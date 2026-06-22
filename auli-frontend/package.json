@@ -12,7 +12,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "doctor": "npx react-doctor@latest",
-    "gen:entities": "node ../scripts/gen-frontend-entities.mjs"
+    "gen:entities": "node ../scripts/gen-frontend-entities.mjs",
+    "gen:public": "../scripts/build-frontend-public.sh",
+    "gen": "npm run gen:entities && npm run gen:public"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.33.0",

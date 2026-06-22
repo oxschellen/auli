@@ -255,6 +255,14 @@ e ficam onde estão.
 **passo de cópia no build** (a-2), não um symlink simples; **B é o destino** e resolve a mescla
 naturalmente. Se quiser destravar já, faça a-2; abra B como item seguinte.
 
+> **FEITO (a-2 committed-static, 2026-06-22):** `scripts/build-frontend-public.sh` regenera
+> `public/<id>/` de `data/<id>/{raw/*.json, ref/*}` de forma determinística (npm: `gen:public` /
+> `gen`). O `public/<id>/` **continua versionado** (é o artefato de deploy servido pelo Apache +
+> Cloudflare) — a cópia **manual** sumiu, virou script a partir da fonte única `data/`. Bônus: os
+> `portal-servicos.txt` (2 MB, não usados pela UI) saíram do `public/`. **B (endpoint)** fica como
+> evolução futura — pior para este deploy estático (acoplaria cada aba à API/CORS). Opção A pura
+> (symlink) foi descartada: não mescla `ref/`+`raw/`.
+
 **Verificação:** abas de referência (Serviços, FAQs, …) carregam o mesmo conteúdo de antes, sem
 nenhum arquivo em `public/<id>/` mantido à mão.
 
