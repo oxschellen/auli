@@ -77,6 +77,16 @@ Prefixos de md5; `—` = ausente. (Conferido em 2026-06-22.)
 
 ## 4. Decisões para sign-off
 
+> **TRAVADO (sign-off 2026-06-22):**
+> - **#1 → (1b) adotar a raspagem nova.** Os packs serão regerados de
+>   `auli-collections/data/rs/portal-*.txt`. Efeito colateral bom: packs e frontend passam a ser
+>   **consistentes** (hoje os packs vêm de um portal antigo e o frontend do scrape novo). Implica
+>   **re-capturar o baseline** após re-vetorizar (respostas podem mudar).
+> - **#2 → prompt do server (14 ln)** → `data/prompts/rs.txt`.
+> - **#3 → (3a) dir "source" agregado no script** (sem mexer no binário).
+> - **#4 → `ref/` versionado** para pareceres/notas/conteudos.
+
+
 **Decisão #1 — fonte canônica de `portal-servicos.txt` / `portal-faqs.txt`** (alimentam os packs):
 
 - **(1a) Preservar o baseline** → adotar as versões do **server** (`auli-server/entities/rs/`) como
