@@ -251,3 +251,24 @@ Caso precise de mais detalhes ou tenha dúvidas específicas, acesse a seção d
 
 ---
 ```
+
+---
+
+## Apêndice C — Novo baseline pós-Fase 1 (raspagem nova adotada)
+
+Boot de `auli server --packs-dir ../data` (layout `data/<id>/packs/`):
+
+```text
+🏛️  Entidades carregadas: [rs]
+🔎 Manifesto de 'rs' validado contra a identidade local.
+📦 rs-services — 627 registros
+📦 rs-faqs — 1914 registros      (era 1734 — a raspagem nova tem +180 FAQs)
+📦 rs-pareceres — 331 registros
+📦 rs-notas — 1 registros
+✅ Server started successfully at 0.0.0.0:3000
+```
+
+Re-execução das 5 perguntas: **4/5 citam o mesmo serviço do baseline** (1698, 1701, 1715, 1259).
+A #4 (inscrição estadual) deixou de citar o card `servico=1661` e passou a responder via **FAQs**
+(REDESIM RS, IN 045/98, Lei 8.820/89) — **não é regressão**: é o efeito esperado das +180 FAQs da
+raspagem nova (decisão #1b). `sc` re-vetorizado também: `sc-services — 208` (entra no server na Fase 2).

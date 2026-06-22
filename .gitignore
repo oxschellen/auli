@@ -54,3 +54,8 @@ web_config.txt
 .DS_Store
 *.swp
 *~
+
+# Data integration (root data/): generated artifacts ignored; prompts/ and <id>/ref/ are versioned
+data/*/raw/
+data/*/cache/
+data/*/packs/

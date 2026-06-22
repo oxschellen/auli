@@ -4,8 +4,10 @@
 //
 // Config and data are split:
 //   - config lives in `./src/entities/<id>/`  -> entity.json { "id", "name" } + prompt.txt
-//   - collection outputs live in `./data/<id>/` -> portal-{servicos,faqs,pareceres,notas}.txt
-//     (plus scraper intermediates like faq_site_tree.json / servicos-*.json)
+//   - collection outputs live in the repo-root `../data/<id>/raw/` -> portal-{servicos,faqs}.txt
+//     + the scraper JSON (faqs.json, servicos*.json, servicos-index.json). This is the GENERATED
+//     half of the per-entity data dir; authored content (pareceres/notas/conteudos) lives in
+//     `../data/<id>/ref/` (versioned), outside the scraper's reach. See roteiro_integracao_data.md.
 //
 // The registry is scanned once at startup. ChromaDB collection names are derived
 // per entity as `<id>-<kind>` (e.g. "rs-faqs"), keeping each entity's vectors isolated.
@@ -21,8 +23,9 @@ pub const DEFAULT_ENTITY: &str = "rs";
 // Directory of per-entity config (entity.json + prompt.txt), scanned to build the registry.
 const ENTITIES_DIR: &str = "./src/entities";
 
-// Root of per-entity collection outputs; each entity's files live in `<DATA_DIR>/<id>/`.
-const DATA_DIR: &str = "./data";
+// Root of per-entity GENERATED collection outputs (repo-root `data/`, relativo ao CWD do
+// collections). Cada entidade escreve em `<DATA_DIR>/<id>/raw/`.
+const DATA_DIR: &str = "../data";
 
 // Fallback system prompt used when an entity directory has no prompt.txt.
 const DEFAULT_SYSTEM_PROMPT: &str = r#"
@@ -46,7 +49,7 @@ pub struct EntityConfig {
     pub id: String,
     pub name: String,
     pub system_prompt: String,
-    // Where this entity's collection outputs live, e.g. "./data/rs".
+    // Where this entity's generated outputs live, e.g. "../data/rs/raw".
     pub data_dir: String,
 }
 
@@ -56,7 +59,7 @@ impl EntityConfig {
         format!("{}-{}", self.id, kind)
     }
 
-    // Source file for a given kind, e.g. "./data/rs/portal-faqs.txt"
+    // Source file for a given kind, e.g. "../data/rs/raw/portal-faqs.txt"
     pub fn data_file(&self, base_name: &str) -> String {
         format!("{}/{}", self.data_dir, base_name)
     }
@@ -98,8 +101,9 @@ fn load_entities() -> HashMap<String, EntityConfig> {
             }
         };
 
-        // Config is read from `path` (./src/entities/<id>); collection outputs live in ./data/<id>.
-        let data_dir = format!("{}/{}", DATA_DIR, manifest.id);
+        // Config is read from `path` (./src/entities/<id>); generated outputs live in
+        // ../data/<id>/raw (the repo-root per-entity data dir, "raw" = scraper-generated half).
+        let data_dir = format!("{}/{}/raw", DATA_DIR, manifest.id);
 
         let system_prompt = fs::read_to_string(path.join("prompt.txt")).unwrap_or_else(|_| {
             eprintln!(

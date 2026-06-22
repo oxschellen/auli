@@ -1,0 +1,935 @@
+{
+  "source": "https://atendimento.receita.rs.gov.br/central-de-conteudo",
+  "categories": [
+    {
+      "name": "Aplicativos",
+      "items": [
+        {
+          "type": "ícone link",
+          "title": "IPVA",
+          "url": "https://atendimento.receita.rs.gov.br/pessoa-fisica/servicos?servico=2010",
+          "extra_links": [
+            {
+              "text": "App Store",
+              "url": "https://apps.apple.com/br/app/ipva-rs/id1008903454"
+            },
+            {
+              "text": "Google Play",
+              "url": "https://play.google.com/store/apps/details?id=br.gov.rs.procergs.ipvars"
+            }
+          ]
+        },
+        {
+          "type": "ícone link",
+          "title": "Menor Preço",
+          "url": "https://atendimento.receita.rs.gov.br/pessoa-fisica/servicos?servico=2108",
+          "extra_links": [
+            {
+              "text": "App Store",
+              "url": "https://apps.apple.com/br/app/menor-pre%C3%A7o-brasil/id1483644418"
+            },
+            {
+              "text": "Google Play",
+              "url": "https://play.google.com/store/apps/details?id=br.gov.rs.procergs.mpbr&gl=US"
+            }
+          ]
+        },
+        {
+          "type": "ícone link",
+          "title": "Minha Empresa",
+          "url": "https://minhaempresa.receita.rs.gov.br/inicial",
+          "extra_links": [
+            {
+              "text": "App Store",
+              "url": "https://apps.apple.com/br/app/minha-empresa-rs/id1667565704"
+            },
+            {
+              "text": "Google Play",
+              "url": "https://play.google.com/store/apps/details?id=br.gov.rs.procergs.minhaemp"
+            }
+          ]
+        },
+        {
+          "type": "ícone link",
+          "title": "Nota Fiscal Fácil",
+          "url": "https://atendimento.receita.rs.gov.br/pessoa-fisica/servicos?servico=1972",
+          "extra_links": [
+            {
+              "text": "App Store",
+              "url": "https://apps.apple.com/br/app/nota-fiscal-f%C3%A1cil-nff/id1531717982"
+            },
+            {
+              "text": "Google Play",
+              "url": "https://play.google.com/store/apps/details?id=br.gov.rs.procergs.nff&pli=1"
+            }
+          ]
+        },
+        {
+          "type": "ícone link",
+          "title": "Nota Fiscal Gaúcha (NFG)",
+          "url": "https://nfg.sefaz.rs.gov.br/site/noticiaDetalhes.aspx?n=557",
+          "extra_links": [
+            {
+              "text": "App Store",
+              "url": "https://apps.apple.com/us/app/nota-fiscal-ga%C3%BAcha-oficial/id917246214"
+            },
+            {
+              "text": "Google Play",
+              "url": "https://play.google.com/store/apps/details?id=br.gov.rs.procergs.nfg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cadastro",
+      "items": [
+        {
+          "type": "PUB",
+          "title": "Cartaz Lei Estadual nº 16.326/25 - Venda de produtos de origem ilícita",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202511/27145338-cartaz-produtos-origem-ilicita-lei16-326-versao-a3.pdf"
+        },
+        {
+          "type": "ícone link",
+          "title": "Consulta Cadastro Contribuintes do RS - por Inscrição Estadual ou CNPJ",
+          "url": "https://atendimento.receita.rs.gov.br/consulta-ao-cadastro"
+        },
+        {
+          "type": "ícone link",
+          "title": "Consulta Cadastro Centralizado de Contribuintes Nacional - CCC (inclusive produtor Rural por CPF)",
+          "url": "https://dfe-portal.svrs.rs.gov.br/NFE/CCC"
+        },
+        {
+          "type": "ícone link",
+          "title": "Web Service de Consulta Cadastral - Habilitação para Documentos Fiscais Eletrônicos (DF-e)",
+          "url": "https://atendimento.receita.rs.gov.br/qual-web-service-e-utilizado-na-verificacao-da-habilitacao-de-um-contribuinte-para-emitente-ou-destinatario-de-df-e"
+        },
+        {
+          "type": "ícone link",
+          "title": "Consulta CNAE",
+          "url": "https://atendimento.receita.rs.gov.br/consulta-cnae"
+        },
+        {
+          "type": "30132102-zip.PNG",
+          "title": "Download Cadastro Contribuintes",
+          "url": "https://atendimento.receita.rs.gov.br/download-cadastro-de-contribuintes"
+        },
+        {
+          "type": "PUB",
+          "title": "Relação de Baixados de Ofício",
+          "url": "https://www.sefaz.rs.gov.br/SAT/ListaEmpresasBaixaOficio.aspx"
+        },
+        {
+          "type": "PUB",
+          "title": "Relação de Devedores do Estado (Inscritos em Dívida Ativa)",
+          "url": "https://atendimento.receita.rs.gov.br/lista-de-debitos-inscritos-em-divida-ativa"
+        },
+        {
+          "type": "PUB",
+          "title": "Relação de Empresas em Regime Especial de Fiscalização - REF",
+          "url": "https://atendimento.receita.rs.gov.br/lista-de-empresas-em-ref-regime-especial-de-fiscalizacao"
+        },
+        {
+          "type": "PUB",
+          "title": "Relação de Estabelecimentos com Inscrição Estadual Cancelada",
+          "url": "https://atendimento.receita.rs.gov.br/relacao-de-estabelecimentos-com-inscricao-estadual-cancelada"
+        },
+        {
+          "type": "PUB",
+          "title": "Relação de Lojas Francas",
+          "url": "https://atendimento.receita.rs.gov.br/lojas-francas-de-fronteira-terrestre"
+        }
+      ]
+    },
+    {
+      "name": "Comércio Exterior - Importação e Exportação",
+      "items": [
+        {
+          "type": "Ícone DOC",
+          "title": "Guia para liberação de mercadoria estrangeira sem comprovação do recolhimento do ICMS - GLME",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/04133550-anexo-a-22-in-08011-7487.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Recinto Alfandegado - Apresentação Controle Pagamentos (24/05/2013 - 699 Kb)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16110244-apresentacao-controle-pagtos-recintos-alfandegados.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Regularidade Tributária - Meios de Acesso à Consulta (22/05/2013 - 3745 Kb)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16110243-regularidade-tributaria-importacao.pdf"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Formulário para Cadastro de Recintos Alfandegados (22/05/2013 - 98 Kb)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16110241-cadastro-recinto-alfandegado.doc"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Formulário - Anexo A-26 da IN 45/98 (21/07/2014 - 38 Kb)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16110240-anexo-a26-cadastro-despachante-aduaneiro.doc"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Importação - Aplicação da Súmula n.º 575 em importações de mercadorias cujas operações estão sujeitas à isenção ou redução de base de cálculo. (17/07/2015 - 128 Kb)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16110239-apli-sumu-575-impo-merc-oper-isen-redu-base-calc.pdf"
+        }
+      ]
+    },
+    {
+      "name": "EFD - Escrituração Fiscal Digital",
+      "items": [
+        {
+          "type": "ícone link",
+          "title": "Arquivos e Programas SPED Fiscal (EFD) - Ambiente Nacional",
+          "url": "http://sped.rfb.gov.br/"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Roteiro Importação da EFD ICMS/IPI no aplicativo da GIA (03/05/2023 564 kB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16085637-roteiro-recurso-de-importacao-da-efd-no-aplicativo-da-gia-v-1-18.pdf"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual da EFD (Anexo único do Ato Cotepe n° 09/2008)",
+          "url": "https://www.confaz.fazenda.gov.br/legislacao/atos/2008/AC009_08"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual para escrituração da restituição ST (tradicional) (25/02/2021 412 kB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16085740-manual-escrituracao-ressarcimento-st-v3-0.pdf"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual de Escrituração de Créditos Presumidos - v1.41 (30/03/2026 1.656 KB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202604/09085513-manual-de-escrituracao-de-creditos-presumidos-v1-41-30-03-26.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Apresentação do recurso de importação da informação da EFD para a geração da GIA Gravataí (31/10/2017 5.8 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16085931-recurso-importacao-efd-aplicativo-gia-gravatai.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Guia para Instalação em Rede da GIA Versão 8",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Aim/InstalacaoRede2009.pdf"
+        }
+      ]
+    },
+    {
+      "name": "GIA",
+      "items": [
+        {
+          "type": "MANUAL",
+          "title": "Manual da GIA Versão 9 (26/03/2018)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sat/Giamen/ManualGIA9.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Leiaute do arquivo de Sistema Próprio da GIA Versão 9 (20/12/2017 - 380 kB)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/pdf/LeiauteGIA9.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Guia para Instalação em Rede da GIA Versão 9 (10/10/2017 - 480 kB)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/pdf/GuiaInstalacaoRedeGIA9.pdf"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual de Autenticação do Usuário para GIA Versão 8 e 9 (Válido a partir do mês de referência Maio de 2014)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/pdf/Manual_autenticacao_usuario_GIA.pdf"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual da GIA Versão 8",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sat/Giamen/ManualGIA.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Leiaute do arquivo de Sistema Próprio da GIA Versão 8",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/pdf/LayoutGIAv8.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Guia para Instalação em Rede da GIA Versão 8",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Aim/InstalacaoRede2009.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Instrução Normativa DRP nº 066/02",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sat/Giamen/IN04598.pdf"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Formulário - Pedido de Correção de GIA (23/05/2014 - 102 kB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/08144905-pedido-de-retificacao-de-gia.docx"
+        },
+        {
+          "type": "exe",
+          "title": "Instala GIA Versão 9 (para GIAs a partir de setembro/2017) (11/04/2018 - 6.9 MB)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sat/Giamen/InstalaGIA9.exe"
+        },
+        {
+          "type": "exe",
+          "title": "Atualiza GIA Versão 9 (26/03/2018 - 3.4 MB)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sat/Giamen/AtualizaGia9.exe"
+        },
+        {
+          "type": "exe",
+          "title": "Instala GIA Versão 8 (para GIAs a partir de janeiro/2012 até agosto/2017)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sat/Giamen/InstalaGia8.exe"
+        },
+        {
+          "type": "exe",
+          "title": "Atualiza GIA Versão 8",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sat/Giamen/AtualizaGia8.exe"
+        },
+        {
+          "type": "exe",
+          "title": "Validador GIA Versão 2",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/SAT/validador32/instalaGiaVal2.EXE"
+        }
+      ]
+    },
+    {
+      "name": "GIA-ST",
+      "items": [
+        {
+          "type": "Ícone PDF",
+          "title": "Layout do Arquivo da GIA-ST versão 3 (para GIA-ST a partir de maio/2015)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/SAT/Giast/Layout_ArquivoGIA-ST_v3.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Layout do Arquivo da GIA-ST versão 2 (para GIA-ST a partir de julho/2012)",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/SAT/Giast/Layout_ArquivoGIA-ST_v2.pdf"
+        },
+        {
+          "type": "exe",
+          "title": "Instala GIA-ST versão 3",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/SAT/Giast/InstalaGIAST3-noadmin.exe"
+        },
+        {
+          "type": "exe",
+          "title": "Instala GIA-ST versão 3",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/SAT/Giast/InstalaGIAST3.exe"
+        },
+        {
+          "type": "exe",
+          "title": "Instala GIA-ST versão 2",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/SAT/Giast/instalaGIASTv2.exe"
+        },
+        {
+          "type": "exe",
+          "title": "Atualiza GIA-ST versão 2",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/SAT/Giast/AtualizaGIASTv2.exe"
+        },
+        {
+          "type": "exe",
+          "title": "Validador de GIA versão 2",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/SAT/validador32/instalaGiaVal2.EXE"
+        }
+      ]
+    },
+    {
+      "name": "ICMS",
+      "items": [
+        {
+          "type": "PUB",
+          "title": "Cartaz Lei Estadual nº 16.326/25 - Venda de produtos de origem ilícita",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202511/27145338-cartaz-produtos-origem-ilicita-lei16-326-versao-a3.pdf"
+        },
+        {
+          "type": "PUB",
+          "title": "Enchentes 2023 - Lista de empresas que possuem laudos constatando danos verificados pela Receita Estadual",
+          "url": "https://atendimento.receita.rs.gov.br/laudos-enchentes-2023"
+        },
+        {
+          "type": "PUB",
+          "title": "Plano Anual de Fiscalização 2025",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/04135055-plano-anual-de-fiscalizacao-2025.pdf"
+        },
+        {
+          "type": "PUB",
+          "title": "Folder Varejo Legal",
+          "url": "https://atendimento.receita.rs.gov.br/varejo-legal"
+        },
+        {
+          "type": "ícone link",
+          "title": "Lista de Lojas Francas de Fronteira Terrestre",
+          "url": "https://atendimento.receita.rs.gov.br/lojas-francas-de-fronteira-terrestre"
+        },
+        {
+          "type": "ícone link",
+          "title": "Relação de Estabelecimentos com Termo de Acordo ARE (Atribuição de Responsabilidade) por Comércio Eletrônico",
+          "url": "https://atendimento.receita.rs.gov.br/termo-de-acordo-are-comercio-eletronico"
+        },
+        {
+          "type": "ícone link",
+          "title": "Relação de Estabelecimentos com Termo de Acordo ST-ARCD - Atribuição de Responsabilidade ao CD de Produtos Eletrônicos",
+          "url": "https://atendimento.receita.rs.gov.br/termo-de-acordo-st-arcd-produtos-eletronicos"
+        },
+        {
+          "type": "ícone link",
+          "title": "Pautas do TARF",
+          "url": "https://atendimento.receita.rs.gov.br/pautas-do-tarf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Resumo de Operações Interestaduais - Vigência até 31/12/2022 (.pdf 176KB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202203/10114448-resumo-de-operacoes-interestaduais-atual-17-02-2022.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Resumo de Operações Interestaduais - Início de vigência 01/01/2023 (.pdf 409 KB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16090814-quadro-resumo-pf-efd-01-01-23.pdf"
+        },
+        {
+          "type": "",
+          "title": "Dica: Para uma melhor visualização, abrir o documento utilizando um leitor de PDF"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Resumo de Operações de Importação - IN RE 096/2022 - Início de vigência 01/01/2023 (.pdf 168 KB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16090813-quadro-resumo-pf-efd-importacao-01-01-23-in096-2022.pdf"
+        },
+        {
+          "type": "ícone link",
+          "title": "Painel de Arrecadação do RS",
+          "url": "https://atendimento.receita.rs.gov.br/painel-de-arrecadacao-do-rs"
+        },
+        {
+          "type": "ícone link",
+          "title": "Desonerações Fiscais no RS",
+          "url": "https://atendimento.receita.rs.gov.br/desoneracoes-fiscais-no-rs"
+        },
+        {
+          "type": "ícone link",
+          "title": "Site do Conselho de Boas Práticas Tributárias (Pautas e Atas)",
+          "url": "https://boaspraticastributarias.rs.gov.br/inicial"
+        }
+      ]
+    },
+    {
+      "name": "ICMS - Pagamento e Parcelamento",
+      "items": [
+        {
+          "type": "MANUAL",
+          "title": "Emissão de Guia de Arrecadação - Débitos não lançados",
+          "url": "https://atendimento.receita.rs.gov.br/emissao-de-guia-de-arrecadacao-ga-icms-debitos-nao-lancados"
+        },
+        {
+          "type": "ícone link",
+          "title": "Pagar Parcelas - Emissão de GA",
+          "url": "https://atendimento.receita.rs.gov.br/pagamento-de-parcelas-emissao-de-ga"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Iniciar Parcelamento",
+          "url": "https://atendimento.receita.rs.gov.br/pedido-inicial-parcelamentos"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Débitos Lançados - ALs e DATs",
+          "url": "https://atendimento.receita.rs.gov.br/debitos-lancados-autos-de-lancamento-ou-divida-ativa"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Emissão de GNRE",
+          "url": "https://atendimento.receita.rs.gov.br/emissao-de-gnre"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Pagamento no Fato Gerador - REF",
+          "url": "https://atendimento.receita.rs.gov.br/pagamento-no-fato-gerador-para-empresas-em-regime-especial-de-fiscalizacao"
+        },
+        {
+          "type": "MANUAL",
+          "title": "",
+          "url": "https://receita.fazenda.rs.gov.br/download/20658",
+          "extra_links": [
+            {
+              "text": "Substitutos Interestaduais",
+              "url": "https://atendimento.receita.rs.gov.br/substitutos-interestaduais"
+            }
+          ]
+        },
+        {
+          "type": "MANUAL",
+          "title": "Pagamento do AMPARA-RS",
+          "url": "https://atendimento.receita.rs.gov.br/pagamento-do-ampara-rs"
+        },
+        {
+          "type": "MANUAL",
+          "title": "DIFAL - Diferencial de Alíquotas",
+          "url": "https://atendimento.receita.rs.gov.br/difal-diferencial-de-aliquotas"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Consulta de Débitos",
+          "url": "https://atendimento.receita.rs.gov.br/consulta-de-debitos"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Quitação Atingidos - Calamidade",
+          "url": "https://atendimento.receita.rs.gov.br/municipios-atingidos-por-calamidade"
+        }
+      ]
+    },
+    {
+      "name": "Indicadores",
+      "items": [
+        {
+          "type": "UIF",
+          "title": "UIF - RS / Unidade de Incentivo do FUNDOPEM",
+          "url": "https://atendimento.receita.rs.gov.br/uif-rs"
+        },
+        {
+          "type": "UIF",
+          "title": "UPF - RS / Unidade de Padrão Fiscal",
+          "url": "https://atendimento.receita.rs.gov.br/upf-rs"
+        }
+      ]
+    },
+    {
+      "name": "IPVA e Veículos",
+      "items": [
+        {
+          "type": "ícone link",
+          "title": "Arrecadação e Inadimplência do IPVA",
+          "url": "https://atendimento.receita.rs.gov.br/arrecadacao-do-ipva"
+        },
+        {
+          "type": "ícone link",
+          "title": "Redução de Base de Cálculo de Veículos Novos para Concessionárias",
+          "url": "https://atendimento.receita.rs.gov.br/reducao-de-base-de-calculo-de-veiculos-novos-para-concessionarias"
+        },
+        {
+          "type": "ícone link",
+          "title": "Repasse de IPVA aos Municípios",
+          "url": "https://www.sefaz.rs.gov.br/Site/MontaMenu.aspx?MenuAlias=m_repasses_mun_ipva"
+        },
+        {
+          "type": "ícone link",
+          "title": "Tabela do IPVA 2025 - modelos de veículos e valores de base de cálculo para o RS",
+          "url": "https://www.diariooficial.rs.gov.br/materia?id=1175550"
+        }
+      ]
+    },
+    {
+      "name": "ITCD",
+      "items": [
+        {
+          "type": "ícone link",
+          "title": "Declaração de ITCD-DIT - Vídeos de Orientação",
+          "url": "https://atendimento.receita.rs.gov.br/videos-declaracao-de-itcd-dit"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual para Declaração de ITDC - DIT (Inventário, Arrolamento, Separação etc) (31/10/2023)",
+          "url": "https://itcd.sefaz.rs.gov.br/web/documentos/manual_dit.pdf"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Formulário de cadastramento no Sistema ITC",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/04102537-formulario-de-cadastramento-e-solicitacao-de-senha-de-usuario-itc.doc"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Formulário para pedido de revisão de avaliação de bens",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/08105350-requerimento-de-revisao-de-avaliacao-itcd.docx"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Formulário de Repetição do Indébito do ITCD",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/04141330-formulario-repeticao-de-indebito-itcd.docx"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Informações para a declaração de ITCD Formulário Anexo J5 IN 045/98 DRP (24/05/2019 110 kB)",
+          "url": "https://admin.atendimento.receita.rs.gov.br/upload/arquivos/202507/16113823-formulario-anexo-j5.doc"
+        }
+      ]
+    },
+    {
+      "name": "NF-e - Nota Fiscal Eletrônica",
+      "items": [
+        {
+          "type": "ícone link",
+          "title": "Consultas, Extrato e Download de NF-e",
+          "url": "https://atendimento.receita.rs.gov.br/pessoa-juridica/servicos?servico=2065"
+        },
+        {
+          "type": "30132102-zip.PNG",
+          "title": "Documentação web service download XML para contabilistas",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16114639-doc-webservice-contabilista-v2-20.zip"
+        },
+        {
+          "type": "Ícone XLS",
+          "title": "Tabela cBenef_x_CST (10/11/2025 - 97 KB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202511/10090959-tabela-cbenef-x-cst-10-11-2025.xlsx"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Orientações sobre o Preenchimento do CBenef",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202210/27164413-validacoes-cbenef.docx"
+        },
+        {
+          "type": "ícone link",
+          "title": "Autorização de Uso",
+          "url": "https://www.sefaz.rs.gov.br/NFE/NFE-AUT.aspx"
+        },
+        {
+          "type": "ícone link",
+          "title": "Inutilização de Numeração da NF-e",
+          "url": "https://dfe-portal.svrs.rs.gov.br/nfe/inutilizacao"
+        },
+        {
+          "type": "ícone link",
+          "title": "Inutilização de Numeração da NFC-e",
+          "url": "https://dfe-portal.svrs.rs.gov.br/nfce/inutilizacao"
+        },
+        {
+          "type": "ícone link",
+          "title": "Inutilização de Numeração da CTe",
+          "url": "https://dfe-portal.svrs.rs.gov.br/cte/inutilizacao"
+        },
+        {
+          "type": "ícone link",
+          "title": "Validador de Mensagens do Projeto NF-e",
+          "url": "https://dfe-portal.svrs.rs.gov.br/NFCE/ValidadorXml"
+        },
+        {
+          "type": "exe",
+          "title": "Assinador-RS",
+          "url": "https://atendimento.receita.rs.gov.br/assinador-rs"
+        }
+      ]
+    },
+    {
+      "name": "Municípios",
+      "items": [
+        {
+          "type": "pdf",
+          "title": "Índice de Participação Municipa",
+          "url": "https://atendimento.receita.rs.gov.br/ipm-indice-de-participacao-dos-municipios"
+        },
+        {
+          "type": "pdf",
+          "title": "Programa Integração Tributária",
+          "url": "https://atendimento.receita.rs.gov.br/pit-programa-de-integracao-tributaria2"
+        }
+      ]
+    },
+    {
+      "name": "Produtor Rural",
+      "items": [
+        {
+          "type": "ícone link",
+          "title": "Consulta Cadastro Centralizado de Contribuintes - CCC por Inscrição ou CPF",
+          "url": "https://dfe-portal.svrs.rs.gov.br/NFE/CCC"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual de atendimento de contribuintes de ICMS da produção primária (janeiro 2026)",
+          "url": "https://atendimento.receita.rs.gov.br/manual-atendimento-icms-producao-primaria"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual de Orientação do APP NFF - Nota Fiscal Fácil para Produtor Rural",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202603/12144032-manual-de-orientacao-ao-produtor-rural-2026.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Nota Fiscal de Produtor MODELO 4 (AIDF) (16/07/2018)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/14163251-nota-fiscal-de-produtor-modelo-4-aidf.pdf"
+        },
+        {
+          "type": "30132102-zip.PNG",
+          "title": "PPR_Ativo",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sitagro/PPR_ATIVO.zip"
+        },
+        {
+          "type": "30132102-zip.PNG",
+          "title": "PPR_Baixado",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sitagro/PPR_BAIXADO.zip"
+        },
+        {
+          "type": "30132102-zip.PNG",
+          "title": "PPR_Troca",
+          "url": "https://www.sefaz.rs.gov.br/ASP/Download/Sitagro/PPR_TROCA.zip"
+        },
+        {
+          "type": "Ícone XLS",
+          "title": "Listagem das Inscrições Estaduais dos Produtores Rurais obrigados a emitir NF-e a partir de 03/02/2025",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/14163254-obrigatoriedade-ppr-2025.xlsx"
+        },
+        {
+          "type": "Ícone XLS",
+          "title": "Listagem das Inscrições Estaduais dos Produtores Rurais com VAF superior a 3.600.00000 em 2024",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202601/15085449-inscricao-de-produtor-rural-com-vaf-superior-a-3-600-000-00-em-2024.xlsx"
+        },
+        {
+          "type": "ícone link",
+          "title": "Relação de estabelecimentos produtores que utilizam a escrituração de livros fiscais",
+          "url": "https://atendimento.receita.rs.gov.br/relacao-de-estabelecimentos-produtores-que-utilizam-escrituracao-de-livros-fiscais"
+        }
+      ]
+    },
+    {
+      "name": "Programa Reforma Tributária do Consumo RS (RTC-RS)",
+      "items": [
+        {
+          "type": "ícone link",
+          "title": "Projeto Piloto do Sistema de Apuração Assistida do IBS (Piloto RTC - IBS)",
+          "url": "https://receita.fazenda.rs.gov.br/piloto-rtc-ibs"
+        }
+      ]
+    },
+    {
+      "name": "Sitagro",
+      "items": [
+        {
+          "type": "Ícone PDF",
+          "title": "Formato de Arquivos (22/03/2018 - 370 kB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202509/22161356-formatodearquivos.pdf"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual SITAGRO (23/10/2000 1.6 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16103319-manual-sitagro.pdf"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual digitação de Nota Fiscal Produtor (26/05/2017 1.5 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16103318-manualdigitacaonotafiscalprodutorsitagro.pdf"
+        }
+      ]
+    },
+    {
+      "name": "Substituição Tributária",
+      "items": [
+        {
+          "type": "exe",
+          "title": "Declaração de Estoque de Mercadorias (STDE) - Instalador Versão 2",
+          "url": "https://www.sefaz.rs.gov.br/DWN/STDEv2Instal.aspx"
+        },
+        {
+          "type": "PUB",
+          "title": "Lista PMPF (Preço Médio Ponderado a Consumidor Final) – Produtos Farmacêuticos",
+          "url": "https://atendimento.receita.rs.gov.br/informacoes-dos-precos-medios-ponderados-a-consumidor-final-dos-produtos-farmaceuticos"
+        },
+        {
+          "type": "PUB",
+          "title": "Preço a Consumidor Final - PFC - Bebidas Quentes",
+          "url": "https://atendimento.receita.rs.gov.br/publicacoes-pfc-bebidas-quentes"
+        },
+        {
+          "type": "PUB",
+          "title": "Preço a Consumidor Final - PFC - Bebidas Frias",
+          "url": "https://atendimento.receita.rs.gov.br/publicacoes-pfc-bebidas-frias"
+        }
+      ]
+    },
+    {
+      "name": "Simples Nacional - SEDIF/DeSTDA",
+      "items": [
+        {
+          "type": "exe",
+          "title": "Instalação SEDIF/DeSTDA - Versão 1.0.6.00 (24/02/2025 - 35.08 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16104110-sedif-setup1-0-6-00-exe.zip"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Preenchimento PGDAS nos casos de Isenção e Redução do ICMS. Lei RS 13.036/2008 (10/11/2017 1.05 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16104112-orientacoes-lei-13036-no-simples-nacional-reducao-base-de-calculo.doc"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Perguntas e Respostas DeSTDA 2026 (0.82 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202602/24112616-perguntas-e-respostas-destda-v16.pdf"
+        },
+        {
+          "type": "ícone link",
+          "title": "Vídeos de orientação",
+          "url": "https://atendimento.receita.rs.gov.br/simples-nacional-e-sedif-destda-videos"
+        }
+      ]
+    },
+    {
+      "name": "TED - Transmissão Eletrônica de Documentos",
+      "items": [
+        {
+          "type": "30132102-zip.PNG",
+          "title": "Certificados de ACs - ACCompactadoPRO.zip (179 KB)",
+          "url": "https://www.sefaz.rs.gov.br/Incoming/ACCompactadoPRO.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Instalação TED - Versão 5.7.2 (08/12/2021 - 8 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16104535-instalated-5-7-2.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Instalação TED - Versão 5.6.0 (23/07/2018 - 7 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16104532-instalated-5-6-0.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Instalação TED - Versão 4",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16104529-instalated-4-3-8.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Empacota TED (23/03/2018 - 5.2 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16104527-empacotated.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Gerar Midia TED (23/03/2018 - 3.5 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16104524-gerarmidiated.zip"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Documentação - Gerar Mídia (24/10/2012 - 16 kB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16104522-descricaodadllprgerarmidiated.pdf"
+        }
+      ]
+    },
+    {
+      "name": "TEF/DIMP - Instituições de Pagamentos, Financeiras e Intermediadores",
+      "items": [
+        {
+          "type": "exe",
+          "title": "Validador TED_TEF (64 bits) Versão 12.10.1 - Homologação (13/04/2026 - 17 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202604/13133705-instalatedtef64-12-10-1.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Validador TED_TEF (64 bits) Versão 12.10.0 (20/02/2026 - 17 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202602/20084421-instalatedtef64-12-10-0.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Validador TED_TEF (64 bits) Versão 12.9.18 (10/12/2025 - 17 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202512/10103746-instalatedtef64-12-9-18.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Validador TED_TEF (64 bits) Versão 12.7.14 (16/07/2022 - 19 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16105408-instalatedtef64-12-7-14.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Validador TED_TEF (64 bits) Versão 12.6.6 (30/11/2021 - 17 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16105401-instalatedtef64-12-6-6.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Validador TED_TEF Versão 11.5.2 (10/11/2020 - 15 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16105357-instalatedtef-11-5-2.zip"
+        },
+        {
+          "type": "exe",
+          "title": "Validador TED_TEF Versão 11.4.2 (01/09/2020 - 15 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16105351-instalatedtef-11-4-2.zip"
+        },
+        {
+          "type": "ícone link",
+          "title": "Novidades das versões e instruções para atualização",
+          "url": "https://atendimento.receita.rs.gov.br/validador-ted-tef"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Manual de Instalação e Funcionamento TED_TEF (12/12/2023 - 6.6 MB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/16105347-manual-do-ted-tef-121223.pdf"
+        },
+        {
+          "type": "MANUAL",
+          "title": "Orientações DIMP - Declaração de Informações de Meios de Pagamento (31/07/2025 - 79 KB)",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202507/31143021-informacoes-sobre-dimp-site-da-re-v4.docx"
+        }
+      ]
+    },
+    {
+      "name": "Trânsito Livre - Piloto",
+      "items": [
+        {
+          "type": "ícone link",
+          "title": "Lista de empresas credenciadas no Piloto Trânsito Livre",
+          "url": "https://atendimento.receita.rs.gov.br/lista-de-empresas-credenciadas-no-piloto-transito-livre"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Manual de Identidade Visual - Orientações para utilização do adesivo",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202409/17145431-visual-manual-identidade-visual-transito-livre.pdf"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Manual de orientação para acesso à API para obtenção de notificações",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202409/17145433-manual-api-tlv-v1-1.pdf"
+        },
+        {
+          "type": "Ícone DOC",
+          "title": "Termo de Adesão ao Projeto Piloto Trânsito Livre",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202409/26090012-termo-de-adesao-transito-livre-v2.docx"
+        },
+        {
+          "type": "Ícone PDF",
+          "title": "Adesivo Trânsito Livre",
+          "url": "https://atendimento.receita.rs.gov.br/upload/arquivos/202409/17145430-visual-adesivo-transito-livre-40cmx13cm-qrcode-6cmx6cm-vf.pdf"
+        }
+      ]
+    },
+    {
+      "name": "Vídeos Orientativos",
+      "items": [
+        {
+          "type": "Video player (2)",
+          "title": "ITCD",
+          "url": "https://atendimento.receita.rs.gov.br/itcd-videos"
+        },
+        {
+          "type": "Video player (2)",
+          "title": "Aplicativo Minha Empresa",
+          "url": "https://atendimento.receita.rs.gov.br/app-minha-empresa-videos"
+        },
+        {
+          "type": "Video player (2)",
+          "title": "Documentos Fiscais",
+          "url": "https://atendimento.receita.rs.gov.br/documentos-fiscais-videos"
+        },
+        {
+          "type": "Video player (2)",
+          "title": "Simples Nacional e SEDIF/DeSTDA",
+          "url": "https://atendimento.receita.rs.gov.br/simples-nacional-e-sedif-destda-videos"
+        }
+      ]
+    },
+    {
+      "name": "Outros Locais",
+      "items": [
+        {
+          "type": "icone",
+          "title": "Perguntas Frequentes",
+          "url": "https://atendimento.receita.rs.gov.br/perguntas-frequentes-link"
+        },
+        {
+          "type": "CONSULTA FORMAL2",
+          "title": "Portal de Legislação",
+          "url": "https://atendimento.receita.rs.gov.br/portal-de-legislacao-receita-estadual"
+        },
+        {
+          "type": "pdf",
+          "title": "Receita Dados",
+          "url": "https://atendimento.receita.rs.gov.br/receita-dados"
+        },
+        {
+          "type": "pdf",
+          "title": "Receita Doc",
+          "url": "https://atendimento.receita.rs.gov.br/receita-doc"
+        }
+      ]
+    }
+  ]
+}
