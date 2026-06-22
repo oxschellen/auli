@@ -1,14 +1,15 @@
-# Auli — Operação (compilar, subir, ngrok, logs)
+# Auli — Operação (compilar, subir, cloudflared, logs)
 
 Runbook prático para **compilar, gerar os dados e subir o servidor da Auli** (workspace `auli`,
-modo `server`) com o túnel **ngrok**, e para saber **onde ficam os logs**. Para a descrição
+modo `server`) com o túnel do **Cloudflare** (cloudflared), e para saber **onde ficam os logs**. Para a descrição
 técnica do código, ver [auli_code.md](auli_code.md) (§9 cobre o workspace `auli`).
 
 > TL;DR — numa máquina já preparada (build feito, packs gerados):
+>
 > ```bash
-> ./start_server.sh                  # compila (incremental) + sobe server + ngrok
+> ./start_server.sh                  # compila (incremental) + sobe server + túnel
 > ./start_server.sh --no-build       # restart rápido, sem recompilar
-> ./start_server.sh --no-ngrok       # só o servidor local, sem túnel
+> ./start_server.sh --no-tunnel       # só o servidor local, sem túnel
 > ```
 
 ---
@@ -20,7 +21,7 @@ O binário único `auli` tem dois modos:
 - **`auli server`** — sobe a API HTTP (axum) em `:3000`, **somente leitura**: carrega os pacotes
   de vetores, valida o manifesto e responde perguntas (RAG). Embeda só a pergunta; nunca escreve.
 - **`auli update`** — vetoriza os `portal-*.txt` de uma entidade em **pacotes** (`<id>-<kind>.json`
-  + `<id>.manifest.json`). É o **único** que escreve dados.
+  - `<id>.manifest.json`). É o **único** que escreve dados.
 
 Embeddings (fastembed/BGE-M3) e busca vetorial rodam **in-process** — não há Ollama, ChromaDB nem
 serviço de embedding para subir à parte.
@@ -34,7 +35,7 @@ serviço de embedding para subir à parte.
 | **Rust** | toolchain estável (`cargo`, `rustc`). |
 | **cmake + compilador C** | exigidos por `aws-lc-sys` (TLS rustls). **Nesta máquina não há cmake de sistema**: foi instalado via `pip install --user cmake` (fica em `~/.local/bin`). Ver §3. |
 | **Rede (1º build/run)** | `ort` baixa o ONNX Runtime no build; o modelo **BGE-M3** baixa do Hugging Face para `EMBED_CACHE_DIR` no 1º uso. |
-| **ngrok** | para o túnel público (`api.auli.com.br`). Opcional (use `--no-ngrok`). |
+| **cloudflared** | túnel do Cloudflare que publica `api.auli.com.br` (em `~/.local/bin`). Configure 1× com `./setup-cloudflared.sh`. Opcional ao rodar: `--no-tunnel`. |
 | **`.env`** | na raiz `auli_new/` (ver §4). |
 
 ---
@@ -87,6 +88,7 @@ estratégia de embedding mudar.**
 ### 4.2 Entidades (`./entities`)
 O server lê `./entities/<id>/` (`entity.json` + `prompt.txt`). No workspace isso é um symlink para
 o baseline (o `start_server.sh` cria automaticamente se faltar):
+
 ```bash
 ln -s ../auli-server/entities entities    # dentro de auli/
 ```
@@ -96,6 +98,7 @@ Cache do BGE-M3 (`EMBED_CACHE_DIR=./models` → `auli/models`). Baixa do Hugging
 depois é reaproveitado (sem rede).
 
 ### 4.4 `.env` (raiz `auli_new/`)
+
 Carregado via `dotenv` a partir do CWD para cima — por isso um `.env` na raiz `auli_new/` serve
 para o server rodando em `auli/`. Variáveis:
 
@@ -113,27 +116,29 @@ para o server rodando em `auli/`. Variáveis:
 
 ---
 
-## 5. Subir o servidor + ngrok
+## 5. Subir o servidor + túnel Cloudflare
 
 O jeito recomendado é o script [start_server.sh](start_server.sh) (na raiz `auli_new/`):
 
 ```bash
-./start_server.sh                       # build incremental + server + ngrok
-./start_server.sh --no-build            # pula o cargo build (restart rápido) + ngrok
-./start_server.sh --no-ngrok            # só o servidor local, sem túnel
-./start_server.sh --no-build --no-ngrok # restart local puro
+./start_server.sh                       # build incremental + server + túnel
+./start_server.sh --no-build            # pula o cargo build (restart rápido) + túnel
+./start_server.sh --no-tunnel            # só o servidor local, sem túnel
+./start_server.sh --no-build --no-tunnel # restart local puro
 ```
 
 O que ele faz: exporta o env de cmake desta máquina, reusa `auli-server/target`, entra em `auli/`,
 garante o symlink `entities`, derruba uma instância anterior na porta, compila (a menos de
-`--no-build`), sobe o **ngrok em background** e o **server em foreground**. **Ctrl+C** encerra os
-dois (um `trap` derruba o ngrok junto).
+`--no-build`), sobe o **túnel cloudflared em background** e o **server em foreground**. **Ctrl+C**
+encerra os dois (um `trap` derruba o cloudflared junto). O túnel precisa ter sido configurado 1× com
+`./setup-cloudflared.sh` (ver §10); sem isso, sobe só o servidor local.
 
 Variáveis de ambiente para sobrescrever:
 ```bash
 PORT=8080 ./start_server.sh                       # outra porta
 PACKS_DIR=/dados/packs ./start_server.sh          # outra pasta de pacotes
-NGROK_DOMAIN=meu.dominio.ngrok.app ./start_server.sh
+TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
+./start_server.sh --no-tunnel                     # só o servidor local, sem túnel
 ```
 
 **Boot saudável** se parecer com:
@@ -178,23 +183,23 @@ Há **três** destinos distintos:
 | Tipo | Onde | Conteúdo |
 | --- | --- | --- |
 | **Q&A do RAG** | `auli/logs/<AAAA-MM-DD_HH-MM-SS>.txt` (um arquivo por pergunta) | `Pergunta:` + contexto RAG recuperado + `Resposta:`. Gravado por [rag.rs](auli/crates/auli-cli/src/rag.rs) em `./logs/` **relativo ao CWD** — como o server roda em `auli/`, caem em `auli/logs/`. |
-| **ngrok** | `/tmp/auli-ngrok.log` | saída do túnel (redirecionada pelo `start_server.sh`). |
+| **cloudflared** | `/tmp/auli-cloudflared.log` | saída do túnel Cloudflare (redirecionada pelo `start_server.sh`). |
 | **Console (`tracing`)** | **stdout/stderr** do terminal (não vai a arquivo) | boot, scores, `info/debug/warn`. Controlado por `RUST_LOG`. |
 
 Exemplos:
 ```bash
 ls -lt auli/logs/ | head                 # últimas consultas
-tail -f /tmp/auli-ngrok.log              # acompanhar o túnel
+tail -f /tmp/auli-cloudflared.log              # acompanhar o túnel
 RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG completo no console
 ```
 
-> Para gravar também o console em arquivo: `./start_server.sh --no-ngrok 2>&1 | tee auli/logs/console.log`.
+> Para gravar também o console em arquivo: `./start_server.sh --no-tunnel 2>&1 | tee auli/logs/console.log`.
 
 ---
 
 ## 8. Parar / reiniciar
 
-- **Parar:** `Ctrl+C` no terminal do server (encerra server + ngrok pelo `trap`).
+- **Parar:** `Ctrl+C` no terminal do server (encerra server + cloudflared pelo `trap`).
 - **Matar à força (porta presa):** `pkill -f "release/auli server"`.
 - **Reiniciar rápido (sem recompilar):** `./start_server.sh --no-build`.
 
@@ -211,4 +216,53 @@ RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG c
 | `Variável de ambiente obrigatória ausente: ...` | Falta variável de LLM no `.env` (`LLM_API_URL`/`LLM_API_KEY`/`LLM_API_MODEL`). Ver §4.4. |
 | `Manifest incompatível ...` no boot | Pacotes gerados com modelo/dim/`strategy_version` diferente do binário. Re-gere com `auli update`. |
 | `Permission denied` ao rodar o script | Faltou `chmod +x start_server.sh`, ou usou `sudo` (não use). |
-| ngrok com "connection refused" no início | Normal: o túnel tenta conectar enquanto o server ainda carrega o modelo; conecta quando o boot termina. |
+| cloudflared com "connection refused"/"context deadline" no início | Normal: o túnel tenta conectar enquanto o server ainda carrega o modelo; conecta quando o boot termina. |
+| `failed to create tunnel ... already exists` | O túnel `auli-api` já existe. O `setup-cloudflared.sh` é idempotente; rode de novo (ele detecta e reaproveita). |
+| `An A, AAAA, or CNAME record with that host already exists` | O CNAME do ngrok ainda está em `api.auli.com.br`. O script usa `--overwrite-dns`; se persistir, apague o registro no painel e rode de novo. |
+| HTTP 1015 / "rate limited" no cliente | A regra de rate limiting do Cloudflare disparou (§10.2). Ajuste o limite ou o período. |
+
+---
+
+## 10. Túnel Cloudflare + rate limiting
+
+O `api.auli.com.br` é publicado por um **Cloudflare Tunnel** (`cloudflared`) — substitui o ngrok.
+O `cloudflared` roda nesta máquina e disca **para fora**, então **o Cloudflare é o único caminho de
+entrada** (não há URL pública de origem para burlar) e as regras de rate limiting do Cloudflare são
+de fato aplicadas. O `CF-Connecting-IP` chega ao limitador interno do app (1 req/s, burst 2 por IP).
+
+### 10.1 Configuração do túnel (uma vez)
+
+```bash
+./setup-cloudflared.sh        # login (abre navegador) + cria o túnel 'auli-api' + roteia o DNS
+```
+
+O script: autoriza a conta (`~/.cloudflared/cert.pem`), cria o túnel, escreve
+`~/.cloudflared/config.yml` (ingress `api.auli.com.br` -> `http://localhost:3000`) e aponta o
+**CNAME proxied** `api.auli.com.br` -> `<uuid>.cfargotunnel.com` (substituindo o CNAME do ngrok).
+Depois disso, **`./start_server.sh` sobe o túnel automaticamente** (`cloudflared tunnel run auli-api`).
+
+No painel Cloudflare, **reative a zona `auli.com.br`** (estava em *pause*) e confira que
+`api.auli.com.br` está **proxied** (nuvem laranja).
+
+### 10.2 Regra de rate limiting (no painel Cloudflare)
+
+**Security -> WAF -> Rate limiting rules -> Create rule**:
+
+| Campo | Valor |
+| --- | --- |
+| **If incoming requests match** | `Hostname` equals `api.auli.com.br` **AND** `URI Path` equals `/v1/question` |
+| **(opcional)** | **AND** `Request Method` equals `POST` |
+| **Rate** | ex.: **60** requests per **1 minute** (ajuste à realidade de um órgão; lembre que NAT faz um escritório inteiro sair por **um IP**) |
+| **Counting characteristic** | `IP` (com proxy, é o IP real do cliente) |
+| **Then** | **Block** por **10s**-**60s**, resposta **429** (corpo custom opcional em pt-BR) |
+
+Defesa em camadas: a regra do Cloudflare é a barreira de borda; o limitador interno do app
+(`/v1/question`, por IP) é a segunda linha. Não há mais URL de ngrok pública para contornar.
+
+### 10.3 Verificação
+
+```bash
+tail -f /tmp/auli-cloudflared.log                 # túnel: deve logar "Registered tunnel connection"
+curl -s https://api.auli.com.br/v1/health         # 200 via Cloudflare
+# dispare > limite no /v1/question e espere 429 (vinda do Cloudflare; veja em Security -> Events)
+```

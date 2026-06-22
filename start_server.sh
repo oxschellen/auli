@@ -2,21 +2,23 @@
 # start_server.sh — compila e sobe o servidor da Auli (workspace `auli`, modo `server`) em :3000.
 # Rode sem sudo, a partir de qualquer lugar:  ./start_server.sh
 #
-# Sobe também um túnel ngrok (api.auli.com.br) junto do servidor.
+# Sobe também o túnel do Cloudflare (cloudflared) que publica api.auli.com.br -> localhost:PORT.
+# Configure o túnel UMA vez com ./setup-cloudflared.sh (login + criação + DNS).
 #
-# Flags:    --no-build   pula o `cargo build` e sobe o binário já compilado (restart rápido).
-#           --no-ngrok   sobe só o servidor local, sem o túnel ngrok.
-# Variáveis opcionais: PORT (3000), PACKS_DIR (./packs), NGROK_DOMAIN (api.auli.com.br),
+# Flags:    --no-build    pula o `cargo build` e sobe o binário já compilado (restart rápido).
+#           --no-tunnel   sobe só o servidor local, sem o túnel Cloudflare.
+#                         (--no-ngrok continua aceito como apelido de --no-tunnel.)
+# Variáveis opcionais: PORT (3000), PACKS_DIR (./packs), TUNNEL_NAME (auli-api),
 #                      CARGO_TARGET_DIR (reuso do build).
 set -euo pipefail
 
 NO_BUILD=0
-NO_NGROK=0
+NO_TUNNEL=0
 for arg in "$@"; do
   case "$arg" in
     --no-build) NO_BUILD=1 ;;
-    --no-ngrok) NO_NGROK=1 ;;
-    *) echo "Flag desconhecida: $arg (use --no-build, --no-ngrok)" >&2; exit 2 ;;
+    --no-tunnel|--no-ngrok) NO_TUNNEL=1 ;;
+    *) echo "Flag desconhecida: $arg (use --no-build, --no-tunnel)" >&2; exit 2 ;;
   esac
 done
 
@@ -33,7 +35,7 @@ export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/auli-server/target}"
 
 PORT="${PORT:-3000}"
 PACKS_DIR="${PACKS_DIR:-./packs}"
-NGROK_DOMAIN="${NGROK_DOMAIN:-api.auli.com.br}"
+TUNNEL_NAME="${TUNNEL_NAME:-auli-api}"
 BIN="$CARGO_TARGET_DIR/release/auli"
 
 cd "$WS"
@@ -55,19 +57,20 @@ else
   cargo build --release --bin auli
 fi
 
-# Túnel ngrok em background (se habilitado e instalado); morre junto com o script.
-NGROK_PID=""
-if [ "$NO_NGROK" -eq 0 ]; then
-  if command -v ngrok >/dev/null; then
-    echo "🌐 ngrok http --domain=${NGROK_DOMAIN} ${PORT} (log: /tmp/auli-ngrok.log)"
-    ngrok http --domain="$NGROK_DOMAIN" "$PORT" >/tmp/auli-ngrok.log 2>&1 &
-    NGROK_PID=$!
-    trap '[ -n "$NGROK_PID" ] && kill "$NGROK_PID" 2>/dev/null || true' EXIT INT TERM
+# Túnel Cloudflare (cloudflared) em background; morre junto com o script.
+TUNNEL_PID=""
+if [ "$NO_TUNNEL" -eq 0 ]; then
+  if command -v cloudflared >/dev/null && [ -f "$HOME/.cloudflared/config.yml" ]; then
+    echo "🌐 cloudflared tunnel run ${TUNNEL_NAME} (log: /tmp/auli-cloudflared.log)"
+    cloudflared tunnel run "$TUNNEL_NAME" >/tmp/auli-cloudflared.log 2>&1 &
+    TUNNEL_PID=$!
+    trap '[ -n "$TUNNEL_PID" ] && kill "$TUNNEL_PID" 2>/dev/null || true' EXIT INT TERM
   else
-    echo "⚠️  ngrok não encontrado no PATH — subindo só o servidor local."
+    echo "⚠️  Túnel Cloudflare não configurado — subindo só o servidor local."
+    echo "    Rode ./setup-cloudflared.sh uma vez (login + criação + DNS), ou use --no-tunnel."
   fi
 fi
 
 echo "🚀 Subindo 'auli server' em :${PORT} (packs: ${PACKS_DIR}). Ctrl+C para parar."
-# Sem `exec`: mantém o script vivo para o trap derrubar o ngrok ao sair (Ctrl+C).
+# Sem `exec`: mantém o script vivo para o trap derrubar o cloudflared ao sair (Ctrl+C).
 "$BIN" server --port "$PORT" --packs-dir "$PACKS_DIR"
