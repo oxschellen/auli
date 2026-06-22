@@ -1,0 +1,442 @@
+[
+  {
+    "id": 1,
+    "servico_number": "2193",
+    "tipo": "Agentes",
+    "classe": "Consulta",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2193",
+    "titulo": "Cadastro de Fornecedores Impedidos de Licitar e Contratar com a Administração Pública Estadual",
+    "descricao": "Agentes \nConsulta \nCadastro de Fornecedores Impedidos de Licitar e Contratar com a Administração Pública Estadual \nQuem deseja consultar sua situação no sistema CFIL/RS pode realizar juntamente com o CADIN/RS no endereço https://cadin.sefaz.rs.gov.br/ \n"
+  },
+  {
+    "id": 2,
+    "servico_number": "2186",
+    "tipo": "Agentes",
+    "classe": "Consulta",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2186",
+    "titulo": "Cadastro Informativo das Pendências perante Órgãos e Entidades da Administração Estadual – CADIN/RS",
+    "descricao": "Agentes \nConsulta \nCadastro Informativo das Pendências perante Órgãos e Entidades da Administração Estadual – CADIN/RS \nO serviço é prestado online no endereço https://cadin.sefaz.rs.gov.br/ \n"
+  },
+  {
+    "id": 3,
+    "servico_number": "2199",
+    "tipo": "Agentes",
+    "classe": "Consulta",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2199",
+    "titulo": "CAGE Gerencial",
+    "descricao": "Agentes \nConsulta \nCAGE Gerencial \nEstá disponível para gestores públicos, grupos setoriais de custos e órgãos de controle, competindo à CAGE prestar suporte aos usuários cadastrados no referido Sistema, além de desenvolver ou adaptar o painel gerencial e analítico para o fornecimento de informações de âmbito contábil, financeiro, orçamentário, patrimonial e operacional. \n"
+  },
+  {
+    "id": 4,
+    "servico_number": "2202",
+    "tipo": "Agentes",
+    "classe": "Consulta",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2202",
+    "titulo": "Serviço de Informações da CAGE - Sincage",
+    "descricao": "Agentes \nConsulta \nServiço de Informações da CAGE - Sincage \nAcesso por meio da página do Portal de Legislação da CAGE (Sincage), no seguinte endereço: http://www.legislacao.sefaz.rs.gov.br/Site/Area.aspx?inpKey=2; \n"
+  },
+  {
+    "id": 5,
+    "servico_number": "1168",
+    "tipo": "Agentes",
+    "classe": "Emissão",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1168",
+    "titulo": "Certidão CHE -  Cadastro de Habilitados do Estado - Convênios",
+    "descricao": "Agentes \nEmissão \nCertidão CHE -  Cadastro de Habilitados do Estado - Convênios \nA emissão do Certificado de Habilitação em Convênios (CHE) será efetuada exclusivamente pela internet no \nendereço eletrônico www.che.sefaz.rs.gov.br e abrangerá todos os documentos necessários à habilitação do Município com vistas a firmar \nconvênios no âmbito da Administração Pública Estadual, conforme a Instrução Normativa CAGE nº 01/2006, bem como comprova o \natendimento, pelo Município, do disposto no inciso I do § 1º do art. 51 da Lei Complementar 101, de 04 de maio de 2000, no que se refere ao \nPoder Executivo estadual. \nPré-Requisitos \nO acesso ao módulo de internet é livre a qualquer usuário. Não exige nenhum tipo de cadastro, pois é somente para consultas, nenhuma com sigilo. \n"
+  },
+  {
+    "id": 6,
+    "servico_number": "2185",
+    "tipo": "Agentes",
+    "classe": "Emissão",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2185",
+    "titulo": "Certificado de Capacidade Financeira Relativa de Licitantes - SISACF",
+    "descricao": "Agentes \nEmissão \nCertificado de Capacidade Financeira Relativa de Licitantes - SISACF \nPrestado de forma inteiramente virtual através do sítio https://sisacf.sefaz.rs.gov.br/#/em que o usuário preenche o cadastramento e envia os documentos solicitados; Outros questionamentos podem ser encaminhados ao portal e-CAGE de atendimento virtual (https://atendimentocage.sefaz.rs.gov.br/). Demais informações procedimentais podem ser encontradas no seguinte endereço: https://cage.fazenda.rs.gov.br/conteudo/6354/sisacf---certificado-de- capacidade-financeira-e-anexo-iii. \n"
+  },
+  {
+    "id": 7,
+    "servico_number": "2198",
+    "tipo": "Agentes",
+    "classe": "Emissão",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2198",
+    "titulo": "Certificado de Programa de Integridade",
+    "descricao": "Agentes \nEmissão \nCertificado de Programa de Integridade \nAcessado através do seguinte link: https://portalcage.sefaz.rs.gov.br/ \n"
+  },
+  {
+    "id": 8,
+    "servico_number": "2194",
+    "tipo": "Agentes",
+    "classe": "Portal",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2194",
+    "titulo": "Portal de Convênios e Parcerias",
+    "descricao": "Agentes \nPortal \nPortal de Convênios e Parcerias \nInformações acerca dos dados disponibilizados no portal, como acessá-los ou requerer outros mais específicas. \n"
+  },
+  {
+    "id": 9,
+    "servico_number": "2248",
+    "tipo": "Agentes",
+    "classe": "Portal",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2248",
+    "titulo": "Portal e-CAGE – Atendimento CAGE Virtual",
+    "descricao": "Agentes \nPortal \nPortal e-CAGE – Atendimento CAGE Virtual \nO Portal e-CAGE - Atendimento CAGE Virtual - é uma plataforma digital que centraliza, organiza e gerencia as demandas direcionadas à Contadoria e Auditoria Geral do Estado. Essas demandas englobam desde solicitações de atendimentos relativos a sistemas gerenciados pela CAGE, pedidos de orientação gerais concernentes à execução da despesa pública (convênios, parcerias, adiantamentos de numerário, contratos etc.), além de outras requisições de serviços prestados pelo órgão à sociedade gaúcha. Trata-se de uma solução e-Gov na qual cidadãos, gestores e servidores públicos, e demais partes interessadas podem interagir de forma eficiente e transparente com a CAGE. \n"
+  },
+  {
+    "id": 10,
+    "servico_number": "2195",
+    "tipo": "Agentes",
+    "classe": "Portal",
+    "orgao": "CAGE",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2195",
+    "titulo": "Portal Transparência RS",
+    "descricao": "Agentes \nPortal \nPortal Transparência RS \nO acesso é feito por meio do sítio: http://www.transparencia.rs.gov.br. \n"
+  },
+  {
+    "id": 11,
+    "servico_number": "1967",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1967",
+    "titulo": "Cadastramento de Operadores das Prefeituras",
+    "descricao": "Agentes \nPrefeituras \nCadastramento de Operadores das Prefeituras \nServiço de cadastramento dos operadores das prefeituras – funcionários municipais que acessam os sistemas da Receita Estadual. \nEste serviço abrange a solicitação de cadastramento de funcionários municipais que devem acessar algum sistema da Receita Estadual, alterações e manutenção de senhas. \n"
+  },
+  {
+    "id": 12,
+    "servico_number": "1968",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1968",
+    "titulo": "Cadastros Gerais e Consultas - Prefeituras",
+    "descricao": "Agentes \nPrefeituras \nCadastros Gerais e Consultas - Prefeituras \nServiços destinados à consulta GMA e de Cadastros Gerais. \n"
+  },
+  {
+    "id": 13,
+    "servico_number": "1974",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1974",
+    "titulo": "Comunicado de Perda de Vínculo com Município - IPVA",
+    "descricao": "Agentes \nPrefeituras \nComunicado de Perda de Vínculo com Município - IPVA \nServiço destinado aos casos em que o órgão municipal identificar perda de atributos essenciais à manutenção da isenção de IPVA para veículos escolares, ônibus e táxis. \nApós os documentos serem devidamente incluídos, será gerado um número de protocolo eletrônico para acompanhamento. \nA decisão poderá ser: a) Benefício cancelado \nb) Benefício mantido. \n"
+  },
+  {
+    "id": 14,
+    "servico_number": "1975",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1975",
+    "titulo": "Consultas - IPVA",
+    "descricao": "Agentes \nPrefeituras \nConsultas - IPVA \nServiço destinado à consulta da situação de IPVA - Inadimplentes e Pagantes. \n"
+  },
+  {
+    "id": 15,
+    "servico_number": "1915",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1915",
+    "titulo": "Consultas sobre Talões de Produtor",
+    "descricao": "Agentes \nPrefeituras \nConsultas sobre Talões de Produtor \nConsultas destinadas às prefeituras sobre os talões de produtor. Acesse o serviço através dos links na forma de prestação descrita em 'Etapas para realização do serviço'. \n"
+  },
+  {
+    "id": 16,
+    "servico_number": "2012",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2012",
+    "titulo": "Envio das Comunicações de Verificação de Indícios - CVI",
+    "descricao": "Agentes \nPrefeituras \nEnvio das Comunicações de Verificação de Indícios - CVI \nServiço destinado às prefeituras para realizarem o envio das Comunicações de Verificação de Indícios - CVI. \n"
+  },
+  {
+    "id": 17,
+    "servico_number": "1962",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1962",
+    "titulo": "Guia Informativa anual modelos A e B - Consultas",
+    "descricao": "Agentes \nPrefeituras \nGuia Informativa anual modelos A e B - Consultas \nServiço destinado à Consultas Relacionadas à Guia informativa anual modelos A e B. \n"
+  },
+  {
+    "id": 18,
+    "servico_number": "1840",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1840",
+    "titulo": "Impugnação do IPM - Índice de Participação dos Municípios",
+    "descricao": "Agentes \nPrefeituras \nImpugnação do IPM - Índice de Participação dos Municípios \nImpugnação do IPM - Índice de Participação dos Municípios \n"
+  },
+  {
+    "id": 19,
+    "servico_number": "2008",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2008",
+    "titulo": "IPM - Índice de Participação dos Município",
+    "descricao": "Agentes \nPrefeituras \nIPM - Índice de Participação dos Município \nPara acessar a Página, Clique aqui \"https://atendimento.receita.rs.gov.br/ipm-indice-de-participacao-dos-municipios\". \n"
+  },
+  {
+    "id": 20,
+    "servico_number": "1969",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1969",
+    "titulo": "Lista de Inscritos em Dívida Ativa - Devedores do Município",
+    "descricao": "Agentes \nPrefeituras \nLista de Inscritos em Dívida Ativa - Devedores do Município \nServiço destinado à consulta de lista de inscritos em Dívida Ativa - Devedores do Município. \n"
+  },
+  {
+    "id": 21,
+    "servico_number": "2096",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2096",
+    "titulo": "Perguntas Frequentes - FAQ",
+    "descricao": "Agentes \nPrefeituras \nPerguntas Frequentes - FAQ \nFAQ - Geral \"https://atendimento.receita.rs.gov.br/perguntas-frequentes\" FAQ - Prefeitura \"https://atendimento.receita.rs.gov.br/prefeituras\" FAQ - Produtor Rural \"https://atendimento.receita.rs.gov.br/faq-produtor-rural\" \n"
+  },
+  {
+    "id": 22,
+    "servico_number": "2013",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2013",
+    "titulo": "PIT - Programa de Integração Tributária",
+    "descricao": "Agentes \nPrefeituras \nPIT - Programa de Integração Tributária \nPara acessar a Página, Clique aqui \"https://atendimento.receita.rs.gov.br/pit-programa-de-integracao-tributaria2\" \n"
+  },
+  {
+    "id": 23,
+    "servico_number": "1983",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1983",
+    "titulo": "Portais de Serviço - Login",
+    "descricao": "Agentes \nPrefeituras \nPortais de Serviço - Login \nOs serviços da Receita Estadual estão em Portais que possuem formas diferentes de acesso. Acesse aqui \"https://atendimento.receita.rs.gov.br/portais-da-receita-estadual\". \n"
+  },
+  {
+    "id": 24,
+    "servico_number": "1929",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1929",
+    "titulo": "Regimes Especiais - Consulta autenticidade de nota fiscal eletrônica de comunicação (modelo 21 e 22)",
+    "descricao": "Agentes \nPrefeituras \nRegimes Especiais - Consulta autenticidade de nota fiscal eletrônica de comunicação (modelo 21 e 22) \nServiço destinado autenticação de nota fiscal de comunicação emitida nos termos do Convênio 115/03, através de consulta ao arquivo de segunda via transmitida pela empresa emitente do documento fiscal. \nIncluir um arquivo para cada Nota Fiscal, incluindo quantos arquivos forem necessários Atenção: O serviço abrange somente autenticação de nota fiscal de comunicação eletrônica; não abrange nota emitida em papel (formulário). \n"
+  },
+  {
+    "id": 25,
+    "servico_number": "1979",
+    "tipo": "Agentes",
+    "classe": "Prefeituras",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1979",
+    "titulo": "SITAGRO",
+    "descricao": "Agentes \nPrefeituras \nSITAGRO \nServiço destinado à informações, instalações e atualizações do SITAGRO. \n"
+  },
+  {
+    "id": 26,
+    "servico_number": "2168",
+    "tipo": "Agentes",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2168",
+    "titulo": "Acesso aos ambientes do sistema RHE",
+    "descricao": "Agentes \nServiços \nAcesso aos ambientes do sistema RHE \nHabilitação de novos administradores de usuários dos Órgãos da Administração Direta e Indireta, e criação ou atualização de permissões de acesso aos sistemas RHE Produção, Histórico e Serviços. \n"
+  },
+  {
+    "id": 27,
+    "servico_number": "2172",
+    "tipo": "Agentes",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2172",
+    "titulo": "Informações relativas sobre Contrato de Serviços de Terceiros (CST)",
+    "descricao": "Agentes \nServiços \nInformações relativas sobre Contrato de Serviços de Terceiros (CST) \nServiço oferecido ao Administrador Público Estadual para subsidiá-lo com parâmetros seguros e confiáveis na elaboração e análise de contratos de serviços terceirizados, objetivando a redução do gasto público com a manutenção da qualidade do serviço. \n"
+  },
+  {
+    "id": 28,
+    "servico_number": "2174",
+    "tipo": "Agentes",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2174",
+    "titulo": "Orientações aos Recursos Humanos sobre Folha de Pagamento",
+    "descricao": "Agentes \nServiços \nOrientações aos Recursos Humanos sobre Folha de Pagamento \nOrientações aos Setores de Recursos Humanos quanto a dúvidas de folha de pagamento. \n"
+  },
+  {
+    "id": 29,
+    "servico_number": "1505",
+    "tipo": "Agentes",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1505",
+    "titulo": "Projeção de Ingressos de Tributos Estaduais e Repasses Federais para os Municípios",
+    "descricao": "Agentes \nServiços \nProjeção de Ingressos de Tributos Estaduais e Repasses Federais para os Municípios \nDisponibilização das informações sobre a Projeção de Ingressos de Tributos Estaduais e Repasses Federais para os Municípios (Transferência aos Municípios); Disponibilização de dados trimestrais sobre projeção de ingressos de \ntributos estaduais e repasse federais para os municípios. \n"
+  },
+  {
+    "id": 30,
+    "servico_number": "2175",
+    "tipo": "Agentes",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2175",
+    "titulo": "Solicitação de Declarações de Contrapartida para Convênios com Órgãos Públicos",
+    "descricao": "Agentes \nServiços \nSolicitação de Declarações de Contrapartida para Convênios com Órgãos Públicos \nSolicitação de declarações de contrapartidas para quem tem convênio com o Estado do RS. Declaração exigida pelo órgão conveniente ao qual o conveniado informa que o valor da contrapartida acordada está previsto no orçamento do exercício no qual será executado. \n"
+  },
+  {
+    "id": 31,
+    "servico_number": "2176",
+    "tipo": "Agentes",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2176",
+    "titulo": "Solicitações de Recursos Financeiros - SRF",
+    "descricao": "Agentes \nServiços \nSolicitações de Recursos Financeiros - SRF \nAtendimento de despesas de órgãos e secretarias do Poder Executivo em situação especial de pagamento não previstas na rotina de pagamentos, bem como as solicitações de transferências de recursos aos demais Poderes do Estado. \n"
+  },
+  {
+    "id": 32,
+    "servico_number": "2177",
+    "tipo": "Agentes",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2177",
+    "titulo": "Suporte aos Órgãos em Execução Financeira",
+    "descricao": "Agentes \nServiços \nSuporte aos Órgãos em Execução Financeira \nAssistência relacionada aos procedimentos necessários à efetivação de movimentações financeiras, transferências de numerário e pagamentos em situações nas quais servidores de outros órgãos necessitem de auxílio técnico ou de mais informações relativas à execução financeira. \n"
+  },
+  {
+    "id": 33,
+    "servico_number": "2242",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2242",
+    "titulo": "Devolução de Fiança Criminal - Poder Judiciário",
+    "descricao": "Agentes \nÓrgãos Públicos \nDevolução de Fiança Criminal - Poder Judiciário \nServiço destinado à solicitação de devolução de valores de fianças criminais demandados diretamente pelo Poder Judiciário. \n"
+  },
+  {
+    "id": 34,
+    "servico_number": "1943",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1943",
+    "titulo": "Envio de Documentos referente à Restituição do ICMS relativo a Combustíveis Setor Público",
+    "descricao": "Agentes \nÓrgãos Públicos \nEnvio de Documentos referente à Restituição do ICMS relativo a Combustíveis Setor Público \nServiço destinado ao encaminhamento da documentação referente à restituição do ICMS relativo a combustíveis destinados a órgãos e entidades da Administração Pública estadual direta, suas fundações e autarquias, e aos poderes Legislativo e Judiciário. \n"
+  },
+  {
+    "id": 35,
+    "servico_number": "2033",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2033",
+    "titulo": "Inscrição de Débitos Não Tributários em Dívida Ativa (DAT)",
+    "descricao": "Agentes \nÓrgãos Públicos \nInscrição de Débitos Não Tributários em Dívida Ativa (DAT) \nA Receita Estadual elaborou Cartilha de Inscrição em Dívida Ativa \"https://atendimento.receita.rs.gov.br/upload/arquivos/202507/14102143-cartilha-nao-tributarios-receita-estadual.pdf\" para consulta das secretarias e órgãos estaduais. Inscrição de Débitos Não Tributários em Dívida Ativa (DAT): Alugueis, Contratos de Concessão ou Permissão de Uso \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1851\" Devoluções e Restituições - Convênios \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1852\" Foros e Laudêmios \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1853\" Honorários Outros que não FURPGE \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1854\" Multa - Uso de recurso hídrico SEMA \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1872\" Multa FEPAM \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1863\" Multa FUNDEFLOR SEMA \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1865\" Multa Processual Penal \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1965\" Multa PROCON \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1867\" Multa Sec. Agric. CISPOA Decreto 39.688-99 \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1871\" Multa Sec. Agric. FEASP Decreto Federal 4.074-02 Agrotóxicos \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1870\" Multa Sec. Agric. FEASP Lei 13.467-10 Serviço Veterinário Oficial do RS \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1869\" Multa Sec. Agric. Febre Aftosa Lei 11.099-98 \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1868\" Multa Vigilância Sanitária - Secretaria da Saúde \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1875\" Multas Diversas \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1855\" Outros Débitos Não Tributários (Sem Categoria Específica) \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1876\" Pagamentos Indevidos pelo Estado \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1877\" Receitas do FEAPER Lei 8.511-88 \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1878\" Taxa CDO \"https://atendimento.receita.rs.gov.br/produtor-e-outros-perfis/servicos?servico=1879\" \n"
+  },
+  {
+    "id": 36,
+    "servico_number": "1424",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1424",
+    "titulo": "Isenção - Corpo Diplomático - ICMS",
+    "descricao": "Agentes \nÓrgãos Públicos \nIsenção - Corpo Diplomático - ICMS \nServiço destinado à Solicitação de Isenção de ICMS na aquisição de veículos nacionais por Missões Diplomáticas, Repartições Consulares e Representações de Organismos Internacionais, de caráter permanente, e respectivos funcionários estrangeiros, conforme o art. 9º, XLVIII, “c” do Livro I do RICMS/RS. \n"
+  },
+  {
+    "id": 37,
+    "servico_number": "1923",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1923",
+    "titulo": "Isenção - Desvinculação de Exercícios Anteriores/Arrematação de Veículos - IPVA",
+    "descricao": "Agentes \nÓrgãos Públicos \nIsenção - Desvinculação de Exercícios Anteriores/Arrematação de Veículos - IPVA \nProcedimento necessário para que não haja vinculação com débitos de IPVAs relativos a períodos anteriores à data da arrematação em licitação pública de veículos promovida pela Justiça do Trabalho, DETRAN, Receita Federal, etc. Este procedimento é necessário para que os IPVAs anteriores à data da arrematação sejam vinculados ao proprietário anterior. Após este procedimento, o DETRAN poderá efetuar o registro do novo proprietário (arrematante). Como consequência, o veículo será transferido sem ônus para o arrematante quanto a eventuais débitos de IPVA existentes antes desta arrematação. \nO contribuinte deverá encaminhar o formulário e o restante da documentação por meio de abertura de Protocolo Eletrônico no Portal Pessoa Física ou no Portal e-CAC da Receita Estadual, conforme o caso. Após os documentos serem devidamente incluídos, será gerado um número de protocolo eletrônico para acompanhamento. \nQuando o recebimento e a análise forem concluídos, o contribuinte poderá consultar a decisão nos respectivos Portais. \n"
+  },
+  {
+    "id": 38,
+    "servico_number": "1916",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1916",
+    "titulo": "Isenção - Veículo Oficial - União, Estados, DF e Municípios (Geração Automática) - IPVA",
+    "descricao": "Agentes \nÓrgãos Públicos \nIsenção - Veículo Oficial - União, Estados, DF e Municípios (Geração Automática) - IPVA \nSolicitação de Isenção de IPVA - União, Estados, DF e Municípios. \n"
+  },
+  {
+    "id": 39,
+    "servico_number": "2062",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2062",
+    "titulo": "Isenção de ICMS de Energia Elétrica – Consulados",
+    "descricao": "Agentes \nÓrgãos Públicos \nIsenção de ICMS de Energia Elétrica – Consulados \nSolicitação de Isenção de ICMS de Energia Elétrica destinadas a Missões Diplomáticas, Repartições Consulares e Representações de Organismos Internacionais, de caráter permanente, conforme o art. 9º, XLVIII, “a” do Livro I do RICMS/RS. \n"
+  },
+  {
+    "id": 40,
+    "servico_number": "2111",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2111",
+    "titulo": "Isenção de ICMS de Telecomunicações – Consulados",
+    "descricao": "Agentes \nÓrgãos Públicos \nIsenção de ICMS de Telecomunicações – Consulados \nSolicitação de Isenção de ICMS de Telecomunicações destinadas a Missões Diplomáticas, Repartições Consulares e Representações de Organismos Internacionais, de caráter permanente, conforme o art. 9º, XLVIII, “a” do Livro I do RICMS/RS. \n"
+  },
+  {
+    "id": 41,
+    "servico_number": "1983",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1983",
+    "titulo": "Portais de Serviço - Login",
+    "descricao": "Agentes \nÓrgãos Públicos \nPortais de Serviço - Login \nOs serviços da Receita Estadual estão em Portais que possuem formas diferentes de acesso. Acesse aqui \"https://atendimento.receita.rs.gov.br/portais-da-receita-estadual\". \n"
+  },
+  {
+    "id": 42,
+    "servico_number": "1898",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1898",
+    "titulo": "Solicitar Imunidade - Fundações e Autarquias, União/Estados/DF/Municípios e seus órgãos - IPVA",
+    "descricao": "Agentes \nÓrgãos Públicos \nSolicitar Imunidade - Fundações e Autarquias, União/Estados/DF/Municípios e seus órgãos - IPVA \nServiço destinado à solicitação de imunidade do IPVA de Fundações e Autarquias Públicas da União, Estados, Distrito Federal, Municípios e seus respectivos órgãos/secretarias. O solicitante deverá encaminhar o formulário e o restante da documentação por meio de abertura de Protocolo Eletrônico no Portal e-CAC da Receita Estadual. Após os documentos serem devidamente incluídos, será gerado um número de protocolo eletrônico para acompanhamento. \nQuando o recebimento e análise for concluído, a Receita Estadual informará, no próprio e-CAC, a decisão em relação aos documentos encaminhados. \n"
+  },
+  {
+    "id": 43,
+    "servico_number": "1896",
+    "tipo": "Agentes",
+    "classe": "Órgãos Públicos",
+    "orgao": "RECEITA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=1896",
+    "titulo": "Solicitar Isenção - Corpo Diplomático - IPVA",
+    "descricao": "Agentes \nÓrgãos Públicos \nSolicitar Isenção - Corpo Diplomático - IPVA \nServiço destinado à solicitação de Isenção de IPVA para Corpo diplomático. \nO contribuinte deverá encaminhar o formulário e o restante da documentação por meio de abertura de Protocolo Eletrônico no Portal Pessoa Física da Receita Estadual. Após os documentos serem devidamente incluídos, será gerado um número de protocolo eletrônico para acompanhamento. \n"
+  },
+  {
+    "id": 44,
+    "servico_number": "2821",
+    "tipo": "Agentes",
+    "classe": "Outros",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos/servicos?servico=2821",
+    "titulo": "FAQ eSocial Fase III",
+    "descricao": "Agentes \nOutros \nFAQ eSocial Fase III \nRelacionada aos “Eventos Periódicos”, a Fase III corresponde ao envio \nmensal de todos os dados referentes a salários, descontos e pagamentos \nfeitos para os trabalhadores. Ou seja, é quando a folha de pagamento \nprecisa ser informada detalhadamente ao governo. \n"
+  }
+]

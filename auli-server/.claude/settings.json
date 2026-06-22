@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./target/debug/auli-server > /tmp/auli_run.log 2>&1)",
+      "Bash(cargo build *)",
+      "Bash(curl -s \"http://localhost:8000/api/v2/tenants/default_tenant/databases/default_database/collections\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(c['name']\\) for c in d] if d else print\\('\\(no collections\\)'\\)\")",
+      "Bash(./target/debug/auli-server)",
+      "Bash(curl -s -o /dev/null -w \"chroma: %{http_code}\\\\n\" http://localhost:8000/api/v2/heartbeat)",
+      "Bash(curl -s -o /dev/null -w \"app: %{http_code}\\\\n\" http://localhost:3000/v1/health)",
+      "Bash(pkill -f target/debug/auli-server)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m ' *)",
+      "Bash(set -e)",
+      "Bash(git mv *)",
+      "Bash(cargo test *)",
+      "PowerShell(wsl -d Ubuntu-24.04 --cd /home/ubu sh -c \"pwd; echo '---'; ls -la /home/ubu/auli-server | head -30; echo '--- rsync?'; which rsync\")",
+      "PowerShell(& \"c:\\\\Users\\\\carlo\\\\OneDrive\\\\�rea de Trabalho\\\\auli-server-local\\\\scripts\\\\sync-to-wsl.ps1\" -DryRun)",
+      "PowerShell(& \"c:\\\\Users\\\\carlo\\\\OneDrive\\\\�rea de Trabalho\\\\auli-server-local\\\\scripts\\\\sync-to-wsl.ps1\")"
+    ],
+    "additionalDirectories": [
+      "/tmp"
+    ]
+  }
+}

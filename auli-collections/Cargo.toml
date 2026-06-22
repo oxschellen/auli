@@ -1,0 +1,17 @@
+[package]
+name = "auli-collections"
+version = "0.1.0"
+edition = "2024"
+
+# Union of dependencies from auli-docs-faqs and auli-docs-servicos.
+[dependencies]
+# Pure-sync HTTP client (no tokio). `json` adds Body::read_json; default features give rustls TLS + gzip.
+ureq = { version = "3", features = ["json"] }
+scraper = "0.27.0"
+regex = "1.12.3"
+url = { version = "2.5.8", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+headless_chrome = "1.0"
+thiserror = "2"
+anyhow = "1"

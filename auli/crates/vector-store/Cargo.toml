@@ -1,0 +1,10 @@
+[package]
+name = "vector-store"
+version = "0.1.0"
+edition = "2021"
+description = "Agnostic, pure-Rust flat cosine vector store with a read/write type split. Knows only (id, vector, payload P)."
+
+[dependencies]
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+thiserror = "2.0.18"

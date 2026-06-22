@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.sef.sc.gov.br)",
+      "Bash(curl -s \"https://www.sef.sc.gov.br/servicos/buscar?page=2\" -o /tmp/sc_buscar2.html -w \"HTTP %{http_code}, %{size_download} bytes\\\\n\")",
+      "Read(//tmp/**)",
+      "Read(//home/ubu/Desktop/auli/auli-frontend/src/pages/servicoslist/**)",
+      "Bash(cd /home/ubu/Desktop/auli/auli-frontend *)",
+      "Read(//home/ubu/Desktop/auli/auli-frontend/**)",
+      "Bash(curl -s \"https://www.sef.sc.gov.br/servicos/buscar?pagina=2&termo=&publico=3\")",
+      "Bash(curl -s https://www.sef.sc.gov.br/_next/data/__TRACKED_VAR__/servicos/buscar.json?publico=__TRACKED_VAR__ -o /tmp/t.json)",
+      "Bash(python3 -c 'import json;d=json.load\\(open\\('\\\\''/tmp/t.json'\\\\''\\)\\);r=d['\\\\''pageProps'\\\\'']['\\\\''respostaApi'\\\\'']['\\\\''responseServicos'\\\\''];print\\('\\\\''publico=[__TRACKED_VAR__] itensTotais='\\\\'',r['\\\\''itensTotais'\\\\''],'\\\\''paginasTotais='\\\\'',r['\\\\''paginasTotais'\\\\'']\\)')",
+      "Bash(curl -s https://www.sef.sc.gov.br/_next/data/__TRACKED_VAR__/servicos/buscar.json?pagina=1 -o /tmp/t.json)",
+      "Bash(python3 -c ' *)",
+      "Bash(grep -iv \"test\\\\|node_modules\\\\|import\\\\|\\\\.json\\\\\"\\\\s*$\")",
+      "Bash(grep -E '\"/|`/|versioned')",
+      "Bash(node -e \"try{require.resolve\\('playwright'\\);console.log\\('playwright available'\\)}catch{console.log\\('no playwright module'\\)}\")",
+      "Bash(node -e \"console.log\\(require.resolve\\('ws'\\)\\)\")",
+      "Bash(python3 -c \"import websocket; print\\('py websocket-client available'\\)\")",
+      "Bash(cp /tmp/cdp_drive.mjs ./_cdp_drive.mjs)",
+      "Bash(node ./_cdp_drive.mjs)",
+      "Bash(cd /home/ubu/Desktop/auli *)",
+      "Read(//home/ubu/Desktop/auli/**)",
+      "Bash(google-chrome --headless --disable-gpu --no-sandbox --window-size=620,620 --screenshot=/tmp/br_preview.png file:///tmp/br_preview.svg)",
+      "Bash(echo \"exit $?\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(echo \"commit exit: $?\")"
+    ],
+    "additionalDirectories": [
+      "/home/ubu/Desktop/auli/auli-frontend/src/pages/servicoslist",
+      "/home/ubu/Desktop/auli/auli-frontend/src/shared",
+      "/home/ubu/Desktop/auli/auli-frontend/public/rs",
+      "/home/ubu/Desktop/auli/auli-frontend/src/pages/parecereslist",
+      "/home/ubu/Desktop/auli/auli-frontend/src/pages/notaslist",
+      "/home/ubu/Desktop/auli/auli-frontend/src/pages/faqslist",
+      "/home/ubu/Desktop/auli/auli-frontend/src",
+      "/home/ubu/Desktop/auli/auli-frontend"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    /* Language / output — Vite strips types; tsc is used only for `--noEmit` checking */
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "noEmit": true,
+
+    /* Interop */
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+
+    /* Strictness (chosen: strict) */
+    "strict": true,
+    "skipLibCheck": true,
+
+    /* Gradual migration: existing .js/.jsx files can be imported by .ts/.tsx
+       without being type-checked. Set "allowJs": false once everything is .ts. */
+    "allowJs": true,
+    "checkJs": false,
+
+    /* Path alias kept in sync with jsconfig.json and the resolve.alias in
+       vite.config.js, so "@/..." resolves in the editor, type-check, and build. */
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,56 @@
+# ── Root .gitignore for the auli monorepo ─────────────────────────────────────
+# Each subproject (auli/, auli-server/, auli-frontend/, auli-collections/) also
+# ships its own .gitignore, which git honors. This file covers root-level items
+# plus belt-and-suspenders global rules so secrets/artifacts can never slip in.
+
+# ── Secrets — NEVER commit ────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ── Disabled nested git repos (kept locally as .git-bak, excluded here) ────────
+**/.git-bak/
+
+# ── Rust build artifacts ──────────────────────────────────────────────────────
+target/
+**/target/
+.cargo/
+
+# ── Node / frontend ───────────────────────────────────────────────────────────
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+*.tsbuildinfo
+
+# ── Embedding model caches (downloaded, large) ────────────────────────────────
+/models/
+**/models--*/
+auli/models/
+auli-server/models/
+
+# ── Generated vector packs & runtime state ────────────────────────────────────
+auli/packs/
+**/vectors/
+**/logs/
+
+# ── Scraper cache ─────────────────────────────────────────────────────────────
+**/data/*/cache/
+
+# ── Local notes / scratch ─────────────────────────────────────────────────────
+notas.txt
+notes.txt
+web_config.txt
+
+# ── Editor / OS ───────────────────────────────────────────────────────────────
+.DS_Store
+*.swp
+*~

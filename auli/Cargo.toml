@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = ["crates/vector-store", "crates/auli-core", "crates/auli-cli"]
+
+# Single shared Cargo.lock across the workspace: the `server` and `update` modes can never pick
+# different versions of fastembed/ort/the model, so the document encoder and the query encoder
+# stay byte-identical by construction (the central reason for the single-workspace design).
+
+[profile.release]
+debug = 1

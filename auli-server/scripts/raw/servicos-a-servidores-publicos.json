@@ -1,0 +1,212 @@
+[
+  {
+    "id": 1,
+    "servico_number": "1489",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1489",
+    "titulo": "Abertura de Canal de Consignação",
+    "descricao": "Servidores \nServiços \nAbertura de Canal de Consignação \nSolicitações de entidades que desejam efetuar descontos consignados na folha de pagamento de Servidor Estadual. \n"
+  },
+  {
+    "id": 2,
+    "servico_number": "1490",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1490",
+    "titulo": "Acessar a Declaração de Informe de Rendimentos",
+    "descricao": "Servidores \nServiços \nAcessar a Declaração de Informe de Rendimentos \nAcesse o Comprovante de Rendimentos para Declaração de Imposto de Renda. \nPré-Requisitos \nSer servidor público estadual ativo ou inativo da Administração Direta e Indireta. \nServidores desligados, exonerados e falecidos, bem como beneficiários de pensão alimentícia, especial e infortunística. \nTer recebido rendimentos ao longo do ano anterior ao da solicitação. \n"
+  },
+  {
+    "id": 3,
+    "servico_number": "1491",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1491",
+    "titulo": "Acessar Contracheques de Servidores Públicos Estaduais",
+    "descricao": "Servidores \nServiços \nAcessar Contracheques de Servidores Públicos Estaduais \nVocê, servidor público do Estado, pode acessar seu contracheque. Este, mostra as vantagens e descontos ocorridos na folha de pagamento. Inclui: \npagamento mensal, \nférias, \n13º salário, \nAuxílio Refeição, \ne valores retroativos, entre outros. \nPré-Requisitos \nSer servidor público estadual. \n"
+  },
+  {
+    "id": 4,
+    "servico_number": "1492",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1492",
+    "titulo": "Atendimento de Demandas Administrativas ou Judiciais referente à folha de pagamento",
+    "descricao": "Servidores \nServiços \nAtendimento de Demandas Administrativas ou Judiciais referente à folha de pagamento \nAtendimento de demandas administrativas ou judiciais protocoladas (oriundas do servidor ou procurador) referente à folha de pagamento. \n"
+  },
+  {
+    "id": 5,
+    "servico_number": "1494",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1494",
+    "titulo": "Atualizações de informações de Dados Funcionais para Órgãos Federais",
+    "descricao": "Servidores \nServiços \nAtualizações de informações de Dados Funcionais para Órgãos Federais \nAtualização de informações de dados funcionais que o servidor ou ex-servidor necessita para prestar aos órgãos federais (Ministério do Trabalho/INSS/Receita Federal), tais como fechamento de vínculo com o Estado, contribuições previdenciárias ao INSS e informe de rendimento para declaração do imposto de renda. \n"
+  },
+  {
+    "id": 6,
+    "servico_number": "1495",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1495",
+    "titulo": "Bloqueios ou Cancelamento de Consignações",
+    "descricao": "Servidores \nServiços \nBloqueios ou Cancelamento de Consignações \nSolicitações de bloqueios e/ou cancelamentos de consignações das espécies facultativas (mensalidades, seguros, taxas e mensalidades de planos de assistência médica), não contemplando empréstimos e compras, conforme estabelecido no Decreto nº 43.337/04. \n"
+  },
+  {
+    "id": 7,
+    "servico_number": "3007",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=3007",
+    "titulo": "Calendário do Crédito da Folha de Pagamento | 2026",
+    "descricao": "Servidores \nServiços \nCalendário do Crédito da Folha de Pagamento | 2026 \nCalendário do Crédito da Folha \n"
+  },
+  {
+    "id": 8,
+    "servico_number": "1498",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1498",
+    "titulo": "Consultar Histórico Funcional",
+    "descricao": "Servidores \nServiços \nConsultar Histórico Funcional \nVocê que é servidor público estadual, pode acessar o seu Histórico Funcional. Pesquise sobre dados pessoais, dependentes, vínculo, provimento, chefia, atributos e pasta funcional. \n"
+  },
+  {
+    "id": 9,
+    "servico_number": "1496",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1496",
+    "titulo": "Contribuições Previdenciárias",
+    "descricao": "Servidores \nServiços \nContribuições Previdenciárias \nConsulta aos valores de contribuição previdenciárias pagas pelo servidor. \n"
+  },
+  {
+    "id": 10,
+    "servico_number": "2169",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=2169",
+    "titulo": "Créditos Adicionais Implantados no Orçamento do Estado",
+    "descricao": "Servidores \nServiços \nCréditos Adicionais Implantados no Orçamento do Estado \nSolicitação de créditos adicionais e seu acompanhamento. \n"
+  },
+  {
+    "id": 11,
+    "servico_number": "1497",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1497",
+    "titulo": "Emissão de Declarações, Demonstrativos ou Cópias de Documento Relativos aos Servidores",
+    "descricao": "Servidores \nServiços \nEmissão de Declarações, Demonstrativos ou Cópias de Documento Relativos aos Servidores \nAtender solicitações de emissão de documentos diversos relativos a vida funcional do servidor, sendo eles: • Declaração de Percentual de Aumento \n• Declaração “Se Percebe ou Não Pelos Cofres Públicos” \n• Declaração “Se Vivo Fosse” \n• Cópia de Documentos Microfilmados \n• Declaração de Vencimentos \n• Requerimento de Demonstrativos Financeiros Diversos \n• Relação de Contribuição para fins de aposentadoria. \n"
+  },
+  {
+    "id": 12,
+    "servico_number": "1508",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1508",
+    "titulo": "Fazer Simulação de Aposentadoria - SimprevRS 2.0",
+    "descricao": "Servidores \nServiços \nFazer Simulação de Aposentadoria - SimprevRS 2.0 \nVocê pode acessar online o Simprev 2.0 e simular a sua aposentadoria. A simulação considera a recente reforma previdenciária e a criação do Benefício Especial. Informações Complementares O sistema permite realizar simulações de aposentadoria considerando: \nadesão ao Regime de Previdência Complementar - RPC, \npermanência no regime atual, \ninscrição à RS-Prev, \ncontribuição facultativa, \nbenefício especial, com integração com o histórico de salários do sistema de Recursos Humanos do Estado (RHE), Abrangendo servidores de todos os Poderes e órgãos autônomos. \n"
+  },
+  {
+    "id": 13,
+    "servico_number": "2171",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=2171",
+    "titulo": "Implantação de Cotas Orçamentárias",
+    "descricao": "Servidores \nServiços \nImplantação de Cotas Orçamentárias \nSolicitação da implantação da cota orçamentária do seu órgão. \n"
+  },
+  {
+    "id": 14,
+    "servico_number": "1501",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1501",
+    "titulo": "Informações sobre Consignação Facultativa",
+    "descricao": "Servidores \nServiços \nInformações sobre Consignação Facultativa \nFornecimento de informações sobre consignações facultativas para os servidores públicos estaduais, através de auto consulta. \n"
+  },
+  {
+    "id": 15,
+    "servico_number": "1503",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1503",
+    "titulo": "Preços de Referências de Mercado (PRM)",
+    "descricao": "Servidores \nServiços \nPreços de Referências de Mercado (PRM) \nParâmetros de preços para aquisições públicas de medicamentos. \n"
+  },
+  {
+    "id": 16,
+    "servico_number": "1506",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1506",
+    "titulo": "Recadastrar Servidores Aposentados",
+    "descricao": "Servidores \nServiços \nRecadastrar Servidores Aposentados \nVocê servidor aposentado (inativo) deve fazer o recadastramento anual, também conhecido como prova de vida. O período de realização do serviço é a partir do primeiro dia do mês anterior ao mês de aniversário do servidor até o último dia do mês posterior, sem prejuízo. \nCaso você não realize a atualização dos dados cadastrais, pode ter o pagamento dos respectivos proventos suspensos. \n"
+  },
+  {
+    "id": 17,
+    "servico_number": "1356",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1356",
+    "titulo": "Servidor RS",
+    "descricao": "Servidores \nServiços \nServidor RS \nO que você encontra no APP: \n• Remuneração/Salário – consulte o pagamento de seus vencimentos e proventos todo mês: Auxílio Refeição, férias, 13º e outros. \n• Consignações – consulte sua margem consignável e gerencie seus descontos. Você ainda obtém informações sobre solicitação de frequências e afastamentos. • Demonstrativo para Imposto de Renda – comprovante dos valores recebidos no ano para declaração de IR. \n• Prova de vida para pensionistas e aposentados – Faça o Recadastramento sem sair de casa e garanta seus proventos/pensão em dia. \n• Requisição de pequeno valor (RPV) – confira se você tem dinheiro para receber de processos judiciais de pequenos valores. \n• Histórico funcional – veja informações sobre sua carreira. \n• Indenização de férias e licença prêmio – verifique o encaminhamento do seu processo ao se desligar ou aposentar. \n• Dependente previdenciário - aponte quem teria direito a receber sua pensão em caso de sua falta (sem impacto no contracheque). \n• Saúde e Bem-Estar – inscreva-se em um programa para fazer exercícios físicos (Wellhub). \n• Licença prêmio – consulte períodos pendentes e já utilizados. \n• Férias, Teletrabalho, Afastamentos e Frequências – algumas instituições permitem solicitação e consulta dessas frequências pelo APP. \n• Simulador de Tempo de aposentadoria – veja quanto tempo falta para sua aposentadoria. \n• Educação e capacitações – acesse novos conhecimentos. \n• Fale conosco – tire dúvidas sobre os serviços prestados pelo Tesouro do Estado. \nLink para maiores informações \nhttps://app.servidor.rs.gov.br/ \"https://app.servidor.rs.gov.br/\" \n"
+  },
+  {
+    "id": 18,
+    "servico_number": "1509",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1509",
+    "titulo": "Solicitar Agendamento de Férias",
+    "descricao": "Servidores \nServiços \nSolicitar Agendamento de Férias \nVocê servidor público estadual pode solicitar o agendamento de férias. \n"
+  },
+  {
+    "id": 19,
+    "servico_number": "1493",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=1493",
+    "titulo": "Solicitar atendimento para Servidores",
+    "descricao": "Servidores \nServiços \nSolicitar atendimento para Servidores \nVocê pode solicitar o esclarecimento de dúvidas sobre: \ncontracheques, \norientações sobre serviços, \nprotocolo de solicitações diversas, \nentrega de documentos ao servidor, \norientações sobre recadastramento de ativos e inativos \nfornecimento de demonstrativos diversos \ncrédito de valores correspondentes à folha de pagamento que retornaram para a conta do Estado. \n"
+  },
+  {
+    "id": 20,
+    "servico_number": "2178",
+    "tipo": "Servidores",
+    "classe": "Serviços",
+    "orgao": "TESOURO",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=2178",
+    "titulo": "Suporte aos Órgãos em Execução Orçamentária",
+    "descricao": "Servidores \nServiços \nSuporte aos Órgãos em Execução Orçamentária \nSolicitação de suporte em casos de dúvidas com execução orçamentária do seu órgão. \n"
+  },
+  {
+    "id": 21,
+    "servico_number": "2218",
+    "tipo": "Servidores",
+    "classe": "Outros",
+    "orgao": "FAZENDA",
+    "link": "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos/servicos?servico=2218",
+    "titulo": "Isenção de IRPF",
+    "descricao": "Servidores \nOutros \nIsenção de IRPF \nO requerimento de isenção de Imposto de Renda deve ser encaminhado ao DRH de origem do servidor aposentado, que, por sua vez, abrirá um expediente administrativo e encaminhará a documentação ao Departamento de Medicina e Saúde do Trabalhador – DMEST, vinculado à SPGG. A análise da solicitação é feita pela DMEST/SPGG. \n"
+  }
+]

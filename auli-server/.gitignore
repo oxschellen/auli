@@ -1,0 +1,16 @@
+.env
+notas.txt
+notes.txt
+
+*.env
+*.pem
+*.key
+*.crt
+
+target/
+data/
+vectors/
+models/
+x-notas/
+logs/
+.cargo/

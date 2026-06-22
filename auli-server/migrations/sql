@@ -1,0 +1,12 @@
+-- Recommended Background Cleanup Query (Cron Job)
+-- Run this daily to keep tables lean:
+
+-- Remove old expired/used tokens
+DELETE FROM refresh_tokens 
+WHERE expires_at < NOW() - INTERVAL '30 days';
+
+DELETE FROM verification_tokens 
+WHERE expires_at < NOW() - INTERVAL '7 days';
+
+DELETE FROM password_reset_tokens 
+WHERE expires_at < NOW() - INTERVAL '7 days' OR used = TRUE;

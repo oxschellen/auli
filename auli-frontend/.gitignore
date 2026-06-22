@@ -1,0 +1,16 @@
+.claude
+.vscode
+
+.env
+.env.*
+notas.txt
+web_config.txt
+
+/*.txt
+/*.env
+/*.pem
+/*.key
+/*.crt
+
+/dist
+/node_modules

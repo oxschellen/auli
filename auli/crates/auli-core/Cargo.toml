@@ -1,0 +1,18 @@
+[package]
+name = "auli-core"
+version = "0.1.0"
+edition = "2021"
+description = "Auli domain core: BGE-M3 embedder, corpus/EmbedStrategy, embedding identity + manifest. Depends on vector-store; knows nothing of RAG/HTTP."
+
+[dependencies]
+vector-store = { path = "../vector-store" }
+
+# In-process embeddings (BGE-M3 ONNX). rustls TLS to match the rest of the project; `ort`
+# downloads a prebuilt ONNX Runtime at build time (Linux deploy box).
+fastembed = { version = "5.17.2", default-features = false, features = ["ort-download-binaries-rustls-tls", "hf-hub-rustls-tls"] }
+
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+thiserror = "2.0.18"
+anyhow = "1.0.102"
+chrono = { version = "0.4.44", features = ["serde"] }
