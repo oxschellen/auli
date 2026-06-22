@@ -21,13 +21,19 @@ use crate::error::Result;
 pub type Collections = HashMap<String, Arc<ReadStore<String>>>;
 
 /// Eager-load and validate every entity's packs. Returns the in-memory, immutable collection map.
-pub fn load_all(packs_dir: impl AsRef<Path>) -> Result<Collections> {
-    let packs_dir = packs_dir.as_ref();
+///
+/// Layout: packs live **per entity** under `<packs_root>/<id>/packs/` — `<id>-<kind>.json` plus
+/// `<id>.manifest.json` (see `data/` integration plan). A missing collection file loads as an empty
+/// store (`read_collection_file` tolerates `NotFound`), so a partial entity (e.g. `sc` with only
+/// `services`) boots cleanly.
+pub fn load_all(packs_root: impl AsRef<Path>) -> Result<Collections> {
+    let packs_root = packs_root.as_ref();
     let expected = manifest::identity();
     let mut map: Collections = HashMap::new();
 
     for id in entities::ENTITIES.keys() {
-        let manifest_path = manifest::manifest_path(packs_dir, id);
+        let packs_dir = packs_root.join(id).join("packs");
+        let manifest_path = manifest::manifest_path(&packs_dir, id);
         if manifest_path.exists() {
             // Hard fail on model/dim/strategy mismatch — never serve from a foreign vector space.
             manifest::validate_manifest(&manifest_path, &expected)?;
