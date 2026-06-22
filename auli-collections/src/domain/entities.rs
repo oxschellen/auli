@@ -1,14 +1,13 @@
-// Multi-tenant entity registry.
+// Multi-tenant entity registry (scraper side) — lê o registro ÚNICO `../data/registry.toml`
+// (a mesma fonte que o `auli-cli` usa). Antes havia uma cópia em `./src/entities/<id>/`; agora a
+// lista de entidades vem só do registry.
 //
-// Multi-tenant entity registry.
+// Layout:
+//   - registry:  ../data/registry.toml  (id, name, prompt; campos de UI ignorados aqui)
+//   - prompt:    ../data/<prompt>        (ex.: ../data/prompts/rs.txt)
+//   - saída:     ../data/<id>/raw/        (metade GERADA pelo scraper; autorado fica em ref/)
 //
-// Config and data are split:
-//   - config lives in `./src/entities/<id>/`  -> entity.json { "id", "name" } + prompt.txt
-//   - collection outputs live in `./data/<id>/` -> portal-{servicos,faqs,pareceres,notas}.txt
-//     (plus scraper intermediates like faq_site_tree.json / servicos-*.json)
-//
-// The registry is scanned once at startup. ChromaDB collection names are derived
-// per entity as `<id>-<kind>` (e.g. "rs-faqs"), keeping each entity's vectors isolated.
+// Nomes de coleção seguem `<id>-<kind>` (ex.: "rs-faqs"), isolando cada entidade.
 
 use std::collections::HashMap;
 use std::fs;
@@ -18,13 +17,10 @@ use serde::Deserialize;
 
 pub const DEFAULT_ENTITY: &str = "rs";
 
-// Directory of per-entity config (entity.json + prompt.txt), scanned to build the registry.
-const ENTITIES_DIR: &str = "./src/entities";
+// Repo-root data/ (relativo ao CWD do collections).
+const DATA_DIR: &str = "../data";
 
-// Root of per-entity collection outputs; each entity's files live in `<DATA_DIR>/<id>/`.
-const DATA_DIR: &str = "./data";
-
-// Fallback system prompt used when an entity directory has no prompt.txt.
+// Fallback system prompt used when an entity has no prompt file.
 const DEFAULT_SYSTEM_PROMPT: &str = r#"
 '''
 ### Instructions
@@ -36,9 +32,18 @@ const DEFAULT_SYSTEM_PROMPT: &str = r#"
 "#;
 
 #[derive(Debug, Deserialize)]
-struct EntityManifest {
+struct Registry {
+    #[serde(default)]
+    entities: Vec<RegistryEntity>,
+}
+
+// Só os campos que o scraper precisa; serde ignora as chaves de UI (uf/state/collections).
+#[derive(Debug, Deserialize)]
+struct RegistryEntity {
     id: String,
     name: String,
+    #[serde(default)]
+    prompt: String,
 }
 
 #[derive(Debug, Clone)]
@@ -46,7 +51,7 @@ pub struct EntityConfig {
     pub id: String,
     pub name: String,
     pub system_prompt: String,
-    // Where this entity's collection outputs live, e.g. "./data/rs".
+    // Where this entity's generated outputs live, e.g. "../data/rs/raw".
     pub data_dir: String,
 }
 
@@ -56,7 +61,7 @@ impl EntityConfig {
         format!("{}-{}", self.id, kind)
     }
 
-    // Source file for a given kind, e.g. "./data/rs/portal-faqs.txt"
+    // Source file for a given kind, e.g. "../data/rs/raw/portal-faqs.txt"
     pub fn data_file(&self, base_name: &str) -> String {
         format!("{}/{}", self.data_dir, base_name)
     }
@@ -66,57 +71,37 @@ pub static ENTITIES: LazyLock<HashMap<String, EntityConfig>> = LazyLock::new(loa
 
 fn load_entities() -> HashMap<String, EntityConfig> {
     let mut map = HashMap::new();
+    let registry_path = format!("{}/registry.toml", DATA_DIR);
 
-    let entries = match fs::read_dir(ENTITIES_DIR) {
-        Ok(entries) => entries,
+    let text = match fs::read_to_string(&registry_path) {
+        Ok(t) => t,
         Err(e) => {
-            eprintln!(
-                "⚠️  Não foi possível ler o diretório de entidades '{}': {}",
-                ENTITIES_DIR, e
-            );
+            eprintln!("⚠️  Não foi possível ler o registro de entidades '{}': {}", registry_path, e);
+            return map;
+        }
+    };
+    let registry: Registry = match toml::from_str(&text) {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("⚠️  registry.toml inválido ('{}'): {}", registry_path, e);
             return map;
         }
     };
 
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if !path.is_dir() {
-            continue;
-        }
-
-        let manifest_path = path.join("entity.json");
-        let manifest_str = match fs::read_to_string(&manifest_path) {
-            Ok(s) => s,
-            Err(_) => continue, // not an entity directory
-        };
-
-        let manifest: EntityManifest = match serde_json::from_str(&manifest_str) {
-            Ok(m) => m,
-            Err(e) => {
-                eprintln!("⚠️  entity.json inválido em {:?}: {}", manifest_path, e);
-                continue;
-            }
-        };
-
-        // Config is read from `path` (./src/entities/<id>); collection outputs live in ./data/<id>.
-        let data_dir = format!("{}/{}", DATA_DIR, manifest.id);
-
-        let system_prompt = fs::read_to_string(path.join("prompt.txt")).unwrap_or_else(|_| {
-            eprintln!(
-                "⚠️  prompt.txt ausente para a entidade '{}', usando o prompt padrão.",
-                manifest.id
-            );
+    for ent in registry.entities {
+        let system_prompt = if ent.prompt.is_empty() {
             DEFAULT_SYSTEM_PROMPT.to_string()
-        });
-
-        let cfg = EntityConfig {
-            id: manifest.id.clone(),
-            name: manifest.name,
-            system_prompt,
-            data_dir,
+        } else {
+            fs::read_to_string(format!("{}/{}", DATA_DIR, ent.prompt)).unwrap_or_else(|_| {
+                eprintln!("⚠️  prompt ausente para '{}' ({}), usando o padrão.", ent.id, ent.prompt);
+                DEFAULT_SYSTEM_PROMPT.to_string()
+            })
         };
-
-        map.insert(manifest.id, cfg);
+        let data_dir = format!("{}/{}/raw", DATA_DIR, ent.id);
+        map.insert(
+            ent.id.clone(),
+            EntityConfig { id: ent.id, name: ent.name, system_prompt, data_dir },
+        );
     }
 
     map
