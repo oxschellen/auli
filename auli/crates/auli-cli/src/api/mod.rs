@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use axum::{
     http::{header, HeaderValue, Method},
+    middleware,
     routing::{get, post},
     Router,
 };
@@ -9,6 +10,7 @@ use tower_http::cors::CorsLayer;
 
 pub mod dto;
 mod handlers;
+pub mod ratelimit;
 
 use crate::state::AppState;
 
@@ -20,9 +22,12 @@ pub fn public_routes() -> Router {
 }
 
 // Rota pública de perguntas (caminho RAG ativo). Precisa do estado compartilhado.
+// Protegida por um limitador de taxa por IP (1 req/s, burst 2) — é o único caminho que chama o LLM.
 pub fn question_routes(state: Arc<AppState>) -> Router {
+    let limiter = ratelimit::question_rate_limiter();
     Router::new()
         .route("/v1/question", post(question_handler))
+        .layer(middleware::from_fn_with_state(limiter, ratelimit::rate_limit))
         .with_state(state)
 }
 
