@@ -1,27 +1,22 @@
-// Multi-tenant entity registry (server side).
+// Multi-tenant entity registry (server side) — lê o registro ÚNICO `data/registry.toml`.
 //
-// Each entity (e.g. a state tax authority) lives in its own directory under
-// `./entities/<id>/` containing:
-//   - entity.json   { "id": "rs", "name": "SEFAZ-RS" }
-//   - prompt.txt     the LLM system instructions for that entity
+// A pasta `data/` vem de `AULI_DATA_DIR` (default `./data`); o server roda em `auli/`, então o
+// `start_server.sh` exporta `AULI_DATA_DIR=../data`. O `registry.toml` lista as entidades; o system
+// prompt de cada uma é lido de `<data>/<prompt>`. Os campos de UI do registry (uf, state,
+// collections) são ignorados aqui (serde descarta chaves desconhecidas) — só interessam ao frontend.
 //
-// (The `portal-*.txt` source files are an INPUT to `auli update`, not needed by the server: the
-// server reads pre-built vector packs, not raw sources.)
-//
-// The registry is scanned once at startup. Vector collection names are derived
-// per entity as `<id>-<kind>` (e.g. "rs-faqs"), keeping each entity's vectors isolated.
+// Nomes de coleção vetorial seguem `<id>-<kind>` (ex.: "rs-faqs"), isolando os vetores por entidade.
 
 use std::collections::HashMap;
 use std::fs;
+use std::path::PathBuf;
 use std::sync::LazyLock;
 
 use serde::Deserialize;
 
 pub const DEFAULT_ENTITY: &str = "rs";
 
-const ENTITIES_DIR: &str = "./entities";
-
-// Fallback system prompt used when an entity directory has no prompt.txt.
+// Fallback system prompt used when an entity has no prompt file.
 const DEFAULT_SYSTEM_PROMPT: &str = r#"
 '''
 ### Instructions
@@ -34,9 +29,18 @@ const DEFAULT_SYSTEM_PROMPT: &str = r#"
 "#;
 
 #[derive(Debug, Deserialize)]
-struct EntityManifest {
+struct Registry {
+    #[serde(default)]
+    entities: Vec<RegistryEntity>,
+}
+
+// Only the fields the server needs; serde ignores the UI-only keys (uf/state/collections).
+#[derive(Debug, Deserialize)]
+struct RegistryEntity {
     id: String,
     name: String,
+    #[serde(default)]
+    prompt: String,
 }
 
 #[derive(Debug, Clone)]
@@ -44,7 +48,6 @@ pub struct EntityConfig {
     pub id: String,
     pub name: String,
     pub system_prompt: String,
-    pub data_dir: String,
 }
 
 impl EntityConfig {
@@ -52,61 +55,48 @@ impl EntityConfig {
     pub fn collection(&self, kind: &str) -> String {
         format!("{}-{}", self.id, kind)
     }
+}
 
-    // Source file for a given kind, e.g. "./entities/rs/portal-faqs.txt"
-    pub fn data_file(&self, base_name: &str) -> String {
-        format!("{}/{}", self.data_dir, base_name)
-    }
+// Root of the shared `data/` dir; the server runs in `auli/`, so this is `../data` in practice.
+fn data_dir() -> PathBuf {
+    std::env::var("AULI_DATA_DIR").unwrap_or_else(|_| "./data".to_string()).into()
 }
 
 pub static ENTITIES: LazyLock<HashMap<String, EntityConfig>> = LazyLock::new(load_entities);
 
 fn load_entities() -> HashMap<String, EntityConfig> {
     let mut map = HashMap::new();
+    let base = data_dir();
+    let registry_path = base.join("registry.toml");
 
-    let entries = match fs::read_dir(ENTITIES_DIR) {
-        Ok(entries) => entries,
+    let text = match fs::read_to_string(&registry_path) {
+        Ok(t) => t,
         Err(e) => {
-            eprintln!("⚠️  Não foi possível ler o diretório de entidades '{}': {}", ENTITIES_DIR, e);
+            eprintln!("⚠️  Não foi possível ler o registro de entidades {:?}: {}", registry_path, e);
+            return map;
+        }
+    };
+    let registry: Registry = match toml::from_str(&text) {
+        Ok(r) => r,
+        Err(e) => {
+            eprintln!("⚠️  registry.toml inválido ({:?}): {}", registry_path, e);
             return map;
         }
     };
 
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if !path.is_dir() {
-            continue;
-        }
-
-        let manifest_path = path.join("entity.json");
-        let manifest_str = match fs::read_to_string(&manifest_path) {
-            Ok(s) => s,
-            Err(_) => continue, // not an entity directory
-        };
-
-        let manifest: EntityManifest = match serde_json::from_str(&manifest_str) {
-            Ok(m) => m,
-            Err(e) => {
-                eprintln!("⚠️  entity.json inválido em {:?}: {}", manifest_path, e);
-                continue;
-            }
-        };
-
-        let data_dir = path.to_string_lossy().to_string();
-
-        let system_prompt = fs::read_to_string(path.join("prompt.txt")).unwrap_or_else(|_| {
-            eprintln!("⚠️  prompt.txt ausente para a entidade '{}', usando o prompt padrão.", manifest.id);
+    for ent in registry.entities {
+        let system_prompt = if ent.prompt.is_empty() {
             DEFAULT_SYSTEM_PROMPT.to_string()
-        });
-
-        let cfg = EntityConfig {
-            id: manifest.id.clone(),
-            name: manifest.name,
-            system_prompt,
-            data_dir,
+        } else {
+            fs::read_to_string(base.join(&ent.prompt)).unwrap_or_else(|_| {
+                eprintln!("⚠️  prompt ausente para a entidade '{}' ({}), usando o padrão.", ent.id, ent.prompt);
+                DEFAULT_SYSTEM_PROMPT.to_string()
+            })
         };
-
-        map.insert(manifest.id, cfg);
+        map.insert(
+            ent.id.clone(),
+            EntityConfig { id: ent.id, name: ent.name, system_prompt },
+        );
     }
 
     map

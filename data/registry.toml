@@ -1,0 +1,32 @@
+# Auli — registro ÚNICO de entidades e coleções.
+#
+# FONTE DA VERDADE compartilhada (roteiro_integracao_data.md, Fase 2). É lida por:
+#   - auli-cli  (server): entidades carregadas + prompt por entidade
+#   - auli-collections (scraper): entidades válidas + diretório de saída
+#   - auli-frontend: gerado por scripts/gen-frontend-entities.mjs -> src/shared/entities.ts
+# Editar AQUI; nunca duplicar a lista de entidades em código.
+#
+# Campos por entidade:
+#   id          identificador estável (também a pasta data/<id>/ e a chave de tenant)
+#   name        nome exibido (ex.: "SEFAZ-RS")
+#   uf          sigla do estado (ex.: "RS")
+#   state       nome do estado por extenso
+#   prompt      caminho do system prompt, relativo à pasta data/
+#   collections rótulos de coleção da UI. `servicos` mapeia ao kind vetorial `services`;
+#               `conteudos` é só de referência (sem kind vetorial, sem scraper).
+
+[[entities]]
+id = "rs"
+name = "SEFAZ-RS"
+uf = "RS"
+state = "Rio Grande do Sul"
+prompt = "prompts/rs.txt"
+collections = ["servicos", "faqs", "pareceres", "notas", "conteudos"]
+
+[[entities]]
+id = "sc"
+name = "SEF-SC"
+uf = "SC"
+state = "Santa Catarina"
+prompt = "prompts/sc.txt"
+collections = ["servicos"]

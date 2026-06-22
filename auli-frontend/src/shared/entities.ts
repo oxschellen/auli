@@ -1,24 +1,25 @@
 /**
- * Multi-tenant entity registry (frontend mirror of the scraper's `domain::entities`).
+ * GERADO de data/registry.toml por scripts/gen-frontend-entities.mjs — NÃO EDITE À MÃO.
+ * Rode `node scripts/gen-frontend-entities.mjs` após mudar o registry.
  *
- * Each entity is a Brazilian state tax authority. The app is scoped to one entity at a time, chosen
- * on the state-selection landing page and persisted to localStorage. Data files are served per
- * entity from `public/<id>/…` (see `entityPath` in fetchers).
+ * Cada entidade é uma secretaria estadual da fazenda. O app é escopo de uma entidade por vez,
+ * escolhida na landing de seleção de estado e persistida no localStorage. Os dados são servidos
+ * por entidade de `public/<id>/…` (ver `entityPath` em fetchers).
  */
 
-/** The collection tabs an entity can have data for. `chat` is always available. */
-export type Collection = "servicos" | "faqs" | "pareceres" | "notas" | "conteudos";
+/** As abas de coleção que uma entidade pode ter. `chat` está sempre disponível. */
+export type Collection = "conteudos" | "faqs" | "notas" | "pareceres" | "servicos";
 
 export interface Entity {
-  /** Stable id; also the `public/<id>/` data folder and the backend tenant key. */
+  /** Id estável; também a pasta `public/<id>/` e a chave de tenant no backend. */
   id: string;
-  /** Full name shown in the header / selector (e.g. "SEFAZ-RS"). */
+  /** Nome completo exibido no header / seletor (ex.: "SEFAZ-RS"). */
   name: string;
-  /** Short label for compact UI (e.g. "RS"). */
+  /** Sigla curta para UI compacta (ex.: "RS"). */
   uf: string;
-  /** State name in Portuguese (e.g. "Rio Grande do Sul"). */
+  /** Nome do estado por extenso (ex.: "Rio Grande do Sul"). */
   state: string;
-  /** Which collections this entity currently has scraped data for. */
+  /** Quais coleções esta entidade tem dados hoje. */
   collections: Collection[];
 }
 
@@ -35,7 +36,6 @@ export const ENTITIES: Entity[] = [
     name: "SEF-SC",
     uf: "SC",
     state: "Santa Catarina",
-    // Only servicos has been scraped for SC so far; other tabs show an empty state.
     collections: ["servicos"],
   },
 ];
@@ -46,12 +46,12 @@ export function getEntity(id: string | null | undefined): Entity | undefined {
   return ENTITIES.find((e) => e.id === id);
 }
 
-/** Find the entity whose state is the given UF code (e.g. "RS"), if any. Used by the Brazil map. */
+/** Entidade cujo estado é a UF dada (ex.: "RS"), se houver. Usado pelo mapa do Brasil. */
 export function getEntityByUf(uf: string): Entity | undefined {
   return ENTITIES.find((e) => e.uf === uf);
 }
 
-/** Whether an entity has data for a given collection (drives the tabs' empty state). */
+/** Se uma entidade tem dados para uma coleção (dirige o estado vazio das abas). */
 export function hasCollection(entity: Entity, collection: Collection): boolean {
   return entity.collections.includes(collection);
 }

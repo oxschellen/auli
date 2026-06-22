@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "doctor": "npx react-doctor@latest"
+    "doctor": "npx react-doctor@latest",
+    "gen:entities": "node ../scripts/gen-frontend-entities.mjs"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.33.0",
