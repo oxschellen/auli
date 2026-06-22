@@ -1,4 +1,4 @@
-//! `auli-cli` library — the application layer. Holds the server (axum/RAG/auth) and the update
+//! `auli-cli` library — the application layer. Holds the server (axum/RAG) and the update
 //! (vectorizer) flows; the `auli` binary in `main.rs` is a thin clap dispatcher over the two.
 //!
 //! Layering: depends on `auli-core` (domain) and `vector-store` (storage). The server links only
@@ -9,11 +9,9 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 
 use axum::Router;
-use sqlx::postgres::PgPoolOptions;
 use tokio::net::TcpListener;
 
 pub mod api;
-pub mod auth;
 pub mod config;
 pub mod entities;
 pub mod error;
@@ -24,7 +22,7 @@ pub mod state;
 pub mod update;
 mod util;
 
-use crate::api::{auth_routes, cors_routes, data_routes, protected_routes, public_routes, question_routes};
+use crate::api::{cors_routes, data_routes, public_routes, question_routes};
 use crate::config::config;
 use crate::state::AppState;
 
@@ -36,8 +34,6 @@ pub fn app(state: Arc<AppState>) -> Router {
     Router::new()
         .merge(public_routes())
         .merge(question_routes(state.clone()))
-        .merge(auth_routes(state.clone()))
-        .merge(protected_routes(state.clone()))
         .merge(data_routes(state))
         .layer(cors_routes())
 }
@@ -55,13 +51,6 @@ pub async fn run_server(packs_dir: String, port: u16) {
     config().log_summary();
     entities::init();
 
-    let pool = PgPoolOptions::new()
-        .max_connections(10)
-        .connect(&config().database_url)
-        .await
-        .expect("Falha ao conectar ao PostgreSQL");
-    println!("🗄️  PostgreSQL database connected successfully!");
-
     // Eager-load + validate all packs before serving (refuse to start on incompatible data).
     let collections = packs::load_all(&packs_dir).expect("Falha ao carregar os pacotes de vetores");
     println!("📦 Pacotes carregados de {}", packs_dir);
@@ -74,14 +63,8 @@ pub async fn run_server(packs_dir: String, port: u16) {
     println!("🧠 Embedder fastembed (BGE-M3) carregado");
 
     let state = Arc::new(AppState {
-        pool,
         collections: Arc::new(collections),
         embedder,
-        secret: config().jwt_secret.clone(),
-        access_min: config().jwt_access_expiration_minutes,
-        refresh_days: config().jwt_refresh_expiration_days,
-        verify_h: config().verification_token_expiry_hours,
-        reset_h: config().password_reset_token_expiry_hours,
     });
 
     println!("----------------------------------------------------");

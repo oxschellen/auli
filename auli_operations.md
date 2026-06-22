@@ -4,7 +4,7 @@ Runbook prático para **compilar, gerar os dados e subir o servidor da Auli** (w
 modo `server`) com o túnel **ngrok**, e para saber **onde ficam os logs**. Para a descrição
 técnica do código, ver [auli_code.md](auli_code.md) (§9 cobre o workspace `auli`).
 
-> TL;DR — numa máquina já preparada (build feito, packs gerados, Postgres no ar):
+> TL;DR — numa máquina já preparada (build feito, packs gerados):
 > ```bash
 > ./start_server.sh                  # compila (incremental) + sobe server + ngrok
 > ./start_server.sh --no-build       # restart rápido, sem recompilar
@@ -34,7 +34,6 @@ serviço de embedding para subir à parte.
 | **Rust** | toolchain estável (`cargo`, `rustc`). |
 | **cmake + compilador C** | exigidos por `aws-lc-sys` (TLS rustls). **Nesta máquina não há cmake de sistema**: foi instalado via `pip install --user cmake` (fica em `~/.local/bin`). Ver §3. |
 | **Rede (1º build/run)** | `ort` baixa o ONNX Runtime no build; o modelo **BGE-M3** baixa do Hugging Face para `EMBED_CACHE_DIR` no 1º uso. |
-| **PostgreSQL** | o `server` conecta no boot para autenticação (`DATABASE_URL`). Precisa estar no ar. |
 | **ngrok** | para o túnel público (`api.auli.com.br`). Opcional (use `--no-ngrok`). |
 | **`.env`** | na raiz `auli_new/` (ver §4). |
 
@@ -103,13 +102,14 @@ para o server rodando em `auli/`. Variáveis:
 | Variável | Obrigatória? | Uso |
 | --- | --- | --- |
 | `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | sim | LLM externo (Groq-compat) que redige a resposta |
-| `DATABASE_URL` | sim | Postgres (auth no boot) |
-| `JWT_RSA_PRIVATE_KEY` / `JWT_RSA_PUBLIC_KEY` / `JWT_SECRET` | sim | JWT RS256 |
 | `EMBED_CACHE_DIR` | não (def. `./models`) | cache do modelo |
 | `EMBED_THREADS` | não (def. `16`) | threads do ONNX Runtime |
-| `POSTGRES_USER` / `VECTOR_DB_PATH` | não | — |
+| `VECTOR_DB_PATH` | não | pasta padrão dos pacotes |
 
 > Faltando uma variável **obrigatória**, o server dá `panic` no boot com mensagem clara.
+>
+> O server **não tem auth nem banco**: só precisa das variáveis de LLM + embedding acima. Não há
+> `DATABASE_URL`, chaves `JWT_*` nem Postgres no boot.
 
 ---
 
@@ -208,8 +208,7 @@ RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG c
 | `📦 Pacotes carregados de ./vectors` (e nada carregado) | Esqueceu `--packs-dir ./packs` — caiu no default `./vectors`. Use o script ou passe a flag. |
 | Rebaixando `model_quantized.onnx` toda vez | CWD errado → `./models` vazio. Rode de `auli/` com o modelo em `auli/models` (`EMBED_CACHE_DIR=./models`). |
 | Erro de cmake / `aws-lc-sys` no build | Sem cmake no PATH ou cmake 4 reclamando de policy. `export PATH="$HOME/.local/bin:$PATH"` e `export CMAKE_POLICY_VERSION_MINIMUM=3.5` (o `start_server.sh` já faz). |
-| `Variável de ambiente obrigatória ausente: ...` | Falta variável no `.env` (LLM/JWT/DATABASE_URL). Ver §4.4. |
-| `Falha ao conectar ao PostgreSQL` | Postgres não está no ar ou `DATABASE_URL` errada. |
+| `Variável de ambiente obrigatória ausente: ...` | Falta variável de LLM no `.env` (`LLM_API_URL`/`LLM_API_KEY`/`LLM_API_MODEL`). Ver §4.4. |
 | `Manifest incompatível ...` no boot | Pacotes gerados com modelo/dim/`strategy_version` diferente do binário. Re-gere com `auli update`. |
 | `Permission denied` ao rodar o script | Faltou `chmod +x start_server.sh`, ou usou `sudo` (não use). |
 | ngrok com "connection refused" no início | Normal: o túnel tenta conectar enquanto o server ainda carrega o modelo; conecta quando o boot termina. |

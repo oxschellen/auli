@@ -661,8 +661,15 @@ explícito de que o parser de HTML do RS **não** funcionará para SC sem reescr
 O `auli-server` (monólito descrito em §3) foi reorganizado em um **workspace Cargo único**
 `auli/`, com **três crates em camadas** e **um binário** que troca de modo por subcomando. A
 lógica de negócio (parsing, `EmbedStrategy`, embedder, `cosine_distance`, `select_by_proximity`,
-auth, LLM, RAG) foi movida **verbatim**; o que mudou foi a *fronteira entre módulos* e o
+LLM, RAG) foi movida **verbatim**; o que mudou foi a *fronteira entre módulos* e o
 *ciclo de vida* (ingestão separada do atendimento). O `auli-server/` segue em disco como baseline.
+
+> **Atualização — auth e banco removidos do workspace.** A camada de autenticação (JWT RS256,
+> signin/register, `auth_middleware`, rotas protegidas) e o **PostgreSQL** foram **removidos** do
+> `auli` (eram usados *só* para auth). O `server` hoje não tem auth nem banco: expõe apenas as
+> rotas **públicas** `GET /v1/health`, `POST /v1/question` e `GET /v1/{kind}/list`, e não carrega
+> `JWT_*`/`DATABASE_URL`. As menções a auth/Postgres em §9.2–§9.4 abaixo refletem o estado anterior;
+> o baseline `auli-server/` (§3.8) ainda descreve o auth original.
 
 ### 9.1 Estrutura (camadas estritas, acoplamento só para baixo)
 
@@ -682,7 +689,7 @@ vetorial é compartilhado por construção, não por convenção.
 | --- | --- |
 | `vector-store` | `Record<P>`/`CollectionData<P>` (payload genérico; chave JSON em disco continua `document`), `cosine_distance` (fallback `2.0`), IO de arquivo, e a **separação leitura/escrita por tipo**: `ReadStore` (`query_scored`/`list`, imutável) vs `Writer` (`reset`/`upsert`/persistência). Enforcement de dimensão no 1º insert (`Error::DimensionMismatch`). |
 | `auli-core` | `embed` (`Embedder` BGE-M3, `EMBED_DIM=1024`), `corpus` (`EmbedStrategy`, tabela `Collection`, `parse_blocks*`, `prepare_documents`, `extract_question`, `clean_servico`, `extract_servico_description` — movidos de [domain/collections.rs](auli-server/src/domain/collections.rs)), `manifest` (identidade do embedding + schema/validação). |
-| `auli-cli` | `server` (axum, RAG, auth, config, packs) + `update` (vetorizador). Despacho por `clap`. |
+| `auli-cli` | `server` (axum, RAG, config, packs) + `update` (vetorizador). Despacho por `clap`. |
 
 ### 9.2 Os dois modos (subcomandos)
 
@@ -713,9 +720,9 @@ re-gerar os pacotes" em **erro de boot**, não em retrieval ruim. O fallback `2.
 ### 9.4 Distribuição (decorrência do desenho)
 
 Servir o `auli server` exige **apenas o binário + a pasta de pacotes** (`<id>-<kind>.json` +
-`<id>.manifest.json`). Sem banco para subir (para servir), sem ChromaDB/Ollama, sem serviço de
-embedding, sem rede para ingestão. (O `server` ainda conecta no Postgres para auth; o caminho RAG
-em si é autossuficiente.) Read-only + eager-load + binário único ⇒ N cópias coexistem sem
+`<id>.manifest.json`). Sem banco para subir, sem ChromaDB/Ollama, sem serviço de
+embedding, sem rede para ingestão. (Com a remoção do auth, o `server` **não conecta mais a
+nenhum banco** — é autossuficiente de ponta a ponta.) Read-only + eager-load + binário único ⇒ N cópias coexistem sem
 coordenação.
 
 ### 9.5 Verificação (estado de fato, neste repo)

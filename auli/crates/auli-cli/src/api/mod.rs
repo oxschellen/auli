@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use axum::{
     http::{header, HeaderValue, Method},
-    middleware,
     routing::{get, post},
     Router,
 };
@@ -11,17 +10,13 @@ use tower_http::cors::CorsLayer;
 pub mod dto;
 mod handlers;
 
-use crate::auth::jwt::gen_rsa_keypair_handler;
-use crate::auth::{auth_middleware, sign_in_handler, user_get_handler, user_register_handler};
 use crate::state::AppState;
 
 use handlers::{health_handler, list_handler, question_handler};
 
-// Rotas públicas sem estado: health-check e geração de par de chaves RSA (utilitário).
+// Rota pública sem estado: health-check.
 pub fn public_routes() -> Router {
-    Router::new()
-        .route("/v1/health", get(health_handler))
-        .route("/v1/gen_rsa_keypair", get(gen_rsa_keypair_handler))
+    Router::new().route("/v1/health", get(health_handler))
 }
 
 // Rota pública de perguntas (caminho RAG ativo). Precisa do estado compartilhado.
@@ -31,29 +26,11 @@ pub fn question_routes(state: Arc<AppState>) -> Router {
         .with_state(state)
 }
 
-// Rotas de autenticação (login e registro). Públicas, mas dependem do banco no estado.
-pub fn auth_routes(state: Arc<AppState>) -> Router {
-    Router::new()
-        .route("/v1/signin", post(sign_in_handler))
-        .route("/register", post(user_register_handler))
-        .with_state(state)
-}
-
-// Rotas protegidas por JWT: exigem `Authorization: Bearer <token>` de um usuário verificado.
-pub fn protected_routes(state: Arc<AppState>) -> Router {
-    Router::new()
-        .route("/v1/protected", get(user_get_handler))
-        .route("/v1/protected_question", post(question_handler))
-        .layer(middleware::from_fn_with_state(state.clone(), auth_middleware))
-        .with_state(state)
-}
-
-// Rota de listagem de dados (somente leitura), genérica por `{kind}`. Exige JWT.
-// A ingestão NÃO é mais uma rota — é o `auli update`.
+// Rota de listagem de dados (somente leitura), genérica por `{kind}`. Pública.
+// A ingestão NÃO é uma rota — é o `auli update`.
 pub fn data_routes(state: Arc<AppState>) -> Router {
     Router::new()
         .route("/v1/{kind}/list", get(list_handler))
-        .layer(middleware::from_fn_with_state(state.clone(), auth_middleware))
         .with_state(state)
 }
 
@@ -75,6 +52,6 @@ pub fn cors_routes() -> CorsLayer {
     CorsLayer::new()
         .allow_origin(origins)
         .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
-        .allow_headers([header::CONTENT_TYPE, header::AUTHORIZATION])
+        .allow_headers([header::CONTENT_TYPE])
         .allow_credentials(true)
 }

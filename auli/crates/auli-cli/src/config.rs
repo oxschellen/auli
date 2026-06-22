@@ -19,19 +19,6 @@ pub struct Config {
     pub embed_cache_dir: String,
     pub embed_threads: usize,
 
-    // Auth / JWT
-    pub jwt_rsa_private_key: String,
-    pub jwt_rsa_public_key: String,
-    pub jwt_secret: String,
-    pub jwt_access_expiration_minutes: i64,
-    pub jwt_refresh_expiration_days: i64,
-    pub verification_token_expiry_hours: i64,
-    pub password_reset_token_expiry_hours: i64,
-
-    // Database
-    pub database_url: String,
-    pub postgres_user: String,
-
     // Vector packs (in-process; directory holding the per-collection JSON files + manifest).
     // The `auli server --packs-dir` flag overrides this; kept as the default.
     pub vector_db_path: String,
@@ -55,17 +42,6 @@ impl Config {
             embed_cache_dir: opt("EMBED_CACHE_DIR", "./models"),
             embed_threads: parse_opt("EMBED_THREADS", 16),
 
-            jwt_rsa_private_key: req("JWT_RSA_PRIVATE_KEY"),
-            jwt_rsa_public_key: req("JWT_RSA_PUBLIC_KEY"),
-            jwt_secret: req("JWT_SECRET"),
-            jwt_access_expiration_minutes: parse_opt("JWT_ACCESS_EXPIRATION_MINUTES", 15),
-            jwt_refresh_expiration_days: parse_opt("JWT_REFRESH_EXPIRATION_DAYS", 7),
-            verification_token_expiry_hours: parse_opt("VERIFICATION_TOKEN_EXPIRY_HOURS", 24),
-            password_reset_token_expiry_hours: parse_opt("PASSWORD_RESET_TOKEN_EXPIRY_HOURS", 1),
-
-            database_url: req("DATABASE_URL"),
-            postgres_user: opt("POSTGRES_USER", ""),
-
             vector_db_path: opt("VECTOR_DB_PATH", "./vectors"),
         }
     }
@@ -77,8 +53,6 @@ impl Config {
         println!("LLM_API_MODEL: {}", self.llm_api_model);
         println!("EMBED_CACHE_DIR: {}", self.embed_cache_dir);
         println!("EMBED_THREADS: {}", self.embed_threads);
-        println!("DATABASE_URL: {}", redact_database_url(&self.database_url));
-        println!("POSTGRES_USER: {}", self.postgres_user);
         println!("VECTOR_DB_PATH: {}", self.vector_db_path);
     }
 }
@@ -94,23 +68,4 @@ fn opt(key: &str, default: &str) -> String {
 // Optional env var parsed to any `FromStr` type; falls back to `default` if unset or unparsable.
 fn parse_opt<T: std::str::FromStr>(key: &str, default: T) -> T {
     std::env::var(key).ok().and_then(|v| v.parse().ok()).unwrap_or(default)
-}
-
-fn redact_database_url(url: &str) -> String {
-    let Some(scheme_end) = url.find("://") else {
-        return url.to_string();
-    };
-    let auth_start = scheme_end + 3;
-    let Some(at_offset) = url[auth_start..].find('@') else {
-        return url.to_string();
-    };
-
-    let auth_end = auth_start + at_offset;
-    let auth = &url[auth_start..auth_end];
-    let redacted_auth = auth
-        .split_once(':')
-        .map(|(user, _)| format!("{user}:***"))
-        .unwrap_or_else(|| "***".to_string());
-
-    format!("{}{}{}", &url[..auth_start], redacted_auth, &url[auth_end..])
 }

@@ -1,7 +1,5 @@
 use std::sync::Arc;
 
-use sqlx::postgres::PgPool;
-
 use auli_core::embed::Embedder;
 
 use crate::packs::Collections;
@@ -11,17 +9,6 @@ use crate::packs::Collections;
 /// ephemeral query vector, in memory.
 #[derive(Clone)]
 pub struct AppState {
-    pub pool: PgPool,
     pub collections: Arc<Collections>,
     pub embedder: Arc<Embedder>,
-    #[allow(dead_code)]
-    pub secret: String,
-    #[allow(dead_code)]
-    pub access_min: i64,
-    #[allow(dead_code)]
-    pub refresh_days: i64,
-    #[allow(dead_code)]
-    pub verify_h: i64,
-    #[allow(dead_code)]
-    pub reset_h: i64,
 }

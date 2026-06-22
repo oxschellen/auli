@@ -54,5 +54,5 @@ AULI_PACKS_DIR=./packs EMBED_CACHE_DIR=./models \
 
 ## Environment (server mode)
 
-`server` reads a `.env` (LLM, JWT, Postgres) via `auli-cli`'s `config`. `update` needs only
-`EMBED_CACHE_DIR` / `EMBED_THREADS`. See `crates/auli-cli/src/config.rs`.
+`server` reads a `.env` (LLM + embedding settings only — no auth, no database) via `auli-cli`'s
+`config`. `update` needs only `EMBED_CACHE_DIR` / `EMBED_THREADS`. See `crates/auli-cli/src/config.rs`.

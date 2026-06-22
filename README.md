@@ -75,7 +75,7 @@ modes use the *same* embedding model — the vector space is shared by construct
 | --- | --- |
 | [`crates/vector-store`](auli/crates/vector-store/) | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert. |
 | [`crates/auli-core`](auli/crates/auli-core/) | Auli domain: BGE-M3 embedder (dim 1024), corpus parsing + `EmbedStrategy`, and the pack **manifest** (embedding identity + integrity hash). |
-| [`crates/auli-cli`](auli/crates/auli-cli/) | The `auli` binary — `server` (Axum, RAG, auth, config) and `update` (vectorizer). Dispatch via `clap`. |
+| [`crates/auli-cli`](auli/crates/auli-cli/) | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`. |
 
 Two modes:
 
@@ -133,13 +133,13 @@ cargo run -- [--usecache] <entity> <collection>     # e.g. cargo run -- rs servi
 
 Full runbook (cmake notes, ngrok, logs, troubleshooting): **[auli_operations.md](auli_operations.md)**.
 
-**Prerequisites:** Rust (stable) · `cmake` + a C compiler (for `aws-lc-sys`) · PostgreSQL running ·
-a `.env` in the repo root (see below). First build/run downloads the ONNX Runtime and the BGE-M3
-model from Hugging Face.
+**Prerequisites:** Rust (stable) · `cmake` + a C compiler (for `aws-lc-sys`) · a `.env` in the repo
+root (see below). No database is required. First build/run downloads the ONNX Runtime and the
+BGE-M3 model from Hugging Face.
 
 ```bash
 # 1. Configure
-cp .env.example .env        # then fill in LLM_API_*, JWT_*, DATABASE_URL
+cp .env.example .env        # then fill in LLM_API_* (LLM endpoint)
 
 # 2. Build + run server + ngrok (from repo root)
 ./start_server.sh                  # build (incremental) + server + ngrok
@@ -178,8 +178,6 @@ Required variables panic at startup if missing.
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | ✅ | External LLM (Groq-compatible) that drafts the answer |
-| `DATABASE_URL` | ✅ | PostgreSQL (auth at boot) |
-| `JWT_RSA_PRIVATE_KEY` / `JWT_RSA_PUBLIC_KEY` / `JWT_SECRET` | ✅ | RS256 JWT |
 | `EMBED_CACHE_DIR` | — | BGE-M3 model cache dir (default `./models`) |
 | `EMBED_THREADS` | — | ONNX Runtime intra-op threads (default 16) |
 | `VECTOR_DB_PATH` | — | In-process vector store dir (default `./vectors`) |
@@ -207,8 +205,8 @@ available as reference navigation in the UI.
 ## Status
 
 - **Working today:** RAG chat for the configured state, full UI (chat + reference tabs + state
-  selection with map), scraping of Serviços/FAQs (RS) and Serviços (SC), local embeddings, and JWT
-  auth in the backend.
+  selection with map), scraping of Serviços/FAQs (RS) and Serviços (SC), and local embeddings. The
+  backend is open (no auth) and database-free — it serves from packs alone.
 - **In progress:** expanding state **SC** (FAQs and other content) on the backend, automated
   scraping of Pareceres/Notas, and using those types in the assistant's answers.
 
