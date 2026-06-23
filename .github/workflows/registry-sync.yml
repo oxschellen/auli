@@ -1,0 +1,25 @@
+name: registry-sync
+
+# Guard-rail barato: garante que data/registry.toml continua sendo a fonte única de entidades
+# (frontend em dia + sem cópias fora do registry). Não compila Rust (fastembed/ort são pesados);
+# o build/test Rust roda localmente (ver auli_operations.md).
+on:
+  pull_request:
+    paths:
+      - "data/registry.toml"
+      - "auli-frontend/src/shared/entities.ts"
+      - "scripts/gen-frontend-entities.mjs"
+      - "scripts/check-registry-sync.sh"
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: registry sync guard
+        run: bash scripts/check-registry-sync.sh

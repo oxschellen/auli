@@ -51,6 +51,14 @@ escopo dos três repositórios principais.
 
 ## 2. Arquitetura e fluxo de dados ponta a ponta
 
+> **Atualização — integração unificada sob `data/` (ver [roteiro_integracao_data.md](roteiro_integracao_data.md)).**
+> O fluxo de "cópia manual" descrito abaixo foi **substituído** por uma pasta única `data/` na raiz:
+> `data/registry.toml` (entidades, fonte única), `data/prompts/`, e por estado
+> `data/<id>/{raw (scraper), ref (autorado, versionado), packs (`auli update`)}`. O server lê os
+> packs de `data/<id>/packs/` e as entidades do registry; o frontend tem `entities.ts` e
+> `public/<id>/` **gerados** de `data/` por `scripts/`. Não há mais cópia à mão entre pastas. O
+> diagrama abaixo descreve o estado **anterior** (baseline).
+
 ```
 [auli-collections]                  [auli-server]                         [auli-frontend]
   scrape do portal                    POST /v1/question                     Chat (React)
@@ -576,6 +584,15 @@ explícito de que o parser de HTML do RS **não** funcionará para SC sem reescr
 ---
 
 ## 6. Divergências e inconsistências entre repositórios (confirmadas no código)
+
+> **RESOLVIDO — integração `data/` (Fases 1–4 do [roteiro_integracao_data.md](roteiro_integracao_data.md)).**
+> As divergências 1–4 abaixo foram **eliminadas**: (1) a triplicação do `domain` deixou de existir —
+> `data/registry.toml` é a fonte única de entidades, lida por `auli-cli` e `auli-collections`, e o
+> frontend gera `entities.ts` dela; o kind vetorial canônico é `services` (o registry mapeia o rótulo
+> de UI `servicos`). (2) Os dados de serviços passaram a vir da raspagem nova (decisão #1b), com packs
+> e frontend **consistentes**. (3) `sc` virou entidade real do server (208 serviços). (4)
+> `pareceres`/`notas`/`conteudos` (autorados, sem scraper) ficam versionados em `data/<id>/ref/`. O
+> texto abaixo descreve o estado **anterior** (baseline `auli-server/`, mantido como referência).
 
 1. **`domain` triplicado e divergente.** `auli-server` e `auli-collections` mantêm cópias do
    registro de coleções com diferenças reais:

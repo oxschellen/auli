@@ -54,12 +54,17 @@ This is a **monorepo** of four cooperating components plus shared docs.
 | [`auli-server/`](auli-server/) | **auli-server** | Pre-refactor monolith, kept as a **reference baseline**. Logic was carried into `auli/` verbatim. | Rust (Axum, Tokio) |
 | [`auli-frontend/`](auli-frontend/) | **auli-frontend** | Web UI: state selection (interactive Brazil map), chat, and reference tabs. | React 19 + TypeScript + Vite |
 | [`auli-collections/`](auli-collections/) | **auli-collections** | Scrapers that collect and standardize the official content the search is built from. | Rust (synchronous) |
+| [`data/`](data/) | **shared data** | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`. | TOML + JSON/txt |
+| [`scripts/`](scripts/) | **tooling** | `build-packs.sh` (vectorize), `gen-frontend-entities.mjs` + `build-frontend-public.sh` (regen frontend from `data/`). | Bash + Node |
 | `auli_*.md` | **docs** | Product, technical and operations references (Portuguese). | — |
-| [`start_server.sh`](start_server.sh) | **runbook script** | Build (incremental) + run the server + ngrok tunnel. | Bash |
+| [`start_server.sh`](start_server.sh) | **runbook script** | Build (incremental) + run the server + Cloudflare tunnel. | Bash |
 
-> Integration between components is by **files copied between directories**, not direct calls:
-> `auli-collections` writes `data/<id>/`, the backend reads `entities/<id>/`, the frontend reads
-> `public/<id>/`. There is no automated sync — see [auli_code.md](auli_code.md) §2.
+> **One shared `data/` tree, no manual copies.** Entities/collections live once in
+> [`data/registry.toml`](data/registry.toml); the scraper writes `data/<id>/raw/`, authored
+> reference content is versioned in `data/<id>/ref/`, and `auli update` builds `data/<id>/packs/`.
+> The frontend's `entities.ts` and `public/<id>/` are **generated** from `data/` by `scripts/`
+> (the prior hand-copying is gone). See [auli_code.md](auli_code.md) §2 and
+> [roteiro_integracao_data.md](roteiro_integracao_data.md).
 
 ---
 
@@ -144,17 +149,15 @@ cp .env.example .env        # then fill in LLM_API_* (LLM endpoint)
 # 2. Build + run server + ngrok (from repo root)
 ./start_server.sh                  # build (incremental) + server + ngrok
 ./start_server.sh --no-build       # fast restart, no recompile
-./start_server.sh --no-ngrok       # local server only
+./start_server.sh --no-tunnel      # local server only
 ```
 
 Generate the vector packs the server serves (only needed when content or the embedding strategy
-changes):
+changes) — `build-packs.sh` aggregates `data/<id>/{raw,ref}` and runs `auli update` into
+`data/<id>/packs/`:
 
 ```bash
-cd auli
-EMBED_CACHE_DIR=./models \
-  ../auli-server/target/release/auli update \
-    --entity rs --source ../auli-server/entities/rs --out ./packs --version 1
+scripts/build-packs.sh rs          # and: scripts/build-packs.sh sc
 ```
 
 A healthy boot logs the loaded entities, a validated manifest, per-collection record counts, the

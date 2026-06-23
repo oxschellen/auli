@@ -68,30 +68,25 @@ cargo build --release --workspace      # ou: cargo build --release --bin auli
 
 ## 4. Dados necessários para servir
 
-O `auli server` lê três coisas a partir do diretório de trabalho (`auli/`):
+Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data` a partir de
+`auli/`). O `auli server` lê de lá: `registry.toml`, `prompts/` e os packs por entidade.
 
-### 4.1 Pacotes de vetores (`./packs`)
-Gerados pelo `auli update` a partir dos `portal-*.txt` da entidade:
+### 4.1 Pacotes de vetores (`data/<id>/packs/`)
+Gerados pelo `scripts/build-packs.sh`, que **agrega** os `portal-*.txt` de `data/<id>/{raw,ref}` e
+chama o `auli update` para aquela entidade:
 
 ```bash
-cd /home/ubu/Desktop/auli_new/auli
-EMBED_CACHE_DIR=./models \
-  ../auli-server/target/release/auli update \
-    --entity rs \
-    --source ../auli-server/entities/rs \
-    --out ./packs --version 1
+scripts/build-packs.sh rs        # e: scripts/build-packs.sh sc
 ```
-Produz `packs/rs-services.json` (627), `rs-faqs.json` (1734), `rs-pareceres.json` (331),
-`rs-notas.json` (1) e `packs/rs.manifest.json`. **Só precisa rodar de novo quando o conteúdo ou a
+Produz `data/rs/packs/rs-services.json` (627), `rs-faqs.json` (1914), `rs-pareceres.json` (331),
+`rs-notas.json` (1) e `rs.manifest.json`. **Só precisa rodar de novo quando o conteúdo ou a
 estratégia de embedding mudar.**
 
-### 4.2 Entidades (`./entities`)
-O server lê `./entities/<id>/` (`entity.json` + `prompt.txt`). No workspace isso é um symlink para
-o baseline (o `start_server.sh` cria automaticamente se faltar):
-
-```bash
-ln -s ../auli-server/entities entities    # dentro de auli/
-```
+### 4.2 Entidades (`data/registry.toml`)
+A lista de entidades e o caminho do prompt de cada uma vêm do **registro único**
+`data/registry.toml` (não há mais symlink `./entities`). O system prompt é lido de
+`data/prompts/<id>.txt`. Adicionar um estado = uma entrada `[[entities]]` no registry + os dados em
+`data/<id>/` (ver [roteiro_integracao_data.md](roteiro_integracao_data.md)).
 
 ### 4.3 Modelo (`./models`)
 Cache do BGE-M3 (`EMBED_CACHE_DIR=./models` → `auli/models`). Baixa do Hugging Face no 1º uso;
@@ -128,7 +123,7 @@ O jeito recomendado é o script [start_server.sh](start_server.sh) (na raiz `aul
 ```
 
 O que ele faz: exporta o env de cmake desta máquina, reusa `auli-server/target`, entra em `auli/`,
-garante o symlink `entities`, derruba uma instância anterior na porta, compila (a menos de
+exporta `AULI_DATA_DIR=../data`, derruba uma instância anterior na porta, compila (a menos de
 `--no-build`), sobe o **túnel cloudflared em background** e o **server em foreground**. **Ctrl+C**
 encerra os dois (um `trap` derruba o cloudflared junto). O túnel precisa ter sido configurado 1× com
 `./setup-cloudflared.sh` (ver §10); sem isso, sobe só o servidor local.
@@ -143,10 +138,14 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 
 **Boot saudável** se parecer com:
 ```
-🏛️  Entidades carregadas: [rs]
+🏛️  Entidades carregadas: [rs, sc]
 🔎 Manifesto de 'rs' validado contra a identidade local.
 📦 rs-services — 627 registros
-📦 rs-faqs — 1734 registros
+📦 rs-faqs — 1914 registros
+📦 rs-pareceres — 331 registros
+📦 rs-notas — 1 registros
+🔎 Manifesto de 'sc' validado contra a identidade local.
+📦 sc-services — 208 registros
 🧠 Embedder fastembed (BGE-M3) carregado
 ✅ Server started successfully at 0.0.0.0:3000
 ```
@@ -154,7 +153,7 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 ### Sem o script (comando direto)
 ```bash
 cd /home/ubu/Desktop/auli_new/auli
-../auli-server/target/release/auli server --packs-dir ./packs
+AULI_DATA_DIR=../data ../auli-server/target/release/auli server --packs-dir ../data
 ```
 
 > **Nunca use `sudo`.** A porta 3000 não exige root, e sob `sudo` o server procura `.env`/cache no
@@ -209,8 +208,8 @@ RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG c
 
 | Sintoma | Causa / correção |
 | --- | --- |
-| `Não foi possível ler o diretório de entidades './entities'` / `Entidades carregadas: []` | Rodou fora de `auli/`, ou falta o symlink `entities`. Use o `start_server.sh` (cria o link e entra em `auli/`). |
-| `📦 Pacotes carregados de ./vectors` (e nada carregado) | Esqueceu `--packs-dir ./packs` — caiu no default `./vectors`. Use o script ou passe a flag. |
+| `Não foi possível ler o registro de entidades` / `Entidades carregadas: []` | `AULI_DATA_DIR` não aponta para a pasta `data/` (com `registry.toml`). Rode via `start_server.sh` (exporta `../data`). |
+| `📦 Pacotes carregados de ./vectors` (e nada carregado) | Esqueceu `--packs-dir ../data` — caiu no default `./vectors`. Use o script ou passe a flag. |
 | Rebaixando `model_quantized.onnx` toda vez | CWD errado → `./models` vazio. Rode de `auli/` com o modelo em `auli/models` (`EMBED_CACHE_DIR=./models`). |
 | Erro de cmake / `aws-lc-sys` no build | Sem cmake no PATH ou cmake 4 reclamando de policy. `export PATH="$HOME/.local/bin:$PATH"` e `export CMAKE_POLICY_VERSION_MINIMUM=3.5` (o `start_server.sh` já faz). |
 | `Variável de ambiente obrigatória ausente: ...` | Falta variável de LLM no `.env` (`LLM_API_URL`/`LLM_API_KEY`/`LLM_API_MODEL`). Ver §4.4. |
