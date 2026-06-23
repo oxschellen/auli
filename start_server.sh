@@ -45,8 +45,7 @@ BIN="$CARGO_TARGET_DIR/release/auli"
 
 cd "$WS"
 
-# O server lê ./entities (entity.json + prompt.txt). Aponta para o baseline se ainda não existir.
-[ -e entities ] || ln -s ../auli-server/entities entities
+# As entidades vêm de $AULI_DATA_DIR/registry.toml (não há mais symlink ./entities).
 
 # Derruba uma instância anterior, se houver, para liberar a porta.
 pkill -f "release/auli server" 2>/dev/null && sleep 1 || true
