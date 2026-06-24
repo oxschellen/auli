@@ -31,7 +31,7 @@ export PATH="$HOME/.local/bin:$PATH"
 export CMAKE_POLICY_VERSION_MINIMUM="${CMAKE_POLICY_VERSION_MINIMUM:-3.5}"
 
 # Reaproveita os artefatos já compilados (fastembed/ort/aws-lc) -> build incremental rápido.
-export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/auli-server/target}"
+export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/auli-engine/target}"
 
 # Pasta data/ (registry.toml + prompts/ + <id>/packs/). O server roda em auli-engine/, então é ../data.
 export AULI_DATA_DIR="${AULI_DATA_DIR:-../data}"

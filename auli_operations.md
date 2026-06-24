@@ -51,12 +51,12 @@ export PATH="$HOME/.local/bin:$PATH"
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # (opcional) reaproveita os artefatos já compilados (fastembed/ort/aws-lc) -> build rápido:
-export CARGO_TARGET_DIR=/home/ubu/Desktop/auli_new/auli-server/target
+export CARGO_TARGET_DIR=/home/ubu/Desktop/auli_new/auli-engine/target
 
 cargo build --release --workspace      # ou: cargo build --release --bin auli
 ```
 
-- Binário: `target/release/auli` (ou `auli-server/target/release/auli` se usar o `CARGO_TARGET_DIR`
+- Binário: `target/release/auli` (ou `auli-engine/target/release/auli` se usar o `CARGO_TARGET_DIR`
   compartilhado acima).
 - 1º build sem `CARGO_TARGET_DIR` compartilhado recompila fastembed/ort/aws-lc (alguns minutos);
   depois é incremental (segundos).
@@ -124,7 +124,7 @@ O jeito recomendado é o script [start_server.sh](start_server.sh) (na raiz `aul
 ./start_server.sh --no-build --no-tunnel # restart local puro
 ```
 
-O que ele faz: exporta o env de cmake desta máquina, reusa `auli-server/target`, entra em `auli-engine/`,
+O que ele faz: exporta o env de cmake desta máquina, reusa `auli-engine/target`, entra em `auli-engine/`,
 exporta `AULI_DATA_DIR=../data`, derruba uma instância anterior na porta, compila (a menos de
 `--no-build`), sobe o **túnel cloudflared em background** e o **server em foreground**. **Ctrl+C**
 encerra os dois (um `trap` derruba o cloudflared junto). O túnel precisa ter sido configurado 1× com
@@ -155,7 +155,7 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 ### Sem o script (comando direto)
 ```bash
 cd /home/ubu/Desktop/auli_new/auli
-AULI_DATA_DIR=../data ../auli-server/target/release/auli server --packs-dir ../data
+AULI_DATA_DIR=../data ../auli-engine/target/release/auli server --packs-dir ../data
 ```
 
 > **Nunca use `sudo`.** A porta 3000 não exige root, e sob `sudo` o server procura `.env`/cache no
