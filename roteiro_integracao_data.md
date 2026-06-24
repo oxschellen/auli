@@ -10,6 +10,14 @@ definições de entidade. **Este documento é só o plano — nenhuma alteraçã
 > limpo; (2) Fase 0 ganhou a decisão de **fonte canônica por arquivo**; (3) o passo 3 da Fase 1 foi
 > corrigido (não é "só caminho"); (4) registrado que **`load_all` tolera packs ausentes** (entidade
 > parcial sobe), corrigindo uma preocupação anterior. Detalhes inline abaixo.
+>
+> **Atualização (auli-contract, 2026-06-23).** A **decisão #3** deste roteiro (`update --source` lendo
+> `portal-*.txt`, com agregação `ref/`+`raw/` no script) foi **superada** pelo trabalho do
+> [PLANO_auli_contract.md](PLANO_auli_contract.md): o `auli update` agora lê o **contrato tipado**
+> (`auli_contract::Table<P>` em `data/<id>/raw/<id>-<kind>.json`) e o `build-packs.sh` aponta
+> `--source` direto para `raw/` (sem agregar `portal-*.txt`, que viraram apenas *print* de auditoria).
+> O scraper foi movido para `auli/crates/auli-collections`. **`pareceres`/`notas`/`conteudos` ficam
+> adiados** (autorados, sem fonte struct) — ausentes nos packs até serem modelados como struct.
 
 Princípios que guiam a ordem das fases:
 

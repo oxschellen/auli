@@ -85,6 +85,12 @@ Prefixos de md5; `—` = ausente. (Conferido em 2026-06-22.)
 > - **#2 → prompt do server (14 ln)** → `data/prompts/rs.txt`.
 > - **#3 → (3a) dir "source" agregado no script** (sem mexer no binário).
 > - **#4 → `ref/` versionado** para pareceres/notas/conteudos.
+>
+> **Atualização (auli-contract, 2026-06-23):** a **#3 foi superada** — o binário passou a ler o
+> **contrato tipado** (`auli_contract::Table<P>` em `raw/<id>-<kind>.json`), então o `build-packs.sh`
+> aponta `--source` direto para `raw/` (sem agregar `portal-*.txt`). `pareceres`/`notas`/`conteudos`
+> ficam **adiados** (autorados, sem fonte struct) — ausentes nos packs até serem modelados. Ver
+> [PLANO_auli_contract.md](PLANO_auli_contract.md).
 
 
 **Decisão #1 — fonte canônica de `portal-servicos.txt` / `portal-faqs.txt`** (alimentam os packs):

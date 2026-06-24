@@ -69,7 +69,7 @@ pub struct Faq {
     pub origin: String,
     /// URL canônica da página de origem.
     pub url: String,
-    /// Key a embeddar — preenchida pelo scraper (ver `EmbedStrategy` portada para o scraper).
+    /// Key a embeddar — materializada pelo scraper (para faqs: breadcrumb `origin` + a pergunta).
     pub text_to_embed: String,
 }
 
