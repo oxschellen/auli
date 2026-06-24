@@ -1,9 +1,0 @@
-{
-    "editor.formatOnPaste": false,
-    "editor.formatOnSave": true,
-    "editor.formatOnType": true,
-    "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 500,
-    "editor.defaultFormatter": "rust-lang.rust-analyzer",
-    "evenBetterToml.formatter.columnWidth": 120
-}
