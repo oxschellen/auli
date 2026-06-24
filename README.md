@@ -136,7 +136,7 @@ cargo run -- [--usecache] <entity> <collection>     # e.g. cargo run -- rs servi
 
 ## Quick start (backend, the live path)
 
-Full runbook (cmake notes, ngrok, logs, troubleshooting): **[auli_operations.md](auli_operations.md)**.
+Full runbook (cmake notes, Cloudflare Tunnel, logs, troubleshooting): **[auli_operations.md](auli_operations.md)**.
 
 **Prerequisites:** Rust (stable) · `cmake` + a C compiler (for `aws-lc-sys`) · a `.env` in the repo
 root (see below). No database is required. First build/run downloads the ONNX Runtime and the
@@ -146,8 +146,8 @@ BGE-M3 model from Hugging Face.
 # 1. Configure
 cp .env.example .env        # then fill in LLM_API_* (LLM endpoint)
 
-# 2. Build + run server + ngrok (from repo root)
-./start_server.sh                  # build (incremental) + server + ngrok
+# 2. Build + run server + Cloudflare Tunnel (from repo root)
+./start_server.sh                  # build (incremental) + server + cloudflared tunnel
 ./start_server.sh --no-build       # fast restart, no recompile
 ./start_server.sh --no-tunnel      # local server only
 ```

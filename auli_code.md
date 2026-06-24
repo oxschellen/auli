@@ -5,7 +5,7 @@ dos três repositórios (`auli-server`, `auli-frontend`, `auli-collections`). Ca
 relevante cita o arquivo que a sustenta. Quando algo não pôde ser confirmado no código,
 está marcado como **NÃO CONFIRMADO NO CÓDIGO**.
 
-**Operação:** para **compilar, gerar os dados e subir o app** (com ngrok) e saber **onde ficam
+**Operação:** para **compilar, gerar os dados e subir o app** (com Cloudflare Tunnel) e saber **onde ficam
 os logs**, ver o runbook [auli_operations.md](auli_operations.md).
 
 > Convenção deste documento: distingo explicitamente o que está **implementado e ativo**

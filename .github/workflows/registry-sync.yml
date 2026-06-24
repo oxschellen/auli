@@ -10,6 +10,9 @@ on:
       - "auli-frontend/src/shared/entities.ts"
       - "scripts/gen-frontend-entities.mjs"
       - "scripts/check-registry-sync.sh"
+      # Disparar também se reaparecer uma definição de entidade fora do registry (check #2 do script).
+      - "auli/entities/**"
+      - "auli-collections/src/entities/**"
   push:
     branches: [main]
 
