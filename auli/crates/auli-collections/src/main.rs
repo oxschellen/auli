@@ -34,8 +34,20 @@ fn main() -> errors::Result<()> {
             // uses the Next.js JSON API. Output/cache paths derive from the entity's data_dir.
             servicos::run(&entity.id, &entity.data_dir, use_cache).map_err(|e| e.to_string())?;
         }
+        "rebuild" => {
+            // OFFLINE: reconstrói o contrato (<id>-faqs.json / <id>-servicos.json) a partir do que já
+            // está em data/<id>/raw/ (árvore faqs.json + per-tipo servicos), SEM rede. Útil para regerar
+            // os packs após um bump de STRATEGY_VERSION sem precisar re-raspar o portal.
+            faqs::rebuild_contract_from_tree(&faq_source_for(entity, use_cache)?)?;
+            servicos::rebuild_contract_from_raw(&entity.id, &entity.data_dir)
+                .map_err(|e| e.to_string())?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: faqs | servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: faqs | servicos | rebuild",
+                other
+            )
+            .into());
         }
     }
 

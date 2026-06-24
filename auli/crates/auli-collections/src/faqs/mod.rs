@@ -92,6 +92,25 @@ pub fn run(source: &FaqSource) -> Result<()> {
     Ok(())
 }
 
+/// Rebuild the contract `<id>-<collection>.json` **offline**, from an already-scraped `faqs.json`
+/// tree in `data_dir` — no network. Used to regenerate packs after a `STRATEGY_VERSION` bump without
+/// re-scraping. If the tree file is absent (e.g. an entity with no faqs), it is a no-op.
+pub fn rebuild_contract_from_tree(source: &FaqSource) -> Result<()> {
+    let tree_path = format!("{}/{}.json", source.data_dir, source.collection); // <data_dir>/faqs.json
+    if !Path::new(&tree_path).exists() {
+        println!("⏭️  {} ausente — pulando faqs", tree_path);
+        return Ok(());
+    }
+    let bytes = std::fs::read(&tree_path)?;
+    let tree: FaqNode = serde_json::from_slice(&bytes)?;
+    let items = flatten_faqs(&tree);
+    let table = auli_contract::Table::new(source.id.clone(), source.collection.clone(), items);
+    let out = source.contract_path();
+    std::fs::write(&out, serde_json::to_string_pretty(&table)?)?;
+    println!("Wrote {} ({} faqs) [rebuild offline de {}]", out, table.len(), tree_path);
+    Ok(())
+}
+
 /// Flattens the FAQ tree into the contract's `Vec<Faq>`, using the SAME traversal as
 /// `portal::render_portal_faqs` (start from the root's children; one `Faq` per `FaqItem` of each
 /// leaf `Faq` node), so contract order matches the print order.

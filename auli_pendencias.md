@@ -20,6 +20,18 @@ em `data/rs/cache/`). Antes de confiar nos packs novos:
    principal e o mesmo `servico=NNNN`**. Equivalência, não bit-paridade (re-vetorização é esperada).
 
 > Os binários release já estão compilados (workspace inteiro builda). Só falta a parte de rede.
+>
+> **Atalho offline já aplicado (2026-06-23).** Após o bump `STRATEGY_VERSION`→2, o server passou a
+> recusar os packs antigos (strategy=1). Para desbloquear **sem re-raspar**, foi adicionado o modo
+> `cargo run -p auli-collections -- <id> rebuild`, que reconstrói o contrato
+> (`<id>-faqs.json`/`<id>-servicos.json`) a partir do que já está em `data/<id>/raw/` (árvore
+> `faqs.json` + per-tipo de serviços), e em seguida `scripts/build-packs.sh <id>` regerou os packs
+> `strategy=2` (modelo BGE-M3 em cache, offline). Boot OK. **Ressalvas que um scrape ao vivo
+> reconcilia:** (a) `rs-services` deu **586** (não 627) — os per-tipo em `raw/` são de uma raspagem
+> mais antiga que o `portal-servicos.txt`; (b) os packs **`rs-pareceres` (331) / `rs-notas` (1)
+> antigos (strategy=1) continuam em disco** e o `load_all` os carrega (não são reconferidos por
+> coleção) — resíduo inofensivo (não entram no RAG); para zerar, apagar
+> `data/rs/packs/rs-{pareceres,notas}.json` ou regerar tudo do zero.
 
 ---
 
