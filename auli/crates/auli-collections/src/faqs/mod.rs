@@ -27,6 +27,8 @@ use crate::errors::Result;
 
 /// Configuration for one FAQ scrape. Kept generic so other entities/portals can reuse it.
 pub struct FaqSource {
+    /// Entity id (e.g. `"rs"`), used as `Table::id` in the contract output.
+    pub id: String,
     /// Origin used to resolve relative menu hrefs and build AJAX URLs, e.g.
     /// `"https://atendimento.receita.rs.gov.br"`.
     pub base_url: String,
@@ -34,24 +36,24 @@ pub struct FaqSource {
     pub root_url: String,
     /// Title for the root node of the tree.
     pub root_title: String,
-    /// Collection name, e.g. `"faqs"`.
-    /// The output file is named `<collection>.json`.
+    /// Collection name, e.g. `"faqs"` — also the `Table::nome` of the contract output.
     pub collection: String,
-    /// Directory the output JSON is written to, e.g. `"data/rs"`.
+    /// Directory the output JSON is written to, e.g. `"../data/rs/raw"`.
     pub data_dir: String,
-    /// Directory where fetched pages are cached, e.g. `"data/rs/cache/faqs"`.
+    /// Directory where fetched pages are cached, e.g. `"../data/rs/cache/faqs"`.
     pub cache_dir: String,
     /// Offline mode: read only cached pages, never fetch (a cache miss becomes an error).
     pub use_cache: bool,
 }
 
 impl FaqSource {
-    /// Full path of the structured JSON output: `<data_dir>/<collection>.json`.
-    pub fn output_path(&self) -> String {
-        format!("{}/{}.json", self.data_dir, self.collection)
+    /// Full path of the contract output (the single structured output): `<data_dir>/<id>-<collection>.json`,
+    /// holding a `Table<Faq>`. Replaces the legacy `<collection>.json` tree dump.
+    pub fn contract_path(&self) -> String {
+        format!("{}/{}-{}.json", self.data_dir, self.id, self.collection)
     }
 
-    /// Full path of the flattened RAG text output: `<data_dir>/portal-<collection>.txt`.
+    /// Full path of the human-readable print output: `<data_dir>/portal-<collection>.txt`.
     pub fn portal_path(&self) -> String {
         format!("{}/portal-{}.txt", self.data_dir, self.collection)
     }
@@ -63,25 +65,67 @@ struct MenuItem {
     url: String,
 }
 
-/// Scrape the FAQ tree, then write both the structured `<collection>.json` and the flattened
-/// `portal-<collection>.txt` knowledge file.
+/// Scrape the FAQ tree, then write the two outputs: the contract `Table<Faq>`
+/// (`<id>-<collection>.json`, the single structured output) and the human-readable print
+/// `portal-<collection>.txt`. The legacy tree dump `<collection>.json` is no longer written.
 pub fn run(source: &FaqSource) -> Result<()> {
     let tree = scrape(source)?;
 
-    let output_path = source.output_path();
-    let json = serde_json::to_string_pretty(&tree)?;
-    if let Some(parent) = Path::new(&output_path).parent() {
+    // Contrato: achata a árvore para Vec<Faq> e grava Table<Faq>. Esta passa a ser a ÚNICA saída
+    // estruturada (o engine lê isto); `faqs.json` (árvore) foi descartado.
+    let items = flatten_faqs(&tree);
+    let table = auli_contract::Table::new(source.id.clone(), source.collection.clone(), items);
+    let contract_path = source.contract_path();
+    let json = serde_json::to_string_pretty(&table)?;
+    if let Some(parent) = Path::new(&contract_path).parent() {
         std::fs::create_dir_all(parent)?;
     }
-    std::fs::write(&output_path, &json)?;
-    println!("Wrote {} ({} bytes)", output_path, json.len());
+    std::fs::write(&contract_path, &json)?;
+    println!("Wrote {} ({} faqs)", contract_path, table.len());
 
+    // Print legível (auditoria) — formato inalterado, nunca lido de volta.
     let portal_path = source.portal_path();
     let portal = portal::render_portal_faqs(&tree);
     std::fs::write(&portal_path, &portal)?;
     println!("Wrote {} ({} bytes)", portal_path, portal.len());
 
     Ok(())
+}
+
+/// Flattens the FAQ tree into the contract's `Vec<Faq>`, using the SAME traversal as
+/// `portal::render_portal_faqs` (start from the root's children; one `Faq` per `FaqItem` of each
+/// leaf `Faq` node), so contract order matches the print order.
+///
+/// `text_to_embed` (D2) reproduces the key of the old engine `EmbedStrategy::QuestionKey`, which
+/// embedded the `## pergunta` field = breadcrumb `origin` + the question text.
+pub fn flatten_faqs(root: &FaqNode) -> Vec<auli_contract::Faq> {
+    let mut out = Vec::new();
+    for child in &root.children {
+        collect_faqs(child, &mut out);
+    }
+    out
+}
+
+fn collect_faqs(node: &FaqNode, out: &mut Vec<auli_contract::Faq>) {
+    if node.page_type == PageType::Faq {
+        for item in &node.faq_items {
+            let text_to_embed = if node.origin.is_empty() {
+                item.pergunta.clone()
+            } else {
+                format!("{} {}", node.origin, item.pergunta)
+            };
+            out.push(auli_contract::Faq {
+                pergunta: item.pergunta.clone(),
+                resposta: item.resposta.clone(),
+                origin: node.origin.clone(),
+                url: node.url.clone(),
+                text_to_embed,
+            });
+        }
+    }
+    for child in &node.children {
+        collect_faqs(child, out);
+    }
 }
 
 /// Walk the portal and return the FAQ tree without writing anything.
@@ -237,6 +281,61 @@ fn panels(html: &str) -> Vec<&str> {
     }
 
     slices
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn faq_leaf(url: &str, origin: &str, items: &[(&str, &str)]) -> FaqNode {
+        FaqNode {
+            title: url.to_string(),
+            url: url.to_string(),
+            page_type: PageType::Faq,
+            origin: origin.to_string(),
+            children: Vec::new(),
+            faq_items: items
+                .iter()
+                .map(|(p, r)| FaqItem { pergunta: p.to_string(), resposta: r.to_string() })
+                .collect(),
+        }
+    }
+
+    fn menu(url: &str, children: Vec<FaqNode>) -> FaqNode {
+        FaqNode {
+            title: url.to_string(),
+            url: url.to_string(),
+            page_type: PageType::Menu,
+            origin: String::new(),
+            children,
+            faq_items: Vec::new(),
+        }
+    }
+
+    #[test]
+    fn flatten_mirrors_portal_order_and_builds_embed_key() {
+        // root(menu) -> [ leaf A (2 items, with origin), menu -> leaf B (1 item, no origin) ]
+        let root = menu(
+            "root",
+            vec![
+                faq_leaf("ua", "Inicial | A", &[("q1", "r1"), ("q2", "r2")]),
+                menu("um", vec![faq_leaf("ub", "", &[("q3", "r3")])]),
+            ],
+        );
+
+        let faqs = flatten_faqs(&root);
+
+        // Depth-first from the root's children: q1, q2, q3 (same order as render_portal_faqs).
+        assert_eq!(faqs.len(), 3);
+        assert_eq!(faqs[0].pergunta, "q1");
+        assert_eq!(faqs[0].url, "ua");
+        assert_eq!(faqs[0].origin, "Inicial | A");
+        // Key reproduces the old QuestionKey strategy: origin + question.
+        assert_eq!(faqs[0].text_to_embed, "Inicial | A q1");
+        assert_eq!(faqs[2].pergunta, "q3");
+        // Empty origin -> the key is just the question.
+        assert_eq!(faqs[2].text_to_embed, "q3");
+    }
 }
 
 /// Turns a URL into a safe cache filename (non `[A-Za-z0-9-_.]` chars become `_`).

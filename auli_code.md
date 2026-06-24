@@ -37,12 +37,21 @@ O ecossistema tem três partes:
 | `auli-collections` | Scrapers que produzem o conteúdo ingerido | Rust (síncrono, `ureq`) |
 
 > **Atualização — backend refatorado para o workspace `auli`.** O `auli-server` (monólito) foi
-> reorganizado em um **workspace Cargo único** `auli/` com três crates em camadas
+> reorganizado em um **workspace Cargo único** `auli/` com crates em camadas
 > (`vector-store` ← `auli-core` ← `auli-cli`) e **um binário** com dois subcomandos
 > (`auli server` / `auli update`). A lógica do `auli-server` foi **preservada verbatim** nos
 > novos crates (ver §9 para o detalhe e a prova de paridade). O diretório `auli-server/`
 > permanece em disco como **baseline de referência** pré-refatoração. As seções §3 a §3.10
 > descrevem esse baseline; **§9 descreve o estado atual (workspace `auli`)**.
+>
+> **Atualização — `auli-contract` (2026-06-23).** O workspace ganhou o crate magro
+> **`auli-contract`** (serde-only): a **forma do dado** (`Table<P>`, `Faq`, `Servico`, trait
+> `Embeddable`) compartilhada entre o scraper e o engine. O **`auli-collections` foi movido para
+> dentro do workspace** (`auli/crates/auli-collections`, 5º membro). Fluxo novo: o scraper compila
+> `Table<P>` preenchendo `text_to_embed` → `data/<id>/raw/<id>-<kind>.json`; o `auli update` lê o
+> contrato, embeda `text_to_embed` e armazena `stored_repr` (sem mais parsing de `portal-*.txt`,
+> que viraram só *print* de auditoria). `STRATEGY_VERSION` foi para **2**. Caminhos `auli-collections/…`
+> nas seções abaixo agora vivem em **`auli/crates/auli-collections/…`**.
 
 Há ainda uma pasta `auli-docs/` no workspace (origem histórica dos scrapers), fora do
 escopo dos três repositórios principais.
@@ -51,7 +60,7 @@ escopo dos três repositórios principais.
 
 ## 2. Arquitetura e fluxo de dados ponta a ponta
 
-> **Atualização — integração unificada sob `data/` (ver [roteiro_integracao_data.md](roteiro_integracao_data.md)).**
+> **Atualização — integração unificada sob `data/`.**
 > O fluxo de "cópia manual" descrito abaixo foi **substituído** por uma pasta única `data/` na raiz:
 > `data/registry.toml` (entidades, fonte única), `data/prompts/`, e por estado
 > `data/<id>/{raw (scraper), ref (autorado, versionado), packs (`auli update`)}`. O server lê os
@@ -469,8 +478,8 @@ Totalmente **síncrono** — confirmado: não há `tokio`/`async fn`/`.await` no
 
 ### 5.2 CLI e dispatch
 
-[auli-collections/src/main.rs](auli-collections/src/main.rs):
-`cargo run [--usecache] <entity> <collection>`.
+[auli/crates/auli-collections/src/main.rs](auli/crates/auli-collections/src/main.rs):
+`cd auli && cargo run -p auli-collections -- [--usecache] <entity> <collection>`.
 
 - `<entity>` (omitido/vazio → `rs`) é resolvido e validado por
   `domain::entities::get_entity`.
@@ -479,26 +488,22 @@ Totalmente **síncrono** — confirmado: não há `tokio`/`async fn`/`.await` no
 - Dispatch: `faqs` → `run_faqs`; `servicos` → `servicos::run(&entity.id, &entity.data_dir, use_cache)`;
   qualquer outro → erro.
 
-### 5.3 Modelo de domínio
+### 5.3 Saída: o contrato `auli-contract`
 
-[auli-collections/src/domain/collections.rs](auli-collections/src/domain/collections.rs):
-mesma estrutura `Collection` do servidor, **porém** com diferenças (ver §6):
+A cópia divergente `domain/collections.rs` (que duplicava o `Collection`/`EmbedStrategy` do engine)
+foi **apagada**. O scraper agora compila o conteúdo no **contrato tipado** (`auli-contract`): para
+cada kind monta uma `Table<P>` (`Table<Faq>` / `Table<Servico>`), preenchendo o `text_to_embed` de
+cada registro, e grava em `data/<id>/raw/<id>-<kind>.json`. O engine (`auli update`) lê isso direto
+— não há mais `EmbedStrategy`/parsing de `portal-*.txt` deste lado nem do outro.
 
-| const | kind | file | delimiter | embed | n_results |
-| --- | --- | --- | --- | --- | --- |
-| `SERVICOS` | `servicos` | `portal-servicos.txt` | `## pergunta` | `FullText` | 10 |
-| `FAQS` | `faqs` | `portal-faqs.txt` | `## pergunta` | `FullText` | 20 |
-| `PARECERES` | `pareceres` | `portal-pareceres.txt` | `## pergunta` | `FullText` | 3 |
-| `NOTAS` | `notas` | `portal-notas.txt` | `## pergunta` | `FullText` | 1 |
-
-`EmbedStrategy::Description` está presente mas **não usado** (comentado como "Currently
-unused").
-
-**Distinção crucial:** o módulo `domain` deste crate está **wired mas não consumido pelo
-pipeline** — `src/domain/mod.rs` carrega `#![allow(dead_code)]`
-([domain/mod.rs](auli-collections/src/domain/mod.rs)). Ou seja, os scrapers produzem os
-arquivos, mas a ingestão/embedding é feita pelo `auli-server`, não aqui. Não há cliente
-Ollama/Chroma neste crate (o `errors.rs` não tem variante Ollama).
+- **`text_to_embed`** (D2): faqs → breadcrumb `origin` + a pergunta (reproduz a key do antigo
+  `QuestionKey`); servicos → `tipo | classe` + título + início do corpo da descrição.
+- **`stored_repr`** reproduz o bloco `## pergunta`/`## resposta` (mesma forma do `portal-*.txt`), então
+  o contexto servido ao RAG continua coerente.
+- Os antigos `faqs.json` (árvore) e `servicos.json` (flat agregado) foram **descartados**; o
+  `portal-<kind>.txt` continua sendo escrito como *print* legível (auditoria), nunca lido de volta.
+- `pareceres`/`notas` são autorados (sem scraper) e ainda não têm fonte struct — ficam ausentes nos
+  packs até serem modelados como `Table<P>`.
 
 ### 5.4 Registro de entidades
 
@@ -587,7 +592,7 @@ explícito de que o parser de HTML do RS **não** funcionará para SC sem reescr
 
 ## 6. Divergências e inconsistências entre repositórios (confirmadas no código)
 
-> **RESOLVIDO — integração `data/` (Fases 1–4 do [roteiro_integracao_data.md](roteiro_integracao_data.md)).**
+> **RESOLVIDO — integração `data/` (Fases 1–4 da unificação sob `data/`).**
 > As divergências 1–4 abaixo foram **eliminadas**: (1) a triplicação do `domain` deixou de existir —
 > `data/registry.toml` é a fonte única de entidades, lida por `auli-cli` e `auli-collections`, e o
 > frontend gera `entities.ts` dela; o kind vetorial canônico é `services` (o registry mapeia o rótulo

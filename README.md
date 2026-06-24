@@ -50,10 +50,10 @@ This is a **monorepo** of four cooperating components plus shared docs.
 
 | Path | Component | Role | Stack |
 | --- | --- | --- | --- |
-| [`auli/`](auli/) | **auli workspace** | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Three layered crates. | Rust (Axum, Tokio) |
+| [`auli/`](auli/) | **auli workspace** | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio) |
 | [`auli-server/`](auli-server/) | **auli-server** | Pre-refactor monolith, kept as a **reference baseline**. Logic was carried into `auli/` verbatim. | Rust (Axum, Tokio) |
 | [`auli-frontend/`](auli-frontend/) | **auli-frontend** | Web UI: state selection (interactive Brazil map), chat, and reference tabs. | React 19 + TypeScript + Vite |
-| [`auli-collections/`](auli-collections/) | **auli-collections** | Scrapers that collect and standardize the official content the search is built from. | Rust (synchronous) |
+| [`auli/crates/auli-collections/`](auli/crates/auli-collections/) | **auli-collections** | Scrapers that collect official content and compile it into the typed `auli-contract` (`Table<P>`). Now a workspace crate. | Rust (synchronous) |
 | [`data/`](data/) | **shared data** | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`. | TOML + JSON/txt |
 | [`scripts/`](scripts/) | **tooling** | `build-packs.sh` (vectorize), `gen-frontend-entities.mjs` + `build-frontend-public.sh` (regen frontend from `data/`). | Bash + Node |
 | `auli_*.md` | **docs** | Product, technical and operations references (Portuguese). | — |
@@ -63,8 +63,7 @@ This is a **monorepo** of four cooperating components plus shared docs.
 > [`data/registry.toml`](data/registry.toml); the scraper writes `data/<id>/raw/`, authored
 > reference content is versioned in `data/<id>/ref/`, and `auli update` builds `data/<id>/packs/`.
 > The frontend's `entities.ts` and `public/<id>/` are **generated** from `data/` by `scripts/`
-> (the prior hand-copying is gone). See [auli_code.md](auli_code.md) §2 and
-> [roteiro_integracao_data.md](roteiro_integracao_data.md).
+> (the prior hand-copying is gone). See [auli_code.md](auli_code.md) §2.
 
 ---
 
@@ -72,22 +71,28 @@ This is a **monorepo** of four cooperating components plus shared docs.
 
 ### `auli/` — backend workspace (current)
 
-A single Cargo workspace with **strict layering** (`vector-store` ← `auli-core` ← `auli-cli`) and
-**one binary** with two subcommands. A shared `Cargo.lock` guarantees the `update` and `server`
-modes use the *same* embedding model — the vector space is shared by construction.
+A single Cargo workspace with **strict layering** (`auli-contract` is the shared data shape;
+`vector-store` ← `auli-core` ← `auli-cli`) and **one binary** with two subcommands. A shared
+`Cargo.lock` guarantees the `update` and `server` modes use the *same* embedding model — the vector
+space is shared by construction.
 
 | Crate | Responsibility |
 | --- | --- |
+| [`crates/auli-contract`](auli/crates/auli-contract/) | The **shared data shape** (serde-only): `Table<P>`, `Faq`, `Servico`, and the `Embeddable` trait (`text_to_embed` / `stored_repr`). The single point where the scraper (producer) and the engine (consumer) agree. |
 | [`crates/vector-store`](auli/crates/vector-store/) | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert. |
-| [`crates/auli-core`](auli/crates/auli-core/) | Auli domain: BGE-M3 embedder (dim 1024), corpus parsing + `EmbedStrategy`, and the pack **manifest** (embedding identity + integrity hash). |
+| [`crates/auli-core`](auli/crates/auli-core/) | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash). |
 | [`crates/auli-cli`](auli/crates/auli-cli/) | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`. |
+| [`crates/auli-collections`](auli/crates/auli-collections/) | The scrapers — compile portal content into `auli-contract` tables (`<id>-<kind>.json`). |
 
 Two modes:
 
 ```bash
-auli update --entity <id> --source <dir-with-portal-txt> --out <packs-dir> [--version <v>]   # only writer
-auli server --packs-dir <packs-dir> [--port 3000]                                            # strictly read-only
+auli update --entity <id> --source <data/<id>/raw> --out <packs-dir> [--version <v>]   # only writer
+auli server --packs-dir <packs-dir> [--port 3000]                                      # strictly read-only
 ```
+
+`auli update` reads the scraper's typed contract (`<source>/<id>-faqs.json`, `<id>-servicos.json` =
+`auli_contract::Table<P>`), embeds each record's `text_to_embed` and stores its `stored_repr`.
 
 `auli server` is read-only by construction: it eager-loads collections via `ReadStore`, **validates
 the pack manifest** against the local embedding identity at boot (and refuses to start on mismatch),
@@ -118,18 +123,20 @@ npm test           # Vitest
 
 The only backend endpoint the frontend calls is `POST /v1/question` (via `VITE_API_URL`).
 
-### `auli-collections/` — scrapers
+### `auli/crates/auli-collections/` — scrapers
 
-A synchronous Rust program that collects content from a secretariat's portal and emits standardized
-files (`<kind>.json` + `portal-<kind>.txt`).
+A synchronous Rust program that collects content from a secretariat's portal and compiles it into
+the typed `auli-contract` (`Table<Faq>` / `Table<Servico>` → `data/<id>/raw/<id>-<kind>.json`),
+materializing each record's `text_to_embed`. It also writes the human-readable `portal-<kind>.txt`
+(an audit *print* of the struct, never read back).
 
 - **FAQs** — SEFAZ-RS portal (headless Chrome + `ureq`).
 - **Services** — RS (headless Chrome) and SC (SEF-SC Next.js JSON API).
 - On-disk **cache** with an offline `--usecache` mode; **dedup** of services shared across audiences.
 
 ```bash
-cd auli-collections
-cargo run -- [--usecache] <entity> <collection>     # e.g. cargo run -- rs servicos
+cd auli
+cargo run -p auli-collections -- [--usecache] <entity> <collection>   # e.g. ... -- rs servicos
 ```
 
 ---
@@ -153,8 +160,8 @@ cp .env.example .env        # then fill in LLM_API_* (LLM endpoint)
 ```
 
 Generate the vector packs the server serves (only needed when content or the embedding strategy
-changes) — `build-packs.sh` aggregates `data/<id>/{raw,ref}` and runs `auli update` into
-`data/<id>/packs/`:
+changes) — `build-packs.sh` runs `auli update` over the scraper's contract in `data/<id>/raw/` into
+`data/<id>/packs/` (`pareceres`/`notas` have no struct source yet and are skipped):
 
 ```bash
 scripts/build-packs.sh rs          # and: scripts/build-packs.sh sc

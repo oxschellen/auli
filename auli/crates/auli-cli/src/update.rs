@@ -1,19 +1,25 @@
 //! `auli update` — the vectorizer / pack builder (the only writer).
 //!
-//! For each content kind: read `<source>/<file>`, `parse_blocks` → `prepare_documents` →
-//! `embed_dense` (all via `auli-core`, the SAME code the server uses on the query), assign
-//! sequential `id-1..id-N`, and `Writer::reset` + `upsert` into `<out>/<entity>-<kind>.json`.
-//! Finally write `<out>/<entity>.manifest.json` stamping the embedding identity, so the server
-//! can validate it at boot.
+//! For each content kind it reads the scraper's contract table `<source>/<entity>-<table>.json`
+//! (an `auli_contract::Table<P>`), embeds each record's `text_to_embed()` and stores its
+//! `stored_repr()` — via `auli-core::embed`, the SAME encoder the server uses on the query —
+//! assigns sequential `id-1..id-N`, and `Writer::reset` + `upsert` into
+//! `<out>/<entity>-<kind>.json`. Finally writes `<out>/<entity>.manifest.json` stamping the
+//! embedding identity, so the server can validate it at boot.
+//!
+//! The UI/scraper label `servicos` maps to the vector kind `services`: the source file is
+//! `<entity>-servicos.json` but the pack/kind is `<entity>-services`. `pareceres`/`notas` have no
+//! struct source yet (authored, not scraped) and are simply absent until modeled as a contract.
 //!
 //! Does NOT use the server `Config` (no LLM/JWT/DB needed for ingestion) — only the embedder
 //! settings, read directly from the environment with defaults.
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-use auli_core::corpus;
+use auli_contract::{Embeddable, Table};
 use auli_core::embed::{Embedder, EMBED_DIM};
 use auli_core::manifest::{self, CollectionEntry, Manifest};
+use serde::de::DeserializeOwned;
 use vector_store::Writer;
 
 use crate::error::Result;
@@ -28,39 +34,19 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     let writer = Writer::new(&out);
     let mut entries: Vec<CollectionEntry> = Vec::new();
 
-    for collection in corpus::ALL {
-        let src = source.join(collection.file);
-        let name = format!("{}-{}", entity, collection.kind);
-
-        if !src.exists() {
-            println!("⏭️  {} ausente ({:?}) — pulando", collection.kind, src);
-            continue;
-        }
-
-        let path_str = src.to_str().ok_or("caminho de origem inválido (não-UTF8)")?;
-        let blocks = corpus::parse_blocks(path_str, collection.delimiter)?;
-        let (stored, to_embed) = corpus::prepare_documents(&blocks, collection);
-        println!("🔢 {}: {} blocos → vetorizando...", collection.kind, stored.len());
-
-        let embeddings = embedder.embed_dense(to_embed)?;
-        let ids: Vec<String> = (1..=stored.len()).map(|i| format!("id-{}", i)).collect();
-
-        writer.reset::<String>(&name)?; // clean reload: no orphan id-(N+1)..
-        let total = writer.upsert(&name, &ids, embeddings, &stored)?;
-
-        // Stamp this collection in the manifest (count + integrity hash of the written file).
-        let file_name = format!("{}.json", name);
-        let written = std::fs::read(out.join(&file_name))?;
-        entries.push(CollectionEntry {
-            kind: collection.kind.to_string(),
-            count: total as usize,
-            dim: EMBED_DIM,
-            file: file_name,
-            bytes: written.len() as u64,
-            hash: manifest::hash_hex(&written),
-        });
-        println!("✅ {} → {} registros", name, total);
+    // faqs: contract Table<Faq> in <source>/<entity>-faqs.json -> pack <entity>-faqs.
+    if let Some(entry) = ingest::<auli_contract::Faq>(
+        &embedder, &writer, &entity, "faqs", &format!("{}-faqs.json", entity), &source, &out,
+    )? {
+        entries.push(entry);
     }
+    // servicos (label) -> services (vector kind): <entity>-servicos.json -> pack <entity>-services.
+    if let Some(entry) = ingest::<auli_contract::Servico>(
+        &embedder, &writer, &entity, "services", &format!("{}-servicos.json", entity), &source, &out,
+    )? {
+        entries.push(entry);
+    }
+    // pareceres/notas: sem fonte struct por ora (autorados) — ausentes até serem modelados.
 
     let manifest = Manifest {
         entity: entity.clone(),
@@ -76,4 +62,54 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     println!("📝 Manifesto escrito em {:?}", mpath);
 
     Ok(())
+}
+
+/// Ingest one contract table into the entity's `<entity>-<kind>` vector collection.
+///
+/// `source_file` is the scraper's contract JSON (e.g. `rs-servicos.json`); `kind` is the engine
+/// vector kind (e.g. `services`). Embeds `P::text_to_embed`, stores `P::stored_repr`. Returns the
+/// manifest entry, or `None` if the source is absent (a kind with no struct source yet — skipped).
+fn ingest<P>(
+    embedder: &Embedder,
+    writer: &Writer,
+    entity: &str,
+    kind: &str,
+    source_file: &str,
+    source_dir: &Path,
+    out: &Path,
+) -> Result<Option<CollectionEntry>>
+where
+    P: Embeddable + DeserializeOwned,
+{
+    let src = source_dir.join(source_file);
+    if !src.exists() {
+        println!("⏭️  {} ausente ({:?}) — pulando", kind, src);
+        return Ok(None);
+    }
+
+    let bytes = std::fs::read(&src)?;
+    let table: Table<P> = serde_json::from_slice(&bytes)?;
+    let to_embed: Vec<String> = table.items.iter().map(|it| it.text_to_embed().to_string()).collect();
+    let stored: Vec<String> = table.items.iter().map(|it| it.stored_repr()).collect();
+    println!("🔢 {}: {} registros → vetorizando...", kind, stored.len());
+
+    let name = format!("{}-{}", entity, kind);
+    let embeddings = embedder.embed_dense(to_embed)?;
+    let ids: Vec<String> = (1..=stored.len()).map(|i| format!("id-{}", i)).collect();
+
+    writer.reset::<String>(&name)?; // clean reload: no orphan id-(N+1)..
+    let total = writer.upsert(&name, &ids, embeddings, &stored)?;
+
+    // Stamp this collection in the manifest (count + integrity hash of the written file).
+    let file_name = format!("{}.json", name);
+    let written = std::fs::read(out.join(&file_name))?;
+    println!("✅ {} → {} registros", name, total);
+    Ok(Some(CollectionEntry {
+        kind: kind.to_string(),
+        count: total as usize,
+        dim: EMBED_DIM,
+        file: file_name,
+        bytes: written.len() as u64,
+        hash: manifest::hash_hex(&written),
+    }))
 }

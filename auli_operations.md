@@ -20,8 +20,9 @@ O binário único `auli` tem dois modos:
 
 - **`auli server`** — sobe a API HTTP (axum) em `:3000`, **somente leitura**: carrega os pacotes
   de vetores, valida o manifesto e responde perguntas (RAG). Embeda só a pergunta; nunca escreve.
-- **`auli update`** — vetoriza os `portal-*.txt` de uma entidade em **pacotes** (`<id>-<kind>.json`
-  - `<id>.manifest.json`). É o **único** que escreve dados.
+- **`auli update`** — lê o **contrato tipado** do scraper (`data/<id>/raw/<id>-<kind>.json` =
+  `auli_contract::Table<P>`), embeda o `text_to_embed` de cada registro e escreve os **pacotes**
+  (`<id>-<kind>.json` + `<id>.manifest.json`). É o **único** que escreve dados.
 
 Embeddings (fastembed/BGE-M3) e busca vetorial rodam **in-process** — não há Ollama, ChromaDB nem
 serviço de embedding para subir à parte.
@@ -72,21 +73,22 @@ Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data
 `auli/`). O `auli server` lê de lá: `registry.toml`, `prompts/` e os packs por entidade.
 
 ### 4.1 Pacotes de vetores (`data/<id>/packs/`)
-Gerados pelo `scripts/build-packs.sh`, que **agrega** os `portal-*.txt` de `data/<id>/{raw,ref}` e
-chama o `auli update` para aquela entidade:
+Gerados pelo `scripts/build-packs.sh`, que aponta o `auli update --source` para `data/<id>/raw/`
+(onde o scraper grava o contrato `<id>-faqs.json` / `<id>-servicos.json`):
 
 ```bash
 scripts/build-packs.sh rs        # e: scripts/build-packs.sh sc
 ```
-Produz `data/rs/packs/rs-services.json` (627), `rs-faqs.json` (1914), `rs-pareceres.json` (331),
-`rs-notas.json` (1) e `rs.manifest.json`. **Só precisa rodar de novo quando o conteúdo ou a
-estratégia de embedding mudar.**
+Produz `data/rs/packs/rs-services.json` (≈627), `rs-faqs.json` (≈1914) e `rs.manifest.json`
+(`strategy_version: 2`). `pareceres`/`notas` são autorados (sem scraper) e ainda **não** têm fonte
+struct no contrato — ficam **ausentes** até serem modelados; o server tolera packs ausentes (sobe
+com a coleção vazia). **Só precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
 
 ### 4.2 Entidades (`data/registry.toml`)
 A lista de entidades e o caminho do prompt de cada uma vêm do **registro único**
 `data/registry.toml` (não há mais symlink `./entities`). O system prompt é lido de
 `data/prompts/<id>.txt`. Adicionar um estado = uma entrada `[[entities]]` no registry + os dados em
-`data/<id>/` (ver [roteiro_integracao_data.md](roteiro_integracao_data.md)).
+`data/<id>/`.
 
 ### 4.3 Modelo (`./models`)
 Cache do BGE-M3 (`EMBED_CACHE_DIR=./models` → `auli/models`). Baixa do Hugging Face no 1º uso;
