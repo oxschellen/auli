@@ -51,6 +51,7 @@ fn run_faqs(entity: &EntityConfig, use_cache: bool) -> errors::Result<()> {
 fn faq_source_for(entity: &EntityConfig, use_cache: bool) -> errors::Result<faqs::FaqSource> {
     match entity.id.as_str() {
         "rs" => Ok(faqs::FaqSource {
+            id: entity.id.clone(),
             base_url: "https://atendimento.receita.rs.gov.br".to_string(),
             root_url: "https://atendimento.receita.rs.gov.br/perguntas-frequentes".to_string(),
             root_title: "Perguntas Frequentes".to_string(),
@@ -60,6 +61,7 @@ fn faq_source_for(entity: &EntityConfig, use_cache: bool) -> errors::Result<faqs
             use_cache,
         }),
         "sc" => Ok(faqs::FaqSource {
+            id: entity.id.clone(),
             // NOTE(sc): SEF-SC runs a different portal platform than RS (Next.js, slug/id URLs,
             // categories like /perguntas/<id>). These URLs are correct, but the faqs scraper's
             // HTML parsing + page classification (keyed off RS's `data-matriz-source-uri`) will

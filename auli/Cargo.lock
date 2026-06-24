@@ -164,6 +164,7 @@ name = "auli-collections"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "auli-contract",
  "headless_chrome",
  "regex",
  "scraper",

@@ -21,7 +21,7 @@ use std::collections::HashSet;
 
 use serde::Serialize;
 
-use types::{Servico, TipoServicos};
+use types::TipoServicos;
 
 /// Scrape an entity's services and write the per-tipo JSON, the aggregated `servicos.json`, the
 /// `servicos-index.json` tab manifest, and `portal-servicos.txt` under `data_dir`. Fetched pages are
@@ -31,12 +31,12 @@ pub fn run(entity_id: &str, data_dir: &str, use_cache: bool) -> Result<(), Box<d
         "rs" => {
             let tipos = utils::get_tipo_servicos();
             let failed = extrair_descricoes::extrair_descricoes_json(data_dir, use_cache)?;
-            finish(data_dir, &tipos)?;
+            finish(entity_id, data_dir, &tipos)?;
             report_failed_detail_urls(&failed);
         }
         "sc" => {
             let tipos = sc::scrape(data_dir, use_cache)?;
-            finish(data_dir, &tipos)?;
+            finish(entity_id, data_dir, &tipos)?;
         }
         other => {
             return Err(format!(
@@ -51,10 +51,10 @@ pub fn run(entity_id: &str, data_dir: &str, use_cache: bool) -> Result<(), Box<d
     Ok(())
 }
 
-/// Shared post-scrape steps: write the portal txt, the aggregated json, and the tab manifest.
-fn finish(data_dir: &str, tipos: &[TipoServicos]) -> Result<(), Box<dyn std::error::Error>> {
+/// Shared post-scrape steps: write the print txt, the contract `Table<Servico>`, and the tab manifest.
+fn finish(entity_id: &str, data_dir: &str, tipos: &[TipoServicos]) -> Result<(), Box<dyn std::error::Error>> {
     gerar_portal_servicos::gerar_portal_services_txt(data_dir, tipos)?;
-    write_servicos_json(data_dir, tipos)?;
+    write_servicos_contract(entity_id, data_dir, tipos)?;
     write_servicos_index(data_dir, tipos)?;
     Ok(())
 }
@@ -75,11 +75,22 @@ fn report_failed_detail_urls(failed: &[String]) {
     }
 }
 
-/// Aggregates the per-tipo JSON files into a single flat `servicos.json`, deduplicated by `link`
-/// (the same service can appear under several audiences/públicos — see `gerar_portal_servicos`).
-fn write_servicos_json(data_dir: &str, tipos: &[TipoServicos]) -> Result<(), Box<dyn std::error::Error>> {
-    let mut all: Vec<Servico> = Vec::new();
+/// Builds the contract `Table<Servico>` from the per-tipo JSON files (deduplicated by `link`, since
+/// the same service can appear under several audiences/públicos) and writes it to
+/// `<data_dir>/<id>-servicos.json`. This is now the single structured output for services; the old
+/// aggregated flat `servicos.json` is no longer written (it was not read by the frontend).
+///
+/// Each record carries `descricao` = the description BODY (the `tipo/classe/titulo` header lines are
+/// dropped, exactly like `portal-servicos.txt`) so `Servico::stored_repr` reproduces the print block;
+/// and a materialized `text_to_embed` (D2).
+fn write_servicos_contract(
+    entity_id: &str,
+    data_dir: &str,
+    tipos: &[TipoServicos],
+) -> Result<(), Box<dyn std::error::Error>> {
+    let mut items: Vec<auli_contract::Servico> = Vec::new();
     let mut seen_links: HashSet<String> = HashSet::new();
+    let mut next_id: usize = 1;
 
     for tipo in tipos {
         let path = format!("{}/{}.json", data_dir, tipo.filename);
@@ -87,17 +98,43 @@ fn write_servicos_json(data_dir: &str, tipos: &[TipoServicos]) -> Result<(), Box
             continue;
         }
         for service in utils::load_servicos_from_json(&path)? {
-            if seen_links.insert(service.link.clone()) {
-                all.push(service);
+            // One record per link; first occurrence wins (matches the print/dedup ordering).
+            if !seen_links.insert(service.link.clone()) {
+                continue;
             }
+            let body = gerar_portal_servicos::descricao_body(&service.descricao);
+            let text_to_embed =
+                servico_text_to_embed(&service.tipo, &service.classe, &service.titulo, &body);
+            items.push(auli_contract::Servico {
+                id: next_id,
+                tipo: service.tipo,
+                classe: service.classe,
+                orgao: service.orgao,
+                link: service.link,
+                titulo: service.titulo,
+                descricao: body,
+                text_to_embed,
+            });
+            next_id += 1;
         }
     }
 
-    let json = serde_json::to_string_pretty(&all)?;
-    let out = format!("{}/servicos.json", data_dir);
+    let table = auli_contract::Table::new(entity_id, "servicos", items);
+    let out = format!("{}/{}-servicos.json", data_dir, entity_id);
+    let json = serde_json::to_string_pretty(&table)?;
     std::fs::write(&out, json)?;
-    println!("Wrote {} ({} serviços únicos)", out, all.len());
+    println!("Wrote {} ({} serviços únicos)", out, table.len());
     Ok(())
+}
+
+/// `text_to_embed` for a service (D2): the breadcrumb `tipo | classe`, the title, and the start of
+/// the description body. Provisional formula — the PLANO leaves the exact `servicos` key as a pending
+/// item; re-vectorization is expected (the goal is retrieval equivalence, not bit-parity).
+fn servico_text_to_embed(tipo: &str, classe: &str, titulo: &str, body: &str) -> String {
+    let snippet: String = body.chars().take(300).collect();
+    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim())
+        .trim()
+        .to_string()
 }
 
 /// One entry of `servicos-index.json` — drives the frontend's audience tabs.
@@ -123,4 +160,34 @@ fn write_servicos_index(data_dir: &str, tipos: &[TipoServicos]) -> Result<(), Bo
     std::fs::write(&out, json)?;
     println!("Wrote {} ({} tabs)", out, entries.len());
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use auli_contract::Embeddable;
+
+    #[test]
+    fn text_to_embed_is_breadcrumb_title_and_body_start() {
+        let key = servico_text_to_embed("Empresas", "ICMS", "Emitir guia", "Passos para emitir.");
+        assert_eq!(key, "Empresas | ICMS\nEmitir guia\nPassos para emitir.");
+    }
+
+    #[test]
+    fn contract_servico_stored_repr_matches_print_block() {
+        // descricao já é o CORPO (sem o header tipo/classe/titulo), como gravado no contrato.
+        let s = auli_contract::Servico {
+            id: 1,
+            tipo: "Empresas".into(),
+            classe: "ICMS".into(),
+            orgao: "SEFAZ".into(),
+            link: "https://x/svc/1".into(),
+            titulo: "Emitir guia".into(),
+            descricao: "Passos para emitir a guia.".into(),
+            text_to_embed: "Empresas | ICMS\nEmitir guia\nPassos para emitir a guia.".into(),
+        };
+        // Mesmo conteúdo do bloco de portal-servicos.txt (sem o `// N.` e a newline final).
+        let expected = "## pergunta\nEmpresas | ICMS\nEmitir guia\n\n## resposta\nPassos para emitir a guia.\nLink: https://x/svc/1";
+        assert_eq!(s.stored_repr(), expected);
+    }
 }

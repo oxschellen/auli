@@ -5,6 +5,8 @@ edition = "2024"
 
 # Union of dependencies from auli-docs-faqs and auli-docs-servicos.
 [dependencies]
+# Contrato compartilhado com o engine: Table<P>/Faq/Servico. O scraper preenche `text_to_embed`.
+auli-contract = { path = "../auli-contract" }
 # Pure-sync HTTP client (no tokio). `json` adds Body::read_json; default features give rustls TLS + gzip.
 ureq = { version = "3", features = ["json"] }
 scraper = "0.27.0"

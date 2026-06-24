@@ -63,7 +63,7 @@ pub fn gerar_portal_services_txt(
 /// `build_descricao` (in extrair_descricoes.rs) prepends. Those three fields are emitted in the
 /// `## pergunta` block instead, so dropping them here avoids duplicating them in `## resposta`.
 /// An empty/missing description yields an empty body.
-fn descricao_body(descricao: &str) -> String {
+pub(super) fn descricao_body(descricao: &str) -> String {
     descricao
         .lines()
         .skip(3)
