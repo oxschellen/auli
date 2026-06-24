@@ -5,8 +5,8 @@
 //!
 //! - [`embed`] — the BGE-M3 embedder, the single encoder for documents (`update`) and the query
 //!   (`server`).
-//! - [`corpus`] — `EmbedStrategy`, the `Collection` table, block parsing, and `prepare_documents`:
-//!   *what* gets embedded.
+//! - [`corpus`] — the per-kind retrieval knobs (`Collection`: kind + `n_results`). *What* gets
+//!   embedded now lives in `auli-contract` (the scraper materializes `text_to_embed`/`stored_repr`).
 //! - [`manifest`] — the embedding identity (model + dim + strategy version) and pack manifest
 //!   schema/validation that pins it.
 

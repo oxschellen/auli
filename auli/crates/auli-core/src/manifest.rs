@@ -1,8 +1,8 @@
 //! Embedding identity + pack manifest.
 //!
 //! A manifest pins the *identity* of the embedding space a set of packs was built with: which
-//! model, which dimension, and which `STRATEGY_VERSION` (what `corpus::prepare_documents`/`parse_*`
-//! actually embedded). `auli update` writes it; `auli server` validates the local identity against
+//! model, which dimension, and which `STRATEGY_VERSION` (what `auli-contract` / the scraper
+//! materialized as `text_to_embed`). `auli update` writes it; `auli server` validates the local identity against
 //! it at boot and **refuses to serve** on a mismatch — turning "forgot to re-ingest after changing
 //! the strategy" from silent bad retrieval into a loud boot error.
 //!
@@ -20,9 +20,10 @@ use crate::error::{Error, Result};
 /// changes (it implies a full re-ingest).
 pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 
-/// Bumped whenever `corpus::prepare_documents` / `parse_*` change what gets embedded. A pack built
-/// under an old strategy is incompatible with a server running a new one even if the model matches.
-pub const STRATEGY_VERSION: u32 = 1;
+/// Bumped whenever what gets embedded changes (the scraper's `text_to_embed` formula / the contract
+/// `stored_repr`). A pack built under an old strategy is incompatible with a server running a new one
+/// even if the model matches. v2: source is the typed `auli-contract` (was: `portal-*.txt` parsing).
+pub const STRATEGY_VERSION: u32 = 2;
 
 /// The triple that must match between the packs and the running server.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
