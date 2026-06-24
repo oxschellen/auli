@@ -127,6 +127,34 @@ fn write_servicos_contract(
     Ok(())
 }
 
+/// Rebuild `<id>-servicos.json` (contract) **offline**, from the already-scraped per-tipo files
+/// listed in `servicos-index.json` — no network. Used to regenerate packs after a `STRATEGY_VERSION`
+/// bump without re-scraping. No-op if the index is absent.
+pub fn rebuild_contract_from_raw(
+    entity_id: &str,
+    data_dir: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let index_path = format!("{}/servicos-index.json", data_dir);
+    if !std::path::Path::new(&index_path).exists() {
+        println!("⏭️  {} ausente — pulando servicos", index_path);
+        return Ok(());
+    }
+    #[derive(serde::Deserialize)]
+    struct IdxEntry {
+        tipo: String,
+        filename: String,
+    }
+    let bytes = std::fs::read(&index_path)?;
+    let idx: Vec<IdxEntry> = serde_json::from_slice(&bytes)?;
+    // `url` não é usado por write_servicos_contract (só `filename`); valor vazio basta no rebuild.
+    let tipos: Vec<TipoServicos> = idx
+        .into_iter()
+        .map(|e| TipoServicos { tipo: e.tipo, filename: e.filename, url: String::new() })
+        .collect();
+    println!("rebuild offline de servicos ({}): {} tipos", entity_id, tipos.len());
+    write_servicos_contract(entity_id, data_dir, &tipos)
+}
+
 /// `text_to_embed` for a service (D2): the breadcrumb `tipo | classe`, the title, and the start of
 /// the description body. Provisional formula — the PLANO leaves the exact `servicos` key as a pending
 /// item; re-vectorization is expected (the goal is retrieval equivalence, not bit-parity).
