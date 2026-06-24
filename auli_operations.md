@@ -88,7 +88,7 @@ com a coleção vazia). **Só precisa rodar de novo quando o conteúdo ou a estr
 A lista de entidades e o caminho do prompt de cada uma vêm do **registro único**
 `data/registry.toml` (não há mais symlink `./entities`). O system prompt é lido de
 `data/prompts/<id>.txt`. Adicionar um estado = uma entrada `[[entities]]` no registry + os dados em
-`data/<id>/` (ver [roteiro_integracao_data.md](roteiro_integracao_data.md)).
+`data/<id>/`.
 
 ### 4.3 Modelo (`./models`)
 Cache do BGE-M3 (`EMBED_CACHE_DIR=./models` → `auli/models`). Baixa do Hugging Face no 1º uso;

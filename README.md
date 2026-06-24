@@ -63,8 +63,7 @@ This is a **monorepo** of four cooperating components plus shared docs.
 > [`data/registry.toml`](data/registry.toml); the scraper writes `data/<id>/raw/`, authored
 > reference content is versioned in `data/<id>/ref/`, and `auli update` builds `data/<id>/packs/`.
 > The frontend's `entities.ts` and `public/<id>/` are **generated** from `data/` by `scripts/`
-> (the prior hand-copying is gone). See [auli_code.md](auli_code.md) §2 and
-> [roteiro_integracao_data.md](roteiro_integracao_data.md).
+> (the prior hand-copying is gone). See [auli_code.md](auli_code.md) §2.
 
 ---
 

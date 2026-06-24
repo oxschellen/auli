@@ -60,7 +60,7 @@ escopo dos três repositórios principais.
 
 ## 2. Arquitetura e fluxo de dados ponta a ponta
 
-> **Atualização — integração unificada sob `data/` (ver [roteiro_integracao_data.md](roteiro_integracao_data.md)).**
+> **Atualização — integração unificada sob `data/`.**
 > O fluxo de "cópia manual" descrito abaixo foi **substituído** por uma pasta única `data/` na raiz:
 > `data/registry.toml` (entidades, fonte única), `data/prompts/`, e por estado
 > `data/<id>/{raw (scraper), ref (autorado, versionado), packs (`auli update`)}`. O server lê os
@@ -592,7 +592,7 @@ explícito de que o parser de HTML do RS **não** funcionará para SC sem reescr
 
 ## 6. Divergências e inconsistências entre repositórios (confirmadas no código)
 
-> **RESOLVIDO — integração `data/` (Fases 1–4 do [roteiro_integracao_data.md](roteiro_integracao_data.md)).**
+> **RESOLVIDO — integração `data/` (Fases 1–4 da unificação sob `data/`).**
 > As divergências 1–4 abaixo foram **eliminadas**: (1) a triplicação do `domain` deixou de existir —
 > `data/registry.toml` é a fonte única de entidades, lida por `auli-cli` e `auli-collections`, e o
 > frontend gera `entities.ts` dela; o kind vetorial canônico é `services` (o registry mapeia o rótulo
