@@ -27,7 +27,7 @@ the `domain::collections::Collection` model.
 ## The bigger system (context)
 
 This is one piece of "Auli", a multi-tenant RAG assistant for Brazilian state tax authorities (sibling
-folders `../../auli-server`, `../../auli-frontend`). Flow:
+folder `../../auli-frontend`). Flow:
 
 ```text
 scrape portal  →  portal-<kind>.txt  →  entities/<id>/  →  parse into blocks  →  embed (Ollama)

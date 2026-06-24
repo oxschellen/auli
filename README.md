@@ -51,7 +51,6 @@ This is a **monorepo** of four cooperating components plus shared docs.
 | Path | Component | Role | Stack |
 | --- | --- | --- | --- |
 | [`auli-engine/`](auli-engine/) | **auli workspace** | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio) |
-| [`auli-server/`](auli-server/) | **auli-server** | Pre-refactor monolith, kept as a **reference baseline**. Logic was carried into `auli-engine/` verbatim. | Rust (Axum, Tokio) |
 | [`auli-frontend/`](auli-frontend/) | **auli-frontend** | Web UI: state selection (interactive Brazil map), chat, and reference tabs. | React 19 + TypeScript + Vite |
 | [`auli-engine/crates/auli-collections/`](auli-engine/crates/auli-collections/) | **auli-collections** | Scrapers that collect official content and compile it into the typed `auli-contract` (`Table<P>`). Now a workspace crate. | Rust (synchronous) |
 | [`data/`](data/) | **shared data** | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`. | TOML + JSON/txt |
@@ -98,10 +97,13 @@ auli server --packs-dir <packs-dir> [--port 3000]                               
 the pack manifest** against the local embedding identity at boot (and refuses to start on mismatch),
 and only ever embeds the incoming question.
 
-### `auli-server/` — baseline (reference)
+### `auli-server/` — baseline (removed from the tree, preserved as a tag)
 
-The original monolith. **Superseded** by `auli-engine/`; kept on disk so the refactor stays auditable. See
-[auli-server/CLAUDE.md](auli-server/CLAUDE.md). Edit the workspace, not this tree.
+The original monolith, **superseded** by `auli-engine/` (logic carried over verbatim). It has been
+**removed from the working tree** and now lives in the annotated git tag **`baseline-auli-server`**
+(commit `c15c61b`), so the refactor stays auditable. Inspect it without checking it out via
+`git show baseline-auli-server:auli-server/<path>`, or restore the whole tree with
+`git checkout baseline-auli-server`. Edit the workspace, never the baseline.
 
 ### `auli-frontend/` — web UI
 
@@ -227,4 +229,4 @@ For the precise active-vs-modeled breakdown (routes, auth flows, cross-repo dive
 
 ## License
 
-[MIT](auli-server/LICENSE) — © 2026 Carlos Henrique Schellenberger and contributors.
+[MIT](LICENSE) — © 2026 Carlos Henrique Schellenberger and contributors.

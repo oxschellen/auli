@@ -11,7 +11,7 @@
 # (`ort` baixa o ONNX Runtime; o BGE-M3 baixa do Hugging Face para EMBED_CACHE_DIR no 1º uso).
 # O server também precisa de um `.env` na raiz do workspace (LLM_API_*, JWT_*, DATABASE_URL):
 # ele conecta no Postgres para auth no boot. Gere os pacotes antes com:
-#   auli update --entity rs --source ../auli-server/entities/rs --out ./packs
+#   auli update --entity rs --source ../data/rs/raw --out ./packs
 set -euo pipefail
 
 # Raiz do workspace = pasta-pai deste script (scripts/ -> raiz).

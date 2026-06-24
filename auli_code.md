@@ -40,9 +40,11 @@ O ecossistema tem três partes:
 > reorganizado em um **workspace Cargo único** `auli-engine/` com crates em camadas
 > (`vector-store` ← `auli-core` ← `auli-cli`) e **um binário** com dois subcomandos
 > (`auli server` / `auli update`). A lógica do `auli-server` foi **preservada verbatim** nos
-> novos crates (ver §9 para o detalhe e a prova de paridade). O diretório `auli-server/`
-> permanece em disco como **baseline de referência** pré-refatoração. As seções §3 a §3.10
-> descrevem esse baseline; **§9 descreve o estado atual (workspace `auli-engine`)**.
+> novos crates (ver §9 para o detalhe e a prova de paridade). O diretório `auli-server/` **foi
+> removido da árvore de trabalho** e preservado na tag anotada **`baseline-auli-server`**
+> (commit `c15c61b`); o baseline pré-refatoração continua recuperável e citável por commit
+> (`git show baseline-auli-server:auli-server/<caminho>`). As seções §3 a §3.10 descrevem esse
+> baseline; **§9 descreve o estado atual (workspace `auli-engine`)**.
 >
 > **Atualização — `auli-contract` (2026-06-23).** O workspace ganhou o crate magro
 > **`auli-contract`** (serde-only): a **forma do dado** (`Table<P>`, `Faq`, `Servico`, trait
@@ -97,8 +99,15 @@ Observações importantes confirmadas no código:
 
 ## 3. auli-server (backend Rust) — baseline pré-refatoração
 
-> Esta seção documenta o **monólito `auli-server`**, mantido em disco como baseline de
-> referência. O backend **atual** é o workspace `auli-engine` (§9), que reaproveita esta lógica verbatim.
+> ⚠️ **A árvore `auli-server/` foi removida do repositório.** Tudo nesta seção (§3 a §3.10)
+> descreve o **snapshot preservado na tag anotada `baseline-auli-server`** (commit `c15c61b`).
+> Os caminhos `auli-server/...` e os ~40 links abaixo referem-se a esse snapshot tagueado, **não**
+> a arquivos presentes na árvore atual — inspecione qualquer um deles com
+> `git show baseline-auli-server:<caminho>` (ex.: `git show baseline-auli-server:auli-server/src/lib.rs`),
+> ou recupere a árvore inteira com `git checkout baseline-auli-server`.
+>
+> Esta seção documenta o **monólito `auli-server`** como baseline de referência. O backend
+> **atual** é o workspace `auli-engine` (§9), que reaproveita esta lógica verbatim.
 > Onde §3 diz "o servidor faz X", o workspace faz o mesmo X — reorganizado entre os três crates.
 
 ### 3.1 Manifesto e dependências
@@ -686,7 +695,8 @@ O `auli-server` (monólito descrito em §3) foi reorganizado em um **workspace C
 `auli-engine/`, com **três crates em camadas** e **um binário** que troca de modo por subcomando. A
 lógica de negócio (parsing, `EmbedStrategy`, embedder, `cosine_distance`, `select_by_proximity`,
 LLM, RAG) foi movida **verbatim**; o que mudou foi a *fronteira entre módulos* e o
-*ciclo de vida* (ingestão separada do atendimento). O `auli-server/` segue em disco como baseline.
+*ciclo de vida* (ingestão separada do atendimento). O `auli-server/` **foi** preservado como baseline
+na tag `baseline-auli-server` (commit `c15c61b`) — ver §3.
 
 > **Atualização — auth e banco removidos do workspace.** A camada de autenticação (JWT RS256,
 > signin/register, `auth_middleware`, rotas protegidas) e o **PostgreSQL** foram **removidos** do
