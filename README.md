@@ -79,7 +79,7 @@ space is shared by construction.
 | Crate | Responsibility |
 | --- | --- |
 | [`crates/auli-contract`](auli/crates/auli-contract/) | The **shared data shape** (serde-only): `Table<P>`, `Faq`, `Servico`, and the `Embeddable` trait (`text_to_embed` / `stored_repr`). The single point where the scraper (producer) and the engine (consumer) agree. |
-| [`crates/vector-store`](auli/crates/vector-store/) | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert. |
+| [`crates/vector-store`](auli-engine/crates/vector-store/) | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert. |
 | [`crates/auli-core`](auli/crates/auli-core/) | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash). |
 | [`crates/auli-cli`](auli/crates/auli-cli/) | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`. |
 | [`crates/auli-collections`](auli/crates/auli-collections/) | The scrapers — compile portal content into `auli-contract` tables (`<id>-<kind>.json`). |
@@ -135,7 +135,7 @@ materializing each record's `text_to_embed`. It also writes the human-readable `
 - On-disk **cache** with an offline `--usecache` mode; **dedup** of services shared across audiences.
 
 ```bash
-cd auli
+cd auli-engine
 cargo run -p auli-collections -- [--usecache] <entity> <collection>   # e.g. ... -- rs servicos
 ```
 

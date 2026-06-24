@@ -115,7 +115,7 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
 ### 3.7 Autenticação e contas (backend) — apenas no baseline `auli-server`
 
 > **Não está no workspace atual.** Os itens abaixo existem somente no monólito `auli-server`
-> (baseline de referência); o workspace `auli` em produção **não tem auth, JWT nem banco** — o
+> (baseline de referência); o workspace `auli-engine` em produção **não tem auth, JWT nem banco** — o
 > servidor expõe apenas `/v1/health`, `/v1/question` e `/v1/{kind}/list`. Ver [auli_code.md](auli_code.md) §9.
 
 - **Cadastro e login** de usuários com senha protegida por hashing (Argon2, com compatibilidade

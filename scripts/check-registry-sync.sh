@@ -18,7 +18,7 @@ if ! git -C "$ROOT" diff --quiet -- auli-frontend/src/shared/entities.ts; then
 fi
 
 # 2) sem cópias de definição de entidade fora do registry
-for dead in auli/crates/auli-collections/src/entities auli/entities; do
+for dead in auli-engine/crates/auli-collections/src/entities auli-engine/entities; do
   if [ -e "$ROOT/$dead" ]; then
     echo "❌ definição de entidade reapareceu fora do registry: $dead"
     fail=1

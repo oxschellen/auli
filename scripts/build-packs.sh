@@ -22,7 +22,7 @@ RAW="$DATA/raw"
 echo "📂 origem ($ID): $(ls "$RAW"/*.json 2>/dev/null | xargs -r -n1 basename | tr '\n' ' ')"
 
 mkdir -p "$DATA/packs"
-export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-$ROOT/auli/models}"
+export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-$ROOT/auli-engine/models}"
 BIN="${AULI_BIN:-$ROOT/auli-server/target/release/auli}"
 [ -x "$BIN" ] || { echo "❌ binário não encontrado: $BIN (compile com cargo build --release)"; exit 1; }
 

@@ -36,13 +36,13 @@ O ecossistema tem três partes:
 | `auli-frontend` | Interface web (chat + navegação) | React 19 + TypeScript + Vite |
 | `auli-collections` | Scrapers que produzem o conteúdo ingerido | Rust (síncrono, `ureq`) |
 
-> **Atualização — backend refatorado para o workspace `auli`.** O `auli-server` (monólito) foi
+> **Atualização — backend refatorado para o workspace `auli-engine`.** O `auli-server` (monólito) foi
 > reorganizado em um **workspace Cargo único** `auli/` com crates em camadas
 > (`vector-store` ← `auli-core` ← `auli-cli`) e **um binário** com dois subcomandos
 > (`auli server` / `auli update`). A lógica do `auli-server` foi **preservada verbatim** nos
 > novos crates (ver §9 para o detalhe e a prova de paridade). O diretório `auli-server/`
 > permanece em disco como **baseline de referência** pré-refatoração. As seções §3 a §3.10
-> descrevem esse baseline; **§9 descreve o estado atual (workspace `auli`)**.
+> descrevem esse baseline; **§9 descreve o estado atual (workspace `auli-engine`)**.
 >
 > **Atualização — `auli-contract` (2026-06-23).** O workspace ganhou o crate magro
 > **`auli-contract`** (serde-only): a **forma do dado** (`Table<P>`, `Faq`, `Servico`, trait
@@ -98,7 +98,7 @@ Observações importantes confirmadas no código:
 ## 3. auli-server (backend Rust) — baseline pré-refatoração
 
 > Esta seção documenta o **monólito `auli-server`**, mantido em disco como baseline de
-> referência. O backend **atual** é o workspace `auli` (§9), que reaproveita esta lógica verbatim.
+> referência. O backend **atual** é o workspace `auli-engine` (§9), que reaproveita esta lógica verbatim.
 > Onde §3 diz "o servidor faz X", o workspace faz o mesmo X — reorganizado entre os três crates.
 
 ### 3.1 Manifesto e dependências
@@ -479,7 +479,7 @@ Totalmente **síncrono** — confirmado: não há `tokio`/`async fn`/`.await` no
 ### 5.2 CLI e dispatch
 
 [auli/crates/auli-collections/src/main.rs](auli/crates/auli-collections/src/main.rs):
-`cd auli && cargo run -p auli-collections -- [--usecache] <entity> <collection>`.
+`cd auli-engine && cargo run -p auli-collections -- [--usecache] <entity> <collection>`.
 
 - `<entity>` (omitido/vazio → `rs`) é resolvido e validado por
   `domain::entities::get_entity`.
@@ -680,7 +680,7 @@ explícito de que o parser de HTML do RS **não** funcionará para SC sem reescr
 
 ---
 
-## 9. Backend refatorado — o workspace `auli`
+## 9. Backend refatorado — o workspace `auli-engine`
 
 O `auli-server` (monólito descrito em §3) foi reorganizado em um **workspace Cargo único**
 `auli/`, com **três crates em camadas** e **um binário** que troca de modo por subcomando. A

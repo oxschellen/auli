@@ -11,7 +11,7 @@ contrato em `data/<id>/raw/<id>-<kind>.json` e o `auli update` o consome. O que 
 A validação de equivalência nunca rodou (precisa de rede externa + chave de LLM; não há cache local
 em `data/rs/cache/`). Antes de confiar nos packs novos:
 
-1. Re-raspar `rs` ao vivo: `cd auli && cargo run -p auli-collections -- rs faqs` e `... rs servicos`
+1. Re-raspar `rs` ao vivo: `cd auli-engine && cargo run -p auli-collections -- rs faqs` e `... rs servicos`
    (headless Chrome na SEFAZ-RS — lento; gera `data/rs/raw/rs-faqs.json` e `rs-servicos.json`).
 2. `scripts/build-packs.sh rs` → `data/rs/packs/` com `strategy_version: 2`.
 3. `./start_server.sh --no-tunnel` → conferir boot: **services ≈ 627, faqs ≈ 1914** (pareceres/notas
@@ -94,6 +94,6 @@ frontend de um `Kind` tipado único, eliminando a chance de divergência.
 - **Abas hardcoded no frontend:** [ServicosList.tsx](auli-frontend/src/pages/servicoslist/ServicosList.tsx)
   não usa `hasCollection`; [Home.tsx](auli-frontend/src/pages/home/Home.tsx) hardcoda as abas em vez
   de derivar de `collections` (SC mostra abas vazias).
-- **`EMBED_CACHE_DIR` com duas fontes:** `.env` (`./models`) vs `build-packs.sh` (`$ROOT/auli/models`).
+- **`EMBED_CACHE_DIR` com duas fontes:** `.env` (`./models`) vs `build-packs.sh` (`$ROOT/auli-engine/models`).
 - **Comentário histórico:** [faqs/mod.rs:99](auli/crates/auli-collections/src/faqs/mod.rs#L99) cita
   `EmbedStrategy::QuestionKey` (tipo já removido do engine) — referência de lineage, cosmética.

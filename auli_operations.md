@@ -1,8 +1,8 @@
 # Auli — Operação (compilar, subir, cloudflared, logs)
 
-Runbook prático para **compilar, gerar os dados e subir o servidor da Auli** (workspace `auli`,
+Runbook prático para **compilar, gerar os dados e subir o servidor da Auli** (workspace `auli-engine`,
 modo `server`) com o túnel do **Cloudflare** (cloudflared), e para saber **onde ficam os logs**. Para a descrição
-técnica do código, ver [auli_code.md](auli_code.md) (§9 cobre o workspace `auli`).
+técnica do código, ver [auli_code.md](auli_code.md) (§9 cobre o workspace `auli-engine`).
 
 > TL;DR — numa máquina já preparada (build feito, packs gerados):
 >
@@ -91,7 +91,7 @@ A lista de entidades e o caminho do prompt de cada uma vêm do **registro único
 `data/<id>/`.
 
 ### 4.3 Modelo (`./models`)
-Cache do BGE-M3 (`EMBED_CACHE_DIR=./models` → `auli/models`). Baixa do Hugging Face no 1º uso;
+Cache do BGE-M3 (`EMBED_CACHE_DIR=./models` → `auli-engine/models`). Baixa do Hugging Face no 1º uso;
 depois é reaproveitado (sem rede).
 
 ### 4.4 `.env` (raiz `auli_new/`)
@@ -212,7 +212,7 @@ RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG c
 | --- | --- |
 | `Não foi possível ler o registro de entidades` / `Entidades carregadas: []` | `AULI_DATA_DIR` não aponta para a pasta `data/` (com `registry.toml`). Rode via `start_server.sh` (exporta `../data`). |
 | `📦 Pacotes carregados de ./vectors` (e nada carregado) | Esqueceu `--packs-dir ../data` — caiu no default `./vectors`. Use o script ou passe a flag. |
-| Rebaixando `model_quantized.onnx` toda vez | CWD errado → `./models` vazio. Rode de `auli/` com o modelo em `auli/models` (`EMBED_CACHE_DIR=./models`). |
+| Rebaixando `model_quantized.onnx` toda vez | CWD errado → `./models` vazio. Rode de `auli-engine/` com o modelo em `auli-engine/models` (`EMBED_CACHE_DIR=./models`). |
 | Erro de cmake / `aws-lc-sys` no build | Sem cmake no PATH ou cmake 4 reclamando de policy. `export PATH="$HOME/.local/bin:$PATH"` e `export CMAKE_POLICY_VERSION_MINIMUM=3.5` (o `start_server.sh` já faz). |
 | `Variável de ambiente obrigatória ausente: ...` | Falta variável de LLM no `.env` (`LLM_API_URL`/`LLM_API_KEY`/`LLM_API_MODEL`). Ver §4.4. |
 | `Manifest incompatível ...` no boot | Pacotes gerados com modelo/dim/`strategy_version` diferente do binário. Re-gere com `auli update`. |
