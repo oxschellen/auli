@@ -2,7 +2,7 @@
 //!
 //! Subcommands (not flags) so each mode has its own exclusive options:
 //!   auli server  --port <p> --packs-dir <dir>
-//!   auli update  --entity <id> --source <dir_com_portal_txt> --out <dir> [--version <v>]
+//!   auli update  --entity <id> --source <dir_com_contrato_json> --out <dir> [--version <v>]
 
 use std::path::PathBuf;
 
@@ -24,7 +24,7 @@ enum Command {
         #[arg(long, default_value = "./vectors")]
         packs_dir: String,
     },
-    /// Vetoriza os `portal-*.txt` de uma entidade em pacotes `<id>-<kind>.json` + manifesto.
+    /// Vetoriza o contrato tipado (`auli_contract::Table<P>`) de uma entidade em pacotes `<id>-<kind>.json` + manifesto.
     Update {
         #[arg(long)]
         entity: String,

@@ -12,8 +12,9 @@ pub enum Error {
     #[error("Erro de (de)serialização do vector store: {0}")]
     Serde(#[from] serde_json::Error),
 
-    /// Reserved for Phase 5 dimension enforcement (reject a vector whose width disagrees with the
-    /// collection's established dimension). Carried here so the public error surface is stable.
+    /// Dimension enforcement: `Writer::upsert` rejects a vector whose width disagrees with the
+    /// collection's established dimension (first record wins), turning a silent degrade into a
+    /// loud write-time error.
     #[error("Dimensão incompatível: esperado {expected}, recebido {got}")]
     DimensionMismatch { expected: usize, got: usize },
 }

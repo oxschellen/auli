@@ -1,6 +1,6 @@
 //! Per-IP rate limiting for the public question route — the only path that calls the paid
-//! external LLM. Keyed by the real client IP (proxy headers first: we sit behind Cloudflare →
-//! ngrok, so the socket peer is the proxy, not the caller). Because office networks NAT many
+//! external LLM. Keyed by the real client IP (proxy headers first: we sit behind a Cloudflare
+//! Tunnel, so the socket peer is the proxy, not the caller). Because office networks NAT many
 //! machines behind one public IP, the limit is effectively **per-network/organization**.
 //!
 //! Quota: **1 request/second sustained, bursts up to 2** (GCRA, via `governor`).
