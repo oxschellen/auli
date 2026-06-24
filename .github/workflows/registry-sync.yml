@@ -12,7 +12,7 @@ on:
       - "scripts/check-registry-sync.sh"
       # Disparar também se reaparecer uma definição de entidade fora do registry (check #2 do script).
       - "auli/entities/**"
-      - "auli-collections/src/entities/**"
+      - "auli/crates/auli-collections/src/entities/**"
   push:
     branches: [main]
 
