@@ -53,7 +53,7 @@ This is a **monorepo** of four cooperating components plus shared docs.
 | [`auli/`](auli/) | **auli workspace** | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio) |
 | [`auli-server/`](auli-server/) | **auli-server** | Pre-refactor monolith, kept as a **reference baseline**. Logic was carried into `auli/` verbatim. | Rust (Axum, Tokio) |
 | [`auli-frontend/`](auli-frontend/) | **auli-frontend** | Web UI: state selection (interactive Brazil map), chat, and reference tabs. | React 19 + TypeScript + Vite |
-| [`auli/crates/auli-collections/`](auli/crates/auli-collections/) | **auli-collections** | Scrapers that collect official content and compile it into the typed `auli-contract` (`Table<P>`). Now a workspace crate. | Rust (synchronous) |
+| [`auli-engine/crates/auli-collections/`](auli-engine/crates/auli-collections/) | **auli-collections** | Scrapers that collect official content and compile it into the typed `auli-contract` (`Table<P>`). Now a workspace crate. | Rust (synchronous) |
 | [`data/`](data/) | **shared data** | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`. | TOML + JSON/txt |
 | [`scripts/`](scripts/) | **tooling** | `build-packs.sh` (vectorize), `gen-frontend-entities.mjs` + `build-frontend-public.sh` (regen frontend from `data/`). | Bash + Node |
 | `auli_*.md` | **docs** | Product, technical and operations references (Portuguese). | — |
@@ -78,11 +78,11 @@ space is shared by construction.
 
 | Crate | Responsibility |
 | --- | --- |
-| [`crates/auli-contract`](auli/crates/auli-contract/) | The **shared data shape** (serde-only): `Table<P>`, `Faq`, `Servico`, and the `Embeddable` trait (`text_to_embed` / `stored_repr`). The single point where the scraper (producer) and the engine (consumer) agree. |
+| [`crates/auli-contract`](auli-engine/crates/auli-contract/) | The **shared data shape** (serde-only): `Table<P>`, `Faq`, `Servico`, and the `Embeddable` trait (`text_to_embed` / `stored_repr`). The single point where the scraper (producer) and the engine (consumer) agree. |
 | [`crates/vector-store`](auli-engine/crates/vector-store/) | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert. |
-| [`crates/auli-core`](auli/crates/auli-core/) | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash). |
-| [`crates/auli-cli`](auli/crates/auli-cli/) | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`. |
-| [`crates/auli-collections`](auli/crates/auli-collections/) | The scrapers — compile portal content into `auli-contract` tables (`<id>-<kind>.json`). |
+| [`crates/auli-core`](auli-engine/crates/auli-core/) | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash). |
+| [`crates/auli-cli`](auli-engine/crates/auli-cli/) | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`. |
+| [`crates/auli-collections`](auli-engine/crates/auli-collections/) | The scrapers — compile portal content into `auli-contract` tables (`<id>-<kind>.json`). |
 
 Two modes:
 
@@ -123,7 +123,7 @@ npm test           # Vitest
 
 The only backend endpoint the frontend calls is `POST /v1/question` (via `VITE_API_URL`).
 
-### `auli/crates/auli-collections/` — scrapers
+### `auli-engine/crates/auli-collections/` — scrapers
 
 A synchronous Rust program that collects content from a secretariat's portal and compiles it into
 the typed `auli-contract` (`Table<Faq>` / `Table<Servico>` → `data/<id>/raw/<id>-<kind>.json`),

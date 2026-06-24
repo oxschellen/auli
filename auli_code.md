@@ -47,11 +47,11 @@ O ecossistema tem três partes:
 > **Atualização — `auli-contract` (2026-06-23).** O workspace ganhou o crate magro
 > **`auli-contract`** (serde-only): a **forma do dado** (`Table<P>`, `Faq`, `Servico`, trait
 > `Embeddable`) compartilhada entre o scraper e o engine. O **`auli-collections` foi movido para
-> dentro do workspace** (`auli/crates/auli-collections`, 5º membro). Fluxo novo: o scraper compila
+> dentro do workspace** (`auli-engine/crates/auli-collections`, 5º membro). Fluxo novo: o scraper compila
 > `Table<P>` preenchendo `text_to_embed` → `data/<id>/raw/<id>-<kind>.json`; o `auli update` lê o
 > contrato, embeda `text_to_embed` e armazena `stored_repr` (sem mais parsing de `portal-*.txt`,
 > que viraram só *print* de auditoria). `STRATEGY_VERSION` foi para **2**. Caminhos `auli-collections/…`
-> nas seções abaixo agora vivem em **`auli/crates/auli-collections/…`**.
+> nas seções abaixo agora vivem em **`auli-engine/crates/auli-collections/…`**.
 
 Há ainda uma pasta `auli-docs/` no workspace (origem histórica dos scrapers), fora do
 escopo dos três repositórios principais.
@@ -478,7 +478,7 @@ Totalmente **síncrono** — confirmado: não há `tokio`/`async fn`/`.await` no
 
 ### 5.2 CLI e dispatch
 
-[auli/crates/auli-collections/src/main.rs](auli/crates/auli-collections/src/main.rs):
+[auli-engine/crates/auli-collections/src/main.rs](auli-engine/crates/auli-collections/src/main.rs):
 `cd auli-engine && cargo run -p auli-collections -- [--usecache] <entity> <collection>`.
 
 - `<entity>` (omitido/vazio → `rs`) é resolvido e validado por

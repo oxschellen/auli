@@ -183,18 +183,18 @@ Há **três** destinos distintos:
 
 | Tipo | Onde | Conteúdo |
 | --- | --- | --- |
-| **Q&A do RAG** | `auli/logs/<AAAA-MM-DD_HH-MM-SS>.txt` (um arquivo por pergunta) | `Pergunta:` + contexto RAG recuperado + `Resposta:`. Gravado por [rag.rs](auli/crates/auli-cli/src/rag.rs) em `./logs/` **relativo ao CWD** — como o server roda em `auli/`, caem em `auli/logs/`. |
+| **Q&A do RAG** | `auli-engine/logs/<AAAA-MM-DD_HH-MM-SS>.txt` (um arquivo por pergunta) | `Pergunta:` + contexto RAG recuperado + `Resposta:`. Gravado por [rag.rs](auli-engine/crates/auli-cli/src/rag.rs) em `./logs/` **relativo ao CWD** — como o server roda em `auli-engine/`, caem em `auli-engine/logs/`. |
 | **cloudflared** | `/tmp/auli-cloudflared.log` | saída do túnel Cloudflare (redirecionada pelo `start_server.sh`). |
 | **Console (`tracing`)** | **stdout/stderr** do terminal (não vai a arquivo) | boot, scores, `info/debug/warn`. Controlado por `RUST_LOG`. |
 
 Exemplos:
 ```bash
-ls -lt auli/logs/ | head                 # últimas consultas
+ls -lt auli-engine/logs/ | head                 # últimas consultas
 tail -f /tmp/auli-cloudflared.log              # acompanhar o túnel
 RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG completo no console
 ```
 
-> Para gravar também o console em arquivo: `./start_server.sh --no-tunnel 2>&1 | tee auli/logs/console.log`.
+> Para gravar também o console em arquivo: `./start_server.sh --no-tunnel 2>&1 | tee auli-engine/logs/console.log`.
 
 ---
 

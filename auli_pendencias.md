@@ -59,7 +59,7 @@ Notas:
 ## 3. Fórmula de `text_to_embed` de serviços — **provisória**
 
 Hoje é `tipo | classe` + título + os primeiros 300 chars do corpo da descrição
-([servicos/mod.rs:133](auli/crates/auli-collections/src/servicos/mod.rs#L133), `servico_text_to_embed`).
+([servicos/mod.rs:133](auli-engine/crates/auli-collections/src/servicos/mod.rs#L133), `servico_text_to_embed`).
 O plano deixou a fórmula exata como pendência. Validar/ajustar contra as 5 perguntas (item 1) e fixar.
 Para FAQs a key é `origin + pergunta` (preserva o antigo `QuestionKey`) e está estável.
 
@@ -78,7 +78,7 @@ vazia). Para reentrarem nos packs:
 ## 5. Vocabulário de kinds (`servicos` ↔ `services`) — **não enforçado**
 
 O label de UI/scraper `servicos` mapeia para o kind vetorial `services` apenas por convenção: a
-tradução vive só no [update.rs](auli/crates/auli-cli/src/update.rs) (`servicos.json` → kind
+tradução vive só no [update.rs](auli-engine/crates/auli-cli/src/update.rs) (`servicos.json` → kind
 `services`) e num comentário do `registry.toml`. Pendência do plano: derivar `registry.toml` e o
 frontend de um `Kind` tipado único, eliminando a chance de divergência.
 
@@ -87,7 +87,7 @@ frontend de um `Kind` tipado único, eliminando a chance de divergência.
 ## Itens relacionados (da revisão de código anterior, ainda abertos)
 
 - **Defaults stale do CLI:** `--packs-dir` default `./vectors` e `--source <dir_com_portal_txt>`
-  na docstring ([main.rs:5,24](auli/crates/auli-cli/src/main.rs#L24)) — só funciona porque
+  na docstring ([main.rs:5,24](auli-engine/crates/auli-cli/src/main.rs#L24)) — só funciona porque
   `start_server.sh`/`build-packs.sh` passam os caminhos explícitos. Atualizar defaults/docstring.
 - **`public/<id>/servicos.json` (~660KB)** copiado pelo gerador mas **sem consumidor** no frontend —
   peso morto; filtrar em [build-frontend-public.sh](scripts/build-frontend-public.sh).
@@ -95,5 +95,5 @@ frontend de um `Kind` tipado único, eliminando a chance de divergência.
   não usa `hasCollection`; [Home.tsx](auli-frontend/src/pages/home/Home.tsx) hardcoda as abas em vez
   de derivar de `collections` (SC mostra abas vazias).
 - **`EMBED_CACHE_DIR` com duas fontes:** `.env` (`./models`) vs `build-packs.sh` (`$ROOT/auli-engine/models`).
-- **Comentário histórico:** [faqs/mod.rs:99](auli/crates/auli-collections/src/faqs/mod.rs#L99) cita
+- **Comentário histórico:** [faqs/mod.rs:99](auli-engine/crates/auli-collections/src/faqs/mod.rs#L99) cita
   `EmbedStrategy::QuestionKey` (tipo já removido do engine) — referência de lineage, cosmética.

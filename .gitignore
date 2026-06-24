@@ -1,5 +1,5 @@
 # ── Root .gitignore for the auli monorepo ─────────────────────────────────────
-# Each subproject (auli/, auli-server/, auli-frontend/, auli-collections/) also
+# Each subproject (auli-engine/, auli-server/, auli-frontend/, auli-collections/) also
 # ships its own .gitignore, which git honors. This file covers root-level items
 # plus belt-and-suspenders global rules so secrets/artifacts can never slip in.
 
@@ -34,11 +34,11 @@ dist/
 # ── Embedding model caches (downloaded, large) ────────────────────────────────
 /models/
 **/models--*/
-auli/models/
+auli-engine/models/
 auli-server/models/
 
 # ── Generated vector packs & runtime state ────────────────────────────────────
-auli/packs/
+auli-engine/packs/
 **/vectors/
 **/logs/
 
