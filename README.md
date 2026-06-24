@@ -50,8 +50,8 @@ This is a **monorepo** of four cooperating components plus shared docs.
 
 | Path | Component | Role | Stack |
 | --- | --- | --- | --- |
-| [`auli/`](auli/) | **auli workspace** | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio) |
-| [`auli-server/`](auli-server/) | **auli-server** | Pre-refactor monolith, kept as a **reference baseline**. Logic was carried into `auli/` verbatim. | Rust (Axum, Tokio) |
+| [`auli-engine/`](auli-engine/) | **auli workspace** | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio) |
+| [`auli-server/`](auli-server/) | **auli-server** | Pre-refactor monolith, kept as a **reference baseline**. Logic was carried into `auli-engine/` verbatim. | Rust (Axum, Tokio) |
 | [`auli-frontend/`](auli-frontend/) | **auli-frontend** | Web UI: state selection (interactive Brazil map), chat, and reference tabs. | React 19 + TypeScript + Vite |
 | [`auli-engine/crates/auli-collections/`](auli-engine/crates/auli-collections/) | **auli-collections** | Scrapers that collect official content and compile it into the typed `auli-contract` (`Table<P>`). Now a workspace crate. | Rust (synchronous) |
 | [`data/`](data/) | **shared data** | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`. | TOML + JSON/txt |
@@ -69,7 +69,7 @@ This is a **monorepo** of four cooperating components plus shared docs.
 
 ## Components
 
-### `auli/` — backend workspace (current)
+### `auli-engine/` — backend workspace (current)
 
 A single Cargo workspace with **strict layering** (`auli-contract` is the shared data shape;
 `vector-store` ← `auli-core` ← `auli-cli`) and **one binary** with two subcommands. A shared
@@ -100,7 +100,7 @@ and only ever embeds the incoming question.
 
 ### `auli-server/` — baseline (reference)
 
-The original monolith. **Superseded** by `auli/`; kept on disk so the refactor stays auditable. See
+The original monolith. **Superseded** by `auli-engine/`; kept on disk so the refactor stays auditable. See
 [auli-server/CLAUDE.md](auli-server/CLAUDE.md). Edit the workspace, not this tree.
 
 ### `auli-frontend/` — web UI

@@ -37,7 +37,7 @@ O ecossistema tem três partes:
 | `auli-collections` | Scrapers que produzem o conteúdo ingerido | Rust (síncrono, `ureq`) |
 
 > **Atualização — backend refatorado para o workspace `auli-engine`.** O `auli-server` (monólito) foi
-> reorganizado em um **workspace Cargo único** `auli/` com crates em camadas
+> reorganizado em um **workspace Cargo único** `auli-engine/` com crates em camadas
 > (`vector-store` ← `auli-core` ← `auli-cli`) e **um binário** com dois subcomandos
 > (`auli server` / `auli update`). A lógica do `auli-server` foi **preservada verbatim** nos
 > novos crates (ver §9 para o detalhe e a prova de paridade). O diretório `auli-server/`
@@ -683,7 +683,7 @@ explícito de que o parser de HTML do RS **não** funcionará para SC sem reescr
 ## 9. Backend refatorado — o workspace `auli-engine`
 
 O `auli-server` (monólito descrito em §3) foi reorganizado em um **workspace Cargo único**
-`auli/`, com **três crates em camadas** e **um binário** que troca de modo por subcomando. A
+`auli-engine/`, com **três crates em camadas** e **um binário** que troca de modo por subcomando. A
 lógica de negócio (parsing, `EmbedStrategy`, embedder, `cosine_distance`, `select_by_proximity`,
 LLM, RAG) foi movida **verbatim**; o que mudou foi a *fronteira entre módulos* e o
 *ciclo de vida* (ingestão separada do atendimento). O `auli-server/` segue em disco como baseline.
@@ -698,7 +698,7 @@ LLM, RAG) foi movida **verbatim**; o que mudou foi a *fronteira entre módulos* 
 ### 9.1 Estrutura (camadas estritas, acoplamento só para baixo)
 
 ```
-auli/                              # workspace único, Cargo.lock compartilhado
+auli-engine/                       # workspace único, Cargo.lock compartilhado
 └── crates/
     ├── vector-store/   # BAIXO — store plano por cosseno, agnóstico (sabe só id+vetor+payload P)
     ├── auli-core/      # MEIO  — domínio auli: embed (BGE-M3), corpus, manifest

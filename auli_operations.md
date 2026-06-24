@@ -70,7 +70,7 @@ cargo build --release --workspace      # ou: cargo build --release --bin auli
 ## 4. Dados necessários para servir
 
 Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data` a partir de
-`auli/`). O `auli server` lê de lá: `registry.toml`, `prompts/` e os packs por entidade.
+`auli-engine/`). O `auli server` lê de lá: `registry.toml`, `prompts/` e os packs por entidade.
 
 ### 4.1 Pacotes de vetores (`data/<id>/packs/`)
 Gerados pelo `scripts/build-packs.sh`, que aponta o `auli update --source` para `data/<id>/raw/`
@@ -97,7 +97,7 @@ depois é reaproveitado (sem rede).
 ### 4.4 `.env` (raiz `auli_new/`)
 
 Carregado via `dotenv` a partir do CWD para cima — por isso um `.env` na raiz `auli_new/` serve
-para o server rodando em `auli/`. Variáveis:
+para o server rodando em `auli-engine/`. Variáveis:
 
 | Variável | Obrigatória? | Uso |
 | --- | --- | --- |
@@ -124,7 +124,7 @@ O jeito recomendado é o script [start_server.sh](start_server.sh) (na raiz `aul
 ./start_server.sh --no-build --no-tunnel # restart local puro
 ```
 
-O que ele faz: exporta o env de cmake desta máquina, reusa `auli-server/target`, entra em `auli/`,
+O que ele faz: exporta o env de cmake desta máquina, reusa `auli-server/target`, entra em `auli-engine/`,
 exporta `AULI_DATA_DIR=../data`, derruba uma instância anterior na porta, compila (a menos de
 `--no-build`), sobe o **túnel cloudflared em background** e o **server em foreground**. **Ctrl+C**
 encerra os dois (um `trap` derruba o cloudflared junto). O túnel precisa ter sido configurado 1× com
