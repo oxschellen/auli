@@ -1,10 +1,9 @@
 // Domain layer — core types & registries (no HTTP, no external I/O).
 //
-// - entities    — multi-tenant registry (EntityConfig, ENTITIES, get_entity)
-// - collections — generic content-kind registry (Collection, parsing, prepare_documents)
+// - entities — multi-tenant registry (EntityConfig, ENTITIES, get_entity)
 
-// Wired into the crate but not yet consumed by the pipeline; suppress dead-code noise until it is.
+// Some registry fields are read by serde/tests but not by the scraper pipeline; suppress dead-code
+// noise for those.
 #![allow(dead_code)]
 
-pub mod collections;
 pub mod entities;

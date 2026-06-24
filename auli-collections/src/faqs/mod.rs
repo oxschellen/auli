@@ -34,7 +34,7 @@ pub struct FaqSource {
     pub root_url: String,
     /// Title for the root node of the tree.
     pub root_title: String,
-    /// Collection name (matches `domain::collections`), e.g. `"faqs"`.
+    /// Collection name, e.g. `"faqs"`.
     /// The output file is named `<collection>.json`.
     pub collection: String,
     /// Directory the output JSON is written to, e.g. `"data/rs"`.

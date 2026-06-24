@@ -417,12 +417,14 @@ ou seja, leem arquivos servidos de `public/<id>/`:
 - Quando a entidade não tem a coleção (`hasCollection` falso), renderiza
   [shared/CollectionEmpty.tsx](auli-frontend/src/shared/CollectionEmpty.tsx) ("em breve").
 
-**Dados estáticos presentes** (confirmado na árvore de `public/`):
+**Dados estáticos presentes** (confirmado na árvore de `public/`, gerada por
+[scripts/build-frontend-public.sh](scripts/build-frontend-public.sh) a partir de `data/<id>/{raw,ref}/`):
 [public/rs/](auli-frontend/public/rs/) tem `faqs.json`, `conteudo_site_tree.json`,
-`servicos*.json`, `servicos-index.json`, `portal-notas.txt`, `portal-pareceres.txt`,
-`portal-servicos.txt`. [public/sc/](auli-frontend/public/sc/) tem **apenas** arquivos de
-serviços (`servicos-*.json`, `servicos-index.json`, `portal-servicos.txt`), coerente com
-`sc.collections = ["servicos"]`.
+`servicos*.json`, `servicos-index.json`, `portal-notas.txt`, `portal-pareceres.txt`.
+[public/sc/](auli-frontend/public/sc/) tem **apenas** arquivos de
+serviços (`servicos-*.json`, `servicos-index.json`), coerente com
+`sc.collections = ["servicos"]`. Os `portal-{faqs,servicos}.txt` (grandes, não usados pela UI —
+só alimentam os packs) são excluídos do `public/` pelo gerador.
 
 ### 4.5 Seleção de estado e mapa
 
