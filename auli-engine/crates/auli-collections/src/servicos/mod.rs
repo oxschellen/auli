@@ -1,9 +1,9 @@
 // servicos collection scraper.
 //
-// Two backends share the same output shape (per-tipo `servicos-<tipo>.json`, an aggregated flat
-// `servicos.json`, a `servicos-index.json` tab manifest, and the `portal-servicos.txt` knowledge
-// file — all under `data/<id>/`):
-//   - `rs` (SEFAZ-RS): headless Chrome renders the audience listing pages, then reqwest fetches each
+// Two backends share the same output shape (per-público `<filename>.json`, the contract
+// `<id>-servicos.json` (`Table<Servico>`), a `servicos-index.json` tab manifest, and the
+// `portal-servicos.txt` knowledge file — all under `data/<id>/`):
+//   - `rs` (SEFAZ-RS): headless Chrome renders the audience listing pages, then ureq fetches each
 //     service's detail page and scrapes the description (`extrair_descricoes` / `utils`).
 //   - `sc` (SEF-SC): a clean Next.js JSON API — no browser, no HTML parsing (`sc`).
 //
@@ -23,7 +23,7 @@ use serde::Serialize;
 
 use types::TipoServicos;
 
-/// Scrape an entity's services and write the per-tipo JSON, the aggregated `servicos.json`, the
+/// Scrape an entity's services and write the per-público JSON, the contract `<id>-servicos.json`, the
 /// `servicos-index.json` tab manifest, and `portal-servicos.txt` under `data_dir`. Fetched pages are
 /// cached under `<data_dir>/cache/servicos/`. Dispatches on `entity_id` (`rs` | `sc`).
 pub fn run(entity_id: &str, data_dir: &str, use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
