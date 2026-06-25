@@ -190,7 +190,7 @@ Required variables panic at startup if missing.
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | ✅ | External LLM (Groq-compatible) that drafts the answer |
-| `EMBED_CACHE_DIR` | — | BGE-M3 model cache dir (default `./models`) |
+| `EMBED_CACHE_DIR` | — | BGE-M3 model cache dir. Launchers set it to `<repo-root>/models` (absolute); code default is `./models` |
 | `EMBED_THREADS` | — | ONNX Runtime intra-op threads (default 16) |
 | `VECTOR_DB_PATH` | — | In-process vector store dir (default `./vectors`) |
 

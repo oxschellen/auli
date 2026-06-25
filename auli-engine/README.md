@@ -44,13 +44,15 @@ cargo build --workspace
 cargo test  --workspace
 
 # end-to-end serving-path test against real generated packs (otherwise ignored):
-AULI_PACKS_DIR=./packs EMBED_CACHE_DIR=./models \
+# Run from auli-engine/: the model cache lives at the repo root (../models).
+AULI_PACKS_DIR=./packs EMBED_CACHE_DIR=../models \
   cargo test -p auli-cli --release --test packs_smoke -- --ignored --nocapture
 ```
 
 > Build needs `cmake` + a C compiler (for `aws-lc-sys`) and network on first build (`ort` downloads
 > the ONNX Runtime; BGE-M3 downloads from Hugging Face into `EMBED_CACHE_DIR` on first `update`/serve).
-> Builds on Linux; see `auli-cli` for the env caveats.
+> The launchers point `EMBED_CACHE_DIR` at `<repo-root>/models` (absolute); the code default `./models`
+> only applies to manual runs. Builds on Linux; see `auli-cli` for the env caveats.
 
 ## Environment (server mode)
 

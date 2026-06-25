@@ -94,6 +94,5 @@ frontend de um `Kind` tipado único, eliminando a chance de divergência.
 - **Abas hardcoded no frontend:** [ServicosList.tsx](auli-frontend/src/pages/servicoslist/ServicosList.tsx)
   não usa `hasCollection`; [Home.tsx](auli-frontend/src/pages/home/Home.tsx) hardcoda as abas em vez
   de derivar de `collections` (SC mostra abas vazias).
-- **`EMBED_CACHE_DIR` com duas fontes:** `.env` (`./models`) vs `build-packs.sh` (`$ROOT/auli-engine/models`).
 - **Comentário histórico:** [faqs/mod.rs:99](auli-engine/crates/auli-collections/src/faqs/mod.rs#L99) cita
   `EmbedStrategy::QuestionKey` (tipo já removido do engine) — referência de lineage, cosmética.

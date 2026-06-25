@@ -2,8 +2,8 @@
 //!
 //! Gated on `AULI_PACKS_DIR` (and uses `EMBED_CACHE_DIR` for the model), so a normal `cargo test`
 //! skips it — it needs the generated `<entity>-<kind>.json` packs and the BGE-M3 model on disk.
-//! Run with:
-//!   AULI_PACKS_DIR=../../packs EMBED_CACHE_DIR=../../models cargo test -p auli-cli --release \
+//! Run with (the model cache lives at the repo root — three levels up from this crate):
+//!   AULI_PACKS_DIR=../../packs EMBED_CACHE_DIR=../../../models cargo test -p auli-cli --release \
 //!     --test packs_smoke -- --nocapture --ignored
 //!
 //! It exercises exactly the server's read path: validate the manifest against the local identity,

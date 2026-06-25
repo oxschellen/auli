@@ -90,9 +90,9 @@ A lista de entidades e o caminho do prompt de cada uma vêm do **registro único
 `data/prompts/<id>.txt`. Adicionar um estado = uma entrada `[[entities]]` no registry + os dados em
 `data/<id>/`.
 
-### 4.3 Modelo (`./models`)
-Cache do BGE-M3 (`EMBED_CACHE_DIR=./models` → `auli-engine/models`). Baixa do Hugging Face no 1º uso;
-depois é reaproveitado (sem rede).
+### 4.3 Modelo (`<raiz>/models`)
+Cache do BGE-M3. Os lançadores definem `EMBED_CACHE_DIR=<raiz>/models` (caminho **absoluto**,
+CWD-independente — fonte única). Baixa do Hugging Face no 1º uso; depois é reaproveitado (sem rede).
 
 ### 4.4 `.env` (raiz `auli_new/`)
 
@@ -102,7 +102,7 @@ para o server rodando em `auli-engine/`. Variáveis:
 | Variável | Obrigatória? | Uso |
 | --- | --- | --- |
 | `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | sim | LLM externo (Groq-compat) que redige a resposta |
-| `EMBED_CACHE_DIR` | não (def. `./models`) | cache do modelo |
+| `EMBED_CACHE_DIR` | não (lançadores: `<raiz>/models`; def. do código `./models`) | cache do modelo |
 | `EMBED_THREADS` | não (def. `16`) | threads do ONNX Runtime |
 | `VECTOR_DB_PATH` | não | pasta padrão dos pacotes |
 
@@ -212,7 +212,7 @@ RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG c
 | --- | --- |
 | `Não foi possível ler o registro de entidades` / `Entidades carregadas: []` | `AULI_DATA_DIR` não aponta para a pasta `data/` (com `registry.toml`). Rode via `start_server.sh` (exporta `../data`). |
 | `📦 Pacotes carregados de ./vectors` (e nada carregado) | Esqueceu `--packs-dir ../data` — caiu no default `./vectors`. Use o script ou passe a flag. |
-| Rebaixando `model_quantized.onnx` toda vez | CWD errado → `./models` vazio. Rode de `auli-engine/` com o modelo em `auli-engine/models` (`EMBED_CACHE_DIR=./models`). |
+| Rebaixando `model_quantized.onnx` toda vez | Cache não encontrado. Os lançadores já apontam `EMBED_CACHE_DIR=<raiz>/models` (absoluto), então o CWD não importa — confira se os pesos estão em `<raiz>/models`. Em execução manual, exporte `EMBED_CACHE_DIR` para esse caminho. |
 | Erro de cmake / `aws-lc-sys` no build | Sem cmake no PATH ou cmake 4 reclamando de policy. `export PATH="$HOME/.local/bin:$PATH"` e `export CMAKE_POLICY_VERSION_MINIMUM=3.5` (o `start_server.sh` já faz). |
 | `Variável de ambiente obrigatória ausente: ...` | Falta variável de LLM no `.env` (`LLM_API_URL`/`LLM_API_KEY`/`LLM_API_MODEL`). Ver §4.4. |
 | `Manifest incompatível ...` no boot | Pacotes gerados com modelo/dim/`strategy_version` diferente do binário. Re-gere com `auli update`. |
