@@ -1,7 +1,7 @@
 [package]
 name = "auli-contract"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # Crate "magro" de contrato: APENAS serde. Nenhuma dependência pesada (sem fastembed/ort/aws-lc),
 # para que tanto o scraper (auli-collections) quanto o engine possam depender dele sem arrastar a

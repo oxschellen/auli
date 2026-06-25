@@ -1,7 +1,7 @@
 [package]
 name = "auli-core"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 description = "Auli domain core: BGE-M3 embedder, corpus/EmbedStrategy, embedding identity + manifest. Depends on vector-store; knows nothing of RAG/HTTP."
 
 [dependencies]

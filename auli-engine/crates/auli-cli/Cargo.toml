@@ -1,7 +1,7 @@
 [package]
 name = "auli-cli"
 version = "0.3.0"
-edition = "2021"
+edition = "2024"
 description = "The `auli` binary: `auli server` (axum REST + RAG, read-only) and `auli update` (vectorize packs)."
 
 # The binary is `auli`; the library is `auli_cli` so tests can build the router without a socket.
