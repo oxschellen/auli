@@ -112,18 +112,6 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
 - **Deduplicação** de serviços que aparecem em vários públicos, evitando conteúdo repetido na
   base de busca.
 
-### 3.7 Autenticação e contas (backend) — apenas no baseline tagueado `baseline-auli-server`
-
-> **Não está no workspace atual.** Os itens abaixo existem somente no monólito `auli-server`
-> (baseline preservado na tag `baseline-auli-server`, removido da árvore); o workspace `auli-engine`
-> em produção **não tem auth, JWT nem banco** — o
-> servidor expõe apenas `/v1/health`, `/v1/question` e `/v1/{kind}/list`. Ver [auli_code.md](auli_code.md) §9.
-
-- **Cadastro e login** de usuários com senha protegida por hashing (Argon2, com compatibilidade
-  para hashes legados) e emissão de **token JWT (RS256)**.
-- **Rotas protegidas** que exigem token válido de um usuário verificado, usadas para as
-  operações de gestão de dados.
-
 ---
 
 ## 4. Tipos de conteúdo
@@ -146,12 +134,12 @@ referência na interface.
 
 | Componente | Papel no produto |
 | --- | --- |
-| **auli** (workspace) | Cérebro: o binário `auli` em dois modos — `auli server` recebe a pergunta, busca o contexto e gera a resposta (somente leitura); `auli update` vetoriza os conteúdos em pacotes. Reorganiza o antigo `auli-server` em três crates. |
+| **auli-engine** (workspace) | Cérebro: o binário `auli` em dois modos — `auli server` recebe a pergunta, busca o contexto e gera a resposta (somente leitura); `auli update` vetoriza os conteúdos em pacotes. Três crates em camadas. |
 | **auli-frontend** | Experiência do usuário: seleção de estado, chat e navegação pelos conteúdos |
 | **auli-collections** | Abastecimento: coleta e padroniza os conteúdos oficiais que alimentam a busca |
 
-> O backend era o monólito **auli-server**, hoje refatorado no workspace **auli**
-> (`vector-store` ← `auli-core` ← `auli-cli`); ver [auli_code.md](auli_code.md) §9.
+> O backend é o workspace **auli-engine** (`vector-store` ← `auli-core` ← `auli-cli`); ver
+> [auli_code.md](auli_code.md) §3.
 
 ---
 
@@ -159,7 +147,8 @@ referência na interface.
 
 - **Funcionando hoje:** chat com RAG para o estado configurado, interface completa (chat +
   abas de referência + seleção de estado com mapa), coleta de Serviços e FAQs (RS) e Serviços
-  (SC) e embeddings locais. (Auth/JWT existe só no baseline tagueado `baseline-auli-server`, não no workspace atual — ver §3.7.)
+  (SC) e embeddings locais. (O servidor é público, sem auth nem banco — expõe só `/v1/health`,
+  `/v1/question` e `/v1/{kind}/list`.)
 - **Em evolução:** ampliação do estado SC (FAQs e demais conteúdos), coleta automatizada de
   Pareceres/Notas, e uso desses tipos também nas respostas do assistente.
 

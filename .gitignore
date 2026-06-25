@@ -1,7 +1,6 @@
 # ── Root .gitignore for the auli monorepo ─────────────────────────────────────
 # Each subproject (auli-engine/, auli-frontend/, auli-collections/) also
-# ships its own .gitignore, which git honors. (The pre-refactor auli-server/ baseline was
-# removed from the tree — see the baseline-auli-server tag.) This file covers root-level items
+# ships its own .gitignore, which git honors. This file covers root-level items
 # plus belt-and-suspenders global rules so secrets/artifacts can never slip in.
 
 # ── Secrets — NEVER commit ────────────────────────────────────────────────────

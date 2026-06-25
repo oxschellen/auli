@@ -97,14 +97,6 @@ auli server [--packs-dir <dir>] [--port 3000]   # read-only; --packs-dir default
 the pack manifest** against the local embedding identity at boot (and refuses to start on mismatch),
 and only ever embeds the incoming question.
 
-### `auli-server/` — baseline (removed from the tree, preserved as a tag)
-
-The original monolith, **superseded** by `auli-engine/` (logic carried over verbatim). It has been
-**removed from the working tree** and now lives in the annotated git tag **`baseline-auli-server`**
-(commit `c15c61b`), so the refactor stays auditable. Inspect it without checking it out via
-`git show baseline-auli-server:auli-server/<path>`, or restore the whole tree with
-`git checkout baseline-auli-server`. Edit the workspace, never the baseline.
-
 ### `auli-frontend/` — web UI
 
 A single-page app (no router; **tab navigation**) built with React 19, Vite, and Chakra UI v3.

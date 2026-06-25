@@ -2,7 +2,7 @@
 
 Runbook prático para **compilar, gerar os dados e subir o servidor da Auli** (workspace `auli-engine`,
 modo `server`) com o túnel do **Cloudflare** (cloudflared), e para saber **onde ficam os logs**. Para a descrição
-técnica do código, ver [auli_code.md](auli_code.md) (§9 cobre o workspace `auli-engine`).
+técnica do código, ver [auli_code.md](auli_code.md) (§3 cobre o workspace `auli-engine`).
 
 > TL;DR — numa máquina já preparada (build feito, packs gerados):
 >
