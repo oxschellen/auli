@@ -57,8 +57,12 @@ impl EntityConfig {
     }
 }
 
-// Root of the shared `data/` dir; the server runs in `auli/`, so this is `../data` in practice.
-fn data_dir() -> PathBuf {
+/// Root of the shared `data/` dir, from `AULI_DATA_DIR` (default `./data`). Holds
+/// `registry.toml`, `prompts/`, and the per-entity `<id>/packs/` — so the registry and the
+/// vector packs share one root by default. `auli server --packs-dir` overrides the packs root;
+/// when it's omitted the server falls back to this same dir (see `run_server`), so the two never
+/// silently look in different places.
+pub fn data_dir() -> PathBuf {
     std::env::var("AULI_DATA_DIR").unwrap_or_else(|_| "./data".to_string()).into()
 }
 

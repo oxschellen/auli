@@ -104,7 +104,6 @@ para o server rodando em `auli-engine/`. Variáveis:
 | `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | sim | LLM externo (Groq-compat) que redige a resposta |
 | `EMBED_CACHE_DIR` | não (lançadores: `<raiz>/models`; def. do código `./models`) | cache do modelo |
 | `EMBED_THREADS` | não (def. `16`) | threads do ONNX Runtime |
-| `VECTOR_DB_PATH` | não | pasta padrão dos pacotes |
 
 > Faltando uma variável **obrigatória**, o server dá `panic` no boot com mensagem clara.
 >
@@ -133,7 +132,7 @@ encerra os dois (um `trap` derruba o cloudflared junto). O túnel precisa ter si
 Variáveis de ambiente para sobrescrever:
 ```bash
 PORT=8080 ./start_server.sh                       # outra porta
-PACKS_DIR=/dados/packs ./start_server.sh          # outra pasta de pacotes
+AULI_DATA_DIR=/dados ./start_server.sh            # outra raiz de data/ (registry+prompts+packs)
 TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 ./start_server.sh --no-tunnel                     # só o servidor local, sem túnel
 ```
@@ -211,7 +210,7 @@ RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG c
 | Sintoma | Causa / correção |
 | --- | --- |
 | `Não foi possível ler o registro de entidades` / `Entidades carregadas: []` | `AULI_DATA_DIR` não aponta para a pasta `data/` (com `registry.toml`). Rode via `start_server.sh` (exporta `../data`). |
-| `📦 Pacotes carregados de ./vectors` (e nada carregado) | Esqueceu `--packs-dir ../data` — caiu no default `./vectors`. Use o script ou passe a flag. |
+| `📦 Pacotes carregados de …` (e nada carregado) | `--packs-dir`/`AULI_DATA_DIR` aponta para a raiz errada (sem `<id>/packs/`). Sem `--packs-dir`, o server usa `AULI_DATA_DIR` (default `./data`); o `start_server.sh` exporta `../data`. |
 | Rebaixando `model_quantized.onnx` toda vez | Cache não encontrado. Os lançadores já apontam `EMBED_CACHE_DIR=<raiz>/models` (absoluto), então o CWD não importa — confira se os pesos estão em `<raiz>/models`. Em execução manual, exporte `EMBED_CACHE_DIR` para esse caminho. |
 | Erro de cmake / `aws-lc-sys` no build | Sem cmake no PATH ou cmake 4 reclamando de policy. `export PATH="$HOME/.local/bin:$PATH"` e `export CMAKE_POLICY_VERSION_MINIMUM=3.5` (o `start_server.sh` já faz). |
 | `Variável de ambiente obrigatória ausente: ...` | Falta variável de LLM no `.env` (`LLM_API_URL`/`LLM_API_KEY`/`LLM_API_MODEL`). Ver §4.4. |

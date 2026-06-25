@@ -8,8 +8,8 @@
 # Flags:    --no-build    pula o `cargo build` e sobe o binário já compilado (restart rápido).
 #           --no-tunnel   sobe só o servidor local, sem o túnel Cloudflare.
 #                         (--no-ngrok continua aceito como apelido de --no-tunnel.)
-# Variáveis opcionais: PORT (3000), PACKS_DIR (./packs), TUNNEL_NAME (auli-api),
-#                      CARGO_TARGET_DIR (reuso do build).
+# Variáveis opcionais: PORT (3000), AULI_DATA_DIR (../data) — raiz de registry+prompts+packs,
+#                      TUNNEL_NAME (auli-api), CARGO_TARGET_DIR (reuso do build).
 set -euo pipefail
 
 NO_BUILD=0
@@ -33,7 +33,9 @@ export CMAKE_POLICY_VERSION_MINIMUM="${CMAKE_POLICY_VERSION_MINIMUM:-3.5}"
 # Reaproveita os artefatos já compilados (fastembed/ort/aws-lc) -> build incremental rápido.
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/auli-engine/target}"
 
-# Pasta data/ (registry.toml + prompts/ + <id>/packs/). O server roda em auli-engine/, então é ../data.
+# Raiz data/ (registry.toml + prompts/ + <id>/packs/). O server roda em auli-engine/, então é ../data.
+# `auli server` herda esta raiz para os packs quando --packs-dir é omitido (knob único).
+# Regenere os packs com scripts/build-packs.sh <id>.
 export AULI_DATA_DIR="${AULI_DATA_DIR:-../data}"
 
 # Cache do modelo BGE-M3 (ONNX). Caminho ABSOLUTO na raiz do repo: CWD-independente, fonte única.
@@ -41,9 +43,6 @@ export AULI_DATA_DIR="${AULI_DATA_DIR:-../data}"
 export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-$ROOT/models}"
 
 PORT="${PORT:-3000}"
-# Packs root (layout data/<id>/packs/). O server roda em auli-engine/, então a raiz data/ é ../data.
-# Regenere os packs com scripts/build-packs.sh <id>.
-PACKS_DIR="${PACKS_DIR:-../data}"
 TUNNEL_NAME="${TUNNEL_NAME:-auli-api}"
 BIN="$CARGO_TARGET_DIR/release/auli"
 
@@ -79,6 +78,6 @@ if [ "$NO_TUNNEL" -eq 0 ]; then
   fi
 fi
 
-echo "🚀 Subindo 'auli server' em :${PORT} (packs: ${PACKS_DIR}). Ctrl+C para parar."
+echo "🚀 Subindo 'auli server' em :${PORT} (packs: ${AULI_DATA_DIR}). Ctrl+C para parar."
 # Sem `exec`: mantém o script vivo para o trap derrubar o cloudflared ao sair (Ctrl+C).
-"$BIN" server --port "$PORT" --packs-dir "$PACKS_DIR"
+"$BIN" server --port "$PORT"

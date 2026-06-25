@@ -39,7 +39,7 @@ pub fn app(state: Arc<AppState>) -> Router {
 }
 
 /// Build shared state from pre-built packs and serve on `0.0.0.0:<port>`.
-pub async fn run_server(packs_dir: String, port: u16) {
+pub async fn run_server(packs_dir: Option<String>, port: u16) {
     // Default to `info`; override per-target with RUST_LOG (e.g. `RUST_LOG=auli_cli=debug`
     // to see score arrays / the full RAG prompt, or `=trace` for everything).
     tracing_subscriber::fmt()
@@ -50,6 +50,11 @@ pub async fn run_server(packs_dir: String, port: u16) {
         .init();
     config().log_summary();
     entities::init();
+
+    // Packs live under `<data>/<id>/packs/`. With no `--packs-dir`, fall back to the shared data
+    // root (`AULI_DATA_DIR`, default `./data`) — the same dir the registry/prompts load from — so
+    // the registry and the packs can never resolve to different roots by accident.
+    let packs_dir = packs_dir.unwrap_or_else(|| entities::data_dir().to_string_lossy().into_owned());
 
     // Eager-load + validate all packs before serving (refuse to start on incompatible data).
     let collections = packs::load_all(&packs_dir).expect("Falha ao carregar os pacotes de vetores");

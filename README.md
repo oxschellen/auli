@@ -87,7 +87,7 @@ Two modes:
 
 ```bash
 auli update --entity <id> --source <data/<id>/raw> --out <packs-dir> [--version <v>]   # only writer
-auli server --packs-dir <packs-dir> [--port 3000]                                      # strictly read-only
+auli server [--packs-dir <dir>] [--port 3000]   # read-only; --packs-dir defaults to $AULI_DATA_DIR
 ```
 
 `auli update` reads the scraper's typed contract (`<source>/<id>-faqs.json`, `<id>-servicos.json` =
@@ -192,7 +192,6 @@ Required variables panic at startup if missing.
 | `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | ✅ | External LLM (Groq-compatible) that drafts the answer |
 | `EMBED_CACHE_DIR` | — | BGE-M3 model cache dir. Launchers set it to `<repo-root>/models` (absolute); code default is `./models` |
 | `EMBED_THREADS` | — | ONNX Runtime intra-op threads (default 16) |
-| `VECTOR_DB_PATH` | — | In-process vector store dir (default `./vectors`) |
 
 > Secrets (`.env`, `*.pem`) and build artifacts (`target/`, `node_modules/`, `models/`, `packs/`,
 > `vectors/`, `logs/`) are **gitignored** and never committed.

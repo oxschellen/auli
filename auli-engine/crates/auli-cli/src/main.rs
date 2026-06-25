@@ -1,7 +1,7 @@
 //! The `auli` binary — a thin clap dispatcher over two modes, `server` and `update`.
 //!
 //! Subcommands (not flags) so each mode has its own exclusive options:
-//!   auli server  --port <p> --packs-dir <dir>
+//!   auli server  --port <p> [--packs-dir <dir>]   (--packs-dir defaults to $AULI_DATA_DIR or ./data)
 //!   auli update  --entity <id> --source <dir_com_contrato_json> --out <dir> [--version <v>]
 
 use std::path::PathBuf;
@@ -21,8 +21,9 @@ enum Command {
     Server {
         #[arg(long, default_value_t = 3000)]
         port: u16,
-        #[arg(long, default_value = "./vectors")]
-        packs_dir: String,
+        /// Raiz dos pacotes (layout `<dir>/<id>/packs/`). Omitido ⇒ usa `AULI_DATA_DIR` (default `./data`).
+        #[arg(long)]
+        packs_dir: Option<String>,
     },
     /// Vetoriza o contrato tipado (`auli_contract::Table<P>`) de uma entidade em pacotes `<id>-<kind>.json` + manifesto.
     Update {

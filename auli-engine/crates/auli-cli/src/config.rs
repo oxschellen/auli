@@ -18,10 +18,6 @@ pub struct Config {
     // Local embeddings (fastembed / BGE-M3, in-process)
     pub embed_cache_dir: String,
     pub embed_threads: usize,
-
-    // Vector packs (in-process; directory holding the per-collection JSON files + manifest).
-    // The `auli server --packs-dir` flag overrides this; kept as the default.
-    pub vector_db_path: String,
 }
 
 static CONFIG: LazyLock<Config> = LazyLock::new(Config::from_env);
@@ -41,8 +37,6 @@ impl Config {
 
             embed_cache_dir: opt("EMBED_CACHE_DIR", "./models"),
             embed_threads: parse_opt("EMBED_THREADS", 16),
-
-            vector_db_path: opt("VECTOR_DB_PATH", "./vectors"),
         }
     }
 
@@ -53,7 +47,6 @@ impl Config {
         println!("LLM_API_MODEL: {}", self.llm_api_model);
         println!("EMBED_CACHE_DIR: {}", self.embed_cache_dir);
         println!("EMBED_THREADS: {}", self.embed_threads);
-        println!("VECTOR_DB_PATH: {}", self.vector_db_path);
     }
 }
 

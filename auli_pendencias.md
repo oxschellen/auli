@@ -86,9 +86,6 @@ frontend de um `Kind` tipado único, eliminando a chance de divergência.
 
 ## Itens relacionados (da revisão de código anterior, ainda abertos)
 
-- **Defaults stale do CLI:** `--packs-dir` default `./vectors` e `--source <dir_com_portal_txt>`
-  na docstring ([main.rs:5,24](auli-engine/crates/auli-cli/src/main.rs#L24)) — só funciona porque
-  `start_server.sh`/`build-packs.sh` passam os caminhos explícitos. Atualizar defaults/docstring.
 - **`public/<id>/servicos.json` (~660KB)** copiado pelo gerador mas **sem consumidor** no frontend —
   peso morto; filtrar em [build-frontend-public.sh](scripts/build-frontend-public.sh).
 - **Abas hardcoded no frontend:** [ServicosList.tsx](auli-frontend/src/pages/servicoslist/ServicosList.tsx)
