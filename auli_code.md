@@ -220,7 +220,8 @@ N cópias coexistem sem coordenação.
 ### 3.9 Verificação (estado de fato, neste repo)
 
 - **Build/test:** `cargo build --workspace` e `cargo test --workspace` passam **sem warnings**;
-  **24 testes** (vector-store 10, auli-core 8, auli-cli 5 + 1 de integração) + 1 teste e2e gated.
+  **26 testes** (vector-store 10, auli-core 4, auli-cli 5 + 1 de integração, auli-collections 3,
+  auli-contract 3) + 1 teste e2e gated (`packs_smoke`).
 - **Pacotes reais gerados** via `auli update` para `rs`: services 627, faqs 1734, pareceres 331,
   notas 1. O manifest confere — `bytes` e `hash` FNV-1a batem com os arquivos (hash conferido também
   por implementação independente em Python); todos os vetores em dim 1024; chave `document` preservada.
