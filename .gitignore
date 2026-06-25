@@ -35,7 +35,6 @@ dist/
 # ── Embedding model caches (downloaded, large) ────────────────────────────────
 /models/
 **/models--*/
-auli-engine/models/
 
 # ── Generated vector packs & runtime state ────────────────────────────────────
 auli-engine/packs/

@@ -36,6 +36,10 @@ export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/auli-engine/target}"
 # Pasta data/ (registry.toml + prompts/ + <id>/packs/). O server roda em auli-engine/, então é ../data.
 export AULI_DATA_DIR="${AULI_DATA_DIR:-../data}"
 
+# Cache do modelo BGE-M3 (ONNX). Caminho ABSOLUTO na raiz do repo: CWD-independente, fonte única.
+# O dotenv do binário não sobrescreve variável já no ambiente, então este export prevalece sobre o .env.
+export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-$ROOT/models}"
+
 PORT="${PORT:-3000}"
 # Packs root (layout data/<id>/packs/). O server roda em auli-engine/, então a raiz data/ é ../data.
 # Regenere os packs com scripts/build-packs.sh <id>.

@@ -5,7 +5,7 @@
 # Variáveis de ambiente (todas opcionais, com defaults):
 #   PORT             porta HTTP                         (default 3000)
 #   PACKS_DIR        pasta dos pacotes de vetores       (default ./packs)
-#   EMBED_CACHE_DIR  cache do modelo BGE-M3 (ONNX)      (default ./models)
+#   EMBED_CACHE_DIR  cache do modelo BGE-M3 (ONNX)      (default <raiz>/models, absoluto)
 #
 # Pré-requisitos de build: cmake + compilador C (para aws-lc-sys) e rede no primeiro build
 # (`ort` baixa o ONNX Runtime; o BGE-M3 baixa do Hugging Face para EMBED_CACHE_DIR no 1º uso).
@@ -15,11 +15,14 @@
 set -euo pipefail
 
 # Raiz do workspace = pasta-pai deste script (scripts/ -> raiz).
+# ROOT = raiz do repo (pai de auli-engine/): este script vive em auli-engine/scripts/.
+ROOT="$(cd "$(dirname "$(readlink -f "$0")")/../.." && pwd)"
 cd "$(dirname "$(readlink -f "$0")")/.."
 
 PORT="${PORT:-3000}"
 PACKS_DIR="${PACKS_DIR:-./packs}"
-export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-./models}"
+# Cache do modelo na raiz do repo (absoluto): CWD-independente, mesma fonte dos demais lançadores.
+export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-$ROOT/models}"
 
 BIN="./target/release/auli"
 
