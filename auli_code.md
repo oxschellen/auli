@@ -1,7 +1,7 @@
 # Auli — Descrição Técnica do Código
 
 Documento técnico auditável do Projeto Auli, baseado na leitura direta do código-fonte
-dos três componentes (`auli-engine`, `auli-frontend`, `auli-collections`). Cada afirmação
+dos três componentes (`auli-server`, `auli-frontend`, `auli-collections`). Cada afirmação
 relevante cita o arquivo que a sustenta. Quando algo não pôde ser confirmado no código,
 está marcado como **NÃO CONFIRMADO NO CÓDIGO**.
 
@@ -30,20 +30,20 @@ pergunta  →  embedding local (fastembed/BGE-M3, in-process)  →  busca vetori
 
 O ecossistema tem três partes:
 
-| Componente | Papel | Linguagem/stack |
-| --- | --- | --- |
-| `auli-engine` (workspace) | Backend REST + pipeline RAG (binário `auli`: `server` + `update`) | Rust (Axum, Tokio) |
-| `auli-frontend` | Interface web (chat + navegação) | React 19 + TypeScript + Vite |
-| `auli-collections` | Scrapers que produzem o conteúdo ingerido | Rust (síncrono, `ureq`) |
+| Componente                | Papel                                                             | Linguagem/stack              |
+| ------------------------- | ----------------------------------------------------------------- | ---------------------------- |
+| `auli-server` (workspace) | Backend REST + pipeline RAG (binário `auli`: `server` + `update`) | Rust (Axum, Tokio)           |
+| `auli-frontend`           | Interface web (chat + navegação)                                  | React 19 + TypeScript + Vite |
+| `auli-collections`        | Scrapers que produzem o conteúdo ingerido                         | Rust (síncrono, `ureq`)      |
 
 > **Atualização — `auli-contract` (2026-06-23).** O workspace ganhou o crate magro
 > **`auli-contract`** (serde-only): a **forma do dado** (`Table<P>`, `Faq`, `Servico`, trait
 > `Embeddable`) compartilhada entre o scraper e o engine. O **`auli-collections` foi movido para
-> dentro do workspace** (`auli-engine/crates/auli-collections`, 5º membro). Fluxo: o scraper compila
+> dentro do workspace** (`auli-server/crates/auli-collections`, 5º membro). Fluxo: o scraper compila
 > `Table<P>` preenchendo `text_to_embed` → `data/<id>/raw/<id>-<kind>.json`; o `auli update` lê o
 > contrato, embeda `text_to_embed` e armazena `stored_repr` (sem mais parsing de `portal-*.txt`,
-> que viraram só *print* de auditoria). `STRATEGY_VERSION` foi para **2**. Caminhos `auli-collections/…`
-> nas seções abaixo vivem hoje em **`auli-engine/crates/auli-collections/…`**.
+> que viraram só _print_ de auditoria). `STRATEGY_VERSION` foi para **2**. Caminhos `auli-collections/…`
+> nas seções abaixo vivem hoje em **`auli-server/crates/auli-collections/…`**.
 
 Há ainda uma pasta `auli-docs/` no workspace (origem histórica dos scrapers), fora do
 escopo dos três componentes principais.
@@ -64,7 +64,7 @@ O **server** lê os packs de `data/<id>/packs/` e as entidades do registry; o **
 `entities.ts` e `public/<id>/` **gerados** de `data/` por `scripts/`.
 
 ```
-[auli-collections]            [auli-engine]                       [auli-frontend]
+[auli-collections]            [auli-server]                       [auli-frontend]
   scrape do portal              auli update → data/<id>/packs/       entities.ts + public/<id>/
         │                          (vetoriza o contrato)            (gerados de data/ por scripts/)
         ▼                              │                                    │
@@ -86,9 +86,9 @@ Observações confirmadas no código:
 
 ---
 
-## 3. Backend — o workspace `auli-engine`
+## 3. Backend — o workspace `auli-server`
 
-O backend é um **workspace Cargo único** (`auli-engine/`), com **três crates em camadas** e
+O backend é um **workspace Cargo único** (`auli-server/`), com **três crates em camadas** e
 **um binário** `auli` que troca de modo por subcomando (`auli server` / `auli update`). A camada
 de autenticação (JWT) e o **PostgreSQL** foram **removidos** (eram usados só para auth): o server
 hoje é **público, sem banco**, e expõe apenas rotas de leitura.
@@ -96,7 +96,7 @@ hoje é **público, sem banco**, e expõe apenas rotas de leitura.
 ### 3.1 Estrutura (camadas estritas, acoplamento só para baixo)
 
 ```
-auli-engine/                       # workspace único, Cargo.lock compartilhado
+auli-server/                       # workspace único, Cargo.lock compartilhado
 └── crates/
     ├── vector-store/      # BAIXO — store plano por cosseno, agnóstico (sabe só id+vetor+payload P)
     ├── auli-core/         # MEIO  — domínio auli: embed (BGE-M3), corpus, manifest
@@ -109,11 +109,11 @@ auli-engine/                       # workspace único, Cargo.lock compartilhado
 (embeda documentos) e `server` (embeda a pergunta) usem o **mesmo** `fastembed`/modelo — o espaço
 vetorial é compartilhado por construção, não por convenção.
 
-| Crate | Conteúdo |
-| --- | --- |
+| Crate          | Conteúdo                                                                                                                                                                                                                                                                                                                                                  |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `vector-store` | `Record<P>`/`CollectionData<P>` (payload genérico; chave JSON em disco continua `document`), `cosine_distance` (fallback `2.0`), IO de arquivo, e a **separação leitura/escrita por tipo**: `ReadStore` (`query_scored`/`list`, imutável) vs `Writer` (`reset`/`upsert`/persistência). Enforcement de dimensão no 1º insert (`Error::DimensionMismatch`). |
-| `auli-core` | `embed` (`Embedder` BGE-M3, `EMBED_DIM=1024`), `corpus` (`EmbedStrategy`, tabela `Collection`, `parse_blocks*`, `prepare_documents`, `extract_question`, `clean_servico`, `extract_servico_description`), `manifest` (identidade do embedding + schema/validação). |
-| `auli-cli` | `server` (axum, RAG, config, packs) + `update` (vetorizador). Despacho por `clap`. |
+| `auli-core`    | `embed` (`Embedder` BGE-M3, `EMBED_DIM=1024`), `corpus` (`EmbedStrategy`, tabela `Collection`, `parse_blocks*`, `prepare_documents`, `extract_question`, `clean_servico`, `extract_servico_description`), `manifest` (identidade do embedding + schema/validação).                                                                                        |
+| `auli-cli`     | `server` (axum, RAG, config, packs) + `update` (vetorizador). Despacho por `clap`.                                                                                                                                                                                                                                                                        |
 
 ### 3.2 Os dois modos (subcomandos)
 
@@ -135,11 +135,11 @@ auli server  [--packs-dir <dir>] [--port <p>]   # --packs-dir default = $AULI_DA
 
 O server expõe apenas rotas **públicas** (não há mais auth/JWT, rotas protegidas, nem ingestão por HTTP):
 
-| Método | Caminho | Observação |
-| --- | --- | --- |
-| GET | `/v1/health` | health check |
-| POST | `/v1/question` | caminho RAG ativo |
-| GET | `/v1/{kind}/list` | listagem de uma coleção (leitura); `{kind}` ∈ `services \| faqs \| pareceres \| notas` |
+| Método | Caminho           | Observação                                                                             |
+| ------ | ----------------- | -------------------------------------------------------------------------------------- |
+| GET    | `/v1/health`      | health check                                                                           |
+| POST   | `/v1/question`    | caminho RAG ativo                                                                      |
+| GET    | `/v1/{kind}/list` | listagem de uma coleção (leitura); `{kind}` ∈ `services \| faqs \| pareceres \| notas` |
 
 A ingestão deixou de ser rota HTTP (antes `load_from_file`/`load_from_web`) — virou o `auli update`.
 CORS: origens **hardcoded** (auli.com.br, www, e portas locais 3000/5173/8080), métodos
@@ -158,7 +158,7 @@ Acionado por `POST /v1/question`. Assinatura: `exec_all_question(collections, em
    e retorna `(texto, distância cosseno)` ordenado do mais próximo ao mais distante.
 4. **Estreitamento por proximidade** (`select_by_proximity`): mantém os `floor` melhores e, além
    disso, os documentos dentro de `band` (distância acima do melhor) — por kind. **Os defaults são
-   `floor=0`, `band=∞`**, ou seja, hoje há *paridade* com o "take fixo" antigo (nenhum descarte); os
+   `floor=0`, `band=∞`**, ou seja, hoje há _paridade_ com o "take fixo" antigo (nenhum descarte); os
    bandos só passam a filtrar após calibração contra perguntas reais (scores logados em `debug`).
 5. Concatena os documentos como contexto RAG; o system prompt = prompt da entidade (registry) +
    contexto + delimitador `'''`.
@@ -174,7 +174,7 @@ apenas `FAQS, SERVICES`).
 Toda a parte de embeddings/busca vetorial é **in-process** (sem Ollama nem ChromaDB):
 
 - **Embedder** (`auli-core::embed`): `fastembed` com **BGE-M3 ONNX INT8** (`Bgem3Model::BGEM3Q`),
-  dimensão **1024** (`EMBED_DIM`), apenas a saída *dense*. O modelo fica atrás de um `Mutex` porque
+  dimensão **1024** (`EMBED_DIM`), apenas a saída _dense_. O modelo fica atrás de um `Mutex` porque
   `embed` é `&mut self`; `max_length` é **512** (dimensionado à "chave" curta). `embed_dense` é
   **bloqueante/CPU-bound** — os chamadores usam `run_blocking`. Construído uma vez no startup (lento;
   baixa o modelo do Hugging Face para `EMBED_CACHE_DIR` no 1º run).
@@ -198,7 +198,7 @@ máxima; o `strategy_version` do manifest transforma "esqueci de re-gerar" em er
 `auli-core::manifest` grava, por entidade, `{ entity, version, built_at, embed_model_id, embed_dim,
 strategy_version, collections: [{ kind, count, dim, file, bytes, hash }] }`. `hash` é FNV-1a 64 do
 arquivo da coleção (integridade — detecta pacote meio-copiado). `STRATEGY_VERSION` é bumpado sempre
-que `prepare_documents`/`parse_*` mudarem (muda *o que* é embedado), transformando "esqueci de
+que `prepare_documents`/`parse_*` mudarem (muda _o que_ é embedado), transformando "esqueci de
 re-gerar os pacotes" em **erro de boot**, não em retrieval ruim. O fallback `2.0` do `cosine_distance`
 vira segunda linha de defesa.
 
@@ -233,7 +233,7 @@ N cópias coexistem sem coordenação.
 
 - **Ingestão fora do server.** As rotas `load_from_file`/`load_from_web` saíram do server (o frontend
   nunca as usou — só `POST /v1/question`); a vetorização é o `auli update`.
-- **Store em memória imutável.** Carga *eager* + `ReadStore` imutável (sem lock no caminho de consulta).
+- **Store em memória imutável.** Carga _eager_ + `ReadStore` imutável (sem lock no caminho de consulta).
 - **Domínio como fonte única no backend.** `corpus`/`vector-store` são fonte única para `server` e
   `update`. O `auli-frontend` segue com seu próprio espelho **gerado** do registro (ver §6).
 - **Auth e banco removidos.** O server não tem mais auth/JWT nem PostgreSQL — é público.
@@ -272,7 +272,7 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
   lista **duas** entidades hardcoded:
   - `rs` = SEFAZ-RS, coleções `["servicos","faqs","pareceres","notas","conteudos"]`.
   - `sc` = SEF-SC, coleções `["servicos"]` (somente serviços, por enquanto).
-  `hasCollection(entity, collection)` dirige os estados "em breve".
+    `hasCollection(entity, collection)` dirige os estados "em breve".
 - **Abas** ([pages/home/Home.tsx](auli-frontend/src/pages/home/Home.tsx)): Chat, Serviços,
   FAQs, Pareceres, Notas, Conteúdos, Sobre. Implementam o padrão WAI-ARIA de tabs (roving
   tabindex, navegação por setas). Cada aba é montada na primeira ativação e mantida montada
@@ -301,13 +301,13 @@ Todas usam SWR + `entityPath(entityId, file)` →
 `/<entityId>/<file>?v=<buildId>` ([shared/fetchers.ts](auli-frontend/src/shared/fetchers.ts)),
 ou seja, leem arquivos servidos de `public/<id>/`:
 
-| Aba | Arquivo lido | Fonte |
-| --- | --- | --- |
-| Serviços | `servicos-index.json` (manifesto de abas) + `<filename>.json` por público | [pages/servicoslist/ServicosList.tsx](auli-frontend/src/pages/servicoslist/ServicosList.tsx) |
-| FAQs | `faqs.json` (árvore recursiva) | [pages/faqslist/FaqsList.tsx](auli-frontend/src/pages/faqslist/FaqsList.tsx), [parseFaqs.ts](auli-frontend/src/pages/faqslist/parseFaqs.ts) |
-| Pareceres | `portal-pareceres.txt` (texto) | [pages/parecereslist/PareceresList.tsx](auli-frontend/src/pages/parecereslist/PareceresList.tsx) |
-| Notas | `portal-notas.txt` (texto) | [pages/notaslist/NotasList.tsx](auli-frontend/src/pages/notaslist/NotasList.tsx) |
-| Conteúdos | `conteudo_site_tree.json` | [pages/conteudoslist/ConteudosList.tsx](auli-frontend/src/pages/conteudoslist/ConteudosList.tsx) |
+| Aba       | Arquivo lido                                                              | Fonte                                                                                                                                       |
+| --------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Serviços  | `servicos-index.json` (manifesto de abas) + `<filename>.json` por público | [pages/servicoslist/ServicosList.tsx](auli-frontend/src/pages/servicoslist/ServicosList.tsx)                                                |
+| FAQs      | `faqs.json` (árvore recursiva)                                            | [pages/faqslist/FaqsList.tsx](auli-frontend/src/pages/faqslist/FaqsList.tsx), [parseFaqs.ts](auli-frontend/src/pages/faqslist/parseFaqs.ts) |
+| Pareceres | `portal-pareceres.txt` (texto)                                            | [pages/parecereslist/PareceresList.tsx](auli-frontend/src/pages/parecereslist/PareceresList.tsx)                                            |
+| Notas     | `portal-notas.txt` (texto)                                                | [pages/notaslist/NotasList.tsx](auli-frontend/src/pages/notaslist/NotasList.tsx)                                                            |
+| Conteúdos | `conteudo_site_tree.json`                                                 | [pages/conteudoslist/ConteudosList.tsx](auli-frontend/src/pages/conteudoslist/ConteudosList.tsx)                                            |
 
 - A aba **Serviços** lê `servicos-index.json` para montar as abas de público; se ausente,
   usa o fallback hardcoded `getDefaultTipoServicos()` (5 tipos RS) em
@@ -369,8 +369,8 @@ Totalmente **síncrono** — confirmado: não há `tokio`/`async fn`/`.await` no
 
 ### 5.2 CLI e dispatch
 
-[auli-engine/crates/auli-collections/src/main.rs](auli-engine/crates/auli-collections/src/main.rs):
-`cd auli-engine && cargo run -p auli-collections -- [--usecache] <entity> <collection>`.
+[auli-server/crates/auli-collections/src/main.rs](auli-server/crates/auli-collections/src/main.rs):
+`cd auli-server && cargo run -p auli-collections -- [--usecache] <entity> <collection>`.
 
 - `<entity>` (omitido/vazio → `rs`) é resolvido e validado por
   `domain::entities::get_entity`.
@@ -392,7 +392,7 @@ cada registro, e grava em `data/<id>/raw/<id>-<kind>.json`. O engine (`auli upda
 - **`stored_repr`** reproduz o bloco `## pergunta`/`## resposta` (mesma forma do `portal-*.txt`), então
   o contexto servido ao RAG continua coerente.
 - Os antigos `faqs.json` (árvore) e `servicos.json` (flat agregado) foram **descartados**; o
-  `portal-<kind>.txt` continua sendo escrito como *print* legível (auditoria), nunca lido de volta.
+  `portal-<kind>.txt` continua sendo escrito como _print_ legível (auditoria), nunca lido de volta.
 - `pareceres`/`notas` são autorados (sem scraper) e ainda não têm fonte struct — ficam ausentes nos
   packs até serem modelados como `Table<P>`.
 
@@ -469,12 +469,12 @@ torna um cache miss um erro.
 
 ### 5.8 Cobertura por kind (collections)
 
-| kind | scraper existe? |
-| --- | --- |
-| `faqs` | sim (`rs`); `sc` **não** implementado — arm placeholder em `faq_source_for` |
-| `servicos` | sim para `rs` (Chrome) e `sc` (JSON) |
-| `pareceres` | **não** há scraper — só existe o `portal-pareceres.txt` como dado |
-| `notas` | **não** há scraper — só existe o `portal-notas.txt` como dado |
+| kind        | scraper existe?                                                             |
+| ----------- | --------------------------------------------------------------------------- |
+| `faqs`      | sim (`rs`); `sc` **não** implementado — arm placeholder em `faq_source_for` |
+| `servicos`  | sim para `rs` (Chrome) e `sc` (JSON)                                        |
+| `pareceres` | **não** há scraper — só existe o `portal-pareceres.txt` como dado           |
+| `notas`     | **não** há scraper — só existe o `portal-notas.txt` como dado               |
 
 Confirmado: `main.rs::faq_source_for` tem um arm `sc` com URLs corretas mas comentário
 explícito de que o parser de HTML do RS **não** funcionará para SC sem reescrita.
@@ -507,7 +507,7 @@ mantém um espelho **gerado** (não mais divergente) do registro. Pendências em
 
 **Ativo e funcionando (confirmado no código):**
 
-- `auli server` (workspace `auli-engine`): `GET /v1/health`, `POST /v1/question` (RAG completo
+- `auli server` (workspace `auli-server`): `GET /v1/health`, `POST /v1/question` (RAG completo
   **in-process**: fastembed/BGE-M3 → vector store próprio → LLM externo, com log em `./logs/`) e
   `GET /v1/{kind}/list` (leitura). Público, **sem auth nem banco**; CORS; configuração por `.env`
   (`config()`); logging via `tracing`. Vetorização separada pelo `auli update`.

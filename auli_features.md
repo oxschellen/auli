@@ -116,13 +116,13 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
 
 ## 4. Tipos de conteúdo
 
-| Tipo | O que é | Onde aparece hoje |
-| --- | --- | --- |
-| **Serviços** | Carta de serviços da secretaria, por público-alvo | Resposta do chat (RAG) + aba Serviços |
-| **FAQs** | Perguntas frequentes oficiais | Resposta do chat (RAG) + aba FAQs |
-| **Pareceres** | Pareceres jurídicos/técnicos | Aba Pareceres (referência) |
-| **Notas** | Notas administrativas/tributárias | Aba Notas (referência) |
-| **Conteúdos** | Materiais de referência diversos | Aba Conteúdos (referência) |
+| Tipo          | O que é                                           | Onde aparece hoje                     |
+| ------------- | ------------------------------------------------- | ------------------------------------- |
+| **Serviços**  | Carta de serviços da secretaria, por público-alvo | Resposta do chat (RAG) + aba Serviços |
+| **FAQs**      | Perguntas frequentes oficiais                     | Resposta do chat (RAG) + aba FAQs     |
+| **Pareceres** | Pareceres jurídicos/técnicos                      | Aba Pareceres (referência)            |
+| **Notas**     | Notas administrativas/tributárias                 | Aba Notas (referência)                |
+| **Conteúdos** | Materiais de referência diversos                  | Aba Conteúdos (referência)            |
 
 Observação de produto: hoje **Serviços e FAQs** alimentam diretamente as respostas do
 assistente; **Pareceres, Notas e Conteúdos** estão disponíveis como navegação/consulta de
@@ -132,13 +132,13 @@ referência na interface.
 
 ## 5. Arquitetura em três partes
 
-| Componente | Papel no produto |
-| --- | --- |
-| **auli-engine** (workspace) | Cérebro: o binário `auli` em dois modos — `auli server` recebe a pergunta, busca o contexto e gera a resposta (somente leitura); `auli update` vetoriza os conteúdos em pacotes. Três crates em camadas. |
-| **auli-frontend** | Experiência do usuário: seleção de estado, chat e navegação pelos conteúdos |
-| **auli-collections** | Abastecimento: coleta e padroniza os conteúdos oficiais que alimentam a busca |
+| Componente                  | Papel no produto                                                                                                                                                                                         |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **auli-server** (workspace) | Cérebro: o binário `auli` em dois modos — `auli server` recebe a pergunta, busca o contexto e gera a resposta (somente leitura); `auli update` vetoriza os conteúdos em pacotes. Três crates em camadas. |
+| **auli-frontend**           | Experiência do usuário: seleção de estado, chat e navegação pelos conteúdos                                                                                                                              |
+| **auli-collections**        | Abastecimento: coleta e padroniza os conteúdos oficiais que alimentam a busca                                                                                                                            |
 
-> O backend é o workspace **auli-engine** (`vector-store` ← `auli-core` ← `auli-cli`); ver
+> O backend é o workspace **auli-server** (`vector-store` ← `auli-core` ← `auli-cli`); ver
 > [auli_code.md](auli_code.md) §3.
 
 ---

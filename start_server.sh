@@ -1,5 +1,5 @@
 #!/bin/bash
-# start_server.sh — compila e sobe o servidor da Auli (workspace `auli-engine`, modo `server`) em :3000.
+# start_server.sh — compila e sobe o servidor da Auli (workspace `auli-server`, modo `server`) em :3000.
 # Rode sem sudo, a partir de qualquer lugar:  ./start_server.sh
 #
 # Sobe também o túnel do Cloudflare (cloudflared) que publica api.auli.com.br -> localhost:PORT.
@@ -23,7 +23,7 @@ for arg in "$@"; do
 done
 
 ROOT="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"   # .../auli_new
-WS="$ROOT/auli-engine"                                          # workspace Cargo (vector-store/auli-core/auli-cli)
+WS="$ROOT/auli-server"                                          # workspace Cargo (vector-store/auli-core/auli-cli)
 
 # cmake desta máquina (instalado via pip em ~/.local/bin) + compat de policy do cmake 4.
 # Inócuo onde já houver cmake de sistema.
@@ -31,9 +31,9 @@ export PATH="$HOME/.local/bin:$PATH"
 export CMAKE_POLICY_VERSION_MINIMUM="${CMAKE_POLICY_VERSION_MINIMUM:-3.5}"
 
 # Reaproveita os artefatos já compilados (fastembed/ort/aws-lc) -> build incremental rápido.
-export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/auli-engine/target}"
+export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/auli-server/target}"
 
-# Raiz data/ (registry.toml + prompts/ + <id>/packs/). O server roda em auli-engine/, então é ../data.
+# Raiz data/ (registry.toml + prompts/ + <id>/packs/). O server roda em auli-server/, então é ../data.
 # `auli server` herda esta raiz para os packs quando --packs-dir é omitido (knob único).
 # Regenere os packs com scripts/build-packs.sh <id>.
 export AULI_DATA_DIR="${AULI_DATA_DIR:-../data}"

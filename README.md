@@ -2,8 +2,8 @@
 
 **Auli** is an open-source, privacy-first **RAG assistant for Brazilian state taxes**. It helps
 tax-office staff answer citizens by turning a natural-language question into a grounded answer
-built from the *official content* of a given state's revenue secretariat (Secretaria da Fazenda) —
-services, FAQs, legal opinions (*pareceres*) and administrative notes (*notas*) — with links back
+built from the _official content_ of a given state's revenue secretariat (Secretaria da Fazenda) —
+services, FAQs, legal opinions (_pareceres_) and administrative notes (_notas_) — with links back
 to the source.
 
 The pilot tenant is **SEFAZ-RS** (Rio Grande do Sul); the system is **multi-tenant by state**, so
@@ -48,15 +48,15 @@ text**, and **vectorized into per-state packs** (`auli update`) that the server 
 
 This is a **monorepo** of four cooperating components plus shared docs.
 
-| Path | Component | Role | Stack |
-| --- | --- | --- | --- |
-| [`auli-engine/`](auli-engine/) | **auli workspace** | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio) |
-| [`auli-frontend/`](auli-frontend/) | **auli-frontend** | Web UI: state selection (interactive Brazil map), chat, and reference tabs. | React 19 + TypeScript + Vite |
-| [`auli-engine/crates/auli-collections/`](auli-engine/crates/auli-collections/) | **auli-collections** | Scrapers that collect official content and compile it into the typed `auli-contract` (`Table<P>`). Now a workspace crate. | Rust (synchronous) |
-| [`data/`](data/) | **shared data** | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`. | TOML + JSON/txt |
-| [`scripts/`](scripts/) | **tooling** | `build-packs.sh` (vectorize), `gen-frontend-entities.mjs` + `build-frontend-public.sh` (regen frontend from `data/`). | Bash + Node |
-| `auli_*.md` | **docs** | Product, technical and operations references (Portuguese). | — |
-| [`start_server.sh`](start_server.sh) | **runbook script** | Build (incremental) + run the server + Cloudflare tunnel. | Bash |
+| Path                                                                           | Component            | Role                                                                                                                                                                                             | Stack                        |
+| ------------------------------------------------------------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| [`auli-server/`](auli-server/)                                                 | **auli workspace**   | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio)           |
+| [`auli-frontend/`](auli-frontend/)                                             | **auli-frontend**    | Web UI: state selection (interactive Brazil map), chat, and reference tabs.                                                                                                                      | React 19 + TypeScript + Vite |
+| [`auli-server/crates/auli-collections/`](auli-server/crates/auli-collections/) | **auli-collections** | Scrapers that collect official content and compile it into the typed `auli-contract` (`Table<P>`). Now a workspace crate.                                                                        | Rust (synchronous)           |
+| [`data/`](data/)                                                               | **shared data**      | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`.                                                                          | TOML + JSON/txt              |
+| [`scripts/`](scripts/)                                                         | **tooling**          | `build-packs.sh` (vectorize), `gen-frontend-entities.mjs` + `build-frontend-public.sh` (regen frontend from `data/`).                                                                            | Bash + Node                  |
+| `auli_*.md`                                                                    | **docs**             | Product, technical and operations references (Portuguese).                                                                                                                                       | —                            |
+| [`start_server.sh`](start_server.sh)                                           | **runbook script**   | Build (incremental) + run the server + Cloudflare tunnel.                                                                                                                                        | Bash                         |
 
 > **One shared `data/` tree, no manual copies.** Entities/collections live once in
 > [`data/registry.toml`](data/registry.toml); the scraper writes `data/<id>/raw/`, authored
@@ -68,20 +68,20 @@ This is a **monorepo** of four cooperating components plus shared docs.
 
 ## Components
 
-### `auli-engine/` — backend workspace (current)
+### `auli-server/` — backend workspace (current)
 
 A single Cargo workspace with **strict layering** (`auli-contract` is the shared data shape;
 `vector-store` ← `auli-core` ← `auli-cli`) and **one binary** with two subcommands. A shared
-`Cargo.lock` guarantees the `update` and `server` modes use the *same* embedding model — the vector
+`Cargo.lock` guarantees the `update` and `server` modes use the _same_ embedding model — the vector
 space is shared by construction.
 
-| Crate | Responsibility |
-| --- | --- |
-| [`crates/auli-contract`](auli-engine/crates/auli-contract/) | The **shared data shape** (serde-only): `Table<P>`, `Faq`, `Servico`, and the `Embeddable` trait (`text_to_embed` / `stored_repr`). The single point where the scraper (producer) and the engine (consumer) agree. |
-| [`crates/vector-store`](auli-engine/crates/vector-store/) | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert. |
-| [`crates/auli-core`](auli-engine/crates/auli-core/) | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash). |
-| [`crates/auli-cli`](auli-engine/crates/auli-cli/) | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`. |
-| [`crates/auli-collections`](auli-engine/crates/auli-collections/) | The scrapers — compile portal content into `auli-contract` tables (`<id>-<kind>.json`). |
+| Crate                                                             | Responsibility                                                                                                                                                                                                     |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`crates/auli-contract`](auli-server/crates/auli-contract/)       | The **shared data shape** (serde-only): `Table<P>`, `Faq`, `Servico`, and the `Embeddable` trait (`text_to_embed` / `stored_repr`). The single point where the scraper (producer) and the engine (consumer) agree. |
+| [`crates/vector-store`](auli-server/crates/vector-store/)         | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert.                                                                              |
+| [`crates/auli-core`](auli-server/crates/auli-core/)               | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash).                                                                 |
+| [`crates/auli-cli`](auli-server/crates/auli-cli/)                 | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`.                                                                                                                   |
+| [`crates/auli-collections`](auli-server/crates/auli-collections/) | The scrapers — compile portal content into `auli-contract` tables (`<id>-<kind>.json`).                                                                                                                            |
 
 Two modes:
 
@@ -117,19 +117,19 @@ npm test           # Vitest
 
 The only backend endpoint the frontend calls is `POST /v1/question` (via `VITE_API_URL`).
 
-### `auli-engine/crates/auli-collections/` — scrapers
+### `auli-server/crates/auli-collections/` — scrapers
 
 A synchronous Rust program that collects content from a secretariat's portal and compiles it into
 the typed `auli-contract` (`Table<Faq>` / `Table<Servico>` → `data/<id>/raw/<id>-<kind>.json`),
 materializing each record's `text_to_embed`. It also writes the human-readable `portal-<kind>.txt`
-(an audit *print* of the struct, never read back).
+(an audit _print_ of the struct, never read back).
 
 - **FAQs** — SEFAZ-RS portal (headless Chrome + `ureq`).
 - **Services** — RS (headless Chrome) and SC (SEF-SC Next.js JSON API).
 - On-disk **cache** with an offline `--usecache` mode; **dedup** of services shared across audiences.
 
 ```bash
-cd auli-engine
+cd auli-server
 cargo run -p auli-collections -- [--usecache] <entity> <collection>   # e.g. ... -- rs servicos
 ```
 
@@ -179,11 +179,11 @@ curl -s -X POST localhost:3000/v1/question -H 'Content-Type: application/json' \
 The server loads its config from a `.env` in the repo root (see **[.env.example](.env.example)**).
 Required variables panic at startup if missing.
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | ✅ | External LLM (Groq-compatible) that drafts the answer |
-| `EMBED_CACHE_DIR` | — | BGE-M3 model cache dir. Launchers set it to `<repo-root>/models` (absolute); code default is `./models` |
-| `EMBED_THREADS` | — | ONNX Runtime intra-op threads (default 16) |
+| Variable                                        | Required | Purpose                                                                                                 |
+| ----------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------- |
+| `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | ✅       | External LLM (Groq-compatible) that drafts the answer                                                   |
+| `EMBED_CACHE_DIR`                               | —        | BGE-M3 model cache dir. Launchers set it to `<repo-root>/models` (absolute); code default is `./models` |
+| `EMBED_THREADS`                                 | —        | ONNX Runtime intra-op threads (default 16)                                                              |
 
 > Secrets (`.env`, `*.pem`) and build artifacts (`target/`, `node_modules/`, `models/`, `packs/`,
 > `vectors/`, `logs/`) are **gitignored** and never committed.
@@ -192,13 +192,13 @@ Required variables panic at startup if missing.
 
 ## Content types
 
-| Type | What it is | Where it appears today |
-| --- | --- | --- |
-| **Serviços** | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab |
-| **FAQs** | Official frequently-asked questions | Chat (RAG) + FAQs tab |
-| **Pareceres** | Legal/technical opinions | Pareceres tab (reference) |
-| **Notas** | Administrative/tax notes | Notas tab (reference) |
-| **Conteúdos** | Misc reference materials | Conteúdos tab (reference) |
+| Type          | What it is                                     | Where it appears today    |
+| ------------- | ---------------------------------------------- | ------------------------- |
+| **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab |
+| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab     |
+| **Pareceres** | Legal/technical opinions                       | Pareceres tab (reference) |
+| **Notas**     | Administrative/tax notes                       | Notas tab (reference)     |
+| **Conteúdos** | Misc reference materials                       | Conteúdos tab (reference) |
 
 Today **Serviços and FAQs** feed the assistant's answers; **Pareceres, Notas and Conteúdos** are
 available as reference navigation in the UI.

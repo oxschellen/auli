@@ -44,7 +44,7 @@ cargo build --workspace
 cargo test  --workspace
 
 # end-to-end serving-path test against real generated packs (otherwise ignored):
-# Run from auli-engine/: the model cache lives at the repo root (../models).
+# Run from auli-server/: the model cache lives at the repo root (../models).
 AULI_PACKS_DIR=./packs EMBED_CACHE_DIR=../models \
   cargo test -p auli-cli --release --test packs_smoke -- --ignored --nocapture
 ```
