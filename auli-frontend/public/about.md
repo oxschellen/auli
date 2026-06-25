@@ -43,8 +43,7 @@ A Auli é um projeto **de código aberto e colaborativo, sem fins comerciais**.
 Todo o código é distribuído sob a **licença MIT** e está publicado no GitHub,
 livre para ser usado, estudado, adaptado e aprimorado pela comunidade:
 
-- **Servidor (backend):** [github.com/oxschellen/auli-server](https://github.com/oxschellen/auli-server)
-- **Interface (frontend):** [github.com/oxschellen/auli-frontend](https://github.com/oxschellen/auli-frontend)
+- **Código:** [github.com/oxschellen/auli](https://github.com/oxschellen/auli)
 
 Contribuições são bem-vindas.
 
