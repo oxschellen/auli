@@ -1,0 +1,929 @@
+[
+  {
+    "id": 1,
+    "tipo": "Servidor Público",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.cadesp.fazenda.sp.gov.br/Pages/Cadastro/Consultas/ConsultaPublica/ConsultaPublica.aspx",
+    "titulo": "Consulta Pública de Cadastro",
+    "descricao": "Permite ver ficha cadastral simplificada das empresas inscritas no CADESP\nFormas de acesso: Público"
+  },
+  {
+    "id": 2,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/acessar_dce.asp?menu=dem&user=rb",
+    "titulo": "Pensão Alimentícia - Demonstrativo de Pagamento",
+    "descricao": "Acesso ao Demonstrativo de Pagamento - Pensão Alimentícia\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 3,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/acessar_dce.asp?menu=com&user=rb",
+    "titulo": "Pensão Alimentícia - Comprovante de Rendimento",
+    "descricao": "Acesso ao Comprovante de Rendimento - Pensão Alimentícia\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 4,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/acessar_dce.asp?menu=end",
+    "titulo": "Pensão Alimentícia - Atualização de Endereço",
+    "descricao": "Acesso para Atualização de Endereço - Pensão Alimentícia\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 5,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/acessar_dce.asp?user=rb&opcao=esqueceu",
+    "titulo": "Pensão Alimentícia - Esqueceu a Senha?",
+    "descricao": "Acesso ao \"Esqueceu a Senha?' - Pensão Alimentícia\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 6,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/acessar_dce.asp?user=rb&opcao=primeiro_acesso",
+    "titulo": "Pensão Alimentícia - Primeiro Acesso",
+    "descricao": "Acesso ao \"Primeiro Acesso\" - Pensão Alimentícia\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 7,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/consignatarias/consender.asp?ordem=alfa",
+    "titulo": "Consignatárias - Relação de Endereços por Ordem Alfabética",
+    "descricao": "Acesso a Relação de Endereços por Ordem Alfabética - Consignatárias\nFormas de acesso: Público"
+  },
+  {
+    "id": 8,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/consignatarias/consender.asp",
+    "titulo": "Consignatárias - Relação de Endereços por Código",
+    "descricao": "Acesso a Relação de Endereços por Código - Consignatárias\nFormas de acesso: Público"
+  },
+  {
+    "id": 9,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/coletaua.asp?menu=encargos&flag=2",
+    "titulo": "Unidades - Encargos Sociais",
+    "descricao": "Acesso a \"Encargos Sociais\" - Unidades de RH\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 10,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/coletaua.asp?menu=caf&flag=4",
+    "titulo": "Unidades - Comunicados de Ocorrências",
+    "descricao": "Acesso a Comunicados de Ocorrências - Unidades de RH\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 11,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/esqueceu_folha.asp?menu=usu&flag=5",
+    "titulo": "Unidades - Recuperação de Senha",
+    "descricao": "Acesso a Recuperação de Senha - Unidades de RH\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 12,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/acessar_recad.asp?menu=rec",
+    "titulo": "Recadastramento de Beneficiários de Complementação de Aposentadorias e Pensões - Consultas / Formulários de Recadastramento",
+    "descricao": "Acesso a Consultas / Formulários - Recadastramento de Beneficiários de Complementação de Aposentadorias e Pensões\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 13,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=usu_obito&cliente=006",
+    "titulo": "Informações Óbitos - Controle de Acesso - Manutenção de Usuários",
+    "descricao": "Acesso para Manutenção de Usuários - Informações Óbitos - Controle de Acesso\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 14,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=senha&cliente=006&produto=obitos",
+    "titulo": "Informações Óbitos - Controle de Acesso - Alteração de Senha",
+    "descricao": "Acesso para Alteração de Senha - Informações Óbitos - Controle de Acesso\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 15,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=download_obito&cliente=006",
+    "titulo": "Informações Óbitos - Download",
+    "descricao": "Acesso a Download - Informações Óbitos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 16,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/coletausu.asp?opcao=ddpe&flag=0",
+    "titulo": "Área restrita - Login",
+    "descricao": "Acesso a Área restrita - Login\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 17,
+    "tipo": "Servidor Público",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/consulta_documentos.asp",
+    "titulo": "Consultar Documentos",
+    "descricao": "Acesso a Consultar Documentos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 18,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.sam.prodesp.sp.gov.br/Estoque/",
+    "titulo": "Acesso ao Sistema",
+    "descricao": "Acesso ao SAM - Sistema de Administração de Materiais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 19,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.contabilizasp.fazenda.sp.gov.br/siafemnet/index.aspx",
+    "titulo": "Sistema SIAFEM/SP",
+    "descricao": "Acesso ao Siafem/SP\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 20,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.sigeo.fazenda.sp.gov.br/analytics/saw.dll?bieehome&startPage=1",
+    "titulo": "Acesso ao SIGEO BI",
+    "descricao": "Acesso ao SIGEO BI\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 21,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CAU_Web/Usuario/Cadastramento/Inicio.aspx",
+    "titulo": "Usuário - Cadastramento",
+    "descricao": "Acesso ao cadastramento de usuários que nunca acessaram os sistemas SIAFEM/SIAFISICO/COMUNICA e desejam obter senha de acesso.\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 22,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/PortalCustos/Paginas/Login.aspx",
+    "titulo": "Logon",
+    "descricao": "Acesso ao Sistema de Custos dos Serviços Públicos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 23,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/SistemaCapacitacaoSiafem/PaginasAutenticacao/Autenticacao.aspx",
+    "titulo": "Gerenciamento de Capacitação para Usuários do SIAFEM",
+    "descricao": "Acesso ao Gerenciamento de Capacitação para usuários do SIAFEM\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 24,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CAU_Usuario/Account/Login.aspx?ReturnUrl=Cadastro%2fcadastro.aspx",
+    "titulo": "Usuário - Alteração do Cadastramento",
+    "descricao": "Acesso para fazer qualquer tipo de alteração referente ao usuário\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 25,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CAU_Usuario/Account/Login.aspx?ReturnUrl=Senhas%2fsenhas.aspx",
+    "titulo": "Usuário - Troca / Desbloqueio de Senha",
+    "descricao": "Acesso para os usuários já cadastrados e que estão bloqueados ou com acesso não permitido, e para solicitar a troca de senha para o(s) ano(s) desejado(s).\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 26,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CAU_Usuario/Account/Login.aspx?ReturnUrl=Exclusao%2fexclusao.aspx",
+    "titulo": "Usuário - Exclusão de Usuário",
+    "descricao": "Acesso para excluir o usuário que não for mais trabalhar/acessar os sistemas SIAFEM/SIAFÍSICO E COMUNICA.\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 27,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CAU_Gestor/Default.aspx",
+    "titulo": "Gestor - Confirmação do Cadastramento",
+    "descricao": "Acesso para a Confirmação do Cadastramento\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 28,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/cau01.asp",
+    "titulo": "Navega/CSCC - Alteração nos Dados da UGE",
+    "descricao": "Fale Conosco - NAVEGA/CSCC: Alteração nos Dados da UGE\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 29,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/cau02.asp",
+    "titulo": "Navega/CSCC - Inclusão do Gestor do Site CAU",
+    "descricao": "Fale Conosco - NAVEGA/CSCC: Inclusão do Gestor do Site CAU\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 30,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/cau03.asp",
+    "titulo": "Navega/CSCC - Inclusão do Gestor do Site CURSOS",
+    "descricao": "Fale Conosco - NAVEGA/CSCC: Inclusão do Gestor do Site CURSOS\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 31,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/mensagem_cau00.asp",
+    "titulo": "Navega/CSCC - Sugestão",
+    "descricao": "Fale Conosco - NAVEGA/CSCC: Sugestão\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 32,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/mensagem_cau00.asp",
+    "titulo": "Navega/CSCC - Reclamação",
+    "descricao": "Fale Conosco - NAVEGA/CSCC: Reclamação\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 33,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/mensagem_cau00.asp",
+    "titulo": "Navega/CSCC - Outros assuntos referentes ao Navega",
+    "descricao": "Fale Conosco - NAVEGA/CSCC: Outros assuntos referentes ao Navega\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 34,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/cau13.asp",
+    "titulo": "CAU - Credores - Reativação de Credor para Baixa Contábil",
+    "descricao": "Fale Conosco - CAU: Reativação de Credor para Baixa Contábil\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 35,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/mensagem_cau00.asp",
+    "titulo": "CAU - Credores - Outros assuntos referentes aos Credores",
+    "descricao": "Fale Conosco - CAU: Outros assuntos referentes aos Credores\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 36,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/cau/mensagem_cau00.asp",
+    "titulo": "CAU - Credores - Assuntos Contábeis",
+    "descricao": "Fale Conosco - CAU: Assuntos Contábeis\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 37,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/email/busca_cau.asp",
+    "titulo": "CAU - Consulta à Mensagem Enviada",
+    "descricao": "Fale Conosco - CAU: Consulta à Mensagem Enviada\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 38,
+    "tipo": "Servidor Público",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/Pages/CadinLogon.aspx",
+    "titulo": "Acesso aos Serviços",
+    "descricao": "Acesso ao CADIN Estadual restrito aos servidores públicos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 39,
+    "tipo": "Servidor Público",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/srpf/",
+    "titulo": "Sistema de Regularidade Previdenciária e Fiscal",
+    "descricao": "Acesso ao Sistema de Regularidade Previdenciária e Fiscal que permite o acompanhamento das certidões de cada uma das entidades, avisando com antecedência de 60 dias no caso da certidão negativa de débito previdenciário e da Certidão Conjunta de Tributos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 40,
+    "tipo": "Servidor Público",
+    "classe": "CADASTRO DE UNIDADES ADMINISTRATIVAS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.fazenda.sp.gov.br/ua/hierarquia.asp",
+    "titulo": "Hierarquia",
+    "descricao": "Acesso a pesquisa de UA por Hierarquia\nFormas de acesso: Público"
+  },
+  {
+    "id": 41,
+    "tipo": "Servidor Público",
+    "classe": "CADASTRO DE UNIDADES ADMINISTRATIVAS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.fazenda.sp.gov.br/ua/regiao.asp",
+    "titulo": "Região Administrativa",
+    "descricao": "Acesso a pesquisa de UA por Região Administrativa\nFormas de acesso: Público"
+  },
+  {
+    "id": 42,
+    "tipo": "Servidor Público",
+    "classe": "CADASTRO DE UNIDADES ADMINISTRATIVAS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.fazenda.sp.gov.br/ua/muni.asp",
+    "titulo": "Município",
+    "descricao": "Acesso a pesquisa de UA por Município\nFormas de acesso: Público"
+  },
+  {
+    "id": 43,
+    "tipo": "Servidor Público",
+    "classe": "CADASTRO DE UNIDADES ADMINISTRATIVAS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.fazenda.sp.gov.br/ua/ugenovo.asp",
+    "titulo": "Unidade Gestora Executora (UGE)",
+    "descricao": "Acesso a pesquisa de UA por Unidade Gestora Executora (UGE)\nFormas de acesso: Público"
+  },
+  {
+    "id": 44,
+    "tipo": "Servidor Público",
+    "classe": "CADASTRO DE UNIDADES ADMINISTRATIVAS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.fazenda.sp.gov.br/ua/nrua.asp",
+    "titulo": "Número ou parte de nome",
+    "descricao": "Acesso a pesquisa de UA por Número ou parte de nome\nFormas de acesso: Público"
+  },
+  {
+    "id": 45,
+    "tipo": "Servidor Público",
+    "classe": "ENTIDADES DA ADMINISTRAÇÃO DO ESTADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/Entidades/Base/Paginas/Login.aspx",
+    "titulo": "Atualização mensal de fluxo de caixa",
+    "descricao": "Atualização mensal de fluxo de caixa das Entidades Descentralizadas do Estado\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 46,
+    "tipo": "Servidor Público",
+    "classe": "ENTIDADES DA ADMINISTRAÇÃO DO ESTADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/Entidades/Base/Paginas/Login.aspx",
+    "titulo": "Previsão inicial de fluxo de caixa",
+    "descricao": "Previsão inicial do fluxo de caixa das Entidades Descentralizadas do Estado\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 47,
+    "tipo": "Servidor Público",
+    "classe": "ENTIDADES DA ADMINISTRAÇÃO DO ESTADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/Entidades/Base/Paginas/Login.aspx",
+    "titulo": "Revisão de fluxo de caixa",
+    "descricao": "Revisão de fluxo de caixa das Entidades Descentralizadas do Estado\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 48,
+    "tipo": "Servidor Público",
+    "classe": "ENTIDADES DA ADMINISTRAÇÃO DO ESTADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/Entidades/Base/Paginas/Login.aspx",
+    "titulo": "Atualização de dados cadastrais",
+    "descricao": "Atualização de dados cadastrais das Entidades Descentralizadas do Estado\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 49,
+    "tipo": "Servidor Público",
+    "classe": "ÍNDICES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/IndObPubConsulta/Consultas/select.aspx",
+    "titulo": "Consulta de Índices",
+    "descricao": "Os Índices de Preços da Construção Civil e dos Serviços Gerais de Mão de Obra são utilizados para o reajuste de contratos de obras públicas e dos serviços gerais com predominância de mão de obra no âmbito da Administração do Governo do Estado de São Paulo\nFormas de acesso: Público"
+  },
+  {
+    "id": 50,
+    "tipo": "Servidor Público",
+    "classe": "PROGRAMAÇÃO DE DESEMBOLSO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/sef/pagina/login.aspx",
+    "titulo": "Login",
+    "descricao": "Acesso ao Sistema de Execução Financeira que permite a programação, o controle, o acompanhamento e a execução das liberações financeiras dos órgãos e entidades do Estado de São Paulo\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 51,
+    "tipo": "Servidor Público",
+    "classe": "PROGRAMAÇÃO DE DESEMBOLSO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/SEF/PaginasTecnico/DetalhaNovoUsuario.aspx",
+    "titulo": "Cadastramento de um novo usuário",
+    "descricao": "Acesso para cadastramento de um novo usuário ao Sistema de Execução Financeira\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 52,
+    "tipo": "Servidor Público",
+    "classe": "PREVISÃO ORÇAMENTÁRIA E ARRECADAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/receitacaf/UsoGeral/Login.aspx",
+    "titulo": "Login",
+    "descricao": "Acesso ao Sistema Integrado da Receita que fornece informações sobre previsão orçamentária e o acompanhamento da arrecadação das receitas estaduais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 53,
+    "tipo": "Servidor Público",
+    "classe": "PREVISÃO ORÇAMENTÁRIA E ARRECADAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/receitacaf/UsoGeral/Login.aspx",
+    "titulo": "Esqueci Minha Senha",
+    "descricao": "Acesso ao Sistema Integrado da Receita: esqueci minha senha\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 54,
+    "tipo": "Servidor Público",
+    "classe": "QUOTAS ORÇAMENTÁRIAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/orcamentaria/Paginas/Login.aspx",
+    "titulo": "Consultas",
+    "descricao": "Acesso a Programação de Quota Orçamentária que controla os lançamentos de quotas orçamentárias no SIAFEM/SP\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 55,
+    "tipo": "Servidor Público",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://legislacao.fazenda.sp.gov.br/Paginas/Home.aspx",
+    "titulo": "Legislação Tributária",
+    "descricao": "Acesso à Legislação Tributária\nFormas de acesso: Público"
+  },
+  {
+    "id": 56,
+    "tipo": "Servidor Público",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/InformarTipoAcesso.aspx",
+    "titulo": "Minhas Consultas Tributárias",
+    "descricao": "Acesso às Consultas Protocoladas pelo Contribuinte Consulente\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 57,
+    "tipo": "Servidor Público",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/AcessoOrientacoes.aspx",
+    "titulo": "Formulação de Consulta Tributária Eletrônica",
+    "descricao": "Acesso à Formulação de Consulta Tributária Eletrônica (e-CT)\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 58,
+    "tipo": "Servidor Público",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/ConsultaPublica.aspx",
+    "titulo": "Confirmação de Autenticidade de Resposta de Consulta Tributária Eletrônica",
+    "descricao": "Acesso à Confirmação de Autenticidade de Consulta Tributária Eletrônica\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 59,
+    "tipo": "Servidor Público",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/DiarioEletronico/ConsultaPublica.aspx",
+    "titulo": "Diário Eletrônico",
+    "descricao": "Consulta dos acórdãos, decisões, atos administrativos, intimações e comunicações em geral do TIT e DTJs.\nFormas de acesso: Público"
+  },
+  {
+    "id": 60,
+    "tipo": "Servidor Público",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/ePAT/portal/",
+    "titulo": "Processos Eletrônicos (ePAT)",
+    "descricao": "Visualização de processos, entrada de documentos, distribuição de processos e outros serviços do ePat\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 61,
+    "tipo": "Servidor Público",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/epat/extratoprocesso/PesquisarExtrato.aspx",
+    "titulo": "Andamento de Processos",
+    "descricao": "Consulta a extratos de Processos do Contencioso Administrativo\nFormas de acesso: Público"
+  },
+  {
+    "id": 62,
+    "tipo": "Servidor Público",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/VDTIT/ConsultarVotos.aspx?instancia=2",
+    "titulo": "Jurisprudência - Inteiro Teor dos Acórdãos do TIT (a partir de 2005)",
+    "descricao": "Consulta de acórdãos do TIT\nFormas de acesso: Público"
+  },
+  {
+    "id": 63,
+    "tipo": "Servidor Público",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/VDTIT/ConsultarVotos.aspx?instancia=1",
+    "titulo": "Jurisprudência - Inteiro Teor das Decisões das DTJs (a partir de 10/11/2010)",
+    "descricao": "Consulta de Decisões das Delegacias Tributárias de Julgamento\nFormas de acesso: Público"
+  },
+  {
+    "id": 64,
+    "tipo": "Servidor Público",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/pauta/pages/ConsultaPauta.aspx",
+    "titulo": "Pauta de Julgamentos",
+    "descricao": "Consulta às pautas de julgamento, por Câmaras Julgadoras\nFormas de acesso: Público"
+  },
+  {
+    "id": 65,
+    "tipo": "Servidor Público",
+    "classe": "GERENCIAMENTO DE INFORMAÇÕES DE PLANEJAMENTO E EXECUÇÃO ORÇAMENTÁRIA E FINANCEIRA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CAU_Usuario/Account/Login.aspx?ReturnUrl=Recadastramento%2frecadastramentos.aspx",
+    "titulo": "Usuário – Recadastramento Anual",
+    "descricao": "Formas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 66,
+    "tipo": "Servidor Público",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoRecolhimento/",
+    "titulo": "Certidão de Pagamento de IPVA",
+    "descricao": "Sistema para a emissão de Certidão de Pagamento de IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 67,
+    "tipo": "Servidor Público",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoIsencao/",
+    "titulo": "Certidão de Imunidade, Isenção e Dispensa do IPVA",
+    "descricao": "Sistema para emissão de Certidão de Imunidade, Isenção e Dispensa do IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 68,
+    "tipo": "Servidor Público",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoValidacao/",
+    "titulo": "Validação de Certidões de IPVA",
+    "descricao": "Sistema para a validação de Certidões de IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 69,
+    "tipo": "Servidor Público",
+    "classe": "EDUCAÇÃO, CAPACITAÇÃO E DESENVOLVIMENTO PESSOAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/SistemaCapacitacaoSiafem/PaginasAutenticacao/Autenticacao.aspx",
+    "titulo": "Sistema de Gestão da Escola de Governo",
+    "descricao": "Área do aluno – emissão de atestados de participação e certificados\nFormas de acesso: Presencial, Público"
+  },
+  {
+    "id": 70,
+    "tipo": "Servidor Público",
+    "classe": "EDUCAÇÃO, CAPACITAÇÃO E DESENVOLVIMENTO PESSOAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/SistemaCapacitacaoSiafem/PaginasAutenticacao/Autenticacao.aspx",
+    "titulo": "Inscrição em eventos",
+    "descricao": "Acesso ao formulário para participar de eventos na Escola de Governo\nFormas de acesso: Público"
+  },
+  {
+    "id": 71,
+    "tipo": "Servidor Público",
+    "classe": "EDUCAÇÃO, CAPACITAÇÃO E DESENVOLVIMENTO PESSOAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://avaegesp.fazenda.sp.gov.br/",
+    "titulo": "AVA – Ambiente Virtual de Aprendizagem",
+    "descricao": "Acesso aos cursos EaD da Secretaria da Fazenda e Planejamento\nFormas de acesso: Público"
+  },
+  {
+    "id": 72,
+    "tipo": "Servidor Público",
+    "classe": "EDUCAÇÃO, CAPACITAÇÃO E DESENVOLVIMENTO PESSOAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://egesp.fazenda.sp.gov.br/programacao/?view_mode=records&perpage=12&paged=1&order=ASC&orderby=title&fetch_only=thumbnail&fetch_only_meta=26386%2C7470%2C26414",
+    "titulo": "Agenda de Eventos",
+    "descricao": "Visualize o calendário de eventos da Escola de Governo\nFormas de acesso: Público"
+  },
+  {
+    "id": 73,
+    "tipo": "Servidor Público",
+    "classe": "EDUCAÇÃO, CAPACITAÇÃO E DESENVOLVIMENTO PESSOAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://egesp.fazenda.sp.gov.br/agendamento-de-salas/",
+    "titulo": "Solicitar uma sala para reunião ou evento",
+    "descricao": "Acesso ao formulário para solicitação de salas\nFormas de acesso: Público"
+  },
+  {
+    "id": 74,
+    "tipo": "Servidor Público",
+    "classe": "ÍNDICES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/pautadocafe/cafe.asp",
+    "titulo": "Café - Pauta para Operações Interestaduais",
+    "descricao": "Pauta do Café\nFormas de acesso: Público"
+  },
+  {
+    "id": 75,
+    "tipo": "Servidor Público",
+    "classe": "COMUNICAÇÕES E ENERGIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/validadores",
+    "titulo": "Consulta das transmissões dos arquivos digitais",
+    "descricao": "Acesso à Consulta das transmissões dos arquivos digitais previstos na Portaria CAT 15/14\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 76,
+    "tipo": "Servidor Público",
+    "classe": "DIPAM",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/DIPAM.Web/Login",
+    "titulo": "DIPAM.Web",
+    "descricao": "Sistema de Consulta do Valor Adicionado\nFormas de acesso: Público"
+  },
+  {
+    "id": 77,
+    "tipo": "Servidor Público",
+    "classe": "TRABALHO A DISTÂNCIA",
+    "orgao": "SEFAZ-SP",
+    "link": "http://outlook.office365.com",
+    "titulo": "Webmail",
+    "descricao": "Acesso ao email corporativo\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 78,
+    "tipo": "Servidor Público",
+    "classe": "TRABALHO A DISTÂNCIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://vpnssl.fazenda.sp.gov.br/sslvpn/",
+    "titulo": "Acesso à VPN Web - SSL",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 79,
+    "tipo": "Servidor Público",
+    "classe": "AUDITORIA DE CONTAS PÚBLICAS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.sct.sp.gov.br/",
+    "titulo": "SCT - Sistema de Consolidação das Informações ao Tribunal de Contas do Estado de São Paulo",
+    "descricao": "O SCT tem como objetivo receber e transmitir as informações sobre licitações, contratos e pagamentos do Poder Executivo do Estado de São Paulo ao Sistema Audesp do TCE-SP para atendimento da Fase IV, pelo Decreto 63195/18.\nFormas de acesso: Público"
+  },
+  {
+    "id": 80,
+    "tipo": "Servidor Público",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/ValidadorXML",
+    "titulo": "Validador XML",
+    "descricao": "Ferramenta para identificar erros de formatação do MDF-e\nFormas de acesso: Público"
+  },
+  {
+    "id": 81,
+    "tipo": "Servidor Público",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFESSL/ConsultaNaoEncerrados",
+    "titulo": "Consulta Não Encerrados",
+    "descricao": "Consulta de MDF-e com encerramento pendente\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 82,
+    "tipo": "Servidor Público",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/CCC",
+    "titulo": "Consulta CCC",
+    "descricao": "Cadastro Centralizado de Contribuintes\nFormas de acesso: Público"
+  },
+  {
+    "id": 83,
+    "tipo": "Servidor Público",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/Disponibilidade",
+    "titulo": "Disponibilidade Web Services",
+    "descricao": "Painel de disponibilidade dos serviços autorizadores de MDF-e\nFormas de acesso: Público"
+  },
+  {
+    "id": 84,
+    "tipo": "Servidor Público",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/Consulta",
+    "titulo": "Consulta Pública",
+    "descricao": "Consulta Pública\nFormas de acesso: Público"
+  },
+  {
+    "id": 85,
+    "tipo": "Servidor Público",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/tit/Paginas/Servicos.aspx",
+    "titulo": "TIT - Tribunal de Impostos e Taxas",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 86,
+    "tipo": "Servidor Público",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/diplomatico-isencao.aspx",
+    "titulo": "IPVA - Isenção/Entidades e Pessoas Físicas com Direito a Tratamento Diplomático",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 87,
+    "tipo": "Servidor Público",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/125",
+    "titulo": "Solicitação de cópia ou de vistas de documentos da Sefaz",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 88,
+    "tipo": "Servidor Público",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfp-jud.fazenda.sp.gov.br/",
+    "titulo": "Sistema do NFP - Judiciário",
+    "descricao": "Acesso aos Tribunais e aos fazendários para consulta de informações cadastrais e saldo de consumidores no programa NFP. Em breve será disponibilizado bloqueio e transferências de créditos.\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 89,
+    "tipo": "Servidor Público",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/125",
+    "titulo": "Solicitação de cópia ou de vistas de documentos da Sefaz",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 90,
+    "tipo": "Servidor Público",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.fazenda.sp.gov.br/regionais/default.asp",
+    "titulo": "Localização de Postos Fiscais",
+    "descricao": "Acesso à Localização de Postos Fiscais\nFormas de acesso: Público"
+  },
+  {
+    "id": 91,
+    "tipo": "Servidor Público",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/scanc/Paginas/PagEntregaExtemporanea.aspx",
+    "titulo": "Entrega Extemporânea de Anexos SCANC",
+    "descricao": "Entrega de anexos SCANC após o prazo estabelecido\nFormas de acesso: Público"
+  },
+  {
+    "id": 92,
+    "tipo": "Servidor Público",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/Simp/",
+    "titulo": "Emissão de DARE para ICMS - IMPORTAÇÃO",
+    "descricao": "SIMP - Geração de DARE, GARE, GNRE, GCOMP-ICMS e Guia de Liberação Importação\nFormas de acesso: Público"
+  },
+  {
+    "id": 93,
+    "tipo": "Servidor Público",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/187",
+    "titulo": "Cancelamento de autorização obtida para compra de veículo com isenção ICMS (pessoa com deficiência)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 94,
+    "tipo": "Servidor Público",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/Multas-de-transito-MILT-e-Renainf.aspx",
+    "titulo": "Restituição de IPVA ou multas de trânsito motivada por pagamento indevido ou a maior",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 95,
+    "tipo": "Servidor Público",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/220",
+    "titulo": "Credenciamento de Operador Logístico - Portaria CAT 31/2019",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 96,
+    "tipo": "Servidor Público",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.pagamentos.fazenda.sp.gov.br/Pagamentos/WebSite/Extranet/Login.aspx",
+    "titulo": "Ambiente de Pagamentos",
+    "descricao": "Consulta de situação e emissão de DARE\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 97,
+    "tipo": "Servidor Público",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/Multas-de-transito-MILT-e-Renainf.aspx",
+    "titulo": "Multa de Trânsito",
+    "descricao": "Informações sobre multas de trânsito\nFormas de acesso: Público"
+  },
+  {
+    "id": 98,
+    "tipo": "Servidor Público",
+    "classe": "SEGURANÇA DA INFORMAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "http://smart.fazenda.sp.gov.br/mgp",
+    "titulo": "MGP - Módulo Gestor de Procurações",
+    "descricao": "O Módulo Gestor de Procurações do Smart permite ao cidadão ou contribuinte cadastrar procurações em um único local para diversos sistemas da Secretaria da Fazenda e Planejamento.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 99,
+    "tipo": "Servidor Público",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/Duimp/login",
+    "titulo": "Sistema de Importação - DUIMP SEFAZ/SP",
+    "descricao": "Sistema de Importação - DUIMP SEFAZ/SP (primeira entrega- apenas exoneração integral GLME)\nFormas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 100,
+    "tipo": "Servidor Público",
+    "classe": "AUTENTICAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www5.fazenda.sp.gov.br/saepdeclaracao",
+    "titulo": "SAEP - Sistema de Acompanhamento da Evolução Patrimonial - para servidores INATIVOS",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 101,
+    "tipo": "Servidor Público",
+    "classe": "AUTENTICAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://sefaznet5.intra.fazenda.sp.gov.br/saep",
+    "titulo": "SAEP - Sistema de Acompanhamento da Evolução Patrimonial - para servidores ATIVOS",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 102,
+    "tipo": "Servidor Público",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoIsencao/",
+    "titulo": "Certidão de Imunidade, Isenção e Dispensa do IPVA",
+    "descricao": "Sistema para emissão de Certidão de Imunidade, Isenção e Dispensa do IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 103,
+    "tipo": "Servidor Público",
+    "classe": "RECURSOS HUMANOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.sfp.sp.gov.br/sefaz/institucional/recursos-humanos",
+    "titulo": "Informações sobre Recursos Humanos",
+    "descricao": "Formas de acesso: Público"
+  }
+]

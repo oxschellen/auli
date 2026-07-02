@@ -1,0 +1,1388 @@
+[
+  {
+    "id": 1,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/pages/publ/cadin.aspx",
+    "titulo": "Consulta Comunicados",
+    "descricao": "Acesso a consulta de comunicados no CADIN\nFormas de acesso: Público"
+  },
+  {
+    "id": 2,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/pages/publ/cadin.aspx",
+    "titulo": "Consulta Inscritos CADIN",
+    "descricao": "Acesso a consulta de inscritos no CADIN\nFormas de acesso: Público"
+  },
+  {
+    "id": 3,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/pages/publ/cadin.aspx",
+    "titulo": "Consulta Declaração CADIN",
+    "descricao": "Acesso a consulta de declarações no CADIN\nFormas de acesso: Público"
+  },
+  {
+    "id": 4,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/pages/publ/cadin.aspx",
+    "titulo": "Logon",
+    "descricao": "Acesso a informações detalhadas no CADIN sobre pendências e comunicados emitidos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 5,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CertidaoNegativaDeb/Pages/EmissaoCertidaoNegativa.aspx",
+    "titulo": "eCND - Certidão Negativa de Débitos Tributários não Inscritos",
+    "descricao": "Acesso à Certidão Negativa de Débitos Tributários não Inscritos\nFormas de acesso: Público"
+  },
+  {
+    "id": 6,
+    "tipo": "Cidadão",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/Simp/",
+    "titulo": "Importações: Geração de GARE, GNRE, GCOMP-ICMS e Guia de Liberação",
+    "descricao": "Acesso à Geração de GARE, GNRE, GCOMP-ICMS e Guia de Liberação de mercadoria importada\nFormas de acesso: Presencial, Público"
+  },
+  {
+    "id": 7,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/ITCMD_DEC/Default.aspx",
+    "titulo": "Sistema Declaratório ITCMD",
+    "descricao": "Sistema para: Gerar, Confirmar, Continuar e Retificar Declaração; Emitir (GARE e 2ªvia; Demonstrativo ou Resumo)\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 8,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.pagamentos.fazenda.sp.gov.br/pagamentos/website.responsivo/emissao/servicos",
+    "titulo": "Emissão de DARE para demais receitas",
+    "descricao": "Ambiente de Pagamentos\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 9,
+    "tipo": "Cidadão",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfp.fazenda.sp.gov.br/login.aspx?ReturnUrl=%2fPrincipal.aspx",
+    "titulo": "Sistema da Nota Fiscal Paulista",
+    "descricao": "Acesse o sistema para cadastro de usuário, consulta de saldo, resgate de valores, consulta dos seus bilhetes e prêmios.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 10,
+    "tipo": "Cidadão",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfp.fazenda.sp.gov.br/areapublica/consultanf_cf.aspx",
+    "titulo": "Consulta individual de Nota Fiscal/Cupom Fiscal Paulista",
+    "descricao": "Acesso à Consulta individual de Nota Fiscal/Cupom Fiscal Paulista\nFormas de acesso: Público"
+  },
+  {
+    "id": 11,
+    "tipo": "Cidadão",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://legislacao.fazenda.sp.gov.br/Paginas/Home.aspx",
+    "titulo": "Legislação Tributária",
+    "descricao": "Acesso à Legislação Tributária\nFormas de acesso: Público"
+  },
+  {
+    "id": 12,
+    "tipo": "Cidadão",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/InformarTipoAcesso.aspx",
+    "titulo": "Minhas Consultas Tributárias",
+    "descricao": "Acesso às Consultas Protocoladas pelo Contribuinte Consulente\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 13,
+    "tipo": "Cidadão",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/AcessoOrientacoes.aspx",
+    "titulo": "Formulação de Consulta Tributária Eletrônica",
+    "descricao": "Acesso à Formulação de Consulta Tributária Eletrônica (e-CT)\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 14,
+    "tipo": "Cidadão",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/ConsultaPublica.aspx",
+    "titulo": "Confirmação de Autenticidade de Resposta de Consulta Tributária Eletrônica",
+    "descricao": "Acesso à Confirmação de Autenticidade de Consulta Tributária Eletrônica\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 15,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Consulta de débitos vinculados ao veículo",
+    "descricao": "Acesso à consulta de débitos de IPVA por CPF, CNPJ ou vinculados ao veículo necessário efetuar login pelo GOV.BR ou com certificado digital\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 16,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Pedido de baixa de benefício",
+    "descricao": "Orientações sobre pedido de baixa de benefício\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 17,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Pedido de retificação de dados cadastrais para cálculo do IPVA",
+    "descricao": "Orientações sobre pedido de retificação de dados cadastrais para cálculo do IPVA\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 18,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Pedido de Retificação de Documento de Arrecadação",
+    "descricao": "Orientações sobre pedido de retificação de Documento de Arrecadação\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 19,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/restituicao-pagamento-indevido-ou-duplicado.aspx",
+    "titulo": "Pedido de Restituição de IPVA",
+    "descricao": "Informações sobre pedido de restituição de IPVA\nFormas de acesso: Presencial, Público"
+  },
+  {
+    "id": 20,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/contestacao-notificacao-lancamento.aspx",
+    "titulo": "Contestação ao lançamento do IPVA",
+    "descricao": "Informações sobre contestação ao lançamento do IPVA\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 21,
+    "tipo": "Cidadão",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/registroExportacao/UsoGeral/Login.aspx",
+    "titulo": "Exportações: RIEX - Registro de Informações de Exportação",
+    "descricao": "Acesso ao cadastro de informações e notas fiscais de exportação- Portaria nº 50/2005\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 22,
+    "tipo": "Cidadão",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/RecintoAlfandegado/login.aspx",
+    "titulo": "Importações: Recinto Alfandegado",
+    "descricao": "Acesso à consulta de status da DI para a entrega de mercadorias pelo Recinto Alfandegado\nFormas de acesso: Presencial, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 23,
+    "tipo": "Cidadão",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/registroExportacaoConsulta/ConsultaPublica.aspx",
+    "titulo": "Exportações: RIEX - Consulta Pública ao Registro de Exportação",
+    "descricao": "Consulta Pública ao Registro de Exportação\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 24,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/DiarioEletronico/ConsultaPublica.aspx",
+    "titulo": "Diário Eletrônico",
+    "descricao": "Consulta dos acórdãos, decisões, atos administrativos, intimações e comunicações em geral do TIT e DTJs.\nFormas de acesso: Público"
+  },
+  {
+    "id": 25,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/ePAT/portal/",
+    "titulo": "Processos Eletrônicos (ePAT)",
+    "descricao": "Visualização de processos, entrada de documentos, distribuição de processos e outros serviços do ePat\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 26,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/epat/extratoprocesso/PesquisarExtrato.aspx",
+    "titulo": "Andamento de Processos",
+    "descricao": "Consulta a extratos de Processos do Contencioso Administrativo\nFormas de acesso: Público"
+  },
+  {
+    "id": 27,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/VDTIT/ConsultarVotos.aspx?instancia=2",
+    "titulo": "Jurisprudência - Inteiro Teor dos Acórdãos do TIT (a partir de 2005)",
+    "descricao": "Consulta de acórdãos do TIT\nFormas de acesso: Público"
+  },
+  {
+    "id": 28,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/VDTIT/ConsultarVotos.aspx?instancia=1",
+    "titulo": "Jurisprudência - Inteiro Teor das Decisões das DTJs (a partir de 10/11/2010)",
+    "descricao": "Consulta de Decisões das Delegacias Tributárias de Julgamento\nFormas de acesso: Público"
+  },
+  {
+    "id": 29,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/pauta/pages/ConsultaPauta.aspx",
+    "titulo": "Pauta de Julgamentos",
+    "descricao": "Consulta às pautas de julgamento, por Câmaras Julgadoras\nFormas de acesso: Público"
+  },
+  {
+    "id": 30,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaPublica.aspx",
+    "titulo": "Consulta à NFC-e (com validade jurídica)",
+    "descricao": "Consulta à NFC-e (com validade jurídica)\nFormas de acesso: Público"
+  },
+  {
+    "id": 31,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.homologacao.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaPublica.aspx",
+    "titulo": "Consulta à NFC-e (ambiente de testes)",
+    "descricao": "Consulta à NFC-e (ambiente de testes)\nFormas de acesso: Público"
+  },
+  {
+    "id": 32,
+    "tipo": "Cidadão",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/codecon/Paginas/Of%C3%ADcios.aspx",
+    "titulo": "Ofícios",
+    "descricao": "Ofícios enviados pelo CODECON\nFormas de acesso: Público"
+  },
+  {
+    "id": 33,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Pedido de certidão de pagamento do IPVA",
+    "descricao": "Emissão de certidão de pagamento do IPVA\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 34,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/Dificuldades-com-o-licenciamento.aspx",
+    "titulo": "Desbloqueio de taxa de licenciamento ou transferência",
+    "descricao": "Orientações sobre desbloqueio de taxa de licenciamento ou transferência\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 35,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/contestacao-inscricao-cadin.aspx",
+    "titulo": "Contestação à inscrição no Cadin",
+    "descricao": "Orientações sobre contestação à inscrição no Cadin\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 36,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Consulta de valor venal para o IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 37,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Emissão de guias de pagamento",
+    "descricao": "Emissão de guias de pagamento\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 38,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Consulta de restituição de veículo furtado e roubado neste Estado",
+    "descricao": "Consulta de restituição motivada por dispensa decorrente de furto ou roubo de veículo dentro do Estado de São Paulo\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 39,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ppd2017.sp.gov.br",
+    "titulo": "PPD - Programa de Parcelamento de Débitos",
+    "descricao": "Promove a regularização dos créditos do Estado inscritos em Dívida Ativa, ajuizados ou não, decorrentes de dívidas de IPVA, ITCMD, taxas de qualquer espécie e origem, taxas, multas, reposição de vencimentos de servidores e ressarcimentos ou restituições.\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 40,
+    "tipo": "Cidadão",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIVEI/",
+    "titulo": "SIVEI - Sistema de Veículos",
+    "descricao": "Sistema para solicitação de pedido de benefícios fiscais para veículos automotores\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 41,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIVEI/",
+    "titulo": "SIVEI - Sistema de Veículos",
+    "descricao": "Sistema para solicitação de pedido de benefícios fiscais para veículos automotores\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 42,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoRecolhimento/",
+    "titulo": "Certidão de Pagamento de IPVA",
+    "descricao": "Sistema para a emissão de Certidão de Pagamento de IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 43,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoIsencao/",
+    "titulo": "Certidão de Imunidade, Isenção e Dispensa do IPVA",
+    "descricao": "Sistema para emissão de Certidão de Imunidade, Isenção e Dispensa do IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 44,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoValidacao/",
+    "titulo": "Validação de Certidões de IPVA",
+    "descricao": "Sistema para a validação de Certidões de IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 45,
+    "tipo": "Cidadão",
+    "classe": "DIPAM",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/DIPAM.Web/Login",
+    "titulo": "DIPAM.Web",
+    "descricao": "Sistema de Consulta do Valor Adicionado\nFormas de acesso: Público"
+  },
+  {
+    "id": 46,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/ValidadorXML",
+    "titulo": "Validador XML",
+    "descricao": "Ferramenta para identificar erros de formatação do MDF-e\nFormas de acesso: Público"
+  },
+  {
+    "id": 47,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFESSL/ConsultaNaoEncerrados",
+    "titulo": "Consulta Não Encerrados",
+    "descricao": "Consulta de MDF-e com encerramento pendente\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 48,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/CCC",
+    "titulo": "Consulta CCC",
+    "descricao": "Cadastro Centralizado de Contribuintes\nFormas de acesso: Público"
+  },
+  {
+    "id": 49,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/Disponibilidade",
+    "titulo": "Disponibilidade Web Services",
+    "descricao": "Painel de disponibilidade dos serviços autorizadores de MDF-e\nFormas de acesso: Público"
+  },
+  {
+    "id": 50,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/Consulta",
+    "titulo": "Consulta Pública",
+    "descricao": "Consulta Pública\nFormas de acesso: Público"
+  },
+  {
+    "id": 51,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/",
+    "titulo": "SIPET - Sistema de Peticionamento Eletrônico",
+    "descricao": "Sistema de recepção e triagem de solicitações do contribuinte para a devida integração com o Sefaz Sem Papel (inserção e direcionamento), além de servir como interface de comunicação com o solicitante que optar em ser atendido remotamente pelo sistema.\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 52,
+    "tipo": "Cidadão",
+    "classe": "ÍNDICES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://legislacao.fazenda.sp.gov.br/Paginas/ValoresDaUFESP.aspx",
+    "titulo": "UFESP - Unidade Fiscal do Estado de São Paulo",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 53,
+    "tipo": "Cidadão",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/codecon/Paginas/Como-Denunciar.aspx",
+    "titulo": "Reclamações e denúncias ao CODECON",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 54,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/68",
+    "titulo": "Cancelamento Extemporâneo de NF-e",
+    "descricao": "Orientações a respeito do recebimento de comunicação de emitente de NFe informando que não efetuou cancelamento de NFe no prazo* estipulado no §2º do artigo 18 da Portaria CAT 162/08.\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 55,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://senhafacil.com.br/agendamento/",
+    "titulo": "Agendamento Eletrônico",
+    "descricao": "Agendamento para atendimento presencial ou eletrônico\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 56,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/sipet",
+    "titulo": "SIPET - Sistema de Peticionamento Eletrônico",
+    "descricao": "Sistema de recepção e triagem de solicitações do contribuinte para a devida integração com o Sefaz Sem Papel (inserção e direcionamento), além de servir como interface de comunicação com o solicitante que optar em ser atendido remotamente pelo sistema\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 57,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/certidoes/",
+    "titulo": "Certidões",
+    "descricao": "Negativa / Pagamento / Inscrição ou Não Inscrição no CADESP\nFormas de acesso: Público"
+  },
+  {
+    "id": 58,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ct/Paginas/Consulta-Tribut%C3%A1ria-Eletr%C3%B4nica-(e-CT).aspx",
+    "titulo": "eCT - Consulta Tributária Eletrônica",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 59,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/tit/Paginas/Servicos.aspx",
+    "titulo": "TIT - Tribunal de Impostos e Taxas",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 60,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/credito-produtor-rural/",
+    "titulo": "Crédito do Produtor Rural",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 61,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/5",
+    "titulo": "Liberação de mercadorias apreendidas",
+    "descricao": "Procedimentos para efetuar a devolução, liberação ou doação de bens apreendidos ou prestar informações do seu leilão\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 62,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/2",
+    "titulo": "Certidão de Pagamento de Tributos",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 63,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/77",
+    "titulo": "Restituição de ICMS pago por GARE/GNRE/DARE",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 64,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/108",
+    "titulo": "Certidão de Regularidade do ITCMD (transmissões extrajudiciais lavradas fora do Estado de São Paulo",
+    "descricao": "Certidão de Regularidade do ITCMD - transmissões de outra UF\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 65,
+    "tipo": "Cidadão",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/comex/Paginas/Guia-do-usu%C3%A1rio---Retifica%C3%A7%C3%A3o-de-GARE---Importa%C3%A7%C3%A3o.aspx",
+    "titulo": "Guias de Importação: retificação de Gare ou GNRE",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 66,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/8",
+    "titulo": "Transferência de Crédito de DARE ITCMD",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 67,
+    "tipo": "Cidadão",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ecf/Paginas/Sobre.aspx",
+    "titulo": "Solicitação de Cessação de Uso de Emissor de Cupom Fiscal fora do prazo",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 68,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/55",
+    "titulo": "Apresentação de defesas/petições/recursos para processos de contestação de AIIM ( processos físicos)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 69,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/contestacao-notificacao-lancamento.aspx",
+    "titulo": "Contestação em lote ao Lançamento de IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 70,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/pedido-recurso-contestacao-notificacao-lancamento.aspx",
+    "titulo": "Recurso em lote do Lançamento de IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 71,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/pedido-recurso-contestacao-notificacao-lancamento.aspx",
+    "titulo": "Recurso do Lançamento de IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 72,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/cadastro-reducao-aliquota-empresa-locadora.aspx",
+    "titulo": "Atualização anual de cadastro de locadora (eventuais alterações cadastrais e entrega de BP e DRE)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 73,
+    "tipo": "Cidadão",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/4",
+    "titulo": "Desbloqueio de senha do Programa Nota Fiscal Paulista",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 74,
+    "tipo": "Cidadão",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/3",
+    "titulo": "Desbloqueio de Créditos do Programa Nota Fiscal Paulista",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 75,
+    "tipo": "Cidadão",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/7",
+    "titulo": "Requisição Judicial sobre créditos da NFP (informações, bloqueio, transferências)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 76,
+    "tipo": "Cidadão",
+    "classe": "DIPAM",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/79",
+    "titulo": "Requerimento de acesso ao sistema DIPAM.Web",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 77,
+    "tipo": "Cidadão",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/84",
+    "titulo": "Atendimento Malha Fiscal PGDAS-D",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 78,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.tjsp.jus.br/PortalCustas",
+    "titulo": "Emissão de DARE para Tribunal de Justiça",
+    "descricao": "Portal de Custas do TJ-SP\nFormas de acesso: Público"
+  },
+  {
+    "id": 79,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/Home/ServicosDisponiveis",
+    "titulo": "Serviços disponíveis no SIPET",
+    "descricao": "Lista de serviços disponíveis no SIPET\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 80,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/ITCMD_DEC/Default.aspx",
+    "titulo": "Emissão de DARE para ITCMD declarado",
+    "descricao": "Sistema Declaratório ITCMD\nFormas de acesso: Público"
+  },
+  {
+    "id": 81,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CFPARC/",
+    "titulo": "Emissão de DARE para ITCMD parcelado",
+    "descricao": "Conta Fiscal de Parcelamento do ITCMD\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 82,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/cadastro-reducao-aliquota-empresa-locadora.aspx",
+    "titulo": "Locadoras - Pedido de alteração de dados cadastrais",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 83,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/entrega-anual-documento-reducao-aliquota-empresa-locadora.aspx",
+    "titulo": "Locadoras - Pedido de Cadastramento",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 84,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/124",
+    "titulo": "Denúncia espontânea",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 85,
+    "tipo": "Cidadão",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/125",
+    "titulo": "Solicitação de cópia ou de vistas de documentos da Sefaz",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 86,
+    "tipo": "Cidadão",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/125",
+    "titulo": "Solicitação de cópia ou de vistas de documentos da Sefaz",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 87,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "http://pfe.fazenda.sp.gov.br/",
+    "titulo": "Emissão de DARE para taxa de serviços eletrônicos",
+    "descricao": "Posto Fiscal Eletrônico\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 88,
+    "tipo": "Cidadão",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/128",
+    "titulo": "Oficinas/concessionárias PCD – Requerimento de cadastro no Portal Sefaz",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 89,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.fazenda.sp.gov.br/regionais/default.asp",
+    "titulo": "Localização de Postos Fiscais",
+    "descricao": "Acesso à Localização de Postos Fiscais\nFormas de acesso: Público"
+  },
+  {
+    "id": 90,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CertidaoNegativaDeb/Pages/EmissaoCertidaoNegativa.aspx",
+    "titulo": "eCND - Certidão Negativa de Débitos Tributários Não Inscritos",
+    "descricao": "Emissão da Certidão Negativa de Débitos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 91,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/Simp/",
+    "titulo": "Emissão de DARE para ICMS - IMPORTAÇÃO",
+    "descricao": "SIMP - Geração de DARE, GARE, GNRE, GCOMP-ICMS e Guia de Liberação Importação\nFormas de acesso: Público"
+  },
+  {
+    "id": 92,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/108",
+    "titulo": "Certidão de Regularidade do ITCMD para heranças e doações feitas fora do Estado (transmissões extrajudiciais lavradas fora do Estado de São Paulo)",
+    "descricao": "Certidão de Regularidade do ITCMD - transmissões de outra UF\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 93,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/8",
+    "titulo": "Transferência de Crédito - DARE/SP",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 94,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/74",
+    "titulo": "Atendimento de notificação do ITCMD",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 95,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/46",
+    "titulo": "Retificação de Guia de Arrecadação e Recolhimento Estadual (DARE )",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 96,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/109",
+    "titulo": "Homologação de Transmissão Judicial – inventário, arrolamento ou doação (exceto separação)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 97,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/110",
+    "titulo": "Homologação de Transmissão Judicial - Doação em separação",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 98,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/?auth=1",
+    "titulo": "Parcelamento de bens acima de 200 mil UFESPs e autos de infração",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 99,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---parcelamento-d%C3%A9bitos-inscritos-em-d%C3%ADvida-ativa.aspx",
+    "titulo": "Parcelamento de débitos inscritos em dívida ativa",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 100,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CFPARC/Account/Index",
+    "titulo": "Parcelamento automático - bens até 200 mil UFESPs",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 101,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---isen%C3%A7%C3%A3o-demais-hip%C3%B3teses-legais.aspx",
+    "titulo": "Isenção - demais hipóteses",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 102,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---isen%C3%A7%C3%A3o-meio-ambiente.aspx",
+    "titulo": "Isenção - entidades vinculadas à preservação do meio ambiente",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 103,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---isen%C3%A7%C3%A3o-entidades-culturais.aspx",
+    "titulo": "Isenção - entidades vinculadas à à promoção da cultura",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 104,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---isen%C3%A7%C3%A3o-direitos-humanos.aspx",
+    "titulo": "Isenção - entidades vinculadas à promoção dos direitos humanos",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 105,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---isen%C3%A7%C3%A3o-constru%C3%A7%C3%A3o-moradia---programa-habita%C3%A7%C3%A3o-popular.aspx",
+    "titulo": "Isenção - imóvel vinculado a programa de habitação de interesse social",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 106,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---restitui%C3%A7%C3%A3o-doa%C3%A7%C3%A3o-em-processo-judicial-de-separa%C3%A7%C3%A3o.aspx",
+    "titulo": "Restituição - Doação em processo judicial de separação",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 107,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---restitui%C3%A7%C3%A3o-doa%C3%A7%C3%A3o-extrajudicial.aspx",
+    "titulo": "Restituição - Doação extrajudicial",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 108,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---restitui%C3%A7%C3%A3o-transmiss%C3%A3o-causa-mortise-doa%C3%A7%C3%A3o-de-quinh%C3%B5es.aspx",
+    "titulo": "Restituição - Transmissão \"causa mortis\" e doação de quinhões",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 109,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/itcmd/Paginas/gu---reconhecimento-de-imunidade-(autarquias,-partidos-e-templos).aspx",
+    "titulo": "Imunidade",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 110,
+    "tipo": "Cidadão",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/154",
+    "titulo": "CADIN - Cancelamento de Comunicado ou Cancelamento de Inscrição",
+    "descricao": "Cancelamento CADIN\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 111,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/159",
+    "titulo": "Restituição de taxas e custas - valores maiores que 100 UFESP´s",
+    "descricao": "Valores maiores que 100 UFESP's\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 112,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/A%C3%A7%C3%B5es-judiciais-relativas-ao-IPVA.aspx",
+    "titulo": "Ações judiciais (decisões e ofícios) sobre IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 113,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/163",
+    "titulo": "Ações judiciais (decisões e ofícios) sobre ITCMD",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 114,
+    "tipo": "Cidadão",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/187",
+    "titulo": "Cancelamento de autorização obtida para compra de veículo com isenção ICMS (pessoa com deficiência)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 115,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/Pedido-de-desvincula%C3%A7%C3%A3o-de-d%C3%A9bitos.aspx",
+    "titulo": "Desvinculação de débitos de IPVA para veículo arrematado em leilão",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 116,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/Multas-de-transito-MILT-e-Renainf.aspx",
+    "titulo": "Restituição de IPVA ou multas de trânsito motivada por pagamento indevido ou a maior",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 117,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/169",
+    "titulo": "Pedido de reconhecimento de Imunidade de Autarquias ou Fundações Públicas",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 118,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/172",
+    "titulo": "Reconhecimento de Imunidade para Entidades Sindicais de trabalhadores",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 119,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/173",
+    "titulo": "Reconhecimento de Imunidade para Institutos de Educação ou de Assistência Social",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 120,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/171",
+    "titulo": "Reconhecimento de Imunidade para Partidos Políticos ou suas Fundações",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 121,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/170",
+    "titulo": "Reconhecimento de Imunidade para Templos de qualquer culto",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 122,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/174",
+    "titulo": "Reconhecimento de Isenção na doação de imóvel vinculado à programa de habitação",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 123,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/176",
+    "titulo": "Reconhecimento de Isenção para Entidades que preservam o meio ambiente",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 124,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/175",
+    "titulo": "Reconhecimento de Isenção para Entidades que promovem a cultura",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 125,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/177",
+    "titulo": "Reconhecimento de Isenção para Entidades que promovem direitos humanos",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 126,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/182",
+    "titulo": "Restituição - Recolhido em processo judicial de inventário/arrolamento",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 127,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/183",
+    "titulo": "Restituição - Recolhido em processo judicial de separação/divórcio",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 128,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/181",
+    "titulo": "Restituição - Recolhido para lavratura de escritura pública de inventário",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 129,
+    "tipo": "Cidadão",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/215",
+    "titulo": "Cancelamento de autorização obtida para compra de veículo com isenção de ICMS (taxista)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 130,
+    "tipo": "Cidadão",
+    "classe": "PREVISÃO ORÇAMENTÁRIA E ARRECADAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/planejamento/Paginas/audiencias-publicas.aspx",
+    "titulo": "Audiências Públicas",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 131,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Recurso em face do indeferimento do pedido de isenção IPVA para PcD",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 132,
+    "tipo": "Cidadão",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/225",
+    "titulo": "Alteração de nome/reativação de cadastro Nota Fiscal Paulista",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 133,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/206",
+    "titulo": "Recurso contra decisão relacionada ao IPVA (exceto recurso ao lançamento e isenção IPVA PCD))",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 134,
+    "tipo": "Cidadão",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/230",
+    "titulo": "Transferência de créditos Nota Fiscal Paulista para herdeiro(s)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 135,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/244",
+    "titulo": "Resposta notificação Operação Vaisyas",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 136,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/234",
+    "titulo": "Alteração de e-mail vinculado à Declaração de ITCMD (para obter nova senha)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 137,
+    "tipo": "Cidadão",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/258",
+    "titulo": "Alteração e confirmação de Ofício de declaração retificadora já analisada",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 138,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://pixipva.fazenda.sp.gov.br/pixipva.auth/",
+    "titulo": "Pagamento de IPVA via Pix",
+    "descricao": "Emissão de QR code Pix para o pagamento de IPVA\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 139,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/icms/Paginas/resolveja.aspx",
+    "titulo": "Resolve Já - Informações básicas sobre o programa",
+    "descricao": "Resolve Já - Informações básicas sobre o programa\nFormas de acesso: Público"
+  },
+  {
+    "id": 140,
+    "tipo": "Cidadão",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.pagamentos.fazenda.sp.gov.br/Pagamentos/WebSite/Extranet/Login.aspx",
+    "titulo": "Ambiente de Pagamentos",
+    "descricao": "Consulta de situação e emissão de DARE\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 141,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/267",
+    "titulo": "Reclamação referente a débito de IPVA (SEM NOTIFICAÇÃO), inclusive débito inscrito em dívida ativa.",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 142,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/Multas-de-transito-MILT-e-Renainf.aspx",
+    "titulo": "Multa de Trânsito",
+    "descricao": "Informações sobre multas de trânsito\nFormas de acesso: Público"
+  },
+  {
+    "id": 143,
+    "tipo": "Cidadão",
+    "classe": "SEGURANÇA DA INFORMAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "http://smart.fazenda.sp.gov.br/mgc",
+    "titulo": "MGC - Módulo Gestor de Consentimento",
+    "descricao": "O Módulo Gestor de Consentimento é um sistema que guarda consentimentos para o tratamento de dados pessoais permitindo que os cidadãos possam consultar e, se quiserem, cancelar o consentimento.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 144,
+    "tipo": "Cidadão",
+    "classe": "SEGURANÇA DA INFORMAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "http://smart.fazenda.sp.gov.br/mgt",
+    "titulo": "Meus Dados (MGT - Módulo Gestor de Tratamento de Dados)",
+    "descricao": "O Meus Dados (antigo Módulo Gestor de Tratamento de dados - MGT), possibilita o cumprimento da LGPD com consulta acerca do tratamento de dados pessoais.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 145,
+    "tipo": "Cidadão",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/318",
+    "titulo": "Cálculo de ICMS para transferência, antes de 12 meses, de veículo adquirido diretamente da montadora",
+    "descricao": "Serviço de cálculo de ICMS do Convênio 64/2006\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 146,
+    "tipo": "Cidadão",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/319",
+    "titulo": "Veículo com restrição de transferência",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 147,
+    "tipo": "Cidadão",
+    "classe": "ENTIDADES DA ADMINISTRAÇÃO DO ESTADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/sged/Paginas/sinfe.aspx",
+    "titulo": "Sinfe - Sistema de Informações Fundações e Empresas",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 148,
+    "tipo": "Cidadão",
+    "classe": "SEGURANÇA DA INFORMAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "http://smart.fazenda.sp.gov.br/mgp",
+    "titulo": "MGP - Módulo Gestor de Procurações",
+    "descricao": "O Módulo Gestor de Procurações do Smart permite ao cidadão ou contribuinte cadastrar procurações em um único local para diversos sistemas da Secretaria da Fazenda e Planejamento.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 149,
+    "tipo": "Cidadão",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/Duimp/login",
+    "titulo": "Sistema de Importação - DUIMP SEFAZ/SP",
+    "descricao": "Sistema de Importação - DUIMP SEFAZ/SP (primeira entrega- apenas exoneração integral GLME)\nFormas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 150,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/379",
+    "titulo": "Isenção IPVA - motociclos, motonetas e ciclomotores até 180cc",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 151,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Portal de Serviços de Veículos",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 152,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoIsencao/",
+    "titulo": "Certidão de Imunidade, Isenção e Dispensa do IPVA",
+    "descricao": "Sistema para emissão de Certidão de Imunidade, Isenção e Dispensa do IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 153,
+    "tipo": "Cidadão",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoValidacao/",
+    "titulo": "Validação de Certidões de IPVA",
+    "descricao": "Sistema para a validação de Certidões de IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 154,
+    "tipo": "Cidadão",
+    "classe": "RECURSOS HUMANOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.sfp.sp.gov.br/sefaz/institucional/recursos-humanos",
+    "titulo": "Informações sobre Recursos Humanos",
+    "descricao": "Formas de acesso: Público"
+  }
+]

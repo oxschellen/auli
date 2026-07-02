@@ -1,0 +1,3881 @@
+[
+  {
+    "id": 1,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.cadesp.fazenda.sp.gov.br/Pages/Cadastro/Consultas/ConsultaPublica/ConsultaPublica.aspx",
+    "titulo": "Consulta Pública de Cadastro",
+    "descricao": "Permite ver ficha cadastral simplificada das empresas inscritas no CADESP\nFormas de acesso: Público"
+  },
+  {
+    "id": 2,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.cadesp.fazenda.sp.gov.br/(S(z45mja55a4c2n355iagxmdm5))/Pages/Login.aspx",
+    "titulo": "Consulta Completa de Cadastro",
+    "descricao": "Apresenta todos os dados cadastrais de empresa inscrita no CADESP. Acesso permitido somente a sócios e contabilistas vinculados.\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 3,
+    "tipo": "Empresa",
+    "classe": "SPED, SINTEGRA E GIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Guia de Informação e Apuração do ICMS",
+    "descricao": "Acesso à Consulta de Guia de Informação e Apuração do ICMS\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 4,
+    "tipo": "Empresa",
+    "classe": "SPED, SINTEGRA E GIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta Completa da Guia de Informação e Apuração (GIA)",
+    "descricao": "Serviço disponível aos contribuintes que optaram em pagar a taxa prevista no artigo 32 da Lei 15.266/13, e regulamentada pela Portaria CAT 06/2020\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 5,
+    "tipo": "Empresa",
+    "classe": "SPED, SINTEGRA E GIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Transmissão e Substituição de Guia de Informação e Apuração do ICMS",
+    "descricao": "Acesso à Transmissão e Substituição de Guia de Informação e Apuração do ICMS\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 6,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=consig-movto&cliente=666",
+    "titulo": "Consignatárias - Movimento - Consulta Envio Mês Atual",
+    "descricao": "Acesso a Consulta Envio Mês Atual : Movimento - Consignatárias\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 7,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=consig-movto-0&cliente=666",
+    "titulo": "Consignatárias - Movimento - Consulta Envio Mês Anterior",
+    "descricao": "Acesso a Consulta Envio Mês Anterior : Movimento - Consignatárias\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 8,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=senha&cliente=666&produto=consig-movto",
+    "titulo": "Consignatárias - Movimento - Alteração de Senha",
+    "descricao": "Acesso a Alteração de Senha : Movimento - Consignatárias\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 9,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=down-pza&cliente=666",
+    "titulo": "Consignatárias - Movimento - Receber Pza-Valid",
+    "descricao": "Acesso a Receber Pza Valid : Movimento - Consignatárias\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 10,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=consig-pesq&cliente=666",
+    "titulo": "Consignatárias - Movimento - Pesquisar",
+    "descricao": "Acesso a Pesquisar : Movimento - Consignatárias\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 11,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=consig-atu&cliente=666&produto=consig-manut",
+    "titulo": "Consignatárias - Manutenção - Atualização de Consignatárias",
+    "descricao": "Acesso a Atualização de Consignatárias : Manutenção - Consignatárias\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 12,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=consig-espec&cliente=006&produto=consig-manut",
+    "titulo": "Consignatárias - Manutenção - Atualização Espécies",
+    "descricao": "Acesso a Atualização Espécies : Manutenção - Consignatárias\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 13,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=consig-passdm&cliente=666&produto=consig-manut",
+    "titulo": "Consignatárias - Manutenção - Reinicializar Senha",
+    "descricao": "Acesso a Reinicializar Senha : Manutenção - Consignatárias\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 14,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=usu_obito&cliente=006",
+    "titulo": "Informações Óbitos - Controle de Acesso - Manutenção de Usuários",
+    "descricao": "Acesso para Manutenção de Usuários - Informações Óbitos - Controle de Acesso\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 15,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=senha&cliente=006&produto=obitos",
+    "titulo": "Informações Óbitos - Controle de Acesso - Alteração de Senha",
+    "descricao": "Acesso para Alteração de Senha - Informações Óbitos - Controle de Acesso\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 16,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.e-folha.prodesp.sp.gov.br/fazenda/seguranca/login.asp?menu=download_obito&cliente=006",
+    "titulo": "Informações Óbitos - Download",
+    "descricao": "Acesso a Download - Informações Óbitos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 17,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/coletausu.asp?opcao=ddpe&flag=0",
+    "titulo": "Área restrita - Login",
+    "descricao": "Acesso a Área restrita - Login\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 18,
+    "tipo": "Empresa",
+    "classe": "FOLHA DE PAGAMENTO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/folha/nova_folha/consulta_documentos.asp",
+    "titulo": "Consultar Documentos",
+    "descricao": "Acesso a Consultar Documentos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 19,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/pages/publ/cadin.aspx",
+    "titulo": "Consulta Comunicados",
+    "descricao": "Acesso a consulta de comunicados no CADIN\nFormas de acesso: Público"
+  },
+  {
+    "id": 20,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/pages/publ/cadin.aspx",
+    "titulo": "Consulta Inscritos CADIN",
+    "descricao": "Acesso a consulta de inscritos no CADIN\nFormas de acesso: Público"
+  },
+  {
+    "id": 21,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/pages/publ/cadin.aspx",
+    "titulo": "Consulta Declaração CADIN",
+    "descricao": "Acesso a consulta de declarações no CADIN\nFormas de acesso: Público"
+  },
+  {
+    "id": 22,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/cadin_estadual/pages/publ/cadin.aspx",
+    "titulo": "Logon",
+    "descricao": "Acesso a informações detalhadas no CADIN sobre pendências e comunicados emitidos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 23,
+    "tipo": "Empresa",
+    "classe": "ÍNDICES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/IndObPubConsulta/Consultas/select.aspx",
+    "titulo": "Consulta de Índices",
+    "descricao": "Os Índices de Preços da Construção Civil e dos Serviços Gerais de Mão de Obra são utilizados para o reajuste de contratos de obras públicas e dos serviços gerais com predominância de mão de obra no âmbito da Administração do Governo do Estado de São Paulo\nFormas de acesso: Público"
+  },
+  {
+    "id": 24,
+    "tipo": "Empresa",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.codecon.sp.gov.br/codecon/atas_e_oficios/atas/",
+    "titulo": "Atas de Reuniões do CODECON",
+    "descricao": "Formas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 25,
+    "tipo": "Empresa",
+    "classe": "PROGRAMAÇÃO DE DESEMBOLSO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/sef/Pagina/logincredor_login.aspx",
+    "titulo": "Login",
+    "descricao": "Acesso ao Sistema de Pagamento a Fornecedores que permite aos Fornecedores do Governo do Estado de São Paulo obter acesso às informações de créditos liberados e pendentes.\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 26,
+    "tipo": "Empresa",
+    "classe": "PROGRAMAÇÃO DE DESEMBOLSO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/sef/Pagina/logincredor_login.aspx",
+    "titulo": "Esqueci minha Senha",
+    "descricao": "ao Sistema de Pagamentos a fornecedores: esqueci minha senha\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 27,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://online.crcsp.org.br/visitantes/registro/consulta_registro.aspx?tipo=1",
+    "titulo": "Cadastro CRC",
+    "descricao": "Consulta de contabilistas registrados no Conselho Regional de Contabilidade do Estado de São Paulo.\nFormas de acesso: Público"
+  },
+  {
+    "id": 28,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "http://hom.portalredesim.receita.fazenda.gov.br/",
+    "titulo": "Coletor Nacional",
+    "descricao": "Acesso ao Portal da REDESIM para solicitação de inscrição, alteração ou baixa de empresa\nFormas de acesso: Público"
+  },
+  {
+    "id": 29,
+    "tipo": "Empresa",
+    "classe": "CARTORÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www10.fazenda.sp.gov.br/CartoriosPublico/CartoriosConsultarCartorios.aspx",
+    "titulo": "Encontre um cartório",
+    "descricao": "Acesso à consulta pública de cartórios cadastrados no sistema Cartórios\nFormas de acesso: Público"
+  },
+  {
+    "id": 30,
+    "tipo": "Empresa",
+    "classe": "CARTORÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/Cartorios/Comum/Login.aspx",
+    "titulo": "Informações cadastrais",
+    "descricao": "Acesso à consulta restrita, por meio de certificação digital, às informações cadastrais dos cartórios\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 31,
+    "tipo": "Empresa",
+    "classe": "CARTORÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/Cartorios/Comum/Login.aspx",
+    "titulo": "Escrituras Públicas e Informações de Venda de Veículos",
+    "descricao": "Acesso restrito ao sistema para transmissão e consulta de escrituras públicas e de informações de venda de veículos\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 32,
+    "tipo": "Empresa",
+    "classe": "CARTORÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/Cartorios/Comum/Login.aspx",
+    "titulo": "Mantenha seu cadastro atualizado",
+    "descricao": "Acesso restrito ao sistema para atualização de dados cadastrais do cartório e de seus prepostos.\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 33,
+    "tipo": "Empresa",
+    "classe": "CARTORÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www10.fazenda.sp.gov.br/CartoriosPublico/SimulaTransmissaoEmLote/SimulaTransmissaoEmLote.aspx",
+    "titulo": "Validação do arquivo a ser transmitido de lote de escrituras públicas – para desenvolvedores",
+    "descricao": "Suporte ao desenvolvedor de TI para simulação da transmissão em lote de escrituras públicas, sem uso de certificação digital.\nFormas de acesso: Público"
+  },
+  {
+    "id": 34,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CertidaoNegativaDeb/Pages/EmissaoCertidaoNegativa.aspx",
+    "titulo": "eCND - Certidão Negativa de Débitos Tributários não Inscritos",
+    "descricao": "Acesso à Certidão Negativa de Débitos Tributários não Inscritos\nFormas de acesso: Público"
+  },
+  {
+    "id": 35,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.cadesp.fazenda.sp.gov.br/(S(f1abokt2upcjgcxsxxv0r3bn))/Pages/Cadastro/Certidoes/CertidaoSituacaoCadastral.aspx",
+    "titulo": "Certidão de Situação Cadastral ou de Inexistência de Inscrição no Estado",
+    "descricao": "Acesso à Certidão Existência/Inexistência Inscrição Estadual\nFormas de acesso: Público"
+  },
+  {
+    "id": 36,
+    "tipo": "Empresa",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/Simp/",
+    "titulo": "Importações: Geração de GARE, GNRE, GCOMP-ICMS e Guia de Liberação",
+    "descricao": "Acesso à Geração de GARE, GNRE, GCOMP-ICMS e Guia de Liberação de mercadoria importada\nFormas de acesso: Presencial, Público"
+  },
+  {
+    "id": 37,
+    "tipo": "Empresa",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/CCIWEB/Account/Login.aspx",
+    "titulo": "Consulta de Ficha de Controle do Conteúdo de Importação",
+    "descricao": "Acesso à Consulta de Ficha de Conteúdo de Importação\nFormas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 38,
+    "tipo": "Empresa",
+    "classe": "DEC E DEMAIS COMUNICAÇÕES FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://consultaosf.fazenda.sp.gov.br/",
+    "titulo": "Verificação da Autenticidade de Fiscalização referente a Ordem de Serviço Fiscal",
+    "descricao": "Acesso à Verificação da Autenticidade de Fiscalização referente a Ordem de Serviço Fiscal\nFormas de acesso: Público"
+  },
+  {
+    "id": 39,
+    "tipo": "Empresa",
+    "classe": "DEC E DEMAIS COMUNICAÇÕES FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://consultaosf.fazenda.sp.gov.br",
+    "titulo": "Consulta OSF",
+    "descricao": "Acesso à Consulta OSF\nFormas de acesso: Público"
+  },
+  {
+    "id": 40,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://nfe.fazenda.sp.gov.br/ConsultaMDFe/",
+    "titulo": "MDF-e Download de XML",
+    "descricao": "Acesso ao MDF-e Download de XML\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 41,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.nfe.fazenda.sp.gov.br/cteConsulta/consulta/publica/ConsultarCTe.aspx",
+    "titulo": "Consulta ao Conhecimento de Transporte Eletrônico de Cargas (em ambiente de homologação)",
+    "descricao": "Acesso à Consulta ao Conhecimento de Transporte Eletrônico de Cargas (em ambiente de homologação)\nFormas de acesso: Público"
+  },
+  {
+    "id": 42,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://nfe.fazenda.sp.gov.br/cteConsulta/consulta/publica/ConsultarCTe.aspx",
+    "titulo": "Consulta de Empresas Credenciadas",
+    "descricao": "Acesso à Consulta de Empresas Credenciadas\nFormas de acesso: Público"
+  },
+  {
+    "id": 43,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://nfe.fazenda.sp.gov.br/CTeCredenciamento/Account/Login.aspx?ReturnUrl=%2FCTeCredenciamento",
+    "titulo": "Credenciamento/Descredenciamento de Conhecimento de Transporte Eletrônico",
+    "descricao": "Acesso ao Credenciamento/Descredenciamento de Conhecimento de Transporte Eletrônico\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 44,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/FormularioSegurancaNfe/Base/Paginas/LoginPfe.aspx",
+    "titulo": "PAFS - Pedido para Aquisição de Formulário de Segurança - FS-DA",
+    "descricao": "Acesso ao PAFS - Pedido para Aquisição de Formulário de Segurança - FS-DA\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 45,
+    "tipo": "Empresa",
+    "classe": "SPED, SINTEGRA E GIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CREDENCIEFD/Login/EfetuaLoginContribuinte.aspx?tipo=2",
+    "titulo": "Retificação de EFD enviada à Fazenda",
+    "descricao": "Solicitação do autorização para retificar arquivos de Escrituração Fiscal Digital já recepcionados pela Fazenda (art. 15 - PCAT 147/09)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 46,
+    "tipo": "Empresa",
+    "classe": "SPED, SINTEGRA E GIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CREDENCIEFD/Login/EfetuaLoginContribuinte.aspx",
+    "titulo": "Credenciamento Voluntário para Entrega de Arquivo EFD",
+    "descricao": "Acesso de contribuintes do Simples Nacional ao credenciamento voluntário para transmissão mensal de arquivos de Escrituração Fiscal Digital (art. 1º, §5º, 3 - PCAT 147/09)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 47,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.homologacao.nfe.fazenda.sp.gov.br/ConsultaNFe/consulta/publica/ConsultarNFe.aspx",
+    "titulo": "Consulta de Nota Fiscal Eletrônica sem validade jurídica (em ambiente de homologação)",
+    "descricao": "Acesso à Consulta de Nota Fiscal Eletrônica sem validade jurídica (em ambiente de homologação)\nFormas de acesso: Público"
+  },
+  {
+    "id": 48,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfe.fazenda.sp.gov.br/ConsultaNFe/consulta/publica/ConsultarNFe.aspx",
+    "titulo": "Consulta de Nota Fiscal Eletrônica com validade jurídica (em ambiente de produção)",
+    "descricao": "Acesso à Consulta de Nota Fiscal Eletrônica com validade jurídica (em ambiente de produção)\nFormas de acesso: Público"
+  },
+  {
+    "id": 49,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfe.fazenda.sp.gov.br/CredenciamentoVoluntario/",
+    "titulo": "Consulta de Empresas Credenciadas para Emissão de de NF-e",
+    "descricao": "Acesso à Consulta de Empresas Credenciadas para Emissão de Nota Fiscal Eletrônica\nFormas de acesso: Público"
+  },
+  {
+    "id": 50,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/nfe/obrigatoriedade/obrigatoriedade.asp",
+    "titulo": "Consulta à Data de Obrigatoriedade para Classificação Nacional de Atividades Econômicas",
+    "descricao": "Acesso à Consulta à Data de Obrigatoriedade para Classificação Nacional de Atividades Econômicas\nFormas de acesso: Público"
+  },
+  {
+    "id": 51,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfe.fazenda.sp.gov.br/CredenciamentoVoluntario/",
+    "titulo": "Credenciamento/Descredenciamento para emissão de NF-e",
+    "descricao": "Acesso ao Sistema de Credenciamento para emissão de Nota Fiscal Eletrônica\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 52,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Credenciamento de Estabelecimento Gráfico de outra UF (exceto Paulista)",
+    "descricao": "Formas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 53,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Credenciamento de Estabelecimento Gráfico Paulista",
+    "descricao": "Acesso à Credenciamento de Estabelecimento Gráfico Paulista\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 54,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Cadastro de Histórico de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Cadastro de Histórico de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 55,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Cadastro de Encerramento de Histórico de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Cadastro de Encerramento de Histórico de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 56,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Cadastro de Pedido de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Cadastro de Pedido de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 57,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Cadastro de usuário em Sistema Eletrônico de Processamento de Dados",
+    "descricao": "Acesso à Cadastro de usuário em Sistema Eletrônico de Processamento de Dados\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 58,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Cadastro de Especialista em Impressos Fiscais",
+    "descricao": "Acesso à Cadastro de Especialista em Impressos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 59,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Cadastro de Parque Gráfico",
+    "descricao": "Acesso à Cadastro de Parque Gráfico\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 60,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Cadastro de Formação de Grupo para Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Cadastro de Formação de Grupo para Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 61,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Histórico de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Consulta de Histórico de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 62,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Pedido de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Consulta de Pedido de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 63,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Consulta de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 64,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta do Sistema Eletrônico de Processamento de Dados",
+    "descricao": "Acesso à Consulta do Sistema Eletrônico de Processamento de Dados\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 65,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Gráficas Credenciadas",
+    "descricao": "Acesso à Consulta de Gráficas Credenciadas\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 66,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Especialista em Impressos Fiscais",
+    "descricao": "Acesso à Consulta de Especialista em Impressos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 67,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Estabelecimentos Gráficos Credenciados",
+    "descricao": "Acesso à Consulta de Estabelecimentos Gráficos Credenciados\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 68,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Parque Gráfico",
+    "descricao": "Acesso à Consulta de Parque Gráfico\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 69,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Gráficas Vinculadas",
+    "descricao": "Acesso à Consulta de Gráficas Vinculadas\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 70,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta de Grupo de empresas",
+    "descricao": "Acesso à Consulta de Grupo de empresas\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 71,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Alteração de Histórico de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Alteração de Histórico de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 72,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Alteração e exclusão de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Alteração e exclusão de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 73,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Alteração do Sistema Eletrônico de Processamento de Dados",
+    "descricao": "Acesso à Alteração do Sistema Eletrônico de Processamento de Dados\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 74,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Alteração de Especialista em Impressos Fiscais",
+    "descricao": "Acesso à Alteração de Especialista em Impressos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 75,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Redistribuição de Impressos Fiscais",
+    "descricao": "Acesso à Redistribuição de Impressos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 76,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Inclusão de Estabelecimento em grupo",
+    "descricao": "Acesso à Inclusão de Estabelecimento em grupo\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 77,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Exclusão de Estabelecimento de grupo",
+    "descricao": "Acesso à Exclusão de Estabelecimento de grupo\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 78,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Alteração de Estabelecimento Centralizador",
+    "descricao": "Acesso à Alteração de Estabelecimento Centralizador\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 79,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Confirmação de Confecção de Autorização para Impressão de Documentos Fiscais",
+    "descricao": "Acesso à Confirmação de Confecção de Autorização para Impressão de Documentos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 80,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Comunicação de Entrega de Impressos Fiscais",
+    "descricao": "Acesso à Comunicação de Entrega de Impressos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 81,
+    "tipo": "Empresa",
+    "classe": "COMUNICAÇÕES E ENERGIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/nfce/base/paginas/logininternet.aspx",
+    "titulo": "Consulta de Situação dos Arquivos Transmitidos com os Documentos Fiscais de Comunicações e Energia Elétrica",
+    "descricao": "Acesso à Consulta da Situação dos Arquivos Transmitidos para a Secretaria da Fazenda do Estado de São Paulo, de Notas Fiscais de Telecomunicações, de Comunicações e de Energia Elétrica emitidas em via única\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 82,
+    "tipo": "Empresa",
+    "classe": "COMUNICAÇÕES E ENERGIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/DEAT_ST_EnergiaEletrica",
+    "titulo": "Declaração do Valor de Aquisição da Energia Elétrica em Ambientes de Contratação Livre",
+    "descricao": "Acesso à Declaração do Valor de Aquisição da Energia Elétrica em Ambientes de Contratação Livre\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 83,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ecf/Paginas/Sobre.aspx",
+    "titulo": "Serviços ECF",
+    "descricao": "Acesso por meio de Serviços Eletrônicos - ICMS. Para conhecer um resumo dos serviços disponíveis ao usuário, consulte a pergunta \"Quais serviços o Sistema ECF disponibiliza ao usuário?\", no tópico “01. INFORMAÇÕES BÁSICAS”, na opção “Perguntas Frequentes”\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 84,
+    "tipo": "Empresa",
+    "classe": "COMUNICAÇÕES E ENERGIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/NFCE2/Sistema/Consultas/InformacoesBasicasChaveCodificacao.aspx",
+    "titulo": "Consulta de Documentos Fiscais de Comunicações e Energia Elétrica",
+    "descricao": "Acesso à Consulta de Notas Fiscais de Telecomunicações, de Comunicações e de Energia Elétrica\nFormas de acesso: Público"
+  },
+  {
+    "id": 85,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx",
+    "titulo": "Consulta pública aos CF-e-SAT",
+    "descricao": "Consulta os CF-e-SAT (Cupons Fiscais Eletrônicos do Sistema de Autenticação e Transmissão) que foram processados com sucesso no SGR-SAT (Sistema de Gestão e Retaguarda do Sistema de Autenticação e Transmissão). Basta informar a chave de acesso e o captcha\nFormas de acesso: Público"
+  },
+  {
+    "id": 86,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://satsp.fazenda.sp.gov.br/COMSAT/public/consultarequipamentoparacompra/consultarequipamentoparacompra.aspx",
+    "titulo": "Consultar Situação do SAT antes da Compra",
+    "descricao": "Consulta através do número de série se o equipamento SAT (Sistema de Autenticação e Transmissão) está em situação adequada para ser ativado e utilizado por um novo contribuinte\nFormas de acesso: Público"
+  },
+  {
+    "id": 87,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultarSoftwareHouses/ConsultarSoftwareHouses.aspx",
+    "titulo": "Consultar Desenvolvedores de Aplicativo Comercial Cadastrados Junto a SEFAZ SP",
+    "descricao": "Informa quais Desenvolvedores de Aplicativo Comercial estão cadastrados no SGR-SAT e também mostra a situação do cadastro e informações básicas para contato. Basta clicar em “Pesquisar” e serão listadas todas as empresas cadastradas.\nFormas de acesso: Público"
+  },
+  {
+    "id": 88,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://satnacional.fazenda.sp.gov.br/SRSAT/Account/LoginSSL.aspx?ReturnUrl=%2fSRSAT%2f",
+    "titulo": "Acesso ao Sistema de Registro de Modelo de Equipamento SAT (SRSAT) para Fabricantes e Órgãos Técnicos",
+    "descricao": "Acesso ao Sistema de Registro de Modelo de Equipamento SAT (SRSAT) para Fabricantes e Órgãos Técnicos\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 89,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Preenchimento e Transmissão de Declaração de Substituição Tributária e Diferencial de Alíquota",
+    "descricao": "Acesso ao Preenchimento e Transmissão de Declaração de Substituição Tributária e Diferencial de Alíquota\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 90,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://sathomolog.fazenda.sp.gov.br/HMLEQP/Account/LoginSSL.aspx?ReturnUrl=%2fHMLEQP%2f",
+    "titulo": "Acesso ao Ambiente de Testes do SRSAT para Fabricantes e Órgãos Técnicos",
+    "descricao": "Acesso ao Ambiente de Testes do SRSAT para Fabricantes e Órgãos Técnicos\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 91,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Substituição de Declaração de Substituição Tributária e Diferencial de Alíquota devido erro ou omissão no preenchimento",
+    "descricao": "Acesso à Substituição de Declaração de Substituição Tributária e Diferencial de Alíquota devido erro ou omissão no preenchimento\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 92,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Exportação de Declaração de Substituição Tributária e Diferencial de Alíquota",
+    "descricao": "Acesso à Exportação de Declaração de Substituição Tributária e Diferencial de Alíquota\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 93,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Importação de Declaração de Declaração de Substituição Tributária e Diferencial de Alíquota",
+    "descricao": "Acesso à Importação de Declaração de Declaração de Substituição Tributária e Diferencial de Alíquota\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 94,
+    "tipo": "Empresa",
+    "classe": "REGIME ESPECIAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/RegimeEspecial/Consulta_Entrada/InformarTipoAcesso.aspx",
+    "titulo": "Resposta a uma Notificação de Regime Especial",
+    "descricao": "Resposta a uma Notificação de Regime Especial\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 95,
+    "tipo": "Empresa",
+    "classe": "REGIME ESPECIAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/RegimeEspecial/Consulta_Entrada/InformarTipoAcesso.aspx",
+    "titulo": "Aditamento a um Pedido de Regime Especial em Andamento",
+    "descricao": "Aditamento a um Pedido de Regime Especial em Andamento\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 96,
+    "tipo": "Empresa",
+    "classe": "REGIME ESPECIAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/RegimeEspecial/Consulta_Entrada/InformarTipoAcesso.aspx",
+    "titulo": "Consulta de Regimes e Pedidos de Regime Especial",
+    "descricao": "Consulta de Regimes e Pedidos de Regime Especial\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 97,
+    "tipo": "Empresa",
+    "classe": "REGIME ESPECIAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/RegimeEspecial/Consulta_Entrada/InformarTipoAcesso.aspx",
+    "titulo": "Apresentação de Pedido e Documentos de Regime Especial",
+    "descricao": "Apresentação de Pedido e Documentos de Regime Especial\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 98,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Consulta de informações do procurador, outorgante e poderes da procuração eletrônica emitidas pelo contribuinte",
+    "descricao": "Acesso à Consulta de informações do procurador, outorgante e poderes da procuração eletrônica emitidas pelo contribuinte\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 99,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Cadastro de Procuração Eletrônica",
+    "descricao": "Acesso ao Cadastro de Procuração Eletrônica\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 100,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Visualização de Procurações Eletrônicas",
+    "descricao": "Acesso à Visualização de Procurações Eletrônicas\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 101,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Envio de Arquivos Eletrônicos para o Programa Gerador, Validador e Transmissor de Arquivos Digitais",
+    "descricao": "Acesso ao Envio de Arquivos Eletrônicos para o Programa Gerador, Validador e Transmissor de Arquivos Digitais\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 102,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Visualização de Mensagens Pendentes e Arquivadas",
+    "descricao": "Acesso à Visualização de Mensagens Pendentes e Arquivadas\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 103,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Consulta de Pedido de Devolução de Crédito",
+    "descricao": "Acesso à Consulta de Pedido de Devolução de Crédito\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 104,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Solicitação de Devolução de Crédito",
+    "descricao": "Acesso à Solicitação de Devolução de Crédito\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 105,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Consulta de Liquidação de Débitos",
+    "descricao": "Acesso à Consulta de Liquidação de Débitos\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 106,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Consulta de Pedido de Dedução de Imposto",
+    "descricao": "Acesso à Consulta de Pedido de Dedução de Imposto\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 107,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Solicitação de Dedução de Imposto",
+    "descricao": "Acesso à Solicitação de Dedução de Imposto\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 108,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Consulta de Pedido de Transferência de Crédito",
+    "descricao": "Acesso à Consulta de Pedido de Transferência de Crédito\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 109,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Solicitação de Transferência de Crédito",
+    "descricao": "Acesso à Solicitação de Transferência de Crédito\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 110,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Consulta de Extrato de Conta Corrente",
+    "descricao": "Acesso à Consulta de Extrato de Conta Corrente\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 111,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Consulta de Saldo de Conta Corrente",
+    "descricao": "Acesso à Consulta de Saldo de Conta Corrente\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 112,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Consulta Cadastral",
+    "descricao": "Acesso à Consulta Cadastral\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 113,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Pedido de Credenciamento",
+    "descricao": "Acesso ao Pedido de Credenciamento\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 114,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Alteração Cadastral de Produtor Rural",
+    "descricao": "Acesso à Alteração Cadastral de Produtor Rural\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 115,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Login.aspx",
+    "titulo": "Credenciamento de Produtor Rural",
+    "descricao": "Acesso ao Credenciamento de Produtor Rural\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 116,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.pagamentos.fazenda.sp.gov.br/pagamentos/website.responsivo/emissao/servicos",
+    "titulo": "Emissão de DARE para demais receitas",
+    "descricao": "Ambiente de Pagamentos\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 117,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Consulta à Conta Fiscal",
+    "descricao": "Acesso à Consulta à Conta Fiscal\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 118,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Simulação de Valores",
+    "descricao": "Acesso à Simulação de Valores\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 119,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/ContaFiscalAiim/Login.aspx?ReturnUrl=%2fContaFiscalAiim%2fDefault.aspx",
+    "titulo": "Simulação De Valores",
+    "descricao": "Acesso à Simulação De Valores\nFormas de acesso: Certificado Digital, Senha PFE"
+  },
+  {
+    "id": 120,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/ContaFiscalAiim/Login.aspx?ReturnUrl=%2fContaFiscalAiim%2fDefault.aspx",
+    "titulo": "Emissão De Dare",
+    "descricao": "Acesso à Emissão De Dare\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 121,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/ContaFiscalAiim/Login.aspx?ReturnUrl=%2fContaFiscalAiim%2fDefault.aspx",
+    "titulo": "Conta Fiscal AIIM - Auto de Infração e Imposição de Multa",
+    "descricao": "Acesso ao Conta Fiscal AIIM - Auto de Infração e Imposição de Multa\nFormas de acesso: Certificado Digital, Senha PFE"
+  },
+  {
+    "id": 122,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Realizar Parcelamento de ICMS",
+    "descricao": "Acesso ao Realizar Parcelamento de ICMS\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 123,
+    "tipo": "Empresa",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfp.fazenda.sp.gov.br/login.aspx?ReturnUrl=%2fPrincipal.aspx",
+    "titulo": "Sistema da Nota Fiscal Paulista",
+    "descricao": "Acesse o sistema para cadastro de usuário, consulta de saldo, resgate de valores, consulta dos seus bilhetes e prêmios.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 124,
+    "tipo": "Empresa",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfp.fazenda.sp.gov.br/areapublica/consultanf_cf.aspx",
+    "titulo": "Consulta individual de Nota Fiscal/Cupom Fiscal Paulista",
+    "descricao": "Acesso à Consulta individual de Nota Fiscal/Cupom Fiscal Paulista\nFormas de acesso: Público"
+  },
+  {
+    "id": 125,
+    "tipo": "Empresa",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://legislacao.fazenda.sp.gov.br/Paginas/Home.aspx",
+    "titulo": "Legislação Tributária",
+    "descricao": "Acesso à Legislação Tributária\nFormas de acesso: Público"
+  },
+  {
+    "id": 126,
+    "tipo": "Empresa",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/InformarTipoAcesso.aspx",
+    "titulo": "Minhas Consultas Tributárias",
+    "descricao": "Acesso às Consultas Protocoladas pelo Contribuinte Consulente\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 127,
+    "tipo": "Empresa",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/AcessoOrientacoes.aspx",
+    "titulo": "Formulação de Consulta Tributária Eletrônica",
+    "descricao": "Acesso à Formulação de Consulta Tributária Eletrônica (e-CT)\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 128,
+    "tipo": "Empresa",
+    "classe": "CT - CONSULTORIA TRIBUTÁRIA E LEGISLAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/eCT/Consulta_Entrada/ConsultaPublica.aspx",
+    "titulo": "Confirmação de Autenticidade de Resposta de Consulta Tributária Eletrônica",
+    "descricao": "Acesso à Confirmação de Autenticidade de Consulta Tributária Eletrônica\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 129,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Administração de Usuários de Estabelecimentos",
+    "descricao": "Acesso à Administração de Usuários de Estabelecimentos\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 130,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Alteração de Senha de Acesso - Reconhecimento e Controle das Operações com Papel Imune",
+    "descricao": "Acesso à Alteração de Senha de Acesso - Reconhecimento e Controle das Operações com Papel Imune\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 131,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Inclusão de Novo Estabelecimento",
+    "descricao": "Acesso à Inclusão de Novo Estabelecimento\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 132,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Nova Operação",
+    "descricao": "Acesso à Nova Operação\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 133,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Consulta de Operações em Aberto",
+    "descricao": "Acesso à Consulta de Operações em Aberto\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 134,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Consulta de Operações",
+    "descricao": "Acesso à Consulta de Operações\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 135,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Consulta de Informações de Estoque",
+    "descricao": "Acesso à Consulta de Informações de Estoque\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 136,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Consulta Pública de Credenciamento de Estabelecimento",
+    "descricao": "Acesso à Consulta Pública de Credenciamento de Estabelecimento\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 137,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Consultar Nova Solicitação de Credenciamento de Estabelecimento",
+    "descricao": "Acesso à Consultar Nova Solicitação de Credenciamento de Estabelecimento\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 138,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Solicitação Precária (Alteração de Tipos de Papel e Previsão de Movimentação)",
+    "descricao": "Acesso à Solicitação Precária (Alteração de Tipos de Papel e Previsão de Movimentação)\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 139,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Solicitação de Credenciamento no Recopi Nacional",
+    "descricao": "Acesso à Solicitação de Credenciamento no Recopi Nacional\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 140,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Alteração de Dados Cadastrais de um Estabelecimento",
+    "descricao": "Acesso à Alteração de Dados Cadastrais de um Estabelecimento\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 141,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Declaração de Livros, Jornais, Periódicos",
+    "descricao": "Acesso à Declaração de Livros, Jornais, Periódicos\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 142,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Declaração de Transformações",
+    "descricao": "Acesso à Declaração de Transformações\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 143,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Declaração de Itens de Estoque",
+    "descricao": "Acesso à Declaração de Itens de Estoque\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 144,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Registro de Imposto Sinistro Retorno de Mercadoria",
+    "descricao": "Acesso ao Registro de Imposto Sinistro Retorno de Mercadoria\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 145,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Registro de Imposto Devido",
+    "descricao": "Acesso ao Registro de Imposto Devido\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 146,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Registro de Operação",
+    "descricao": "Acesso ao Registro de Operação\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 147,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Retornos Fracionados",
+    "descricao": "Acesso ao Retornos Fracionados\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 148,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Recepções Fracionadas",
+    "descricao": "Acesso à Recepções Fracionadas\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 149,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Recebimento de Operação",
+    "descricao": "Acesso ao Recebimento de Operação\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 150,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Operações Bloqueadas",
+    "descricao": "Acesso à Operações Bloqueadas\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 151,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Despacho de Operação",
+    "descricao": "Acesso ao Despacho de Operação\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 152,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Cancelamento de Operação",
+    "descricao": "Acesso ao Cancelamento de Operação\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 153,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Não Identificar Operação",
+    "descricao": "Acesso ao Não Identificar Operação\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 154,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/RecopiNacional/(S(5v52zzjweumezcvrdwxukifu))/Telas/Login.aspx",
+    "titulo": "Aceite de Devolução de Operação",
+    "descricao": "Acesso à Aceite de Devolução de Operação\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 155,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Credenciamento de Contribuintes do ICMS – PAC/PIE",
+    "descricao": "Acesso ao credenciamento de CNPJ para participação como patrocinador no Programa de Ação Cultural - PAC / Programa de Incentivo ao Esporte – PIE\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 156,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "Aviso de Habilitação e Emissão de Boletos – PAC/PIE",
+    "descricao": "Acesso a consulta de aviso de habilitação e emissão de boletos para os Programas de Ação Cultural e Incentivo ao Esporte\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 157,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Consulta de débitos vinculados ao veículo",
+    "descricao": "Acesso à consulta de débitos de IPVA por CPF, CNPJ ou vinculados ao veículo necessário efetuar login pelo GOV.BR ou com certificado digital\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 158,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Pedido de baixa de benefício",
+    "descricao": "Orientações sobre pedido de baixa de benefício\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 159,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Pedido de retificação de dados cadastrais para cálculo do IPVA",
+    "descricao": "Orientações sobre pedido de retificação de dados cadastrais para cálculo do IPVA\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 160,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Pedido de Retificação de Documento de Arrecadação",
+    "descricao": "Orientações sobre pedido de retificação de Documento de Arrecadação\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 161,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/restituicao-pagamento-indevido-ou-duplicado.aspx",
+    "titulo": "Pedido de Restituição de IPVA",
+    "descricao": "Informações sobre pedido de restituição de IPVA\nFormas de acesso: Presencial, Público"
+  },
+  {
+    "id": 162,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/contestacao-notificacao-lancamento.aspx",
+    "titulo": "Contestação ao lançamento do IPVA",
+    "descricao": "Informações sobre contestação ao lançamento do IPVA\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 163,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/simples/Paginas/Op%C3%A7%C3%A3o-do-Simples-Nacional.aspx",
+    "titulo": "Consulta de Processo de Opção pelo Simples Nacional pelo Ano Corrente",
+    "descricao": "Acesso à Consulta de Processo de Opção pelo Simples Nacional pelo Ano Corrente\nFormas de acesso: Público"
+  },
+  {
+    "id": 164,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/126",
+    "titulo": "Contestação de exclusão de ofício do regime do Simples Nacional pela fiscalização da Sefaz-SP",
+    "descricao": "Serviço para atender os contribuintes excluídos do Simples Nacional por iniciativa da fiscalização da Secretaria da Fazenda e Planejamento\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 165,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://legislacao.fazenda.sp.gov.br/Paginas/pcat842007.aspx",
+    "titulo": "Solicitação contra indeferimento da opção do Regime Simples Nacional",
+    "descricao": "Acesso à Solicitação contra indeferimento da opção do Regime Simples Nacional\nFormas de acesso: Público"
+  },
+  {
+    "id": 166,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "STDA",
+    "descricao": "Acesso à STDA\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 167,
+    "tipo": "Empresa",
+    "classe": "DIPAM",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/DIPAM.Web/consultaindice",
+    "titulo": "Consulta de Índices",
+    "descricao": "Consulta de Índices de Participação dos Municípios\nFormas de acesso: Público"
+  },
+  {
+    "id": 168,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/st",
+    "titulo": "Inscrição de Contribuinte Fora do Estado de São Paulo por Substituição Tributária",
+    "descricao": "Inscrição de Contribuinte Fora do Estado de São Paulo por Substituição Tributária\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 169,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://satsp.fazenda.sp.gov.br/COMSAT/Account/LoginSSL.aspx?ReturnUrl=%2fCOMSAT%2f",
+    "titulo": "Acesso ao Sistema de Gestão e Retaguarda do SAT para Contribuintes, Software Houses, Contabilistas e Fazendários",
+    "descricao": "Sistema que possui diversas funcionalidades, como: vinculação de SAT, consulta de lotes de CF-e, cadastro de Desenvolvedor de Aplicativo Comercial, entre outros\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 170,
+    "tipo": "Empresa",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/registroExportacao/UsoGeral/Login.aspx",
+    "titulo": "Exportações: RIEX - Registro de Informações de Exportação",
+    "descricao": "Acesso ao cadastro de informações e notas fiscais de exportação- Portaria nº 50/2005\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 171,
+    "tipo": "Empresa",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/RecintoAlfandegado/login.aspx",
+    "titulo": "Importações: Recinto Alfandegado",
+    "descricao": "Acesso à consulta de status da DI para a entrega de mercadorias pelo Recinto Alfandegado\nFormas de acesso: Presencial, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 172,
+    "tipo": "Empresa",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/registroExportacaoConsulta/ConsultaPublica.aspx",
+    "titulo": "Exportações: RIEX - Consulta Pública ao Registro de Exportação",
+    "descricao": "Consulta Pública ao Registro de Exportação\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 173,
+    "tipo": "Empresa",
+    "classe": "REGIME ESPECIAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/RegimeEspecial/Consulta_Entrada/InformarTipoAcesso.aspx",
+    "titulo": "Procuração Eletrônica Específica para Regime Especial",
+    "descricao": "Procuração Eletrônica Específica para Regime Especial\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 174,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/DiarioEletronico/ConsultaPublica.aspx",
+    "titulo": "Diário Eletrônico",
+    "descricao": "Consulta dos acórdãos, decisões, atos administrativos, intimações e comunicações em geral do TIT e DTJs.\nFormas de acesso: Público"
+  },
+  {
+    "id": 175,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/ePAT/portal/",
+    "titulo": "Processos Eletrônicos (ePAT)",
+    "descricao": "Visualização de processos, entrada de documentos, distribuição de processos e outros serviços do ePat\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 176,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/epat/extratoprocesso/PesquisarExtrato.aspx",
+    "titulo": "Andamento de Processos",
+    "descricao": "Consulta a extratos de Processos do Contencioso Administrativo\nFormas de acesso: Público"
+  },
+  {
+    "id": 177,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/VDTIT/ConsultarVotos.aspx?instancia=2",
+    "titulo": "Jurisprudência - Inteiro Teor dos Acórdãos do TIT (a partir de 2005)",
+    "descricao": "Consulta de acórdãos do TIT\nFormas de acesso: Público"
+  },
+  {
+    "id": 178,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/VDTIT/ConsultarVotos.aspx?instancia=1",
+    "titulo": "Jurisprudência - Inteiro Teor das Decisões das DTJs (a partir de 10/11/2010)",
+    "descricao": "Consulta de Decisões das Delegacias Tributárias de Julgamento\nFormas de acesso: Público"
+  },
+  {
+    "id": 179,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/pauta/pages/ConsultaPauta.aspx",
+    "titulo": "Pauta de Julgamentos",
+    "descricao": "Consulta às pautas de julgamento, por Câmaras Julgadoras\nFormas de acesso: Público"
+  },
+  {
+    "id": 180,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/PAC/ConsultarBoletos/CPB.aspx",
+    "titulo": "Consulta Pública a Boletos - PAC/PIE",
+    "descricao": "Acesso à relação de boletos pagos para projetos culturais ou esportivos a partir de 2015\nFormas de acesso: Público"
+  },
+  {
+    "id": 181,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfce.fazenda.sp.gov.br/NFCeSiteContribuinte/?c=s",
+    "titulo": "Credenciamento na NFC-e (com validade jurídica)",
+    "descricao": "Acesso ao Sistema de Credenciamento na NFC-e (com validade jurídica)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 182,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.homologacao.nfce.fazenda.sp.gov.br/NFCeSiteContribuinte/?c=s",
+    "titulo": "Credenciamento na NFC-e (ambiente de testes)",
+    "descricao": "Acesso ao Sistema de Credenciamento na NFC-e (ambiente de testes)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 183,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaPublica.aspx",
+    "titulo": "Consulta à NFC-e (com validade jurídica)",
+    "descricao": "Consulta à NFC-e (com validade jurídica)\nFormas de acesso: Público"
+  },
+  {
+    "id": 184,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.homologacao.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaPublica.aspx",
+    "titulo": "Consulta à NFC-e (ambiente de testes)",
+    "descricao": "Consulta à NFC-e (ambiente de testes)\nFormas de acesso: Público"
+  },
+  {
+    "id": 185,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaInutilizacao.aspx",
+    "titulo": "Consulta de Inutilização (com validade jurídica)",
+    "descricao": "Consulta de Inutilização (com validade jurídica)\nFormas de acesso: Público"
+  },
+  {
+    "id": 186,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.homologacao.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaInutilizacao.aspx",
+    "titulo": "Consulta de Inutilização (ambiente de testes)",
+    "descricao": "Consulta de Inutilização (ambiente de testes)\nFormas de acesso: Público"
+  },
+  {
+    "id": 187,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.nfce.fazenda.sp.gov.br/NFCeSiteContribuinte/",
+    "titulo": "Gerenciar Código de Segurança (com validade jurídica)",
+    "descricao": "Gerenciar Código de Segurança (com validade jurídica)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 188,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.homologacao.nfce.fazenda.sp.gov.br/NFCeSiteContribuinte/",
+    "titulo": "Gerenciar Código de Segurança (ambiente de testes)",
+    "descricao": "Gerenciar Código de Segurança (ambiente de testes)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 189,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.nfce.fazenda.sp.gov.br/NFCePortal/Paginas/GeraQRCode.aspx",
+    "titulo": "Validar XML / Calcular QR-Code",
+    "descricao": "Validar XML / Calcular QR-Code\nFormas de acesso: Público"
+  },
+  {
+    "id": 190,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ehc/Paginas/credenciamento.aspx",
+    "titulo": "Credenciamento do EHC",
+    "descricao": "Solicitação de credenciamento de fabricantes e distribuidores de etanol hidratado combustível EHC segundo a Portaria CAT 223/2009.\nFormas de acesso: Público"
+  },
+  {
+    "id": 191,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ehc/Documents/Distribuidoras%20Suspensas%20da%20Condicao%20de%20ST.xls",
+    "titulo": "Consulta Distribuidoras Suspensas da Condição de Substituta Tributária",
+    "descricao": "Consulta das distribuidoras suspensas da condição de substitutas tributárias segundo a Portaria CAT 41/2014\nFormas de acesso: Público"
+  },
+  {
+    "id": 192,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/pac/ConsultaEmpresasHabilitadas/PADConsultaEmpresasHabilitadas.aspx",
+    "titulo": "Contribuintes Credenciados Habilitados no Mês",
+    "descricao": "Relação de contribuintes credenciados no âmbito do PAC e PIE, com divulgação autorizada nos termos da legislação\nFormas de acesso: Público"
+  },
+  {
+    "id": 193,
+    "tipo": "Empresa",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/codecon/Paginas/Of%C3%ADcios.aspx",
+    "titulo": "Ofícios",
+    "descricao": "Ofícios enviados pelo CODECON\nFormas de acesso: Público"
+  },
+  {
+    "id": 194,
+    "tipo": "Empresa",
+    "classe": "PROGRAMAÇÃO DE DESEMBOLSO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/sef/Pagina/logincredor_login.aspx",
+    "titulo": "Cadastramento de um novo Fornecedor",
+    "descricao": "Acesso para cadastramento de um novo fornecedor ao Sistema de Pagamento a Fornecedores\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 195,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/eCredRural/WebApp/SiteExtranet/Public/ConsultaCertificadoDeducao.aspx",
+    "titulo": "Consulta Certificado de Dedução do Imposto a pagar",
+    "descricao": "Acesso à Consulta de Certificado de Dedução do Imposto a pagar\nFormas de acesso: Público"
+  },
+  {
+    "id": 196,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://nfe.fazenda.sp.gov.br/cteConsulta/consulta/publica/ConsultarCTe.aspx",
+    "titulo": "Consulta ao Conhecimento de Transporte Eletrônico de Cargas (em ambiente de produção)",
+    "descricao": "Acesso à Consulta ao Conhecimento de Transporte Eletrônico de Cargas (em ambiente de produção)\nFormas de acesso: Público"
+  },
+  {
+    "id": 197,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.nfe.fazenda.sp.gov.br/cteConsulta/consulta/publica/ConsultarCTe.aspx",
+    "titulo": "Consulta de Inutilização (ambiente de testes)",
+    "descricao": "Consulta de Inutilização (ambiente de testes)\nFormas de acesso: Público"
+  },
+  {
+    "id": 198,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://nfe.fazenda.sp.gov.br/cteConsulta/consulta/publica/ConsultarCTe.aspx",
+    "titulo": "Consulta de Inutilização (com validade jurídica)",
+    "descricao": "Consulta de Inutilização (com validade jurídica)\nFormas de acesso: Público"
+  },
+  {
+    "id": 199,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/FormularioSegurancaNfe/Base/Paginas/LoginPfe.aspx",
+    "titulo": "PAFS - Pedido para Aquisição de Formulário de Sergurança - FS-DA",
+    "descricao": "Acesso ao PAFS - Pedido para Aquisição de Formulário de Sergurança - FS-DA\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 200,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Pedido de certidão de pagamento do IPVA",
+    "descricao": "Emissão de certidão de pagamento do IPVA\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 201,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/Dificuldades-com-o-licenciamento.aspx",
+    "titulo": "Desbloqueio de taxa de licenciamento ou transferência",
+    "descricao": "Orientações sobre desbloqueio de taxa de licenciamento ou transferência\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 202,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/contestacao-inscricao-cadin.aspx",
+    "titulo": "Contestação à inscrição no Cadin",
+    "descricao": "Orientações sobre contestação à inscrição no Cadin\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 203,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Consulta de valor venal para o IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 204,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Emissão de guias de pagamento",
+    "descricao": "Emissão de guias de pagamento\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 205,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Consulta de restituição de veículo furtado e roubado neste Estado",
+    "descricao": "Consulta de restituição motivada por dispensa decorrente de furto ou roubo de veículo dentro do Estado de São Paulo\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 206,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.pepdoicms.sp.gov.br",
+    "titulo": "PEP - Programa Especial de Parcelamento",
+    "descricao": "Promove a regularização dos créditos do Estado, decorrentes de débitos de ICMS, constituídos ou não, inclusive os inscritos em dívida ativa, ajuizados ou ajuizar, em razão de fatos geradores ocorrido até 31/12/16, com descontos nas multas e juros de mora.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 207,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ppd2017.sp.gov.br",
+    "titulo": "PPD - Programa de Parcelamento de Débitos",
+    "descricao": "Promove a regularização dos créditos do Estado inscritos em Dívida Ativa, ajuizados ou não, decorrentes de dívidas de IPVA, ITCMD, taxas de qualquer espécie e origem, taxas, multas, reposição de vencimentos de servidores e ressarcimentos ou restituições.\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 208,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIVEI/",
+    "titulo": "SIVEI - Sistema de Veículos",
+    "descricao": "Sistema para solicitação de pedido de benefícios fiscais para veículos automotores\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 209,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIVEI/",
+    "titulo": "SIVEI - Sistema de Veículos",
+    "descricao": "Sistema para solicitação de pedido de benefícios fiscais para veículos automotores\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 210,
+    "tipo": "Empresa",
+    "classe": "DEC E DEMAIS COMUNICAÇÕES FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.dec.fazenda.sp.gov.br/DEC/UCLogin/login.aspx",
+    "titulo": "Acesso ao DEC – Domicílio Eletrônico do Contribuinte",
+    "descricao": "Acesso ao sistema DEC\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 211,
+    "tipo": "Empresa",
+    "classe": "DEC E DEMAIS COMUNICAÇÕES FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.dec.fazenda.sp.gov.br/DEC/UCConsultaPublica/Consulta.aspx",
+    "titulo": "Consulta Pública à Situação do DEC",
+    "descricao": "Consulta ao credenciamento da empresa ao DEC e à habilitação do estabelecimento\nFormas de acesso: Público"
+  },
+  {
+    "id": 212,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoRecolhimento/",
+    "titulo": "Certidão de Pagamento de IPVA",
+    "descricao": "Sistema para a emissão de Certidão de Pagamento de IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 213,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoIsencao/",
+    "titulo": "Certidão de Imunidade, Isenção e Dispensa do IPVA",
+    "descricao": "Sistema para emissão de Certidão de Imunidade, Isenção e Dispensa do IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 214,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoValidacao/",
+    "titulo": "Validação de Certidões de IPVA",
+    "descricao": "Sistema para a validação de Certidões de IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 215,
+    "tipo": "Empresa",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "PFE - Posto Fiscal Eletrônico",
+    "descricao": "Acesso ao Sistema de Classificação dos Contribuintes do ICMS pelo PFE\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 216,
+    "tipo": "Empresa",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://senhafacil.com.br/agendamento/",
+    "titulo": "Agendamento Eletrônico",
+    "descricao": "Sistema para agendar serviços e orientação presencial nos Postos Fiscais\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 217,
+    "tipo": "Empresa",
+    "classe": "COMUNICAÇÕES E ENERGIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/nfce/base/paginas/logininternet.aspx",
+    "titulo": "Segunda via Eletrônica – NFCE",
+    "descricao": "Acesso à Segunda via Eletrônica – NFCE\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 218,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://bpe.fazenda.sp.gov.br/BPe/consulta",
+    "titulo": "Ambiente de Produção",
+    "descricao": "Consulta Pública - COM validade jurídica\nFormas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 219,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.bpe.fazenda.sp.gov.br/BPe/consulta",
+    "titulo": "Ambiente de Testes",
+    "descricao": "Consulta Pública - SEM validade jurídica\nFormas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 220,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://bpe.fazenda.sp.gov.br/BPeWeb/services/BPeRecepcao.asmx",
+    "titulo": "Ambiente de Produção - Web Service - BPeRecepcao.asmx",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 221,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://bpe.fazenda.sp.gov.br/BPeWeb/services/BPeConsulta.asmx",
+    "titulo": "Ambiente de Produção - Web Service - BPeConsulta.asmx",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 222,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://bpe.fazenda.sp.gov.br/BPeWeb/services/BPeRecepcaoEvento.asmx",
+    "titulo": "Ambiente de Produção - Web Service - BPeRecepcaoEvento.asmx",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 223,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://bpe.fazenda.sp.gov.br/BPeWeb/services/BPeStatusServico.asmx",
+    "titulo": "Ambiente de Produção - Web Service - BPeStatusServico.asmx",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 224,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://bpe.fazenda.sp.gov.br/BPe/qrcode",
+    "titulo": "Ambiente de Produção - QR Code",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 225,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.bpe.fazenda.sp.gov.br/BPeWeb/services/BPeRecepcao.asmx",
+    "titulo": "Ambiente de Testes - Web Service - BPeRecepcao.asmx",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 226,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.bpe.fazenda.sp.gov.br/BPeWeb/services/BPeConsulta.asmx",
+    "titulo": "Ambiente de Testes - Web Service - BPeConsulta.asmx",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 227,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.bpe.fazenda.sp.gov.br/BPeWeb/services/BPeRecepcaoEvento.asmx",
+    "titulo": "Ambiente de Testes - Web Service - BPeRecepcaoEvento.asmx",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 228,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.bpe.fazenda.sp.gov.br/BPeWeb/services/BPeStatusServico.asmx",
+    "titulo": "Ambiente de Testes - Web Service - BPeStatusServico.asmx",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 229,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.bpe.fazenda.sp.gov.br/BPe/qrcode",
+    "titulo": "Ambiente de Testes - QR Code",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 230,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/RessarcimentoSTPreValidador/publish.htm",
+    "titulo": "Pré-Validador - Instalação",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 231,
+    "tipo": "Empresa",
+    "classe": "ÍNDICES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/pautadocafe/cafe.asp",
+    "titulo": "Café - Pauta para Operações Interestaduais",
+    "descricao": "Pauta do Café\nFormas de acesso: Público"
+  },
+  {
+    "id": 232,
+    "tipo": "Empresa",
+    "classe": "COMUNICAÇÕES E ENERGIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/validadores",
+    "titulo": "Consulta das transmissões dos arquivos digitais",
+    "descricao": "Acesso à Consulta das transmissões dos arquivos digitais previstos na Portaria CAT 15/14\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 233,
+    "tipo": "Empresa",
+    "classe": "AUDITORIA DE CONTAS PÚBLICAS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.sct.sp.gov.br/",
+    "titulo": "SCT - Sistema de Consolidação das Informações ao Tribunal de Contas do Estado de São Paulo",
+    "descricao": "O SCT tem como objetivo receber e transmitir as informações sobre licitações, contratos e pagamentos do Poder Executivo do Estado de São Paulo ao Sistema Audesp do TCE-SP para atendimento da Fase IV, pelo Decreto 63195/18.\nFormas de acesso: Público"
+  },
+  {
+    "id": 234,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/ValidadorXML",
+    "titulo": "Validador XML",
+    "descricao": "Ferramenta para identificar erros de formatação do MDF-e\nFormas de acesso: Público"
+  },
+  {
+    "id": 235,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFESSL/ConsultaNaoEncerrados",
+    "titulo": "Consulta Não Encerrados",
+    "descricao": "Consulta de MDF-e com encerramento pendente\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 236,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/CCC",
+    "titulo": "Consulta CCC",
+    "descricao": "Cadastro Centralizado de Contribuintes\nFormas de acesso: Público"
+  },
+  {
+    "id": 237,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/Disponibilidade",
+    "titulo": "Disponibilidade Web Services",
+    "descricao": "Painel de disponibilidade dos serviços autorizadores de MDF-e\nFormas de acesso: Público"
+  },
+  {
+    "id": 238,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/MDFE/Consulta",
+    "titulo": "Consulta Pública",
+    "descricao": "Consulta Pública\nFormas de acesso: Público"
+  },
+  {
+    "id": 239,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/",
+    "titulo": "SIPET - Sistema de Peticionamento Eletrônico",
+    "descricao": "Sistema de recepção e triagem de solicitações do contribuinte para a devida integração com o Sefaz Sem Papel (inserção e direcionamento), além de servir como interface de comunicação com o solicitante que optar em ser atendido remotamente pelo sistema.\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 240,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://homologacao.bpe.fazenda.sp.gov.br/BPeAdmin/",
+    "titulo": "Credenciamento de desenvolvedores de software – Ambiente de Testes",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 241,
+    "tipo": "Empresa",
+    "classe": "SPED, SINTEGRA E GIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/sped/obrigados/obrigados.asp",
+    "titulo": "Histórico de Obrigatoriedade - SPED FISCAL",
+    "descricao": "Consulta da situação do credenciamento do contribuinte\nFormas de acesso: Público"
+  },
+  {
+    "id": 242,
+    "tipo": "Empresa",
+    "classe": "ÍNDICES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://legislacao.fazenda.sp.gov.br/Paginas/ValoresDaUFESP.aspx",
+    "titulo": "UFESP - Unidade Fiscal do Estado de São Paulo",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 243,
+    "tipo": "Empresa",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/codecon/Paginas/Como-Denunciar.aspx",
+    "titulo": "Reclamações e denúncias ao CODECON",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 244,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/68",
+    "titulo": "Cancelamento Extemporâneo de NF-e",
+    "descricao": "Orientações a respeito do recebimento de comunicação de emitente de NFe informando que não efetuou cancelamento de NFe no prazo* estipulado no §2º do artigo 18 da Portaria CAT 162/08.\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 245,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/SelecaoJuizes/Entidade/",
+    "titulo": "Seleção de Juízes",
+    "descricao": "Cadastro de entidades para o processo seletivo de juízes do Tribunal de Impostos e Taxas\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 246,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://senhafacil.com.br/agendamento/",
+    "titulo": "Agendamento Eletrônico",
+    "descricao": "Agendamento para atendimento presencial ou eletrônico\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 247,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/sipet",
+    "titulo": "SIPET - Sistema de Peticionamento Eletrônico",
+    "descricao": "Sistema de recepção e triagem de solicitações do contribuinte para a devida integração com o Sefaz Sem Papel (inserção e direcionamento), além de servir como interface de comunicação com o solicitante que optar em ser atendido remotamente pelo sistema\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 248,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/CAWEB/Account/Login.aspx",
+    "titulo": "PFE - Posto Fiscal Eletrônico",
+    "descricao": "Acesso ao PFE – Serviços Eletrônicos ICMS\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 249,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/cadesp/Paginas/Sobre.aspx",
+    "titulo": "CADESP - Cadastro de Contribuintes do ICMS",
+    "descricao": "Acesso à Informações sobre o CADESP\nFormas de acesso: Público"
+  },
+  {
+    "id": 250,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/dec/",
+    "titulo": "DEC - Domicílio Eletrônico do Contribuinte",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 251,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/certidoes/",
+    "titulo": "Certidões",
+    "descricao": "Negativa / Pagamento / Inscrição ou Não Inscrição no CADESP\nFormas de acesso: Público"
+  },
+  {
+    "id": 252,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ct/Paginas/Consulta-Tribut%C3%A1ria-Eletr%C3%B4nica-(e-CT).aspx",
+    "titulo": "eCT - Consulta Tributária Eletrônica",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 253,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/tit/Paginas/Servicos.aspx",
+    "titulo": "TIT - Tribunal de Impostos e Taxas",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 254,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/credito-acumulado/",
+    "titulo": "Crédito Acumulado",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 255,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/credito-produtor-rural/",
+    "titulo": "Crédito do Produtor Rural",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 256,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/RessarcimentoCC",
+    "titulo": "e-Ressarcimento (Acesse o sistema e pressione F5)",
+    "descricao": "Controla a conta corrente do ressarcimento e os arquivos transmitidos pelo contribuinte\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 257,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/recopi/",
+    "titulo": "RECOPI - Sistema de Reconhecimento e Controle das Operações com Papel Imune",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 258,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/icms/Paginas/Sintegra.aspx",
+    "titulo": "SINTEGRA - Sistema Integrado de Informações sobre Operações Interestaduais com Mercadorias e Serviços",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 259,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ted/",
+    "titulo": "TED - Transmissão Eletrônica de Documentos",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 260,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/5",
+    "titulo": "Liberação de mercadorias apreendidas",
+    "descricao": "Procedimentos para efetuar a devolução, liberação ou doação de bens apreendidos ou prestar informações do seu leilão\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 261,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/41",
+    "titulo": "AIDF - Inclusão de Modelo Fiscal Não Disponível",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 262,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/1",
+    "titulo": "Atendimento de exigências documentais (Portal Redesim - inscrição, alteração ou baixa de empresa)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 263,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/45",
+    "titulo": "Vinculação de ofício de contabilista",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 264,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/57",
+    "titulo": "Certidão de Débitos não Inscritos (na impossibilidade de geração eletrônica)",
+    "descricao": "Caso a certidão eletrônica disponível no link https://www10.fazenda.sp.gov.br/CertidaoNegativaDeb/Pages/EmissaoCertidaoNegativa.aspx não possa ser gerada automaticamente (normalmente por conta de alguma pendência, suspensa ou não).\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 265,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/2",
+    "titulo": "Certidão de Pagamento de Tributos",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 266,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/77",
+    "titulo": "Restituição de ICMS pago por GARE/GNRE/DARE",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 267,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/77",
+    "titulo": "Restituição de ICMS pago por GARE/GNRE/DARE",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 268,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/108",
+    "titulo": "Certidão de Regularidade do ITCMD (transmissões extrajudiciais lavradas fora do Estado de São Paulo",
+    "descricao": "Certidão de Regularidade do ITCMD - transmissões de outra UF\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 269,
+    "tipo": "Empresa",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/comex/Paginas/Guia-do-usu%C3%A1rio---Retifica%C3%A7%C3%A3o-de-GARE---Importa%C3%A7%C3%A3o.aspx",
+    "titulo": "Guias de Importação: retificação de Gare ou GNRE",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 270,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/60",
+    "titulo": "Pedido de Parcelamento de débitos de ICMS não inscritos em dívida ativa",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 271,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/67",
+    "titulo": "Pedido de Reparcelamento de débitos de ICMS não inscrito em dívida ativa",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 272,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/61",
+    "titulo": "Pedido de confissão manual de AIIM de ICMS (artigo 85-B da Lei 6.374/89)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 273,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/77",
+    "titulo": "Restituição de ICMS pago por GARE/GNRE/DARE",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 274,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/8",
+    "titulo": "Transferência de Crédito de DARE ITCMD",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 275,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ecf/Paginas/Sobre.aspx",
+    "titulo": "Solicitação de Cessação de Uso de Emissor de Cupom Fiscal fora do prazo",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 276,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/72",
+    "titulo": "Atendimento de notificação eCredRural",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 277,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/55",
+    "titulo": "Apresentação de defesas/petições/recursos para processos de contestação de AIIM ( processos físicos)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 278,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/contestacao-notificacao-lancamento.aspx",
+    "titulo": "Contestação em lote ao Lançamento de IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 279,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/pedido-recurso-contestacao-notificacao-lancamento.aspx",
+    "titulo": "Recurso em lote do Lançamento de IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 280,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/pedido-recurso-contestacao-notificacao-lancamento.aspx",
+    "titulo": "Recurso do Lançamento de IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 281,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/diplomatico-isencao.aspx",
+    "titulo": "IPVA - Isenção/Entidades e Pessoas Físicas com Direito a Tratamento Diplomático",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 282,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/cadastro-reducao-aliquota-empresa-locadora.aspx",
+    "titulo": "Atualização anual de cadastro de locadora (eventuais alterações cadastrais e entrega de BP e DRE)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 283,
+    "tipo": "Empresa",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/4",
+    "titulo": "Desbloqueio de senha do Programa Nota Fiscal Paulista",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 284,
+    "tipo": "Empresa",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/7",
+    "titulo": "Requisição Judicial sobre créditos da NFP (informações, bloqueio, transferências)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 285,
+    "tipo": "Empresa",
+    "classe": "REGIME ESPECIAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/83",
+    "titulo": "Termo de Adesão ao Regime Especial",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 286,
+    "tipo": "Empresa",
+    "classe": "REGIME ESPECIAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/49",
+    "titulo": "Apresentação de documentos exigidos pelo Regime Especial de ofício (ex officio)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 287,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/43",
+    "titulo": "Cessação de Uso de Equipamento SAT",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 288,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/73",
+    "titulo": "Solicitação de regularização para emissão de documentos fiscais - Simples Nacional (exceto MEI)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 289,
+    "tipo": "Empresa",
+    "classe": "DEC E DEMAIS COMUNICAÇÕES FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/70",
+    "titulo": "Atendimento de notificação de fiscalização",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 290,
+    "tipo": "Empresa",
+    "classe": "DIPAM",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/79",
+    "titulo": "Requerimento de acesso ao sistema DIPAM.Web",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 291,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/82",
+    "titulo": "Solicitação de regularização para emissão de documentos fiscais - Microempreendedor Individual -MEI",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 292,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/81",
+    "titulo": "Solicitação de regularização para emissão de documentos fiscais - MEI (outros casos)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 293,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/84",
+    "titulo": "Atendimento Malha Fiscal PGDAS-D",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 294,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/91",
+    "titulo": "Declaração de descontinuidade de prestação de serviço de softwarehouse para contribuinte ICMS",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 295,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/icms/Paginas/Procedimentos.aspx",
+    "titulo": "Convalidação (Convênio ICMS 190/2017) - Procedimentos",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 296,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/DareICMS/DareAvulso",
+    "titulo": "Emissão de DARE para ICMS declarado/parcelado não inscrito",
+    "descricao": "DARE ICMS\nFormas de acesso: Público"
+  },
+  {
+    "id": 297,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/ContaFiscalAiim/Login.aspx",
+    "titulo": "Emissão de DARE para ICMS ou ITCMD exigido em AIIM",
+    "descricao": "Conta Fiscal AIIM - Auto de Infração e Imposição de Multa\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 298,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.dividaativa.pge.sp.gov.br/",
+    "titulo": "Emissão de DARE para receitas em dívida ativa",
+    "descricao": "Dívida ativa - PGE\nFormas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 299,
+    "tipo": "Empresa",
+    "classe": "DIPAM",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/DIPAM-A/",
+    "titulo": "DIPAM-A",
+    "descricao": "Envio de declaração por produtores agropecuários\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 300,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/Home/ServicosDisponiveis",
+    "titulo": "Serviços disponíveis no SIPET",
+    "descricao": "Lista de serviços disponíveis no SIPET\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 301,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ehc/Documents/credenciamento_etanol_hidratado_usinas.xls",
+    "titulo": "Consulta credenciamento fabricantes",
+    "descricao": "Consulta da situação de credenciamento dos fabricantes de etanol hidratado combustível ¿ EHC segundo a Portaria CAT 223/2009\nFormas de acesso: Público"
+  },
+  {
+    "id": 302,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ehc/Documents/credenciamento_etanol_hidratado_distribuidoras.xls",
+    "titulo": "Consulta credenciamento distribuidoras",
+    "descricao": "Consulta da situação de credenciamento das distribuidoras de etanol hidratado combustível ¿ EHC segundo a Portaria CAT 223/2009\nFormas de acesso: Público"
+  },
+  {
+    "id": 303,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/ITCMD_DEC/Default.aspx",
+    "titulo": "Emissão de DARE para ITCMD declarado",
+    "descricao": "Sistema Declaratório ITCMD\nFormas de acesso: Público"
+  },
+  {
+    "id": 304,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/cadastro-reducao-aliquota-empresa-locadora.aspx",
+    "titulo": "Locadoras - Pedido de alteração de dados cadastrais",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 305,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/entrega-anual-documento-reducao-aliquota-empresa-locadora.aspx",
+    "titulo": "Locadoras - Pedido de Cadastramento",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 306,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/102",
+    "titulo": "Contestação de rejeição da Sefaz-SP de opção pelo Simples Nacional no presente exercício",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 307,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/112",
+    "titulo": "Alterações de ofício no CADESP que não possam ser solicitadas via REDESIM ou Portal do Empreendedor",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 308,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/116",
+    "titulo": "Cadastro, alteração ou cancelamento de histórico de AIDF",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 309,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/124",
+    "titulo": "Denúncia espontânea",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 310,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/125",
+    "titulo": "Solicitação de cópia ou de vistas de documentos da Sefaz",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 311,
+    "tipo": "Empresa",
+    "classe": "RELACIONAMENTO ENTRE FISCO E CONTRIBUINTE",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/125",
+    "titulo": "Solicitação de cópia ou de vistas de documentos da Sefaz",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 312,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "http://pfe.fazenda.sp.gov.br/",
+    "titulo": "Emissão de DARE para taxa de serviços eletrônicos",
+    "descricao": "Posto Fiscal Eletrônico\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 313,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/128",
+    "titulo": "Oficinas/concessionárias PCD – Requerimento de cadastro no Portal Sefaz",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 314,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "http://www.fazenda.sp.gov.br/regionais/default.asp",
+    "titulo": "Localização de Postos Fiscais",
+    "descricao": "Acesso à Localização de Postos Fiscais\nFormas de acesso: Público"
+  },
+  {
+    "id": 315,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www10.fazenda.sp.gov.br/CertidaoNegativaDeb/Pages/EmissaoCertidaoNegativa.aspx",
+    "titulo": "eCND - Certidão Negativa de Débitos Tributários Não Inscritos",
+    "descricao": "Emissão da Certidão Negativa de Débitos\nFormas de acesso: CPF/CNPJ e Senha"
+  },
+  {
+    "id": 316,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/icms/Paginas/Senha-do-PFE.aspx",
+    "titulo": "Senha do PFE",
+    "descricao": "Procedimentos para solicitação de emissão de senha do PFE\nFormas de acesso: Presencial"
+  },
+  {
+    "id": 317,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/62",
+    "titulo": "Senha do Posto Fiscal Eletrônico (PFE) para sócios de empresa individual (MEI, EIRELI etc.)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 318,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/scanc/Paginas/PagRessarcimento.aspx",
+    "titulo": "Ressarcimento ICMS ST SCANC",
+    "descricao": "Requerimento de ressarcimento do ICMS ST pelo contribuinte que adquiriu diretamente do substituto tributário\nFormas de acesso: Público"
+  },
+  {
+    "id": 319,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/Simp/",
+    "titulo": "Emissão de DARE para ICMS - IMPORTAÇÃO",
+    "descricao": "SIMP - Geração de DARE, GARE, GNRE, GCOMP-ICMS e Guia de Liberação Importação\nFormas de acesso: Público"
+  },
+  {
+    "id": 320,
+    "tipo": "Empresa",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/108",
+    "titulo": "Certidão de Regularidade do ITCMD para heranças e doações feitas fora do Estado (transmissões extrajudiciais lavradas fora do Estado de São Paulo)",
+    "descricao": "Certidão de Regularidade do ITCMD - transmissões de outra UF\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 321,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/cadcontribcomb/Paginas/renovação-inscrição-estadual.aspx",
+    "titulo": "Renovação de Inscrição Estadual",
+    "descricao": "Sistema com informações sobre os procedimentos cadastrais dos contribuintes de combustíveis\nFormas de acesso: Público"
+  },
+  {
+    "id": 322,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/cadcontribcomb/Paginas/concessão-inscrição-estadual.aspx",
+    "titulo": "Concessão de Inscrição Estadual",
+    "descricao": "Sistema com informações sobre os procedimentos cadastrais dos contribuintes de combustíveis\nFormas de acesso: Público"
+  },
+  {
+    "id": 323,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/cadcontribcomb/Paginas/altera%C3%A7%C3%A3o-dados-cadastrais.aspx",
+    "titulo": "Alteração de Dados Cadastrais",
+    "descricao": "Sistema com informações sobre os procedimentos cadastrais dos contribuintes de combustíveis\nFormas de acesso: Público"
+  },
+  {
+    "id": 324,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/9",
+    "titulo": "Guias de Importação: retificação de GARE ou GNRE",
+    "descricao": "Retificação de GARE ou GNRE importação\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 325,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/9",
+    "titulo": "Guias de Importação: retificação de GARE ou GNRE",
+    "descricao": "Retificação de GARE ou GNRE importação\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 326,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/139",
+    "titulo": "Solicitação dos preços de partida",
+    "descricao": "ICMS-ST: Solicitação dos preços de partida\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 327,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/140",
+    "titulo": "Entrega de levantamento de preços",
+    "descricao": "ICMS-ST: Entrega de levantamento de preços\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 328,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/137",
+    "titulo": "Comprovação da contratação da pesquisa de levantamento de preços",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 329,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/145",
+    "titulo": "Pedido de Ressarcimento de ICMS-ST",
+    "descricao": "Ressarcimento de ICMS-ST\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 330,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/146",
+    "titulo": "Cancelamento Extemporâneo de CF-e SAT",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 331,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/147",
+    "titulo": "Comércio de peças usadas – Alteração da Inscrição Estadual para ``ativa´´",
+    "descricao": "Comércio de peças usadas – Ativação\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 332,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/148",
+    "titulo": "Armazéns Gerais – Alteração da situação cadastral para ``ativa´´",
+    "descricao": "Armazéns Gerais – Ativação de IE\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 333,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/151",
+    "titulo": "Liberação de EPEC (NF-e em contingência)",
+    "descricao": "Desbloqueio EPEC\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 334,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/152",
+    "titulo": "Pedido de restabelecimento de Inscrição Estadual suspensa por não localização ou outro motivo",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 335,
+    "tipo": "Empresa",
+    "classe": "SPED, SINTEGRA E GIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/153",
+    "titulo": "Compensação de ICMS por destaque indevido em nota fiscal - saldo credor em GIA",
+    "descricao": "Compensação de ICMS destacado a maior em NF\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 336,
+    "tipo": "Empresa",
+    "classe": "CERTIDÕES / CADIN",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/154",
+    "titulo": "CADIN - Cancelamento de Comunicado ou Cancelamento de Inscrição",
+    "descricao": "Cancelamento CADIN\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 337,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/159",
+    "titulo": "Restituição de taxas e custas - valores maiores que 100 UFESP´s",
+    "descricao": "Valores maiores que 100 UFESP's\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 338,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/161",
+    "titulo": "Cancelamento extemporâneo de CT-e",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 339,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/ipva/Paginas/A%C3%A7%C3%B5es-judiciais-relativas-ao-IPVA.aspx",
+    "titulo": "Ações judiciais (decisões e ofícios) sobre IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 340,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/164",
+    "titulo": "Transferência de crédito de ICMS entre estabelecimentos rurais do mesmo titular",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 341,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/168",
+    "titulo": "Pedido de Apropriação de Crédito Acumulado - Método de Custeio - PCAT 83/2009",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 342,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/165",
+    "titulo": "Cálculo de ICMS para transferência, antes do prazo legal, de veículo adquirido com isenção PCD/Taxi",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 343,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/187",
+    "titulo": "Cancelamento de autorização obtida para compra de veículo com isenção ICMS (pessoa com deficiência)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 344,
+    "tipo": "Empresa",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/172",
+    "titulo": "Reconhecimento de Imunidade para Entidades Sindicais de trabalhadores",
+    "descricao": "Formas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 345,
+    "tipo": "Empresa",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/183",
+    "titulo": "Restituição - Recolhido em processo judicial de separação/divórcio",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 346,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://dfe-portal.svrs.rs.gov.br/nfe/ccc",
+    "titulo": "Consulta situação do destinatário/emitente na emissão da NF-e",
+    "descricao": "Consulta no CCC da situação de atores da operação na emissão da NF-e\nFormas de acesso: Público"
+  },
+  {
+    "id": 347,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/202",
+    "titulo": "Pedido de substituição do arquivo digital acolhido no Sistema e-CredRural",
+    "descricao": "Pedido de substituição de arquivo digital do Sistema e-CredRural\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 348,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/DIFAL",
+    "titulo": "Consulta da consolidação dos documentos e emissão de guia de recolhimento do DIFAL",
+    "descricao": "Consulta da consolidação dos documentos e emissão de guia de recolhimento do DIFAL\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 349,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/212",
+    "titulo": "Resposta a notificação de ICMS",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 350,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/213",
+    "titulo": "Resposta a notificação de IPVA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 351,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/214",
+    "titulo": "Resposta a notificação de taxas",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 352,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/215",
+    "titulo": "Cancelamento de autorização obtida para compra de veículo com isenção de ICMS (taxista)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 353,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/211",
+    "titulo": "Comunicação ao Fisco - Preparação de Refeições Coletivas - Portaria CAT 37/02",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 354,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Recurso em face do indeferimento do pedido de isenção IPVA para PcD",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 355,
+    "tipo": "Empresa",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/225",
+    "titulo": "Alteração de nome/reativação de cadastro Nota Fiscal Paulista",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 356,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/216",
+    "titulo": "Correção da conta fiscal ICMS do Simples Nacional - STDA/DeSTDA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 357,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/216",
+    "titulo": "Correção da conta fiscal ICMS do Simples Nacional - STDA/DeSTDA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 358,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/221",
+    "titulo": "Pedido de Reconhecimento de Créditos de ICMS - Resolução Conjunta SFP/PGE - 01/ 2019",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 359,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/220",
+    "titulo": "Credenciamento de Operador Logístico - Portaria CAT 31/2019",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 360,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/224",
+    "titulo": "Pedido de adesão ao Regime Tributário Simplificado (PSRE 14/22, Energia Elétrica)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 361,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/223",
+    "titulo": "Regularização de débito(s) de AIIM (`s) liquidado(s)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 362,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/204",
+    "titulo": "Recurso contra decisão relacionada a atos cadastrais (CADESP)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 363,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/208",
+    "titulo": "Recurso contra decisão relacionada a taxas ou custas",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 364,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/205",
+    "titulo": "Recurso contra decisão relacionada ao ICMS",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 365,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/206",
+    "titulo": "Recurso contra decisão relacionada ao IPVA (exceto recurso ao lançamento e isenção IPVA PCD))",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 366,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/226",
+    "titulo": "Restituição de ICMS pago por DAS (Documento de Arrecadação do Simples Nacional)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 367,
+    "tipo": "Empresa",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/230",
+    "titulo": "Transferência de créditos Nota Fiscal Paulista para herdeiro(s)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 368,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/229",
+    "titulo": "Credenciamento para aplicação do diferimento previsto nos Convênios ICMS 199/22 e 15/23",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 369,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/229",
+    "titulo": "Credenciamento para aplicação do diferimento previsto nos Convênios ICMS 199/22 e 15/23",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 370,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/226",
+    "titulo": "Restituição de ICMS pago por DAS (Documento de Arrecadação do Simples Nacional",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 371,
+    "tipo": "Empresa",
+    "classe": "COMUNICAÇÕES E ENERGIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/231",
+    "titulo": "Saneamento de informações prestadas na DEVEC (omissão ou prestação de informações incorretas)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 372,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/66",
+    "titulo": "Retificação de Guia de Arrecadação ICMS (GARE/GNRE/DARE)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 373,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/66",
+    "titulo": "Retificação de Guia de Arrecadação ICMS (GARE/GNRE/DARE)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 374,
+    "tipo": "Empresa",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/244",
+    "titulo": "Resposta notificação Operação Vaisyas",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 375,
+    "tipo": "Empresa",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/234",
+    "titulo": "Alteração de e-mail vinculado à Declaração de ITCMD (para obter nova senha)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 376,
+    "tipo": "Empresa",
+    "classe": "CADESP",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/232",
+    "titulo": "Regime Especial de Inscrição Estadual Única - Empresas de Comunicação",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 377,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/246",
+    "titulo": "Contestação de cobrança de débito de ICMS (inscrito em dívida ativa) relativo ao DIFAL – EC 87/15",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 378,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/Solicitacao/Instrucao/227",
+    "titulo": "Credenciamento previsto no artigo 418- A do RICMS/00",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 379,
+    "tipo": "Empresa",
+    "classe": "COMBUSTÍVEIS E USINAS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/227",
+    "titulo": "Credenciamento previsto no artigo 418- A do RICMS/00",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 380,
+    "tipo": "Empresa",
+    "classe": "HERANÇAS E DOAÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/258",
+    "titulo": "Alteração e confirmação de Ofício de declaração retificadora já analisada",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 381,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/icms/Paginas/resolveja.aspx",
+    "titulo": "Resolve Já - Informações básicas sobre o programa",
+    "descricao": "Resolve Já - Informações básicas sobre o programa\nFormas de acesso: Público"
+  },
+  {
+    "id": 382,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/cfaiim/Paginas/Como-renunciar-desistir.aspx",
+    "titulo": "Resolve Já - Pedido de Renúncia e Desistência de AIIM de ICMS",
+    "descricao": "Formas de acesso: Público"
+  },
+  {
+    "id": 383,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/254",
+    "titulo": "Solicitação de Descredenciamento no RECOPI Nacional",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 384,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/81",
+    "titulo": "Solicitação de desbloqueio para emissão de NF-e (SOMENTE MEI)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 385,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/81",
+    "titulo": "Solicitação de desbloqueio para emissão de NF-e (SOMENTE MEI)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 386,
+    "tipo": "Empresa",
+    "classe": "PROCESSOS ADMINISTRATIVOS TRIBUTÁRIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/263",
+    "titulo": "Pedido de vinculação de procurador a AIIM (SOMENTE PARA AUTUADO PESSOA FÍSICA)",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 387,
+    "tipo": "Empresa",
+    "classe": "SUBSTITUIÇÃO TRIBUTÁRIA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/RessarcimentoCC",
+    "titulo": "e-Ressarcimento (Acesse o sistema e pressione F5)",
+    "descricao": "Controla a conta corrente do ressarcimento e os arquivos transmitidos pelo contribuinte\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 388,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/267",
+    "titulo": "Reclamação referente a débito de IPVA (SEM NOTIFICAÇÃO), inclusive débito inscrito em dívida ativa.",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 389,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/300",
+    "titulo": "Credenciamento de Estabelecimento Gráfico Paulista",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 390,
+    "tipo": "Empresa",
+    "classe": "PRODUTOR RURAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/299",
+    "titulo": "Liquidação de débito fiscal com crédito de produtor rural",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 391,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/91",
+    "titulo": "Declaração de descontinuidade de prestação de serviço de softwarehouse para contribuinte ICMS",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 392,
+    "tipo": "Empresa",
+    "classe": "NOTA FISCAL PAULISTA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/278",
+    "titulo": "Resposta a notificação relacionada ao Programa Nota Fiscal Paulista",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 393,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/309",
+    "titulo": "Solicitação de inscrição de AIIM em dívida ativa (somente situações específicas)",
+    "descricao": "Destinado a inscrição de AIIM em dívida ativa SOMENTE para os casos de:AIIM(s) de empresas falidas ou em processo de recuperação judicial para fins de adesão ao Programa de Transação da PGE OU para AIIM(s) que esteja(m) há mais de 90 dias pendente(s).\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 394,
+    "tipo": "Empresa",
+    "classe": "SEGURANÇA DA INFORMAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "http://smart.fazenda.sp.gov.br/mgt",
+    "titulo": "Meus Dados (MGT - Módulo Gestor de Tratamento de Dados)",
+    "descricao": "O Meus Dados (antigo Módulo Gestor de Tratamento de dados - MGT), possibilita o cumprimento da LGPD com consulta acerca do tratamento de dados pessoais.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 395,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/71",
+    "titulo": "Transferência entre empresas não interdependentes",
+    "descricao": "Solicitar autorização para transferir crédito a empresa não interdependente\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 396,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Transferência",
+    "descricao": "Solicitação, consulta e aceite da transferência de crédito acumulado\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 397,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Reincorporação",
+    "descricao": "Solicitar ou consultar pedidos de reincorporação de crédito acumulado\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 398,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/98",
+    "titulo": "Regime Especial para apropriação - Solicitar",
+    "descricao": "Solicitar regime especial para apropriação de crédito acumulado mediante garantia\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 399,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Regime Especial",
+    "descricao": "Consultar as autorizações de regime especial para apropriação\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 400,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/20",
+    "titulo": "Reconhecimento de interdependência",
+    "descricao": "Solicitar o reconhecimento da relação de interdependência\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 401,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Reconhecimento de interdependência",
+    "descricao": "Consultar as relações de interdependências registradas no sistema e-CredAc\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 402,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Procuração",
+    "descricao": "Cadastrar, consultar ou cancelar procuração eletrônica\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 403,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/24",
+    "titulo": "Liquidação - Solicitar",
+    "descricao": "Solicitar a liquidação de débitos com crédito acumulado (SIPET)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 404,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Liquidação - e-CredAc",
+    "descricao": "Consulta aos pedidos de liquidação registrados no sistema e-CredAc\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 405,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Devolução",
+    "descricao": "Solicitação, consulta e aceite da devolução de transferência\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 406,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/293",
+    "titulo": "Conta corrente - Desbloquear",
+    "descricao": "Solicitar o desbloqueio da conta corrente e envio de documentos\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 407,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Conta corrente",
+    "descricao": "Consultar saldo, extrato ou outras informações relativas à conta corrente\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 408,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/247",
+    "titulo": "Compensação - Estorno",
+    "descricao": "Solicitar o estorno da compensação (SIPET)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 409,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Compensação",
+    "descricao": "Solicitar ou consultar pedidos de compensação com crédito acumulado\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 410,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Arquivo simplificado",
+    "descricao": "Transmitir, consultar, substituir ou cancelar a substituição de arquivo simplificado\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 411,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/22",
+    "titulo": "Arquivo de custo - Documentos (SIPET)",
+    "descricao": "Peticionar e enviar documentação para substituição de arquivo de custo (SIPET)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 412,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Arquivo de custo",
+    "descricao": "Consultar, substituir ou cancelar a substituição de arquivo de custo (e-CredAc)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 413,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Apuração simplificada",
+    "descricao": "Aderir, consultar ou renunciar à apuração simplificada de crédito acumulado\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 414,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/",
+    "titulo": "Apropriação - Documentos (SIPET)",
+    "descricao": "Apresentação de documentos relativos à apropriação de crédito acumulado (SIPET)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 415,
+    "tipo": "Empresa",
+    "classe": "CRÉDITO ACUMULADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.fazenda.sp.gov.br/creditoacumulado/",
+    "titulo": "Apropriação e-CredAc",
+    "descricao": "Solicitar, consultar e outras ações relativas aos pedidos de apropriação (e-CredAc)\nFormas de acesso: Certificado Digital"
+  },
+  {
+    "id": 416,
+    "tipo": "Empresa",
+    "classe": "PAGAMENTOS, RETIFICAÇÕES E RESTITUIÇÕES",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/313",
+    "titulo": "Pedido de Correção de Consta Fiscal após SUBSTITUIÇÃO de GIA/EFD/DeSTDA",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 417,
+    "tipo": "Empresa",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/318",
+    "titulo": "Cálculo de ICMS para transferência, antes de 12 meses, de veículo adquirido diretamente da montadora",
+    "descricao": "Serviço de cálculo de ICMS do Convênio 64/2006\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 418,
+    "tipo": "Empresa",
+    "classe": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/319",
+    "titulo": "Veículo com restrição de transferência",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 419,
+    "tipo": "Empresa",
+    "classe": "ENTIDADES DA ADMINISTRAÇÃO DO ESTADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/siedesc/",
+    "titulo": "Siedesc - Sistema de Informações das Entidades Descentralizadas",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 420,
+    "tipo": "Empresa",
+    "classe": "ENTIDADES DA ADMINISTRAÇÃO DO ESTADO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://portal.fazenda.sp.gov.br/servicos/sged/Paginas/sinfe.aspx",
+    "titulo": "Sinfe - Sistema de Informações Fundações e Empresas",
+    "descricao": "Formas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 421,
+    "tipo": "Empresa",
+    "classe": "SEGURANÇA DA INFORMAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "http://smart.fazenda.sp.gov.br/mgp",
+    "titulo": "MGP - Módulo Gestor de Procurações",
+    "descricao": "O Módulo Gestor de Procurações do Smart permite ao cidadão ou contribuinte cadastrar procurações em um único local para diversos sistemas da Secretaria da Fazenda e Planejamento.\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha"
+  },
+  {
+    "id": 422,
+    "tipo": "Empresa",
+    "classe": "COMÉRCIO EXTERIOR",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www4.fazenda.sp.gov.br/Duimp/login",
+    "titulo": "Sistema de Importação - DUIMP SEFAZ/SP",
+    "descricao": "Sistema de Importação - DUIMP SEFAZ/SP (primeira entrega- apenas exoneração integral GLME)\nFormas de acesso: Certificado Digital, Público"
+  },
+  {
+    "id": 423,
+    "tipo": "Empresa",
+    "classe": "AUTENTICAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www5.fazenda.sp.gov.br/saepdeclaracao",
+    "titulo": "SAEP - Sistema de Acompanhamento da Evolução Patrimonial - para servidores INATIVOS",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 424,
+    "tipo": "Empresa",
+    "classe": "AUTENTICAÇÃO",
+    "orgao": "SEFAZ-SP",
+    "link": "https://sefaznet5.intra.fazenda.sp.gov.br/saep",
+    "titulo": "SAEP - Sistema de Acompanhamento da Evolução Patrimonial - para servidores ATIVOS",
+    "descricao": "Formas de acesso: Certificado Digital"
+  },
+  {
+    "id": 425,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/380",
+    "titulo": "Solicitação de desbloqueio para emissão de NF-e - somente RPA e SN (exceto MEI)",
+    "descricao": "Formas de acesso: Presencial, Certificado Digital"
+  },
+  {
+    "id": 426,
+    "tipo": "Empresa",
+    "classe": "SIMPLES NACIONAL",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www3.fazenda.sp.gov.br/SIPET/ServicosInstrucao/Instrucao/380",
+    "titulo": "Solicitação de desbloqueio para emissão de NF-e - somente RPA e SN (exceto MEI)",
+    "descricao": "Formas de acesso: Presencial, Certificado Digital"
+  },
+  {
+    "id": 427,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/ipvanet_consulta",
+    "titulo": "Portal de Serviços de Veículos",
+    "descricao": "Formas de acesso: Presencial"
+  },
+  {
+    "id": 428,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://play.google.com/store/apps/details?id=br.gov.pr.celepar.sefa.dce&pli=1",
+    "titulo": "Emissor DC-e (Android)",
+    "descricao": "Aplicativo emissor de DC-e para dispositivos Android\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 429,
+    "tipo": "Empresa",
+    "classe": "DOCUMENTOS FISCAIS",
+    "orgao": "SEFAZ-SP",
+    "link": "https://apps.apple.com/br/app/dce/id6753601602",
+    "titulo": "Emissor DC-e (iOS)",
+    "descricao": "Aplicativo emissor de DC-e para dispositivos Apple\nFormas de acesso: Certificado Digital, CPF/CNPJ e Senha, Público"
+  },
+  {
+    "id": 430,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoIsencao/",
+    "titulo": "Certidão de Imunidade, Isenção e Dispensa do IPVA",
+    "descricao": "Sistema para emissão de Certidão de Imunidade, Isenção e Dispensa do IPVA\nFormas de acesso: Público"
+  },
+  {
+    "id": 431,
+    "tipo": "Empresa",
+    "classe": "IPVA",
+    "orgao": "SEFAZ-SP",
+    "link": "https://www.ipva.fazenda.sp.gov.br/IPVANET_CertidaoValidacao/",
+    "titulo": "Validação de Certidões de IPVA",
+    "descricao": "Sistema para a validação de Certidões de IPVA\nFormas de acesso: Público"
+  }
+]
