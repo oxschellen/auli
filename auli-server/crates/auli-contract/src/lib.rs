@@ -10,6 +10,9 @@
 //! Este crate é deliberadamente magro (só `serde`): nada de embedder, HTTP ou domínio de
 //! tributação. É o único ponto onde produtor e consumidor concordam.
 
+mod snapshot;
+pub use snapshot::*;
+
 use serde::{Deserialize, Serialize};
 
 /// Envelope genérico de uma tabela. Cada *tipo de tabela* é uma instanciação:
