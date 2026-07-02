@@ -54,13 +54,12 @@ impl Writer {
             .first()
             .map(|r| r.embedding.len())
             .or_else(|| embeddings.first().map(|e| e.len()))
+            && let Some(bad) = embeddings.iter().find(|e| e.len() != expected)
         {
-            if let Some(bad) = embeddings.iter().find(|e| e.len() != expected) {
-                return Err(Error::DimensionMismatch { expected, got: bad.len() });
-            }
+            return Err(Error::DimensionMismatch { expected, got: bad.len() });
         }
 
-        for ((id, emb), payload) in ids.iter().zip(embeddings.into_iter()).zip(payloads.iter()) {
+        for ((id, emb), payload) in ids.iter().zip(embeddings).zip(payloads.iter()) {
             let rec = Record { id: id.clone(), embedding: emb, payload: payload.clone() };
             match data.records.iter_mut().find(|r| r.id == rec.id) {
                 Some(existing) => *existing = rec,

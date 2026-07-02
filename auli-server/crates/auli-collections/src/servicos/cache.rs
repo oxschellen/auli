@@ -29,14 +29,14 @@ pub fn read(data_dir: &str, url: &str) -> Option<String> {
 /// Best-effort: failures are logged, not propagated, so caching never breaks a scrape.
 pub fn write(data_dir: &str, url: &str, content: &str) {
     let path = cache_path(data_dir, url);
-    if let Some(parent) = path.parent() {
-        if let Err(e) = std::fs::create_dir_all(parent) {
-            eprintln!(
-                "⚠️  cache servicos: não foi possível criar {:?}: {}",
-                parent, e
-            );
-            return;
-        }
+    if let Some(parent) = path.parent()
+        && let Err(e) = std::fs::create_dir_all(parent)
+    {
+        eprintln!(
+            "⚠️  cache servicos: não foi possível criar {:?}: {}",
+            parent, e
+        );
+        return;
     }
     if let Err(e) = std::fs::write(&path, content) {
         eprintln!(

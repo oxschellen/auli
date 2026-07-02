@@ -75,12 +75,12 @@ pub fn extract_panel_body_text(panel_html: &str) -> String {
 
 /// Title text of a menu item, read from the element matching `class_attr` up to its `</div>`.
 pub fn extract_question_title_from_class(html_chunk: &str, class_attr: &str) -> String {
-    if let Some(class_pos) = html_chunk.find(class_attr) {
-        if let Some(open_tag_end) = html_chunk[class_pos..].find('>') {
-            let content_start = class_pos + open_tag_end + 1;
-            if let Some(close_pos) = html_chunk[content_start..].find("</div>") {
-                return remove_html_tags(&html_chunk[content_start..content_start + close_pos]);
-            }
+    if let Some(class_pos) = html_chunk.find(class_attr)
+        && let Some(open_tag_end) = html_chunk[class_pos..].find('>')
+    {
+        let content_start = class_pos + open_tag_end + 1;
+        if let Some(close_pos) = html_chunk[content_start..].find("</div>") {
+            return remove_html_tags(&html_chunk[content_start..content_start + close_pos]);
         }
     }
     String::new()
@@ -88,14 +88,14 @@ pub fn extract_question_title_from_class(html_chunk: &str, class_attr: &str) -> 
 
 /// `href` of the first `<a>` inside the element matching `class_attr`.
 pub fn extract_question_href_from_class(html_chunk: &str, class_attr: &str) -> String {
-    if let Some(class_pos) = html_chunk.find(class_attr) {
-        if let Some(a_pos) = html_chunk[class_pos..].find("<a ") {
-            let a_start = class_pos + a_pos;
-            if let Some(href_pos) = html_chunk[a_start..].find("href=\"") {
-                let href_value_start = a_start + href_pos + 6;
-                if let Some(href_end) = html_chunk[href_value_start..].find('"') {
-                    return html_chunk[href_value_start..href_value_start + href_end].to_string();
-                }
+    if let Some(class_pos) = html_chunk.find(class_attr)
+        && let Some(a_pos) = html_chunk[class_pos..].find("<a ")
+    {
+        let a_start = class_pos + a_pos;
+        if let Some(href_pos) = html_chunk[a_start..].find("href=\"") {
+            let href_value_start = a_start + href_pos + 6;
+            if let Some(href_end) = html_chunk[href_value_start..].find('"') {
+                return html_chunk[href_value_start..href_value_start + href_end].to_string();
             }
         }
     }
@@ -155,35 +155,35 @@ fn html_to_text_with_links(html: &str) -> String {
             let rest = &html[pos..];
 
             // Anchor tag — emit [text](href)
-            if rest.starts_with("<a ") || rest.starts_with("<a\n") || rest.starts_with("<a\t") {
-                if let Some(tag_end) = rest.find('>') {
-                    let tag = &rest[..tag_end + 1];
-                    let content_start = pos + tag_end + 1;
+            if (rest.starts_with("<a ") || rest.starts_with("<a\n") || rest.starts_with("<a\t"))
+                && let Some(tag_end) = rest.find('>')
+            {
+                let tag = &rest[..tag_end + 1];
+                let content_start = pos + tag_end + 1;
 
-                    let href = tag.find("href=\"").and_then(|i| {
-                        let start = i + 6;
-                        tag[start..]
-                            .find('"')
-                            .map(|end| tag[start..start + end].to_string())
-                    });
+                let href = tag.find("href=\"").and_then(|i| {
+                    let start = i + 6;
+                    tag[start..]
+                        .find('"')
+                        .map(|end| tag[start..start + end].to_string())
+                });
 
-                    if let Some(close_offset) = html[content_start..].find("</a>") {
-                        let inner_raw = &html[content_start..content_start + close_offset];
-                        let inner = remove_html_tags(inner_raw)
-                            .split_whitespace()
-                            .collect::<Vec<_>>()
-                            .join(" ");
+                if let Some(close_offset) = html[content_start..].find("</a>") {
+                    let inner_raw = &html[content_start..content_start + close_offset];
+                    let inner = remove_html_tags(inner_raw)
+                        .split_whitespace()
+                        .collect::<Vec<_>>()
+                        .join(" ");
 
-                        if !inner.is_empty() {
-                            match href {
-                                Some(h) => result.push_str(&format!("[{}]({})", inner, h)),
-                                None => result.push_str(&inner),
-                            }
+                    if !inner.is_empty() {
+                        match href {
+                            Some(h) => result.push_str(&format!("[{}]({})", inner, h)),
+                            None => result.push_str(&inner),
                         }
-
-                        pos = content_start + close_offset + 4;
-                        continue;
                     }
+
+                    pos = content_start + close_offset + 4;
+                    continue;
                 }
             }
 
@@ -332,12 +332,11 @@ fn decode_html_entities(text: &str) -> String {
                 } else {
                     s.parse::<u32>().ok()
                 }
-            }) {
-                if let Some(ch) = char::from_u32(code_point) {
-                    out.push(ch);
-                    rest = &rest[semi + 1..];
-                    continue;
-                }
+            }) && let Some(ch) = char::from_u32(code_point)
+            {
+                out.push(ch);
+                rest = &rest[semi + 1..];
+                continue;
             }
 
             // unknown entity — emit as-is
