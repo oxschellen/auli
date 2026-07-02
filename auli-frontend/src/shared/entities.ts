@@ -43,14 +43,14 @@ export const ENTITIES: Entity[] = [
     name: "SEFA-PR",
     uf: "PR",
     state: "Paraná",
-    collections: ["servicos"],
+    collections: [],
   },
   {
     id: "sp",
     name: "SEFAZ-SP",
     uf: "SP",
     state: "São Paulo",
-    collections: ["servicos"],
+    collections: [],
   },
 ];
 

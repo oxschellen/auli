@@ -4,9 +4,8 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 /// Unified error type for the crate.
 ///
-/// `Display` produces a human-readable message (it reaches end users via
-/// `exec_all_question` → the `answer` field), while `Debug` keeps the full detail for logs.
-/// External errors are wrapped with `#[from]` so `?` converts them automatically.
+/// `Display` produces a human-readable message (surfaced on the CLI / in logs), while `Debug`
+/// keeps the full detail. External errors are wrapped with `#[from]` so `?` converts them automatically.
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("{0}")]

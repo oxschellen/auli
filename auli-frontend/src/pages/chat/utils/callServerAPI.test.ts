@@ -110,4 +110,16 @@ describe("callServerAPI", () => {
 
     expect(finalMessages(setMessages).at(-1)?.text).toMatch(/não está disponível/i);
   });
+
+  it("surfaces the server's rate-limit message on HTTP 429", async () => {
+    mockedPost.mockRejectedValue({
+      response: { status: 429, data: { error: "Muitas requisições. Aguarde." } },
+    });
+    mockedIsCancel.mockReturnValue(false);
+    const { setMessages, args } = makeArgs();
+
+    await callServerAPI(args);
+
+    expect(finalMessages(setMessages).at(-1)?.text).toMatch(/muitas requisições/i);
+  });
 });

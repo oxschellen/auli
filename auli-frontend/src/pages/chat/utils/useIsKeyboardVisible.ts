@@ -1,4 +1,4 @@
-// useIsMobileKeyboardVisible.jsx
+// Tracks the on-screen (mobile) keyboard height via the VisualViewport API.
 import { useSyncExternalStore } from "react";
 
 function getKeyboardHeight() {

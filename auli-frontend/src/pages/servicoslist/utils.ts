@@ -19,10 +19,10 @@ export interface Servico {
  */
 export function getDefaultTipoServicos(): TipoServico[] {
   return [
-    { tipo: "Empresas",     filename: "rs-servicos-a-empresas" },
-    { tipo: "Cidadãos",     filename: "rs-servicos-ao-cidadao" },
-    { tipo: "Fornecedores", filename: "rs-servicos-a-fornecedores" },
-    { tipo: "Agentes",      filename: "rs-servicos-a-agentes-publicos" },
-    { tipo: "Servidores",   filename: "rs-servicos-a-servidores-publicos" },
+    { tipo: "Empresas",     filename: "servicos-a-empresas" },
+    { tipo: "Cidadãos",     filename: "servicos-ao-cidadao" },
+    { tipo: "Fornecedores", filename: "servicos-a-fornecedores" },
+    { tipo: "Agentes",      filename: "servicos-a-agentes-publicos" },
+    { tipo: "Servidores",   filename: "servicos-a-servidores-publicos" },
   ];
 }

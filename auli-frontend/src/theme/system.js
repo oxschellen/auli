@@ -3,7 +3,7 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 // Single source of truth for color. Primitives are the raw palette (seeded from
 // DESIGN.md); semantic tokens are what components consume, and carry both a
 // light (`base`) and `_dark` value so color mode is a data change, not a code
-// change. See COLOR_MODE_PLAN.md for the full plan and the literal→token mapping.
+// change. See THEME.md for the token vocabulary and the literal→token mapping.
 const config = defineConfig({
   theme: {
     tokens: {

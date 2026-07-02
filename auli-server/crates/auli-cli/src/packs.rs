@@ -25,7 +25,7 @@ pub type Collections = HashMap<String, Arc<ReadStore<String>>>;
 /// Layout: packs live **per entity** under `<packs_root>/<id>/packs/` — `<id>-<kind>.json` plus
 /// `<id>.manifest.json` (see `data/` integration plan). A missing collection file loads as an empty
 /// store (`read_collection_file` tolerates `NotFound`), so a partial entity (e.g. `sc` with only
-/// `services`) boots cleanly.
+/// `servicos`) boots cleanly.
 pub fn load_all(packs_root: impl AsRef<Path>) -> Result<Collections> {
     let packs_root = packs_root.as_ref();
     let expected = manifest::identity();
@@ -34,9 +34,14 @@ pub fn load_all(packs_root: impl AsRef<Path>) -> Result<Collections> {
     for id in entities::ENTITIES.keys() {
         let packs_dir = packs_root.join(id).join("packs");
         let manifest_path = manifest::manifest_path(&packs_dir, id);
+        // Per-file integrity hashes from the manifest (`<file> -> fnv1a64 hex`); empty when absent.
+        let mut hashes: std::collections::HashMap<String, String> = HashMap::new();
         if manifest_path.exists() {
             // Hard fail on model/dim/strategy mismatch — never serve from a foreign vector space.
-            manifest::validate_manifest(&manifest_path, &expected)?;
+            let manifest = manifest::validate_manifest(&manifest_path, &expected)?;
+            for c in &manifest.collections {
+                hashes.insert(c.file.clone(), c.hash.clone());
+            }
             println!("🔎 Manifesto de '{}' validado contra a identidade local.", id);
         } else {
             eprintln!(
@@ -47,7 +52,23 @@ pub fn load_all(packs_root: impl AsRef<Path>) -> Result<Collections> {
 
         for collection in corpus::ALL {
             let name = format!("{}-{}", id, collection.kind);
-            let path = packs_dir.join(format!("{}.json", name));
+            let file_name = format!("{}.json", name);
+            let path = packs_dir.join(&file_name);
+            // Integrity check: re-hash the file and compare to the manifest — catches a half-copied /
+            // corrupted pack that still deserializes. Non-fatal (the identity triple above is the hard
+            // gate); a mismatch is surfaced loudly so ops re-generates with `auli update`.
+            if let Some(expected_hash) = hashes.get(&file_name) {
+                if let Ok(bytes) = std::fs::read(&path) {
+                    let got = manifest::hash_hex(&bytes);
+                    if &got != expected_hash {
+                        eprintln!(
+                            "⚠️  Integridade: '{}' diverge do manifesto (esperado {}, obtido {}). \
+                             Pacote corrompido ou desatualizado — re-gere com `auli update`.",
+                            file_name, expected_hash, got
+                        );
+                    }
+                }
+            }
             let store = ReadStore::<String>::load(&path)?;
             println!("📦 {} — {} registros", name, store.len());
             map.insert(name, Arc::new(store));

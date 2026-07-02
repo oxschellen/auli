@@ -8,27 +8,27 @@ pub fn get_tipo_servicos() -> Vec<TipoServicos> {
     vec![
         TipoServicos {
             tipo: "Cidadãos".to_string(),
-            filename: "rs-servicos-ao-cidadao".to_string(),
+            filename: "servicos-ao-cidadao".to_string(),
             url: "https://www.fazenda.rs.gov.br/servicos-ao-cidadao".to_string(),
         },
         TipoServicos {
             tipo: "Empresas".to_string(),
-            filename: "rs-servicos-a-empresas".to_string(),
+            filename: "servicos-a-empresas".to_string(),
             url: "https://www.fazenda.rs.gov.br/servicos-a-empresas".to_string(),
         },
         TipoServicos {
             tipo: "Fornecedores".to_string(),
-            filename: "rs-servicos-a-fornecedores".to_string(),
+            filename: "servicos-a-fornecedores".to_string(),
             url: "https://www.fazenda.rs.gov.br/servicos-a-fornecedores".to_string(),
         },
         TipoServicos {
             tipo: "Agentes".to_string(),
-            filename: "rs-servicos-a-agentes-publicos".to_string(),
+            filename: "servicos-a-agentes-publicos".to_string(),
             url: "https://www.fazenda.rs.gov.br/servicos-a-agentes-publicos".to_string(),
         },
         TipoServicos {
             tipo: "Servidores".to_string(),
-            filename: "rs-servicos-a-servidores-publicos".to_string(),
+            filename: "servicos-a-servidores-publicos".to_string(),
             url: "https://www.fazenda.rs.gov.br/servicos-a-servidores-publicos".to_string(),
         },
     ]

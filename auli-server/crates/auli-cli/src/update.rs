@@ -7,8 +7,8 @@
 //! `<out>/<entity>-<kind>.json`. Finally writes `<out>/<entity>.manifest.json` stamping the
 //! embedding identity, so the server can validate it at boot.
 //!
-//! The UI/scraper label `servicos` maps to the vector kind `services`: the source file is
-//! `<entity>-servicos.json` but the pack/kind is `<entity>-services`. `pareceres`/`notas` have no
+//! `servicos` is one vocabulary end-to-end: the source contract is `<entity>-servicos.json` and the
+//! pack/kind is `<entity>-servicos` too. `pareceres`/`notas` have no
 //! struct source yet (authored, not scraped) and are simply absent until modeled as a contract.
 //!
 //! Does NOT use the server `Config` (no LLM/JWT/DB needed for ingestion) — only the embedder
@@ -40,9 +40,9 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     )? {
         entries.push(entry);
     }
-    // servicos (label) -> services (vector kind): <entity>-servicos.json -> pack <entity>-services.
+    // servicos: <entity>-servicos.json (contract) -> pack <entity>-servicos.
     if let Some(entry) = ingest::<auli_contract::Servico>(
-        &embedder, &writer, &entity, "services", &format!("{}-servicos.json", entity), &source, &out,
+        &embedder, &writer, &entity, "servicos", &format!("{}-servicos.json", entity), &source, &out,
     )? {
         entries.push(entry);
     }
@@ -67,7 +67,7 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
 /// Ingest one contract table into the entity's `<entity>-<kind>` vector collection.
 ///
 /// `source_file` is the scraper's contract JSON (e.g. `rs-servicos.json`); `kind` is the engine
-/// vector kind (e.g. `services`). Embeds `P::text_to_embed`, stores `P::stored_repr`. Returns the
+/// vector kind (e.g. `servicos`). Embeds `P::text_to_embed`, stores `P::stored_repr`. Returns the
 /// manifest entry, or `None` if the source is absent (a kind with no struct source yet — skipped).
 fn ingest<P>(
     embedder: &Embedder,

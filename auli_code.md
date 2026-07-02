@@ -139,7 +139,7 @@ O server expõe apenas rotas **públicas** (não há mais auth/JWT, rotas proteg
 | ------ | ----------------- | -------------------------------------------------------------------------------------- |
 | GET    | `/v1/health`      | health check                                                                           |
 | POST   | `/v1/question`    | caminho RAG ativo                                                                      |
-| GET    | `/v1/{kind}/list` | listagem de uma coleção (leitura); `{kind}` ∈ `services \| faqs \| pareceres \| notas` |
+| GET    | `/v1/{kind}/list` | listagem de uma coleção (leitura); `{kind}` ∈ `servicos \| faqs \| pareceres \| notas` |
 
 A ingestão deixou de ser rota HTTP (antes `load_from_file`/`load_from_web`) — virou o `auli update`.
 CORS: origens **hardcoded** (auli.com.br, www, e portas locais 3000/5173/8080), métodos

@@ -31,13 +31,15 @@ state = "Santa Catarina"
 prompt = "prompts/sc.txt"
 collections = ["servicos"]
 
+# pr e sp: infraestrutura pronta (scraper + prompt), mas ainda SEM dados coletados. `collections`
+# vazio até o primeiro scrape — o frontend as mostra como "em breve" (CollectionEmpty) em vez de 404.
 [[entities]]
 id = "pr"
 name = "SEFA-PR"
 uf = "PR"
 state = "Paraná"
 prompt = "prompts/pr.txt"
-collections = ["servicos"]
+collections = []
 
 [[entities]]
 id = "sp"
@@ -45,4 +47,4 @@ name = "SEFAZ-SP"
 uf = "SP"
 state = "São Paulo"
 prompt = "prompts/sp.txt"
-collections = ["servicos"]
+collections = []

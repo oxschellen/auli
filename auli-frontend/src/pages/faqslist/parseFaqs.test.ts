@@ -17,7 +17,7 @@ const sampleJson = {
         {
           title: "ICMS",
           url: "https://portal/icms",
-          page_type: "FAQ",
+          page_type: "Faq",
           faq_items: [
             { pergunta: "O que é ICMS?", resposta: "É um imposto estadual." },
             { pergunta: "Como pagar ICMS?", resposta: "Via guia." },
@@ -130,7 +130,7 @@ describe("buildPageTypeMap", () => {
   it("indexes page_type by url with the trailing slash stripped", () => {
     const map = buildPageTypeMap(sampleJson);
     expect(map.get("https://portal/impostos")).toBe("Menu");
-    expect(map.get("https://portal/icms")).toBe("FAQ");
+    expect(map.get("https://portal/icms")).toBe("Faq");
     expect(map.get("https://portal/contato")).toBe("Geral");
   });
 });

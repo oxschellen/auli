@@ -40,8 +40,7 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         None => println!("⏭️  sem coleção de faqs no snapshot — pulando"),
     }
     match &snapshot.colecoes.servicos {
-        Some(coleta) => crate::servicos::process(&entity.id, &entity.data_dir, coleta)
-            .map_err(|e| e.to_string())?,
+        Some(coleta) => crate::servicos::process(&entity.id, &entity.data_dir, coleta)?,
         None => println!("⏭️  sem coleção de serviços no snapshot — pulando"),
     }
 

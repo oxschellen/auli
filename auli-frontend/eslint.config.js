@@ -43,7 +43,7 @@ export default tseslint.config(
   // Color guardrail: components must consume semantic tokens (bg.app, fg.muted,
   // accent, …) — never raw color literals. Raw values live only in the token
   // source of truth (src/theme/system.js) and in .css files (as Chakra vars).
-  // See COLOR_MODE_PLAN.md §3–4 for the token vocabulary and literal→token mapping.
+  // See THEME.md for the token vocabulary and literal→token mapping.
   {
     files: ["src/**/*.{jsx,tsx}"],
     rules: {

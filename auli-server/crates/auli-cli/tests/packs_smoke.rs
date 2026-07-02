@@ -26,14 +26,18 @@ fn manifest_validates_and_query_retrieves() {
         return;
     };
 
+    // Resolve paths exactly like the server's `packs::load_all`: packs live per-entity under
+    // `<AULI_PACKS_DIR>/<id>/packs/` (`<id>-<kind>.json` + `<id>.manifest.json`), not flat.
+    let packs_dir = packs.join("rs").join("packs");
+
     // 1. Manifest validates against the build's embedding identity (the server's boot gate).
-    let mpath = manifest::manifest_path(&packs, "rs");
+    let mpath = manifest::manifest_path(&packs_dir, "rs");
     let m = manifest::validate_manifest(&mpath, &identity()).expect("manifest should validate");
     assert_eq!(m.embed_dim, 1024);
     assert!(m.collections.iter().any(|c| c.kind == "faqs" && c.count > 0));
 
     // 2. Load the faqs collection read-only.
-    let store = ReadStore::<String>::load(packs.join("rs-faqs.json")).expect("load rs-faqs");
+    let store = ReadStore::<String>::load(packs_dir.join("rs-faqs.json")).expect("load rs-faqs");
     assert!(store.len() > 1000, "expected the full faq corpus, got {}", store.len());
 
     // 3. Embed a real question with the SAME encoder the packs were built with.

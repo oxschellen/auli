@@ -23,7 +23,7 @@ const DEFAULT_SYSTEM_PROMPT: &str = r#"
 ### Responda sempre no idioma português do brasil.
 ### Para responder use as informações apresentadas na lista de serviços e nas perguntas frequentes (Faq) apresentados abaixo.
 ### Cada serviço do texto inicia com o marcador: ## servico
-### Cada serviço do texto inicia com o marcador: ## pergunta
+### Cada serviço e cada pergunta do texto inicia com o marcador: ## pergunta
 ### Sempre apresente os links de chamadas https
 ### Se a pergunta não puder ser respondida com as informações disponíveis, responda que não é possível responder
 "#;
@@ -51,7 +51,7 @@ pub struct EntityConfig {
 }
 
 impl EntityConfig {
-    // kind ∈ {"services", "faqs", "pareceres", "notas"} -> "rs-faqs"
+    // kind ∈ {"servicos", "faqs", "pareceres", "notas"} -> "rs-faqs"
     pub fn collection(&self, kind: &str) -> String {
         format!("{}-{}", self.id, kind)
     }

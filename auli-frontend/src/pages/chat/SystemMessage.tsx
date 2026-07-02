@@ -45,7 +45,7 @@ export const SystemMessage = ({ messageText, showButton }: SystemMessageProps) =
                 size="xs"
                 minW="22px"
                 h="22px"
-                color="var(--chakra-colors-fg-muted)"
+                color="fg.muted"
                 bg="transparent"
                 _hover={{ bg: "bg.overlay" }}
                 transition="all 0.15s ease"

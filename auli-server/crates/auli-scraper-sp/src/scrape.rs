@@ -24,10 +24,10 @@ const COURTESY: Duration = Duration::from_millis(300);
 /// a `classe` continua sendo o `Assunto`, uma dimensão separada.
 fn publicos() -> [(&'static str, &'static str, &'static str); 4] {
     [
-        ("Cidadao", "Cidadão", "sp-servicos-ao-cidadao"),
-        ("Empresa", "Empresa", "sp-servicos-a-empresas"),
-        ("Servidor", "Servidor Público", "sp-servicos-a-servidores"),
-        ("Tributo", "Tributos", "sp-servicos-tributos"),
+        ("Cidadao", "Cidadão", "servicos-ao-cidadao"),
+        ("Empresa", "Empresa", "servicos-a-empresas"),
+        ("Servidor", "Servidor Público", "servicos-a-servidores"),
+        ("Tributo", "Tributos", "servicos-tributos"),
     ]
 }
 

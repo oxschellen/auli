@@ -87,7 +87,8 @@ pub struct ColetaServicos {
 pub struct Publico {
     /// Nome legível (ex.: `"Cidadãos"`).
     pub nome: String,
-    /// Slug do arquivo per-público (ex.: `"rs-servicos-ao-cidadao"`).
+    /// Slug do arquivo per-público, sem prefixo de entidade (ex.: `"servicos-ao-cidadao"`) — a pasta
+    /// `data/<id>/` (e `public/<id>/`) já provê o escopo por entidade.
     pub slug: String,
 }
 

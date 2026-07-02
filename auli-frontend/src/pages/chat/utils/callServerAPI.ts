@@ -26,6 +26,7 @@ const MESSAGES = {
   emptyAnswer: "Desculpe! Não foi possível obter resposta.",
   timeout: "Desculpe! A requisição excedeu o tempo limite.",
   unavailable: "Desculpe!, o Servidor Auli não está disponível.",
+  rateLimited: "Muitas requisições. Aguarde alguns instantes e tente novamente.",
 } as const;
 
 export const callServerAPI = async ({
@@ -79,9 +80,19 @@ export const callServerAPI = async ({
 
     setPrompt("");
   } catch (e) {
-    const serverMessage = axios.isCancel(e)
-      ? MESSAGES.timeout
-      : MESSAGES.unavailable;
+    // Distinguish: timeout (aborted) → rate limited (HTTP 429, server sends a friendly pt-BR
+    // `{ error }` body) → anything else (server down / network). Without this, a throttled user is
+    // wrongly told the server is unavailable.
+    let serverMessage: string;
+    if (axios.isCancel(e)) {
+      serverMessage = MESSAGES.timeout;
+    } else {
+      const err = e as { response?: { status?: number; data?: { error?: string } } };
+      serverMessage =
+        err.response?.status === 429
+          ? err.response.data?.error || MESSAGES.rateLimited
+          : MESSAGES.unavailable;
+    }
 
     messagesArray.pop();
     messagesArray.push({
