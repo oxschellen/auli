@@ -4,34 +4,38 @@ Registro dos assuntos em aberto **após** o merge do `auli-contract` (PR #3) no 
 fez a **struct tipada** (`auli_contract::Table<P>`) virar a fonte única do dado: o scraper grava o
 contrato em `data/<id>/raw/<id>-<kind>.json` e o `auli update` o consome. O que ficou para depois:
 
+> **Revisão 2026-07-02 (pós fases 1 e 2).** O modelo evoluiu: o **snapshot v2**
+> (`data/<id>/<id>-snapshot.json`, tipos em `auli_contract::snapshot`) virou a fronteira
+> scraper→collections; a coleta saiu para os binários **`auli-scraper-rs`** / **`auli-scraper-sc`** e
+> o **`auli-collections <e>`** só deriva os artefatos (contrato/prints/index/per-público). O
+> subcomando `rebuild` foi **removido** (a regeração é offline pelo `process` a partir do snapshot).
+> Status atualizado item a item abaixo.
+
 ---
 
-## 1. Verificação ponta a ponta (Fase 5) — **não executada**
+## 1. Verificação ponta a ponta — **scrape + packs feitos; faltam as 5 perguntas**
 
-A validação de equivalência nunca rodou (precisa de rede externa + chave de LLM; não há cache local
-em `data/rs/cache/`). Antes de confiar nos packs novos:
+Nesta sessão (2026-07-02) o scrape ao vivo **rodou** e reconstruiu o cache em `data/rs/cache/`:
 
-1. Re-raspar `rs` ao vivo: `cd auli-server && cargo run -p auli-collections -- rs faqs` e `... rs servicos`
-   (headless Chrome na SEFAZ-RS — lento; gera `data/rs/raw/rs-faqs.json` e `rs-servicos.json`).
-2. `scripts/build-packs.sh rs` → `data/rs/packs/` com `strategy_version: 2`.
-3. `./start_server.sh --no-tunnel` → conferir boot: **services ≈ 627, faqs ≈ 1914** (pareceres/notas
-   ausentes — esperado, ver item 4).
-4. Rodar as **5 perguntas de referência** e comparar: cada resposta deve citar o **mesmo serviço
-   principal e o mesmo `servico=NNNN`**. Equivalência, não bit-paridade (re-vetorização é esperada).
+1. `cd auli-server && ./target/debug/auli-scraper-rs all` (faqs + serviços; headless Chrome na
+   SEFAZ-RS) → grava o `rs-snapshot.json` (v2).
+2. `./target/debug/auli-collections rs` (process) → deriva `rs-faqs.json`/`rs-servicos.json` +
+   prints + index + per-público.
+3. `scripts/build-packs.sh rs` → `data/rs/packs/` com `strategy_version: 2` (**faqs 1937,
+   services 586**). Boot não conferido aqui (sem `--no-tunnel` nesta sessão).
 
-> Os binários release já estão compilados (workspace inteiro builda). Só falta a parte de rede.
->
-> **Atalho offline já aplicado (2026-06-23).** Após o bump `STRATEGY_VERSION`→2, o server passou a
-> recusar os packs antigos (strategy=1). Para desbloquear **sem re-raspar**, foi adicionado o modo
-> `cargo run -p auli-collections -- <id> rebuild`, que reconstrói o contrato
-> (`<id>-faqs.json`/`<id>-servicos.json`) a partir do que já está em `data/<id>/raw/` (árvore
-> `faqs.json` + per-tipo de serviços), e em seguida `scripts/build-packs.sh <id>` regerou os packs
-> `strategy=2` (modelo BGE-M3 em cache, offline). Boot OK. **Ressalvas que um scrape ao vivo
-> reconcilia:** (a) `rs-services` deu **586** (não 627) — os per-tipo em `raw/` são de uma raspagem
-> mais antiga que o `portal-servicos.txt`; (b) os packs **`rs-pareceres` (331) / `rs-notas` (1)
-> antigos (strategy=1) continuam em disco** e o `load_all` os carrega (não são reconferidos por
-> coleção) — resíduo inofensivo (não entram no RAG); para zerar, apagar
-> `data/rs/packs/rs-{pareceres,notas}.json` ou regerar tudo do zero.
+**Equivalência confirmada (código):** todos os agregados RAG/engine saíram **byte a byte idênticos**
+comparando o código novo × antigo sobre o **mesmo cache** (isolando drift de conteúdo). Falta só o
+passo de RAG:
+
+**Ainda pendente** — rodar as **5 perguntas de referência** contra o server (precisa de chave de LLM
++ boot) e conferir que cada resposta cita o **mesmo serviço principal e o mesmo `servico=NNNN`** —
+equivalência, não bit-paridade.
+
+> **Resíduo (inalterado):** os packs **`rs-pareceres` / `rs-notas` antigos (strategy=1)** continuam
+> em `data/rs/packs/` e o `load_all` os carrega (não entram no RAG — inofensivo). Para zerar, apagar
+> `data/rs/packs/rs-{pareceres,notas}.json`. (Contagem `services=586` já é a atual — o "627" antigo
+> era de uma raspagem mais velha.)
 
 ---
 
@@ -61,9 +65,11 @@ Notas:
 ## 3. Fórmula de `text_to_embed` de serviços — **provisória**
 
 Hoje é `tipo | classe` + título + os primeiros 300 chars do corpo da descrição
-([servicos/mod.rs:133](auli-server/crates/auli-collections/src/servicos/mod.rs#L133), `servico_text_to_embed`).
-O plano deixou a fórmula exata como pendência. Validar/ajustar contra as 5 perguntas (item 1) e fixar.
-Para FAQs a key é `origin + pergunta` (preserva o antigo `QuestionKey`) e está estável.
+([servicos/mod.rs:116](auli-server/crates/auli-collections/src/servicos/mod.rs#L116), `servico_text_to_embed`,
+agora no lado da derivação/`process`). O plano deixou a fórmula exata como pendência. Validar/ajustar
+contra as 5 perguntas (item 1) e fixar. Para FAQs a key é `origin + pergunta` (preserva o antigo
+`QuestionKey`) e está estável — inalterada pelas fases 1/2 (a materialização virou `faq_from_raw` em
+[derive_faqs.rs](auli-server/crates/auli-collections/src/derive_faqs.rs)).
 
 ---
 
@@ -89,10 +95,11 @@ frontend de um `Kind` tipado único, eliminando a chance de divergência.
 
 ## Itens relacionados (da revisão de código anterior, ainda abertos)
 
-- **`public/<id>/servicos.json` (~660KB)** copiado pelo gerador mas **sem consumidor** no frontend —
-  peso morto; filtrar em [build-frontend-public.sh](scripts/build-frontend-public.sh).
+- **`public/<id>/servicos.json` (~660KB) — resolvido na origem:** o agregado `servicos.json` **não é
+  mais gerado** em `raw/` (o `process` grava só `<id>-servicos.json` + per-público + index), então o
+  gerador não tem o que copiar. Resta só apagar cópias antigas eventualmente presentes em `public/`.
 - **Abas hardcoded no frontend:** [ServicosList.tsx](auli-frontend/src/pages/servicoslist/ServicosList.tsx)
   não usa `hasCollection`; [Home.tsx](auli-frontend/src/pages/home/Home.tsx) hardcoda as abas em vez
   de derivar de `collections` (SC mostra abas vazias).
-- **Comentário histórico:** [faqs/mod.rs:99](auli-server/crates/auli-collections/src/faqs/mod.rs#L99) cita
-  `EmbedStrategy::QuestionKey` (tipo já removido do engine) — referência de lineage, cosmética.
+- **Comentário histórico:** [derive_faqs.rs:29](auli-server/crates/auli-collections/src/derive_faqs.rs#L29)
+  cita `EmbedStrategy::QuestionKey` (tipo já removido do engine) — referência de lineage, cosmética.
