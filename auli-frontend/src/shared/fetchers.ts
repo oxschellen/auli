@@ -17,11 +17,12 @@ export const versioned = (path: string): string => `${path}?v=${ASSET_VERSION}`;
 
 /**
  * Resolve an entity-scoped data file to its versioned public path.
- * Data lives under `public/<entityId>/<file>` (e.g. `/rs/faqs.json`), so each state's collections
- * are served independently. `file` is the bare filename (no leading slash).
+ * Data lives under `public/<entityId>/<entityId>-<file>` (e.g. `/rs/rs-faqs.json`): each state's
+ * files are both folder-scoped and name-prefixed with the entity id, so they stay globally unique.
+ * `file` is the bare filename (no `<id>-` prefix, no leading slash); the id prefix is added here.
  */
 export const entityPath = (entityId: string, file: string): string =>
-  versioned(`/${entityId}/${file}`);
+  versioned(`/${entityId}/${entityId}-${file}`);
 
 export const textFetcher = (url: string): Promise<string> =>
   axios.get<string>(url, { responseType: "text" }).then((res) => res.data);
