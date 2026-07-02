@@ -32,11 +32,13 @@ pub fn run(entity_id: &str, data_dir: &str, use_cache: bool) -> Result<(), Box<d
             let tipos = utils::get_tipo_servicos();
             let failed = extrair_descricoes::extrair_descricoes_json(data_dir, use_cache)?;
             finish(entity_id, data_dir, &tipos)?;
+            write_servicos_snapshot(entity_id, data_dir, &tipos)?;
             report_failed_detail_urls(&failed);
         }
         "sc" => {
             let tipos = sc::scrape(data_dir, use_cache)?;
             finish(entity_id, data_dir, &tipos)?;
+            write_servicos_snapshot(entity_id, data_dir, &tipos)?;
         }
         other => {
             return Err(format!(
@@ -57,6 +59,65 @@ fn finish(entity_id: &str, data_dir: &str, tipos: &[TipoServicos]) -> Result<(),
     write_servicos_contract(entity_id, data_dir, tipos)?;
     write_servicos_index(data_dir, tipos)?;
     Ok(())
+}
+
+/// Constrói a coleta de serviços do snapshot a partir dos arquivos per-tipo/público já gravados (os
+/// mesmos que `write_servicos_contract` lê) e a grava no snapshot. Aditivo — não substitui os
+/// artefatos atuais; o `process` (etapa C) passará a derivá-los deste snapshot.
+///
+/// Um serviço = **um** registro, com `publicos` na ordem de `tipos` e posição fixada pela primeira
+/// ocorrência do `link` (D-S3) — a mesma semântica de dedup first-occurrence de
+/// `write_servicos_contract`, o que garante `id`/numeração idênticos quando o `process` derivar.
+fn write_servicos_snapshot(
+    entity_id: &str,
+    data_dir: &str,
+    tipos: &[TipoServicos],
+) -> Result<(), Box<dyn std::error::Error>> {
+    let mut loaded: Vec<(String, Vec<types::Servico>)> = Vec::new();
+    for tipo in tipos {
+        let path = format!("{}/{}.json", data_dir, tipo.filename);
+        if !std::path::Path::new(&path).exists() {
+            continue;
+        }
+        loaded.push((tipo.tipo.clone(), utils::load_servicos_from_json(&path)?));
+    }
+
+    let items = aggregate_servicos(&loaded);
+    let publicos_ordem = tipos
+        .iter()
+        .map(|t| auli_contract::Publico { nome: t.tipo.clone(), slug: t.filename.clone() })
+        .collect();
+    crate::snapshot::write_servicos(entity_id, data_dir, publicos_ordem, items)?;
+    Ok(())
+}
+
+/// Agrega serviços per-tipo em um registro por `link`: itera os tipos na ordem dada e, dentro de
+/// cada tipo, os serviços na ordem do arquivo; a primeira ocorrência de um `link` fixa a posição e o
+/// `publicos[0]` (público primário), e ocorrências seguintes só acrescentam o público. `descricao`
+/// vira o corpo limpo (sem o header `tipo/classe/titulo`), como o contrato e o print já fazem.
+fn aggregate_servicos(inputs: &[(String, Vec<types::Servico>)]) -> Vec<auli_contract::ServicoRaw> {
+    use std::collections::HashMap;
+    let mut items: Vec<auli_contract::ServicoRaw> = Vec::new();
+    let mut pos: HashMap<String, usize> = HashMap::new();
+
+    for (tipo, servicos) in inputs {
+        for s in servicos {
+            if let Some(&i) = pos.get(&s.link) {
+                items[i].publicos.push(tipo.clone());
+                continue;
+            }
+            pos.insert(s.link.clone(), items.len());
+            items.push(auli_contract::ServicoRaw {
+                titulo: s.titulo.clone(),
+                descricao: gerar_portal_servicos::descricao_body(&s.descricao),
+                link: s.link.clone(),
+                orgao: s.orgao.clone(),
+                classe: s.classe.clone(),
+                publicos: vec![tipo.clone()],
+            });
+        }
+    }
+    items
 }
 
 /// Prints a summary of the detail-page URLs that failed to load during the scrape.
@@ -199,6 +260,33 @@ mod tests {
     fn text_to_embed_is_breadcrumb_title_and_body_start() {
         let key = servico_text_to_embed("Empresas", "ICMS", "Emitir guia", "Passos para emitir.");
         assert_eq!(key, "Empresas | ICMS\nEmitir guia\nPassos para emitir.");
+    }
+
+    #[test]
+    fn aggregate_dedups_by_link_first_occurrence_and_collects_publicos() {
+        let svc = |link: &str, tipo: &str| types::Servico {
+            id: 0,
+            tipo: tipo.into(),
+            classe: "C".into(),
+            orgao: "O".into(),
+            link: link.into(),
+            titulo: "T".into(),
+            descricao: "tipo\nclasse\ntitulo\ncorpo".into(),
+        };
+        let inputs = vec![
+            ("Cidadãos".to_string(), vec![svc("l1", "Cidadãos"), svc("l2", "Cidadãos")]),
+            ("Empresas".to_string(), vec![svc("l2", "Empresas"), svc("l3", "Empresas")]),
+        ];
+
+        let out = aggregate_servicos(&inputs);
+
+        // Ordem = primeira ocorrência de cada link (l1, l2, l3) — dá ids idênticos no `process`.
+        assert_eq!(out.iter().map(|s| s.link.as_str()).collect::<Vec<_>>(), ["l1", "l2", "l3"]);
+        // l2 aparece nos dois públicos; primário (publicos[0]) = Cidadãos (primeira ocorrência).
+        let l2 = out.iter().find(|s| s.link == "l2").unwrap();
+        assert_eq!(l2.publicos, ["Cidadãos", "Empresas"]);
+        // descricao = corpo limpo, sem as 3 linhas de header.
+        assert_eq!(out[0].descricao, "corpo");
     }
 
     #[test]

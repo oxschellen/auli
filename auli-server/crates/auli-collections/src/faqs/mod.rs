@@ -89,7 +89,37 @@ pub fn run(source: &FaqSource) -> Result<()> {
     std::fs::write(&portal_path, &portal)?;
     println!("Wrote {} ({} bytes)", portal_path, portal.len());
 
+    // Snapshot de coleta (fronteira scraper→collections). Aditivo: os artefatos acima seguem sendo
+    // gravados; o `process` (etapa C) passará a derivá-los deste snapshot.
+    crate::snapshot::write_faqs(&source.id, &source.data_dir, flatten_faqs_raw(&tree))?;
+
     Ok(())
+}
+
+/// Achata a árvore em `Vec<FaqRaw>` para o snapshot — mesma travessia de [`flatten_faqs`], mas sem
+/// materializar `text_to_embed` (o `process` o deriva a partir de `origin` + `pergunta`).
+pub fn flatten_faqs_raw(root: &FaqNode) -> Vec<auli_contract::FaqRaw> {
+    let mut out = Vec::new();
+    for child in &root.children {
+        collect_faqs_raw(child, &mut out);
+    }
+    out
+}
+
+fn collect_faqs_raw(node: &FaqNode, out: &mut Vec<auli_contract::FaqRaw>) {
+    if node.page_type == PageType::Faq {
+        for item in &node.faq_items {
+            out.push(auli_contract::FaqRaw {
+                pergunta: item.pergunta.clone(),
+                resposta: item.resposta.clone(),
+                origin: node.origin.clone(),
+                url: node.url.clone(),
+            });
+        }
+    }
+    for child in &node.children {
+        collect_faqs_raw(child, out);
+    }
 }
 
 /// Rebuild the contract `<id>-<collection>.json` **offline**, from an already-scraped `faqs.json`
@@ -302,6 +332,16 @@ fn panels(html: &str) -> Vec<&str> {
     slices
 }
 
+/// Turns a URL into a safe cache filename (non `[A-Za-z0-9-_.]` chars become `_`).
+fn url_to_filename(url: &str) -> String {
+    url.chars()
+        .map(|c| match c {
+            'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' | '.' => c,
+            _ => '_',
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -355,14 +395,4 @@ mod tests {
         // Empty origin -> the key is just the question.
         assert_eq!(faqs[2].text_to_embed, "q3");
     }
-}
-
-/// Turns a URL into a safe cache filename (non `[A-Za-z0-9-_.]` chars become `_`).
-fn url_to_filename(url: &str) -> String {
-    url.chars()
-        .map(|c| match c {
-            'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' | '.' => c,
-            _ => '_',
-        })
-        .collect()
 }

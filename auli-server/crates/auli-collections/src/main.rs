@@ -2,6 +2,7 @@ mod domain;
 mod errors;
 mod faqs;
 mod servicos;
+mod snapshot;
 
 use domain::entities::{EntityConfig, get_entity};
 
