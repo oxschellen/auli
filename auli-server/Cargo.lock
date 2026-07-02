@@ -167,15 +167,12 @@ dependencies = [
  "anyhow",
  "auli-contract",
  "auli-scraper-kit",
- "headless_chrome",
  "regex",
- "scraper",
  "serde",
  "serde_json",
  "thiserror",
  "toml",
  "ureq",
- "url",
 ]
 
 [[package]]
@@ -208,6 +205,22 @@ dependencies = [
  "serde",
  "serde_json",
  "time",
+ "ureq",
+]
+
+[[package]]
+name = "auli-scraper-rs"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "auli-contract",
+ "auli-scraper-kit",
+ "headless_chrome",
+ "regex",
+ "scraper",
+ "serde",
+ "serde_json",
+ "thiserror",
  "ureq",
 ]
 
@@ -3468,7 +3481,6 @@ dependencies = [
  "idna",
  "percent-encoding",
  "serde",
- "serde_derive",
 ]
 
 [[package]]

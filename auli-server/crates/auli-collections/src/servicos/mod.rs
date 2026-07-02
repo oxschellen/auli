@@ -1,58 +1,38 @@
-// servicos collection scraper + derivação (`process`).
+// servicos — derivação (`process`) + o scraper SC (temporário; migra para `auli-scraper-sc`).
 //
-// O scrape grava a coleta no snapshot (`colecoes.servicos`): um registro por serviço, com a lista de
-// `publicos` (D-S3). Dois backends:
-//   - `rs` (SEFAZ-RS): headless Chrome + ureq raspam as páginas por público, gravando arquivos
-//     per-tipo (recuperação de falha), e agregam em `ServicoRaw`.
-//   - `sc` (SEF-SC): API JSON Next.js, sem browser; monta os `ServicoRaw` em memória (sem fan-out).
-//
-// `process` deriva do snapshot (offline) todos os artefatos: o contrato `<id>-servicos.json`
+// `process` deriva do snapshot (offline) os artefatos: o contrato `<id>-servicos.json`
 // (`Table<Servico>`), o print `portal-servicos.txt`, o `servicos-index.json` e os JSONs per-público
-// (`<slug>.json`).
+// (`<slug>.json`, uma entrada por `(link, classe)` — restaura o multi-classe). O scraper RS já é o
+// binário `auli-scraper-rs`; o SC ainda vive aqui até a etapa D.
 
-mod extrair_descricoes;
 mod sc;
 mod types;
-mod utils;
 
 use serde::Serialize;
 
-use auli_scraper_kit::PerPublicoServicos;
-use types::TipoServicos;
-
-/// Raspa os serviços da entidade e grava a coleta no snapshot (`colecoes.servicos`). Não gera os
-/// artefatos — [`process`] os deriva do snapshot em seguida. Despacha em `entity_id` (`rs` | `sc`).
+/// Raspa os serviços de `sc` e grava a coleta no snapshot. `rs` migrou para `auli-scraper-rs`.
 pub fn run(entity_id: &str, data_dir: &str, use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
     match entity_id {
-        "rs" => {
-            let tipos = utils::get_tipo_servicos();
-            let failed = extrair_descricoes::extrair_descricoes_json(data_dir, use_cache)?;
-            let inputs = load_per_tipo(data_dir, &tipos)?;
-            write_servicos_snapshot(entity_id, data_dir, &inputs, publicos_ordem_from(&tipos))?;
-            report_failed_detail_urls(&failed);
-        }
         "sc" => {
             let (inputs, publicos_ordem) = sc::scrape(data_dir, use_cache)?;
             write_servicos_snapshot(entity_id, data_dir, &inputs, publicos_ordem)?;
+            println!("🎉 Coleta de serviços gravada no snapshot.");
+            Ok(())
         }
+        "rs" => Err(
+            "o scraper de serviços do RS agora é o binário `auli-scraper-rs servicos`".into(),
+        ),
         other => {
-            return Err(format!(
-                "scraper de servicos ainda não configurado para a entidade '{}'",
-                other
-            )
-            .into());
+            Err(format!("scraper de servicos não configurado para a entidade '{}'", other).into())
         }
     }
-
-    println!("🎉 Coleta de serviços gravada no snapshot.");
-    Ok(())
 }
 
 /// Agrega os per-público em memória em `Vec<ServicoRaw>` e grava a coleta no snapshot.
 fn write_servicos_snapshot(
     entity_id: &str,
     data_dir: &str,
-    inputs: &PerPublicoServicos,
+    inputs: &auli_scraper_kit::PerPublicoServicos,
     publicos_ordem: Vec<auli_contract::Publico>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let items = auli_scraper_kit::aggregate_servicos(inputs);
@@ -66,50 +46,8 @@ fn write_servicos_snapshot(
     Ok(())
 }
 
-/// Lê os arquivos per-tipo (na ordem de `tipos`) para a agregação — fluxo RS, onde o scrape os grava
-/// incrementalmente como recuperação de falha. Arquivo ausente é ignorado.
-fn load_per_tipo(
-    data_dir: &str,
-    tipos: &[TipoServicos],
-) -> Result<PerPublicoServicos, Box<dyn std::error::Error>> {
-    let mut loaded = Vec::new();
-    for tipo in tipos {
-        let path = format!("{}/{}.json", data_dir, tipo.filename);
-        if !std::path::Path::new(&path).exists() {
-            continue;
-        }
-        loaded.push((tipo.tipo.clone(), utils::load_servicos_from_json(&path)?));
-    }
-    Ok(loaded)
-}
-
-/// `publicos_ordem` do snapshot a partir da lista de tipos (`tipo` -> `nome`, `filename` -> `slug`).
-fn publicos_ordem_from(tipos: &[TipoServicos]) -> Vec<auli_contract::Publico> {
-    tipos
-        .iter()
-        .map(|t| auli_contract::Publico { nome: t.tipo.clone(), slug: t.filename.clone() })
-        .collect()
-}
-
-/// Prints a summary of the detail-page URLs that failed to load during the scrape.
-fn report_failed_detail_urls(failed: &[String]) {
-    if failed.is_empty() {
-        println!("✅ Todas as páginas de detalhe carregaram com sucesso.");
-        return;
-    }
-
-    eprintln!(
-        "\n⚠️  {} página(s) de detalhe falharam ao carregar:",
-        failed.len()
-    );
-    for url in failed {
-        eprintln!("  - {}", url);
-    }
-}
-
-/// Deriva os artefatos de serviços da coleta do snapshot (offline): o contrato `Table<Servico>`
-/// (`<id>-servicos.json`), o print `portal-servicos.txt`, o `servicos-index.json` e os JSONs
-/// per-público (`<slug>.json`). Não lê rede nem os per-tipo — só o snapshot.
+/// Deriva os artefatos de serviços da coleta do snapshot (offline): contrato `Table<Servico>`,
+/// `portal-servicos.txt`, `servicos-index.json` e os JSONs per-público. Não lê rede — só o snapshot.
 pub fn process(
     id: &str,
     data_dir: &str,
@@ -215,9 +153,7 @@ fn primary_ocorrencia<'a>(
 /// item; re-vectorization is expected (the goal is retrieval equivalence, not bit-parity).
 fn servico_text_to_embed(tipo: &str, classe: &str, titulo: &str, body: &str) -> String {
     let snippet: String = body.chars().take(300).collect();
-    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim())
-        .trim()
-        .to_string()
+    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim()).trim().to_string()
 }
 
 /// One entry of `servicos-index.json` — drives the frontend's audience tabs.
@@ -277,80 +213,6 @@ mod tests {
         assert_eq!((oc.publico.as_str(), oc.classe.as_str()), ("Cidadãos", "Y"));
     }
 
-    /// Equivalência golden (etapa E) — inerte sem `AULI_GOLDEN_DATA` (raiz do `data/` do repo, ex.:
-    /// `/home/ubu/Desktop/auli/data`). Sintetiza as coletas a partir dos intermediários existentes
-    /// (`faqs.json` + per-tipo), roda as derivações do `process` num diretório temporário e compara
-    /// byte a byte os 5 artefatos RS. Rodar com: `AULI_GOLDEN_DATA=<...> cargo test -- --ignored golden`.
-    #[test]
-    #[ignore = "gated por AULI_GOLDEN_DATA"]
-    fn golden_rs_equivalence() {
-        let Ok(root) = std::env::var("AULI_GOLDEN_DATA") else { return };
-        let rs_raw = format!("{}/rs/raw", root);
-
-        // Coleta de faqs: árvore faqs.json -> flatten (sem text_to_embed).
-        let tree_bytes = std::fs::read(format!("{}/faqs.json", rs_raw)).unwrap();
-        let tree: crate::faqs::FaqNode = serde_json::from_slice(&tree_bytes).unwrap();
-        let coleta_faqs = auli_contract::ColetaFaqs {
-            coletado_em: String::new(),
-            items: crate::faqs::flatten_faqs_raw(&tree),
-        };
-
-        // Coleta de serviços: agrega os per-tipo (mesma ordem/dedup do contrato antigo).
-        let tipos = utils::get_tipo_servicos();
-        let inputs = load_per_tipo(&rs_raw, &tipos).unwrap();
-        let coleta_servicos = auli_contract::ColetaServicos {
-            coletado_em: String::new(),
-            publicos_ordem: publicos_ordem_from(&tipos),
-            items: auli_scraper_kit::aggregate_servicos(&inputs),
-        };
-
-        // Deriva num diretório temporário e compara com o golden.
-        let out = std::env::temp_dir().join(format!("auli_golden_{}", std::process::id()));
-        let out = out.to_str().unwrap();
-        std::fs::create_dir_all(out).unwrap();
-        crate::faqs::process("rs", out, &coleta_faqs).unwrap();
-        process("rs", out, &coleta_servicos).unwrap();
-
-        let mut checked = 0;
-        for f in [
-            "rs-faqs.json",
-            "rs-servicos.json",
-            "portal-faqs.txt",
-            "portal-servicos.txt",
-            "servicos-index.json",
-        ] {
-            let golden = format!("{}/{}", rs_raw, f);
-            if !std::path::Path::new(&golden).exists() {
-                eprintln!("⏭️  golden ausente, pulando: {}", f);
-                continue;
-            }
-            let got = std::fs::read(format!("{}/{}", out, f)).unwrap();
-            let want = std::fs::read(&golden).unwrap();
-            // Tolera diferença de só newline(s) finais: o `to_string_pretty` (código antigo e novo) não
-            // emite `\n` final, mas alguns golden em disco foram normalizados por editor.
-            let trim = |v: &[u8]| {
-                let mut e = v.len();
-                while e > 0 && v[e - 1] == b'\n' {
-                    e -= 1;
-                }
-                v[..e].to_vec()
-            };
-            if got != want {
-                eprintln!("ℹ️  {}: difere só por newline final (got {}, want {} bytes)", f, got.len(), want.len());
-            }
-            assert!(
-                trim(&got) == trim(&want),
-                "artefato diverge do golden (conteúdo): {} (got {} bytes, want {} bytes)",
-                f,
-                got.len(),
-                want.len()
-            );
-            checked += 1;
-        }
-        eprintln!("✅ golden RS: {} artefato(s) conferidos byte a byte", checked);
-        let _ = std::fs::remove_dir_all(out);
-    }
-
     #[test]
     fn contract_servico_stored_repr_matches_print_block() {
         // descricao já é o CORPO (sem o header tipo/classe/titulo), como gravado no contrato.
@@ -364,8 +226,76 @@ mod tests {
             descricao: "Passos para emitir a guia.".into(),
             text_to_embed: "Empresas | ICMS\nEmitir guia\nPassos para emitir a guia.".into(),
         };
-        // Mesmo conteúdo do bloco de portal-servicos.txt (sem o `// N.` e a newline final).
         let expected = "## pergunta\nEmpresas | ICMS\nEmitir guia\n\n## resposta\nPassos para emitir a guia.\nLink: https://x/svc/1";
         assert_eq!(s.stored_repr(), expected);
+    }
+
+    /// Equivalência golden (D-F2.7) — inerte sem `AULI_GOLDEN_DATA` (raiz do `data/` do repo). Lê o
+    /// **snapshot v2 real**, roda as derivações do `process` num diretório temporário e compara com os
+    /// artefatos golden em `data/rs/raw/`: agregados byte a byte (tolerando `\n` final); per-público por
+    /// `(link, classe)` — incluindo os multi-classe restaurados; ordem/id fora do gate (D-S5).
+    #[test]
+    #[ignore = "gated por AULI_GOLDEN_DATA"]
+    fn golden_rs_equivalence() {
+        let Ok(root) = std::env::var("AULI_GOLDEN_DATA") else { return };
+        let rs_raw = format!("{}/rs/raw", root);
+
+        let snapshot = auli_scraper_kit::snapshot::load("rs", &rs_raw)
+            .unwrap()
+            .expect("snapshot rs ausente — rode o scraper primeiro");
+
+        let out = std::env::temp_dir().join(format!("auli_golden_{}", std::process::id()));
+        let out = out.to_str().unwrap();
+        std::fs::create_dir_all(out).unwrap();
+        if let Some(faqs) = &snapshot.colecoes.faqs {
+            crate::derive_faqs::process("rs", out, faqs).unwrap();
+        }
+        if let Some(servicos) = &snapshot.colecoes.servicos {
+            process("rs", out, servicos).unwrap();
+        }
+
+        // Agregados: byte a byte (tolerando newline final que editores adicionam ao golden em disco).
+        let trim = |v: Vec<u8>| {
+            let mut e = v.len();
+            while e > 0 && v[e - 1] == b'\n' {
+                e -= 1;
+            }
+            v[..e].to_vec()
+        };
+        let mut checked = 0;
+        for f in ["rs-faqs.json", "rs-servicos.json", "portal-faqs.txt", "portal-servicos.txt", "servicos-index.json"] {
+            let golden = format!("{}/{}", rs_raw, f);
+            if !std::path::Path::new(&golden).exists() {
+                eprintln!("⏭️  golden ausente, pulando: {}", f);
+                continue;
+            }
+            let got = trim(std::fs::read(format!("{}/{}", out, f)).unwrap());
+            let want = trim(std::fs::read(&golden).unwrap());
+            assert!(got == want, "artefato diverge do golden: {}", f);
+            checked += 1;
+        }
+
+        // Per-público: multiset (link, classe, titulo, orgao) idêntico ao golden (multi-classe incl.).
+        for pubx in &snapshot.colecoes.servicos.as_ref().unwrap().publicos_ordem {
+            let key = |bytes: &[u8]| {
+                let v: Vec<auli_scraper_kit::Servico> = serde_json::from_slice(bytes).unwrap();
+                let mut k: Vec<_> = v
+                    .iter()
+                    .map(|s| format!("{}|{}|{}|{}", s.link, s.classe, s.titulo, s.orgao))
+                    .collect();
+                k.sort();
+                k
+            };
+            let g = format!("{}/{}.json", rs_raw, pubx.slug);
+            if !std::path::Path::new(&g).exists() {
+                continue;
+            }
+            let got = key(&std::fs::read(format!("{}/{}.json", out, pubx.slug)).unwrap());
+            let want = key(&std::fs::read(&g).unwrap());
+            assert!(got == want, "per-público diverge (link,classe): {}", pubx.slug);
+        }
+
+        eprintln!("✅ golden RS: {} agregados + per-público conferidos", checked);
+        let _ = std::fs::remove_dir_all(out);
     }
 }

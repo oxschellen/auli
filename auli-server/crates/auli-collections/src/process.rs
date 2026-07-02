@@ -36,7 +36,7 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
     }
 
     match &snapshot.colecoes.faqs {
-        Some(coleta) => crate::faqs::process(&entity.id, &entity.data_dir, coleta)?,
+        Some(coleta) => crate::derive_faqs::process(&entity.id, &entity.data_dir, coleta)?,
         None => println!("⏭️  sem coleção de faqs no snapshot — pulando"),
     }
     match &snapshot.colecoes.servicos {
