@@ -9,7 +9,7 @@
 //   5. write one per-público file (`servicos-<...>.json`); the caller aggregates + dedups by link.
 //
 // Cache: pages are cached by a *logical* URL (without the buildId) so a SC deploy that changes the
-// buildId doesn't invalidate the on-disk cache (`super::cache`, shared with the RS backend).
+// buildId doesn't invalidate the on-disk cache (`auli_scraper_kit::cache`).
 
 use std::collections::BTreeMap;
 use std::sync::LazyLock;
@@ -20,7 +20,7 @@ use regex::Regex;
 use serde::Deserialize;
 use ureq::Agent;
 
-use super::types::Servico;
+use auli_scraper_kit::Servico;
 
 const BASE: &str = "https://www.sef.sc.gov.br";
 const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";

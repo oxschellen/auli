@@ -1,50 +1,12 @@
-// servicos — derivação (`process`) + o scraper SC (temporário; migra para `auli-scraper-sc`).
+// servicos — derivação (`process`) dos artefatos a partir da coleta do snapshot.
 //
-// `process` deriva do snapshot (offline) os artefatos: o contrato `<id>-servicos.json`
-// (`Table<Servico>`), o print `portal-servicos.txt`, o `servicos-index.json` e os JSONs per-público
-// (`<slug>.json`, uma entrada por `(link, classe)` — restaura o multi-classe). O scraper RS já é o
-// binário `auli-scraper-rs`; o SC ainda vive aqui até a etapa D.
+// Deriva (offline) o contrato `<id>-servicos.json` (`Table<Servico>`), o print `portal-servicos.txt`,
+// o `servicos-index.json` e os JSONs per-público (`<slug>.json`, uma entrada por `(link, classe)` —
+// restaura o multi-classe). Os scrapers são os binários `auli-scraper-rs` / `auli-scraper-sc`.
 
-mod sc;
 mod types;
 
 use serde::Serialize;
-
-/// Raspa os serviços de `sc` e grava a coleta no snapshot. `rs` migrou para `auli-scraper-rs`.
-pub fn run(entity_id: &str, data_dir: &str, use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
-    match entity_id {
-        "sc" => {
-            let (inputs, publicos_ordem) = sc::scrape(data_dir, use_cache)?;
-            write_servicos_snapshot(entity_id, data_dir, &inputs, publicos_ordem)?;
-            println!("🎉 Coleta de serviços gravada no snapshot.");
-            Ok(())
-        }
-        "rs" => Err(
-            "o scraper de serviços do RS agora é o binário `auli-scraper-rs servicos`".into(),
-        ),
-        other => {
-            Err(format!("scraper de servicos não configurado para a entidade '{}'", other).into())
-        }
-    }
-}
-
-/// Agrega os per-público em memória em `Vec<ServicoRaw>` e grava a coleta no snapshot.
-fn write_servicos_snapshot(
-    entity_id: &str,
-    data_dir: &str,
-    inputs: &auli_scraper_kit::PerPublicoServicos,
-    publicos_ordem: Vec<auli_contract::Publico>,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let items = auli_scraper_kit::aggregate_servicos(inputs);
-    auli_scraper_kit::snapshot::write_servicos(
-        entity_id,
-        data_dir,
-        &crate::scraper_info(),
-        publicos_ordem,
-        items,
-    )?;
-    Ok(())
-}
 
 /// Deriva os artefatos de serviços da coleta do snapshot (offline): contrato `Table<Servico>`,
 /// `portal-servicos.txt`, `servicos-index.json` e os JSONs per-público. Não lê rede — só o snapshot.

@@ -167,12 +167,10 @@ dependencies = [
  "anyhow",
  "auli-contract",
  "auli-scraper-kit",
- "regex",
  "serde",
  "serde_json",
  "thiserror",
  "toml",
- "ureq",
 ]
 
 [[package]]
@@ -221,6 +219,19 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror",
+ "ureq",
+]
+
+[[package]]
+name = "auli-scraper-sc"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "auli-contract",
+ "auli-scraper-kit",
+ "regex",
+ "serde",
+ "serde_json",
  "ureq",
 ]
 

@@ -3,15 +3,12 @@ name = "auli-collections"
 version = "0.1.0"
 edition = "2024"
 
-# Derivação (process) + registry + o scraper SC (temporário, até a etapa D). Sem headless_chrome.
+# Derivação (process) do snapshot + registro de entidades. Sem rede, headless_chrome ou fastembed/ort.
 [dependencies]
 # Contrato compartilhado com o engine: Table<P>/Faq/Servico. O `process` preenche `text_to_embed`.
 auli-contract = { path = "../auli-contract" }
-# Apoio dos scrapers: snapshot I/O, cache de páginas, builder de agent, aggregate_servicos, Servico.
+# Apoio: I/O do snapshot (load), Servico. O collections lê o snapshot e deriva.
 auli-scraper-kit = { path = "../auli-scraper-kit" }
-# Pure-sync HTTP client (no tokio). `json` adds Body::read_json; default features give rustls TLS + gzip.
-ureq = { version = "3", features = ["json"] }
-regex = "1.12.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "2"
