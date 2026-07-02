@@ -166,13 +166,13 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "auli-contract",
+ "auli-scraper-kit",
  "headless_chrome",
  "regex",
  "scraper",
  "serde",
  "serde_json",
  "thiserror",
- "time",
  "toml",
  "ureq",
  "url",
@@ -197,6 +197,18 @@ dependencies = [
  "serde_json",
  "thiserror",
  "vector-store",
+]
+
+[[package]]
+name = "auli-scraper-kit"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "auli-contract",
+ "serde",
+ "serde_json",
+ "time",
+ "ureq",
 ]
 
 [[package]]

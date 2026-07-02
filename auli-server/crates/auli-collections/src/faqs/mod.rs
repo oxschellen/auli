@@ -56,7 +56,12 @@ struct MenuItem {
 /// the snapshot, offline.
 pub fn run(source: &FaqSource) -> Result<()> {
     let tree = scrape(source)?;
-    crate::snapshot::write_faqs(&source.id, &source.data_dir, flatten_faqs_raw(&tree))?;
+    auli_scraper_kit::snapshot::write_faqs(
+        &source.id,
+        &source.data_dir,
+        &crate::scraper_info(),
+        flatten_faqs_raw(&tree),
+    )?;
     Ok(())
 }
 

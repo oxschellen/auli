@@ -3,9 +3,16 @@ mod errors;
 mod faqs;
 mod process;
 mod servicos;
-mod snapshot;
 
 use domain::entities::{EntityConfig, get_entity};
+
+/// Identidade deste scraper, gravada como metadado no snapshot.
+pub(crate) fn scraper_info() -> auli_contract::ScraperInfo {
+    auli_contract::ScraperInfo {
+        nome: env!("CARGO_PKG_NAME").to_string(),
+        versao: env!("CARGO_PKG_VERSION").to_string(),
+    }
+}
 
 fn main() -> errors::Result<()> {
     // CLI: `cargo run [--usecache] <entity> <collection>`

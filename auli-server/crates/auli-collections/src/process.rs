@@ -12,7 +12,7 @@ use crate::errors::Result;
 
 /// Carrega o snapshot da entidade e deriva os artefatos das coleções presentes.
 pub fn run(entity: &EntityConfig) -> Result<()> {
-    let snapshot = crate::snapshot::load(&entity.id, &entity.data_dir)?.ok_or_else(|| {
+    let snapshot = auli_scraper_kit::snapshot::load(&entity.id, &entity.data_dir)?.ok_or_else(|| {
         format!(
             "snapshot ausente para '{}' — rode `{} faqs` e/ou `{} servicos` antes do process.",
             entity.id, entity.id, entity.id

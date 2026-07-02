@@ -10,20 +10,15 @@
 // (`Table<Servico>`), o print `portal-servicos.txt`, o `servicos-index.json` e os JSONs per-público
 // (`<slug>.json`).
 
-mod cache;
 mod extrair_descricoes;
-mod gerar_portal_servicos;
 mod sc;
 mod types;
 mod utils;
 
 use serde::Serialize;
 
+use auli_scraper_kit::PerPublicoServicos;
 use types::TipoServicos;
-
-/// Serviços agrupados por público (rótulo do público, serviços daquele público), na ordem de
-/// exibição — a entrada de [`aggregate_servicos`].
-pub(super) type PerPublicoServicos = Vec<(String, Vec<types::Servico>)>;
 
 /// Raspa os serviços da entidade e grava a coleta no snapshot (`colecoes.servicos`). Não gera os
 /// artefatos — [`process`] os deriva do snapshot em seguida. Despacha em `entity_id` (`rs` | `sc`).
@@ -60,8 +55,14 @@ fn write_servicos_snapshot(
     inputs: &PerPublicoServicos,
     publicos_ordem: Vec<auli_contract::Publico>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let items = aggregate_servicos(inputs);
-    crate::snapshot::write_servicos(entity_id, data_dir, publicos_ordem, items)?;
+    let items = auli_scraper_kit::aggregate_servicos(inputs);
+    auli_scraper_kit::snapshot::write_servicos(
+        entity_id,
+        data_dir,
+        &crate::scraper_info(),
+        publicos_ordem,
+        items,
+    )?;
     Ok(())
 }
 
@@ -88,36 +89,6 @@ fn publicos_ordem_from(tipos: &[TipoServicos]) -> Vec<auli_contract::Publico> {
         .iter()
         .map(|t| auli_contract::Publico { nome: t.tipo.clone(), slug: t.filename.clone() })
         .collect()
-}
-
-/// Agrega serviços per-público em um registro por `link`, acumulando uma [`auli_contract::Ocorrencia`]
-/// (público×classe) por listagem, na ordem de descoberta (itera os públicos na ordem dada e, dentro
-/// de cada um, os serviços na ordem da lista). Um serviço sob 2+ classes vira 2+ ocorrências (v2 —
-/// restaura o caso multi-classe). `descricao` vira o corpo limpo (sem o header `tipo/classe/titulo`).
-fn aggregate_servicos(inputs: &PerPublicoServicos) -> Vec<auli_contract::ServicoRaw> {
-    use std::collections::HashMap;
-    let mut items: Vec<auli_contract::ServicoRaw> = Vec::new();
-    let mut pos: HashMap<String, usize> = HashMap::new();
-
-    for (publico, servicos) in inputs {
-        for s in servicos {
-            let ocorrencia =
-                auli_contract::Ocorrencia { publico: publico.clone(), classe: s.classe.clone() };
-            if let Some(&i) = pos.get(&s.link) {
-                items[i].ocorrencias.push(ocorrencia);
-                continue;
-            }
-            pos.insert(s.link.clone(), items.len());
-            items.push(auli_contract::ServicoRaw {
-                titulo: s.titulo.clone(),
-                descricao: gerar_portal_servicos::descricao_body(&s.descricao),
-                link: s.link.clone(),
-                orgao: s.orgao.clone(),
-                ocorrencias: vec![ocorrencia],
-            });
-        }
-    }
-    items
 }
 
 /// Prints a summary of the detail-page URLs that failed to load during the scrape.
@@ -286,35 +257,6 @@ mod tests {
     }
 
     #[test]
-    fn aggregate_records_ocorrencias_per_link_in_discovery_order() {
-        let svc = |link: &str, classe: &str| types::Servico {
-            id: 0,
-            tipo: String::new(), // irrelevante: o público vem do rótulo do input
-            classe: classe.into(),
-            orgao: "O".into(),
-            link: link.into(),
-            titulo: "T".into(),
-            descricao: "tipo\nclasse\ntitulo\ncorpo".into(),
-        };
-        let inputs = vec![
-            // l2 aparece sob 2 classes no MESMO público (multi-classe) e depois em outro público.
-            ("Cidadãos".to_string(), vec![svc("l1", "A"), svc("l2", "A"), svc("l2", "B")]),
-            ("Empresas".to_string(), vec![svc("l2", "A"), svc("l3", "A")]),
-        ];
-
-        let out = aggregate_servicos(&inputs);
-
-        // Um registro por link, na ordem de primeira ocorrência (l1, l2, l3).
-        assert_eq!(out.iter().map(|s| s.link.as_str()).collect::<Vec<_>>(), ["l1", "l2", "l3"]);
-        // l2: uma ocorrência por listagem, na ordem de descoberta.
-        let l2 = out.iter().find(|s| s.link == "l2").unwrap();
-        let ocs: Vec<_> = l2.ocorrencias.iter().map(|o| (o.publico.as_str(), o.classe.as_str())).collect();
-        assert_eq!(ocs, [("Cidadãos", "A"), ("Cidadãos", "B"), ("Empresas", "A")]);
-        // descricao = corpo limpo, sem as 3 linhas de header.
-        assert_eq!(out[0].descricao, "corpo");
-    }
-
-    #[test]
     fn primary_ocorrencia_follows_publicos_ordem() {
         let ordem = vec![
             auli_contract::Publico { nome: "Cidadãos".into(), slug: "rs-c".into() },
@@ -359,7 +301,7 @@ mod tests {
         let coleta_servicos = auli_contract::ColetaServicos {
             coletado_em: String::new(),
             publicos_ordem: publicos_ordem_from(&tipos),
-            items: aggregate_servicos(&inputs),
+            items: auli_scraper_kit::aggregate_servicos(&inputs),
         };
 
         // Deriva num diretório temporário e compara com o golden.

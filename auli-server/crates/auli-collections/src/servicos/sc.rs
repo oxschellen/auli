@@ -145,13 +145,9 @@ impl<'de> Deserialize<'de> for StringOrNum {
 /// Scrapes all SC services and returns them grouped per público (in display order) plus the
 /// `publicos_ordem`, ready for `aggregate_servicos` to fold into the snapshot. SC no longer writes
 /// per-público files during the scrape — the fan-out is now `process`'s job.
-type ScrapeResult = (super::PerPublicoServicos, Vec<auli_contract::Publico>);
+type ScrapeResult = (auli_scraper_kit::PerPublicoServicos, Vec<auli_contract::Publico>);
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn std::error::Error>> {
-    let agent: Agent = Agent::config_builder()
-        .user_agent(USER_AGENT)
-        .timeout_global(Some(Duration::from_secs(30)))
-        .build()
-        .into();
+    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
 
     let build_id = discover_build_id(data_dir, &agent, use_cache)?;
     println!("SC buildId: {}", build_id);
@@ -362,7 +358,7 @@ fn fetch_cached(
     data_url: &str,
     use_cache: bool,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    if let Some(cached) = super::cache::read(data_dir, logical_url) {
+    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, logical_url) {
         return Ok(cached);
     }
     if use_cache {
@@ -377,7 +373,7 @@ fn fetch_cached(
         match agent.get(data_url).call() {
             Ok(mut resp) => match resp.body_mut().read_to_string() {
                 Ok(body) if !body.trim().is_empty() => {
-                    super::cache::write(data_dir, logical_url, &body);
+                    auli_scraper_kit::cache::write(data_dir, logical_url, &body);
                     return Ok(body);
                 }
                 Ok(_) => last_error = "resposta vazia".to_string(),

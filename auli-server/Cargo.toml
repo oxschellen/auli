@@ -6,6 +6,7 @@ members = [
     "crates/auli-core",
     "crates/auli-cli",
     "crates/auli-collections",
+    "crates/auli-scraper-kit",
 ]
 
 # Single shared Cargo.lock across the workspace: the `server` and `update` modes can never pick

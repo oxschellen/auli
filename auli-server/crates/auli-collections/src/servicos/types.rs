@@ -1,26 +1,12 @@
 use serde::{Deserialize, Serialize};
 
+// O registro de serviço raspado (e o shape dos JSONs per-público) mora no kit, compartilhado com os
+// scrapers e com o `process`.
+pub use auli_scraper_kit::Servico;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TipoServicos {
     pub tipo: String,
     pub filename: String,
     pub url: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Servico {
-    /// Sequential ID for reference (starts from 1)
-    pub id: usize,
-    /// Category type (e.g. "Cidadãos", "Empresas")
-    pub tipo: String,
-    /// Service class/group from the card title
-    pub classe: String,
-    /// Originating organ label from the card
-    pub orgao: String,
-    /// URL link for the service
-    pub link: String,
-    /// Human-readable title
-    pub titulo: String,
-    /// Service description from the detail page (a tipo/classe/titulo header + the description body)
-    pub descricao: String,
 }

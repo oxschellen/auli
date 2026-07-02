@@ -22,11 +22,7 @@ pub fn extrair_descricoes_json(
     use_cache: bool,
 ) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     // Initialize the HTTP agent (ureq). Accept headers are set per request in fetch_html.
-    let http_client: Agent = Agent::config_builder()
-        .user_agent(USER_AGENT)
-        .timeout_global(Some(Duration::from_secs(30)))
-        .build()
-        .into();
+    let http_client = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
 
     // Initializa o Vetor de Tipos de Serviços
     let vec_tipo_servicos = get_tipo_servicos();
@@ -105,7 +101,7 @@ fn fetch_webpage(
     url: &str,
     use_cache: bool,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    if let Some(cached) = super::cache::read(data_dir, url) {
+    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
         println!("Cache hit (listagem): {}", url);
         return Ok(cached);
     }
@@ -158,7 +154,7 @@ fn fetch_webpage(
         html_content.len()
     );
 
-    super::cache::write(data_dir, url, &html_content);
+    auli_scraper_kit::cache::write(data_dir, url, &html_content);
 
     Ok(html_content)
 }
@@ -247,7 +243,7 @@ fn fetch_html(
     url: &str,
     use_cache: bool,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    if let Some(cached) = super::cache::read(data_dir, url) {
+    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
         return Ok(cached);
     }
     if use_cache {
@@ -268,7 +264,7 @@ fn fetch_html(
         {
             Ok(mut response) => match response.body_mut().read_to_string() {
                 Ok(body) => {
-                    super::cache::write(data_dir, url, &body);
+                    auli_scraper_kit::cache::write(data_dir, url, &body);
                     return Ok(body);
                 }
                 Err(error) => last_error = Some(error),

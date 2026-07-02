@@ -50,10 +50,7 @@ fn retry<T>(label: &str, mut op: impl FnMut() -> Result<T>) -> Result<T> {
 
 /// Builds a ureq agent with a browser-like User-Agent. (Accept headers are set per request.)
 pub fn build_agent() -> Agent {
-    Agent::config_builder()
-        .user_agent(USER_AGENT)
-        .build()
-        .into()
+    auli_scraper_kit::build_agent(USER_AGENT, None)
 }
 
 /// Fetches (or reads from cache) the rendered HTML of `url`.
