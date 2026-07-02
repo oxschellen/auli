@@ -20,7 +20,11 @@ use serde::{Deserialize, Serialize};
 
 /// Versão do schema do snapshot. O produtor grava; o `process` compara contra esta constante e
 /// emite erro amigável se não bater. Bump quando o formato mudar de forma incompatível.
-pub const SNAPSHOT_SCHEMA_VERSION: u32 = 1;
+///
+/// v2 (fase 2): `ServicoRaw` troca `classe`/`publicos` por `ocorrencias` (par público×classe),
+/// para representar serviços listados sob mais de uma classe no portal. Sem migração — o snapshot é
+/// regenerável do cache.
+pub const SNAPSHOT_SCHEMA_VERSION: u32 = 2;
 
 /// O snapshot de coleta de uma entidade. Persistido como JSON em `data/<id>/<id>-snapshot.json`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -102,9 +106,10 @@ pub struct FaqRaw {
     pub url: String,
 }
 
-/// Um registro bruto de serviço no snapshot. Um serviço = **um** registro, com todos os
-/// `publicos` a que pertence; o dedup por link e o fan-out per-público são do `process` (D-S3).
-/// **Sem** `id`, `tipo` ou `text_to_embed` — todos derivados no `process`.
+/// Um registro bruto de serviço no snapshot. Um serviço = **um** registro (chave `link`), com todas
+/// as suas `ocorrencias` no portal (par público×classe, na ordem de descoberta). O dedup por link e
+/// o fan-out per-público são do `process` (D-S3/D-F2.3). **Sem** `id`, `tipo`, `classe` primária ou
+/// `text_to_embed` — todos derivados no `process`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ServicoRaw {
     /// Título legível.
@@ -115,10 +120,19 @@ pub struct ServicoRaw {
     pub link: String,
     /// Órgão de origem.
     pub orgao: String,
-    /// Classe/grupo do serviço.
+    /// Onde o serviço aparece no portal, na ordem de descoberta. Um serviço listado sob duas classes
+    /// (mesma ou públicos diferentes) tem uma [`Ocorrencia`] por listagem.
+    pub ocorrencias: Vec<Ocorrencia>,
+}
+
+/// Uma listagem do serviço no portal: sob qual `publico` e sob qual `classe`. Preserva o caso
+/// multi-classe que o schema v1 perdia (D-F2.3).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Ocorrencia {
+    /// Nome do público onde o serviço foi listado (refere-se a [`Publico::nome`]).
+    pub publico: String,
+    /// Classe/grupo sob a qual foi listado nesse público.
     pub classe: String,
-    /// Nomes dos públicos a que o serviço pertence (referem-se a [`Publico::nome`]).
-    pub publicos: Vec<String>,
 }
 
 #[cfg(test)]
@@ -151,8 +165,10 @@ mod tests {
                         descricao: "Corpo limpo.".into(),
                         link: "https://exemplo/svc/1".into(),
                         orgao: "SEFAZ".into(),
-                        classe: "ICMS".into(),
-                        publicos: vec!["Empresas".into(), "Cidadãos".into()],
+                        ocorrencias: vec![
+                            Ocorrencia { publico: "Empresas".into(), classe: "ICMS".into() },
+                            Ocorrencia { publico: "Cidadãos".into(), classe: "ICMS".into() },
+                        ],
                     }],
                 }),
             },
@@ -175,7 +191,9 @@ mod tests {
 
         let servicos = back.colecoes.servicos.unwrap();
         assert_eq!(servicos.publicos_ordem.len(), 2);
-        assert_eq!(servicos.items[0].publicos, vec!["Empresas", "Cidadãos"]);
+        assert_eq!(servicos.items[0].ocorrencias.len(), 2);
+        assert_eq!(servicos.items[0].ocorrencias[0].publico, "Empresas");
+        assert_eq!(servicos.items[0].ocorrencias[0].classe, "ICMS");
     }
 
     #[test]
@@ -205,7 +223,7 @@ mod tests {
             },
         };
         let json = serde_json::to_string(&snap).unwrap();
-        assert!(json.contains("\"schema_version\":1"));
+        assert!(json.contains("\"schema_version\":2"));
         assert!(!json.contains("servicos"));
     }
 }

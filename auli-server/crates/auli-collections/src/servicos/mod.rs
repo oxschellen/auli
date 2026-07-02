@@ -90,19 +90,21 @@ fn publicos_ordem_from(tipos: &[TipoServicos]) -> Vec<auli_contract::Publico> {
         .collect()
 }
 
-/// Agrega serviços per-público em um registro por `link`: itera os públicos na ordem dada e, dentro
-/// de cada um, os serviços na ordem da lista; a primeira ocorrência de um `link` fixa a posição e o
-/// `publicos[0]` (público primário), e ocorrências seguintes só acrescentam o público. `descricao`
-/// vira o corpo limpo (sem o header `tipo/classe/titulo`).
+/// Agrega serviços per-público em um registro por `link`, acumulando uma [`auli_contract::Ocorrencia`]
+/// (público×classe) por listagem, na ordem de descoberta (itera os públicos na ordem dada e, dentro
+/// de cada um, os serviços na ordem da lista). Um serviço sob 2+ classes vira 2+ ocorrências (v2 —
+/// restaura o caso multi-classe). `descricao` vira o corpo limpo (sem o header `tipo/classe/titulo`).
 fn aggregate_servicos(inputs: &PerPublicoServicos) -> Vec<auli_contract::ServicoRaw> {
     use std::collections::HashMap;
     let mut items: Vec<auli_contract::ServicoRaw> = Vec::new();
     let mut pos: HashMap<String, usize> = HashMap::new();
 
-    for (tipo, servicos) in inputs {
+    for (publico, servicos) in inputs {
         for s in servicos {
+            let ocorrencia =
+                auli_contract::Ocorrencia { publico: publico.clone(), classe: s.classe.clone() };
             if let Some(&i) = pos.get(&s.link) {
-                items[i].publicos.push(tipo.clone());
+                items[i].ocorrencias.push(ocorrencia);
                 continue;
             }
             pos.insert(s.link.clone(), items.len());
@@ -111,8 +113,7 @@ fn aggregate_servicos(inputs: &PerPublicoServicos) -> Vec<auli_contract::Servico
                 descricao: gerar_portal_servicos::descricao_body(&s.descricao),
                 link: s.link.clone(),
                 orgao: s.orgao.clone(),
-                classe: s.classe.clone(),
-                publicos: vec![tipo.clone()],
+                ocorrencias: vec![ocorrencia],
             });
         }
     }
@@ -152,12 +153,14 @@ pub fn process(
         .iter()
         .enumerate()
         .map(|(i, s)| {
-            let tipo = primary_publico(s, ordem);
-            let text_to_embed = servico_text_to_embed(&tipo, &s.classe, &s.titulo, &s.descricao);
+            let (tipo, classe) = primary_ocorrencia(s, ordem)
+                .map(|o| (o.publico.clone(), o.classe.clone()))
+                .unwrap_or_default();
+            let text_to_embed = servico_text_to_embed(&tipo, &classe, &s.titulo, &s.descricao);
             auli_contract::Servico {
                 id: i + 1,
                 tipo,
-                classe: s.classe.clone(),
+                classe,
                 orgao: s.orgao.clone(),
                 link: s.link.clone(),
                 titulo: s.titulo.clone(),
@@ -177,12 +180,14 @@ pub fn process(
     // 2. portal-servicos.txt: um bloco por serviço, breadcrumb `tipo | classe` (tipo = primário).
     let mut portal = String::new();
     for (i, s) in coleta.items.iter().enumerate() {
-        let tipo = primary_publico(s, ordem);
+        let (tipo, classe) = primary_ocorrencia(s, ordem)
+            .map(|o| (o.publico.as_str(), o.classe.as_str()))
+            .unwrap_or_default();
         portal.push_str(&format!(
             "// {}.\n## pergunta\n{} | {}\n{}\n\n## resposta\n{}\nLink: {}\n\n",
             i + 1,
             tipo,
-            s.classe,
+            classe,
             s.titulo,
             s.descricao,
             s.link
@@ -195,23 +200,23 @@ pub fn process(
     // 3. servicos-index.json: { tipo: nome, filename: slug } na ordem de `publicos_ordem`.
     write_servicos_index(data_dir, ordem)?;
 
-    // 4. per-público JSONs: fan-out — um arquivo por público com os serviços cujo `publicos` o inclui,
-    //    id local reiniciando em 1; descricao = corpo limpo do snapshot (D-S5).
+    // 4. per-público JSONs: fan-out — um arquivo por público, **uma entrada por `(link, classe)`**
+    //    (restaura as listagens multi-classe do portal — D-F2.4.3); id local reiniciando em 1, na
+    //    ordem dos items do snapshot; descricao = corpo limpo do snapshot (D-S5).
     for pubx in ordem {
         let mut local: Vec<types::Servico> = Vec::new();
         for s in &coleta.items {
-            if !s.publicos.contains(&pubx.nome) {
-                continue;
+            for oc in s.ocorrencias.iter().filter(|o| o.publico == pubx.nome) {
+                local.push(types::Servico {
+                    id: local.len() + 1,
+                    tipo: pubx.nome.clone(),
+                    classe: oc.classe.clone(),
+                    orgao: s.orgao.clone(),
+                    link: s.link.clone(),
+                    titulo: s.titulo.clone(),
+                    descricao: s.descricao.clone(),
+                });
             }
-            local.push(types::Servico {
-                id: local.len() + 1,
-                tipo: pubx.nome.clone(),
-                classe: s.classe.clone(),
-                orgao: s.orgao.clone(),
-                link: s.link.clone(),
-                titulo: s.titulo.clone(),
-                descricao: s.descricao.clone(),
-            });
         }
         let out = format!("{}/{}.json", data_dir, pubx.slug);
         std::fs::write(&out, serde_json::to_string_pretty(&local)?)?;
@@ -221,14 +226,17 @@ pub fn process(
     Ok(())
 }
 
-/// Público primário de um serviço: o primeiro `nome` de `publicos_ordem` que esteja em `publicos`
-/// (fallback: o primeiro item de `publicos`). É o `tipo` do contrato e o breadcrumb do print.
-fn primary_publico(s: &auli_contract::ServicoRaw, ordem: &[auli_contract::Publico]) -> String {
+/// Ocorrência primária de um serviço: a primeira encontrada iterando os públicos na ordem de
+/// `publicos_ordem` (fallback: a primeira ocorrência na ordem de descoberta). Dá o `(tipo, classe)`
+/// primário do contrato e o breadcrumb do print — mesma semântica first-occurrence da fase 1.
+fn primary_ocorrencia<'a>(
+    s: &'a auli_contract::ServicoRaw,
+    ordem: &[auli_contract::Publico],
+) -> Option<&'a auli_contract::Ocorrencia> {
     ordem
         .iter()
-        .find(|p| s.publicos.contains(&p.nome))
-        .map(|p| p.nome.clone())
-        .unwrap_or_else(|| s.publicos.first().cloned().unwrap_or_default())
+        .find_map(|p| s.ocorrencias.iter().find(|o| o.publico == p.nome))
+        .or_else(|| s.ocorrencias.first())
 }
 
 /// `text_to_embed` for a service (D2): the breadcrumb `tipo | classe`, the title, and the start of
@@ -278,48 +286,53 @@ mod tests {
     }
 
     #[test]
-    fn aggregate_dedups_by_link_first_occurrence_and_collects_publicos() {
-        let svc = |link: &str, tipo: &str| types::Servico {
+    fn aggregate_records_ocorrencias_per_link_in_discovery_order() {
+        let svc = |link: &str, classe: &str| types::Servico {
             id: 0,
-            tipo: tipo.into(),
-            classe: "C".into(),
+            tipo: String::new(), // irrelevante: o público vem do rótulo do input
+            classe: classe.into(),
             orgao: "O".into(),
             link: link.into(),
             titulo: "T".into(),
             descricao: "tipo\nclasse\ntitulo\ncorpo".into(),
         };
         let inputs = vec![
-            ("Cidadãos".to_string(), vec![svc("l1", "Cidadãos"), svc("l2", "Cidadãos")]),
-            ("Empresas".to_string(), vec![svc("l2", "Empresas"), svc("l3", "Empresas")]),
+            // l2 aparece sob 2 classes no MESMO público (multi-classe) e depois em outro público.
+            ("Cidadãos".to_string(), vec![svc("l1", "A"), svc("l2", "A"), svc("l2", "B")]),
+            ("Empresas".to_string(), vec![svc("l2", "A"), svc("l3", "A")]),
         ];
 
         let out = aggregate_servicos(&inputs);
 
-        // Ordem = primeira ocorrência de cada link (l1, l2, l3) — dá ids idênticos no `process`.
+        // Um registro por link, na ordem de primeira ocorrência (l1, l2, l3).
         assert_eq!(out.iter().map(|s| s.link.as_str()).collect::<Vec<_>>(), ["l1", "l2", "l3"]);
-        // l2 aparece nos dois públicos; primário (publicos[0]) = Cidadãos (primeira ocorrência).
+        // l2: uma ocorrência por listagem, na ordem de descoberta.
         let l2 = out.iter().find(|s| s.link == "l2").unwrap();
-        assert_eq!(l2.publicos, ["Cidadãos", "Empresas"]);
+        let ocs: Vec<_> = l2.ocorrencias.iter().map(|o| (o.publico.as_str(), o.classe.as_str())).collect();
+        assert_eq!(ocs, [("Cidadãos", "A"), ("Cidadãos", "B"), ("Empresas", "A")]);
         // descricao = corpo limpo, sem as 3 linhas de header.
         assert_eq!(out[0].descricao, "corpo");
     }
 
     #[test]
-    fn process_primary_publico_follows_publicos_ordem() {
+    fn primary_ocorrencia_follows_publicos_ordem() {
         let ordem = vec![
             auli_contract::Publico { nome: "Cidadãos".into(), slug: "rs-c".into() },
             auli_contract::Publico { nome: "Empresas".into(), slug: "rs-e".into() },
         ];
-        // publicos fora de ordem: o primário deve seguir publicos_ordem (Cidadãos), não a lista.
+        // ocorrências fora de ordem: o primário deve seguir publicos_ordem (Cidadãos), não a lista.
         let s = auli_contract::ServicoRaw {
             titulo: "T".into(),
             descricao: "corpo".into(),
             link: "l".into(),
             orgao: "O".into(),
-            classe: "C".into(),
-            publicos: vec!["Empresas".into(), "Cidadãos".into()],
+            ocorrencias: vec![
+                auli_contract::Ocorrencia { publico: "Empresas".into(), classe: "X".into() },
+                auli_contract::Ocorrencia { publico: "Cidadãos".into(), classe: "Y".into() },
+            ],
         };
-        assert_eq!(primary_publico(&s, &ordem), "Cidadãos");
+        let oc = primary_ocorrencia(&s, &ordem).unwrap();
+        assert_eq!((oc.publico.as_str(), oc.classe.as_str()), ("Cidadãos", "Y"));
     }
 
     /// Equivalência golden (etapa E) — inerte sem `AULI_GOLDEN_DATA` (raiz do `data/` do repo, ex.:

@@ -21,8 +21,8 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
 
     if snapshot.schema_version != SNAPSHOT_SCHEMA_VERSION {
         return Err(format!(
-            "schema do snapshot desconhecido para '{}': {} (esperado {}). \
-             Regrave o snapshot com esta versão do scraper.",
+            "snapshot de '{}' está na versão de schema v{} (esperado v{}). Re-raspe a entidade — o \
+             snapshot é regenerável do cache, não há migração.",
             entity.id, snapshot.schema_version, SNAPSHOT_SCHEMA_VERSION
         )
         .into());

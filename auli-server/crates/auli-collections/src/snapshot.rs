@@ -115,8 +115,7 @@ mod tests {
             descricao: "d".into(),
             link: link.into(),
             orgao: "o".into(),
-            classe: "c".into(),
-            publicos: vec!["Cidadãos".into()],
+            ocorrencias: vec![auli_contract::Ocorrencia { publico: "Cidadãos".into(), classe: "c".into() }],
         }
     }
 
