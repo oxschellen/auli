@@ -38,3 +38,11 @@ uf = "PR"
 state = "Paraná"
 prompt = "prompts/pr.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "sp"
+name = "SEFAZ-SP"
+uf = "SP"
+state = "São Paulo"
+prompt = "prompts/sp.txt"
+collections = ["servicos"]
