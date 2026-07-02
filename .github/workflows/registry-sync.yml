@@ -10,7 +10,9 @@ on:
       - "auli-frontend/src/shared/entities.ts"
       - "scripts/gen-frontend-entities.mjs"
       - "scripts/check-registry-sync.sh"
-      # Disparar também se reaparecer uma definição de entidade fora do registry (check #2 do script).
+      # GUARDA (check #2 do script/`check-registry-sync.sh`): estes dois dirs NÃO existem hoje — de
+      # propósito. O filtro dispara o workflow SE eles reaparecerem, para o check falhar já no PR (e
+      # não só no push a main). Não remover por "não existir": é o padrão que queremos barrar.
       - "auli-server/entities/**"
       - "auli-server/crates/auli-collections/src/entities/**"
   push:

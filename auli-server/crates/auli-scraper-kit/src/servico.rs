@@ -1,3 +1,9 @@
+//! NOTA de acoplamento: o `auli-collections` (offline) depende deste kit só por [`crate::snapshot`]
+//! `load` e pelo re-export de [`Servico`] (shape per-público que ele grava) — e com isso arrasta
+//! `ureq`/`time` para o grafo de build dele. Se um dia incomodar, o caminho é mover o shape
+//! per-público para o `auli-contract` (ele *é* um contrato — o frontend o consome) e inlinar o `load`
+//! (serde puro) no collections. Sem ação agora.
+
 use serde::{Deserialize, Serialize};
 
 /// Um serviço raspado de um público (a entrada de [`crate::aggregate_servicos`]) — e também o shape
