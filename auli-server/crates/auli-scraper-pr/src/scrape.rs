@@ -25,13 +25,13 @@ const COURTESY: Duration = Duration::from_millis(400);
 /// `(id do painel no HTML, nome do público, slug do arquivo per-público)`.
 fn publicos() -> Vec<(&'static str, &'static str, &'static str)> {
     vec![
-        ("servicos-tema-cidado", "Cidadão", "pr-servicos-ao-cidadao"),
-        ("servicos-tema-empresa", "Empresa", "pr-servicos-a-empresas"),
-        ("servicos-tema-municpio", "Município", "pr-servicos-a-municipios"),
-        ("servicos-tema-produtor-rural", "Produtor rural", "pr-servicos-a-produtores-rurais"),
-        ("servicos-tema-receitapr", "Receita/PR", "pr-servicos-receita-pr"),
-        ("servicos-tema-programas", "Programas", "pr-servicos-programas"),
-        ("servicos-tema-legislao", "Legislação", "pr-servicos-legislacao"),
+        ("servicos-tema-cidado", "Cidadão", "servicos-ao-cidadao"),
+        ("servicos-tema-empresa", "Empresa", "servicos-a-empresas"),
+        ("servicos-tema-municpio", "Município", "servicos-a-municipios"),
+        ("servicos-tema-produtor-rural", "Produtor rural", "servicos-a-produtores-rurais"),
+        ("servicos-tema-receitapr", "Receita/PR", "servicos-receita-pr"),
+        ("servicos-tema-programas", "Programas", "servicos-programas"),
+        ("servicos-tema-legislao", "Legislação", "servicos-legislacao"),
     ]
 }
 

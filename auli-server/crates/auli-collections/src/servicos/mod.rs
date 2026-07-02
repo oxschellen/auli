@@ -8,13 +8,15 @@ mod types;
 
 use serde::Serialize;
 
+use crate::errors::Result;
+
 /// Deriva os artefatos de serviços da coleta do snapshot (offline): contrato `Table<Servico>`,
 /// `portal-servicos.txt`, `servicos-index.json` e os JSONs per-público. Não lê rede — só o snapshot.
 pub fn process(
     id: &str,
     data_dir: &str,
     coleta: &auli_contract::ColetaServicos,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<()> {
     let ordem = &coleta.publicos_ordem;
 
     // 1. Contrato: id sequencial (1..), tipo = público primário, text_to_embed materializado; a
@@ -130,7 +132,7 @@ struct ServicoIndexEntry {
 fn write_servicos_index(
     data_dir: &str,
     ordem: &[auli_contract::Publico],
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<()> {
     let entries: Vec<ServicoIndexEntry> = ordem
         .iter()
         .map(|p| ServicoIndexEntry { tipo: p.nome.clone(), filename: p.slug.clone() })

@@ -19,15 +19,6 @@ pub struct EntityQuery {
     pub entity: Option<String>,
 }
 
-// Struct for output of Questions
-#[derive(Debug, Display, Serialize, Deserialize)]
-#[display("{} {} {}", status, question, answer)]
-pub struct QuestionResponse {
-    pub status: String,
-    pub question: String,
-    pub answer: String,
-}
-
 // Struct for output of Answers
 #[derive(Debug, Display, Serialize, Deserialize)]
 #[display("question: {}\nanswer: {}", question, answer)]

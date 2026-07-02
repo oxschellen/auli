@@ -46,11 +46,11 @@ fn normalize_links(text: &str) -> String {
 /// the portal's público id; services are grouped into these files by their `publicos` list.
 fn publicos() -> Vec<(i64, &'static str, &'static str)> {
     vec![
-        (3, "Cidadão", "sc-servicos-ao-cidadao"),
-        (4, "Empresa", "sc-servicos-a-empresas"),
-        (5, "Servidor Público", "sc-servicos-a-servidores-publicos"),
-        (8, "Estudante", "sc-servicos-a-estudantes"),
-        (12, "Prefeitura", "sc-servicos-a-prefeituras"),
+        (3, "Cidadão", "servicos-ao-cidadao"),
+        (4, "Empresa", "servicos-a-empresas"),
+        (5, "Servidor Público", "servicos-a-servidores-publicos"),
+        (8, "Estudante", "servicos-a-estudantes"),
+        (12, "Prefeitura", "servicos-a-prefeituras"),
     ]
 }
 

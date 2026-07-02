@@ -7,16 +7,20 @@ import { jsonFetcher, SWR_OPTS, entityPath } from "../../shared/fetchers";
 import { SearchInput } from "../../shared/SearchInput";
 import { AsyncContent } from "../../shared/AsyncContent";
 import { useSelectedEntity } from "../../shared/EntityContext";
+import { hasCollection } from "../../shared/entities";
+import { CollectionEmpty } from "../../shared/CollectionEmpty";
 
 /** A class heading paired with its (possibly filtered) services. */
 type ServicoGroup = [string, Servico[]];
 
 export function ServicosList() {
   const entity = useSelectedEntity();
+  const available = hasCollection(entity, "servicos");
   // Audience tabs are driven by `servicos-index.json` (emitted by the scraper per entity); fall back
-  // to the hardcoded default list when the manifest is missing (older / RS-only deploys).
+  // to the hardcoded default list when the manifest is missing (older / RS-only deploys). Gated on
+  // `available` so states without Serviços data never fire the fetch (no 404) — see CollectionEmpty.
   const { data: tipoIndex } = useSWR<TipoServico[]>(
-    entityPath(entity.id, "servicos-index.json"),
+    available ? entityPath(entity.id, "servicos-index.json") : null,
     jsonFetcher<TipoServico[]>,
     SWR_OPTS
   );
@@ -37,7 +41,7 @@ export function ServicosList() {
   const activeName = activeTipo?.tipo ?? "";
 
   const { data: activeServicos = [], error, isLoading: loading } = useSWR(
-    activeTipo ? entityPath(entity.id, `${activeTipo.filename}.json`) : null,
+    available && activeTipo ? entityPath(entity.id, `${activeTipo.filename}.json`) : null,
     jsonFetcher<Servico[]>,
     SWR_OPTS
   );
@@ -89,6 +93,8 @@ export function ServicosList() {
 
   const isSearching = deferredQuery.trim().length > 0;
   const totalResults = isSearching ? filteredGroups.reduce((sum, [, items]) => sum + items.length, 0) : 0;
+
+  if (!available) return <CollectionEmpty entity={entity} label="Serviços" />;
 
   return (
     <Flex direction="column" flex={1} w="100%" bg="bg.app">

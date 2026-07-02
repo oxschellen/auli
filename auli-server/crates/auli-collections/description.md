@@ -168,9 +168,9 @@ placeholder arm in `main.rs::faq_source_for` (real URLs, but the faqs walk/parse
 — the existing `src/faqs` is RS-specific).
 
 **SC servicos — implemented (`src/servicos/sc.rs`, 2026-06-02).** `cargo run sc servicos` scrapes SC's
-Next.js JSON API and writes, under `data/sc/`: 5 per-público files (`sc-servicos-ao-cidadao`,
-`sc-servicos-a-empresas`, `sc-servicos-a-servidores-publicos`, `sc-servicos-a-estudantes`,
-`sc-servicos-a-prefeituras`), the contract `sc-servicos.json`, the `servicos-index.json` tab manifest, and
+Next.js JSON API and writes, under `data/sc/`: 5 per-público files (`servicos-ao-cidadao`,
+`servicos-a-empresas`, `servicos-a-servidores-publicos`, `servicos-a-estudantes`,
+`servicos-a-prefeituras`), the contract `sc-servicos.json`, the `servicos-index.json` tab manifest, and
 `portal-servicos.txt`. Verified run: 213 listing services → 208 unique in the txt/json (5 have no
 público so land in no audience file). Same `Servico` shape + `## pergunta`/`## resposta` block format
 as RS, so the frontend UI and the RAG ingest are drop-in. Notes:
@@ -219,7 +219,7 @@ app backed by a clean JSON API.** No browser, no HTML parsing needed. Plan (inve
 ### SC servicos: per-público JSON compatibility (verified 2026-06-02)
 
 The goal is for SC to emit the **same per-público `Servico` JSON structure as RS** (one file per
-audience, e.g. `sc-servicos-a-empresas.json`) so the **same `gerar_portal_servicos` txt routine** and the
+audience, e.g. `servicos-a-empresas.json`) so the **same `gerar_portal_servicos` txt routine** and the
 **same frontend UI** (`auli-frontend/src/pages/servicoslist/`) work unchanged. Verified the two
 consumers' field requirements:
 

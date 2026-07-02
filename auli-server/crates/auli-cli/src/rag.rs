@@ -1,4 +1,4 @@
-// RAG orchestration: embed the question, retrieve from the entity's services + faqs
+// RAG orchestration: embed the question, retrieve from the entity's servicos + faqs
 // collections (scored), narrow each set by proximity, assemble the prompt, call the LLM,
 // and log the exchange. The server embeds ONLY the question here; documents were embedded
 // ahead of time by `auli update`. Retrieval reads immutable `ReadStore`s — no writes, no locks.
@@ -109,7 +109,7 @@ pub async fn exec_all_question(
             .ok_or("Não foi possível gerar embedding para a pergunta.")?
     };
 
-    // Look up this entity's services + faqs stores and retrieve concurrently.
+    // Look up this entity's servicos + faqs stores and retrieve concurrently.
     let svc_store = collections.get(&cfg.collection(SERVICES.kind)).cloned();
     let faq_store = collections.get(&cfg.collection(FAQS.kind)).cloned();
 
