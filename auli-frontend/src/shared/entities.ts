@@ -38,6 +38,13 @@ export const ENTITIES: Entity[] = [
     state: "Santa Catarina",
     collections: ["servicos"],
   },
+  {
+    id: "pr",
+    name: "SEFA-PR",
+    uf: "PR",
+    state: "Paraná",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";

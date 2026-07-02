@@ -30,3 +30,11 @@ uf = "SC"
 state = "Santa Catarina"
 prompt = "prompts/sc.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "pr"
+name = "SEFA-PR"
+uf = "PR"
+state = "Paraná"
+prompt = "prompts/pr.txt"
+collections = ["servicos"]
