@@ -1,6 +1,7 @@
 mod domain;
 mod errors;
 mod faqs;
+mod process;
 mod servicos;
 mod snapshot;
 
@@ -29,23 +30,23 @@ fn main() -> errors::Result<()> {
     }
 
     match collection.as_str() {
-        "faqs" => run_faqs(entity, use_cache)?,
+        // Cada fluxo de scrape grava a coleta no snapshot; o `process` então deriva os artefatos.
+        "faqs" => {
+            run_faqs(entity, use_cache)?;
+            process::run(entity)?;
+        }
         "servicos" => {
             // servicos dispatches on the entity: `rs` uses headless Chrome + HTML scraping, `sc`
             // uses the Next.js JSON API. Output/cache paths derive from the entity's data_dir.
             servicos::run(&entity.id, &entity.data_dir, use_cache).map_err(|e| e.to_string())?;
+            process::run(entity)?;
         }
-        "rebuild" => {
-            // OFFLINE: reconstrói o contrato (<id>-faqs.json / <id>-servicos.json) a partir do que já
-            // está em data/<id>/raw/ (árvore faqs.json + per-tipo servicos), SEM rede. Útil para regerar
-            // os packs após um bump de STRATEGY_VERSION sem precisar re-raspar o portal.
-            faqs::rebuild_contract_from_tree(&faq_source_for(entity, use_cache)?)?;
-            servicos::rebuild_contract_from_raw(&entity.id, &entity.data_dir)
-                .map_err(|e| e.to_string())?;
-        }
+        // OFFLINE: deriva os artefatos (contrato, prints, index, per-público) do snapshot já gravado,
+        // SEM rede. Útil para regerar os packs após um bump de STRATEGY_VERSION sem re-raspar o portal.
+        "process" => process::run(entity)?,
         other => {
             return Err(format!(
-                "coleção desconhecida: '{}'. Use: faqs | servicos | rebuild",
+                "coleção desconhecida: '{}'. Use: faqs | servicos | process",
                 other
             )
             .into());
@@ -68,7 +69,6 @@ fn faq_source_for(entity: &EntityConfig, use_cache: bool) -> errors::Result<faqs
             base_url: "https://atendimento.receita.rs.gov.br".to_string(),
             root_url: "https://atendimento.receita.rs.gov.br/perguntas-frequentes".to_string(),
             root_title: "Perguntas Frequentes".to_string(),
-            collection: "faqs".to_string(),
             data_dir: entity.data_dir.clone(),
             cache_dir: format!("{}/cache/faqs", entity.data_dir),
             use_cache,
@@ -82,7 +82,6 @@ fn faq_source_for(entity: &EntityConfig, use_cache: bool) -> errors::Result<faqs
             base_url: "https://www.sef.sc.gov.br".to_string(),
             root_url: "https://www.sef.sc.gov.br/perguntas".to_string(),
             root_title: "Perguntas Frequentes".to_string(),
-            collection: "faqs".to_string(),
             data_dir: entity.data_dir.clone(),
             cache_dir: format!("{}/cache/faqs", entity.data_dir),
             use_cache,

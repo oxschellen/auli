@@ -20,7 +20,7 @@ use regex::Regex;
 use serde::Deserialize;
 use ureq::Agent;
 
-use super::types::{Servico, TipoServicos};
+use super::types::Servico;
 
 const BASE: &str = "https://www.sef.sc.gov.br";
 const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
@@ -142,12 +142,11 @@ impl<'de> Deserialize<'de> for StringOrNum {
     }
 }
 
-/// Scrapes all SC services and writes one per-público `servicos-<...>.json` under `data_dir`.
-/// Returns the tipo list (audience tabs + filenames) for the downstream txt/json aggregation.
-pub fn scrape(
-    data_dir: &str,
-    use_cache: bool,
-) -> Result<Vec<TipoServicos>, Box<dyn std::error::Error>> {
+/// Scrapes all SC services and returns them grouped per público (in display order) plus the
+/// `publicos_ordem`, ready for `aggregate_servicos` to fold into the snapshot. SC no longer writes
+/// per-público files during the scrape — the fan-out is now `process`'s job.
+type ScrapeResult = (super::PerPublicoServicos, Vec<auli_contract::Publico>);
+pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn std::error::Error>> {
     let agent: Agent = Agent::config_builder()
         .user_agent(USER_AGENT)
         .timeout_global(Some(Duration::from_secs(30)))
@@ -216,25 +215,21 @@ pub fn scrape(
         }
     }
 
-    // 3. Write one JSON file per público (ids renumbered 1..N within each file, matching RS).
-    let mut tipos = Vec::new();
+    // 3. Emit the per-público buckets in display order, plus `publicos_ordem`, for aggregation into
+    //    the snapshot. Ids stay 0 here — `aggregate_servicos` positions by link and `process`
+    //    re-numbers the per-público output.
+    let mut inputs = Vec::new();
+    let mut publicos_ordem = Vec::new();
     for (pub_id, pub_nome, filename) in &pubs {
-        let mut services = buckets.remove(pub_id).unwrap_or_default();
-        for (i, s) in services.iter_mut().enumerate() {
-            s.id = i + 1;
-        }
-        let path = format!("{}/{}.json", data_dir, filename);
-        std::fs::write(&path, serde_json::to_string_pretty(&services)?)?;
-        println!("Wrote {} ({} serviços)", path, services.len());
-
-        tipos.push(TipoServicos {
-            tipo: pub_nome.to_string(),
-            filename: filename.to_string(),
-            url: format!("{}/servicos", BASE),
+        let services = buckets.remove(pub_id).unwrap_or_default();
+        publicos_ordem.push(auli_contract::Publico {
+            nome: pub_nome.to_string(),
+            slug: filename.to_string(),
         });
+        inputs.push((pub_nome.to_string(), services));
     }
 
-    Ok(tipos)
+    Ok((inputs, publicos_ordem))
 }
 
 /// Builds the `descricao` with the 3-line `tipo / classe / titulo` header that

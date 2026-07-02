@@ -1,8 +1,7 @@
-// Output model for the `faqs` collection.
+// In-memory model for the `faqs` scrape.
 //
-// The scraper walks the FAQ portal and produces a tree. Serializing the root node yields the
-// collection's standard JSON output file (named `<collection>.json`, e.g. `faqs.json`; same shape as
-// the legacy `faq_site_tree.json`).
+// The scraper walks the FAQ portal and produces this tree in memory; `faqs::run` flattens it into the
+// snapshot's `Vec<FaqRaw>` (the tree itself is not persisted anymore).
 //
 // Tree shape:
 //   - `Menu`  nodes group other nodes via `children` (no FAQ content of their own).

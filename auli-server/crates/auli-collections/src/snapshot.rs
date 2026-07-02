@@ -83,6 +83,17 @@ fn load_colecoes(path: &Path) -> Result<Colecoes> {
     Ok(snapshot.colecoes)
 }
 
+/// Carrega o snapshot inteiro de `../data/<id>/<id>-snapshot.json`, ou `None` se ainda não existe.
+/// Usado pelo `process` para validar `schema_version`/`entidade` antes de derivar.
+pub fn load(id: &str, data_dir: &str) -> Result<Option<Snapshot>> {
+    let path = snapshot_path(id, data_dir);
+    if !path.exists() {
+        return Ok(None);
+    }
+    let bytes = std::fs::read(&path)?;
+    Ok(Some(serde_json::from_slice(&bytes)?))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
