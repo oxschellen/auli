@@ -20,9 +20,10 @@ O binário único `auli` tem dois modos:
 
 - **`auli server`** — sobe a API HTTP (axum) em `:3000`, **somente leitura**: carrega os pacotes
   de vetores, valida o manifesto e responde perguntas (RAG). Embeda só a pergunta; nunca escreve.
-- **`auli update`** — lê o **contrato tipado** do scraper (`data/<id>/raw/<id>-<kind>.json` =
-  `auli_contract::Table<P>`), embeda o `text_to_embed` de cada registro e escreve os **pacotes**
-  (`<id>-<kind>.json` + `<id>.manifest.json`). É o **único** que escreve dados.
+- **`auli update`** — lê o **contrato tipado** (`data/<id>/raw/<id>-<kind>.json` =
+  `auli_contract::Table<P>`, **derivado pelo `auli-collections <id>`** a partir do snapshot — ver
+  §4.1), embeda o `text_to_embed` de cada registro e escreve os **pacotes** (`<id>-<kind>.json` +
+  `<id>.manifest.json`). É o **único do engine** que escreve dados.
 
 Embeddings (fastembed/BGE-M3) e busca vetorial rodam **in-process** — não há Ollama, ChromaDB nem
 serviço de embedding para subir à parte.
@@ -37,30 +38,27 @@ serviço de embedding para subir à parte.
 | **cmake + compilador C** | exigidos por `aws-lc-sys` (TLS rustls). **Nesta máquina não há cmake de sistema**: foi instalado via `pip install --user cmake` (fica em `~/.local/bin`). Ver §3. |
 | **Rede (1º build/run)**  | `ort` baixa o ONNX Runtime no build; o modelo **BGE-M3** baixa do Hugging Face para `EMBED_CACHE_DIR` no 1º uso.                                                  |
 | **cloudflared**          | túnel do Cloudflare que publica `api.auli.com.br` (em `~/.local/bin`). Configure 1× com `./setup-cloudflared.sh`. Opcional ao rodar: `--no-tunnel`.               |
-| **`.env`**               | na raiz `auli_new/` (ver §4).                                                                                                                                     |
+| **`.env`**               | na raiz do repo `auli/` (ver §4).                                                                                                                                 |
 
 ---
 
 ## 3. Compilar (build)
 
 ```bash
-cd /home/ubu/Desktop/auli_new/auli
+cd /home/ubu/Desktop/auli/auli-server     # o workspace Cargo (raiz do repo: /home/ubu/Desktop/auli)
 
 # cmake desta máquina (pip) + compat de policy do cmake 4 — INÓCUO onde já houver cmake de sistema:
 export PATH="$HOME/.local/bin:$PATH"
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
 
-# (opcional) reaproveita os artefatos já compilados (fastembed/ort/aws-lc) -> build rápido:
-export CARGO_TARGET_DIR=/home/ubu/Desktop/auli_new/auli-server/target
-
-cargo build --release --workspace      # ou: cargo build --release --bin auli
+cargo build --release --workspace      # ou só o engine: cargo build --release --bin auli
 ```
 
-- Binário: `target/release/auli` (ou `auli-server/target/release/auli` se usar o `CARGO_TARGET_DIR`
-  compartilhado acima).
-- 1º build sem `CARGO_TARGET_DIR` compartilhado recompila fastembed/ort/aws-lc (alguns minutos);
-  depois é incremental (segundos).
-- Numa máquina com cmake de sistema, **nenhuma** das três `export` é necessária.
+- Binários em `auli-server/target/release/`: **`auli`** (server/update), **`auli-scraper-rs`** e
+  **`auli-scraper-sc`** (os scrapers da fase 2 — só o `-rs` puxa headless Chrome).
+- 1º build recompila fastembed/ort/aws-lc (alguns minutos); depois é incremental (segundos). Os
+  scrapers **não** dependem de fastembed/ort — compilam leves.
+- Numa máquina com cmake de sistema, **nenhuma** das `export` é necessária.
 - Testes: `cargo test --workspace`.
 
 > Se faltar cmake: `python3 -m pip install --user cmake` (sem sudo) e garanta `~/.local/bin` no PATH.
@@ -74,17 +72,29 @@ Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data
 
 ### 4.1 Pacotes de vetores (`data/<id>/packs/`)
 
-Gerados pelo `scripts/build-packs.sh`, que aponta o `auli update --source` para `data/<id>/raw/`
-(onde o scraper grava o contrato `<id>-faqs.json` / `<id>-servicos.json`):
+Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
+
+1. **Raspar** (rede; headless Chrome só no RS) → grava o snapshot `data/<id>/<id>-snapshot.json` (v2):
+   `./target/release/auli-scraper-rs [faqs|servicos|all]` (RS) e `./target/release/auli-scraper-sc servicos` (SC).
+   `--usecache` reusa o cache de páginas (offline, sem rede).
+2. **Derivar** (offline) → o contrato `<id>-faqs.json`/`<id>-servicos.json` + prints + per-público em
+   `data/<id>/raw/`: `./target/release/auli-collections <id>`.
+3. **Vetorizar** → `scripts/build-packs.sh <id>` (aponta o `auli update --source` para `raw/`).
 
 ```bash
-scripts/build-packs.sh rs        # e: scripts/build-packs.sh sc
+cd auli-server
+./target/release/auli-scraper-rs all && ./target/release/auli-collections rs && cd .. && scripts/build-packs.sh rs
+# SC: (cd auli-server && ./target/release/auli-scraper-sc servicos && ./target/release/auli-collections sc) && scripts/build-packs.sh sc
 ```
 
-Produz `data/rs/packs/rs-services.json` (≈627), `rs-faqs.json` (≈1914) e `rs.manifest.json`
+Produz `data/rs/packs/rs-services.json` (≈586), `rs-faqs.json` (≈1937) e `rs.manifest.json`
 (`strategy_version: 2`). `pareceres`/`notas` são autorados (sem scraper) e ainda **não** têm fonte
 struct no contrato — ficam **ausentes** até serem modelados; o server tolera packs ausentes (sobe
 com a coleção vazia). **Só precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
+
+> Regenerar **sem re-raspar** (ex.: após bump de `STRATEGY_VERSION`): com o snapshot já em disco,
+> `auli-collections <id>` re-deriva os contratos offline e `build-packs.sh` regera os packs
+> (substitui o antigo subcomando `rebuild`, removido).
 
 ### 4.2 Entidades (`data/registry.toml`)
 
@@ -98,9 +108,9 @@ A lista de entidades e o caminho do prompt de cada uma vêm do **registro único
 Cache do BGE-M3. Os lançadores definem `EMBED_CACHE_DIR=<raiz>/models` (caminho **absoluto**,
 CWD-independente — fonte única). Baixa do Hugging Face no 1º uso; depois é reaproveitado (sem rede).
 
-### 4.4 `.env` (raiz `auli_new/`)
+### 4.4 `.env` (raiz do repo `auli/`)
 
-Carregado via `dotenv` a partir do CWD para cima — por isso um `.env` na raiz `auli_new/` serve
+Carregado via `dotenv` a partir do CWD para cima — por isso um `.env` na raiz do repo (`auli/`) serve
 para o server rodando em `auli-server/`. Variáveis:
 
 | Variável                                        | Obrigatória?                                                 | Uso                                             |
@@ -118,7 +128,7 @@ para o server rodando em `auli-server/`. Variáveis:
 
 ## 5. Subir o servidor + túnel Cloudflare
 
-O jeito recomendado é o script [start_server.sh](start_server.sh) (na raiz `auli_new/`):
+O jeito recomendado é o script [start_server.sh](start_server.sh) (na raiz do repo `auli/`):
 
 ```bash
 ./start_server.sh                       # build incremental + server + túnel
@@ -147,8 +157,8 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 ```
 🏛️  Entidades carregadas: [rs, sc]
 🔎 Manifesto de 'rs' validado contra a identidade local.
-📦 rs-services — 627 registros
-📦 rs-faqs — 1914 registros
+📦 rs-services — 586 registros
+📦 rs-faqs — 1937 registros
 📦 rs-pareceres — 331 registros
 📦 rs-notas — 1 registros
 🔎 Manifesto de 'sc' validado contra a identidade local.
@@ -160,8 +170,8 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 ### Sem o script (comando direto)
 
 ```bash
-cd /home/ubu/Desktop/auli_new/auli
-AULI_DATA_DIR=../data ../auli-server/target/release/auli server --packs-dir ../data
+cd /home/ubu/Desktop/auli/auli-server
+AULI_DATA_DIR=../data target/release/auli server --packs-dir ../data
 ```
 
 > **Nunca use `sudo`.** A porta 3000 não exige root, e sob `sudo` o server procura `.env`/cache no
