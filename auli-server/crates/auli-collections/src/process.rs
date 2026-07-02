@@ -1,9 +1,9 @@
 //! O subcomando `process` — deriva os artefatos do snapshot, **offline**.
 //!
 //! Lê `../data/<id>/<id>-snapshot.json`, valida `schema_version`/`entidade`, e para cada coleta
-//! presente chama as derivações de [`crate::faqs::process`] / [`crate::servicos::process`]. Coleção
-//! ausente é pulada (não é erro). É aqui que mora a validação amigável do schema — o `auli-contract`
-//! segue só serde, sem domínio (mesmo precedente da `Table<P>`: quem lê é que reclama).
+//! presente chama as derivações de [`crate::derive_faqs::process`] / [`crate::servicos::process`].
+//! Coleção ausente é pulada (não é erro). É aqui que mora a validação amigável do schema — o
+//! `auli-contract` segue só serde, sem domínio (mesmo precedente da `Table<P>`: quem lê é que reclama).
 
 use auli_contract::SNAPSHOT_SCHEMA_VERSION;
 
