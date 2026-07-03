@@ -52,6 +52,13 @@ export const ENTITIES: Entity[] = [
     state: "São Paulo",
     collections: ["servicos"],
   },
+  {
+    id: "mg",
+    name: "SEF-MG",
+    uf: "MG",
+    state: "Minas Gerais",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";
