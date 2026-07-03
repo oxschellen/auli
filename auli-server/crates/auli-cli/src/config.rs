@@ -2,7 +2,7 @@
 // access. Required variables panic at load with a clear message; optional ones fall back to
 // documented defaults.
 //
-// `auli update` does NOT use this (it would force LLM/JWT/DB vars that ingestion doesn't need);
+// `auli update` does NOT use this (it would force the LLM vars that ingestion doesn't need);
 // it reads only the embedder settings directly from the environment. See `update.rs`.
 
 use std::sync::LazyLock;

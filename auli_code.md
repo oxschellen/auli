@@ -402,10 +402,11 @@ ocorrências nativas** (resolveu o limite multi-classe do modelo antigo). FAQs s
 
 | Crate | Entidade | Plataforma / técnica | CLI |
 | ----- | -------- | -------------------- | --- |
-| [auli-scraper-rs](auli-server/crates/auli-scraper-rs) | SEFAZ-RS | FAQs (portal CMS via **headless Chrome** + `ureq`) + serviços (5 públicos via Chrome, detalhe via `ureq`) | `[--usecache] faqs\|servicos\|all` |
+| [auli-scraper-rs](auli-server/crates/auli-scraper-rs) | SEFAZ-RS | FAQs (portal CMS via **AJAX/`ureq`**, sem browser) + serviços (5 públicos via **headless Chrome**, detalhe via `ureq`) | `[--usecache] faqs\|servicos\|all` |
 | [auli-scraper-sc](auli-server/crates/auli-scraper-sc) | SEF-SC | serviços via **API JSON Next.js** (sem browser) | `[--usecache] servicos` |
 | [auli-scraper-sp](auli-server/crates/auli-scraper-sp) | SEFAZ-SP | serviços via **REST SharePoint** (JSON anônimo: listas `Serviços` + `Homes 360`) | `[--usecache] servicos` |
 | [auli-scraper-pr](auli-server/crates/auli-scraper-pr) | SEFA-PR | serviços via **HTML Drupal** server-side (mega-menu "Serviços para você!") | `[--usecache] servicos` |
+| [auli-scraper-mg](auli-server/crates/auli-scraper-mg) | SEF-MG | serviços via **API JSON ServiceNow CSM** (page API, sem browser) | `[--usecache] servicos` |
 
 - **RS** é o único com FAQs e o único que puxa **headless Chrome**. A **árvore** de FAQ
   (`FaqNode { title, url, page_type, origin, children, faq_items }`) é serializada em
@@ -441,10 +442,11 @@ nos packs até serem modelados.
 
 | entidade | serviços | FAQs |
 | -------- | -------- | ---- |
-| `rs` | ✅ (Chrome) | ✅ (Chrome) |
+| `rs` | ✅ (Chrome) | ✅ (AJAX/`ureq`) |
 | `sc` | ✅ (JSON Next.js) | — |
 | `sp` | ✅ (REST SharePoint) | — |
 | `pr` | ✅ (HTML Drupal) | — |
+| `mg` | ✅ (JSON ServiceNow) | — |
 
 `pareceres`/`notas`/`conteudos` não têm scraper (autorados). FAQs hoje só no RS.
 
@@ -458,7 +460,7 @@ nos packs até serem modelados.
 1. **Triplicação do `domain` resolvida.** `data/registry.toml` é a fonte única de entidades, lida
    por `auli-cli` e `auli-collections`; o frontend gera `entities.ts` dela. O kind vetorial foi
    **unificado para `servicos` ponta a ponta** pela auditoria (PR #4) — não há mais o descasamento
-   `services`↔`servicos` (o antigo `services` sobrou só como guarda de regressão em `from_kind`) nem
+   `services`↔`servicos` (o antigo `services` sobrou só como guarda de regressão — o teste que exige `from_kind("services").is_err()`) nem
    cópias divergentes de `domain`/`errors`/`entities`.
 2. **Dados de serviços consistentes.** Packs e frontend vêm da **mesma** raspagem (contrato
    `auli-contract`); o engine não declara mais `delimiter`/`EmbedStrategy` próprios para serviços.

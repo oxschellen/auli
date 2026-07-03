@@ -11,7 +11,7 @@
 //! pack/kind is `<entity>-servicos` too. `pareceres`/`notas` have no
 //! struct source yet (authored, not scraped) and are simply absent until modeled as a contract.
 //!
-//! Does NOT use the server `Config` (no LLM/JWT/DB needed for ingestion) — only the embedder
+//! Does NOT use the server `Config` (no LLM vars needed for ingestion) — only the embedder
 //! settings, read directly from the environment with defaults.
 
 use std::path::{Path, PathBuf};

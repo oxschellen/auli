@@ -162,7 +162,7 @@ mod tests {
             "rs",
             dd,
             &sc,
-            vec![Publico { nome: "Cidadãos".into(), slug: "rs-servicos-ao-cidadao".into() }],
+            vec![Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() }],
             vec![svc("l1")],
         )
         .unwrap();

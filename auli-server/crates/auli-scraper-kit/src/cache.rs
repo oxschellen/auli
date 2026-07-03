@@ -1,8 +1,9 @@
 // On-disk page cache for the servicos scraper, mirroring the faqs cache.
 //
 // Each fetched page is stored under `<data_dir>/cache/servicos/` keyed by a sanitized URL, so
-// re-runs read from disk instead of re-hitting the portal. This matters most for the per-tipo
-// listing pages (expensive headless-Chrome renders) but also spares the many service detail pages.
+// re-runs read from disk instead of re-hitting the portal. This matters most for the expensive
+// per-tipo listing pages but also spares the many service detail pages. (This kit is generic —
+// its consumers fetch plain HTTP; the RS-only headless-Chrome path lives in auli-scraper-rs.)
 // Only successful fetches are cached; failed requests are left uncached so they retry next run.
 
 use std::path::PathBuf;

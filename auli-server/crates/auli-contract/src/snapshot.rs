@@ -117,7 +117,9 @@ pub struct ServicoRaw {
     pub titulo: String,
     /// Corpo limpo da descrição (sem o header `tipo/classe/titulo`).
     pub descricao: String,
-    /// URL do serviço — a chave natural única do snapshot.
+    /// URL do serviço — a chave natural do snapshot, única para os scrapers que passam por
+    /// `aggregate_servicos` (dedup por link). Exceção deliberada: o SP monta os `ServicoRaw` direto
+    /// e vários serviços compartilham a URL de login, então lá o link não é único.
     pub link: String,
     /// Órgão de origem.
     pub orgao: String,
@@ -158,8 +160,8 @@ mod tests {
                 servicos: Some(ColetaServicos {
                     coletado_em: "2026-07-01T10:02:00-03:00".into(),
                     publicos_ordem: vec![
-                        Publico { nome: "Cidadãos".into(), slug: "rs-servicos-ao-cidadao".into() },
-                        Publico { nome: "Empresas".into(), slug: "rs-servicos-a-empresas".into() },
+                        Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() },
+                        Publico { nome: "Empresas".into(), slug: "servicos-a-empresas".into() },
                     ],
                     items: vec![ServicoRaw {
                         titulo: "Emitir guia".into(),

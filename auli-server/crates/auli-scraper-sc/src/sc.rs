@@ -6,7 +6,8 @@
 //   2. page through the service listing (`servicos/buscar.json?pagina=N`),
 //   3. fetch each service's detail (`servicos/<slug>.json?slug=<slug>`) for the rich body,
 //   4. map each service into the shared `Servico` model, once per audience (`publicos`), and
-//   5. write one per-público file (`servicos-<...>.json`); the caller aggregates + dedups by link.
+//   5. hand the per-público buckets to `aggregate_servicos` for the snapshot; the per-público
+//      fan-out files are derived later by `auli-collections process`, not written here.
 //
 // Cache: pages are cached by a *logical* URL (without the buildId) so a SC deploy that changes the
 // buildId doesn't invalidate the on-disk cache (`auli_scraper_kit::cache`).
@@ -229,7 +230,7 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn s
 }
 
 /// Builds the `descricao` with the 3-line `tipo / classe / titulo` header that
-/// `gerar_portal_servicos::descricao_body` strips (via `skip(3)`), followed by the service body
+/// `auli_scraper_kit::descricao_body` strips (via `skip(3)`), followed by the service body
 /// (finalidade + etapas + requisitos). Keep exactly three header lines.
 fn build_descricao(tipo: &str, classe: &str, titulo: &str, d: &DadosJson) -> String {
     let mut out = String::new();
