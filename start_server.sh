@@ -42,6 +42,10 @@ export AULI_DATA_DIR="${AULI_DATA_DIR:-../data}"
 # O dotenv do binário não sobrescreve variável já no ambiente, então este export prevalece sobre o .env.
 export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-$ROOT/models}"
 
+# Logs das consultas (RAG) na raiz do repo (`./logs`), não em auli-server/logs — o server roda em
+# auli-server/, então sem isto o `./logs` do código cairia lá. Caminho ABSOLUTO, CWD-independente.
+export AULI_LOG_DIR="${AULI_LOG_DIR:-$ROOT/logs}"
+
 PORT="${PORT:-3000}"
 TUNNEL_NAME="${TUNNEL_NAME:-auli-api}"
 BIN="$CARGO_TARGET_DIR/release/auli"

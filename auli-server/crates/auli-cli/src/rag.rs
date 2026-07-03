@@ -137,9 +137,12 @@ pub async fn exec_all_question(
 }
 
 fn log_question(content: String) -> std::io::Result<()> {
-    fs::create_dir_all("./logs")?;
+    // Diretório de logs configurável; default `./logs` (relativo ao CWD). O start_server.sh aponta
+    // para a raiz do repo (`$ROOT/logs`) para não depender de onde o binário é lançado.
+    let log_dir = std::env::var("AULI_LOG_DIR").unwrap_or_else(|_| "./logs".to_string());
+    fs::create_dir_all(&log_dir)?;
     let timestamp = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S");
-    let path = format!("./logs/{}.txt", timestamp);
+    let path = format!("{}/{}.txt", log_dir, timestamp);
     let mut file = OpenOptions::new().create(true).append(true).open(&path)?;
     debug!("Log da consulta gravado em {}", path);
     writeln!(file, "{}", content)
