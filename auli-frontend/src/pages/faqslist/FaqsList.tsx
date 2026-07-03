@@ -14,7 +14,7 @@ export function FaqsList() {
   const entity = useSelectedEntity()
   const available = hasCollection(entity, 'faqs')
   const { data, error, isLoading } = useSWR(
-    available ? entityPath(entity.id, 'faqs.json') : null,
+    available ? entityPath(entity.id, 'faqs-tree.json') : null,
     jsonFetcher<RawFaqNode>,
     SWR_OPTS,
   )

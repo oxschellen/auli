@@ -3,7 +3,8 @@
 // Walks a FAQ portal starting from a root menu page and produces an in-memory `FaqNode` tree. `run`
 // flattens the tree into the collection snapshot (`colecoes.faqs`, a `Vec<FaqRaw>`); the derivation of
 // the engine artifacts (`<id>-faqs.json`, `portal-faqs.txt`) is the `auli-collections process` step.
-// The tree is never serialized to disk.
+// `run` also serializes the tree itself to `faqs-tree.json` — the aba de FAQs do frontend consome a
+// árvore (page_type/children), que o snapshot achatado não preserva.
 //
 // How the portal works:
 //   - Each page declares a `data-matriz-source-uri` attribute. Its template id tells us whether the
@@ -51,11 +52,18 @@ struct MenuItem {
     url: String,
 }
 
-/// Scrape the FAQ tree and write the collection *snapshot* (`colecoes.faqs`). The engine artifacts
-/// (`<id>-faqs.json`, `portal-faqs.txt`) are no longer written here — [`process`] derives them from
-/// the snapshot, offline.
+/// Scrape the FAQ tree, persist it as `faqs-tree.json` (for the frontend's FAQ tab) and write the
+/// collection *snapshot* (`colecoes.faqs`). The engine artifacts (`<id>-faqs.json`, `portal-faqs.txt`)
+/// are derived from the snapshot by [`process`], offline.
 pub fn run(source: &FaqSource) -> Result<()> {
     let tree = scrape(source)?;
+
+    // A árvore (page_type/children) que a aba de FAQs do frontend consome — o snapshot achatado a
+    // perde, então persistimos o nó-raiz aqui, ao lado do snapshot.
+    let tree_path = format!("{}/faqs-tree.json", source.data_dir);
+    std::fs::write(&tree_path, serde_json::to_string_pretty(&tree)?)?;
+    println!("Wrote {} (árvore de FAQ p/ o frontend)", tree_path);
+
     auli_scraper_kit::snapshot::write_faqs(
         &source.id,
         &source.data_dir,

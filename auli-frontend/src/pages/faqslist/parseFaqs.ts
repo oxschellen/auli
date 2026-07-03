@@ -1,10 +1,10 @@
-/** A single Q&A pair as stored in faqs.json. */
+/** A single Q&A pair as stored in faqs-tree.json. */
 interface RawFaqItem {
   pergunta: string;
   resposta: string;
 }
 
-/** Raw node shape as it appears in faqs.json (and its recursive children). */
+/** Raw node shape as it appears in faqs-tree.json (and its recursive children). */
 export interface RawFaqNode {
   title?: string;
   url?: string | null;

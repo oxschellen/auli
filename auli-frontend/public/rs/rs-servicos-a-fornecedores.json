@@ -6,7 +6,7 @@
     "orgao": "TESOURO",
     "link": "https://www.fazenda.rs.gov.br/servicos-a-fornecedores/servicos?servico=1489",
     "titulo": "Abertura de Canal de Consignação",
-    "descricao": "Fornecedores \nServiços \nAbertura de Canal de Consignação \nSolicitações de entidades que desejam efetuar descontos consignados na folha de pagamento de Servidor Estadual. \n"
+    "descricao": "Solicitações de entidades que desejam efetuar descontos consignados na folha de pagamento de Servidor Estadual."
   },
   {
     "id": 2,
@@ -15,7 +15,7 @@
     "orgao": "TESOURO",
     "link": "https://www.fazenda.rs.gov.br/servicos-a-fornecedores/servicos?servico=1658",
     "titulo": "Consulta Créditos a Pagar para Fornecedores do Estado",
-    "descricao": "Fornecedores \nServiços \nConsulta Créditos a Pagar para Fornecedores do Estado \nConsulta de créditos de pessoas físicas ou jurídicas, informando a data do efetivo pagamento ou a previsão, bem como valores. \n"
+    "descricao": "Consulta de créditos de pessoas físicas ou jurídicas, informando a data do efetivo pagamento ou a previsão, bem como valores."
   },
   {
     "id": 3,
@@ -24,7 +24,7 @@
     "orgao": "TESOURO",
     "link": "https://www.fazenda.rs.gov.br/servicos-a-fornecedores/servicos?servico=1502",
     "titulo": "Informações Sobre Consignações para Consignatárias",
-    "descricao": "Fornecedores \nServiços \nInformações Sobre Consignações para Consignatárias \nEsclarecimentos para as consignatárias sobre descontos em folha. \n"
+    "descricao": "Esclarecimentos para as consignatárias sobre descontos em folha."
   },
   {
     "id": 4,
@@ -33,6 +33,6 @@
     "orgao": "TESOURO",
     "link": "https://www.fazenda.rs.gov.br/servicos-a-fornecedores/servicos?servico=2175",
     "titulo": "Solicitação de Declarações de Contrapartida para Convênios com Órgãos Públicos",
-    "descricao": "Fornecedores \nServiços \nSolicitação de Declarações de Contrapartida para Convênios com Órgãos Públicos \nSolicitação de declarações de contrapartidas para quem tem convênio com o Estado do RS. Declaração exigida pelo órgão conveniente ao qual o conveniado informa que o valor da contrapartida acordada está previsto no orçamento do exercício no qual será executado. \n"
+    "descricao": "Solicitação de declarações de contrapartidas para quem tem convênio com o Estado do RS. Declaração exigida pelo órgão conveniente ao qual o conveniado informa que o valor da contrapartida acordada está previsto no orçamento do exercício no qual será executado."
   }
 ]
