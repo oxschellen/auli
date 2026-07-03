@@ -237,12 +237,12 @@ N cópias coexistem sem coordenação.
 - **Build/test:** `cargo build --workspace` e `cargo test --workspace` passam **sem warnings**
   (inclui `clippy -D warnings`); 1 teste e2e fica _gated_ (`packs_smoke`, exige packs + modelo).
 - **Pacotes reais gerados** via `auli update` (kind `servicos`, `strategy_version: 2`): **rs** serviços
-  586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141. O manifest confere — `bytes` e `hash` FNV-1a
+  586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148. O manifest confere — `bytes` e `hash` FNV-1a
   batem com os arquivos (o `packs::load_all` re-hasheia e alerta em divergência); todos os vetores em
   dim 1024; chave `document` preservada.
-- **Boot e2e (modelo real):** o server carrega as 4 entidades, valida cada manifest contra a
+- **Boot e2e (modelo real):** o server carrega as 5 entidades, valida cada manifest contra a
   identidade local e responde `POST /v1/question` por estado citando os links do próprio catálogo
-  (verificado ao vivo: rs/sc/sp/pr).
+  (verificado ao vivo: rs/sc/sp/pr/mg).
 
 ### 3.10 Decisões de desenho
 
@@ -363,7 +363,7 @@ entidades; ambos chamam `selectEntity`.
 ### 4.7 Distinção ativo vs modelado (frontend)
 
 - O frontend é **single-tenant em tempo de execução por deploy**: serve os arquivos de uma
-  pasta `public/` específica; a seleção `rs`/`sc`/`sp`/`pr` muda apenas qual `public/<id>/` é
+  pasta `public/` específica; a seleção `rs`/`sc`/`sp`/`pr`/`mg` muda apenas qual `public/<id>/` é
   consultado. Não há, no código, busca de uma lista de entidades vinda do backend — a lista vem de
   [shared/entities.ts](auli-frontend/src/shared/entities.ts), **gerado** de `data/registry.toml`
   (não editado à mão).
@@ -462,8 +462,8 @@ nos packs até serem modelados.
    cópias divergentes de `domain`/`errors`/`entities`.
 2. **Dados de serviços consistentes.** Packs e frontend vêm da **mesma** raspagem (contrato
    `auli-contract`); o engine não declara mais `delimiter`/`EmbedStrategy` próprios para serviços.
-3. **`rs`, `sc`, `sp` e `pr` são entidades reais** do server (serviços 586/208/537/141; FAQs 1937 no
-   RS), não só do frontend.
+3. **`rs`, `sc`, `sp`, `pr` e `mg` são entidades reais** do server (serviços 586/208/537/141/148;
+   FAQs 1937 no RS), não só do frontend.
 4. **`pareceres`/`notas`/`conteudos`** (autorados, sem scraper) ficam versionados em `data/<id>/ref/`,
    exibidos no frontend e (pareceres/notas) ingeríveis nos packs quando modelados como `Table<P>`;
    ainda **não** são consultados no RAG ativo.
@@ -483,14 +483,15 @@ mantém um espelho **gerado** (não mais divergente) do registro. Pendências em
   na raiz do repo) e `GET /v1/{kind}/list` (leitura). Escuta configurável (`--bind`, default `0.0.0.0`).
   Público, **sem auth nem banco**; CORS; configuração por `.env` (`config()`); logging via `tracing`.
   Vetorização separada pelo `auli update`.
-- **Quatro estados ativos** (rs, sc, sp, pr). RAG consulta efetivamente apenas `servicos` (10) +
+- **Cinco estados ativos** (rs, sc, sp, pr, mg). RAG consulta efetivamente apenas `servicos` (10) +
   `faqs` (20); estreitamento por proximidade presente mas em modo paridade (`band=∞`) até calibração.
-- `auli-frontend`: SPA com seleção de entidade (rs/sc/sp/pr), chat contra `POST /v1/question` com
+- `auli-frontend`: SPA com seleção de entidade (rs/sc/sp/pr/mg), chat contra `POST /v1/question` com
   timeout de 25s, abas de referência lendo `public/<id>/` (arquivos prefixados `<id>-`), tema
   claro/escuro, testes Vitest.
-- **Scrapers por entidade** (`auli-scraper-{rs,sc,sp,pr}` sobre `auli-scraper-kit`): FAQs (rs) e
-  serviços (rs Chrome, sc JSON, sp SharePoint, pr Drupal), cache + `--usecache`, gravando o snapshot
-  v2; `auli-collections <e>` deriva o contrato + `portal-*.txt` + `servicos-index.json` + per-público.
+- **Scrapers por entidade** (`auli-scraper-{rs,sc,sp,pr,mg}` sobre `auli-scraper-kit`): FAQs (rs) e
+  serviços (rs Chrome, sc JSON, sp SharePoint, pr Drupal, mg ServiceNow JSON), cache + `--usecache`,
+  gravando o snapshot v2; `auli-collections <e>` deriva o contrato + `portal-*.txt` +
+  `servicos-index.json` + per-público.
 
 **Modelado/declarado mas inativo ou incompleto:**
 

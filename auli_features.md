@@ -147,11 +147,11 @@ referência na interface.
 
 ## 6. Estado atual e direção
 
-- **Funcionando hoje:** chat com RAG para os **quatro estados** configurados (RS, SC, SP, PR),
+- **Funcionando hoje:** chat com RAG para os **cinco estados** configurados (RS, SC, SP, PR, MG),
   interface completa (chat + abas de referência + seleção de estado com mapa), coleta de Serviços
-  (RS, SC, SP, PR) e FAQs (RS) e embeddings locais. (O servidor é público, sem auth nem banco —
+  (RS, SC, SP, PR, MG) e FAQs (RS) e embeddings locais. (O servidor é público, sem auth nem banco —
   expõe só `/v1/health`, `/v1/question` e `/v1/{kind}/list`.)
-- **Em evolução:** FAQs para SC/SP/PR, coleta automatizada de Pareceres/Notas, e uso desses tipos
+- **Em evolução:** FAQs para SC/SP/PR/MG, coleta automatizada de Pareceres/Notas, e uso desses tipos
   também nas respostas do assistente.
 
 Para o que é apenas modelado/planejado versus efetivamente ativo no código (rotas, fluxos de

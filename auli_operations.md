@@ -56,8 +56,8 @@ cargo build --release --workspace      # ou só o engine: cargo build --release 
 
 - Binários em `auli-server/target/release/`: **`auli`** (server/update) e um scraper por entidade —
   **`auli-scraper-rs`** (headless Chrome; FAQs + serviços), **`auli-scraper-sc`** (API JSON Next.js),
-  **`auli-scraper-sp`** (REST SharePoint, JSON) e **`auli-scraper-pr`** (HTML Drupal server-side). Só
-  o `-rs` puxa headless Chrome.
+  **`auli-scraper-sp`** (REST SharePoint, JSON), **`auli-scraper-pr`** (HTML Drupal server-side) e
+  **`auli-scraper-mg`** (API JSON ServiceNow Service Portal). Só o `-rs` puxa headless Chrome.
 - 1º build recompila fastembed/ort/aws-lc (alguns minutos); depois é incremental (segundos). Os
   scrapers **não** dependem de fastembed/ort — compilam leves.
 - Numa máquina com cmake de sistema, **nenhuma** das `export` é necessária.
@@ -78,8 +78,8 @@ Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo
 
 1. **Raspar** (rede; headless Chrome só no RS) → grava o snapshot `data/<id>/<id>-snapshot.json` (v2):
    `auli-scraper-rs [faqs|servicos|all]` (RS), `auli-scraper-sc servicos` (SC),
-   `auli-scraper-sp servicos` (SP) e `auli-scraper-pr servicos` (PR). `--usecache` reusa o cache de
-   páginas (offline, sem rede).
+   `auli-scraper-sp servicos` (SP), `auli-scraper-pr servicos` (PR) e `auli-scraper-mg servicos`
+   (MG). `--usecache` reusa o cache de páginas (offline, sem rede).
 2. **Derivar** (offline) → o contrato `<id>-faqs.json`/`<id>-servicos.json` + prints + index +
    per-público (e a árvore `faqs-tree.json` p/ a UI, no RS) em `data/<id>/raw/`:
    `./target/release/auli-collections <id>`.
@@ -91,11 +91,12 @@ cd auli-server
 # SC: (cd auli-server && ./target/release/auli-scraper-sc servicos && ./target/release/auli-collections sc) && scripts/build-packs.sh sc
 # SP: (cd auli-server && ./target/release/auli-scraper-sp servicos && ./target/release/auli-collections sp) && scripts/build-packs.sh sp
 # PR: (cd auli-server && ./target/release/auli-scraper-pr servicos && ./target/release/auli-collections pr) && scripts/build-packs.sh pr
+# MG: (cd auli-server && ./target/release/auli-scraper-mg servicos && ./target/release/auli-collections mg) && scripts/build-packs.sh mg
 ```
 
 Produz, por entidade, `data/<id>/packs/<id>-servicos.json` + `<id>.manifest.json` (`strategy_version: 2`,
 kind `servicos`) — e `<id>-faqs.json` onde houver FAQs (hoje só RS). Contagens atuais: **rs** serviços
-586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141. `pareceres`/`notas` são autorados (sem scraper) e
+586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148. `pareceres`/`notas` são autorados (sem scraper) e
 ainda **não** têm fonte struct no contrato — ficam **ausentes** até serem modelados; o server tolera
 packs ausentes (sobe com a coleção vazia). **Só precisa rodar de novo quando o conteúdo ou a estratégia
 de embedding mudar.**
@@ -161,10 +162,10 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 ./start_server.sh --no-tunnel                     # só o servidor local, sem túnel
 ```
 
-**Boot saudável** se parecer com (4 entidades ativas):
+**Boot saudável** se parecer com (5 entidades ativas):
 
 ```text
-🏛️  Entidades carregadas: [pr, rs, sc, sp]
+🏛️  Entidades carregadas: [mg, pr, rs, sc, sp]
 🔎 Manifesto de 'rs' validado contra a identidade local.
 📦 rs-servicos — 586 registros
 📦 rs-faqs — 1937 registros
@@ -174,6 +175,8 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 📦 pr-servicos — 141 registros
 🔎 Manifesto de 'sc' validado contra a identidade local.
 📦 sc-servicos — 208 registros
+🔎 Manifesto de 'mg' validado contra a identidade local.
+📦 mg-servicos — 148 registros
 ✅ Server started successfully at 0.0.0.0:3000
 ```
 
