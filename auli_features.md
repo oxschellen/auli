@@ -61,9 +61,9 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
   separadas por estado, de modo que uma pergunta nunca mistura conteúdo de estados diferentes.
 - **Adicionar um novo estado** é uma operação de configuração + dados (cadastrar a entidade e
   ingerir seus conteúdos), sem reescrever a aplicação.
-- Estados atualmente presentes no projeto: **RS (SEFAZ-RS)** — conteúdo completo — e
-  **SC (SEF-SC)** — em implantação, com Serviços já coletados. (O atendimento de chat por
-  estado depende de o estado estar configurado também no backend; ver [auli_code.md](auli_code.md).)
+- Estados ativos hoje (chat/RAG + abas de referência): **RS (SEFAZ-RS)** — Serviços + FAQs —,
+  **SC (SEF-SC)**, **SP (SEFAZ-SP)** e **PR (SEFA-PR)** — Serviços. Os quatro respondem no chat
+  com contexto do seu próprio catálogo e citam os links oficiais.
 
 ### 3.3 Privacidade: embeddings locais
 
@@ -101,16 +101,18 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
 - Tipos de conteúdo descritos de forma **uniforme** (um único caminho de processamento por
   tipo), o que facilita acrescentar novos tipos.
 
-### 3.6 Coleta de conteúdo (scrapers — auli-collections)
+### 3.6 Coleta de conteúdo (scrapers por estado)
 
-- Programa de **scraping reutilizável** que coleta os conteúdos do portal de uma secretaria e
-  gera arquivos padronizados (estruturados em JSON e em texto pronto para indexação).
-- Suporta **plataformas de portal diferentes** por estado (ex.: o portal RS, baseado em CMS, e
-  o portal SC, baseado em API JSON), com a mesma forma de saída.
+- Um **scraper por secretaria** (um binário por estado), sobre um **kit compartilhado** (cache,
+  agente HTTP, agregação), gravando todos a mesma fronteira: o **snapshot** tipado que o passo de
+  derivação transforma nos arquivos padronizados (JSON estruturado + texto pronto para indexação).
+- Suporta **plataformas de portal bem diferentes** com a mesma forma de saída: **RS** (CMS, via
+  headless Chrome), **SC** (API JSON Next.js), **SP** (REST SharePoint, JSON) e **PR** (HTML Drupal
+  server-side).
 - **Cache em disco** das páginas coletadas e **modo offline** (reconstrói as saídas a partir
   do cache, sem acessar a rede), para reprocessar sem sobrecarregar o portal.
 - **Deduplicação** de serviços que aparecem em vários públicos, evitando conteúdo repetido na
-  base de busca.
+  base de busca (quando o link identifica o serviço).
 
 ---
 
@@ -136,7 +138,7 @@ referência na interface.
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **auli-server** (workspace) | Cérebro: o binário `auli` em dois modos — `auli server` recebe a pergunta, busca o contexto e gera a resposta (somente leitura); `auli update` vetoriza os conteúdos em pacotes. Três crates em camadas. |
 | **auli-frontend**           | Experiência do usuário: seleção de estado, chat e navegação pelos conteúdos                                                                                                                              |
-| **auli-collections**        | Abastecimento: coleta e padroniza os conteúdos oficiais que alimentam a busca                                                                                                                            |
+| **scrapers + auli-collections** | Abastecimento: os **scrapers por estado** coletam do portal (gravam o snapshot) e o **auli-collections** deriva o contrato padronizado que alimenta a busca                                            |
 
 > O backend é o workspace **auli-server** (`vector-store` ← `auli-core` ← `auli-cli`); ver
 > [auli_code.md](auli_code.md) §3.
@@ -145,12 +147,12 @@ referência na interface.
 
 ## 6. Estado atual e direção
 
-- **Funcionando hoje:** chat com RAG para o estado configurado, interface completa (chat +
-  abas de referência + seleção de estado com mapa), coleta de Serviços e FAQs (RS) e Serviços
-  (SC) e embeddings locais. (O servidor é público, sem auth nem banco — expõe só `/v1/health`,
-  `/v1/question` e `/v1/{kind}/list`.)
-- **Em evolução:** ampliação do estado SC (FAQs e demais conteúdos), coleta automatizada de
-  Pareceres/Notas, e uso desses tipos também nas respostas do assistente.
+- **Funcionando hoje:** chat com RAG para os **quatro estados** configurados (RS, SC, SP, PR),
+  interface completa (chat + abas de referência + seleção de estado com mapa), coleta de Serviços
+  (RS, SC, SP, PR) e FAQs (RS) e embeddings locais. (O servidor é público, sem auth nem banco —
+  expõe só `/v1/health`, `/v1/question` e `/v1/{kind}/list`.)
+- **Em evolução:** FAQs para SC/SP/PR, coleta automatizada de Pareceres/Notas, e uso desses tipos
+  também nas respostas do assistente.
 
 Para o que é apenas modelado/planejado versus efetivamente ativo no código (rotas, fluxos de
 autenticação, divergências entre os repositórios), consulte [auli_code.md](auli_code.md).
