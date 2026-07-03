@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "tipo": "Receita/PR",
+    "classe": "Fale conosco",
+    "orgao": "Secretaria de Estado da Fazenda - SEFA",
+    "link": "https://www.fazenda.pr.gov.br/servicos/Receita-PR/Fale-conosco/Acessar-o-Fale-Conosco-da-Receita-Estadual-PlNapzoO",
+    "titulo": "Acessar o Fale Conosco da Receita Estadual",
+    "descricao": "Acessar \"https://www.fazenda.pr.gov.br/webservices/sefa/servicos\"\nO que é\nPor meio desse serviço, você pode enviar a sua dúvida, por escrito, para o Serviço de Atendimento do Cidadão (SAC) da Receita Estadual do Paraná.\nÉ possível tirar dúvidas sobre IPVA, ICMS e ITCMD ou sobre os sistemas operacionais da Receita Estadual.\nQuem pode acessar\nCidadão.\nOnde acessar\nNa internet.\nComo acessar\nClique no botão \"Acessar\" e preencha os dados solicitados;\nDescreva a dúvida de forma detalhada, com todas as informações sobre a situação.\nAtenção! Dependendo do assunto, serão solicitadas informações específicas - necessárias para o atendimento da solicitação.\nPrazo\nO preenchimento do formulário é imediato.\nA resposta será enviada em até 24 horas - em dias úteis - pelo e-mail informado.\nEm alguns casos, poderá ser gerada uma ocorrência, que será enviada para um auditor fiscal. Nessas situações o prazo de resposta é de 48 horas - em dias úteis.\nAcessar \"https://www.fazenda.pr.gov.br/webservices/sefa/servicos\"\nForma de atendimento:\nIntegralmente na Internet\nQuanto custa:\nGratuito."
+  },
+  {
+    "id": 2,
+    "tipo": "Receita/PR",
+    "classe": "Acesso ao portal",
+    "orgao": "Secretaria de Estado da Fazenda - SEFA",
+    "link": "https://www.fazenda.pr.gov.br/servicos/Receita-PR/Acesso-ao-portal/Acessar-o-Portal-Receita-PR-ybrz8JN4",
+    "titulo": "Acessar o Portal Receita/PR",
+    "descricao": "Acessar \"https://receita.pr.gov.br/\"\nO que é\nPor meio desse serviço, você tem acesso ao Portal Receita/PR. Pelo site, usuários previamente cadastrados podem acessar os serviços da Receita Estadual do Paraná.\nEntre os serviços oferecidos estão:\nDomicílio tributário eletrônico - DT-e;\nExtrato de pendências tributárias;\nManutenção de dados cadastrais do contribuinte;\nParcelamentos;\nRelatório de pendências da certidão.\nQuem pode acessar\nPessoas cadastradas.\nOnde acessar\nNa internet.\nComo acessar\nClique no botão Acessar e faça o login.\nCaso você ainda não seja cadastrado, siga as instruções disponíveis aqui \"https://www.fazenda.pr.gov.br/Pagina/Torne-se-usuario-do-ReceitaPR\".\nPrazo\nSe você já possui cadastro, o acesso é imediato.\nSe você ainda precisa se cadastrar, o prazo de homologação é de até 5 dias após o envio do formulário por e-protocolo. Caso o cadastro seja feito com o certificado digital, a autorização é concedida na mesma hora.\nO que diz a lei\nA Norma de Procedimento Fiscal 077/2010 \"http://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/3201000077.pdf\" institui o Receita/PR e disciplina os procedimentos relativos aos serviços oferecidos por esse meio. A norma também revoga as NPFs nº 027/2000 e nº 065/2009.\nAcessar \"https://receita.pr.gov.br/\"\nForma de atendimento:\nIntegralmente na Internet\nQuanto custa:\nGratuito"
+  },
+  {
+    "id": 3,
+    "tipo": "Receita/PR",
+    "classe": "Acesso ao portal",
+    "orgao": "Secretaria de Estado da Fazenda - SEFA",
+    "link": "https://www.fazenda.pr.gov.br/servicos/Economia-e-Financas/Receita-PR/Torne-se-usuario-do-Receita-PR-MD3Pqkr6",
+    "titulo": "Torne-se usuário do Receita/PR",
+    "descricao": "Mais informações \"https://www.fazenda.pr.gov.br/Pagina/Torne-se-usuario-do-ReceitaPR\"\nO que é\nEste serviço permite o cadastro ao Portal Receita/PR, site que possibilita o acesso a diversos serviços da Receita Estadual do Paraná.\nQuem pode se tornar\nQualquer pessoa que tenha um CPF regularmente cadastrado na Receita Federal do Brasil, e-mail ativo e telefone celular.\nOnde se tornar\nNa internet.\nComo se tornar\nBasta clicar no botão \"Mais Informações\" e seguir os passos ali descritos.\nPrazo\nO prazo de homologação é de até 5 dias úteis.\nCaso o cadastro seja feito com o certificado digital, a autorização é concedida na mesma hora.\nO que diz a lei\nA Norma de Procedimento Fiscal nº 077/2010 \"http://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/3201000077.pdf\" institui o Receita/PR e disciplina os procedimentos relativos aos serviços oferecidos por esse meio. Revoga as NPFs nº 027/2000 e nº 065/2009.\nMais informações \"https://www.fazenda.pr.gov.br/Pagina/Torne-se-usuario-do-ReceitaPR\"\nForma de atendimento:\nParcialmente na Internet\nQuanto custa:\nGratuito."
+  },
+  {
+    "id": 4,
+    "tipo": "Receita/PR",
+    "classe": "Consultas",
+    "orgao": "Secretaria de Estado da Fazenda - SEFA",
+    "link": "https://www.fazenda.pr.gov.br/servicos/Economia-e-Financas/Receita-PR/Acompanhar-solicitacao-de-adesao-ao-Portal-Receita-PR-jlNDe23g",
+    "titulo": "Acompanhar solicitação de adesão ao Portal Receita/PR",
+    "descricao": "Acompanhar \"http://www.receita.pr.gov.br/receitapr/consultas/processo_homologacao\"\nO que é\nEste serviço permite a consulta do andamento da solicitação de adesão ao Portal Receita/PR.\nQuem pode acompanhar\nQualquer pessoa que tenha feito a solicitação de adesão ao Portal Receita/PR.\nOnde acompanhar\nNa internet.\nComo acompanhar\nClique em “Acompanhar” e insira o seu CPF.\nPrazo\nA consulta é imediata. Será exibida a solicitação até o momento da sua homologação ou não homologação.\nO que diz a lei\nA Norma de Procedimento Fiscal nº 077/2010 \"http://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/3201000077.pdf\"institui o Receita/PR e disciplina os procedimentos relativos aos serviços oferecidos por esse meio. Revoga as NPFs nº 027/2000 e nº 065/2009.\nAcompanhar \"http://www.receita.pr.gov.br/receitapr/consultas/processo_homologacao\"\nForma de atendimento:\nIntegralmente na Internet\nQuanto custa:\nGratuito."
+  },
+  {
+    "id": 5,
+    "tipo": "Receita/PR",
+    "classe": "Consultas",
+    "orgao": "Secretaria de Estado da Fazenda - SEFA",
+    "link": "https://www.fazenda.pr.gov.br/servicos/Economia-e-Financas/Receita-PR/Obter-informacoes-sobre-certificado-digital-para-acessar-o-Portal-Receita-PR-ElodbB3v",
+    "titulo": "Obter informações sobre certificado digital para acessar o Portal Receita/PR",
+    "descricao": "Mais informações \"http://www.fazenda.pr.gov.br/Pagina/Certificado-digital-no-ReceitaPR\"\nO que é\nO certificado digital é um documento eletrônico que garante proteção às transações online e a troca virtual de documentos, mensagens e dados, com validade jurídica. O documento contém um conjunto de informações da certificadora que o expediu que permitem atestar a identidade do titular.\nQuem pode obter\nQualquer pessoa que já seja ou queira se tornar usuário do Portal Receita/PR.\nOnde obter\nNa internet.\nComo obter\nClique no botão “Mais informações” e acesse informações detalhadas sobre o certificado digital.\nPrazo\nO acesso às informações é imediato.\nO que diz a lei\nA Norma de Procedimento Fiscal nº 077/2010 i \"http://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/3201000077.pdf\"nstitui o Receita/PR e disciplina os procedimentos relativos aos serviços oferecidos por esse meio. Revoga as NPFs nº 027/2000 e nº 065/2009.\nMais informações \"http://www.fazenda.pr.gov.br/Pagina/Certificado-digital-no-ReceitaPR\"\nForma de atendimento:\nIntegralmente na Internet\nQuanto custa:\nGratuito."
+  },
+  {
+    "id": 6,
+    "tipo": "Receita/PR",
+    "classe": "Emissões",
+    "orgao": "Secretaria de Estado da Fazenda - SEFA",
+    "link": "https://www.fazenda.pr.gov.br/servicos/Receita-PR/Emissoes/Reimprimir-termo-de-adesao-do-Receita-PR-xv3KVAN1",
+    "titulo": "Reimprimir termo de adesão do Receita/PR",
+    "descricao": "Reimprimir \"http://www.receita.pr.gov.br/receitapr/solicitacao_cadastros/termo_reimpressao\"\nO que é\nEste serviço permite a reimpressão do termo de adesão dos usuários cadastrados para usar o Receita/PR.\nQuem pode reimprimir\nO solicitante do termo de adesão que já confirmou os dados do seu pedido.\nOnde reimprimir\nNa internet.\nComo reimprimir\nClique em “Reimprimir” e informe o seu CPF.\nAtenção: este serviço deve ser utilizado somente após o solicitante ter confirmado os dados do seu pedido.\nPrazo\nA reimpressão é imediata e será exibida até o momento da sua homologação ou não homologação.\nO que diz a lei\nA Norma de Procedimento Fiscal nº 077/2010 \"http://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/3201000077.pdf\" institui o Receita/PR e disciplina os procedimentos relativos aos serviços oferecidos por esse meio. Revoga as NPFs nº 027/2000 e nº 065/2009.\nReimprimir \"http://www.receita.pr.gov.br/receitapr/solicitacao_cadastros/termo_reimpressao\"\nForma de atendimento:\nIntegralmente na Internet\nQuanto custa:\nGratuito."
+  },
+  {
+    "id": 7,
+    "tipo": "Receita/PR",
+    "classe": "Perguntas frequentes",
+    "orgao": "Secretaria de Estado da Fazenda - SEFA",
+    "link": "https://www.fazenda.pr.gov.br/servicos/Receita-PR/Perguntas-frequentes/Consultar-Perguntas-Frequentes-sobre-o-Receita-PR-J0o20n3Q",
+    "titulo": "Consultar Perguntas Frequentes sobre o Receita PR",
+    "descricao": "Consultar \"https://atendimento.fazenda.pr.gov.br/sacsefa/portal/assuntosReferente/26\"\nO que é\nNesse local, você vai encontrar as perguntas mais frequentes sobre o Portal de serviços Receita PR.\nSão perguntas muito úteis que esclarecem diversas dúvidas como por exemplo, como tornar-se usuário ou problemas com senhas ou troca do email cadastrado.\nQuem pode acessar\nCidadão.\nOnde Consultar\nNa Internet\nComo Consultar\nClique em \"Consultar\" e escolha o assunto desejado.\nPrazo\nA consulta é imediata.\nConsultar \"https://atendimento.fazenda.pr.gov.br/sacsefa/portal/assuntosReferente/26\"\nForma de atendimento:\nIntegralmente na Internet\nQuanto custa:\nGratuito"
+  },
+  {
+    "id": 8,
+    "tipo": "Receita/PR",
+    "classe": "Versão demonstração",
+    "orgao": "Secretaria de Estado da Fazenda - SEFA",
+    "link": "https://www.fazenda.pr.gov.br/servicos/Economia-e-Financas/Receita-PR/Acessar-versao-demonstracao-do-Receita-PR-4EoV1xrn",
+    "titulo": "Acessar versão demonstração do Receita/PR",
+    "descricao": "Acessar \"https://receita.pr.gov.br/demonstracao\"\nO que é\nEste serviço permite ao usuário acessar a versão demonstração do Portal Receita/PR, possibilitando que o usuário simule operações relacionadas ao cadastro como se estivesse logado no Portal.\nAs operações executadas nesta versão permitem ao contabilista/sócio fazer testes sem valor, verificando o passo a passo antes de realizar efetivamente uma operação.\nQuem pode acessar\nCidadão.\nOnde acessar\nNa internet.\nComo acessar\nClique em “Acessar” e você será redirecionado ao site versão demonstração do Portal Receita/PR.\nPrazo\nO acesso é imediato.\nO que diz a lei\nA Norma de Procedimento Fiscal nº 077/2010 \"http://www.sefanet.pr.gov.br/dados/SEFADOCUMENTOS/3201000077.pdf\" institui o Receita/PR e disciplina os procedimentos relativos aos serviços oferecidos por esse meio. Revoga as NPFs nº 027/2000 e nº 065/2009.\nAcessar \"https://receita.pr.gov.br/demonstracao\"\nForma de atendimento:\nIntegralmente na Internet\nQuanto custa:\nGratuito."
+  }
+]

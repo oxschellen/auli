@@ -43,7 +43,7 @@ export const ENTITIES: Entity[] = [
     name: "SEFA-PR",
     uf: "PR",
     state: "Paraná",
-    collections: [],
+    collections: ["servicos"],
   },
   {
     id: "sp",
