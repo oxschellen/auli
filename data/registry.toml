@@ -46,3 +46,11 @@ uf = "SP"
 state = "São Paulo"
 prompt = "prompts/sp.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "mg"
+name = "SEF-MG"
+uf = "MG"
+state = "Minas Gerais"
+prompt = "prompts/mg.txt"
+collections = ["servicos"]
