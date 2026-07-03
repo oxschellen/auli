@@ -57,16 +57,16 @@ pub fn load_all(packs_root: impl AsRef<Path>) -> Result<Collections> {
             // Integrity check: re-hash the file and compare to the manifest — catches a half-copied /
             // corrupted pack that still deserializes. Non-fatal (the identity triple above is the hard
             // gate); a mismatch is surfaced loudly so ops re-generates with `auli update`.
-            if let Some(expected_hash) = hashes.get(&file_name) {
-                if let Ok(bytes) = std::fs::read(&path) {
-                    let got = manifest::hash_hex(&bytes);
-                    if &got != expected_hash {
-                        eprintln!(
-                            "⚠️  Integridade: '{}' diverge do manifesto (esperado {}, obtido {}). \
-                             Pacote corrompido ou desatualizado — re-gere com `auli update`.",
-                            file_name, expected_hash, got
-                        );
-                    }
+            if let Some(expected_hash) = hashes.get(&file_name)
+                && let Ok(bytes) = std::fs::read(&path)
+            {
+                let got = manifest::hash_hex(&bytes);
+                if &got != expected_hash {
+                    eprintln!(
+                        "⚠️  Integridade: '{}' diverge do manifesto (esperado {}, obtido {}). \
+                         Pacote corrompido ou desatualizado — re-gere com `auli update`.",
+                        file_name, expected_hash, got
+                    );
                 }
             }
             let store = ReadStore::<String>::load(&path)?;
