@@ -20,11 +20,12 @@ so the document vectors and the live query vector share one cosine space by cons
 ## The two modes
 
 ```bash
-# Build vectors ("packs") from an entity's portal-*.txt sources (the only writer):
-auli update --entity rs --source ./sources/rs --out ./packs [--version 1]
+# Build vectors ("packs") from an entity's typed contract in data/<id>/raw/ (the only writer):
+auli update --entity rs --source ../data/rs/raw --out ../data/rs/packs [--version 2]
 
 # Serve the API read-only from pre-built packs (validates the manifest at boot):
-auli server --port 3000 --packs-dir ./packs
+# packs live under <packs-dir>/<id>/packs/; --packs-dir defaults to $AULI_DATA_DIR.
+auli server --port 3000 --packs-dir ../data
 ```
 
 `update` writes `<entity>-<kind>.json` + `<entity>.manifest.json`. `server` eager-loads those into
