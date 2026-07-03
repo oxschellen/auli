@@ -34,7 +34,7 @@ O ecossistema tem três partes:
 | ------------------------- | ----------------------------------------------------------------- | ---------------------------- |
 | `auli-server` (workspace) | Backend REST + pipeline RAG (binário `auli`: `server` + `update`) | Rust (Axum, Tokio)           |
 | `auli-frontend`           | Interface web (chat + navegação)                                  | React 19 + TypeScript + Vite |
-| `auli-collections`        | Scrapers que produzem o conteúdo ingerido                         | Rust (síncrono, `ureq`)      |
+| scrapers + `auli-collections` | Coleta (um `auli-scraper-<e>` por entidade) + derivação do contrato ingerido | Rust (síncrono, `ureq`)      |
 
 > **Atualização — `auli-contract` (2026-06-23).** O workspace ganhou o crate magro
 > **`auli-contract`** (serde-only): a **forma do dado** (`Table<P>`, `Faq`, `Servico`, trait
@@ -63,21 +63,22 @@ não por chamadas diretas nem cópia manual. `data/` tem `registry.toml` (entida
 O **server** lê os packs de `data/<id>/packs/` e as entidades do registry; o **frontend** tem
 `entities.ts` e `public/<id>/` **gerados** de `data/` por `scripts/`.
 
-```
-[auli-collections]            [auli-server]                       [auli-frontend]
-  scrape do portal              auli update → data/<id>/packs/       entities.ts + public/<id>/
-        │                          (vetoriza o contrato)            (gerados de data/ por scripts/)
-        ▼                              │                                    │
-  data/<id>/raw/<id>-<kind>.json ──────┘                                    │
-                                   auli server (somente leitura)            │
-                                       ▲                                    ▼
-                  pergunta ──> embedding in-process ──> busca vetorial ──> LLM externo ──> resposta ──> UI
+```text
+[auli-scraper-<e>]  →  data/<id>/<id>-snapshot.json  →  [auli-collections <e>]  →  data/<id>/raw/<id>-<kind>.json
+  scrape do portal            (snapshot v2)                deriva (offline)                    │
+                                                                                              │
+[auli-server] auli update  → data/<id>/packs/ (vetoriza o contrato)  ←─────────────────────────┘
+[auli-server] auli server (somente leitura)                          [auli-frontend] entities.ts + public/<id>/
+        │                                                            (gerados de data/ por scripts/)
+        ▼
+pergunta ──> embedding in-process ──> busca vetorial ──> LLM externo ──> resposta ──> UI
 ```
 
 Observações confirmadas no código:
 
-- Os scrapers escrevem o **contrato tipado** (`auli_contract::Table<P>`) em `data/<id>/raw/`;
-  o `auli update` lê isso direto, sem parsing de `portal-*.txt` (ver §5).
+- Os **scrapers** (`auli-scraper-<e>`) escrevem o **snapshot v2**; o **`auli-collections <e>`** deriva
+  o **contrato tipado** (`auli_contract::Table<P>`) em `data/<id>/raw/`, que o `auli update` lê direto
+  (sem parsing de `portal-*.txt`, que viraram só _print_ — ver §5).
 - O `auli-frontend` lê de `public/<id>/`, **gerado** de `data/` por
   [scripts/build-frontend-public.sh](scripts/build-frontend-public.sh) — não há mais cópia à
   mão entre pastas.
@@ -102,8 +103,20 @@ auli-server/                       # workspace único, Cargo.lock compartilhado
     ├── auli-core/         # MEIO  — domínio auli: embed (BGE-M3), corpus, manifest
     ├── auli-cli/          # TOPO  — o binário `auli`: server (RAG) + update (ingestão)
     ├── auli-contract/     # forma do dado (serde-only) compartilhada scraper↔engine
-    └── auli-collections/  # scrapers (ver §5)
+    ├── auli-collections/  # DERIVA os artefatos do snapshot (offline) — ver §5
+    ├── auli-scraper-kit/  # kit compartilhado dos scrapers (cache, agente HTTP, snapshot, aggregate)
+    ├── auli-scraper-rs/   # scraper SEFAZ-RS (FAQs + serviços; headless Chrome)
+    ├── auli-scraper-sc/   # scraper SEF-SC (serviços; API JSON Next.js)
+    ├── auli-scraper-sp/   # scraper SEFAZ-SP (serviços; REST SharePoint)
+    └── auli-scraper-pr/   # scraper SEFA-PR (serviços; HTML Drupal server-side)
 ```
+
+> **Fase 2 (scrapers em crates próprios).** A coleta saiu do `auli-collections` para **um binário por
+> entidade** (`auli-scraper-<e>`) sobre o **`auli-scraper-kit`**; todos gravam a mesma fronteira, o
+> **snapshot v2** (`data/<id>/<id>-snapshot.json`, tipos em `auli_contract::snapshot`). O
+> `auli-collections <e>` virou **só derivação** (offline): lê o snapshot e produz o contrato +
+> prints + index + per-público. As citações a `auli-collections/src/{faqs,servicos}/…` na §5 vivem
+> hoje em `auli-scraper-rs/src/…` (ver §5 reescrita).
 
 `vector-store` ← `auli-core` ← `auli-cli`. O `Cargo.lock` único garante que os modos `update`
 (embeda documentos) e `server` (embeda a pergunta) usem o **mesmo** `fastembed`/modelo — o espaço
@@ -119,7 +132,7 @@ vetorial é compartilhado por construção, não por convenção.
 
 ```
 auli update  --entity <id> --source <dir_com_contrato_json> --out <dir> [--version <v>]
-auli server  [--packs-dir <dir>] [--port <p>]   # --packs-dir default = $AULI_DATA_DIR (./data)
+auli server  [--port <p>] [--bind <addr>] [--packs-dir <dir>]   # --bind default 0.0.0.0; --packs-dir default = $AULI_DATA_DIR (./data)
 ```
 
 - **`auli update`** é o **único escritor**: lê o contrato tipado (`auli_contract::Table<P>` em
@@ -153,7 +166,7 @@ Acionado por `POST /v1/question`. Assinatura: `exec_all_question(collections, em
    como resposta, com HTTP 200 (sem panic).
 2. Gera o embedding da pergunta **uma vez**, in-process (`embed_dense`, executado fora da thread
    async via `run_blocking`/`spawn_blocking`); a pergunta já é uma "chave" curta.
-3. Consulta **duas** coleções de forma **concorrente** (`tokio::try_join!`): `<id>-services`
+3. Consulta **duas** coleções de forma **concorrente** (`tokio::try_join!`): `<id>-servicos`
    (`n_results = 10`) e `<id>-faqs` (`n_results = 20`). Cada `query_scored` roda em thread bloqueante
    e retorna `(texto, distância cosseno)` ordenado do mais próximo ao mais distante.
 4. **Estreitamento por proximidade** (`select_by_proximity`): mantém os `floor` melhores e, além
@@ -163,11 +176,12 @@ Acionado por `POST /v1/question`. Assinatura: `exec_all_question(collections, em
 5. Concatena os documentos como contexto RAG; o system prompt = prompt da entidade (registry) +
    contexto + delimitador `'''`.
 6. Chama o LLM externo.
-7. Retorna `{ question, answer }` e **anexa o diálogo a `./logs/<timestamp>.txt`**.
+7. Retorna `{ question, answer }` e **anexa o diálogo a `$AULI_LOG_DIR/<timestamp>.txt`** (default
+   `./logs` do CWD; o `start_server.sh` aponta para `<raiz>/logs`).
 
-**Distinção crucial (ativo vs modelado):** apenas `services` e `faqs` alimentam as respostas.
-`pareceres` e `notas` possuem listagem, mas **não são consultados** por `exec_all_question` (importa
-apenas `FAQS, SERVICES`).
+**Distinção crucial (ativo vs modelado):** apenas `servicos` e `faqs` alimentam as respostas.
+`pareceres` e `notas` possuem listagem, mas **não são consultados** por `exec_all_question` (as
+`Collection`s consultadas são só `SERVICES` — kind `servicos` — e `FAQS`).
 
 ### 3.5 Clientes e adaptadores (embeddings/busca/LLM in-process)
 
@@ -208,7 +222,8 @@ As entidades vêm de `data/registry.toml` (fonte única), lido por `auli-cli` e 
 frontend gera seu `entities.ts` a partir dele. Cada entidade tem `id`, `name`, prompt e as coleções
 disponíveis. `AULI_DATA_DIR` (default `./data`) é a raiz de `registry.toml`, `prompts/` e
 `<id>/packs/` — e também o default de `--packs-dir`, então registry e packs compartilham uma raiz por
-construção. Entidades hoje: `rs` (SEFAZ-RS) e `sc` (SEF-SC).
+construção. Entidades hoje (todas ativas no server): `rs` (SEFAZ-RS), `sc` (SEF-SC), `sp` (SEFAZ-SP)
+e `pr` (SEFA-PR).
 
 ### 3.8 Distribuição (decorrência do desenho)
 
@@ -219,15 +234,15 @@ N cópias coexistem sem coordenação.
 
 ### 3.9 Verificação (estado de fato, neste repo)
 
-- **Build/test:** `cargo build --workspace` e `cargo test --workspace` passam **sem warnings**;
-  **26 testes** (vector-store 10, auli-core 4, auli-cli 5 + 1 de integração, auli-collections 3,
-  auli-contract 3) + 1 teste e2e gated (`packs_smoke`).
-- **Pacotes reais gerados** via `auli update` para `rs`: services 627, faqs 1734, pareceres 331,
-  notas 1. O manifest confere — `bytes` e `hash` FNV-1a batem com os arquivos (hash conferido também
-  por implementação independente em Python); todos os vetores em dim 1024; chave `document` preservada.
-- **Caminho de atendimento e2e** (teste gated, modelo real): manifest validado → `ReadStore` carrega
-  1734 faqs → pergunta embedada → `query_scored` retorna 20 hits ordenados (melhor distância ≈ **0,28**,
-  um match real), com relevância semântica correta.
+- **Build/test:** `cargo build --workspace` e `cargo test --workspace` passam **sem warnings**
+  (inclui `clippy -D warnings`); 1 teste e2e fica _gated_ (`packs_smoke`, exige packs + modelo).
+- **Pacotes reais gerados** via `auli update` (kind `servicos`, `strategy_version: 2`): **rs** serviços
+  586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141. O manifest confere — `bytes` e `hash` FNV-1a
+  batem com os arquivos (o `packs::load_all` re-hasheia e alerta em divergência); todos os vetores em
+  dim 1024; chave `document` preservada.
+- **Boot e2e (modelo real):** o server carrega as 4 entidades, valida cada manifest contra a
+  identidade local e responde `POST /v1/question` por estado citando os links do próprio catálogo
+  (verificado ao vivo: rs/sc/sp/pr).
 
 ### 3.10 Decisões de desenho
 
@@ -268,10 +283,11 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
   React Router; a navegação interna é por **abas**.
 - **Seleção de entidade.** [shared/EntityContext.tsx](auli-frontend/src/shared/EntityContext.tsx)
   guarda a entidade selecionada, persistida em `localStorage` (chave `auli.entity`).
-- **Registro de entidades (frontend).** [shared/entities.ts](auli-frontend/src/shared/entities.ts)
-  lista **duas** entidades hardcoded:
+- **Registro de entidades (frontend).** [shared/entities.ts](auli-frontend/src/shared/entities.ts) é
+  **gerado** de `data/registry.toml` por [scripts/gen-frontend-entities.mjs](scripts/gen-frontend-entities.mjs)
+  (guardado por `scripts/check-registry-sync.sh`), com **quatro** entidades:
   - `rs` = SEFAZ-RS, coleções `["servicos","faqs","pareceres","notas","conteudos"]`.
-  - `sc` = SEF-SC, coleções `["servicos"]` (somente serviços, por enquanto).
+  - `sc` = SEF-SC, `sp` = SEFAZ-SP, `pr` = SEFA-PR — coleções `["servicos"]`.
     `hasCollection(entity, collection)` dirige os estados "em breve".
 - **Abas** ([pages/home/Home.tsx](auli-frontend/src/pages/home/Home.tsx)): Chat, Serviços,
   FAQs, Pareceres, Notas, Conteúdos, Sobre. Implementam o padrão WAI-ARIA de tabs (roving
@@ -298,13 +314,14 @@ README de que apenas esses arquivos permanecem em JSX.
 ### 4.4 Páginas de referência (conteúdo estático por entidade)
 
 Todas usam SWR + `entityPath(entityId, file)` →
-`/<entityId>/<file>?v=<buildId>` ([shared/fetchers.ts](auli-frontend/src/shared/fetchers.ts)),
-ou seja, leem arquivos servidos de `public/<id>/`:
+`/<entityId>/<entityId>-<file>?v=<buildId>` ([shared/fetchers.ts](auli-frontend/src/shared/fetchers.ts)):
+os arquivos em `public/<id>/` são **prefixados com `<id>-`** (globalmente únicos), e o `entityPath`
+adiciona esse prefixo ao buscar (o consumidor passa o nome "cru"). Nomes crus por aba:
 
-| Aba       | Arquivo lido                                                              | Fonte                                                                                                                                       |
+| Aba       | Arquivo lido (cru; servido como `<id>-…`)                                 | Fonte                                                                                                                                       |
 | --------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | Serviços  | `servicos-index.json` (manifesto de abas) + `<filename>.json` por público | [pages/servicoslist/ServicosList.tsx](auli-frontend/src/pages/servicoslist/ServicosList.tsx)                                                |
-| FAQs      | `faqs.json` (árvore recursiva)                                            | [pages/faqslist/FaqsList.tsx](auli-frontend/src/pages/faqslist/FaqsList.tsx), [parseFaqs.ts](auli-frontend/src/pages/faqslist/parseFaqs.ts) |
+| FAQs      | `faqs-tree.json` (árvore recursiva)                                       | [pages/faqslist/FaqsList.tsx](auli-frontend/src/pages/faqslist/FaqsList.tsx), [parseFaqs.ts](auli-frontend/src/pages/faqslist/parseFaqs.ts) |
 | Pareceres | `portal-pareceres.txt` (texto)                                            | [pages/parecereslist/PareceresList.tsx](auli-frontend/src/pages/parecereslist/PareceresList.tsx)                                            |
 | Notas     | `portal-notas.txt` (texto)                                                | [pages/notaslist/NotasList.tsx](auli-frontend/src/pages/notaslist/NotasList.tsx)                                                            |
 | Conteúdos | `conteudo_site_tree.json`                                                 | [pages/conteudoslist/ConteudosList.tsx](auli-frontend/src/pages/conteudoslist/ConteudosList.tsx)                                            |
@@ -319,13 +336,14 @@ ou seja, leem arquivos servidos de `public/<id>/`:
   [shared/CollectionEmpty.tsx](auli-frontend/src/shared/CollectionEmpty.tsx) ("em breve").
 
 **Dados estáticos presentes** (confirmado na árvore de `public/`, gerada por
-[scripts/build-frontend-public.sh](scripts/build-frontend-public.sh) a partir de `data/<id>/{raw,ref}/`):
-[public/rs/](auli-frontend/public/rs/) tem `faqs.json`, `conteudo_site_tree.json`,
-`servicos*.json`, `servicos-index.json`, `portal-notas.txt`, `portal-pareceres.txt`.
-[public/sc/](auli-frontend/public/sc/) tem **apenas** arquivos de
-serviços (`servicos-*.json`, `servicos-index.json`), coerente com
-`sc.collections = ["servicos"]`. Os `portal-{faqs,servicos}.txt` (grandes, não usados pela UI —
-só alimentam os packs) são excluídos do `public/` pelo gerador.
+[scripts/build-frontend-public.sh](scripts/build-frontend-public.sh) — que aceita um `<id>` opcional
+para regenerar **só uma** entidade — a partir de `data/<id>/{raw,ref}/`, prefixando cada arquivo com
+`<id>-`): [public/rs/](auli-frontend/public/rs/) tem `rs-faqs-tree.json`, `rs-conteudo_site_tree.json`,
+`rs-servicos-*.json`, `rs-servicos-index.json`, `rs-portal-notas.txt`, `rs-portal-pareceres.txt`.
+`public/{sc,sp,pr}/` têm **apenas** arquivos de serviços (`<id>-servicos-*.json`, `<id>-servicos-index.json`),
+coerente com `collections = ["servicos"]`. O gerador **exclui** do `public/`: os `portal-{faqs,servicos}.txt`
+(grandes) e os **contratos do engine** `<id>-{faqs,servicos}.json` — nenhum é buscado pela UI (só
+alimentam os packs, lidos de `data/<id>/raw/`).
 
 ### 4.5 Seleção de estado e mapa
 
@@ -345,139 +363,90 @@ entidades; ambos chamam `selectEntity`.
 ### 4.7 Distinção ativo vs modelado (frontend)
 
 - O frontend é **single-tenant em tempo de execução por deploy**: serve os arquivos de uma
-  pasta `public/` específica; a seleção `rs`/`sc` muda apenas qual `public/<id>/` é
-  consultado. Não há, no código, busca de uma lista de entidades vinda do backend — a lista
-  é hardcoded em [shared/entities.ts](auli-frontend/src/shared/entities.ts).
+  pasta `public/` específica; a seleção `rs`/`sc`/`sp`/`pr` muda apenas qual `public/<id>/` é
+  consultado. Não há, no código, busca de uma lista de entidades vinda do backend — a lista vem de
+  [shared/entities.ts](auli-frontend/src/shared/entities.ts), **gerado** de `data/registry.toml`
+  (não editado à mão).
 - O frontend **não** consome rotas de gestão de dados do servidor; o único endpoint de backend
   efetivamente chamado é `POST /v1/question` (via `VITE_API_URL`). Não há, no código do
   frontend, uso de login/JWT. **NÃO CONFIRMADO NO CÓDIGO:** qualquer fluxo de autenticação no cliente.
 
 ---
 
-## 5. auli-collections (scrapers Rust)
+## 5. Coleta: scrapers por entidade + `auli-collections` (derivação)
 
-Repositório foco da fase atual (consolida os antigos scrapers de FAQs e Serviços em um único
-programa reutilizável). Fonte de orientação: [auli-collections/description.md](auli-collections/description.md)
-(usei-o como guia, mas as afirmações abaixo foram verificadas no código).
+A coleta é **um binário por entidade** (`auli-scraper-<e>`) sobre o **`auli-scraper-kit`**; o
+`auli-collections` virou **só derivação** (offline). A fronteira entre os dois é o **snapshot v2**.
 
-### 5.1 Manifesto e dependências
+```text
+auli-scraper-<e> (rede)  →  data/<id>/<id>-snapshot.json (v2)  →  auli-collections <e> (offline)  →  data/<id>/raw/
+```
 
-Fonte: [auli-collections/Cargo.toml](auli-collections/Cargo.toml). **Edição 2024**.
-Totalmente **síncrono** — confirmado: não há `tokio`/`async fn`/`.await` no código compilado
-(`grep` não encontra nenhum fora de `legacy/`). Dependências: `ureq` (HTTP síncrono),
-`scraper`, `regex`, `url`, `serde`/`serde_json`, `headless_chrome`, `thiserror`, `anyhow`.
+### 5.1 O kit compartilhado (`auli-scraper-kit`)
 
-### 5.2 CLI e dispatch
+[crates/auli-scraper-kit](auli-server/crates/auli-scraper-kit): peças comuns aos scrapers —
+`snapshot::{load, write_faqs, write_servicos}` (grava/lê o snapshot v2), `cache::{read, write}`
+(cache de página por URL; arquivo vazio conta como _miss_), `build_agent(user_agent, timeout)`
+(agente `ureq`), e `aggregate_servicos` + `descricao_body` (dobra registros per-público em `ServicoRaw`
+**deduplicando por `link`**). Sem `fastembed`/`ort` — os scrapers compilam leves.
 
-[auli-server/crates/auli-collections/src/main.rs](auli-server/crates/auli-collections/src/main.rs):
-`cd auli-server && cargo run -p auli-collections -- [--usecache] <entity> <collection>`.
+### 5.2 O snapshot v2 (`auli_contract::snapshot`)
 
-- `<entity>` (omitido/vazio → `rs`) é resolvido e validado por
-  `domain::entities::get_entity`.
-- `<collection>` (omitido → `faqs`).
-- `--usecache` ativa modo offline (só cache; cache miss vira erro).
-- Dispatch: `faqs` → `run_faqs`; `servicos` → `servicos::run(&entity.id, &entity.data_dir, use_cache)`;
-  qualquer outro → erro.
+Cada scraper grava `data/<id>/<id>-snapshot.json` (`SNAPSHOT_SCHEMA_VERSION = 2`): metadados do
+scraper + as coleções. Serviços são `ServicoRaw { titulo, descricao, link, orgao, ocorrencias:
+Vec<Ocorrencia> }` com `Ocorrencia { publico, classe }` — um serviço em N públicos/classes é **N
+ocorrências nativas** (resolveu o limite multi-classe do modelo antigo). FAQs são `Vec<FaqRaw>`
+(pergunta/resposta/origin/url), lista **achatada**.
 
-### 5.3 Saída: o contrato `auli-contract`
+### 5.3 Os scrapers (um por entidade)
 
-A cópia divergente `domain/collections.rs` (que duplicava o `Collection`/`EmbedStrategy` do engine)
-foi **apagada**. O scraper agora compila o conteúdo no **contrato tipado** (`auli-contract`): para
-cada kind monta uma `Table<P>` (`Table<Faq>` / `Table<Servico>`), preenchendo o `text_to_embed` de
-cada registro, e grava em `data/<id>/raw/<id>-<kind>.json`. O engine (`auli update`) lê isso direto
-— não há mais `EmbedStrategy`/parsing de `portal-*.txt` deste lado nem do outro.
+| Crate | Entidade | Plataforma / técnica | CLI |
+| ----- | -------- | -------------------- | --- |
+| [auli-scraper-rs](auli-server/crates/auli-scraper-rs) | SEFAZ-RS | FAQs (portal CMS via **headless Chrome** + `ureq`) + serviços (5 públicos via Chrome, detalhe via `ureq`) | `[--usecache] faqs\|servicos\|all` |
+| [auli-scraper-sc](auli-server/crates/auli-scraper-sc) | SEF-SC | serviços via **API JSON Next.js** (sem browser) | `[--usecache] servicos` |
+| [auli-scraper-sp](auli-server/crates/auli-scraper-sp) | SEFAZ-SP | serviços via **REST SharePoint** (JSON anônimo: listas `Serviços` + `Homes 360`) | `[--usecache] servicos` |
+| [auli-scraper-pr](auli-server/crates/auli-scraper-pr) | SEFA-PR | serviços via **HTML Drupal** server-side (mega-menu "Serviços para você!") | `[--usecache] servicos` |
 
-- **`text_to_embed`** (D2): faqs → breadcrumb `origin` + a pergunta (reproduz a key do antigo
-  `QuestionKey`); servicos → `tipo | classe` + título + início do corpo da descrição.
-- **`stored_repr`** reproduz o bloco `## pergunta`/`## resposta` (mesma forma do `portal-*.txt`), então
-  o contexto servido ao RAG continua coerente.
-- Os antigos `faqs.json` (árvore) e `servicos.json` (flat agregado) foram **descartados**; o
-  `portal-<kind>.txt` continua sendo escrito como _print_ legível (auditoria), nunca lido de volta.
-- `pareceres`/`notas` são autorados (sem scraper) e ainda não têm fonte struct — ficam ausentes nos
-  packs até serem modelados como `Table<P>`.
+- **RS** é o único com FAQs e o único que puxa **headless Chrome**. A **árvore** de FAQ
+  (`FaqNode { title, url, page_type, origin, children, faq_items }`) é serializada em
+  `faqs-tree.json` para a aba de FAQs do frontend ([faqs/mod.rs](auli-server/crates/auli-scraper-rs/src/faqs/mod.rs));
+  o snapshot leva a lista achatada.
+- **SC/RS/PR** dobram os registros per-público via `aggregate_servicos` (**dedup por `link`**). **SP
+  é a exceção**: no portal paulista a URL **não** é única (vários serviços distintos compartilham um
+  login), então o scraper monta os `ServicoRaw` **direto** (um por linha do catálogo), sem o
+  aggregate, para não colapsar serviços distintos ([sp/scrape.rs](auli-server/crates/auli-scraper-sp/src/scrape.rs)).
+- **Cache + `--usecache`:** cada scraper cacheia páginas por URL (`data/<id>/raw/cache/…`, ignorado
+  pelo git); `--usecache` reprocessa offline e torna um _miss_ um erro.
 
-### 5.4 Registro de entidades
+### 5.4 A derivação (`auli-collections <e>`)
 
-[auli-collections/src/domain/entities.rs](auli-collections/src/domain/entities.rs): config e
-dados **separados** — config em `./src/entities/<id>/` (`ENTITIES_DIR`), saídas em
-`./data/<id>/` (`DATA_DIR`). Entidades presentes: `rs` (SEFAZ-RS) e `sc` (SEF-SC), cada uma
-com `entity.json` + `prompt.txt` em [src/entities/](auli-collections/src/entities/).
+[crates/auli-collections](auli-server/crates/auli-collections) (`main`, `process`, `derive_faqs`,
+`servicos/{mod,types}`, `domain/entities`): **não raspa** — lê o snapshot e produz, offline, em
+`data/<id>/raw/`:
 
-### 5.5 Scraper de FAQs (ativo, `src/faqs/`)
+- o **contrato** `<id>-faqs.json` / `<id>-servicos.json` (`auli_contract::Table<P>`, com
+  `text_to_embed` materializado) — o que o `auli update` embeda;
+- os **prints** `portal-<kind>.txt` (auditoria, nunca relidos);
+- o **`servicos-index.json`** (manifesto de abas) + os JSONs **per-público** (`<slug>.json`).
 
-[auli-collections/src/faqs/mod.rs](auli-collections/src/faqs/mod.rs) e submódulos
-(`faq.rs`, `fetch.rs`, `html.rs`, `portal.rs`):
+`text_to_embed`: faqs → breadcrumb `origin` + pergunta (a mesma key do antigo `QuestionKey`);
+serviços → `tipo | classe` + título + início do corpo (fórmula ainda **provisória**, ver
+[auli_pendencias.md](auli_pendencias.md)). A tentativa de raspar por aqui é rejeitada com erro
+explícito ("a coleta agora é feita pelos binários `auli-scraper-*`").
 
-- Caminha o portal de FAQs da SEFAZ-RS a partir de uma raiz, classificando páginas por
-  `data-matriz-source-uri` (`sanfona.comnavegacao` → `Faq`; `categoriafaq` → `Menu`; demais
-  → `Geral`).
-- Modelo de saída `FaqNode { title, url, page_type, origin, children, faq_items }`
-  ([faqs/faq.rs](auli-collections/src/faqs/faq.rs)).
-- `fetch.rs` usa agente `ureq` síncrono + cache em disco; o conteúdo vem de um endpoint AJAX
-  (campo `body` com markup). Retentativas com backoff exponencial.
-- `html.rs` é um conjunto de helpers HTML→texto feitos à mão (sem crate de DOM).
-- `portal.rs` achata a árvore em `portal-faqs.txt`, um bloco `## pergunta`/`## resposta`
-  numerado (`// N.`) por pergunta ([faqs/portal.rs](auli-collections/src/faqs/portal.rs)).
-- Saídas: `<data_dir>/faqs.json` e `<data_dir>/portal-faqs.txt`
-  (`output_path`/`portal_path` em [faqs/mod.rs](auli-collections/src/faqs/mod.rs)).
-- Usa o `crate::errors` unificado.
+`pareceres`/`notas` seguem **autorados** em `data/<id>/ref/` (sem scraper, sem `Table<P>`) — ausentes
+nos packs até serem modelados.
 
-[auli-collections/src/faqs/legacy/](auli-collections/src/faqs/legacy/) contém os arquivos
-originais copiados — **não declarados como módulos, portanto não compilados** (confirmado:
-`faqs/mod.rs` declara só `faq`, `fetch`, `html`, `portal`). É onde aparece a única referência
-a `reqwest` no repositório (em código não compilado).
+### 5.5 Cobertura por entidade
 
-### 5.6 Scraper de Serviços (`src/servicos/`)
+| entidade | serviços | FAQs |
+| -------- | -------- | ---- |
+| `rs` | ✅ (Chrome) | ✅ (Chrome) |
+| `sc` | ✅ (JSON Next.js) | — |
+| `sp` | ✅ (REST SharePoint) | — |
+| `pr` | ✅ (HTML Drupal) | — |
 
-[auli-collections/src/servicos/mod.rs](auli-collections/src/servicos/mod.rs):
-`run(entity_id, data_dir, use_cache)` despacha por entidade:
-
-- **`rs`** ([servicos/extrair_descricoes.rs](auli-collections/src/servicos/extrair_descricoes.rs)):
-  renderiza as 5 páginas de público com **headless Chrome** (`Browser`/`LaunchOptions`),
-  esperando o elemento `.card`; depois busca cada página de detalhe via **`ureq`** e extrai a
-  descrição. Falhas de detalhe são coletadas e reportadas no fim (não fatais).
-- **`sc`** ([servicos/sc.rs](auli-collections/src/servicos/sc.rs)): consome a **API JSON do
-  Next.js** da SEF-SC (sem browser, sem parse de HTML); normaliza links `[[url anchor]]` para
-  o formato RS.
-- `finish()` (compartilhado) gera `portal-servicos.txt`
-  ([servicos/gerar_portal_servicos.rs](auli-collections/src/servicos/gerar_portal_servicos.rs)),
-  agrega `servicos.json` e escreve `servicos-index.json` (manifesto de abas consumido pelo
-  frontend).
-- **Dedup por `link`** (não por `id`): um serviço pode aparecer em vários públicos; o
-  `link` é a chave única.
-- O formato de `portal-servicos.txt` gerado é `// N.` + `## pergunta` (breadcrumb
-  `tipo | classe` + título) + `## resposta` (corpo + `Link:`), idêntico ao de faqs
-  ([gerar_portal_servicos.rs](auli-collections/src/servicos/gerar_portal_servicos.rs)).
-
-**Distinção ativo vs em refatoração:** o módulo `servicos` ainda usa
-`Box<dyn std::error::Error>` (não o `crate::errors`) e tem URLs de tipo hardcoded em
-[servicos/utils.rs](auli-collections/src/servicos/utils.rs); está "wired" e funcional, mas
-não totalmente refatorado para o formato limpo do `faqs`.
-
-**Correção a uma afirmação da própria base:** o comentário em
-[servicos/mod.rs](auli-collections/src/servicos/mod.rs) diz que o `rs` usa "reqwest fetches
-each service's detail page". Isso está **incorreto**: o fetch de detalhe usa **`ureq`**
-([servicos/extrair_descricoes.rs](auli-collections/src/servicos/extrair_descricoes.rs), linha 7
-`use ureq::Agent;`). `reqwest` só existe em `faqs/legacy/` (não compilado).
-
-### 5.7 Cache e modo offline
-
-Cache em disco para ambos os scrapers (`cache/faqs/` em [faqs/fetch.rs](auli-collections/src/faqs/fetch.rs);
-`cache/servicos/` em [servicos/cache.rs](auli-collections/src/servicos/cache.rs)). O
-`.gitignore` ignora `/data/*/cache`. `--usecache` propaga o flag até a camada de fetch e
-torna um cache miss um erro.
-
-### 5.8 Cobertura por kind (collections)
-
-| kind        | scraper existe?                                                             |
-| ----------- | --------------------------------------------------------------------------- |
-| `faqs`      | sim (`rs`); `sc` **não** implementado — arm placeholder em `faq_source_for` |
-| `servicos`  | sim para `rs` (Chrome) e `sc` (JSON)                                        |
-| `pareceres` | **não** há scraper — só existe o `portal-pareceres.txt` como dado           |
-| `notas`     | **não** há scraper — só existe o `portal-notas.txt` como dado               |
-
-Confirmado: `main.rs::faq_source_for` tem um arm `sc` com URLs corretas mas comentário
-explícito de que o parser de HTML do RS **não** funcionará para SC sem reescrita.
+`pareceres`/`notas`/`conteudos` não têm scraper (autorados). FAQs hoje só no RS.
 
 ---
 
@@ -487,12 +456,14 @@ explícito de que o parser de HTML do RS **não** funcionará para SC sem reescr
 > os domínios duplicados foram **eliminadas** pela fonte única `data/`.
 
 1. **Triplicação do `domain` resolvida.** `data/registry.toml` é a fonte única de entidades, lida
-   por `auli-cli` e `auli-collections`; o frontend gera `entities.ts` dela. O kind vetorial canônico
-   é `services` (o registry mapeia o rótulo de UI `servicos`), então não há mais o descasamento
-   `services`↔`servicos` nem cópias divergentes de `domain`/`errors`/`entities`.
+   por `auli-cli` e `auli-collections`; o frontend gera `entities.ts` dela. O kind vetorial foi
+   **unificado para `servicos` ponta a ponta** pela auditoria (PR #4) — não há mais o descasamento
+   `services`↔`servicos` (o antigo `services` sobrou só como guarda de regressão em `from_kind`) nem
+   cópias divergentes de `domain`/`errors`/`entities`.
 2. **Dados de serviços consistentes.** Packs e frontend vêm da **mesma** raspagem (contrato
    `auli-contract`); o engine não declara mais `delimiter`/`EmbedStrategy` próprios para serviços.
-3. **`sc` é entidade real** do server (208 serviços), não só do frontend.
+3. **`rs`, `sc`, `sp` e `pr` são entidades reais** do server (serviços 586/208/537/141; FAQs 1937 no
+   RS), não só do frontend.
 4. **`pareceres`/`notas`/`conteudos`** (autorados, sem scraper) ficam versionados em `data/<id>/ref/`,
    exibidos no frontend e (pareceres/notas) ingeríveis nos packs quando modelados como `Table<P>`;
    ainda **não** são consultados no RAG ativo.
@@ -508,24 +479,27 @@ mantém um espelho **gerado** (não mais divergente) do registro. Pendências em
 **Ativo e funcionando (confirmado no código):**
 
 - `auli server` (workspace `auli-server`): `GET /v1/health`, `POST /v1/question` (RAG completo
-  **in-process**: fastembed/BGE-M3 → vector store próprio → LLM externo, com log em `./logs/`) e
-  `GET /v1/{kind}/list` (leitura). Público, **sem auth nem banco**; CORS; configuração por `.env`
-  (`config()`); logging via `tracing`. Vetorização separada pelo `auli update`.
-- RAG consulta efetivamente apenas `services` (10) + `faqs` (20); estreitamento por proximidade
-  presente mas em modo paridade (`band=∞`) até calibração.
-- `auli-frontend`: SPA com seleção de entidade (rs/sc), chat contra `POST /v1/question` com
-  timeout de 25s, abas de referência lendo `public/<id>/`, tema claro/escuro, testes Vitest.
-- `auli-collections`: scraper de `faqs` (rs) e de `servicos` (rs via Chrome, sc via JSON),
-  cache em disco, modo `--usecache`, geração do contrato + `portal-*.txt` + `servicos-index.json`.
+  **in-process**: fastembed/BGE-M3 → vector store próprio → LLM externo, com log em `$AULI_LOG_DIR`,
+  na raiz do repo) e `GET /v1/{kind}/list` (leitura). Escuta configurável (`--bind`, default `0.0.0.0`).
+  Público, **sem auth nem banco**; CORS; configuração por `.env` (`config()`); logging via `tracing`.
+  Vetorização separada pelo `auli update`.
+- **Quatro estados ativos** (rs, sc, sp, pr). RAG consulta efetivamente apenas `servicos` (10) +
+  `faqs` (20); estreitamento por proximidade presente mas em modo paridade (`band=∞`) até calibração.
+- `auli-frontend`: SPA com seleção de entidade (rs/sc/sp/pr), chat contra `POST /v1/question` com
+  timeout de 25s, abas de referência lendo `public/<id>/` (arquivos prefixados `<id>-`), tema
+  claro/escuro, testes Vitest.
+- **Scrapers por entidade** (`auli-scraper-{rs,sc,sp,pr}` sobre `auli-scraper-kit`): FAQs (rs) e
+  serviços (rs Chrome, sc JSON, sp SharePoint, pr Drupal), cache + `--usecache`, gravando o snapshot
+  v2; `auli-collections <e>` deriva o contrato + `portal-*.txt` + `servicos-index.json` + per-público.
 
 **Modelado/declarado mas inativo ou incompleto:**
 
 - Server: `pareceres`/`notas` listáveis mas **não consultados** no RAG ativo.
-- Collections: módulo `domain` `#![allow(dead_code)]` (não consumido por pipeline);
-  `faqs` para `sc` não implementado; sem scraper de `pareceres`/`notas`; `servicos` ainda em
-  `Box<dyn Error>` (refatoração pendente).
+- Coleta: sem scraper de `pareceres`/`notas` (autorados); FAQs só no RS. Os binários de scraper
+  `sc`/`sp`/`pr` usam `anyhow` (idiomático p/ bin); a derivação em `auli-collections` já usa o
+  `crate::errors` tipado.
 - Frontend: sem fluxo de autenticação/JWT no cliente; multi-tenant apenas por troca de
-  `public/<id>/` (lista de entidades hardcoded).
+  `public/<id>/` (lista de entidades **gerada** do registry).
 
 ---
 
