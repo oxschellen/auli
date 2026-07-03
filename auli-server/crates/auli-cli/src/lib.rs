@@ -38,8 +38,10 @@ pub fn app(state: Arc<AppState>) -> Router {
         .layer(cors_routes())
 }
 
-/// Build shared state from pre-built packs and serve on `0.0.0.0:<port>`.
-pub async fn run_server(packs_dir: Option<String>, port: u16) {
+/// Build shared state from pre-built packs and serve on `<bind>:<port>`.
+/// `bind` default é `0.0.0.0` (instância única); multi-instância atrás de
+/// reverse proxy deve passar `127.0.0.1` para não expor a porta na rede.
+pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
     // Default to `info`; override per-target with RUST_LOG (e.g. `RUST_LOG=auli_cli=debug`
     // to see score arrays / the full RAG prompt, or `=trace` for everything).
     tracing_subscriber::fmt()
@@ -78,7 +80,7 @@ pub async fn run_server(packs_dir: Option<String>, port: u16) {
 
     let app = app(state);
 
-    let bind_addr = format!("0.0.0.0:{port}");
+    let bind_addr = format!("{bind}:{port}");
     // Bind first, then announce — so the success line can't print if the port is taken.
     let listener = TcpListener::bind(&bind_addr)
         .await

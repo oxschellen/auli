@@ -8,8 +8,8 @@
 # Flags:    --no-build    pula o `cargo build` e sobe o binário já compilado (restart rápido).
 #           --no-tunnel   sobe só o servidor local, sem o túnel Cloudflare.
 #                         (--no-ngrok continua aceito como apelido de --no-tunnel.)
-# Variáveis opcionais: PORT (3000), AULI_DATA_DIR (../data) — raiz de registry+prompts+packs,
-#                      TUNNEL_NAME (auli-api), CARGO_TARGET_DIR (reuso do build).
+# Variáveis opcionais: PORT (3000), BIND (0.0.0.0), AULI_DATA_DIR (../data) — raiz de
+#                      registry+prompts+packs, TUNNEL_NAME (auli-api), CARGO_TARGET_DIR (reuso do build).
 set -euo pipefail
 
 NO_BUILD=0
@@ -47,6 +47,7 @@ export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-$ROOT/models}"
 export AULI_LOG_DIR="${AULI_LOG_DIR:-$ROOT/logs}"
 
 PORT="${PORT:-3000}"
+BIND="${BIND:-0.0.0.0}"   # multi-instância atrás de reverse proxy: BIND=127.0.0.1
 TUNNEL_NAME="${TUNNEL_NAME:-auli-api}"
 BIN="$CARGO_TARGET_DIR/release/auli"
 
@@ -84,4 +85,4 @@ fi
 
 echo "🚀 Subindo 'auli server' em :${PORT} (packs: ${AULI_DATA_DIR}). Ctrl+C para parar."
 # Sem `exec`: mantém o script vivo para o trap derrubar o cloudflared ao sair (Ctrl+C).
-"$BIN" server --port "$PORT"
+"$BIN" server --port "$PORT" --bind "$BIND"

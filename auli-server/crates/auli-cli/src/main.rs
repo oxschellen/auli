@@ -1,7 +1,7 @@
 //! The `auli` binary — a thin clap dispatcher over two modes, `server` and `update`.
 //!
 //! Subcommands (not flags) so each mode has its own exclusive options:
-//!   auli server  --port <p> [--packs-dir <dir>]   (--packs-dir defaults to $AULI_DATA_DIR or ./data)
+//!   auli server  --port <p> [--bind <addr>] [--packs-dir <dir>]   (--packs-dir defaults to $AULI_DATA_DIR or ./data)
 //!   auli update  --entity <id> --source <dir_com_contrato_json> --out <dir> [--version <v>]
 
 use std::path::PathBuf;
@@ -21,6 +21,10 @@ enum Command {
     Server {
         #[arg(long, default_value_t = 3000)]
         port: u16,
+        /// Endereço de escuta. Default `0.0.0.0` (todas as interfaces — instância única).
+        /// Em multi-instância atrás de reverse proxy local, use `127.0.0.1`.
+        #[arg(long, default_value = "0.0.0.0")]
+        bind: String,
         /// Raiz dos pacotes (layout `<dir>/<id>/packs/`). Omitido ⇒ usa `AULI_DATA_DIR` (default `./data`).
         #[arg(long)]
         packs_dir: Option<String>,
@@ -42,8 +46,8 @@ enum Command {
 async fn main() {
     let cli = Cli::parse();
     match cli.command {
-        Command::Server { port, packs_dir } => {
-            auli_cli::run_server(packs_dir, port).await;
+        Command::Server { port, bind, packs_dir } => {
+            auli_cli::run_server(packs_dir, port, bind).await;
         }
         Command::Update { entity, source, out, version } => {
             // Synchronous, CPU-bound work — runs to completion on the async entrypoint thread.
