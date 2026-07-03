@@ -75,7 +75,7 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
     });
 
     println!("----------------------------------------------------");
-    println!("Auli Server v0.3.0 - Read-only packs + in-process embeddings");
+    println!("Auli Server v{} - Read-only packs + in-process embeddings", env!("CARGO_PKG_VERSION"));
     println!("----------------------------------------------------");
 
     let app = app(state);

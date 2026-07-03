@@ -1,6 +1,6 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
-use std::time::SystemTime;
+use std::time::Instant;
 
 use axum::{
     extract::{ConnectInfo, Path, Query, State},
@@ -25,7 +25,7 @@ pub async fn list_handler(
     Path(kind): Path<String>,
     Query(q): Query<EntityQuery>,
 ) -> impl IntoResponse {
-    let now_total: SystemTime = SystemTime::now();
+    let now_total = Instant::now();
     log_start(&format!("Listando coleção '{}'", kind), addr);
 
     let cfg = match get_entity(q.entity.as_deref()) {
@@ -62,9 +62,9 @@ fn log_start(what: &str, addr: SocketAddr) {
     println!("Local time : {local_time}");
 }
 
-fn log_end(what: &str, started: SystemTime) {
+fn log_end(what: &str, started: Instant) {
     println!("Fim da Rotina {}.", what);
-    let tempo_total = started.elapsed().unwrap().as_millis();
+    let tempo_total = started.elapsed().as_millis();
     println!("Tempo total: {tempo_total:6} milisegundos");
     println!("--------------------------------------------\n");
 }

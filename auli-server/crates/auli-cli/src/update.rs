@@ -95,6 +95,19 @@ where
 
     let name = format!("{}-{}", entity, kind);
     let embeddings = embedder.embed_dense(to_embed)?;
+    // The manifest stamps `dim = EMBED_DIM` (a constant). If the model ever produces a different
+    // real width without an `EMBED_MODEL_ID` bump, the manifest would lie and boot validation
+    // (which checks the identity triple, not the file width) wouldn't catch it. Fail loudly here.
+    if let Some(first) = embeddings.first()
+        && first.len() != EMBED_DIM
+    {
+        return Err(crate::error::Error::Custom(format!(
+            "embedder produziu dim {} ≠ EMBED_DIM {} para '{}' — faça bump de EMBED_MODEL_ID e re-gere os packs",
+            first.len(),
+            EMBED_DIM,
+            name
+        )));
+    }
     let ids: Vec<String> = (1..=stored.len()).map(|i| format!("id-{}", i)).collect();
 
     writer.reset::<String>(&name)?; // clean reload: no orphan id-(N+1)..
