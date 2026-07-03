@@ -54,8 +54,10 @@ export CMAKE_POLICY_VERSION_MINIMUM=3.5
 cargo build --release --workspace      # ou só o engine: cargo build --release --bin auli
 ```
 
-- Binários em `auli-server/target/release/`: **`auli`** (server/update), **`auli-scraper-rs`** e
-  **`auli-scraper-sc`** (os scrapers da fase 2 — só o `-rs` puxa headless Chrome).
+- Binários em `auli-server/target/release/`: **`auli`** (server/update) e um scraper por entidade —
+  **`auli-scraper-rs`** (headless Chrome; FAQs + serviços), **`auli-scraper-sc`** (API JSON Next.js),
+  **`auli-scraper-sp`** (REST SharePoint, JSON) e **`auli-scraper-pr`** (HTML Drupal server-side). Só
+  o `-rs` puxa headless Chrome.
 - 1º build recompila fastembed/ort/aws-lc (alguns minutos); depois é incremental (segundos). Os
   scrapers **não** dependem de fastembed/ort — compilam leves.
 - Numa máquina com cmake de sistema, **nenhuma** das `export` é necessária.
@@ -75,22 +77,28 @@ Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
 
 1. **Raspar** (rede; headless Chrome só no RS) → grava o snapshot `data/<id>/<id>-snapshot.json` (v2):
-   `./target/release/auli-scraper-rs [faqs|servicos|all]` (RS) e `./target/release/auli-scraper-sc servicos` (SC).
-   `--usecache` reusa o cache de páginas (offline, sem rede).
-2. **Derivar** (offline) → o contrato `<id>-faqs.json`/`<id>-servicos.json` + prints + per-público em
-   `data/<id>/raw/`: `./target/release/auli-collections <id>`.
+   `auli-scraper-rs [faqs|servicos|all]` (RS), `auli-scraper-sc servicos` (SC),
+   `auli-scraper-sp servicos` (SP) e `auli-scraper-pr servicos` (PR). `--usecache` reusa o cache de
+   páginas (offline, sem rede).
+2. **Derivar** (offline) → o contrato `<id>-faqs.json`/`<id>-servicos.json` + prints + index +
+   per-público (e a árvore `faqs-tree.json` p/ a UI, no RS) em `data/<id>/raw/`:
+   `./target/release/auli-collections <id>`.
 3. **Vetorizar** → `scripts/build-packs.sh <id>` (aponta o `auli update --source` para `raw/`).
 
 ```bash
 cd auli-server
 ./target/release/auli-scraper-rs all && ./target/release/auli-collections rs && cd .. && scripts/build-packs.sh rs
 # SC: (cd auli-server && ./target/release/auli-scraper-sc servicos && ./target/release/auli-collections sc) && scripts/build-packs.sh sc
+# SP: (cd auli-server && ./target/release/auli-scraper-sp servicos && ./target/release/auli-collections sp) && scripts/build-packs.sh sp
+# PR: (cd auli-server && ./target/release/auli-scraper-pr servicos && ./target/release/auli-collections pr) && scripts/build-packs.sh pr
 ```
 
-Produz `data/rs/packs/rs-services.json` (≈586), `rs-faqs.json` (≈1937) e `rs.manifest.json`
-(`strategy_version: 2`). `pareceres`/`notas` são autorados (sem scraper) e ainda **não** têm fonte
-struct no contrato — ficam **ausentes** até serem modelados; o server tolera packs ausentes (sobe
-com a coleção vazia). **Só precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
+Produz, por entidade, `data/<id>/packs/<id>-servicos.json` + `<id>.manifest.json` (`strategy_version: 2`,
+kind `servicos`) — e `<id>-faqs.json` onde houver FAQs (hoje só RS). Contagens atuais: **rs** serviços
+586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141. `pareceres`/`notas` são autorados (sem scraper) e
+ainda **não** têm fonte struct no contrato — ficam **ausentes** até serem modelados; o server tolera
+packs ausentes (sobe com a coleção vazia). **Só precisa rodar de novo quando o conteúdo ou a estratégia
+de embedding mudar.**
 
 > Regenerar **sem re-raspar** (ex.: após bump de `STRATEGY_VERSION`): com o snapshot já em disco,
 > `auli-collections <id>` re-deriva os contratos offline e `build-packs.sh` regera os packs
@@ -118,6 +126,7 @@ para o server rodando em `auli-server/`. Variáveis:
 | `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | sim                                                          | LLM externo (Groq-compat) que redige a resposta |
 | `EMBED_CACHE_DIR`                               | não (lançadores: `<raiz>/models`; def. do código `./models`) | cache do modelo                                 |
 | `EMBED_THREADS`                                 | não (def. `16`)                                              | threads do ONNX Runtime                         |
+| `AULI_LOG_DIR`                                  | não (lançadores: `<raiz>/logs`; def. do código `./logs`)     | dir dos logs de Q&A do RAG (§7)                 |
 
 > Faltando uma variável **obrigatória**, o server dá `panic` no boot com mensagem clara.
 >
@@ -152,18 +161,19 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 ./start_server.sh --no-tunnel                     # só o servidor local, sem túnel
 ```
 
-**Boot saudável** se parecer com:
+**Boot saudável** se parecer com (4 entidades ativas):
 
-```
-🏛️  Entidades carregadas: [rs, sc]
+```text
+🏛️  Entidades carregadas: [pr, rs, sc, sp]
 🔎 Manifesto de 'rs' validado contra a identidade local.
-📦 rs-services — 586 registros
+📦 rs-servicos — 586 registros
 📦 rs-faqs — 1937 registros
-📦 rs-pareceres — 331 registros
-📦 rs-notas — 1 registros
+🔎 Manifesto de 'sp' validado contra a identidade local.
+📦 sp-servicos — 537 registros
+🔎 Manifesto de 'pr' validado contra a identidade local.
+📦 pr-servicos — 141 registros
 🔎 Manifesto de 'sc' validado contra a identidade local.
-📦 sc-services — 208 registros
-🧠 Embedder fastembed (BGE-M3) carregado
+📦 sc-servicos — 208 registros
 ✅ Server started successfully at 0.0.0.0:3000
 ```
 
@@ -200,19 +210,19 @@ Há **três** destinos distintos:
 
 | Tipo                    | Onde                                                                   | Conteúdo                                                                                                                                                                                                                |
 | ----------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Q&A do RAG**          | `auli-server/logs/<AAAA-MM-DD_HH-MM-SS>.txt` (um arquivo por pergunta) | `Pergunta:` + contexto RAG recuperado + `Resposta:`. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `./logs/` **relativo ao CWD** — como o server roda em `auli-server/`, caem em `auli-server/logs/`. |
+| **Q&A do RAG**          | `logs/<AAAA-MM-DD_HH-MM-SS>.txt` na raiz do repo (um arquivo por pergunta) | `Pergunta:` + contexto RAG recuperado + `Resposta:`. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `$AULI_LOG_DIR` (default `./logs` do CWD). O `start_server.sh` exporta `AULI_LOG_DIR=<raiz>/logs` (absoluto), então caem na **raiz do repo**, não em `auli-server/`. |
 | **cloudflared**         | `/tmp/auli-cloudflared.log`                                            | saída do túnel Cloudflare (redirecionada pelo `start_server.sh`).                                                                                                                                                       |
 | **Console (`tracing`)** | **stdout/stderr** do terminal (não vai a arquivo)                      | boot, scores, `info/debug/warn`. Controlado por `RUST_LOG`.                                                                                                                                                             |
 
 Exemplos:
 
 ```bash
-ls -lt auli-server/logs/ | head                 # últimas consultas
+ls -lt logs/ | head                             # últimas consultas (raiz do repo)
 tail -f /tmp/auli-cloudflared.log              # acompanhar o túnel
 RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG completo no console
 ```
 
-> Para gravar também o console em arquivo: `./start_server.sh --no-tunnel 2>&1 | tee auli-server/logs/console.log`.
+> Para gravar também o console em arquivo: `./start_server.sh --no-tunnel 2>&1 | tee logs/console.log`.
 
 ---
 
