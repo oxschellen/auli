@@ -9,25 +9,32 @@
 # Sem argumento, regenera TODAS as entidades do registry. Com `<id>` (ex.: `build-frontend-public.sh
 # rs`), regenera só aquela — útil quando o data/ das outras não está fresco (evita sobrescrevê-las).
 #
-# O que entra em public/<id>/:
-#   - data/<id>/raw/*.json   (servicos-index, servicos-*, faqs-tree.json — o que a UI busca)
+# O que entra em public/<id>/ (todos com o nome já prefixado por `<id>-`, casando com `entityPath` no
+# frontend, que busca `/<id>/<id>-<file>`):
+#   - data/<id>/raw/*.json   (<id>-servicos-index, <id>-servicos-*, <id>-faqs-tree.json — o que a UI busca)
 #   - data/<id>/ref/*        (portal-pareceres.txt, portal-notas.txt, conteudo_site_tree.json)
-# NÃO copia os portal-servicos.txt/portal-faqs.txt de raw/ (grandes; alimentam os packs, a UI não usa).
+# NÃO copia os <id>-portal-servicos.txt/<id>-portal-faqs.txt de raw/ (o filtro `*.json` já os exclui;
+# são grandes, alimentam os packs, a UI não usa) nem os contratos do engine `<id>-{faqs,servicos}.json`
+# (lidos pelo `auli update`, a UI não os busca).
 #
-# Cada arquivo é copiado com o nome PREFIXADO por `<id>-` (ex.: faqs-tree.json -> rs-faqs-tree.json),
-# casando com `entityPath` no frontend (que busca `/<id>/<id>-<file>`). Arquivos em data/<id>/raw que
-# JÁ começam com `<id>-` são os contratos do engine (`<id>-faqs.json` / `<id>-servicos.json`, lidos
-# pelo `auli update`); a UI não os busca, então NÃO vão para public/.
+# Todo `raw/` já é prefixado por `<id>-` na origem (o `process`/scraper grava assim), então de raw/ os
+# arquivos são copiados COMO ESTÃO; só os de `ref/` (não prefixados em disco) ganham o prefixo aqui.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 PUB="$ROOT/auli-frontend/public"
 
-# Copia $1 para $2/ prefixando o nome com "$3-". Pula (retorna 1) os contratos do engine, que já
-# vêm prefixados com "$3-" — a UI não os consome.
-copy_prefixed() {
+# raw/: já prefixado por "$3-" na origem. Copia como está, pulando (retorna 1) os contratos do engine
+# `<id>-servicos.json` / `<id>-faqs.json`, que a UI não consome.
+copy_raw() {
   local base; base="$(basename "$1")"
-  case "$base" in "$3-"*) return 1 ;; esac
+  case "$base" in "$3-servicos.json"|"$3-faqs.json") return 1 ;; esac
+  cp "$1" "$2/$base"
+}
+
+# ref/: NÃO prefixado em disco. Adiciona o prefixo "$3-" ao copiar, casando com `entityPath`.
+copy_ref() {
+  local base; base="$(basename "$1")"
   cp "$1" "$2/$3-$base"
 }
 
@@ -50,11 +57,11 @@ for id in "${IDS[@]}"; do
 
   n=0
   if [ -d "$src_raw" ]; then
-    while IFS= read -r -d '' f; do copy_prefixed "$f" "$dst" "$id" && n=$((n+1)); done \
+    while IFS= read -r -d '' f; do copy_raw "$f" "$dst" "$id" && n=$((n+1)); done \
       < <(find "$src_raw" -maxdepth 1 -name '*.json' -print0)
   fi
   if [ -d "$src_ref" ]; then
-    while IFS= read -r -d '' f; do copy_prefixed "$f" "$dst" "$id" && n=$((n+1)); done \
+    while IFS= read -r -d '' f; do copy_ref "$f" "$dst" "$id" && n=$((n+1)); done \
       < <(find "$src_ref" -maxdepth 1 -type f -print0)
   fi
   echo "📦 public/$id/  <- data/$id/{raw/*.json, ref/*}  ($n arquivos)"
