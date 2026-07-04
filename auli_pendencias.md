@@ -5,7 +5,7 @@ fez a **struct tipada** (`auli_contract::Table<P>`) virar a fonte única do dado
 contrato em `data/<id>/raw/<id>-<kind>.json` e o `auli update` o consome.
 
 > **Revisão 2026-07-02 (pós fases 1 e 2).** O modelo evoluiu: o **snapshot v2**
-> (`data/<id>/<id>-snapshot.json`, tipos em `auli_contract::snapshot`) virou a fronteira
+> (um por coleção: `data/<id>/<id>-<kind>-snapshot.json`, tipos em `auli_contract::snapshot`) virou a fronteira
 > scraper→collections; a coleta saiu para os binários **`auli-scraper-<e>`** e o
 > **`auli-collections <e>`** só deriva os artefatos (contrato/prints/index/per-público).
 >

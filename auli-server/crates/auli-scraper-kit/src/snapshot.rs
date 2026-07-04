@@ -1,23 +1,24 @@
 //! I/O do *snapshot de coleta* — a fronteira **scraper → collections**.
 //!
-//! Cada scraper grava aqui a sua coleção (`faqs` ou `servicos`) em `../data/<id>/<id>-snapshot.json`.
-//! A gravação é **merge, não overwrite**: raspar só `faqs` não pode apagar `colecoes.servicos` que já
-//! esteja no arquivo (e vice-versa), por isso carregamos as coleções existentes antes de atualizar só
-//! a raspada. Os tipos vivem no `auli-contract`; aqui só há I/O.
+//! Cada scraper grava a sua coleção no **seu próprio arquivo**: `../data/<id>/<id>-<kind>-snapshot.json`
+//! (kind ∈ {`servicos`, `faqs`}). Sem merge nem read-modify-write: raspar `faqs` grava só o arquivo de
+//! faqs e não toca no de serviços (e vice-versa). Os tipos vivem no `auli-contract`; aqui só há I/O.
 
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use auli_contract::{
-    Colecoes, ColetaFaqs, ColetaServicos, FaqRaw, Publico, SNAPSHOT_SCHEMA_VERSION, ScraperInfo,
-    ServicoRaw, Snapshot,
+    CollectionSnapshot, ColetaFaqs, ColetaServicos, FaqRaw, Publico, SNAPSHOT_SCHEMA_VERSION,
+    ScraperInfo, ServicoRaw,
 };
+use serde::Serialize;
+use serde::de::DeserializeOwned;
 
-/// Caminho do snapshot: `../data/<id>/<id>-snapshot.json`, irmão de `raw/`. O `data_dir` aponta para
-/// `.../<id>/raw`, então subimos um nível.
-fn snapshot_path(id: &str, data_dir: &str) -> PathBuf {
+/// Caminho do snapshot de uma coleção: `../data/<id>/<id>-<kind>-snapshot.json`, irmão de `raw/`. O
+/// `data_dir` aponta para `.../<id>/raw`, então subimos um nível.
+fn snapshot_path(id: &str, data_dir: &str, kind: &str) -> PathBuf {
     let base = Path::new(data_dir).parent().unwrap_or_else(|| Path::new(data_dir));
-    base.join(format!("{}-snapshot.json", id))
+    base.join(format!("{}-{}-snapshot.json", id, kind))
 }
 
 /// Instante atual em RFC 3339 (UTC). Metadado de auditoria; não entra em nenhum artefato derivado.
@@ -27,14 +28,13 @@ fn now_rfc3339() -> String {
     OffsetDateTime::now_utc().format(&Rfc3339).unwrap_or_default()
 }
 
-/// Grava a coleta de faqs, preservando a coleção de serviços já presente. `scraper` identifica quem
-/// gravou (cada scraper passa o seu nome/versão).
+/// Grava a coleta de faqs no arquivo `<id>-faqs-snapshot.json`. `scraper` identifica quem gravou.
 pub fn write_faqs(id: &str, data_dir: &str, scraper: &ScraperInfo, items: Vec<FaqRaw>) -> Result<()> {
     let coleta = ColetaFaqs { coletado_em: now_rfc3339(), items };
-    merge_and_save(id, data_dir, scraper, |c| c.faqs = Some(coleta))
+    save(id, data_dir, "faqs", scraper, coleta)
 }
 
-/// Grava a coleta de serviços, preservando a coleção de faqs já presente.
+/// Grava a coleta de serviços no arquivo `<id>-servicos-snapshot.json`.
 pub fn write_servicos(
     id: &str,
     data_dir: &str,
@@ -43,28 +43,25 @@ pub fn write_servicos(
     items: Vec<ServicoRaw>,
 ) -> Result<()> {
     let coleta = ColetaServicos { coletado_em: now_rfc3339(), publicos_ordem, items };
-    merge_and_save(id, data_dir, scraper, |c| c.servicos = Some(coleta))
+    save(id, data_dir, "servicos", scraper, coleta)
 }
 
-/// Carrega as coleções já gravadas (preservando a não raspada), aplica a atualização e regrava o
-/// snapshot inteiro com o header atual.
-fn merge_and_save(
+/// Serializa o snapshot de uma coleção no seu arquivo próprio — **sem merge**, sobrescrevendo apenas
+/// o arquivo daquela coleção.
+fn save<C: Serialize>(
     id: &str,
     data_dir: &str,
+    kind: &str,
     scraper: &ScraperInfo,
-    update: impl FnOnce(&mut Colecoes),
+    coleta: C,
 ) -> Result<()> {
-    let path = snapshot_path(id, data_dir);
-    let mut colecoes = load_colecoes(&path)?;
-    update(&mut colecoes);
-
-    let snapshot = Snapshot {
+    let snapshot = CollectionSnapshot {
         schema_version: SNAPSHOT_SCHEMA_VERSION,
         entidade: id.to_string(),
         scraper: scraper.clone(),
-        colecoes,
+        coleta,
     };
-
+    let path = snapshot_path(id, data_dir, kind);
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
     }
@@ -73,18 +70,18 @@ fn merge_and_save(
     Ok(())
 }
 
-/// Prefixo mínimo do snapshot lido **antes** da desserialização tipada. Um snapshot de schema
-/// incompatível (ex.: v1 com `classe`/`publicos` em vez de `ocorrencias`) falharia com um erro cru
-/// do serde ao desserializar o `Snapshot` inteiro; lendo só o header primeiro conseguimos dar a
-/// mensagem amigável de "re-raspe" tanto no merge dos scrapers quanto no `process`.
+/// Prefixo mínimo lido **antes** da desserialização tipada. Um snapshot de schema incompatível (ex.:
+/// o v2 mesclado com `colecoes`) falharia com um erro cru do serde ao desserializar o
+/// `CollectionSnapshot` inteiro; lendo só o header primeiro conseguimos dar a mensagem amigável.
 #[derive(serde::Deserialize)]
 struct SnapshotHeader {
     schema_version: u32,
+    entidade: String,
 }
 
-/// Lê o header e recusa, com mensagem amigável, um schema diferente do atual — antes da
-/// desserialização tipada. `entidade` fica para o chamador (`process`) conferir.
-fn check_schema_version(bytes: &[u8]) -> Result<()> {
+/// Valida `schema_version` (contra [`SNAPSHOT_SCHEMA_VERSION`]) e `entidade` a partir do header,
+/// antes da desserialização tipada.
+fn check_header(bytes: &[u8], id: &str) -> Result<()> {
     let header: SnapshotHeader = serde_json::from_slice(bytes)
         .map_err(|e| anyhow::anyhow!("snapshot ilegível (nem o header desserializa): {e}"))?;
     if header.schema_version != SNAPSHOT_SCHEMA_VERSION {
@@ -95,29 +92,26 @@ fn check_schema_version(bytes: &[u8]) -> Result<()> {
             SNAPSHOT_SCHEMA_VERSION
         );
     }
+    if header.entidade != id {
+        anyhow::bail!("entidade do snapshot ('{}') não bate com a pedida ('{}').", header.entidade, id);
+    }
     Ok(())
 }
 
-/// Coleções já gravadas no snapshot, ou vazias se o arquivo ainda não existe.
-fn load_colecoes(path: &Path) -> Result<Colecoes> {
-    if !path.exists() {
-        return Ok(Colecoes::default());
-    }
-    let bytes = std::fs::read(path)?;
-    check_schema_version(&bytes)?;
-    let snapshot: Snapshot = serde_json::from_slice(&bytes)?;
-    Ok(snapshot.colecoes)
-}
-
-/// Carrega o snapshot inteiro de `../data/<id>/<id>-snapshot.json`, ou `None` se ainda não existe.
-/// Usado pelo `process` para validar `schema_version`/`entidade` antes de derivar.
-pub fn load(id: &str, data_dir: &str) -> Result<Option<Snapshot>> {
-    let path = snapshot_path(id, data_dir);
+/// Carrega o snapshot de uma coleção (`<id>-<kind>-snapshot.json`), ou `None` se o arquivo ainda não
+/// existe. `C` é a coleta concreta esperada para o `kind` (o chamador escolhe: `ColetaServicos` para
+/// `"servicos"`, `ColetaFaqs` para `"faqs"`). Valida `schema_version`/`entidade` antes de desserializar.
+pub fn load<C: DeserializeOwned>(
+    id: &str,
+    data_dir: &str,
+    kind: &str,
+) -> Result<Option<CollectionSnapshot<C>>> {
+    let path = snapshot_path(id, data_dir, kind);
     if !path.exists() {
         return Ok(None);
     }
     let bytes = std::fs::read(&path)?;
-    check_schema_version(&bytes)?;
+    check_header(&bytes, id)?;
     Ok(Some(serde_json::from_slice(&bytes)?))
 }
 
@@ -151,10 +145,9 @@ mod tests {
     }
 
     #[test]
-    fn merge_preserves_the_other_collection() {
-        let data_dir = tmp_data_dir("merge");
+    fn each_collection_writes_its_own_file_and_leaves_the_other_untouched() {
+        let data_dir = tmp_data_dir("split");
         let dd = data_dir.to_str().unwrap();
-        let path = snapshot_path("rs", dd);
         let sc = scraper();
 
         write_faqs("rs", dd, &sc, vec![faq("q1")]).unwrap();
@@ -167,30 +160,55 @@ mod tests {
         )
         .unwrap();
 
-        let snap: Snapshot = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
-        assert!(snap.colecoes.faqs.is_some());
-        assert!(snap.colecoes.servicos.is_some());
+        let faqs_path = snapshot_path("rs", dd, "faqs");
+        let servicos_path = snapshot_path("rs", dd, "servicos");
+        assert!(faqs_path.exists(), "faqs snapshot file must exist");
+        assert!(servicos_path.exists(), "servicos snapshot file must exist");
 
-        // Re-raspar só faqs não pode apagar a coleção de serviços.
-        write_faqs("rs", dd, &sc, vec![faq("q2")]).unwrap();
-        let snap: Snapshot = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
-        assert!(snap.colecoes.servicos.is_some());
-        assert_eq!(snap.colecoes.faqs.unwrap().items[0].pergunta, "q2");
+        // Re-writing servicos must NOT touch the faqs file (the invariant the old merge protected).
+        let faqs_before = std::fs::read(&faqs_path).unwrap();
+        write_servicos(
+            "rs",
+            dd,
+            &sc,
+            vec![Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() }],
+            vec![svc("l2")],
+        )
+        .unwrap();
+        assert_eq!(
+            std::fs::read(&faqs_path).unwrap(),
+            faqs_before,
+            "a servicos write must not touch the faqs snapshot file"
+        );
+
+        // Each loads back as its own typed coleta.
+        let faqs: CollectionSnapshot<ColetaFaqs> = load("rs", dd, "faqs").unwrap().unwrap();
+        assert_eq!(faqs.coleta.items[0].pergunta, "q1");
+        let servicos: CollectionSnapshot<ColetaServicos> = load("rs", dd, "servicos").unwrap().unwrap();
+        assert_eq!(servicos.coleta.items[0].link, "l2");
 
         let _ = std::fs::remove_dir_all(data_dir.parent().unwrap());
+    }
+
+    #[test]
+    fn load_missing_file_is_none() {
+        let data_dir = tmp_data_dir("missing");
+        let dd = data_dir.to_str().unwrap();
+        let got: Option<CollectionSnapshot<ColetaServicos>> = load("rs", dd, "servicos").unwrap();
+        assert!(got.is_none());
     }
 
     #[test]
     fn load_rejects_old_schema_with_friendly_message() {
         let data_dir = tmp_data_dir("oldschema");
         let dd = data_dir.to_str().unwrap();
-        let path = snapshot_path("rs", dd);
+        let path = snapshot_path("rs", dd, "servicos");
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-        // A v1-shaped snapshot: only the header matters — the typed body would fail serde, but the
-        // header check must fire first with the "re-raspe" message.
-        std::fs::write(&path, r#"{"schema_version":1,"entidade":"rs","classe":"x"}"#).unwrap();
+        // An old v2 (merged `colecoes`) file at the new path: the header check must fire on the
+        // version before the typed body — with the "re-raspe" message, not a raw serde error.
+        std::fs::write(&path, r#"{"schema_version":2,"entidade":"rs","colecoes":{}}"#).unwrap();
 
-        let err = load("rs", dd).unwrap_err().to_string();
+        let err = load::<ColetaServicos>("rs", dd, "servicos").unwrap_err().to_string();
         assert!(err.contains("Re-raspe"), "esperava mensagem amigável, veio: {err}");
 
         let _ = std::fs::remove_dir_all(data_dir.parent().unwrap());

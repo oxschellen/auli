@@ -5,7 +5,7 @@
 //! - [`cache`]: cache de páginas em disco, por URL lógica;
 //! - [`build_agent`]: builder do agent `ureq` (User-Agent + timeout);
 //! - [`Servico`]: o registro de um serviço raspado (entrada da agregação);
-//! - [`aggregate_servicos`]: agrega os serviços per-público em `ServicoRaw` (snapshot v2).
+//! - [`aggregate_servicos`]: agrega os serviços per-público em `ServicoRaw` (para o snapshot).
 //!
 //! Depende só de `auli-contract` + rede/serde — nada de fastembed/ort/vector-store.
 

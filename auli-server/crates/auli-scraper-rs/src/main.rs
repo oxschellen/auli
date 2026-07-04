@@ -1,7 +1,8 @@
 // auli-scraper-rs — scraper da SEFAZ-RS (faqs + serviços).
 //
 // Conhece UMA entidade ("rs"); não lê o registry.toml (isso é assunto do collections/engine).
-// Grava o snapshot v2; a derivação dos artefatos é o `auli-collections rs`.
+// Grava os snapshots por coleção (v3: faqs e serviços em arquivos separados); a derivação dos
+// artefatos é o `auli-collections rs`.
 
 mod errors;
 mod faqs;

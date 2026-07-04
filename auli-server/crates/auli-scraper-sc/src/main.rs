@@ -1,7 +1,7 @@
 // auli-scraper-sc — scraper da SEF-SC (serviços, API JSON Next.js). Sem headless Chrome.
 //
-// Conhece UMA entidade ("sc"); não lê o registry. Grava o snapshot v2; a derivação dos artefatos é
-// o `auli-collections sc`.
+// Conhece UMA entidade ("sc"); não lê o registry. Grava o snapshot de serviços (v3); a derivação dos
+// artefatos é o `auli-collections sc`.
 
 mod sc;
 

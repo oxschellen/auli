@@ -14,7 +14,7 @@ mod utils;
 use auli_scraper_kit::PerPublicoServicos;
 use types::TipoServicos;
 
-/// Raspa os serviços do RS e grava a coleta no snapshot (`colecoes.servicos`).
+/// Raspa os serviços do RS e grava a coleta no snapshot de serviços (`<id>-servicos-snapshot.json`).
 pub fn run(data_dir: &str, use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
     let tipos = utils::get_tipo_servicos();
     let failed = extrair_descricoes::extrair_descricoes_json(data_dir, use_cache)?;

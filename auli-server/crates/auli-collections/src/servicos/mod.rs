@@ -207,8 +207,8 @@ mod tests {
         assert_eq!(s.stored_repr(), expected);
     }
 
-    /// Equivalência golden (D-F2.7) — inerte sem `AULI_GOLDEN_DATA` (raiz do `data/` do repo). Lê o
-    /// **snapshot v2 real**, roda as derivações do `process` num diretório temporário e compara com os
+    /// Equivalência golden (D-F2.7) — inerte sem `AULI_GOLDEN_DATA` (raiz do `data/` do repo). Lê os
+    /// **snapshots v3 reais** (por coleção), roda as derivações do `process` num diretório temporário e compara com os
     /// artefatos golden em `data/rs/raw/`: agregados byte a byte (tolerando `\n` final); per-público por
     /// `(link, classe)` — incluindo os multi-classe restaurados; ordem/id fora do gate (D-S5).
     #[test]
@@ -217,19 +217,20 @@ mod tests {
         let Ok(root) = std::env::var("AULI_GOLDEN_DATA") else { return };
         let rs_raw = format!("{}/rs/raw", root);
 
-        let snapshot = auli_scraper_kit::snapshot::load("rs", &rs_raw)
-            .unwrap()
-            .expect("snapshot rs ausente — rode o scraper primeiro");
+        let faqs = auli_scraper_kit::snapshot::load::<auli_contract::ColetaFaqs>("rs", &rs_raw, "faqs")
+            .unwrap();
+        let servicos =
+            auli_scraper_kit::snapshot::load::<auli_contract::ColetaServicos>("rs", &rs_raw, "servicos")
+                .unwrap()
+                .expect("snapshot de serviços rs ausente — rode o scraper primeiro");
 
         let out = std::env::temp_dir().join(format!("auli_golden_{}", std::process::id()));
         let out = out.to_str().unwrap();
         std::fs::create_dir_all(out).unwrap();
-        if let Some(faqs) = &snapshot.colecoes.faqs {
-            crate::derive_faqs::process("rs", out, faqs).unwrap();
+        if let Some(snap) = &faqs {
+            crate::derive_faqs::process("rs", out, &snap.coleta).unwrap();
         }
-        if let Some(servicos) = &snapshot.colecoes.servicos {
-            process("rs", out, servicos).unwrap();
-        }
+        process("rs", out, &servicos.coleta).unwrap();
 
         // Agregados: byte a byte (tolerando newline final que editores adicionam ao golden em disco).
         let trim = |v: Vec<u8>| {
@@ -253,7 +254,7 @@ mod tests {
         }
 
         // Per-público: multiset (link, classe, titulo, orgao) idêntico ao golden (multi-classe incl.).
-        for pubx in &snapshot.colecoes.servicos.as_ref().unwrap().publicos_ordem {
+        for pubx in &servicos.coleta.publicos_ordem {
             let key = |bytes: &[u8]| {
                 let v: Vec<auli_scraper_kit::Servico> = serde_json::from_slice(bytes).unwrap();
                 let mut k: Vec<_> = v

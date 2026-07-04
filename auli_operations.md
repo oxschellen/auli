@@ -76,7 +76,7 @@ Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data
 
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
 
-1. **Raspar** (rede; headless Chrome só no RS) → grava o snapshot `data/<id>/<id>-snapshot.json` (v2):
+1. **Raspar** (rede; headless Chrome só no RS) → grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (v3):
    `auli-scraper-rs [faqs|servicos|all]` (RS), `auli-scraper-sc servicos` (SC),
    `auli-scraper-sp servicos` (SP), `auli-scraper-pr servicos` (PR) e `auli-scraper-mg servicos`
    (MG). `--usecache` reusa o cache de páginas (offline, sem rede).

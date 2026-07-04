@@ -1,7 +1,7 @@
 // The `faqs` scraper (SEFAZ-RS).
 //
 // Walks a FAQ portal starting from a root menu page and produces an in-memory `FaqNode` tree. `run`
-// flattens the tree into the collection snapshot (`colecoes.faqs`, a `Vec<FaqRaw>`); the derivation of
+// flattens the tree into the faqs snapshot (`<id>-faqs-snapshot.json`, a `Vec<FaqRaw>`); the derivation of
 // the engine artifacts (`<id>-faqs.json`, `<id>-portal-faqs.txt`) is the `auli-collections process` step.
 // `run` also serializes the tree itself to `<id>-faqs-tree.json` — the aba de FAQs do frontend consome
 // a árvore (page_type/children), que o snapshot achatado não preserva.
@@ -53,7 +53,7 @@ struct MenuItem {
 }
 
 /// Scrape the FAQ tree, persist it as `<id>-faqs-tree.json` (for the frontend's FAQ tab) and write the
-/// collection *snapshot* (`colecoes.faqs`). The engine artifacts (`<id>-faqs.json`, `<id>-portal-faqs.txt`)
+/// faqs *snapshot* (`<id>-faqs-snapshot.json`). The engine artifacts (`<id>-faqs.json`, `<id>-portal-faqs.txt`)
 /// are derived from the snapshot by [`process`], offline.
 pub fn run(source: &FaqSource) -> Result<()> {
     let tree = scrape(source)?;
