@@ -14,8 +14,9 @@
 //! padrão RJ): público único "Serviços", classe "Geral".
 //!
 //! Guards (princípio D-RJ5): falha alto se o catálogo vier capado; o cache só grava DEPOIS dos
-//! guards. Nota: `hits` (392) > itens entregues ao anônimo (~292): os inativos não vêm, e o scrape
-//! público pega os ativos — por isso a paginação para na página vazia, não no `hits`.
+//! guards. ATENÇÃO ao `pageSize`: o servidor entrega MENOS resultados no total quanto MAIOR o
+//! `pageSize` (10→~382 itens, 100→292, 500→0). Usamos `pageSize=10` (o do front) — o único que
+//! devolve o catálogo inteiro. A paginação para na página VAZIA (o `hits` não é confiável).
 
 use std::collections::HashSet;
 use std::thread::sleep;
@@ -39,9 +40,12 @@ const CATALOGO_ID: &str = "648af76264778b7336c470a3";
 
 const USER_AGENT: &str =
     "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
-const PAGE_SIZE: u32 = 100;
-/// Teto de páginas (guarda contra loop; 292 itens ÷ 100 = 3 páginas + a vazia).
-const MAX_PAGES: u32 = 30;
+/// `pageSize` PEQUENO de propósito: o servidor Sydle ONE entrega MENOS resultados no total quanto
+/// MAIOR o `pageSize` (10→382 itens, 100→292, 500→0). O 10 é o que o próprio front usa e é o único
+/// que devolve o catálogo inteiro. Não aumentar sem re-medir a completude.
+const PAGE_SIZE: u32 = 10;
+/// Teto de páginas (guarda contra loop; ~382 itens ÷ 10 ≈ 39 páginas + a vazia).
+const MAX_PAGES: u32 = 80;
 /// Cortesia entre páginas.
 const COURTESY: Duration = Duration::from_millis(400);
 
@@ -53,9 +57,9 @@ const CLASSE_GERAL: &str = "Geral";
 /// Órgão de origem.
 const ORGAO: &str = "SEFAZ-CE";
 
-/// Guard D-CE (princípio D-RJ5): mínimo de serviços ativos (folga sobre os ~292 observados, mas
-/// aperta o bastante para rejeitar catálogo capado).
-const MIN_SERVICOS: usize = 200;
+/// Guard D-CE (princípio D-RJ5): mínimo de serviços (folga sobre os ~382 observados, mas aperta o
+/// bastante para rejeitar catálogo capado — inclusive a regressão de `pageSize` que devolvia 292).
+const MIN_SERVICOS: usize = 350;
 
 /// Uma página da resposta de `getChildren`.
 #[derive(Debug, Deserialize)]
@@ -93,7 +97,9 @@ pub fn scrape(
 
     let mut page = 1u32;
     loop {
-        let logical = format!("{}#page={}", GETCHILDREN_URL, page);
+        // `pageSize` na chave: um cache gravado com outro pageSize NÃO é reaproveitado (o total
+        // entregue depende do pageSize — ver PAGE_SIZE).
+        let logical = format!("{}#ps={}&page={}", GETCHILDREN_URL, PAGE_SIZE, page);
         let (json, from_cache) = match auli_scraper_kit::cache::read(data_dir, &logical) {
             Some(cached) => {
                 println!("Cache hit (página {}): {}", page, GETCHILDREN_URL);
@@ -118,12 +124,14 @@ pub fn scrape(
 
         let parsed = parse_page(&json)?;
         let n = parsed.items.len();
+        // Termina SÓ na página vazia (não em página curta): o front pagina até esvaziar, e páginas
+        // não-finais podem vir curtas. Página vazia não entra no cache nem no acumulado.
+        if n == 0 {
+            break;
+        }
         println!("CE: página {} -> {} itens (hits={})", page, n, parsed.hits);
         raw_pages.push((logical, json));
 
-        if n < PAGE_SIZE as usize {
-            break; // última página (parcial ou vazia)
-        }
         page += 1;
         if page > MAX_PAGES {
             eprintln!("⚠️  CE: atingiu MAX_PAGES ({}); parando a paginação.", MAX_PAGES);
