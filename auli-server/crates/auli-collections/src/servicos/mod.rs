@@ -1,14 +1,23 @@
 // servicos — derivação (`process`) dos artefatos a partir da coleta do snapshot.
 //
-// Deriva (offline) o contrato `<id>-servicos.json` (`Table<Servico>`), o print `portal-servicos.txt`,
-// o `servicos-index.json` e os JSONs per-público (`<slug>.json`, uma entrada por `(link, classe)` —
-// restaura o multi-classe). Os scrapers são os binários `auli-scraper-rs` / `auli-scraper-sc`.
+// Deriva (offline) o contrato `<id>-servicos.json` (`Table<Servico>`), o print `<id>-portal-servicos.txt`,
+// o `<id>-servicos-index.json` e os JSONs per-público (`<id>-<slug>.json`, uma entrada por
+// `(link, classe)` — restaura o multi-classe). **Todo artefato de `raw/` é prefixado por `<id>-`**
+// (ver `raw_out`). Os scrapers são os binários `auli-scraper-rs` / `auli-scraper-sc`.
 
 mod types;
 
 use serde::Serialize;
 
 use crate::errors::Result;
+
+/// Caminho de um artefato de `raw/`, prefixado pela entidade: `raw_out("../data/rs/raw", "rs",
+/// "servicos-index.json")` -> `../data/rs/raw/rs-servicos-index.json`. Namespaceia todo o `raw/` por
+/// entidade (os contratos do engine já seguiam essa convenção); o prefixo `<id>-` deixa de ser só
+/// uma preocupação do boundary do `public/` e passa a valer na origem.
+fn raw_out(data_dir: &str, id: &str, name: &str) -> String {
+    format!("{}/{}-{}", data_dir, id, name)
+}
 
 /// Deriva os artefatos de serviços da coleta do snapshot (offline): contrato `Table<Servico>`,
 /// `portal-servicos.txt`, `servicos-index.json` e os JSONs per-público. Não lê rede — só o snapshot.
@@ -43,7 +52,7 @@ pub fn process(
         })
         .collect();
     let table = auli_contract::Table::new(id, "servicos", items);
-    let contract_out = format!("{}/{}-servicos.json", data_dir, id);
+    let contract_out = raw_out(data_dir, id, "servicos.json");
     if let Some(parent) = std::path::Path::new(&contract_out).parent() {
         std::fs::create_dir_all(parent)?;
     }
@@ -66,12 +75,12 @@ pub fn process(
             s.link
         ));
     }
-    let portal_out = format!("{}/portal-servicos.txt", data_dir);
+    let portal_out = raw_out(data_dir, id, "portal-servicos.txt");
     std::fs::write(&portal_out, &portal)?;
     println!("Wrote {} ({} serviços únicos)", portal_out, coleta.items.len());
 
-    // 3. servicos-index.json: { tipo: nome, filename: slug } na ordem de `publicos_ordem`.
-    write_servicos_index(data_dir, ordem)?;
+    // 3. <id>-servicos-index.json: { tipo: nome, filename: slug } na ordem de `publicos_ordem`.
+    write_servicos_index(data_dir, id, ordem)?;
 
     // 4. per-público JSONs: fan-out — um arquivo por público, **uma entrada por `(link, classe)`**
     //    (restaura as listagens multi-classe do portal — D-F2.4.3); id local reiniciando em 1, na
@@ -91,7 +100,7 @@ pub fn process(
                 });
             }
         }
-        let out = format!("{}/{}.json", data_dir, pubx.slug);
+        let out = raw_out(data_dir, id, &format!("{}.json", pubx.slug));
         std::fs::write(&out, serde_json::to_string_pretty(&local)?)?;
         println!("Wrote {} ({} serviços)", out, local.len());
     }
@@ -127,10 +136,14 @@ struct ServicoIndexEntry {
     filename: String,
 }
 
-/// Writes `servicos-index.json`: the `{ tipo, filename }` tabs, in `publicos_ordem` order, so the
+/// Writes `<id>-servicos-index.json`: the `{ tipo, filename }` tabs, in `publicos_ordem` order, so the
 /// frontend can render the right audience tabs (and load the right files) without hardcoding them.
+///
+/// `filename` stays the **bare** slug (no `<id>-` prefix): it's a public/-facing logical name that the
+/// frontend resolves via `entityPath` (which prepends `<id>-`). Only the index *file* is prefixed.
 fn write_servicos_index(
     data_dir: &str,
+    id: &str,
     ordem: &[auli_contract::Publico],
 ) -> Result<()> {
     let entries: Vec<ServicoIndexEntry> = ordem
@@ -139,7 +152,7 @@ fn write_servicos_index(
         .collect();
 
     let json = serde_json::to_string_pretty(&entries)?;
-    let out = format!("{}/servicos-index.json", data_dir);
+    let out = raw_out(data_dir, id, "servicos-index.json");
     std::fs::write(&out, json)?;
     println!("Wrote {} ({} tabs)", out, entries.len());
     Ok(())
@@ -227,7 +240,7 @@ mod tests {
             v[..e].to_vec()
         };
         let mut checked = 0;
-        for f in ["rs-faqs.json", "rs-servicos.json", "portal-faqs.txt", "portal-servicos.txt", "servicos-index.json"] {
+        for f in ["rs-faqs.json", "rs-servicos.json", "rs-portal-faqs.txt", "rs-portal-servicos.txt", "rs-servicos-index.json"] {
             let golden = format!("{}/{}", rs_raw, f);
             if !std::path::Path::new(&golden).exists() {
                 eprintln!("⏭️  golden ausente, pulando: {}", f);
@@ -250,11 +263,11 @@ mod tests {
                 k.sort();
                 k
             };
-            let g = format!("{}/{}.json", rs_raw, pubx.slug);
+            let g = format!("{}/rs-{}.json", rs_raw, pubx.slug);
             if !std::path::Path::new(&g).exists() {
                 continue;
             }
-            let got = key(&std::fs::read(format!("{}/{}.json", out, pubx.slug)).unwrap());
+            let got = key(&std::fs::read(format!("{}/rs-{}.json", out, pubx.slug)).unwrap());
             let want = key(&std::fs::read(&g).unwrap());
             assert!(got == want, "per-público diverge (link,classe): {}", pubx.slug);
         }

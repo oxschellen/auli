@@ -1,12 +1,12 @@
 //! Derivação dos artefatos de faqs a partir da coleta do snapshot (offline). O scraper produz a
 //! `ColetaFaqs` (`Vec<FaqRaw>`); aqui materializamos a `Table<Faq>` (`<id>-faqs.json`, com
-//! `text_to_embed`) e o print `portal-faqs.txt`. Não toca rede nem a árvore do scraper — só o snapshot.
+//! `text_to_embed`) e o print `<id>-portal-faqs.txt`. Não toca rede nem a árvore do scraper — só o snapshot.
 
 use std::path::Path;
 
 use crate::errors::Result;
 
-/// Deriva `<id>-faqs.json` (contrato) + `portal-faqs.txt` da coleta de faqs.
+/// Deriva `<id>-faqs.json` (contrato) + `<id>-portal-faqs.txt` da coleta de faqs.
 pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaFaqs) -> Result<()> {
     let items: Vec<auli_contract::Faq> = coleta.items.iter().map(faq_from_raw).collect();
     let table = auli_contract::Table::new(id, "faqs", items);
@@ -17,7 +17,7 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaFaqs) -> 
     std::fs::write(&contract_path, serde_json::to_string_pretty(&table)?)?;
     println!("Wrote {} ({} faqs)", contract_path, table.len());
 
-    let portal_path = format!("{}/portal-faqs.txt", data_dir);
+    let portal_path = format!("{}/{}-portal-faqs.txt", data_dir, id);
     let portal = render_portal_faqs(&coleta.items);
     std::fs::write(&portal_path, &portal)?;
     println!("Wrote {} ({} bytes)", portal_path, portal.len());

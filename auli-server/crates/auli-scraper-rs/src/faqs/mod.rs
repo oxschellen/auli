@@ -2,9 +2,9 @@
 //
 // Walks a FAQ portal starting from a root menu page and produces an in-memory `FaqNode` tree. `run`
 // flattens the tree into the collection snapshot (`colecoes.faqs`, a `Vec<FaqRaw>`); the derivation of
-// the engine artifacts (`<id>-faqs.json`, `portal-faqs.txt`) is the `auli-collections process` step.
-// `run` also serializes the tree itself to `faqs-tree.json` — the aba de FAQs do frontend consome a
-// árvore (page_type/children), que o snapshot achatado não preserva.
+// the engine artifacts (`<id>-faqs.json`, `<id>-portal-faqs.txt`) is the `auli-collections process` step.
+// `run` also serializes the tree itself to `<id>-faqs-tree.json` — the aba de FAQs do frontend consome
+// a árvore (page_type/children), que o snapshot achatado não preserva.
 //
 // How the portal works:
 //   - Each page declares a `data-matriz-source-uri` attribute. Its template id tells us whether the
@@ -52,15 +52,16 @@ struct MenuItem {
     url: String,
 }
 
-/// Scrape the FAQ tree, persist it as `faqs-tree.json` (for the frontend's FAQ tab) and write the
-/// collection *snapshot* (`colecoes.faqs`). The engine artifacts (`<id>-faqs.json`, `portal-faqs.txt`)
+/// Scrape the FAQ tree, persist it as `<id>-faqs-tree.json` (for the frontend's FAQ tab) and write the
+/// collection *snapshot* (`colecoes.faqs`). The engine artifacts (`<id>-faqs.json`, `<id>-portal-faqs.txt`)
 /// are derived from the snapshot by [`process`], offline.
 pub fn run(source: &FaqSource) -> Result<()> {
     let tree = scrape(source)?;
 
     // A árvore (page_type/children) que a aba de FAQs do frontend consome — o snapshot achatado a
-    // perde, então persistimos o nó-raiz aqui, ao lado do snapshot.
-    let tree_path = format!("{}/faqs-tree.json", source.data_dir);
+    // perde, então persistimos o nó-raiz aqui, ao lado do snapshot. Prefixado por `<id>-` como os
+    // demais artefatos de `raw/`.
+    let tree_path = format!("{}/{}-faqs-tree.json", source.data_dir, source.id);
     std::fs::write(&tree_path, serde_json::to_string_pretty(&tree)?)?;
     println!("Wrote {} (árvore de FAQ p/ o frontend)", tree_path);
 
