@@ -7,7 +7,7 @@ use std::time::Duration;
 use ureq::Agent;
 
 use super::types::Servico;
-use super::utils::{get_tipo_servicos, save_servicos_to_json};
+use super::utils::{get_tipo_servicos, save_servicos_to_json, scrape_recovery_path};
 
 const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 const ACCEPT: &str = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
@@ -30,6 +30,9 @@ pub fn extrair_descricoes_json(
     // URLs de páginas de detalhe que falharam ao carregar; reportadas ao final do programa.
     let mut failed_urls: Vec<String> = Vec::new();
 
+    // Subdiretório próprio da recuperação incremental (não colide com os per-público do `process`).
+    std::fs::create_dir_all(format!("{}/scrape", data_dir))?;
+
     // Para cada Tipo de Serviço extrai a lista de Serviços
     for tipo_servicos in &vec_tipo_servicos {
         let tipo_s = &tipo_servicos.tipo;
@@ -37,7 +40,7 @@ pub fn extrair_descricoes_json(
         let url_s = &tipo_servicos.url;
         println!("Tipo: {}, File: {} Url: {}", tipo_s, file_s, url_s);
 
-        let filename_json = format!("{}/{}.json", data_dir, file_s);
+        let filename_json = scrape_recovery_path(data_dir, file_s);
 
         let html_content = fetch_webpage(data_dir, url_s, use_cache)?;
 

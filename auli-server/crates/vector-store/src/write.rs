@@ -44,6 +44,17 @@ impl Writer {
     where
         P: Serialize + DeserializeOwned + Clone,
     {
+        // The three inputs are positional triples; a length mismatch would `zip` to the shortest and
+        // drop records silently. Reject it before writing anything (the sole caller derives all three
+        // from the same `table.items`, so this is a defensive contract, not a hot path).
+        if ids.len() != embeddings.len() || ids.len() != payloads.len() {
+            return Err(Error::ArityMismatch {
+                ids: ids.len(),
+                embeddings: embeddings.len(),
+                payloads: payloads.len(),
+            });
+        }
+
         let path = self.path_for(name);
         let mut data: CollectionData<P> = read_collection_file(&path)?;
 
@@ -130,6 +141,24 @@ mod tests {
             .upsert("d", &["id-1".into(), "id-2".into()], vec![vec![1.0, 2.0], vec![1.0, 2.0, 3.0]], &["a".to_string(), "b".to_string()])
             .unwrap_err();
         assert!(matches!(err, Error::DimensionMismatch { expected: 2, got: 3 }));
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn upsert_rejects_arity_mismatch_without_writing() {
+        let dir = std::env::temp_dir().join(format!("vs-arity-test-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let w = Writer::new(&dir);
+        w.reset::<String>("c").unwrap();
+
+        // Two ids but only one payload — must error, not truncate to one record.
+        let err = w
+            .upsert("c", &["id-1".into(), "id-2".into()], vec![vec![1.0], vec![2.0]], &["a".to_string()])
+            .unwrap_err();
+        assert!(matches!(err, Error::ArityMismatch { ids: 2, embeddings: 2, payloads: 1 }));
+        let data: CollectionData<String> = read_collection_file(w.path_for("c")).unwrap();
+        assert_eq!(data.records.len(), 0, "rejected batch must not persist");
 
         let _ = std::fs::remove_dir_all(&dir);
     }

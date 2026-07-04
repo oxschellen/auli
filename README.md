@@ -52,7 +52,7 @@ This is a **monorepo** of four cooperating components plus shared docs.
 | ------------------------------------------------------------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
 | [`auli-server/`](auli-server/)                                                 | **auli workspace**   | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio)           |
 | [`auli-frontend/`](auli-frontend/)                                             | **auli-frontend**    | Web UI: state selection (interactive Brazil map), chat, and reference tabs.                                                                                                                      | React 19 + TypeScript + Vite |
-| [`auli-server/crates/auli-collections/`](auli-server/crates/auli-collections/) | **auli-collections** | Scrapers that collect official content and compile it into the typed `auli-contract` (`Table<P>`). Now a workspace crate.                                                                        | Rust (synchronous)           |
+| [`auli-server/crates/auli-collections/`](auli-server/crates/auli-collections/) | **auli-collections** | Offline derivation step: turns a scraper snapshot into the typed `auli-contract` (`Table<P>`) + artifacts. The scraping itself is the per-entity `auli-scraper-<id>` crates (sharing `auli-scraper-kit`). | Rust (synchronous)           |
 | [`data/`](data/)                                                               | **shared data**      | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`.                                                                          | TOML + JSON/txt              |
 | [`scripts/`](scripts/)                                                         | **tooling**          | `build-packs.sh` (vectorize), `gen-frontend-entities.mjs` + `build-frontend-public.sh` (regen frontend from `data/`).                                                                            | Bash + Node                  |
 | `auli_*.md`                                                                    | **docs**             | Product, technical and operations references (Portuguese).                                                                                                                                       | —                            |
@@ -81,7 +81,8 @@ space is shared by construction.
 | [`crates/vector-store`](auli-server/crates/vector-store/)         | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert.                                                                              |
 | [`crates/auli-core`](auli-server/crates/auli-core/)               | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash).                                                                 |
 | [`crates/auli-cli`](auli-server/crates/auli-cli/)                 | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`.                                                                                                                   |
-| [`crates/auli-collections`](auli-server/crates/auli-collections/) | The scrapers — compile portal content into `auli-contract` tables (`<id>-<kind>.json`).                                                                                                                            |
+| [`crates/auli-collections`](auli-server/crates/auli-collections/) | Offline **derivation** (`<id> process`): snapshot → `auli-contract` tables (`<id>-<kind>.json`) + artifacts.                                                                                                                            |
+| [`crates/auli-scraper-<id>`](auli-server/crates/) + [`auli-scraper-kit`](auli-server/crates/auli-scraper-kit/) | The **scrapers** — one binary per state (`rs`/`sc`/`sp`/`pr`/`mg`) writing a snapshot; `auli-scraper-kit` is their shared cache / aggregation / snapshot I/O.                                                                                                                            |
 
 Two modes:
 
@@ -117,20 +118,30 @@ npm test           # Vitest
 
 The only backend endpoint the frontend calls is `POST /v1/question` (via `VITE_API_URL`).
 
-### `auli-server/crates/auli-collections/` — scrapers
+### Scraping pipeline — per-entity scrapers + `auli-collections`
 
-A synchronous Rust program that collects content from a secretariat's portal and compiles it into
-the typed `auli-contract` (`Table<Faq>` / `Table<Servico>` → `data/<id>/raw/<id>-<kind>.json`),
-materializing each record's `text_to_embed`. It also writes the human-readable `portal-<kind>.txt`
-(an audit _print_ of the struct, never read back).
+Collection is a **two-step, synchronous** pipeline. First a **per-entity scraper binary**
+(`auli-scraper-<id>`) fetches the portal and writes a versioned **snapshot**
+(`data/<id>/<id>-snapshot.json`); the scrapers share `auli-scraper-kit` (HTTP cache, service
+aggregation, snapshot I/O). Then **`auli-collections <id> process`** derives, offline, the typed
+`auli-contract` artifacts (`Table<Faq>` / `Table<Servico>` → `data/<id>/raw/<id>-<kind>.json`,
+materializing each record's `text_to_embed`) plus the human-readable `portal-<kind>.txt` audit
+_print_ and the per-público fan-out files.
 
-- **FAQs** — SEFAZ-RS portal (headless Chrome + `ureq`).
-- **Services** — RS (headless Chrome) and SC (SEF-SC Next.js JSON API).
+Active scrapers (one crate per state):
+
+- **RS** (`auli-scraper-rs`) — FAQs (portal CMS via AJAX/`ureq`) + serviços (**headless Chrome** for
+  the listing, `ureq` for details). The only crate that uses Chrome.
+- **SC** (`auli-scraper-sc`) — serviços via SEF-SC Next.js JSON API.
+- **SP** (`auli-scraper-sp`) — serviços via SharePoint REST (anonymous JSON).
+- **PR** (`auli-scraper-pr`) — serviços via server-side Drupal HTML.
+- **MG** (`auli-scraper-mg`) — serviços via ServiceNow CSM page API (JSON).
 - On-disk **cache** with an offline `--usecache` mode; **dedup** of services shared across audiences.
 
 ```bash
 cd auli-server
-cargo run -p auli-collections -- [--usecache] <entity> <collection>   # e.g. ... -- rs servicos
+cargo run -p auli-scraper-rs -- [--usecache] servicos   # scrape RS -> snapshot (faqs|servicos|all)
+cargo run -p auli-collections -- rs process             # derive artifacts from the snapshot (offline)
 ```
 
 ---
@@ -158,7 +169,7 @@ changes) — `build-packs.sh` runs `auli update` over the scraper's contract in 
 `data/<id>/packs/` (`pareceres`/`notas` have no struct source yet and are skipped):
 
 ```bash
-scripts/build-packs.sh rs          # and: scripts/build-packs.sh sc
+scripts/build-packs.sh rs          # per entity: rs | sc | sp | pr | mg
 ```
 
 A healthy boot logs the loaded entities, a validated manifest, per-collection record counts, the
@@ -208,10 +219,11 @@ available as reference navigation in the UI.
 ## Status
 
 - **Working today:** RAG chat for the configured state, full UI (chat + reference tabs + state
-  selection with map), scraping of Serviços/FAQs (RS) and Serviços (SC), and local embeddings. The
-  backend is open (no auth) and database-free — it serves from packs alone.
-- **In progress:** expanding state **SC** (FAQs and other content) on the backend, automated
-  scraping of Pareceres/Notas, and using those types in the assistant's answers.
+  selection with map), and local embeddings. **Five states active** — Serviços for RS, SC, SP, PR
+  and MG, plus FAQs for RS. The backend is open (no auth) and database-free — it serves from packs
+  alone.
+- **In progress:** Serviços for more states, FAQs beyond RS, automated scraping of Pareceres/Notas,
+  and using those reference types in the assistant's answers.
 
 For the precise active-vs-modeled breakdown (routes, auth flows, cross-repo divergences), see
 **[auli_code.md](auli_code.md)** §7.

@@ -18,9 +18,11 @@ export interface Servico {
  * entity's data was built — see `getTipoServicos`.
  */
 export function getDefaultTipoServicos(): TipoServico[] {
+  // Order mirrors the RS scraper / `servicos-index.json` (Cidadãos first) so the fallback tabs match
+  // the real audience order when the index is absent.
   return [
-    { tipo: "Empresas",     filename: "servicos-a-empresas" },
     { tipo: "Cidadãos",     filename: "servicos-ao-cidadao" },
+    { tipo: "Empresas",     filename: "servicos-a-empresas" },
     { tipo: "Fornecedores", filename: "servicos-a-fornecedores" },
     { tipo: "Agentes",      filename: "servicos-a-agentes-publicos" },
     { tipo: "Servidores",   filename: "servicos-a-servidores-publicos" },

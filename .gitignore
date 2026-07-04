@@ -40,8 +40,8 @@ auli-server/packs/
 **/vectors/
 **/logs/
 
-# ── Scraper cache ─────────────────────────────────────────────────────────────
-**/data/*/cache/
+# ── Scraper cache (lives at data/<id>/raw/cache/) ─────────────────────────────
+**/data/*/raw/cache/
 
 # ── Local notes / scratch ─────────────────────────────────────────────────────
 notas.txt
@@ -55,6 +55,6 @@ web_config.txt
 
 # Data integration (root data/): generated artifacts ignored; prompts/ and <id>/ref/ are versioned
 data/*/raw/
-data/*/cache/
+data/*/raw/cache/
 data/*/packs/
 /*.patch

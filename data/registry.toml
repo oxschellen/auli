@@ -12,8 +12,8 @@
 #   uf          sigla do estado (ex.: "RS")
 #   state       nome do estado por extenso
 #   prompt      caminho do system prompt, relativo à pasta data/
-#   collections rótulos de coleção da UI. `servicos` mapeia ao kind vetorial `services`;
-#               `conteudos` é só de referência (sem kind vetorial, sem scraper).
+#   collections rótulos de coleção da UI. `servicos` é o kind vetorial `servicos` (unificado — não
+#               existe mais `services`); `conteudos` é só de referência (sem kind vetorial, sem scraper).
 
 [[entities]]
 id = "rs"

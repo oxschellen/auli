@@ -11,7 +11,7 @@
 //! pack/kind is `<entity>-servicos` too. `pareceres`/`notas` have no
 //! struct source yet (authored, not scraped) and are simply absent until modeled as a contract.
 //!
-//! Does NOT use the server `Config` (no LLM/JWT/DB needed for ingestion) — only the embedder
+//! Does NOT use the server `Config` (no LLM vars needed for ingestion) — only the embedder
 //! settings, read directly from the environment with defaults.
 
 use std::path::{Path, PathBuf};
@@ -95,6 +95,19 @@ where
 
     let name = format!("{}-{}", entity, kind);
     let embeddings = embedder.embed_dense(to_embed)?;
+    // The manifest stamps `dim = EMBED_DIM` (a constant). If the model ever produces a different
+    // real width without an `EMBED_MODEL_ID` bump, the manifest would lie and boot validation
+    // (which checks the identity triple, not the file width) wouldn't catch it. Fail loudly here.
+    if let Some(first) = embeddings.first()
+        && first.len() != EMBED_DIM
+    {
+        return Err(crate::error::Error::Custom(format!(
+            "embedder produziu dim {} ≠ EMBED_DIM {} para '{}' — faça bump de EMBED_MODEL_ID e re-gere os packs",
+            first.len(),
+            EMBED_DIM,
+            name
+        )));
+    }
     let ids: Vec<String> = (1..=stored.len()).map(|i| format!("id-{}", i)).collect();
 
     writer.reset::<String>(&name)?; // clean reload: no orphan id-(N+1)..

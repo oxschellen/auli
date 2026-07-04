@@ -1,6 +1,6 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
-use std::time::SystemTime;
+use std::time::Instant;
 
 use axum::{
     extract::{ConnectInfo, State},
@@ -21,7 +21,7 @@ pub async fn question_handler(
     headers: HeaderMap,
     Json(req): Json<Question>,
 ) -> impl IntoResponse {
-    let started = SystemTime::now();
+    let started = Instant::now();
 
     let client_ip = client_ip(&headers).unwrap_or_else(|| addr.ip());
     let entity = req.entity;
@@ -33,7 +33,7 @@ pub async fn question_handler(
         .await
         .unwrap_or_else(|e| e.to_string());
 
-    debug!("Consulta concluída em {} ms", started.elapsed().unwrap().as_millis());
+    debug!("Consulta concluída em {} ms", started.elapsed().as_millis());
 
     (StatusCode::OK, Json(Answer { question, answer }))
 }

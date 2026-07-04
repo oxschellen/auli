@@ -101,8 +101,7 @@ pub fn cosine_distance(a: &[f32], b: &[f32]) -> f32 {
 }
 
 /// Score every record against `embedding` and return `(payload, distance)` sorted best-first
-/// (ascending distance), truncated to `max_results`. Shared by [`ReadStore`] and the Phase-1
-/// server registry so the two cannot diverge.
+/// (ascending distance), truncated to `max_results`. The query core of [`ReadStore`].
 pub(crate) fn scan<P: Clone>(records: &[Record<P>], embedding: &[f32], max_results: usize) -> Vec<(P, f32)> {
     let mut scored: Vec<(P, f32)> = records
         .iter()

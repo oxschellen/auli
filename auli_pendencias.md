@@ -87,3 +87,9 @@ o scraper, a UI e o engine falam um vocabulário só. Os packs saem `<id>-servic
   Alinhar muda o comportamento do LLM ao vivo — decisão à parte.
 - **Comentário histórico:** [derive_faqs.rs:29](auli-server/crates/auli-collections/src/derive_faqs.rs#L29)
   cita `EmbedStrategy::QuestionKey` (tipo já removido) — referência de lineage, cosmética.
+- **Formato de links/slugs não uniforme — aceito (não corrigir por ora):** FAQs do RS emitem
+  `[texto](url)`; os serviços (RS/SC/PR/SP/MG) emitem `texto "url"`. O `linkify.tsx` do frontend
+  linkifica URLs cruas nos dois casos, então funciona, mas o texto enviado ao LLM não é homogêneo.
+  Idem os slugs de servidores: `servicos-a-servidores-publicos` (RS/SC) vs `servicos-a-servidores`
+  (SP). Uniformizar re-gera todos os packs (muda o texto embarcado / o espaço vetorial) sem ganho
+  funcional — **documentado como dívida aceita**.

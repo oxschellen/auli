@@ -14,7 +14,7 @@ use crate::errors::Result;
 pub fn run(entity: &EntityConfig) -> Result<()> {
     let snapshot = auli_scraper_kit::snapshot::load(&entity.id, &entity.data_dir)?.ok_or_else(|| {
         format!(
-            "snapshot ausente para '{}' — rode `{} faqs` e/ou `{} servicos` antes do process.",
+            "snapshot ausente para '{}' — rode `auli-scraper-{} faqs` e/ou `auli-scraper-{} servicos` antes do process.",
             entity.id, entity.id, entity.id
         )
     })?;

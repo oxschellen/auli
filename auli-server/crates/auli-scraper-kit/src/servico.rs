@@ -7,8 +7,9 @@
 use serde::{Deserialize, Serialize};
 
 /// Um serviço raspado de um público (a entrada de [`crate::aggregate_servicos`]) — e também o shape
-/// dos JSONs per-público que o `process` grava. `descricao` carrega o header `tipo/classe/titulo`
-/// que [`crate::descricao_body`] remove ao materializar o corpo limpo do snapshot.
+/// dos JSONs per-público que o `process` grava. Na **entrada** do scrape, `descricao` carrega o
+/// header `tipo/classe/titulo` que [`crate::descricao_body`] remove ao materializar o corpo limpo do
+/// snapshot; nos JSONs per-público que o `process` grava, `descricao` já é esse **corpo limpo**.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Servico {
     /// Id sequencial por arquivo (começa em 1). Não é globalmente único — use `link` para isso.

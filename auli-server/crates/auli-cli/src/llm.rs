@@ -1,24 +1,26 @@
 // External LLM client — Groq-compatible chat completions.
 
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
-use reqwest::Client;
+use reqwest::{Client, StatusCode};
 use serde_json::{json, Value};
 
 use crate::config::config;
 use crate::error::{Error, Result};
 
 // Send a system + user message to the chat-completions endpoint and return the assistant text.
-// Retries up to 3 times on connect/timeout errors. An API-level error is returned as a
-// human-readable message rather than an Err.
+// Retries up to 3 times on connect/timeout errors (send OR body read). An API-level error — a JSON
+// `error` field, a non-JSON body, or a hung request that hits the timeout — is returned as a
+// human-readable message rather than an Err, so the handler never leaks a raw serde/reqwest error.
 pub async fn chat(system_prompt: &str, user_message: &str) -> Result<String> {
     let start = Instant::now();
-    println!("LLM_API_MODEL: {:?}", config().llm_api_model);
 
     const AUTH_HEADER: &str = "Authorization";
     const CONTENT_TYPE_HEADER: &str = "Content-Type";
 
-    let client = Client::new();
+    // Timeout kept below the frontend's 25 s budget (callServerAPI.ts): a hung LLM surfaces here as
+    // a retryable timeout instead of the client giving up while the handler keeps the paid call open.
+    let client = Client::builder().timeout(Duration::from_secs(20)).build()?;
     let auth_token = format!("Bearer {}", config().llm_api_key);
     let request_body = json!({
         "messages": [
@@ -33,24 +35,33 @@ pub async fn chat(system_prompt: &str, user_message: &str) -> Result<String> {
         "stop": null,
     });
 
-    let response_text = {
-        let mut result: Result<String> = Err(Error::Custom("unreachable".into()));
+    // (status, body) from the first round-trip that both connects and reads. Retries cover
+    // connect/timeout on send AND on body read — both transient.
+    let (status, response_text): (StatusCode, String) = {
+        let mut result: Result<(StatusCode, String)> = Err(Error::Custom("unreachable".into()));
         for attempt in 1u32..=3 {
-            match client
-                .post(config().llm_api_url.as_str())
-                .header(AUTH_HEADER, &auth_token)
-                .header(CONTENT_TYPE_HEADER, "application/json")
-                .json(&request_body)
-                .send()
-                .await
-            {
-                Ok(resp) => {
-                    result = resp.text().await.map_err(Into::into);
+            let outcome = async {
+                let resp = client
+                    .post(config().llm_api_url.as_str())
+                    .header(AUTH_HEADER, &auth_token)
+                    .header(CONTENT_TYPE_HEADER, "application/json")
+                    .json(&request_body)
+                    .send()
+                    .await?;
+                let status = resp.status();
+                let text = resp.text().await?;
+                Ok::<(StatusCode, String), reqwest::Error>((status, text))
+            }
+            .await;
+
+            match outcome {
+                Ok(pair) => {
+                    result = Ok(pair);
                     break;
                 }
                 Err(e) if (e.is_connect() || e.is_timeout()) && attempt < 3 => {
                     println!("Erro de conexão (tentativa {}/3): {e}. Tentando novamente...", attempt);
-                    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+                    tokio::time::sleep(Duration::from_millis(500)).await;
                     result = Err(e.into());
                 }
                 Err(e) => {
@@ -62,12 +73,19 @@ pub async fn chat(system_prompt: &str, user_message: &str) -> Result<String> {
         result?
     };
 
-    let data: Value = serde_json::from_str(&response_text)?;
-
-    let answer = if let Some(err) = data.get("error") {
-        format!("Erro na chamada da API do modelo AI: {}!", err)
-    } else {
-        data["choices"][0]["message"]["content"].as_str().unwrap_or_default().to_string()
+    let answer = match serde_json::from_str::<Value>(&response_text) {
+        Ok(data) => {
+            if let Some(err) = data.get("error") {
+                format!("Erro na chamada da API do modelo AI: {}!", err)
+            } else {
+                data["choices"][0]["message"]["content"].as_str().unwrap_or_default().to_string()
+            }
+        }
+        // Non-JSON body (e.g. an HTML 5xx from a proxy) — surface the status, not a raw serde error.
+        Err(_) => format!(
+            "Erro na chamada da API do modelo AI (HTTP {}): resposta não-JSON do provedor.",
+            status
+        ),
     };
 
     let elapsed = start.elapsed().as_millis();

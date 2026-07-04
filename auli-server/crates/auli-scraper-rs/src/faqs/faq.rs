@@ -1,7 +1,8 @@
 // In-memory model for the `faqs` scrape.
 //
 // The scraper walks the FAQ portal and produces this tree in memory; `faqs::run` flattens it into the
-// snapshot's `Vec<FaqRaw>` (the tree itself is not persisted anymore).
+// snapshot's `Vec<FaqRaw>` and also serializes the tree itself to `faqs-tree.json` (consumed by the
+// frontend's FAQ tab).
 //
 // Tree shape:
 //   - `Menu`  nodes group other nodes via `children` (no FAQ content of their own).
@@ -28,7 +29,7 @@ pub struct FaqItem {
     pub resposta: String,
 }
 
-/// One node of the FAQ tree. The root node is what gets written to `<collection>.json`.
+/// One node of the FAQ tree. The root node is what gets written to `faqs-tree.json`.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FaqNode {
     /// Human-readable page title (for `Faq` nodes this is the cleaned page title).

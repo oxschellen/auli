@@ -73,12 +73,38 @@ fn merge_and_save(
     Ok(())
 }
 
+/// Prefixo mínimo do snapshot lido **antes** da desserialização tipada. Um snapshot de schema
+/// incompatível (ex.: v1 com `classe`/`publicos` em vez de `ocorrencias`) falharia com um erro cru
+/// do serde ao desserializar o `Snapshot` inteiro; lendo só o header primeiro conseguimos dar a
+/// mensagem amigável de "re-raspe" tanto no merge dos scrapers quanto no `process`.
+#[derive(serde::Deserialize)]
+struct SnapshotHeader {
+    schema_version: u32,
+}
+
+/// Lê o header e recusa, com mensagem amigável, um schema diferente do atual — antes da
+/// desserialização tipada. `entidade` fica para o chamador (`process`) conferir.
+fn check_schema_version(bytes: &[u8]) -> Result<()> {
+    let header: SnapshotHeader = serde_json::from_slice(bytes)
+        .map_err(|e| anyhow::anyhow!("snapshot ilegível (nem o header desserializa): {e}"))?;
+    if header.schema_version != SNAPSHOT_SCHEMA_VERSION {
+        anyhow::bail!(
+            "snapshot na versão de schema v{} (esperado v{}). Re-raspe a entidade — o snapshot é \
+             regenerável do cache, não há migração.",
+            header.schema_version,
+            SNAPSHOT_SCHEMA_VERSION
+        );
+    }
+    Ok(())
+}
+
 /// Coleções já gravadas no snapshot, ou vazias se o arquivo ainda não existe.
 fn load_colecoes(path: &Path) -> Result<Colecoes> {
     if !path.exists() {
         return Ok(Colecoes::default());
     }
     let bytes = std::fs::read(path)?;
+    check_schema_version(&bytes)?;
     let snapshot: Snapshot = serde_json::from_slice(&bytes)?;
     Ok(snapshot.colecoes)
 }
@@ -91,6 +117,7 @@ pub fn load(id: &str, data_dir: &str) -> Result<Option<Snapshot>> {
         return Ok(None);
     }
     let bytes = std::fs::read(&path)?;
+    check_schema_version(&bytes)?;
     Ok(Some(serde_json::from_slice(&bytes)?))
 }
 
@@ -135,7 +162,7 @@ mod tests {
             "rs",
             dd,
             &sc,
-            vec![Publico { nome: "Cidadãos".into(), slug: "rs-servicos-ao-cidadao".into() }],
+            vec![Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() }],
             vec![svc("l1")],
         )
         .unwrap();
@@ -149,6 +176,22 @@ mod tests {
         let snap: Snapshot = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
         assert!(snap.colecoes.servicos.is_some());
         assert_eq!(snap.colecoes.faqs.unwrap().items[0].pergunta, "q2");
+
+        let _ = std::fs::remove_dir_all(data_dir.parent().unwrap());
+    }
+
+    #[test]
+    fn load_rejects_old_schema_with_friendly_message() {
+        let data_dir = tmp_data_dir("oldschema");
+        let dd = data_dir.to_str().unwrap();
+        let path = snapshot_path("rs", dd);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        // A v1-shaped snapshot: only the header matters — the typed body would fail serde, but the
+        // header check must fire first with the "re-raspe" message.
+        std::fs::write(&path, r#"{"schema_version":1,"entidade":"rs","classe":"x"}"#).unwrap();
+
+        let err = load("rs", dd).unwrap_err().to_string();
+        assert!(err.contains("Re-raspe"), "esperava mensagem amigável, veio: {err}");
 
         let _ = std::fs::remove_dir_all(data_dir.parent().unwrap());
     }

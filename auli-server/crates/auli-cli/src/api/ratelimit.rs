@@ -1,7 +1,11 @@
 //! Per-IP rate limiting for the public question route — the only path that calls the paid
-//! external LLM. Keyed by the real client IP (proxy headers first: we sit behind a Cloudflare
-//! Tunnel, so the socket peer is the proxy, not the caller). Because office networks NAT many
-//! machines behind one public IP, the limit is effectively **per-network/organization**.
+//! external LLM. Keyed by the real client IP. We sit behind a **Cloudflare Tunnel**, so the socket
+//! peer is the proxy; the real caller is in Cloudflare's `CF-Connecting-IP` header. We trust **only**
+//! Cloudflare's headers (`CF-Connecting-IP` / `True-Client-IP`) — never the generic, caller-settable
+//! `X-Forwarded-For`/`X-Real-IP` family, which any client hitting the port directly (the `--bind
+//! 0.0.0.0` default allows this) could forge to bypass the limit and grow the key map unboundedly.
+//! With no Cloudflare header present we fall back to the socket peer. Because office networks NAT
+//! many machines behind one public IP, the limit is effectively **per-network/organization**.
 //!
 //! Quota: **1 request/second sustained, bursts up to 2** (GCRA, via `governor`).
 
@@ -50,17 +54,15 @@ pub async fn rate_limit(
     }
 }
 
-/// Real client IP from the usual proxy headers, in priority order, taking the leftmost value of
-/// each (the original client in an `X-Forwarded-For`-style chain). Returns `None` if none carry a
-/// parseable address, so the caller can fall back to the socket peer.
+/// Real client IP from **Cloudflare's** headers only, in priority order, taking the leftmost value
+/// (the original client). Returns `None` if neither header carries a parseable address, so the
+/// caller falls back to the socket peer. The generic `X-Forwarded-For`/`X-Real-IP` family is
+/// deliberately NOT trusted: it is caller-settable and would let a direct-to-port client forge the
+/// rate-limit key. Only reinstate a non-CF proxy's header behind an explicit trusted-proxy flag.
 pub(crate) fn client_ip(headers: &HeaderMap) -> Option<IpAddr> {
     const IP_HEADERS: &[&str] = &[
-        "CF-Connecting-IP",         // Cloudflare
-        "True-Client-IP",           // Cloudflare Enterprise
-        "X-Real-IP",                // Nginx
-        "X-Forwarded-For",          // most common (can be spoofed)
-        "X-Cluster-Client-IP",      // GCP Load Balancer
-        "X-Original-Forwarded-For", // AWS ALB
+        "CF-Connecting-IP", // Cloudflare Tunnel (our deployment)
+        "True-Client-IP",   // Cloudflare Enterprise
     ];
 
     IP_HEADERS.iter().find_map(|name| {
@@ -68,4 +70,23 @@ pub(crate) fn client_ip(headers: &HeaderMap) -> Option<IpAddr> {
         let first = value.split(',').next().unwrap_or(value).trim();
         first.parse::<IpAddr>().ok()
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn client_ip_trusts_cloudflare_headers_only() {
+        // A forged X-Forwarded-For is ignored -> None (caller falls back to the socket peer).
+        let mut spoofed = HeaderMap::new();
+        spoofed.insert("X-Forwarded-For", "1.2.3.4".parse().unwrap());
+        spoofed.insert("X-Real-IP", "5.6.7.8".parse().unwrap());
+        assert_eq!(client_ip(&spoofed), None);
+
+        // CF-Connecting-IP is trusted; leftmost value wins.
+        let mut cf = HeaderMap::new();
+        cf.insert("CF-Connecting-IP", "203.0.113.7, 10.0.0.1".parse().unwrap());
+        assert_eq!(client_ip(&cf), Some("203.0.113.7".parse().unwrap()));
+    }
 }

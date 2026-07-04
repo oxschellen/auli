@@ -59,6 +59,11 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Ve
     for (panel_id, nome, _) in &pubs {
         let items = parse_panel(&doc, panel_id);
         println!("PR: aba '{}' -> {} ocorrências", nome, items.len());
+        // Uma aba vazia geralmente significa `panel_id` errado (os ids do portal têm typos, ex.
+        // `-cidado`/`-municpio`/`-legislao`): sem itens ela some silenciosamente do catálogo.
+        if items.is_empty() {
+            eprintln!("⚠️  PR: aba '{}' (painel '{}') veio vazia — id do painel mudou no portal?", nome, panel_id);
+        }
         per_pub.push((nome.to_string(), items));
     }
 
