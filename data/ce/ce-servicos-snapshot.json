@@ -1,0 +1,3523 @@
+{
+  "schema_version": 3,
+  "entidade": "ce",
+  "scraper": {
+    "nome": "auli-scraper-ce",
+    "versao": "0.1.0"
+  },
+  "coleta": {
+    "coletado_em": "2026-07-04T22:16:14.107675568Z",
+    "publicos_ordem": [
+      {
+        "nome": "Serviços",
+        "slug": "servicos-gerais"
+      }
+    ],
+    "items": [
+      {
+        "titulo": "Homologar DI - Declaração de Importação",
+        "descricao": "rEQUISIÇÃO DE AÇÃO FISCAL DE D I AINDA NÃO HOMOLOGADA NO SITRAM",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+homologar-di-declaracao-de-importacao+69459012f6e0ff51fef22a9d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Homologar notas fiscais",
+        "descricao": "REQUISIÇÃO DE HOMOLOGAÇÃO DE AÇÃO FISCAL",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+homologar-notas-fiscais+69459014f6e0ff51fef2e639",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Impugnar Débito Inscrito na Dívida Ativa - ITCD",
+        "descricao": "Impugnação de débitos de ITCD inscritos na Dívida Ativa.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+impugnar-debito-inscrito-na-divida-ativa-itcd+64da4f00170f5a26dc569674",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Impugnar Lançamento - ITCD",
+        "descricao": "Impugnação do lançamento de ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+impugnar-lancamento-itcd+64da64ad170f5a26dcdc27cc",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Incluir Empresas com 4 ou 5 Jangadas na Funcionalidade de Alterar o Selo no Ambiente Seguro",
+        "descricao": "Incluir empresas no programa de auto regularização e conformidade tributária Contribuinte Pai d?Égua.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+incluir-empresas-com-4-ou-5-jangadas-na-funcionalidade-de-alterar-o-selo-no-ambiente-seguro+64da4f61170f5a26dc596cda",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Incluir Notas Fiscais nas Exceções do Siget",
+        "descricao": "Incluir NF-e emitidas equivocadamente com finalidade NORMAL no SITRAM.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+incluir-notas-fiscais-nas-excecoes-do-siget+64da4ee5170f5a26dc51aae4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Incluir ou excluir procurador no PAT da 2ª Câmara",
+        "descricao": "Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT pautado para julgamento na 1ª Câmara.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+incluir-ou-excluir-procurador-no-pat-da-2-camara+66c7974b23650f101194dbe1",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Incluir ou excluir procurador no PAT da 3ª Câmara",
+        "descricao": "\"Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT pautado para julgamento na 3ª Câmara. \"",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+incluir-ou-excluir-procurador-no-pat-da-3-camara+66c8a1bbd8e82105c6d4e634",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Incluir ou excluir procurador no PAT da 4ª Câmara",
+        "descricao": "\"Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT pautado para julgamento na 4ª Câmara. \"",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+incluir-ou-excluir-procurador-no-pat-da-4-camara+66c8e2940dcf0e714319ddb5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Incluir ou excluir procurador no PAT da Câmara Superior",
+        "descricao": "Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT pautado para julgamento na Câmara Superior.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+incluir-ou-excluir-procurador-no-pat-da-camara-superior+66cc8c340dcf0e7143317531",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Incluir ou excluir procurador no PAT ou PAT-e",
+        "descricao": "Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT ou PAT-e",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+incluir-ou-excluir-procurador-no-pat-ou-pat-e+66c5fcbf56048456b72de768",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Informar Declaração de Não Contribuinte de ICMS",
+        "descricao": "Declarar a não contribuição de ICMS",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+informar-declaracao-de-nao-contribuinte-de-icms+64da4f1e170f5a26dc574e06",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Informar Depósito Judicial",
+        "descricao": "Registrar o depósito judicial já realizado",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+informar-deposito-judicial+64da4f2a170f5a26dc57d45f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Informar Desconhecimento de Operação - NFE",
+        "descricao": "Informar à SEFAZ sobre operação interna não realizada em NF-e.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+informar-desconhecimento-de-operacao-nfe+64da4efe170f5a26dc5686fd",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Lavrar Auto de Infração",
+        "descricao": "Forma de punição por não cumprimento de obrigações principais ou acessórioas. Visa combater a sonegação fiscal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+lavrar-auto-de-infracao+69459011f6e0ff51fef1f0c2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Liberar chave de NF-e na CIPP",
+        "descricao": "REQUISIÇÃO DE REENVIO DA CHAVE DA NOTA PARA CIPP",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+liberar-chave-de-nf-e-na-cipp+69459015f6e0ff51fef34c18",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Liberar mercadoria aguardando pagamento",
+        "descricao": "Liberação da mercadoria após confirmação do pagamento pendente para regularização financeira.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+liberar-mercadoria-aguardando-pagamento+6642156742a1ea68e9a3b08f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Liberar mercadoria autuada com Liminar em Mandado de Segurança",
+        "descricao": "Liberar mercadoria autuada em cumprimento de liminar concedida em Mandado de Segurança.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+liberar-mercadoria-autuada-com-liminar-em-mandado-de-seguranca+664276706e983079877e4152",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Liberar mercadoria autuada com Termo de Fiança",
+        "descricao": "Liberação mediante apresentação de Termo de Fiança como garantia do cumprimento das obrigações.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+liberar-mercadoria-autuada-com-termo-de-fianca+663e12c342a1ea68e921c323",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Liberar mercadoria autuada com pagamento",
+        "descricao": "Liberação da mercadoria após quitação integral das multas ou tributos aplicados.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+liberar-mercadoria-autuada-com-pagamento+6642aa5842a1ea68e99af9aa",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Liberar mercadoria retida mediante depósito administrativo",
+        "descricao": "Liberação mediante depósito do valor da multa ou tributo em processo administrativo.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+liberar-mercadoria-retida-mediante-deposito-administrativo+6642927942a1ea68e99b860e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Monitorar Transportadoras",
+        "descricao": "Acompanhamento eletrônico das operações e obrigações fiscais das transportadoras em tempo real, promovendo uma autorrregularização de forma menos ostensiva do que a fiscalização",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+monitorar-transportadoras+69459010f6e0ff51fef1b10f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Obter Credenciamento - Recurso/SICRED",
+        "descricao": "Obter credenciamento por recurso/SICRED.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+obter-credenciamento-recurso-sicred+64da5a9ed29b0c14e1bce92f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Parcelar Auto de Infração",
+        "descricao": "Parcelar débitos originados da lavratura de auto de infração.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f2e170f5a26dc57fd6b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Parcelar Auto de Infração",
+        "descricao": "Solicitar o parcelamento de autos de infração",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f60170f5a26dc595d2b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Parcelar ICMS Estoque - CNAE Substituição Tributária",
+        "descricao": "Parcelar ICMS de estoque de contribuintes enquadrados em CNAE?s elencadas em decreto estadual para cobrança de substituição tributária.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-icms-estoque-cnae-substituicao-tributaria+64de683bd29b0c14e1e808fa",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Parcelar débitos de ICMS não inscritos em Dívida Ativa",
+        "descricao": "Parcelar débitos de ICMS em até 60 parcelas, que não estão inscritos em Dívida Ativa do Estado e nem incluídos em auto de infração.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-debitos-de-icms-nao-inscritos-em-divida-ativa+64da4f2a170f5a26dc57d996",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Cancelamento de Guia no ITCD",
+        "descricao": "Pedido de cancelamento de guias relacionadas ao ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-cancelamento-de-guia-no-itcd+64da4f0c170f5a26dc56c853",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Cálculo de ITCD - Divórcio",
+        "descricao": "Serviço para solicitar o cálculo do Imposto sobre Transmissão Causa Mortis e Doação (ITCD) em casos de partilha de bens decorrente de divórcio. O cálculo é necessário para a regularização da transferência de patrimônio entre as partes envolvidas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-calculo-de-itcd-divorcio+67a4fbb80c3e54731eae1574",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Cálculo de ITCD - Inter Vivos",
+        "descricao": "Solicitação de cálculo de ITCD para transmissão inter vivos.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-calculo-de-itcd-inter-vivos+64da4f12170f5a26dc5701f4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir DAE para pagamento parcial de auto de infração",
+        "descricao": "Emitir DAE da parte incontroversa do auto de infração.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-dae-para-pagamento-parcial-de-auto-de-infracao+668c301a896d383914d6d920",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Dispensa de Multa e Juros no ITCD",
+        "descricao": "Requerimento de dispensa de multa e juros relacionados ao ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-dispensa-de-multa-e-juros-no-itcd+64da4f11170f5a26dc56ee19",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Parcelamento - ITCD",
+        "descricao": "Pedido de parcelamento de débitos de ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-parcelamento-itcd+64da4f1a170f5a26dc57408a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Reavaliação - ITCD",
+        "descricao": "Pedido de reavaliação de lançamento de ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-reavaliacao-itcd+64da64ae170f5a26dcdc2808",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Reconhecimento de Não incidência/Imunidade ITCD",
+        "descricao": "Solicitação de cálculo de ITCD para Não incidência/Imunidade",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-reconhecimento-de-nao-incidencia-imunidade-itcd+64da4f12170f5a26dc5701a5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Restituição de IPVA Pago pelo proprietário anterior ou por terceiros",
+        "descricao": "Solicitar pelo Tramita, a restituição do IPVA pago a mais por terceiros ou proprietário anterior.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-restituicao-de-ipva-pago-pelo-proprietario-anterior-ou-por-terceiros+64da4eed170f5a26dc5605cc",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir Sustentação Oral em sessão presencial da Câmara Superior",
+        "descricao": "Pedir a sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada pela Câmara Superior, quando não solicitado no rol de pedidos da peça recursal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-em-sessao-presencial-da-camara-superior+66c8ef830dcf0e7143c70e5e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir adiamento do julgamento do processo da 1ª Câmara",
+        "descricao": "Pedir adiamento de julgamento de processo pautado na 1ª Câmara do Conat.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-adiamento-do-julgamento-do-processo-da-1-camara+66c498a80230d40855df074f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir adiamento do julgamento do processo da 2ª Câmara",
+        "descricao": "Pedir adiamento da sessão de julgamento da Segunda Câmara do Conat.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-adiamento-do-julgamento-do-processo-da-2-camara+66c790c2ef405307e772d3c1",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir adiamento do julgamento do processo da 3ª Câmara",
+        "descricao": "Pedir adiamento de sessão de julgamento da 3ª Câmara",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-adiamento-do-julgamento-do-processo-da-3-camara+66c891bcd8e82105c65c1bc0",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir adiamento do julgamento do processo da 4ª Câmara",
+        "descricao": "Pedir adiamento de julgamento de processo pautado na Quarta Câmara do Conat.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-adiamento-do-julgamento-do-processo-da-4-camara+66c8d7974c482f51a0927dd6",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir adiamento do julgamento do processo da Câmara Superior",
+        "descricao": "Pedir adiamento de julgamento de processo pautado na Câmara Superior.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-adiamento-do-julgamento-do-processo-da-camara-superior+66cc839470594f43f8c6db1c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir certidão de trânsito em julgado dos processos físicos",
+        "descricao": "Pedir a certidão de trânsito em julgado, emitida exclusivamente para processos físicos (em papel), quando ocorre a decisão administrativa definitiva e encerrado os prazos previstos na lei processual.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-certidao-de-transito-em-julgado-dos-processos-fisicos+66b6644ec5e5aa175698a210",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir cópia de resolução da Câmara de Julgamento e Superior - PAT físico",
+        "descricao": "Pedir cópia da resolução proferida pela Segunda Instância (Câmara de Julgamento) e Instância Especial (Câmara Superior), na qual consta o teor da decisão administrativa de um auto de infração lavrado em papel (físico).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-copia-de-resolucao-da-camara-de-julgamento-e-superior-pat-fisico+66ccb36943e213185f4e593b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir cópia do julgamento de 1ª Instância - PAT físico",
+        "descricao": "Pedir cópia da peça de julgamento de Primeira Instância de um auto de infração lavrado em papel (físico).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-copia-do-julgamento-de-1-instancia-pat-fisico+64de66f5d29b0c14e1ddf6ad",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir cópias do processo físico - PAT",
+        "descricao": "Pedir peças processuais de um auto de infração lavrado em papel (físico) em trâmite no Conat.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-copias-do-processo-fisico-pat+66b52b1277e91c3c39046631",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir devolução de depósito administrativo",
+        "descricao": "Pedir devolução total ou parcial de depósito administrativo, nos casos de julgamento definitivo nulo, extinto, improcedente e parcial procedente.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-devolucao-de-deposito-administrativo+66b6604736b90a5f0c5adee2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir restituição do pagamento de auto de infração",
+        "descricao": "Pedir a restituição total ou parcial de auto de infração pago integralmente e tido como indevidamente recolhido ao erário.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-restituicao-do-pagamento-de-auto-de-infracao+668c166de5b0085967ef6b2d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir restituição do pagamento de taxas do Contencioso",
+        "descricao": "Pedir restituição do pagamento de taxas de fiscalização e prestação de serviços públicos, cobradas pelo Contencioso.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-restituicao-do-pagamento-de-taxas-do-contencioso+66917f307011d7223aaca7ab",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral em sessão presencial da 1ª Câmara",
+        "descricao": "Pedir a sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada no Conat pela Primeira Câmara de Julgamento, quando não solicitado no rol de pedidos da peça recursal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-em-sessao-presencial-da-1-camara+66c38665eaa8460c738fd40a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral em sessão presencial da 2ª Câmara",
+        "descricao": "Pedir sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada no Conat pela Segunda Câmara de Julgamento, quando não solicitado no rol de pedidos da peça recursal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-em-sessao-presencial-da-2-camara+66c790adef405307e76b3862",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral em sessão presencial da 3ª Câmara",
+        "descricao": "Pedir a sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada no Conat pela Terceira Câmara de Julgamento, quando não solicitado no rol de pedidos da peça recursal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-em-sessao-presencial-da-3-camara+66c7a092120ec1533710e7ff",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral em sessão presencial da 4ª Câmara",
+        "descricao": "Pedir a sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada no Conat pela Quarta Câmara de Julgamento, quando não solicitado no rol de pedidos da peça recursal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-em-sessao-presencial-da-4-camara+66c8cae6620830296485b6bb",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral por videoconferência da 1ª Câmara",
+        "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Primeira Câmara de Julgamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-por-videoconferencia-da-1-camara+66e4934e44cd866b8f14d72f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral por videoconferência da 2ª Câmara",
+        "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Segunda Câmara de Julgamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-por-videoconferencia-da-2-camara+66c790b0ef405307e76d0e90",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral por videoconferência da 3ª Câmara",
+        "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Terceira Câmara de Julgamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-por-videoconferencia-da-3-camara+66c883f2a8d01a078b5b6ac9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral por videoconferência da 4ª Câmara",
+        "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Quarta Câmara de Julgamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-por-videoconferencia-da-4-camara+66c8d1ef0dcf0e7143d86a9b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pedir sustentação oral por videoconferência da Câmara Superior",
+        "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Câmara Superior.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pedir-sustentacao-oral-por-videoconferencia-da-camara-superior+66c8f449b032da5d26a8aae2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pesquisar INFORMATIVO CONAT e outras publicações",
+        "descricao": "Pesquisar publicações elaboradas pelo Contencioso, em destaque, o INFORMATIVO CONAT, dentre elas, ementários, manuais e outras produções.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pesquisar-informativo-conat-e-outras-publicacoes+6709818b1074de14323c4a38",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Pesquisar resoluções e jurisprudência no CONAT Juris",
+        "descricao": "Pesquisar resoluções proferidas pelas Câmaras de Julgamento ou Câmara Superior, de acordo com os critérios de busca da nova ferramenta Conat Juris.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+pesquisar-resolucoes-e-jurisprudencia-no-conat-juris+64da5a7bd29b0c14e1bc1397",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Processar Processos Sanfit selagem não transitou pelo posto fiscal e encontra-se de posse",
+        "descricao": "Procedimento para registrar e selar notas fiscais de saída tramita com destino a outros estados, garantindo a conformidade fiscal e o acompanhamento das operações interestaduais.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+processar-processos-sanfit-selagem-nao-transitou-pelo-posto-fiscal-e-encontra-se-de-posse+6945900df6e0ff51fef154ed",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Processar Tramita - Contrato de Fidelidade/Autopeças",
+        "descricao": "Processo Tramita para apresentar o contrato de fidelidade",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+processar-tramita-contrato-de-fidelidade-autopecas+6945900ef6e0ff51fef16682",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Processar Tramita - Inclusão de Exceção SIGET",
+        "descricao": "Processo para inclusão de notas fiscais nas exceções do sistema SIGET, possibilitando tratamento diferenciado para determinadas operações conforme regras específicas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+processar-tramita-inclusao-de-excecao-siget+6945900ef6e0ff51fef16271",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Processos Sanfit correção menos de 60 dias",
+        "descricao": "Processo de correção nas operações interestaduais utilizando o sistema SANFIT, assegurando a correta documentação e fiscalização das transações entre estados.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+processos-sanfit-correcao-menos-de-60-dias+6945900cf6e0ff51fef12276",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar Consulta acerca da aplicação da legislação tributária do IPVA",
+        "descricao": "Consultar a legislação tributária estadual relacionada ao IPVA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-consulta-acerca-da-aplicacao-da-legislacao-tributaria-do-ipva+64da4ee4170f5a26dc512a52",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar Cálculo do Diferencial de Alíquotas (Difal)",
+        "descricao": "Apuração do valor do ICMS devido pela diferença entre as alíquotas interna e interestaduais nas operações e prestações que destinem bens, mercadorias e serviços a consumidores finais não contribuintes domicilados no Estado.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-calculo-do-diferencial-de-aliquotas-difal+69459002f6e0ff51feef2346",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar Inscrição de Distribuidor de Combustíveis",
+        "descricao": "Inscrever distribuidor de combustíveis no cadastro.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-inscricao-de-distribuidor-de-combustiveis+64da4ee5170f5a26dc5210dd",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar Inscrição de Posto Revendedor Varejista de Combustível",
+        "descricao": "Inscrever posto revendedor varejista de combustível.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-inscricao-de-posto-revendedor-varejista-de-combustivel+64da4f0e170f5a26dc56e07e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar Inscrição de Produtor Rural",
+        "descricao": "Inscrever produtor rural no cadastro.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-inscricao-de-produtor-rural+64da4f0d170f5a26dc56da11",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar Inscrição de Transportador Revendedor Retalhista",
+        "descricao": "Inscrever transportador revendedor retalhista no cadastro.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-inscricao-de-transportador-revendedor-retalhista+64da4f11170f5a26dc56fd50",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar cobrança Administrativa do Difal de Empresas de outras UF",
+        "descricao": "Procedimento de autorregularização de empresas de outras UF'S que apresentem débito fiscal relativo ao DIFAL.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-cobranca-administrativa-do-difal-de-empresas-de-outras-uf+69459004f6e0ff51feef6861",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar depósito administrativo de Auto de Infração impugnado no Conat.",
+        "descricao": "Realizar depósito administrativo de Auto de Infração impugnado no Conat.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-deposito-administrativo-de-auto-de-infracao-impugnado-no-conat+668c267f896d383914eaa368",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Realizar depósito judicial",
+        "descricao": "Realizar depósito judicial em Posto Fiscal para atender a obrigações fiscais.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+realizar-deposito-judicial+64da4f60170f5a26dc595cbf",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Reativação de Cadastro",
+        "descricao": "Reativar cadastro que estava inativo.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+reativacao-de-cadastro+64da4f0d170f5a26dc56d24f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Recepcionar Documentos Processuais no Contencioso",
+        "descricao": "Envie documentos processuais para análise no setor de contencioso.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+recepcionar-documentos-processuais-no-contencioso+64da4ee3170f5a26dc510c82",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Recorrer contra Indeferimento de Impugnação/Reavaliação - ITCD",
+        "descricao": "Recurso contra indeferimento de impugnação ou reavaliação de ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+recorrer-contra-indeferimento-de-impugnacao-reavaliacao-itcd+64da67a4d29b0c14e105cdb2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Recurso - Desenquadramento do MEI",
+        "descricao": "Informações acerca do recurso para desenquadramento de MEI devido a compras ou receitas excessivas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+recurso-desenquadramento-do-mei+64de8015d29b0c14e1af617c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Recurso - Diferença PGDAS-D x DIMP (Cartão/PIX/Meios de Pagamento) x Documentos Fiscais",
+        "descricao": "Informações de recurso sobre as diferenças de receita entre PGDAS-D, DIMP e documentos fiscais",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+recurso-diferenca-pgdas-d-x-dimp-cartao-pix-meios-de-pagamento-x-documentos-fiscais+64de807cd29b0c14e1b10b54",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Recurso - Eventos 379 (Despesas) e 380 (Aquisições)",
+        "descricao": "Informações relativas a despesas que superam em mais de 20% e aquisições superam em 80% os ingressos de recursos, em que o contribuinte optante pelo SImples Nacional entende recorrer contra a Fazenda Pública.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+recurso-eventos-379-despesas-e-380-aquisicoes+64de806dd29b0c14e1b0db23",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Recurso - Indeferimento da Opção ao Regime",
+        "descricao": "Informações acerca do recurso para opção de regime do Simples Nacional indeferida.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+recurso-indeferimento-da-opcao-ao-regime+64de8060d29b0c14e1b0c970",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Recurso - Termo de Exclusão de Ofício",
+        "descricao": "Informações a respeito do recurso ao Termo de Exclusão do Simples Nacional",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+recurso-termo-de-exclusao-de-oficio+64de7efed29b0c14e1a843ee",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Reduzir Alíquota de IPVA para Autoescola",
+        "descricao": "Solicitar redução de alíquota para veículos de autoescolas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+reduzir-aliquota-de-ipva-para-autoescola+64da4ef9170f5a26dc56659e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Reduzir Alíquota de IPVA para Locadoras",
+        "descricao": "Solicitar redução de alíquota para veículos de locadoras.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+reduzir-aliquota-de-ipva-para-locadoras+64da4ef9170f5a26dc5665a8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar Contrato de Fidelidade/Autopeças",
+        "descricao": "Firmar convênio para obter redutor nos percentuais de carga tributária líquida de aquisições de peças automotivas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-contrato-de-fidelidade-autopecas+64da4f5e170f5a26dc5952bc",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar Inscrição Estadual de Substituto Tributário",
+        "descricao": "Registrar inscrição estadual de substituto tributário.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-inscricao-estadual-de-substituto-tributario+64da4f13170f5a26dc571016",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar Manifestação - Ouvidoria",
+        "descricao": "Registro de manifestações e sugestões para o órgão de ouvidoria.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-manifestacao-ouvidoria+64da4efe170f5a26dc5686d2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar Notas fiscais de simples remessa",
+        "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE SIMPLES REMESSA",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-notas-fiscais-de-simples-remessa+69459015f6e0ff51fef31fbb",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar Operação de Cabotagem",
+        "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE CABOTAGEM PARA O CEARÁ",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-operacao-de-cabotagem+69459013f6e0ff51fef26a77",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar Operação de leilão",
+        "descricao": "REQUISIÇÃO DE REGISTRO DE OPERAÇÃO DE LEILÃO",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-operacao-de-leilao+69459016f6e0ff51fef3508f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar denúncia ou representação contra servidor da Sefaz",
+        "descricao": "É o canal oficial para o cidadão relatar condutas irregulares, abusos ou descumprimento de deveres por parte de funcionários da Secretaria da Fazenda.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-denuncia-ou-representacao-contra-servidor-da-sefaz+6a048ba9d25fe454574585fc",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar nota fiscal de entrada/saída no PF Mucuripe via SITRAM (Presencial)",
+        "descricao": "Cadastro e registro de notas fiscais que entraram ou saíram no Posto Fiscal do Mucuripe no sistema SITRAM para controle fiscal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-nota-fiscal-de-entrada-saida-no-pf-mucuripe-via-sitram-presencial+6945901cf6e0ff51fef59763",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar operação de Importação",
+        "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE IMPORTAÇÃO JÁ ABERTA PELA CENTRAL DE IMPORTAÇÃO",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-operacao-de-importacao+69459012f6e0ff51fef23bb6",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar ou selar Nota Fiscal Avulsa de Entrada Interestadual no Sitram",
+        "descricao": "Registrar ou selar no SITRAM, Nota Fiscal Avulsa - NFA de entrada de mercadorias no Ceará, quando não tiver sido feito na divisa do Estado, com solicitação por meio do Sistema TRAMITA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-ou-selar-nota-fiscal-avulsa-de-entrada-interestadual-no-sitram+64da4f61170f5a26dc596c06",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar ou selar importação via SISCOEX",
+        "descricao": "Registrar ou selar operações de importações via SISCOEX",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-ou-selar-importacao-via-siscoex+664189d242a1ea68e9278906",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar ou selar no SITRAM operações Interestaduais via Posto Fiscal Virtual",
+        "descricao": "Registrar ou selar notas fiscais, em operações interestaduais no SITRAM por meio de acesso exclusivo a empresa transportadora credenciada na SEFAZ-Ce.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-ou-selar-no-sitram-operacoes-interestaduais-via-posto-fiscal-virtual+64da4f60170f5a26dc595cb5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar ou selar no SITRAM operações Interestaduais via SANFIT",
+        "descricao": "Registrar ou selar notas fiscais, em operações interestaduais, pelo SITRAM (Sistema de Trânsito de Mercadorias) quando não tiver sido feito na divisa do Estado.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-ou-selar-no-sitram-operacoes-interestaduais-via-sanfit+64da4eed170f5a26dc5605ee",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar ou selar no SITRAM operações interestaduais no Posto Fiscal",
+        "descricao": "Registrar ou selar nota fiscal em operação interestadual na passagem da mercadoria em posto de divisa ou fronteira",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-ou-selar-no-sitram-operacoes-interestaduais-no-posto-fiscal+664160f66e98307987b4b27e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Registrar ou selar saída Interestadual no SITRAM",
+        "descricao": "Registrar ou selar no SITRAM, nota fiscal que acoberta operação de saída de mercadoria do Ceará.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+registrar-ou-selar-saida-interestadual-no-sitram+64da4f63170f5a26dc598b11",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Regularizar Divergência de lacre",
+        "descricao": "LIBERAÇÃO DE DIVERGÊNCIA DE LACRE NO SIC-TOS",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+regularizar-divergencia-de-lacre+69459016f6e0ff51fef35b2e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Regularizar Notas fiscais não informadas na planilha do navio",
+        "descricao": "REQUISIÇÃO DE INCLUSÃO DE NOVAS NOTAS FISCAIS NA PLANILHA DO NAVIO",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+regularizar-notas-fiscais-nao-informadas-na-planilha-do-navio+69459016f6e0ff51fef3608d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Regularizar importação por pessoa física e jurídica não contribuinte do ICMS",
+        "descricao": "Procedimentos para regularizar operação de importação por pessoa física e jurídica não contribuinte do ICMS",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+regularizar-importacao-por-pessoa-fisica-e-juridica-nao-contribuinte-do-icms+64da4f64170f5a26dc59aac3",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Regularizar situação fiscal para encomendas retidas",
+        "descricao": "Através do recolhimento do imposto",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+regularizar-situacao-fiscal-para-encomendas-retidas+69459017f6e0ff51fef362e7",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Requisitar Restituição abaixo de 5.000 UFIRCES - ITCD",
+        "descricao": "Requisição de restituição de valores abaixo de 5.000 UFIRCES relacionados ao ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+requisitar-restituicao-abaixo-de-5-000-ufirces-itcd+64da4f11170f5a26dc56edfe",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Requisitar Restituição acima de 5.000 UFIRCES - ITCD",
+        "descricao": "Requisição de restituição de valores acima de 5.000 UFIRCES relacionados ao ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+requisitar-restituicao-acima-de-5-000-ufirces-itcd+64da4f0c170f5a26dc56c871",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Responder ao recurso extraordinário da Procuradoria Geral do Estado",
+        "descricao": "Apresentar contrarrazões a respeito da admissibilidade do Recurso Extraordinário interposto pela Procuradoria Geral do Estado - PGE (Recorrente), com base no despacho fundamentado do Presidente do Conat.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+responder-ao-recurso-extraordinario-da-procuradoria-geral-do-estado+66917900320add6fe562bb79",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Restituição de ICMS e Frete",
+        "descricao": "Análise dos pedidos de restituição de valores de ICMS pagos de forma indevida ou em excesso pelos contribuintes nas operações de transporte, garantindo a fiel observância da legislação tributária.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+restituicao-de-icms-e-frete+69459011f6e0ff51fef1f571",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Revogar Retirada de Restrições de IPVA",
+        "descricao": "Anular restrições sobre o pagamento do IPVA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+revogar-retirada-de-restricoes-de-ipva+64da4ef8170f5a26dc564863",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Alteração Cadastral",
+        "descricao": "Requerer mudança de informações no cadastro.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-alteracao-cadastral+64da5a92d29b0c14e1bcc5bf",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Alteração de Razão Social - Ato COTEPE 13/2013",
+        "descricao": "Efetuar mudança na razão social de acordo com regulamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-alteracao-de-razao-social-ato-cotepe-13-2013+64da4f0b170f5a26dc56c1bc",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Análise Malha Fiscal PGDAS-D Retida",
+        "descricao": "Informações a respeito da solicitação de análise das declarações de PGDAS-D retidas na Malha Fiscal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-analise-malha-fiscal-pgdas-d-retida+64de8050d29b0c14e1b057d8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Autorização de Venda de Mercadoria Abaixo do Preço de Custo",
+        "descricao": "Solicitar autorização de venda de mercadoria abaixo do preço de custo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-autorizacao-de-venda-de-mercadoria-abaixo-do-preco-de-custo+64da4f2d170f5a26dc57f4e1",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Autorregularização de ICMS - IN 102/2022",
+        "descricao": "Autorregularização de ICMS de que trata o art. 155 do Decreto n.º 34.605/2022, disciplinada na Instrução Normativa nº 102/2022.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-autorregularizacao-de-icms-in-102-2022+64da4f2b170f5a26dc57e488",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Baixa de Cadastro",
+        "descricao": "Encerrar cadastro de uma entidade.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-baixa-de-cadastro+64dd00cad29b0c14e1fd5a56",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Consulta sobre Aplicação de Normas e Processos Tributários",
+        "descricao": "Solicitar consulta tributária",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-consulta-sobre-aplicacao-de-normas-e-processos-tributarios+64da4f3a170f5a26dc585e21",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Contestação - Manifestação de Fabricante Local",
+        "descricao": "Solicitar contestação - manifestação de fabricante local",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-contestacao-manifestacao-de-fabricante-local+64da4f2e170f5a26dc57fd62",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Contestação de Suspensão de RET",
+        "descricao": "Solicitar contestação de suspensão de regime especial tributário (RET) - Outros casos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-contestacao-de-suspensao-de-ret+64da4f43170f5a26dc58aa58",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Contestação de Suspensão de RET - Débitos Sitram",
+        "descricao": "Solicitar contestação de suspensão de regime especial tributário (RET) - Débitos Sitram",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-contestacao-de-suspensao-de-ret-debitos-sitram+64da4f3f170f5a26dc589b41",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Correção de Classificação no Programa",
+        "descricao": "Pedido de correção de classificação no programa.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-correcao-de-classificacao-no-programa+64da4f1e170f5a26dc5753fd",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Credenciamento - Documentação de Atacadista",
+        "descricao": "Obter credenciamento como atacadista.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-documentacao-de-atacadista+64da4f11170f5a26dc56fd48",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Credenciamento de Transportadora",
+        "descricao": "Solicitar credenciamento de transportadora",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-de-transportadora+66e493ac717ec6394728a5ba",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Credenciamento em Regime Especial - Borra, Cera Bruta e Pó de Carnaúba, Couro e Pele",
+        "descricao": "Solicitar credenciamento em regime especial para borra, cera bruta e pó de carnaúba, couro e pele",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-em-regime-especial-borra-cera-bruta-e-po-de-carnauba-couro-e-pele+64da4f3d170f5a26dc58782c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Credenciamento em Regime Especial - Castanha de Caju, Pedúnculo e Líquido de Castanha de Caju",
+        "descricao": "Solicitar credenciamento em regime especial para castanha de caju, pedúnculo e líquido de castanha de caju",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-em-regime-especial-castanha-de-caju-pedunculo-e-liquido-de-castanha-de-caju+64da4f3d170f5a26dc587814",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Credenciamento em Regime Especial - Lagosta, Camarão e Pescado",
+        "descricao": "Solicitar credenciamento em regime especial para lagosta, camarão e pescado",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-em-regime-especial-lagosta-camarao-e-pescado+64da4f3c170f5a26dc58720d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Credenciamento em Regime Especial - Mel de Abelha",
+        "descricao": "Solicitar credenciamento em regime especial para mel de abelha",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-em-regime-especial-mel-de-abelha+64da4f3d170f5a26dc58778b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Crédito Módulos Fiscais Eletrônicos",
+        "descricao": "Crédito da SEFAZ para empresas que compraram MFE com restituição ou compensação.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credito-modulos-fiscais-eletronicos+64da4efe170f5a26dc568723",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Desvinculação Débitos de IPVA para Leilão",
+        "descricao": "Pedir a desvinculação de débitos de IPVA para leilão de veículo.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-desvinculacao-debitos-de-ipva-para-leilao+64da4ee4170f5a26dc511b0a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Dispensa de IPVA para Cooperativas",
+        "descricao": "Pedir isenção de IPVA para cooperativas de transporte alternativo.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-dispensa-de-ipva-para-cooperativas+64da4eed170f5a26dc5605c8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Dispensa de IPVA por Furto, Roubo",
+        "descricao": "Pedir isenção de IPVA para veículos furtados, roubados ou sinistrados.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-dispensa-de-ipva-por-furto-roubo+64da4ef8170f5a26dc5652d2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Documentação de Termo de Credenciamento - Transportadora",
+        "descricao": "Documentação para termo de credenciamento de transportadora.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-documentacao-de-termo-de-credenciamento-transportadora+64da4f0d170f5a26dc56da18",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Emissão de Certificados - CEFDESP",
+        "descricao": "Solicitar emissão de certificados no CEFDESP",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-emissao-de-certificados-cefdesp+64da4f23170f5a26dc5786e0",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Emissão de Certificados - CEFIC",
+        "descricao": "Solicitar emissão de certificados no CEFIC",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-emissao-de-certificados-cefic+64da4f1e170f5a26dc5753f5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Entrega de Documentos Fiscais em Branco",
+        "descricao": "Solicitar entrega de documentos fiscais em branco",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-entrega-de-documentos-fiscais-em-branco+64da4f39170f5a26dc5851db",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Exoneração GLME de Importação",
+        "descricao": "Solicitar exoneração GLME (Grupo Logístico Multimodal Especial) de importação",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-exoneracao-glme-de-importacao+64da4f2f170f5a26dc580a19",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar ITCD para inventário, arrolamento, alvará ou partilha judicial",
+        "descricao": "Solicitação de cálculo de ITCD para transmissão por morte.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-itcd-para-inventario-arrolamento-alvara-ou-partilha-judicial+64da4f12170f5a26dc5701a7",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar ITCD para sobrepartilha judicial",
+        "descricao": "Pedir Cálculo de ITCD – Sobrepartilha é o serviço que permite solicitar à Secretaria da Fazenda do Estado do Ceará o cálculo do imposto devido em casos de sobrepartilha, quando bens não incluídos na partilha original de herança são posteriormente transmitidos aos herdeiros.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-itcd-para-sobrepartilha-judicial+68c3fd709c3b48628a86fe32",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Impugnação de Débitos Inscritos em Dívida Ativa",
+        "descricao": "Solicitar impugnação de débitos inscritos em dívida ativa",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-impugnacao-de-debitos-inscritos-em-divida-ativa+64da4f31170f5a26dc581eef",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Impugnação de VAF",
+        "descricao": "Solicitar impugnação do Valor Adicionado Fiscal (VAF)",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-impugnacao-de-vaf+64da4f31170f5a26dc581f38",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Imunidade de ICMS/Outros",
+        "descricao": "Solicitar imunidade de ICMS ou outros casos especiais",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-imunidade-de-icms-outros+64da4f1b170f5a26dc57433a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Inclusão de Empresa no ATO COTEPE 13/2013",
+        "descricao": "Solicitar inclusão de empresa no Ato COTEPE 13/2013",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-inclusao-de-empresa-no-ato-cotepe-13-2013+67212b92d7046963f4eede52",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Inclusão de Empresa no Ato COTEPE 13/2013",
+        "descricao": "Solicitar inclusão de empresa no Ato COTEPE 13/2013",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-inclusao-de-empresa-no-ato-cotepe-13-2013+64da4f3e170f5a26dc588b7d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Inclusão/Alteração/Exclusão de Contador - MEI",
+        "descricao": "Pedido para incluir, alterar ou remover contador do MEI.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-inclusao-alteracao-exclusao-de-contador-mei+64da64ae170f5a26dcdc28c4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Inclusão/Alteração/Exclusão de Contador - Produtor Rural",
+        "descricao": "Solicitar inclusão, mudança ou exclusão de contador - Produtor Rural.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-inclusao-alteracao-exclusao-de-contador-produtor-rural+64da4f11170f5a26dc56ee2d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Informação - LAI",
+        "descricao": "Pedido de acesso a informações públicas através da Lei de Acesso à Informação.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-informacao-lai+64da4f19170f5a26dc57381c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Inscrição Cadastral",
+        "descricao": "Registrar empresa no cadastro estadual.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-inscricao-cadastral+64da4f0e170f5a26dc56e65f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção de ICMS para Taxistas",
+        "descricao": "Solicitar isenção de ICMS para taxistas",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-icms-para-taxistas+64da4f23170f5a26dc5786d6",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção de IPVA Entidades Filantrópicas",
+        "descricao": "Pedir isenção de IPVA para entidades filantrópicas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-ipva-entidades-filantropicas+64da4ef8170f5a26dc564857",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção de IPVA Transporte Escolar",
+        "descricao": "Pedir isenção de IPVA para veículos de transporte escolar.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-ipva-transporte-escolar+64da4ef8170f5a26dc56483b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção de IPVA para Cooperativas",
+        "descricao": "Pedir isenção de IPVA para veículos de cooperativas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-ipva-para-cooperativas+64da4ef8170f5a26dc5653db",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção de IPVA para Mototaxistas",
+        "descricao": "Pedir isenção de IPVA para veículos de mototaxistas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-ipva-para-mototaxistas+64da4ef8170f5a26dc564995",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção de IPVA para Pessoas com Deficiência (PcD)",
+        "descricao": "Pedir isenção de IPVA para Pessoas com Deficiência (PcD)",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-ipva-para-pessoas-com-deficiencia-pcd+64da4ef8170f5a26dc564c43",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção de IPVA para Taxistas",
+        "descricao": "Pedir isenção de IPVA para veículos de taxistas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-ipva-para-taxistas+64da4ef8170f5a26dc5649a0",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção de IPVA para Ônibus",
+        "descricao": "Pedir isenção de IPVA para ônibus de transporte coletivo.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-ipva-para-onibus+64da4ef8170f5a26dc564926",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Isenção para Ônibus, Micro-Ônibus e Vans",
+        "descricao": "Solicitar isenção de ICMS para ônibus, micro-ônibus e vans",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-para-onibus-micro-onibus-e-vans+64da4f19170f5a26dc573814",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Parcelamento de IPVA",
+        "descricao": "Dividir o valor do IPVA em até 24 parcelas de no mínimo 50 reais.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-parcelamento-de-ipva+64da4ee4170f5a26dc5114e4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Perda de Benefício da Isenção",
+        "descricao": "Solicitar revogação da isenção do IPVA concedida anteriormente.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-perda-de-beneficio-da-isencao+64da4ef9170f5a26dc5665e9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Processos Sobre Convênios e Protocolos",
+        "descricao": "Solicitar informações ou realizar procedimentos relacionados a Convênios e Protocolos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-processos-sobre-convenios-e-protocolos+6503917285c1313c6871fb21",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Processos Sobre Convênios e Protocolos",
+        "descricao": "Solicitar informações ou realizar procedimentos relacionados a Convênios e Protocolos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-processos-sobre-convenios-e-protocolos+67212bced7046963f4fc5706",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET com Redução da Base de Cálculo - Convênio 19/2018 - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação com Redução da Base de Cálculo - Convênio 19/2018 - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-com-reducao-da-base-de-calculo-convenio-19-2018-novo+64da4f55170f5a26dc59260a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET com Redução da Base de Cálculo - Convênio 19/2018 - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação com Redução da Base de Cálculo - Convênio 19/2018 - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-com-reducao-da-base-de-calculo-convenio-19-2018-novo+67212c13028b4369eddc40b5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET com Redução da Base de Cálculo - Convênio 19/2018 - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação com Redução da Base de Cálculo - Convênio 19/2018",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-com-reducao-da-base-de-calculo-convenio-19-2018-vigente+64da4f5d170f5a26dc594c1a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Alimentos e Congêneres - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Alimentos e Congêneres - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-alimentos-e-congeneres-novo+64da4f45170f5a26dc58ace9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Alimentos e Congêneres - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Alimentos e Congêneres",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-alimentos-e-congeneres-vigente+64da4f51170f5a26dc59090b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Aços Planos - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Aços Planos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-acos-planos-vigente+64da4f51170f5a26dc58fde9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Brita e Gesso - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Brita e Gesso",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-brita-e-gesso-vigente+64da4f51170f5a26dc58ffb7",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para CT-E - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para CT-E - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-ct-e-novo+64da4f48170f5a26dc58c8d8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para CT-E - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para CT-E",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-ct-e-vigente+64da4f3c170f5a26dc5871e9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Carga Líquida de Águas Minerais e Adicionadas de Sais - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Carga Líquida de Águas Minerais e Adicionadas de Sais",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-carga-liquida-de-aguas-minerais-e-adicionadas-de-sais-vigente+64da4f52170f5a26dc590f34",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Cerâmica - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Cerâmica - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-ceramica-novo+64da4f46170f5a26dc58b5d7",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Cerâmica - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Cerâmica",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-ceramica-vigente+64da4f54170f5a26dc591bf2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Coobilling - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Coobilling - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-coobilling-novo+64da4f47170f5a26dc58c088",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Coobilling - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Coobilling - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-coobilling-novo+67212c170c04bf0eb7aefb45",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Coobilling - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Coobilling",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-coobilling-vigente+64da4f54170f5a26dc591b24",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Crédito Presumido Telecom - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Crédito Presumido Telecom - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-credito-presumido-telecom-novo+64da4f46170f5a26dc58b584",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Crédito Presumido Telecom - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Crédito Presumido Telecom - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-credito-presumido-telecom-novo+67212c1b0c04bf0eb7af5b6d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Crédito Presumido Telecom - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Crédito Presumido Telecom",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-credito-presumido-telecom-vigente+64da4f56170f5a26dc5928ef",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para FDI - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para FDI - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-fdi-novo+64da4f4d170f5a26dc58e297",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para FDI - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para FDI",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-fdi-vigente+64da4f56170f5a26dc59286b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Feiras e Eventos - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Feiras e Eventos - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-feiras-e-eventos-novo+64da4f4d170f5a26dc58e03d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Feiras e Eventos - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Feiras e Eventos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-feiras-e-eventos-vigente+64da4f57170f5a26dc592d46",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Fios, Malhas e Tecidos - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Fios, Malhas e Tecidos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-fios-malhas-e-tecidos-vigente+64da4f57170f5a26dc592d44",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Material de Construção - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Material de Construção - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-material-de-construcao-novo+64da4f4e170f5a26dc58e75f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Material de Construção - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Material de Construção",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-material-de-construcao-vigente+64da4f59170f5a26dc593f3d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Móveis, Eletrodomésticos e Utilidades Domésticas - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Móveis, Eletrodomésticos e Utilidades Domésticas - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-moveis-eletrodomesticos-e-utilidades-domesticas-novo+64da4f4e170f5a26dc58ea97",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Móveis, Eletrodomésticos e Utilidades Domésticas - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Móveis, Eletrodomésticos e Utilidades Domésticas",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-moveis-eletrodomesticos-e-utilidades-domesticas-vigente+64da4f5b170f5a26dc594539",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Outros setores - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Outros setores - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-outros-setores-novo+64da4f49170f5a26dc58cf2a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Outros setores - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Outros setores",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-outros-setores-vigente+64da4f60170f5a26dc596143",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Peças Automotivas - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Peças Automotivas - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-pecas-automotivas-novo+64da4f4f170f5a26dc58f528",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Peças Automotivas - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Peças Automotivas",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-pecas-automotivas-vigente+64da4f5b170f5a26dc594542",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Produtos Farmacêuticos - Canal Farma - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Produtos Farmacêuticos - Canal Farma - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-produtos-farmaceuticos-canal-farma-novo+64da4f4a170f5a26dc58d3b6",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Produtos Farmacêuticos - Canal Farma - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Produtos Farmacêuticos - Canal Farma",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-produtos-farmaceuticos-canal-farma-vigente+64da4f5f170f5a26dc595814",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Produtos Farmacêuticos - Canal Hospitalar - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Produtos Farmacêuticos - Canal Hospitalar - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-produtos-farmaceuticos-canal-hospitalar-novo+64da4f4e170f5a26dc58e802",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Produtos Farmacêuticos - Canal Hospitalar - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Produtos Farmacêuticos - Canal Hospitalar",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-produtos-farmaceuticos-canal-hospitalar-vigente+64da4f61170f5a26dc596e30",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Produtos de Informática - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Produtos de Informática - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-produtos-de-informatica-novo+64da4f4a170f5a26dc58d394",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Produtos de Informática - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Produtos de Informática",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-produtos-de-informatica-vigente+64da4f60170f5a26dc5961e8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Restaurantes Coletivos - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Restaurantes Coletivos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-restaurantes-coletivos-vigente+64da4f3c170f5a26dc58668f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Rochas Ornamentais - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Rochas Ornamentais - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-rochas-ornamentais-novo+64da4f4f170f5a26dc58ee84",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Rochas Ornamentais - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Rochas Ornamentais",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-rochas-ornamentais-vigente+64da4f3d170f5a26dc587782",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Transporte de Passageiros - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Transporte de Passageiros - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-transporte-de-passageiros-novo+64da4f51170f5a26dc58fb8f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Transporte de Passageiros - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Transporte de Passageiros",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-transporte-de-passageiros-vigente+64da4f3d170f5a26dc58788a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Águas Minerais - Novo",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Águas Minerais - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-aguas-minerais-novo+64da4f45170f5a26dc58ad0b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar RET para Águas Minerais - Vigente",
+        "descricao": "Solicitar renovação do Regime Especial de Tributação para Águas Minerais",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ret-para-aguas-minerais-vigente+64da4f51170f5a26dc590108",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Refaturamento",
+        "descricao": "REQUISIÇÃO DE REGISTRO DE NOTA FISCAL EM REFATURAMENTO",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-refaturamento+69459014f6e0ff51fef2a085",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Regime Especial de Recolhimento - Produtos Primários",
+        "descricao": "Solicitar regime especial de recolhimento para produtos primários",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-regime-especial-de-recolhimento-produtos-primarios+64da4f3d170f5a26dc5877f2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Regime Especial de Tributação (RET) para Restaurantes Coletivos (NOVO)",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Restaurantes Coletivos - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-regime-especial-de-tributacao-ret-para-restaurantes-coletivos-novo+64da4f4f170f5a26dc58f0de",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Regime Especial de Tributação (RET) para carga líquida de águas minerais e adicionadas de sais",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Carga Líquida de Águas Minerais e Adicionadas de Sais - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-regime-especial-de-tributacao-ret-para-carga-liquida-de-aguas-minerais-e-adicionadas-de-sais+64dd0c75d29b0c14e157afbf",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Regime Especial de Tributação (RET) para indústria de tecidos e aviamentos",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Indústria de Tecidos e Aviamentos - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-regime-especial-de-tributacao-ret-para-industria-de-tecidos-e-aviamentos+64da4f4d170f5a26dc58e2a0",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Relatório de VAF",
+        "descricao": "Solicitar relatório do Valor Adicionado Fiscal (VAF)",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-relatorio-de-vaf+64da4f38170f5a26dc5850ea",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Resarcimento de Combustível - SCANC",
+        "descricao": "Solicitar ressarcimento de ICMS decorrente de operações interestaduais declaradas no sistema SCANC.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-resarcimento-de-combustivel-scanc+67212bfa028b4369edd918c2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Resarcimento/Restituição Combustíveis e Lubrificantes",
+        "descricao": "Solicitar restituição e ressarcimento de ICMS relativo à operações com combustíveis e lubrificantes, não compreendendo operações realizadas no sistema SCANC,",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-resarcimento-restituicao-combustiveis-e-lubrificantes+67212c03028b4369edda1e36",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento de ICMS ST por Convênios e Protocolos",
+        "descricao": "Solicitar reembolso do ICMS retido por substituição tributária com base em convênios e protocolos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-de-icms-st-por-convenios-e-protocolos+64da4f27170f5a26dc57a69e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento de ICMS ST por Decreto",
+        "descricao": "Solicitar reembolso do ICMS retido por substituição tributária com base no decreto",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-de-icms-st-por-decreto+64da4f21170f5a26dc577af9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento de ICMS ST sem Retenção",
+        "descricao": "Solicitar reembolso do ICMS retido por substituição tributária sem retenção pelo emitente",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-de-icms-st-sem-retencao+64da4f27170f5a26dc57b5da",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento de ICMS para Atacadistas de Alimentos",
+        "descricao": "Solicitar reembolso do ICMS pago por atacadistas de alimentos com regime especial",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-de-icms-para-atacadistas-de-alimentos+64da4f22170f5a26dc57803c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento de ICMS para Atacadistas de Peças e Pneus",
+        "descricao": "Solicitar reembolso do ICMS pago por atacadistas de peças e pneus com regime especial",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-de-icms-para-atacadistas-de-pecas-e-pneus+64da4f27170f5a26dc57a6ec",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento de ICMS sobre Diesel Pesqueiro",
+        "descricao": "Solicitar reembolso do ICMS sobre diesel utilizado em embarcações pesqueiras",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-de-icms-sobre-diesel-pesqueiro+64da4f21170f5a26dc577b9e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento de ICMS sobre Diesel Pesqueiro",
+        "descricao": "Solicitar reembolso do ICMS sobre diesel utilizado em embarcações pesqueiras",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-de-icms-sobre-diesel-pesqueiro+67212c0a0c04bf0eb7ad9028",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento de ICMS sobre Diesel Pesqueiro",
+        "descricao": "Solicitar reembolso do ICMS sobre diesel utilizado em embarcações pesqueiras",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-de-icms-sobre-diesel-pesqueiro+67212c1fd7046963f405c85f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Ressarcimento/Restituição Combustíveis e Lubrificantes",
+        "descricao": "Solicitar restituição e ressarcimento de ICMS relativo à operações com combustíveis e lubrificantes, não compreendendo operações realizadas no sistema SCANC,",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-ressarcimento-restituicao-combustiveis-e-lubrificantes+6503924f85c1313c6879d5ef",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Restituição IPVA",
+        "descricao": "Pedir restituição do IPVA pago a mais ou indevidamente.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-restituicao-ipva+64da4eed170f5a26dc56055c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Restituição de ICMS - Fatura Telecom Contestada",
+        "descricao": "Solicitar estorno de débito de ICMS pago em fatura de telecomunicações contestada",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-restituicao-de-icms-fatura-telecom-contestada+64da4f27170f5a26dc57a6de",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Restituição de ICMS - Fatura Telecom Contestada",
+        "descricao": "Solicitar estorno de débito de ICMS pago em fatura de telecomunicações contestada",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-restituicao-de-icms-fatura-telecom-contestada+67212c0ed7046963f40417a1",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Restituição de ICMS ST por Convênios e Protocolos",
+        "descricao": "Solicitar restituição do ICMS retido por substituição tributária com base em convênios e protocolos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-restituicao-de-icms-st-por-convenios-e-protocolos+64dd0b88d29b0c14e14f4ae7",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Restituição de ICMS para Pessoa Física ou Jurídica sem Inscrição",
+        "descricao": "Solicitar restituição de ICMS para pessoa física ou jurídica sem inscrição estadual ou CGF",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-restituicao-de-icms-para-pessoa-fisica-ou-juridica-sem-inscricao+64da4f29170f5a26dc57b8f5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Restituição de ICMS por Regime Normal",
+        "descricao": "Solicitar restituição do ICMS pago por regime normal de apuração",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-restituicao-de-icms-por-regime-normal+64da4f29170f5a26dc57b8ec",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Restituição de ICMS sobre Importação",
+        "descricao": "Solicitar restituição do ICMS pago na importação",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-restituicao-de-icms-sobre-importacao+64da4f27170f5a26dc57a6e0",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar Restituição de Taxas",
+        "descricao": "Solicitar restituição de taxas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-restituicao-de-taxas+64da4f29170f5a26dc57c3db",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar alteração cadastral de contribuinte do ICMS",
+        "descricao": "É o serviço utilizado para atualizar os dados de uma empresa (como endereço, sócios ou atividade econômica) no registro estadual.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-alteracao-cadastral-de-contribuinte-do-icms+6a04d7583c04921fee6ffd7a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar alteração cadastral em decorrência de fusão, cisão ou incorporação de empresa.",
+        "descricao": "Requisitar processos de fusão, cisão ou incorporação de empresas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-alteracao-cadastral-em-decorrencia-de-fusao-cisao-ou-incorporacao-de-empresa+64da4f12170f5a26dc570918",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar análise de GLME de forma manual via TRAMITA",
+        "descricao": "Análise e liberação da GLME por meio do sistema TRAMITA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-analise-de-glme-de-forma-manual-via-tramita+6945901af6e0ff51fef4b7e2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar análise do ICMS dos Leilões da Receita Federal (bens apreendidos e abandonados)",
+        "descricao": "Verificação documental e cobrança do ICMS incidente sobre mercadorias provenientes de leilões da Receita Federal nos casos de bens apreendidos e abandonados.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-analise-do-icms-dos-leiloes-da-receita-federal-bens-apreendidos-e-abandonados+6945901bf6e0ff51fef516b8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar análise e liberação de Declaração de Importação via sistema SISCOEX",
+        "descricao": "Liberação e registro de importações por meio do sistema SISCOEX e SITRAM.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-analise-e-liberacao-de-declaracao-de-importacao-via-sistema-siscoex+6945901af6e0ff51fef4a900",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar análise e liberação de Declaração de importação de forma manual via TRAMITA",
+        "descricao": "Análise e liberação de Declaração de Importação por meio do sistema TRAMITA e SITRAM.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-analise-e-liberacao-de-declaracao-de-importacao-de-forma-manual-via-tramita+6945901af6e0ff51fef4c542",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar análise e liberação de GLME via sistema SISCOEX",
+        "descricao": "Análise da Guia de Liberação de Mercadoria Estrangeira (GLME) e Declaração de Importação (DI) pelo sistema SISCOEX.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-analise-e-liberacao-de-glme-via-sistema-siscoex+69459019f6e0ff51fef49407",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar análise extermporânea de operação de importação via processo TRAMITA",
+        "descricao": "Análise de Processo Tramita de Selagem de Notas Fiscais de Importação cuja mercadoria já se encontra no estabelecimento do importador.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-analise-extermporanea-de-operacao-de-importacao-via-processo-tramita+6945901cf6e0ff51fef53034",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar aproveitamento de crédito extemporâneo de ICMS",
+        "descricao": "Utilizar crédito extemporâneo para compensar débitos futuros",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-aproveitamento-de-credito-extemporaneo-de-icms+64da687c170f5a26dcfa5c04",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar autorização para uso de Módulo Fiscal Eletrônico (MFE) em eventos externos",
+        "descricao": "Solicitação para usar MFE em eventos fora do estabelecimento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-autorizacao-para-uso-de-modulo-fiscal-eletronico-mfe-em-eventos-externos+64da64ae170f5a26dcdc2825",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar baixa no Cadastro Geral da Fazenda (CGF) para ICMS Substituição Tributária de outro estado",
+        "descricao": "É o pedido para encerrar o registro de uma empresa de outro estado que vendia produtos para cá com o imposto já pago antecipadamente.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-baixa-no-cadastro-geral-da-fazenda-cgf-para-icms-substituicao-tributaria-de-outro-estado+6a04d3478246d9076fac94dd",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar benefício fiscal de substituição tributária (RET/ST)",
+        "descricao": "É o pedido para que uma empresa possa pagar o ICMS de forma antecipada ou diferenciada, seguindo um regime especial.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-beneficio-fiscal-de-substituicao-tributaria-ret-st+6a04cf638246d9076f9163d8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar cadastramento de fabricantes de Módulos Fiscais Eletrônicos (MFE)",
+        "descricao": "Fabricantes de MFE solicitam cadastramento na SEFAZ CE.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-cadastramento-de-fabricantes-de-modulos-fiscais-eletronicos-mfe+64da64ad170f5a26dcdc27c4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar cadastramento de software house para sistemas Fiscais",
+        "descricao": "Software House solicita cadastramento na SEFAZ CE.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-cadastramento-de-software-house-para-sistemas-fiscais+64da4efe170f5a26dc5686c8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar cadastro de NFA-e de veículo novo importado",
+        "descricao": "Solicitar cadastro de NFA-e de veículo novo que acoberta operação de importação, para fins de lançamento inicial no Sistema IPVA da SEFAZ-Ce e troca de informações junto ao DETRAN no primeiro emplacamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-cadastro-de-nfa-e-de-veiculo-novo-importado+681cb618af89ff7359311c98",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar cadastro de nota fiscal de veículo novo com RENAVE",
+        "descricao": "Solicitar liberação do serviço de cadastro de NF-e de veículo novo com compra/venda autorizada no RENAVE, para fins de lançamento inicial no Sistema IPVA da SEFAZ-Ce e troca de informações junto ao DETRAN no primeiro emplacamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-cadastro-de-nota-fiscal-de-veiculo-novo-com-renave+681cb61832dae5614d1b8669",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar compensação de débito de ICMS",
+        "descricao": "Solicitar compensação de ICMS com débitos inscritos em dívida ativa",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-compensacao-de-debito-de-icms+64da4f2a170f5a26dc57cc5e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar correção de duplicidade de pagamento de ICMS - Duplicidade Pagamento do Mesmo DAE-GNRE",
+        "descricao": "Solicitar correção de duplicidade de pagamento de ICMS através do mesmo DAE-GNRE.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-correcao-de-duplicidade-de-pagamento-de-icms-duplicidade-pagamento-do-mesmo-dae-gnre+64da4f21170f5a26dc5775c4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar credenciamento de gráfica para fornecer selo fiscal de controle da água",
+        "descricao": "Credenciamento para gráfica de selos fiscais de controle de água.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-de-grafica-para-fornecer-selo-fiscal-de-controle-da-agua+64da4f0d170f5a26dc56d497",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar credenciamento de gráficas para confeccionar documentos fiscais",
+        "descricao": "É o pedido para que uma gráfica receba autorização oficial do governo para imprimir blocos ou formulários de notas fiscais.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-de-graficas-para-confeccionar-documentos-fiscais+6a04b54fd25fe45457cdf50e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar credenciamento de transportadora responsável pelo ICMS",
+        "descricao": "Solicitar o cadastro para empresas como transportadoras e permitir que recolham ICMS.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-credenciamento-de-transportadora-responsavel-pelo-icms+64da4b39d29b0c14e18d47b6",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar denúncia espontânea para exclusão de culpabilidade",
+        "descricao": "É o ato de o contribuinte confessar um erro ou atraso no pagamento de impostos ao governo antes de qualquer fiscalização começar.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-denuncia-espontanea-para-exclusao-de-culpabilidade+6a04ad003c04921fee268828",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar desembaraço no Ceará",
+        "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE IMPORTAÇÃO JÁ ABERTA PELA CENTRAL DE IMPORTAÇÃO",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-desembaraco-no-ceara+69459015f6e0ff51fef34638",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar dispensa de Módulo Fiscal Eletrônico (Emissão de NFC-e para faturamento até R$ 250 mil)",
+        "descricao": "Solicitação de dispensa do MFE para varejistas com receita bruta R$ 250.000,00.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-dispensa-de-modulo-fiscal-eletronico-emissao-de-nfc-e-para-faturamento-ate-r-250-mil+64da4f1f170f5a26dc576363",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar exclusão de culpabilidade por denúncia espontânea de infrações tributárias",
+        "descricao": "Solicitar denúncia espontânea com exclusão de culpabilidade (Documentos ou livros fiscais).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-exclusao-de-culpabilidade-por-denuncia-espontanea-de-infracoes-tributarias+64da4f39170f5a26dc5855d7",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar exclusão de edital no cadastro de contribuintes",
+        "descricao": "É o pedido para retirar o nome de uma pessoa ou empresa de uma lista pública de irregularidades (edital) após a situação ter sido resolvida.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-exclusao-de-edital-no-cadastro-de-contribuintes+64da4f11170f5a26dc56edf5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar exclusão de edital para alteração de regime",
+        "descricao": "Mudança cadastral com exclusão de edital.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-exclusao-de-edital-para-alteracao-de-regime+64da4f15170f5a26dc57306c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar exclusão do registro de veículo novo devolvido",
+        "descricao": "Solicitar a exclusão do registro de NF-e no Sistema IPVA, por desfazimento da aquisição de veículo novo, em razão de ocorrência de devolução.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-exclusao-do-registro-de-veiculo-novo-devolvido+64da4ee3170f5a26dc510c35",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar inclusão de marca/modelo não cadastrada no IPVA",
+        "descricao": "Solicitar a inclusão de marca/modelo de veículo novo na Tabela de IPVA para fins de realizar o cadastro da NF-e de compra e lançamento inicial no Sistema IPVA da SEFAZ-CE.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-inclusao-de-marca-modelo-nao-cadastrada-no-ipva+681cb723af89ff73595dde60",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar informações ou realizar procedimentos relacionados a ICMS - Combustível SCANC",
+        "descricao": "Solicitar informações ou realizar procedimentos relacionados a ICMS de SCANC.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-informacoes-ou-realizar-procedimentos-relacionados-a-icms-combustivel-scanc+64da4f21170f5a26dc5771c3",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar inscrição de contribuinte para empresa de outro estado",
+        "descricao": "Solicitar o cadastro de Contribuinte com Matriz em outro Estado.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-inscricao-de-contribuinte-para-empresa-de-outro-estado+64da4f0c170f5a26dc56cdae",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar inscrição estadual de Produtor Rural",
+        "descricao": "Solicita a inscrição estadual do Produtor Rural.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-inscricao-estadual-de-produtor-rural+651acee214967143f5a2eb1a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar isenção de ICMS para pessoas com deficiência (PcD)",
+        "descricao": "Solicitar isenção de ICMS para Pessoas com Deficiência.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-isencao-de-icms-para-pessoas-com-deficiencia-pcd+64da4f1e170f5a26dc57544d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar liberação de DUIMP no Portal único do PUCOMEX",
+        "descricao": "Análise e liberação da Declaração Única de Importação (DUIMP) por meio do Portal Único do Comércio Exterior e SITRAM.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-liberacao-de-duimp-no-portal-unico-do-pucomex+6945901af6e0ff51fef4e5a1",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar liberação de mercadoria retida",
+        "descricao": "Liberação da mercadoria retida após atendimento das exigências legais ou fiscais.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-liberacao-de-mercadoria-retida+64da4ee5170f5a26dc52af85",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar liberação de operações de Importação de outras UF's - Trânsito Livre.",
+        "descricao": "Análise e liberação de importação de outros Estados cuja mercadoria irá apenas transitar pelo Estado do Ceará. A formalização do Trânsito Livre é feita através da abertura de uma ação fiscal no sistema SITRAM que ficará no \"status\" de pendente até a sua efetiva \"baixa\" no posto fiscal na fronteira de saída do Estado.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-liberacao-de-operacoes-de-importacao-de-outras-uf-s-transito-livre+6945901af6e0ff51fef4e856",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar não incidência de IPVA",
+        "descricao": "Regularizar imunidade do IPVA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-nao-incidencia-de-ipva+64dd0a59d29b0c14e143d76b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar não incidência de IPVA para instituições de educação sem fins lucrativos",
+        "descricao": "Pedir isenção de IPVA para instituições de educação.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-nao-incidencia-de-ipva-para-instituicoes-de-educacao-sem-fins-lucrativos+64da4ef8170f5a26dc56477e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar não incidência de IPVA para veículos de templos religiosos",
+        "descricao": "Solicitar isenção de IPVA para templos religiosos.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-nao-incidencia-de-ipva-para-veiculos-de-templos-religiosos+64da4ef8170f5a26dc56491c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar não incidência de IPVA para órgãos públicos e templos religiosos",
+        "descricao": "É o pedido para que veículos de igrejas ou de órgãos dos governos federal, estadual e municipal fiquem livres de pagar o imposto.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-nao-incidencia-de-ipva-para-orgaos-publicos-e-templos-religiosos+6a04b054936cbd772a76f922",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar recurso extraordinário ao Contencioso Administrativo Tributário",
+        "descricao": "Interpor Recurso Extraordinário para a Câmara Superior, no caso de decisões divergentes das Câmaras de Julgamento sobre a mesma matéria, quanto à interpretação do direito em tese .",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-recurso-extraordinario-ao-contencioso-administrativo-tributario+667ddec75bd84909eb44d686",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar recurso ordinário ao Contencioso Administrativo Tributário",
+        "descricao": "Interpor Recurso Ordinário para as Câmaras de Julgamento (Segunda Instância), nas decisões contrárias ao sujeito passivo (autuado) ou ao requerente, no todo ou em parte.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-recurso-ordinario-ao-contencioso-administrativo-tributario+667dc7d4bd1d342629ec1883",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar regime especial de tributação (RET) para aços planos",
+        "descricao": "Solicitar acesso ao Regime Especial de Tributação para Aços Planos - Novo",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-regime-especial-de-tributacao-ret-para-acos-planos+64da4f45170f5a26dc58ad2f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar regime especial de tributação para serviços de comunicação (VIGENTE)",
+        "descricao": "É o pedido feito por empresas de comunicação (como rádio e TV) para pagar impostos de uma forma diferenciada e simplificada, prevista na lei.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-regime-especial-de-tributacao-para-servicos-de-comunicacao-vigente+6a04bf5190dcdb24e8245116",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar retirada de mercadoria do porto",
+        "descricao": "REQUISIÇÃO DE AÇÃO FISCAL PARA RETIRADA DO PORTO",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-retirada-de-mercadoria-do-porto+69459012f6e0ff51fef24b93",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar retirada de mercadoria em trânsito",
+        "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE MERCADORIA EM TRÂNSITO PELO CEARÁ",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-retirada-de-mercadoria-em-transito+69459013f6e0ff51fef25a54",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar transferência de crédito de ICMS por exportação",
+        "descricao": "Transferir créditos acumulados para exportação",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-transferencia-de-credito-de-icms-por-exportacao+64da4f36170f5a26dc584a47",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar tratamento de Erros de Sistema",
+        "descricao": "Registrar solicitação para corrigir falhas ou inconsistências nos sistemas do ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-tratamento-de-erros-de-sistema+68f25b64b242ce08b2c80d31",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar validação de Declaração de Livre Trânsito (DLT)",
+        "descricao": "Análise e validação de Declaração de Livre Trânsito (DLT) para mercadorias em trânsito dentro do Estado do Ceará (operações internas).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-validacao-de-declaracao-de-livre-transito-dlt+6945901bf6e0ff51fef5152d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar validação de Nota Fiscal Avulsa do Comércio Exterior (Exportação - PF Mucuripe)",
+        "descricao": "Análise e validação de Nota Fiscal Avulsa do Comércio Exterior (exportação) dentro do sistema SINFA-NFA, quando o despacho aduaneiro ocorrer no Posto Fiscal do Mucuripe.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-validacao-de-nota-fiscal-avulsa-do-comercio-exterior-exportacao-pf-mucuripe+6945901bf6e0ff51fef50fd6",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar validação de Nota Fiscal Avulsa do Comércio Exterior (Importação)",
+        "descricao": "Análise e validação de Nota Fiscal Avulsa do Comércio Exterior (Importação) dentro do sistema SINFA-NFA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-validacao-de-nota-fiscal-avulsa-do-comercio-exterior-importacao+6945901bf6e0ff51fef4e9d8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar/Emitir NFAe - Nota Fiscal Avulsa Eletrônica",
+        "descricao": "Emissão de NFA-e por parte do contribuinte.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitar-emitir-nfae-nota-fiscal-avulsa-eletronica+64da4f0b170f5a26dc56c1ba",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação - Alteração de Regime de Recolhimento por Ultrapassar o Sublimite",
+        "descricao": "Informações a respeito da mudança para Regime Normal após ultrapassar sublimite de R$ 3,6M.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+solicitacao-alteracao-de-regime-de-recolhimento-por-ultrapassar-o-sublimite+64de7f08d29b0c14e1a86df8",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Sugerir alteração ou inclusão no Catálogo Eletrônico de Valores de Referência (CEVR)",
+        "descricao": "É o serviço que permite ao cidadão pedir a atualização ou a entrada de novos produtos na tabela de preços utilizada pelo Estado.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+sugerir-alteracao-ou-inclusao-no-catalogo-eletronico-de-valores-de-referencia-cevr+6a0481218246d9076f818d3a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Transferência de Crédito",
+        "descricao": "Transferir créditos acumulados para outra inscrição estadual",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+transferencia-de-credito+64da4f36170f5a26dc58463a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Validar Certidão Negativa Estadual",
+        "descricao": "Verificação da autenticidade de certidão negativa estadual.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+validar-certidao-negativa-estadual+64da4efe170f5a26dc56872f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Validar Certidão de Baixa Cadastral",
+        "descricao": "Validar a Certidão de Baixa Cadastral",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+validar-certidao-de-baixa-cadastral+650b498ebad4ad67c05f0894",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Validar Certidão de Quitação de IPVA",
+        "descricao": "Verificar a autenticidade da certidão de quitação do IPVA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+validar-certidao-de-quitacao-de-ipva+64dd08bcd29b0c14e13b8e1b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Validar Certidão de Recolhimento de Receita para Não-Contribuinte",
+        "descricao": "Verificação de validade da Certidão de Recolhimento de Receita para Não-Contribuinte",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+validar-certidao-de-recolhimento-de-receita-para-nao-contribuinte+66e4934b717ec6394709b907",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Validar Certificado de Regularidade",
+        "descricao": "Verificação da validade da Certificação de Regularidade",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+validar-certificado-de-regularidade+65035b2949e79469ba242eb5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Validar GLME",
+        "descricao": "Verificar a autenticidade da GLME",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+validar-glme+64da4ee4170f5a26dc512a65",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Validar Guias de ITCD - Ambiente Seguro",
+        "descricao": "O serviço que permite confirmar a autenticidade e a integridade das guias de ITCD emitidas, garantindo que o documento foi gerado corretamente e em ambiente protegido pela Secretaria da Fazenda, evitando fraudes e erros no pagamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+validar-guias-de-itcd-ambiente-seguro+6880ebcd5f330c7d82df7f73",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Visitar o Centro de Memória da Fazenda",
+        "descricao": "Agendamento para visitar o Centro de Memória.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+visitar-o-centro-de-memoria-da-fazenda+64da5aaad29b0c14e1bd022a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Visualizar Causa Mortis - EITCD - Manual de Preenchimento",
+        "descricao": "Causa Mortis – EITCD – Manual de Preenchimento é o guia que orienta os contribuintes no correto preenchimento eletrônico da declaração do ITCD em casos de transmissão de bens por falecimento, detalhando passo a passo os campos, documentos necessários e procedimentos exigidos pela Secretaria da Fazenda do Estado do Ceará.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+visualizar-causa-mortis-eitcd-manual-de-preenchimento+68b6d24f02524f70273a0d18",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Visualizar Divórcio - Manual de Preenchimento",
+        "descricao": "Guia prático com instruções para o correto preenchimento de documentos e formulários relacionados ao divórcio.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+visualizar-divorcio-manual-de-preenchimento+67ab8c74170d051234ebb373",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Serviço de Atendimento ao Cidadão (SAC)",
+        "descricao": "Tire suas dúvidas sobre os serviços e informações da SEFAZ.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+servico-de-atendimento-ao-cidadao-sac+64adca7b48c5b8191406b1d9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+[package]
+name = "auli-scraper-ce"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-CE (serviços, "Portal de Serviços" — SPA Sydle ONE). SEM headless: a listagem
+# vem da API JSON `getChildren` (POST), catálogo `servico-geral`. Token Bearer anônimo é extraído
+# fresh do shell público a cada rodada (efêmero). Depende de auli-contract + o kit — nunca de
+# fastembed/ort. Decisões D-CE1..4 no plano-scraper-ce.md / PR.
+[dependencies]
+auli-contract = { path = "../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1"

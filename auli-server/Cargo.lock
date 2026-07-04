@@ -209,6 +209,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "auli-scraper-ce"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "auli-contract",
+ "auli-scraper-kit",
+ "serde",
+ "serde_json",
+ "ureq",
+]
+
+[[package]]
 name = "auli-scraper-kit"
 version = "0.1.0"
 dependencies = [
