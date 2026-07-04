@@ -13,6 +13,7 @@ members = [
     "crates/auli-scraper-sp",
     "crates/auli-scraper-mg",
     "crates/auli-scraper-pe",
+    "crates/auli-scraper-ba",
 ]
 
 # Single shared Cargo.lock across the workspace: the `server` and `update` modes can never pick
