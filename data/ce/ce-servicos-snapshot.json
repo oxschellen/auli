@@ -6,7 +6,7 @@
     "versao": "0.1.0"
   },
   "coleta": {
-    "coletado_em": "2026-07-04T22:16:14.107675568Z",
+    "coletado_em": "2026-07-04T22:30:48.9580158Z",
     "publicos_ordem": [
       {
         "nome": "Serviços",
@@ -14,6 +14,1086 @@
       }
     ],
     "items": [
+      {
+        "titulo": "Alterar dados do contribuinte (CGF/CNPJ/CPF) - DAE e GNRE",
+        "descricao": "Alterar dados do contribuinte (inscrição estadual/CGF, CNPJ e CPF) de DAE e GNRE.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+alterar-dados-do-contribuinte-cgf-cnpj-cpf-dae-e-gnre+64da4f32170f5a26dc582bd7",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Alterar ou excluir Contador - Normal, EPP, ME e Contribuinte Substituto (outra UF)",
+        "descricao": "Solicitar mudança ou exclusão de contador no Cadastro de Contribuintes do ICMS do Ceará de empresas inscritas nos regimes de recolhimento Normal, EPP, ME e Contribuinte Substituto sediado em outra Unidade Federada.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+alterar-ou-excluir-contador-normal-epp-me-e-contribuinte-substituto-outra-uf+6503511ebbf1401cc0dc851e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Analisar Processo TRAMITA",
+        "descricao": "REQUISIÇÃO DE ANÁLISE DE PROCESSO TRAMITA QUANDO A MERCADORIA JÁ ESTÁ EM POSSE DO DESTINATÁRIO",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+analisar-processo-tramita+69459016f6e0ff51fef3545f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Apresentar Recurso de Cadastro",
+        "descricao": "Apresentar recurso relacionado ao cadastro.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+apresentar-recurso-de-cadastro+64da4ee4170f5a26dc512a9f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Apresentar manifestação prévia ao Recurso Extraordinário da PGE",
+        "descricao": "Apresentar manifestação a respeito da admissibilidade do Recurso Extraordinário interposto pela Procuradoria Geral do Estado ? PGE (Recorrente).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+apresentar-manifestacao-previa-ao-recurso-extraordinario-da-pge+66917587320add6fe5eac70f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Apresentar manifestação sobre laudo pericial do CONAT (CEPET)",
+        "descricao": "Apresentar manifestação sobre laudo emitido pela Perícia Tributária ou Informação Fiscal prestada pelo autuante na diligência fiscal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+apresentar-manifestacao-sobre-laudo-pericial-do-conat-cepet+66916f102ce2873356772e30",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Atender diligência procedimental em processo administrativo tributário",
+        "descricao": "Atender diligência procedimental requerida pela autoridade competente para suprir exigência formal pelo sujeito passivo (autuado).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+atender-diligencia-procedimental-em-processo-administrativo-tributario+66916b717011d7223aae675e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Ativar e Vincular MFE",
+        "descricao": "Configuração e autorização de um MFE para uso comercial.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+ativar-e-vincular-mfe+64da4efe170f5a26dc56873e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Atualizar informações do IPVA com o DETRAN",
+        "descricao": "Atualizar dados do proprietário e/ou do veículo no Sistema IPVA de acordo com os registros do DETRAN.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+atualizar-informacoes-do-ipva-com-o-detran+64da4ee4170f5a26dc5119a9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Baixar Trânsito Livre",
+        "descricao": "REQUISIÇÃO DE BAIXA DE AÇÃO FISCAL DE TRÂNSITO LIVRE",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+baixar-transito-livre+69459013f6e0ff51fef2952a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Cadastrar Produtor Rural no CGF",
+        "descricao": "Realiza o cadastro do Produtor Rural no CGF.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-produtor-rural-no-cgf+651aced214967143f5a1070e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Cadastrar e Acessar o Ambiente Seguro - ITCD - Advogados, Tabeliães e Defensores Públicos.",
+        "descricao": "Acesso ao Ambiente Seguro para advogados, tabeliães e contadores em processos de ITCD.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-e-acessar-o-ambiente-seguro-itcd-advogados-tabeliaes-e-defensores-publicos+6503762abe977b1b4a87a4cd",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Cadastrar no Ambiente Seguro Advogados, Tabeliães, Contadores e Outros -NFAe",
+        "descricao": "Cadastro no Ambiente Seguro perfis de advogados, tabeliães, contadores e outros em NFAe.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-no-ambiente-seguro-advogados-tabeliaes-contadores-e-outros-nfae+65043a7485c1313c687c3b5d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Cadastrar nota fiscal de veículo novo",
+        "descricao": "Cadastrar nota fiscal da aquisição de veículo novo para fins de lançamento inicial no Sistema IPVA da SEFAZ-Ce e troca de informações junto ao DETRAN no primeiro emplacamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-nota-fiscal-de-veiculo-novo+64da4ee4170f5a26dc511995",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Cadastrar notas fiscais do chassi e carroceria de veículo novo",
+        "descricao": "Cadastrar notas fiscais do chassi e da carroceria (02 ou 03 DANFE’S) de veículo novo do tipo ônibus e caminhão, para fins de lançamento inicial no Sistema IPVA da SEFAZ-CE e troca de informações junto ao DETRAN no primeiro emplacamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-notas-fiscais-do-chassi-e-carroceria-de-veiculo-novo+681cb61832dae5614d1b8667",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Cancelar NFAe - Nota Fiscal Avulsa Eletrônica",
+        "descricao": "Emissão e cancelamento de NFA-e por parte do contribuinte.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cancelar-nfae-nota-fiscal-avulsa-eletronica+64da4f11170f5a26dc56f67e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Cancelar Parcelamento de IPVA",
+        "descricao": "Anular o parcelamento de débitos do IPVA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cancelar-parcelamento-de-ipva+64da4eee170f5a26dc561c4a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Ação Fiscal por MDF-e",
+        "descricao": "Consultar situação de ação fiscal relacionada ao Manifesto Eletrônico de Documentos Fiscais (MDF-e).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-acao-fiscal-por-mdf-e+64da4f62170f5a26dc597bde",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Benefício de IPVA por Veículo",
+        "descricao": "Verificar benefícios disponíveis para IPVA em um veículo.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-beneficio-de-ipva-por-veiculo+64da4ee4170f5a26dc5129f9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Cupom Fiscal Eletrônico",
+        "descricao": "Verificação de informações e detalhes dos cupons fiscais eletrônicos no Ceará.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-cupom-fiscal-eletronico+64da4ef9170f5a26dc56658c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar DAE COPAF",
+        "descricao": "Consulta de situação de cobrança e pagamentos via SITRAM",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-dae-copaf+69459018f6e0ff51fef3bace",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Fornecedores de MFE",
+        "descricao": "Verificação dos fornecedores com módulos homologados pela SEFAZ.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-fornecedores-de-mfe+64da4efa170f5a26dc567556",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Homologação de Ação Fiscal de Importação",
+        "descricao": "Consulta de situação da Ação Fiscal para solicitação de Homologação",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-homologacao-de-acao-fiscal-de-importacao+69459019f6e0ff51fef48eb0",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar ICMS Frete",
+        "descricao": "Consulta de situação de cobrança e pagamentos via SITRAM",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-icms-frete+69459018f6e0ff51fef40dbc",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Memória de Cálculo",
+        "descricao": "Verificação dos cálculos utilizados para apuração de tributos em documentos fiscais.(Notas registradas no Sitram)",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-memoria-de-calculo+69459007f6e0ff51fef04c21",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Mercadoria Retida para Fiscalização",
+        "descricao": "Consulta de situação e motivo de retenção de mercadoria retida para Fiscalização",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-mercadoria-retida-para-fiscalizacao+69459018f6e0ff51fef457f5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Módulo Fiscal Eletrônico",
+        "descricao": "Obter informações sobre o status operacional do MFE.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-modulo-fiscal-eletronico+64da4efa170f5a26dc56755e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Nota Fiscal por chave de acesso (NF-e)",
+        "descricao": "Consulta detalhada da Nota Fiscal Eletrônica utilizando a chave de acesso.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-nota-fiscal-por-chave-de-acesso-nf-e+69459005f6e0ff51feef812a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Software House",
+        "descricao": "Lista de desenvolvedores de Aplicativos Comerciais (Software Houses).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-software-house+64da4efe170f5a26dc5686ca",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Tabela de IPVA por marca/modelo",
+        "descricao": "Consultar por marca/modelo e ano de fabricação, a base de cálculo do IPVA e alíquota aplicada para o cálculo do IPVA",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-tabela-de-ipva-por-marca-modelo+64da4ee4170f5a26dc51199f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar atas das Sessões de Julgamento da 1ª Câmara",
+        "descricao": "Consultar a ata do dia da sessão de julgamento da 1ª Câmara do processo de interesse do sujeito passivo ou representante legal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-1-camara+66f59e098f7d522a9e475941",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar atas das Sessões de Julgamento da 2ª Câmara",
+        "descricao": "Consultar a ata do dia da sessão de julgamento da 2ª Câmara do processo de interesse do sujeito passivo ou representante legal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-2-camara+66c790d2ef405307e7774144",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar atas das Sessões de Julgamento da 3ª Câmara",
+        "descricao": "Consultar atas das Sessões de Julgamento da 3ª Câmara.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-3-camara+66c899e13662ed4cca5b19df",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar atas das Sessões de Julgamento da 4ª Câmara",
+        "descricao": "Consultar a ata do dia da sessão de julgamento da 4ª Câmara do processo de interesse do sujeito passivo ou representante legal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-4-camara+66c8dd850dcf0e7143c7ed68",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar atas das Sessões de Julgamento da Câmara Superior",
+        "descricao": "Consultar a ata do dia da sessão de julgamento da Câmara Superior do processo de interesse do sujeito passivo ou representante legal.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-camara-superior+66cc87440dcf0e7143d7b2e4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar ação fiscal",
+        "descricao": "Consulta da situação da Ação Fiscal utilizando o número da ação fiscal ou do manifesto de carga (MDF-e)",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-acao-fiscal+69459008f6e0ff51fef06f09",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar débitos de lançamentos do SITRAM",
+        "descricao": "\"Consultar débitos de ICMS Substituição Tributária, Antecipado e Diferencial de Alíquota lançados no SITRAM decorrentes de operações de entradas interestaduais \"",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-debitos-de-lancamentos-do-sitram+64da4f62170f5a26dc597c02",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar histórico de valor do IPVA",
+        "descricao": "Consultar histórico de valor do IPVA",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-historico-de-valor-do-ipva+66d84d7ad8a5931a133052b4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar informações no cadastro",
+        "descricao": "Consultar informações no cadastro.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-informacoes-no-cadastro+64da4f24170f5a26dc5794bc",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar o andamento processual do auto de infração",
+        "descricao": "Consultar o andamento do auto de infração no Contencioso Administrativo Tributário ? Conat, os resultados das decisões, as datas das intimações e prazos processuais, em todas as instâncias administrativas do Processo Administrativo Tributário (PAT).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-o-andamento-processual-do-auto-de-infracao+64da4ee3170f5a26dc5106bd",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar pagamentos (DAE, GNRE, auto de infração, Parcelamento COPAF)",
+        "descricao": "Consulta dos pagamentos realizados e pendentes.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pagamentos-dae-gnre-auto-de-infracao-parcelamento-copaf+6945901df6e0ff51fef5cc33",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar pagamentos de débitos do SITRAM",
+        "descricao": "Consultar informações de pagamento de ICMS de débitos lançados no SITRAM, conforme opção selecionada (DAE, GNRE, Parcelamento e Auto de Infração). .",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pagamentos-de-debitos-do-sitram+64da4ee4170f5a26dc513593",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar pautas das sessões de julgamento da 1ª Câmara",
+        "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Primeira Câmara de Julgamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-1-camara+66c62e5530ba39327b6609e5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar pautas das sessões de julgamento da 2ª Câmara",
+        "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Segunda Câmara de Julgamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-2-camara+66c6458f30ba39327b32fbc4",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar pautas das sessões de julgamento da 3ª Câmara",
+        "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Terceira Câmara de Julgamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-3-camara+66c79d8d120ec15337f49960",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar pautas das sessões de julgamento da 4ª Câmara",
+        "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Quarta Câmara de Julgamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-4-camara+66c8a88c44adc22112b2540b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar pautas das sessões de julgamento da Câmara Superior",
+        "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Câmara Superior.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-camara-superior+66c8e7f10dcf0e7143684386",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar registros de notas fiscais no SITRAM",
+        "descricao": "Consultar registros de notas fiscais de operações interestaduais incluídas no SITRAM",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-registros-de-notas-fiscais-no-sitram+64da4f63170f5a26dc598b5a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar situação de Nota Fiscal",
+        "descricao": "Consulta de situação de nota fiscal para solicitação de informações.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-situacao-de-nota-fiscal+69459019f6e0ff51fef4911c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar/Questionar Cobrança de Imposto",
+        "descricao": "Consulta de informações e questionamentos sobre cobrança de imposto",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-questionar-cobranca-de-imposto+69459019f6e0ff51fef46971",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar/Questionar Cobrança de imposto (ICMS)",
+        "descricao": "Através da emissão do DAE",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-questionar-cobranca-de-imposto-icms+69459017f6e0ff51fef36b6e",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar/Questionar cobrança do ICMS de Transporte (frete)",
+        "descricao": "Cobrança do ICMS devido sobre serviços de transporte de mercadorias.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-questionar-cobranca-do-icms-de-transporte-frete+6945901cf6e0ff51fef55a20",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Corrigir Código de Receita e Período de Referência ? DAE e GNRE",
+        "descricao": "Corrigir ou retificar código de receita e período de referência de DAE ou GNRE emitidos com erros nesses campos e com efetivo pagamento.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-codigo-de-receita-e-periodo-de-referencia-dae-e-gnre+64da4f34170f5a26dc583c7d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Corrigir Processos Tramita correção mais de 60 dias",
+        "descricao": "Processo de correção de operações interestaduais utilizando o sistema SANFIT, assegurando a correta documentação e fiscalização das transações entre estados.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-processos-tramita-correcao-mais-de-60-dias+6945900cf6e0ff51fef14b47",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Corrigir Selo SITRAM",
+        "descricao": "Ajustar tributação do ICMS da mercadoria indicada na NF-e, de acordo com legislação tributária.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-selo-sitram+64da4f5e170f5a26dc594fe1",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Corrigir código de barra ? DAE/GNRE rejeitado",
+        "descricao": "\"Corrigir e processar pagamento de DAE/GNRE no status rejeitado devido a erro no código de barras \"",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-codigo-de-barra-dae-gnre-rejeitado+64da4f35170f5a26dc584359",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Corrigir pagamento em duplicidade ? DAE e GNRE",
+        "descricao": "Corrigir pagamento duplicado de ICMS por meio de abatimento de débito constante em DAE/GNRE apenas emitido.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-pagamento-em-duplicidade-dae-e-gnre+64da4f34170f5a26dc583d9b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Corrigir registro ou selo do SITRAM via SANFIT",
+        "descricao": "Corrigir registros do SITRAM, de operações interestaduais, por meio de solicitação gerada no Sistema TRAMITA/SANFIT.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-registro-ou-selo-do-sitram-via-sanfit+64da64ae170f5a26dcdc28ac",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Corrigir registro/selo do SITRAM - Contribuinte Pai D?Égua",
+        "descricao": "Corrigir registros do SITRAM, de operações destinadas a ativo fixo ou consumo, por contribuinte com classificação de 4 ou 5 Jangadas no Programa Contribuinte Pai D?Égua.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-registro-selo-do-sitram-contribuinte-pai-d-egua+64da64ad170f5a26dcdc27ac",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Credenciar Transportadoras",
+        "descricao": "Processo de análise pedidos de credenciamento de transportadoras, que permitem a postergação do pagamento do imposto desde que algums requisitos sejam cumpridos.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+credenciar-transportadoras+69459010f6e0ff51fef1a304",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir Certidão Negativa Estadual",
+        "descricao": "Emissão de certidão comprobatória de ausência de débitos estaduais. É possível acessar o serviço através do chat enviado a frase: \"Emitir Certidão Negativa\" Certidão Negativa, Certidão Negativa de Débitos, Certidão Negativa Estadual.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certidao-negativa-estadual+64da4ef9170f5a26dc566594",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir Certidão de Baixa Cadastral",
+        "descricao": "\"Emissão de certidão comprobatória de baixa cadastral. \"",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certidao-de-baixa-cadastral+650b47c2820c9d2ef7d4402a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir Certidão de Quitação de IPVA",
+        "descricao": "Emitir Certidão de Quitação de IPVA.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certidao-de-quitacao-de-ipva+64da4ee4170f5a26dc5119f5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir Certidão de Recolhimento de Receita para Não-Contribuinte",
+        "descricao": "Emissão ateste de não contribuinte e ausência de Recolhimento de Receita.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certidao-de-recolhimento-de-receita-para-nao-contribuinte+6503601dd048b208a51fffef",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir Certificado de Não-Similaridade",
+        "descricao": "Solicitar certificado de não-similaridade de produtos",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certificado-de-nao-similaridade+64da687c170f5a26dcfa5edc",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir Certificado de Regularidade",
+        "descricao": "Emissão de certidão de regularidade de débitos estadual.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certificado-de-regularidade+65035d0f49e79469ba5aba9c",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE",
+        "descricao": "REQUISIÇÃO DE LIBERAÇÃO DE AÇÃO FISCAL PARA PAGAMENTO",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae+69459015f6e0ff51fef3417a",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE DIFAL operação ou prestação",
+        "descricao": "Possibilitar aos contribuintes de outras UF’s a emissão de DAE para recolhimento do DIFAL EC nº 87/2015.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-difal-operacao-ou-prestacao+64da4ee5170f5a26dc52a5df",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE de Depósito Administrativo",
+        "descricao": "Emissão do DAE - Documento de Arrecadação Estadual para liberar mercadorias autuadas nos Postos Fiscais",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-de-deposito-administrativo+64da4ee4170f5a26dc512a50",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE de Frete Avulso ? Transportadora de outra UF",
+        "descricao": "Emitir DAE para pagamento de ICMS em prestação de serviço de transporte rodoviário de cargas realizado por transportadora de outra unidade federada da Federação não inscrita na SEFAZ-Ce.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-de-frete-avulso-transportadora-de-outra-uf+6641172442a1ea68e9954672",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE de Parcelamento",
+        "descricao": "Emitir DAE para pagar parcelamento",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-de-parcelamento+64da4f2b170f5a26dc57dde9",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE de Parcelamento de IPVA",
+        "descricao": "Obter o Documento de Arrecadação Estadual (DAE) para IPVA parcelado.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-de-parcelamento-de-ipva+64da4eed170f5a26dc560566",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE do ICMS Frete Avulso - Transportador Autônomo",
+        "descricao": "Emitir DAE para pagamento de ICMS em prestação de serviço de transporte rodoviário de cargas realizado por pessoa física, transportador autônomo (frete avulso).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-do-icms-frete-avulso-transportador-autonomo+64da4f62170f5a26dc59845f",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE para restrição de veículo",
+        "descricao": "Obter o Documento de Arrecadação Estadual (DAE) para ICMS.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-para-restricao-de-veiculo+64da4eed170f5a26dc5605a0",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAE referente ao ICMS Difal e FECOP",
+        "descricao": "Geração do Documento de Arrecadação Estadual (DAE) para pagamento do ICMS Difal e do valor destinado ao Fundo de Combate à Pobreza (FECOP).",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-referente-ao-icms-difal-e-fecop+69459003f6e0ff51feef4013",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir DAEs para pagamento de ICMS no SITRAM",
+        "descricao": "\"Emissão de DAE em Operações Interestaduais \"",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-daes-para-pagamento-de-icms-no-sitram+64dd0f80d29b0c14e173a291",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir Ficha de Inscrição Cadastral - FIC",
+        "descricao": "Serviço de emissão de ficha da inscrição cadastral.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+ficha-de-inscricao-cadastral+65afc4ac19ddb56f1be80ad6",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir GNRE",
+        "descricao": "Orientações para geração e emissão de GNRE no ambiente nacional - Portal GNRE",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-gnre+6509bcb4499f581b212979b5",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir e baixar DAE para pagamento do ICMS por ação fiscal (transportador)",
+        "descricao": "Emissão e baixa do DAE para recolhimento do ICMS decorrente de ação fiscal envolvendo transportador.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixar-dae-para-pagamento-do-icms-por-acao-fiscal-transportador+6945900bf6e0ff51fef0dd4b",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir e baixar DAE para pagamento do ICMS por frete (transportador autônomo)",
+        "descricao": "Emissão e baixa do DAE para recolhimento do ICMS sobre frete prestado por transportador autônomo.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixar-dae-para-pagamento-do-icms-por-frete-transportador-autonomo+6945900af6e0ff51fef0d262",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir e baixar DAE para pagamento do ICMS por nota fiscal",
+        "descricao": "Consulta dos pagamentos realizados e pendentes relacionados a tributos e multas.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixar-dae-para-pagamento-do-icms-por-nota-fiscal+6945900af6e0ff51fef0aad7",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir e baixar GNRE",
+        "descricao": "Emissão de boleto GNRE via SITRAM e encaminhamento para o contribuinte",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixar-gnre+69459018f6e0ff51fef385b2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir e baixarDAE para pagamento do ICMS por CT-e (convênio 25/1990)",
+        "descricao": "Geração e quitação do DAE para ICMS incidente sobre Conhecimento de Transporte Eletrônico conforme convênio.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixardae-para-pagamento-do-icms-por-ct-e-convenio-25-1990+6945900af6e0ff51fef0d5d2",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir nota fiscal avulsa na saída do estado em decorrência de transporte de bens ou mercadorias para pessoa fisica.",
+        "descricao": "Nota fiscal avulsa para acobertar a circulação da mercadoria.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-nota-fiscal-avulsa-na-saida-do-estado-em-decorrencia-de-transporte-de-bens-ou-mercadorias-para-pessoa-fisica+69459017f6e0ff51fef37d35",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitur nota fiscal avulsa na saída do estado em decorrência de transporte de bens ou mercadorias para pessoa juridica não contribuinte.",
+        "descricao": "Nota fiscal avulsa para acobertar a circulação da mercadoria.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitur-nota-fiscal-avulsa-na-saida-do-estado-em-decorrencia-de-transporte-de-bens-ou-mercadorias-para-pessoa-juridica-nao-contribuinte+69459017f6e0ff51fef375f0",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Entregar Documentos PCDM - Comércio",
+        "descricao": "Programa de Incentivos às Centrais de Distribuição de Mercadorias (PCDM)",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+entregar-documentos-pcdm-comercio+64da4f3c170f5a26dc586686",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Estornar exportação",
+        "descricao": "OPERAÇÕES DE ESTORNO DE ESPORTAÇÃO NÃO EFETIVADA",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+estornar-exportacao+69459011f6e0ff51fef21328",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Fiscalizar Transportadoras",
+        "descricao": "Realização de diligências fiscais em estabelecimentos ou galpões que levantam suspeitas de irregularidades em suas operações .",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+fiscalizar-transportadoras+69459010f6e0ff51fef1b4b1",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Gerar ICMS por frete CT-e (Convênio 25/1990)",
+        "descricao": "Cálculo e geração do ICMS devido sobre frete registrado em CT-e.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+gerar-icms-por-frete-ct-e-convenio-25-1990+6945900bf6e0ff51fef0ea2d",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
+      {
+        "titulo": "Gerar ICMS por frete autônomo",
+        "descricao": "Cálculo e geração do ICMS devido sobre frete prestado por transportador autônomo.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+gerar-icms-por-frete-autonomo+6945900bf6e0ff51fef0e202",
+        "orgao": "SEFAZ-CE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Geral"
+          }
+        ]
+      },
       {
         "titulo": "Homologar DI - Declaração de Importação",
         "descricao": "rEQUISIÇÃO DE AÇÃO FISCAL DE D I AINDA NÃO HOMOLOGADA NO SITRAM",

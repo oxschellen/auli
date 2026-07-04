@@ -4,12 +4,822 @@
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+alterar-dados-do-contribuinte-cgf-cnpj-cpf-dae-e-gnre+64da4f32170f5a26dc582bd7",
+    "titulo": "Alterar dados do contribuinte (CGF/CNPJ/CPF) - DAE e GNRE",
+    "descricao": "Alterar dados do contribuinte (inscrição estadual/CGF, CNPJ e CPF) de DAE e GNRE."
+  },
+  {
+    "id": 2,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+alterar-ou-excluir-contador-normal-epp-me-e-contribuinte-substituto-outra-uf+6503511ebbf1401cc0dc851e",
+    "titulo": "Alterar ou excluir Contador - Normal, EPP, ME e Contribuinte Substituto (outra UF)",
+    "descricao": "Solicitar mudança ou exclusão de contador no Cadastro de Contribuintes do ICMS do Ceará de empresas inscritas nos regimes de recolhimento Normal, EPP, ME e Contribuinte Substituto sediado em outra Unidade Federada."
+  },
+  {
+    "id": 3,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+analisar-processo-tramita+69459016f6e0ff51fef3545f",
+    "titulo": "Analisar Processo TRAMITA",
+    "descricao": "REQUISIÇÃO DE ANÁLISE DE PROCESSO TRAMITA QUANDO A MERCADORIA JÁ ESTÁ EM POSSE DO DESTINATÁRIO"
+  },
+  {
+    "id": 4,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+apresentar-recurso-de-cadastro+64da4ee4170f5a26dc512a9f",
+    "titulo": "Apresentar Recurso de Cadastro",
+    "descricao": "Apresentar recurso relacionado ao cadastro."
+  },
+  {
+    "id": 5,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+apresentar-manifestacao-previa-ao-recurso-extraordinario-da-pge+66917587320add6fe5eac70f",
+    "titulo": "Apresentar manifestação prévia ao Recurso Extraordinário da PGE",
+    "descricao": "Apresentar manifestação a respeito da admissibilidade do Recurso Extraordinário interposto pela Procuradoria Geral do Estado ? PGE (Recorrente)."
+  },
+  {
+    "id": 6,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+apresentar-manifestacao-sobre-laudo-pericial-do-conat-cepet+66916f102ce2873356772e30",
+    "titulo": "Apresentar manifestação sobre laudo pericial do CONAT (CEPET)",
+    "descricao": "Apresentar manifestação sobre laudo emitido pela Perícia Tributária ou Informação Fiscal prestada pelo autuante na diligência fiscal."
+  },
+  {
+    "id": 7,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+atender-diligencia-procedimental-em-processo-administrativo-tributario+66916b717011d7223aae675e",
+    "titulo": "Atender diligência procedimental em processo administrativo tributário",
+    "descricao": "Atender diligência procedimental requerida pela autoridade competente para suprir exigência formal pelo sujeito passivo (autuado)."
+  },
+  {
+    "id": 8,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+ativar-e-vincular-mfe+64da4efe170f5a26dc56873e",
+    "titulo": "Ativar e Vincular MFE",
+    "descricao": "Configuração e autorização de um MFE para uso comercial."
+  },
+  {
+    "id": 9,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+atualizar-informacoes-do-ipva-com-o-detran+64da4ee4170f5a26dc5119a9",
+    "titulo": "Atualizar informações do IPVA com o DETRAN",
+    "descricao": "Atualizar dados do proprietário e/ou do veículo no Sistema IPVA de acordo com os registros do DETRAN."
+  },
+  {
+    "id": 10,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+baixar-transito-livre+69459013f6e0ff51fef2952a",
+    "titulo": "Baixar Trânsito Livre",
+    "descricao": "REQUISIÇÃO DE BAIXA DE AÇÃO FISCAL DE TRÂNSITO LIVRE"
+  },
+  {
+    "id": 11,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-produtor-rural-no-cgf+651aced214967143f5a1070e",
+    "titulo": "Cadastrar Produtor Rural no CGF",
+    "descricao": "Realiza o cadastro do Produtor Rural no CGF."
+  },
+  {
+    "id": 12,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-e-acessar-o-ambiente-seguro-itcd-advogados-tabeliaes-e-defensores-publicos+6503762abe977b1b4a87a4cd",
+    "titulo": "Cadastrar e Acessar o Ambiente Seguro - ITCD - Advogados, Tabeliães e Defensores Públicos.",
+    "descricao": "Acesso ao Ambiente Seguro para advogados, tabeliães e contadores em processos de ITCD."
+  },
+  {
+    "id": 13,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-no-ambiente-seguro-advogados-tabeliaes-contadores-e-outros-nfae+65043a7485c1313c687c3b5d",
+    "titulo": "Cadastrar no Ambiente Seguro Advogados, Tabeliães, Contadores e Outros -NFAe",
+    "descricao": "Cadastro no Ambiente Seguro perfis de advogados, tabeliães, contadores e outros em NFAe."
+  },
+  {
+    "id": 14,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-nota-fiscal-de-veiculo-novo+64da4ee4170f5a26dc511995",
+    "titulo": "Cadastrar nota fiscal de veículo novo",
+    "descricao": "Cadastrar nota fiscal da aquisição de veículo novo para fins de lançamento inicial no Sistema IPVA da SEFAZ-Ce e troca de informações junto ao DETRAN no primeiro emplacamento."
+  },
+  {
+    "id": 15,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cadastrar-notas-fiscais-do-chassi-e-carroceria-de-veiculo-novo+681cb61832dae5614d1b8667",
+    "titulo": "Cadastrar notas fiscais do chassi e carroceria de veículo novo",
+    "descricao": "Cadastrar notas fiscais do chassi e da carroceria (02 ou 03 DANFE’S) de veículo novo do tipo ônibus e caminhão, para fins de lançamento inicial no Sistema IPVA da SEFAZ-CE e troca de informações junto ao DETRAN no primeiro emplacamento."
+  },
+  {
+    "id": 16,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cancelar-nfae-nota-fiscal-avulsa-eletronica+64da4f11170f5a26dc56f67e",
+    "titulo": "Cancelar NFAe - Nota Fiscal Avulsa Eletrônica",
+    "descricao": "Emissão e cancelamento de NFA-e por parte do contribuinte."
+  },
+  {
+    "id": 17,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+cancelar-parcelamento-de-ipva+64da4eee170f5a26dc561c4a",
+    "titulo": "Cancelar Parcelamento de IPVA",
+    "descricao": "Anular o parcelamento de débitos do IPVA."
+  },
+  {
+    "id": 18,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-acao-fiscal-por-mdf-e+64da4f62170f5a26dc597bde",
+    "titulo": "Consultar Ação Fiscal por MDF-e",
+    "descricao": "Consultar situação de ação fiscal relacionada ao Manifesto Eletrônico de Documentos Fiscais (MDF-e)."
+  },
+  {
+    "id": 19,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-beneficio-de-ipva-por-veiculo+64da4ee4170f5a26dc5129f9",
+    "titulo": "Consultar Benefício de IPVA por Veículo",
+    "descricao": "Verificar benefícios disponíveis para IPVA em um veículo."
+  },
+  {
+    "id": 20,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-cupom-fiscal-eletronico+64da4ef9170f5a26dc56658c",
+    "titulo": "Consultar Cupom Fiscal Eletrônico",
+    "descricao": "Verificação de informações e detalhes dos cupons fiscais eletrônicos no Ceará."
+  },
+  {
+    "id": 21,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-dae-copaf+69459018f6e0ff51fef3bace",
+    "titulo": "Consultar DAE COPAF",
+    "descricao": "Consulta de situação de cobrança e pagamentos via SITRAM"
+  },
+  {
+    "id": 22,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-fornecedores-de-mfe+64da4efa170f5a26dc567556",
+    "titulo": "Consultar Fornecedores de MFE",
+    "descricao": "Verificação dos fornecedores com módulos homologados pela SEFAZ."
+  },
+  {
+    "id": 23,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-homologacao-de-acao-fiscal-de-importacao+69459019f6e0ff51fef48eb0",
+    "titulo": "Consultar Homologação de Ação Fiscal de Importação",
+    "descricao": "Consulta de situação da Ação Fiscal para solicitação de Homologação"
+  },
+  {
+    "id": 24,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-icms-frete+69459018f6e0ff51fef40dbc",
+    "titulo": "Consultar ICMS Frete",
+    "descricao": "Consulta de situação de cobrança e pagamentos via SITRAM"
+  },
+  {
+    "id": 25,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-memoria-de-calculo+69459007f6e0ff51fef04c21",
+    "titulo": "Consultar Memória de Cálculo",
+    "descricao": "Verificação dos cálculos utilizados para apuração de tributos em documentos fiscais.(Notas registradas no Sitram)"
+  },
+  {
+    "id": 26,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-mercadoria-retida-para-fiscalizacao+69459018f6e0ff51fef457f5",
+    "titulo": "Consultar Mercadoria Retida para Fiscalização",
+    "descricao": "Consulta de situação e motivo de retenção de mercadoria retida para Fiscalização"
+  },
+  {
+    "id": 27,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-modulo-fiscal-eletronico+64da4efa170f5a26dc56755e",
+    "titulo": "Consultar Módulo Fiscal Eletrônico",
+    "descricao": "Obter informações sobre o status operacional do MFE."
+  },
+  {
+    "id": 28,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-nota-fiscal-por-chave-de-acesso-nf-e+69459005f6e0ff51feef812a",
+    "titulo": "Consultar Nota Fiscal por chave de acesso (NF-e)",
+    "descricao": "Consulta detalhada da Nota Fiscal Eletrônica utilizando a chave de acesso."
+  },
+  {
+    "id": 29,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-software-house+64da4efe170f5a26dc5686ca",
+    "titulo": "Consultar Software House",
+    "descricao": "Lista de desenvolvedores de Aplicativos Comerciais (Software Houses)."
+  },
+  {
+    "id": 30,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-tabela-de-ipva-por-marca-modelo+64da4ee4170f5a26dc51199f",
+    "titulo": "Consultar Tabela de IPVA por marca/modelo",
+    "descricao": "Consultar por marca/modelo e ano de fabricação, a base de cálculo do IPVA e alíquota aplicada para o cálculo do IPVA"
+  },
+  {
+    "id": 31,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-1-camara+66f59e098f7d522a9e475941",
+    "titulo": "Consultar atas das Sessões de Julgamento da 1ª Câmara",
+    "descricao": "Consultar a ata do dia da sessão de julgamento da 1ª Câmara do processo de interesse do sujeito passivo ou representante legal."
+  },
+  {
+    "id": 32,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-2-camara+66c790d2ef405307e7774144",
+    "titulo": "Consultar atas das Sessões de Julgamento da 2ª Câmara",
+    "descricao": "Consultar a ata do dia da sessão de julgamento da 2ª Câmara do processo de interesse do sujeito passivo ou representante legal."
+  },
+  {
+    "id": 33,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-3-camara+66c899e13662ed4cca5b19df",
+    "titulo": "Consultar atas das Sessões de Julgamento da 3ª Câmara",
+    "descricao": "Consultar atas das Sessões de Julgamento da 3ª Câmara."
+  },
+  {
+    "id": 34,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-4-camara+66c8dd850dcf0e7143c7ed68",
+    "titulo": "Consultar atas das Sessões de Julgamento da 4ª Câmara",
+    "descricao": "Consultar a ata do dia da sessão de julgamento da 4ª Câmara do processo de interesse do sujeito passivo ou representante legal."
+  },
+  {
+    "id": 35,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-atas-das-sessoes-de-julgamento-da-camara-superior+66cc87440dcf0e7143d7b2e4",
+    "titulo": "Consultar atas das Sessões de Julgamento da Câmara Superior",
+    "descricao": "Consultar a ata do dia da sessão de julgamento da Câmara Superior do processo de interesse do sujeito passivo ou representante legal."
+  },
+  {
+    "id": 36,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-acao-fiscal+69459008f6e0ff51fef06f09",
+    "titulo": "Consultar ação fiscal",
+    "descricao": "Consulta da situação da Ação Fiscal utilizando o número da ação fiscal ou do manifesto de carga (MDF-e)"
+  },
+  {
+    "id": 37,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-debitos-de-lancamentos-do-sitram+64da4f62170f5a26dc597c02",
+    "titulo": "Consultar débitos de lançamentos do SITRAM",
+    "descricao": "\"Consultar débitos de ICMS Substituição Tributária, Antecipado e Diferencial de Alíquota lançados no SITRAM decorrentes de operações de entradas interestaduais \""
+  },
+  {
+    "id": 38,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-historico-de-valor-do-ipva+66d84d7ad8a5931a133052b4",
+    "titulo": "Consultar histórico de valor do IPVA",
+    "descricao": "Consultar histórico de valor do IPVA"
+  },
+  {
+    "id": 39,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-informacoes-no-cadastro+64da4f24170f5a26dc5794bc",
+    "titulo": "Consultar informações no cadastro",
+    "descricao": "Consultar informações no cadastro."
+  },
+  {
+    "id": 40,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-o-andamento-processual-do-auto-de-infracao+64da4ee3170f5a26dc5106bd",
+    "titulo": "Consultar o andamento processual do auto de infração",
+    "descricao": "Consultar o andamento do auto de infração no Contencioso Administrativo Tributário ? Conat, os resultados das decisões, as datas das intimações e prazos processuais, em todas as instâncias administrativas do Processo Administrativo Tributário (PAT)."
+  },
+  {
+    "id": 41,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pagamentos-dae-gnre-auto-de-infracao-parcelamento-copaf+6945901df6e0ff51fef5cc33",
+    "titulo": "Consultar pagamentos (DAE, GNRE, auto de infração, Parcelamento COPAF)",
+    "descricao": "Consulta dos pagamentos realizados e pendentes."
+  },
+  {
+    "id": 42,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pagamentos-de-debitos-do-sitram+64da4ee4170f5a26dc513593",
+    "titulo": "Consultar pagamentos de débitos do SITRAM",
+    "descricao": "Consultar informações de pagamento de ICMS de débitos lançados no SITRAM, conforme opção selecionada (DAE, GNRE, Parcelamento e Auto de Infração). ."
+  },
+  {
+    "id": 43,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-1-camara+66c62e5530ba39327b6609e5",
+    "titulo": "Consultar pautas das sessões de julgamento da 1ª Câmara",
+    "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Primeira Câmara de Julgamento."
+  },
+  {
+    "id": 44,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-2-camara+66c6458f30ba39327b32fbc4",
+    "titulo": "Consultar pautas das sessões de julgamento da 2ª Câmara",
+    "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Segunda Câmara de Julgamento."
+  },
+  {
+    "id": 45,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-3-camara+66c79d8d120ec15337f49960",
+    "titulo": "Consultar pautas das sessões de julgamento da 3ª Câmara",
+    "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Terceira Câmara de Julgamento."
+  },
+  {
+    "id": 46,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-4-camara+66c8a88c44adc22112b2540b",
+    "titulo": "Consultar pautas das sessões de julgamento da 4ª Câmara",
+    "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Quarta Câmara de Julgamento."
+  },
+  {
+    "id": 47,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-pautas-das-sessoes-de-julgamento-da-camara-superior+66c8e7f10dcf0e7143684386",
+    "titulo": "Consultar pautas das sessões de julgamento da Câmara Superior",
+    "descricao": "Consultar os processos/autos de infração pautados e as datas de realização das sessões de julgamento da Câmara Superior."
+  },
+  {
+    "id": 48,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-registros-de-notas-fiscais-no-sitram+64da4f63170f5a26dc598b5a",
+    "titulo": "Consultar registros de notas fiscais no SITRAM",
+    "descricao": "Consultar registros de notas fiscais de operações interestaduais incluídas no SITRAM"
+  },
+  {
+    "id": 49,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-situacao-de-nota-fiscal+69459019f6e0ff51fef4911c",
+    "titulo": "Consultar situação de Nota Fiscal",
+    "descricao": "Consulta de situação de nota fiscal para solicitação de informações."
+  },
+  {
+    "id": 50,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-questionar-cobranca-de-imposto+69459019f6e0ff51fef46971",
+    "titulo": "Consultar/Questionar Cobrança de Imposto",
+    "descricao": "Consulta de informações e questionamentos sobre cobrança de imposto"
+  },
+  {
+    "id": 51,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-questionar-cobranca-de-imposto-icms+69459017f6e0ff51fef36b6e",
+    "titulo": "Consultar/Questionar Cobrança de imposto (ICMS)",
+    "descricao": "Através da emissão do DAE"
+  },
+  {
+    "id": 52,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+consultar-questionar-cobranca-do-icms-de-transporte-frete+6945901cf6e0ff51fef55a20",
+    "titulo": "Consultar/Questionar cobrança do ICMS de Transporte (frete)",
+    "descricao": "Cobrança do ICMS devido sobre serviços de transporte de mercadorias."
+  },
+  {
+    "id": 53,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-codigo-de-receita-e-periodo-de-referencia-dae-e-gnre+64da4f34170f5a26dc583c7d",
+    "titulo": "Corrigir Código de Receita e Período de Referência ? DAE e GNRE",
+    "descricao": "Corrigir ou retificar código de receita e período de referência de DAE ou GNRE emitidos com erros nesses campos e com efetivo pagamento."
+  },
+  {
+    "id": 54,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-processos-tramita-correcao-mais-de-60-dias+6945900cf6e0ff51fef14b47",
+    "titulo": "Corrigir Processos Tramita correção mais de 60 dias",
+    "descricao": "Processo de correção de operações interestaduais utilizando o sistema SANFIT, assegurando a correta documentação e fiscalização das transações entre estados."
+  },
+  {
+    "id": 55,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-selo-sitram+64da4f5e170f5a26dc594fe1",
+    "titulo": "Corrigir Selo SITRAM",
+    "descricao": "Ajustar tributação do ICMS da mercadoria indicada na NF-e, de acordo com legislação tributária."
+  },
+  {
+    "id": 56,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-codigo-de-barra-dae-gnre-rejeitado+64da4f35170f5a26dc584359",
+    "titulo": "Corrigir código de barra ? DAE/GNRE rejeitado",
+    "descricao": "\"Corrigir e processar pagamento de DAE/GNRE no status rejeitado devido a erro no código de barras \""
+  },
+  {
+    "id": 57,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-pagamento-em-duplicidade-dae-e-gnre+64da4f34170f5a26dc583d9b",
+    "titulo": "Corrigir pagamento em duplicidade ? DAE e GNRE",
+    "descricao": "Corrigir pagamento duplicado de ICMS por meio de abatimento de débito constante em DAE/GNRE apenas emitido."
+  },
+  {
+    "id": 58,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-registro-ou-selo-do-sitram-via-sanfit+64da64ae170f5a26dcdc28ac",
+    "titulo": "Corrigir registro ou selo do SITRAM via SANFIT",
+    "descricao": "Corrigir registros do SITRAM, de operações interestaduais, por meio de solicitação gerada no Sistema TRAMITA/SANFIT."
+  },
+  {
+    "id": 59,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+corrigir-registro-selo-do-sitram-contribuinte-pai-d-egua+64da64ad170f5a26dcdc27ac",
+    "titulo": "Corrigir registro/selo do SITRAM - Contribuinte Pai D?Égua",
+    "descricao": "Corrigir registros do SITRAM, de operações destinadas a ativo fixo ou consumo, por contribuinte com classificação de 4 ou 5 Jangadas no Programa Contribuinte Pai D?Égua."
+  },
+  {
+    "id": 60,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+credenciar-transportadoras+69459010f6e0ff51fef1a304",
+    "titulo": "Credenciar Transportadoras",
+    "descricao": "Processo de análise pedidos de credenciamento de transportadoras, que permitem a postergação do pagamento do imposto desde que algums requisitos sejam cumpridos."
+  },
+  {
+    "id": 61,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certidao-negativa-estadual+64da4ef9170f5a26dc566594",
+    "titulo": "Emitir Certidão Negativa Estadual",
+    "descricao": "Emissão de certidão comprobatória de ausência de débitos estaduais. É possível acessar o serviço através do chat enviado a frase: \"Emitir Certidão Negativa\" Certidão Negativa, Certidão Negativa de Débitos, Certidão Negativa Estadual."
+  },
+  {
+    "id": 62,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certidao-de-baixa-cadastral+650b47c2820c9d2ef7d4402a",
+    "titulo": "Emitir Certidão de Baixa Cadastral",
+    "descricao": "\"Emissão de certidão comprobatória de baixa cadastral. \""
+  },
+  {
+    "id": 63,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certidao-de-quitacao-de-ipva+64da4ee4170f5a26dc5119f5",
+    "titulo": "Emitir Certidão de Quitação de IPVA",
+    "descricao": "Emitir Certidão de Quitação de IPVA."
+  },
+  {
+    "id": 64,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certidao-de-recolhimento-de-receita-para-nao-contribuinte+6503601dd048b208a51fffef",
+    "titulo": "Emitir Certidão de Recolhimento de Receita para Não-Contribuinte",
+    "descricao": "Emissão ateste de não contribuinte e ausência de Recolhimento de Receita."
+  },
+  {
+    "id": 65,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certificado-de-nao-similaridade+64da687c170f5a26dcfa5edc",
+    "titulo": "Emitir Certificado de Não-Similaridade",
+    "descricao": "Solicitar certificado de não-similaridade de produtos"
+  },
+  {
+    "id": 66,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-certificado-de-regularidade+65035d0f49e79469ba5aba9c",
+    "titulo": "Emitir Certificado de Regularidade",
+    "descricao": "Emissão de certidão de regularidade de débitos estadual."
+  },
+  {
+    "id": 67,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae+69459015f6e0ff51fef3417a",
+    "titulo": "Emitir DAE",
+    "descricao": "REQUISIÇÃO DE LIBERAÇÃO DE AÇÃO FISCAL PARA PAGAMENTO"
+  },
+  {
+    "id": 68,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-difal-operacao-ou-prestacao+64da4ee5170f5a26dc52a5df",
+    "titulo": "Emitir DAE DIFAL operação ou prestação",
+    "descricao": "Possibilitar aos contribuintes de outras UF’s a emissão de DAE para recolhimento do DIFAL EC nº 87/2015."
+  },
+  {
+    "id": 69,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-de-deposito-administrativo+64da4ee4170f5a26dc512a50",
+    "titulo": "Emitir DAE de Depósito Administrativo",
+    "descricao": "Emissão do DAE - Documento de Arrecadação Estadual para liberar mercadorias autuadas nos Postos Fiscais"
+  },
+  {
+    "id": 70,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-de-frete-avulso-transportadora-de-outra-uf+6641172442a1ea68e9954672",
+    "titulo": "Emitir DAE de Frete Avulso ? Transportadora de outra UF",
+    "descricao": "Emitir DAE para pagamento de ICMS em prestação de serviço de transporte rodoviário de cargas realizado por transportadora de outra unidade federada da Federação não inscrita na SEFAZ-Ce."
+  },
+  {
+    "id": 71,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-de-parcelamento+64da4f2b170f5a26dc57dde9",
+    "titulo": "Emitir DAE de Parcelamento",
+    "descricao": "Emitir DAE para pagar parcelamento"
+  },
+  {
+    "id": 72,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-de-parcelamento-de-ipva+64da4eed170f5a26dc560566",
+    "titulo": "Emitir DAE de Parcelamento de IPVA",
+    "descricao": "Obter o Documento de Arrecadação Estadual (DAE) para IPVA parcelado."
+  },
+  {
+    "id": 73,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-do-icms-frete-avulso-transportador-autonomo+64da4f62170f5a26dc59845f",
+    "titulo": "Emitir DAE do ICMS Frete Avulso - Transportador Autônomo",
+    "descricao": "Emitir DAE para pagamento de ICMS em prestação de serviço de transporte rodoviário de cargas realizado por pessoa física, transportador autônomo (frete avulso)."
+  },
+  {
+    "id": 74,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-para-restricao-de-veiculo+64da4eed170f5a26dc5605a0",
+    "titulo": "Emitir DAE para restrição de veículo",
+    "descricao": "Obter o Documento de Arrecadação Estadual (DAE) para ICMS."
+  },
+  {
+    "id": 75,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-dae-referente-ao-icms-difal-e-fecop+69459003f6e0ff51feef4013",
+    "titulo": "Emitir DAE referente ao ICMS Difal e FECOP",
+    "descricao": "Geração do Documento de Arrecadação Estadual (DAE) para pagamento do ICMS Difal e do valor destinado ao Fundo de Combate à Pobreza (FECOP)."
+  },
+  {
+    "id": 76,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-daes-para-pagamento-de-icms-no-sitram+64dd0f80d29b0c14e173a291",
+    "titulo": "Emitir DAEs para pagamento de ICMS no SITRAM",
+    "descricao": "\"Emissão de DAE em Operações Interestaduais \""
+  },
+  {
+    "id": 77,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+ficha-de-inscricao-cadastral+65afc4ac19ddb56f1be80ad6",
+    "titulo": "Emitir Ficha de Inscrição Cadastral - FIC",
+    "descricao": "Serviço de emissão de ficha da inscrição cadastral."
+  },
+  {
+    "id": 78,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-gnre+6509bcb4499f581b212979b5",
+    "titulo": "Emitir GNRE",
+    "descricao": "Orientações para geração e emissão de GNRE no ambiente nacional - Portal GNRE"
+  },
+  {
+    "id": 79,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixar-dae-para-pagamento-do-icms-por-acao-fiscal-transportador+6945900bf6e0ff51fef0dd4b",
+    "titulo": "Emitir e baixar DAE para pagamento do ICMS por ação fiscal (transportador)",
+    "descricao": "Emissão e baixa do DAE para recolhimento do ICMS decorrente de ação fiscal envolvendo transportador."
+  },
+  {
+    "id": 80,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixar-dae-para-pagamento-do-icms-por-frete-transportador-autonomo+6945900af6e0ff51fef0d262",
+    "titulo": "Emitir e baixar DAE para pagamento do ICMS por frete (transportador autônomo)",
+    "descricao": "Emissão e baixa do DAE para recolhimento do ICMS sobre frete prestado por transportador autônomo."
+  },
+  {
+    "id": 81,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixar-dae-para-pagamento-do-icms-por-nota-fiscal+6945900af6e0ff51fef0aad7",
+    "titulo": "Emitir e baixar DAE para pagamento do ICMS por nota fiscal",
+    "descricao": "Consulta dos pagamentos realizados e pendentes relacionados a tributos e multas."
+  },
+  {
+    "id": 82,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixar-gnre+69459018f6e0ff51fef385b2",
+    "titulo": "Emitir e baixar GNRE",
+    "descricao": "Emissão de boleto GNRE via SITRAM e encaminhamento para o contribuinte"
+  },
+  {
+    "id": 83,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-e-baixardae-para-pagamento-do-icms-por-ct-e-convenio-25-1990+6945900af6e0ff51fef0d5d2",
+    "titulo": "Emitir e baixarDAE para pagamento do ICMS por CT-e (convênio 25/1990)",
+    "descricao": "Geração e quitação do DAE para ICMS incidente sobre Conhecimento de Transporte Eletrônico conforme convênio."
+  },
+  {
+    "id": 84,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitir-nota-fiscal-avulsa-na-saida-do-estado-em-decorrencia-de-transporte-de-bens-ou-mercadorias-para-pessoa-fisica+69459017f6e0ff51fef37d35",
+    "titulo": "Emitir nota fiscal avulsa na saída do estado em decorrência de transporte de bens ou mercadorias para pessoa fisica.",
+    "descricao": "Nota fiscal avulsa para acobertar a circulação da mercadoria."
+  },
+  {
+    "id": 85,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+emitur-nota-fiscal-avulsa-na-saida-do-estado-em-decorrencia-de-transporte-de-bens-ou-mercadorias-para-pessoa-juridica-nao-contribuinte+69459017f6e0ff51fef375f0",
+    "titulo": "Emitur nota fiscal avulsa na saída do estado em decorrência de transporte de bens ou mercadorias para pessoa juridica não contribuinte.",
+    "descricao": "Nota fiscal avulsa para acobertar a circulação da mercadoria."
+  },
+  {
+    "id": 86,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+entregar-documentos-pcdm-comercio+64da4f3c170f5a26dc586686",
+    "titulo": "Entregar Documentos PCDM - Comércio",
+    "descricao": "Programa de Incentivos às Centrais de Distribuição de Mercadorias (PCDM)"
+  },
+  {
+    "id": 87,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+estornar-exportacao+69459011f6e0ff51fef21328",
+    "titulo": "Estornar exportação",
+    "descricao": "OPERAÇÕES DE ESTORNO DE ESPORTAÇÃO NÃO EFETIVADA"
+  },
+  {
+    "id": 88,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+fiscalizar-transportadoras+69459010f6e0ff51fef1b4b1",
+    "titulo": "Fiscalizar Transportadoras",
+    "descricao": "Realização de diligências fiscais em estabelecimentos ou galpões que levantam suspeitas de irregularidades em suas operações ."
+  },
+  {
+    "id": 89,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+gerar-icms-por-frete-ct-e-convenio-25-1990+6945900bf6e0ff51fef0ea2d",
+    "titulo": "Gerar ICMS por frete CT-e (Convênio 25/1990)",
+    "descricao": "Cálculo e geração do ICMS devido sobre frete registrado em CT-e."
+  },
+  {
+    "id": 90,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+gerar-icms-por-frete-autonomo+6945900bf6e0ff51fef0e202",
+    "titulo": "Gerar ICMS por frete autônomo",
+    "descricao": "Cálculo e geração do ICMS devido sobre frete prestado por transportador autônomo."
+  },
+  {
+    "id": 91,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-CE",
     "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+homologar-di-declaracao-de-importacao+69459012f6e0ff51fef22a9d",
     "titulo": "Homologar DI - Declaração de Importação",
     "descricao": "rEQUISIÇÃO DE AÇÃO FISCAL DE D I AINDA NÃO HOMOLOGADA NO SITRAM"
   },
   {
-    "id": 2,
+    "id": 92,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -18,7 +828,7 @@
     "descricao": "REQUISIÇÃO DE HOMOLOGAÇÃO DE AÇÃO FISCAL"
   },
   {
-    "id": 3,
+    "id": 93,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -27,7 +837,7 @@
     "descricao": "Impugnação de débitos de ITCD inscritos na Dívida Ativa."
   },
   {
-    "id": 4,
+    "id": 94,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -36,7 +846,7 @@
     "descricao": "Impugnação do lançamento de ITCD."
   },
   {
-    "id": 5,
+    "id": 95,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -45,7 +855,7 @@
     "descricao": "Incluir empresas no programa de auto regularização e conformidade tributária Contribuinte Pai d?Égua."
   },
   {
-    "id": 6,
+    "id": 96,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -54,7 +864,7 @@
     "descricao": "Incluir NF-e emitidas equivocadamente com finalidade NORMAL no SITRAM."
   },
   {
-    "id": 7,
+    "id": 97,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -63,7 +873,7 @@
     "descricao": "Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT pautado para julgamento na 1ª Câmara."
   },
   {
-    "id": 8,
+    "id": 98,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -72,7 +882,7 @@
     "descricao": "\"Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT pautado para julgamento na 3ª Câmara. \""
   },
   {
-    "id": 9,
+    "id": 99,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -81,7 +891,7 @@
     "descricao": "\"Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT pautado para julgamento na 4ª Câmara. \""
   },
   {
-    "id": 10,
+    "id": 100,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -90,7 +900,7 @@
     "descricao": "Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT pautado para julgamento na Câmara Superior."
   },
   {
-    "id": 11,
+    "id": 101,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -99,7 +909,7 @@
     "descricao": "Incluir ou excluir procurador ou dar ciência da desistência como procurador no PAT ou PAT-e"
   },
   {
-    "id": 12,
+    "id": 102,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -108,7 +918,7 @@
     "descricao": "Declarar a não contribuição de ICMS"
   },
   {
-    "id": 13,
+    "id": 103,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -117,7 +927,7 @@
     "descricao": "Registrar o depósito judicial já realizado"
   },
   {
-    "id": 14,
+    "id": 104,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -126,7 +936,7 @@
     "descricao": "Informar à SEFAZ sobre operação interna não realizada em NF-e."
   },
   {
-    "id": 15,
+    "id": 105,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -135,7 +945,7 @@
     "descricao": "Forma de punição por não cumprimento de obrigações principais ou acessórioas. Visa combater a sonegação fiscal."
   },
   {
-    "id": 16,
+    "id": 106,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -144,7 +954,7 @@
     "descricao": "REQUISIÇÃO DE REENVIO DA CHAVE DA NOTA PARA CIPP"
   },
   {
-    "id": 17,
+    "id": 107,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -153,7 +963,7 @@
     "descricao": "Liberação da mercadoria após confirmação do pagamento pendente para regularização financeira."
   },
   {
-    "id": 18,
+    "id": 108,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -162,7 +972,7 @@
     "descricao": "Liberar mercadoria autuada em cumprimento de liminar concedida em Mandado de Segurança."
   },
   {
-    "id": 19,
+    "id": 109,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -171,7 +981,7 @@
     "descricao": "Liberação mediante apresentação de Termo de Fiança como garantia do cumprimento das obrigações."
   },
   {
-    "id": 20,
+    "id": 110,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -180,7 +990,7 @@
     "descricao": "Liberação da mercadoria após quitação integral das multas ou tributos aplicados."
   },
   {
-    "id": 21,
+    "id": 111,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -189,7 +999,7 @@
     "descricao": "Liberação mediante depósito do valor da multa ou tributo em processo administrativo."
   },
   {
-    "id": 22,
+    "id": 112,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -198,7 +1008,7 @@
     "descricao": "Acompanhamento eletrônico das operações e obrigações fiscais das transportadoras em tempo real, promovendo uma autorrregularização de forma menos ostensiva do que a fiscalização"
   },
   {
-    "id": 23,
+    "id": 113,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -207,7 +1017,7 @@
     "descricao": "Obter credenciamento por recurso/SICRED."
   },
   {
-    "id": 24,
+    "id": 114,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -216,7 +1026,7 @@
     "descricao": "Parcelar débitos originados da lavratura de auto de infração."
   },
   {
-    "id": 25,
+    "id": 115,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -225,7 +1035,7 @@
     "descricao": "Solicitar o parcelamento de autos de infração"
   },
   {
-    "id": 26,
+    "id": 116,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -234,7 +1044,7 @@
     "descricao": "Parcelar ICMS de estoque de contribuintes enquadrados em CNAE?s elencadas em decreto estadual para cobrança de substituição tributária."
   },
   {
-    "id": 27,
+    "id": 117,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -243,7 +1053,7 @@
     "descricao": "Parcelar débitos de ICMS em até 60 parcelas, que não estão inscritos em Dívida Ativa do Estado e nem incluídos em auto de infração."
   },
   {
-    "id": 28,
+    "id": 118,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -252,7 +1062,7 @@
     "descricao": "Pedido de cancelamento de guias relacionadas ao ITCD."
   },
   {
-    "id": 29,
+    "id": 119,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -261,7 +1071,7 @@
     "descricao": "Serviço para solicitar o cálculo do Imposto sobre Transmissão Causa Mortis e Doação (ITCD) em casos de partilha de bens decorrente de divórcio. O cálculo é necessário para a regularização da transferência de patrimônio entre as partes envolvidas."
   },
   {
-    "id": 30,
+    "id": 120,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -270,7 +1080,7 @@
     "descricao": "Solicitação de cálculo de ITCD para transmissão inter vivos."
   },
   {
-    "id": 31,
+    "id": 121,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -279,7 +1089,7 @@
     "descricao": "Emitir DAE da parte incontroversa do auto de infração."
   },
   {
-    "id": 32,
+    "id": 122,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -288,7 +1098,7 @@
     "descricao": "Requerimento de dispensa de multa e juros relacionados ao ITCD."
   },
   {
-    "id": 33,
+    "id": 123,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -297,7 +1107,7 @@
     "descricao": "Pedido de parcelamento de débitos de ITCD."
   },
   {
-    "id": 34,
+    "id": 124,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -306,7 +1116,7 @@
     "descricao": "Pedido de reavaliação de lançamento de ITCD."
   },
   {
-    "id": 35,
+    "id": 125,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -315,7 +1125,7 @@
     "descricao": "Solicitação de cálculo de ITCD para Não incidência/Imunidade"
   },
   {
-    "id": 36,
+    "id": 126,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -324,7 +1134,7 @@
     "descricao": "Solicitar pelo Tramita, a restituição do IPVA pago a mais por terceiros ou proprietário anterior."
   },
   {
-    "id": 37,
+    "id": 127,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -333,7 +1143,7 @@
     "descricao": "Pedir a sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada pela Câmara Superior, quando não solicitado no rol de pedidos da peça recursal."
   },
   {
-    "id": 38,
+    "id": 128,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -342,7 +1152,7 @@
     "descricao": "Pedir adiamento de julgamento de processo pautado na 1ª Câmara do Conat."
   },
   {
-    "id": 39,
+    "id": 129,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -351,7 +1161,7 @@
     "descricao": "Pedir adiamento da sessão de julgamento da Segunda Câmara do Conat."
   },
   {
-    "id": 40,
+    "id": 130,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -360,7 +1170,7 @@
     "descricao": "Pedir adiamento de sessão de julgamento da 3ª Câmara"
   },
   {
-    "id": 41,
+    "id": 131,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -369,7 +1179,7 @@
     "descricao": "Pedir adiamento de julgamento de processo pautado na Quarta Câmara do Conat."
   },
   {
-    "id": 42,
+    "id": 132,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -378,7 +1188,7 @@
     "descricao": "Pedir adiamento de julgamento de processo pautado na Câmara Superior."
   },
   {
-    "id": 43,
+    "id": 133,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -387,7 +1197,7 @@
     "descricao": "Pedir a certidão de trânsito em julgado, emitida exclusivamente para processos físicos (em papel), quando ocorre a decisão administrativa definitiva e encerrado os prazos previstos na lei processual."
   },
   {
-    "id": 44,
+    "id": 134,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -396,7 +1206,7 @@
     "descricao": "Pedir cópia da resolução proferida pela Segunda Instância (Câmara de Julgamento) e Instância Especial (Câmara Superior), na qual consta o teor da decisão administrativa de um auto de infração lavrado em papel (físico)."
   },
   {
-    "id": 45,
+    "id": 135,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -405,7 +1215,7 @@
     "descricao": "Pedir cópia da peça de julgamento de Primeira Instância de um auto de infração lavrado em papel (físico)."
   },
   {
-    "id": 46,
+    "id": 136,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -414,7 +1224,7 @@
     "descricao": "Pedir peças processuais de um auto de infração lavrado em papel (físico) em trâmite no Conat."
   },
   {
-    "id": 47,
+    "id": 137,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -423,7 +1233,7 @@
     "descricao": "Pedir devolução total ou parcial de depósito administrativo, nos casos de julgamento definitivo nulo, extinto, improcedente e parcial procedente."
   },
   {
-    "id": 48,
+    "id": 138,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -432,7 +1242,7 @@
     "descricao": "Pedir a restituição total ou parcial de auto de infração pago integralmente e tido como indevidamente recolhido ao erário."
   },
   {
-    "id": 49,
+    "id": 139,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -441,7 +1251,7 @@
     "descricao": "Pedir restituição do pagamento de taxas de fiscalização e prestação de serviços públicos, cobradas pelo Contencioso."
   },
   {
-    "id": 50,
+    "id": 140,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -450,7 +1260,7 @@
     "descricao": "Pedir a sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada no Conat pela Primeira Câmara de Julgamento, quando não solicitado no rol de pedidos da peça recursal."
   },
   {
-    "id": 51,
+    "id": 141,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -459,7 +1269,7 @@
     "descricao": "Pedir sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada no Conat pela Segunda Câmara de Julgamento, quando não solicitado no rol de pedidos da peça recursal."
   },
   {
-    "id": 52,
+    "id": 142,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -468,7 +1278,7 @@
     "descricao": "Pedir a sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada no Conat pela Terceira Câmara de Julgamento, quando não solicitado no rol de pedidos da peça recursal."
   },
   {
-    "id": 53,
+    "id": 143,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -477,7 +1287,7 @@
     "descricao": "Pedir a sustentação oral para apresentar as razões de seu recurso, em sessão presencial realizada no Conat pela Quarta Câmara de Julgamento, quando não solicitado no rol de pedidos da peça recursal."
   },
   {
-    "id": 54,
+    "id": 144,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -486,7 +1296,7 @@
     "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Primeira Câmara de Julgamento."
   },
   {
-    "id": 55,
+    "id": 145,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -495,7 +1305,7 @@
     "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Segunda Câmara de Julgamento."
   },
   {
-    "id": 56,
+    "id": 146,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -504,7 +1314,7 @@
     "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Terceira Câmara de Julgamento."
   },
   {
-    "id": 57,
+    "id": 147,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -513,7 +1323,7 @@
     "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Quarta Câmara de Julgamento."
   },
   {
-    "id": 58,
+    "id": 148,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -522,7 +1332,7 @@
     "descricao": "Pedir a sustentação oral para apresentar suas razões de recurso, por videoconferência, em sessão de modelo híbrido (presencial e virtual) realizada pela Câmara Superior."
   },
   {
-    "id": 59,
+    "id": 149,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -531,7 +1341,7 @@
     "descricao": "Pesquisar publicações elaboradas pelo Contencioso, em destaque, o INFORMATIVO CONAT, dentre elas, ementários, manuais e outras produções."
   },
   {
-    "id": 60,
+    "id": 150,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -540,7 +1350,7 @@
     "descricao": "Pesquisar resoluções proferidas pelas Câmaras de Julgamento ou Câmara Superior, de acordo com os critérios de busca da nova ferramenta Conat Juris."
   },
   {
-    "id": 61,
+    "id": 151,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -549,7 +1359,7 @@
     "descricao": "Procedimento para registrar e selar notas fiscais de saída tramita com destino a outros estados, garantindo a conformidade fiscal e o acompanhamento das operações interestaduais."
   },
   {
-    "id": 62,
+    "id": 152,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -558,7 +1368,7 @@
     "descricao": "Processo Tramita para apresentar o contrato de fidelidade"
   },
   {
-    "id": 63,
+    "id": 153,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -567,7 +1377,7 @@
     "descricao": "Processo para inclusão de notas fiscais nas exceções do sistema SIGET, possibilitando tratamento diferenciado para determinadas operações conforme regras específicas."
   },
   {
-    "id": 64,
+    "id": 154,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -576,7 +1386,7 @@
     "descricao": "Processo de correção nas operações interestaduais utilizando o sistema SANFIT, assegurando a correta documentação e fiscalização das transações entre estados."
   },
   {
-    "id": 65,
+    "id": 155,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -585,7 +1395,7 @@
     "descricao": "Consultar a legislação tributária estadual relacionada ao IPVA."
   },
   {
-    "id": 66,
+    "id": 156,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -594,7 +1404,7 @@
     "descricao": "Apuração do valor do ICMS devido pela diferença entre as alíquotas interna e interestaduais nas operações e prestações que destinem bens, mercadorias e serviços a consumidores finais não contribuintes domicilados no Estado."
   },
   {
-    "id": 67,
+    "id": 157,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -603,7 +1413,7 @@
     "descricao": "Inscrever distribuidor de combustíveis no cadastro."
   },
   {
-    "id": 68,
+    "id": 158,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -612,7 +1422,7 @@
     "descricao": "Inscrever posto revendedor varejista de combustível."
   },
   {
-    "id": 69,
+    "id": 159,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -621,7 +1431,7 @@
     "descricao": "Inscrever produtor rural no cadastro."
   },
   {
-    "id": 70,
+    "id": 160,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -630,7 +1440,7 @@
     "descricao": "Inscrever transportador revendedor retalhista no cadastro."
   },
   {
-    "id": 71,
+    "id": 161,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -639,7 +1449,7 @@
     "descricao": "Procedimento de autorregularização de empresas de outras UF'S que apresentem débito fiscal relativo ao DIFAL."
   },
   {
-    "id": 72,
+    "id": 162,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -648,7 +1458,7 @@
     "descricao": "Realizar depósito administrativo de Auto de Infração impugnado no Conat."
   },
   {
-    "id": 73,
+    "id": 163,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -657,7 +1467,7 @@
     "descricao": "Realizar depósito judicial em Posto Fiscal para atender a obrigações fiscais."
   },
   {
-    "id": 74,
+    "id": 164,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -666,7 +1476,7 @@
     "descricao": "Reativar cadastro que estava inativo."
   },
   {
-    "id": 75,
+    "id": 165,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -675,7 +1485,7 @@
     "descricao": "Envie documentos processuais para análise no setor de contencioso."
   },
   {
-    "id": 76,
+    "id": 166,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -684,7 +1494,7 @@
     "descricao": "Recurso contra indeferimento de impugnação ou reavaliação de ITCD."
   },
   {
-    "id": 77,
+    "id": 167,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -693,7 +1503,7 @@
     "descricao": "Informações acerca do recurso para desenquadramento de MEI devido a compras ou receitas excessivas."
   },
   {
-    "id": 78,
+    "id": 168,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -702,7 +1512,7 @@
     "descricao": "Informações de recurso sobre as diferenças de receita entre PGDAS-D, DIMP e documentos fiscais"
   },
   {
-    "id": 79,
+    "id": 169,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -711,7 +1521,7 @@
     "descricao": "Informações relativas a despesas que superam em mais de 20% e aquisições superam em 80% os ingressos de recursos, em que o contribuinte optante pelo SImples Nacional entende recorrer contra a Fazenda Pública."
   },
   {
-    "id": 80,
+    "id": 170,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -720,7 +1530,7 @@
     "descricao": "Informações acerca do recurso para opção de regime do Simples Nacional indeferida."
   },
   {
-    "id": 81,
+    "id": 171,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -729,7 +1539,7 @@
     "descricao": "Informações a respeito do recurso ao Termo de Exclusão do Simples Nacional"
   },
   {
-    "id": 82,
+    "id": 172,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -738,7 +1548,7 @@
     "descricao": "Solicitar redução de alíquota para veículos de autoescolas."
   },
   {
-    "id": 83,
+    "id": 173,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -747,7 +1557,7 @@
     "descricao": "Solicitar redução de alíquota para veículos de locadoras."
   },
   {
-    "id": 84,
+    "id": 174,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -756,7 +1566,7 @@
     "descricao": "Firmar convênio para obter redutor nos percentuais de carga tributária líquida de aquisições de peças automotivas."
   },
   {
-    "id": 85,
+    "id": 175,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -765,7 +1575,7 @@
     "descricao": "Registrar inscrição estadual de substituto tributário."
   },
   {
-    "id": 86,
+    "id": 176,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -774,7 +1584,7 @@
     "descricao": "Registro de manifestações e sugestões para o órgão de ouvidoria."
   },
   {
-    "id": 87,
+    "id": 177,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -783,7 +1593,7 @@
     "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE SIMPLES REMESSA"
   },
   {
-    "id": 88,
+    "id": 178,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -792,7 +1602,7 @@
     "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE CABOTAGEM PARA O CEARÁ"
   },
   {
-    "id": 89,
+    "id": 179,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -801,7 +1611,7 @@
     "descricao": "REQUISIÇÃO DE REGISTRO DE OPERAÇÃO DE LEILÃO"
   },
   {
-    "id": 90,
+    "id": 180,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -810,7 +1620,7 @@
     "descricao": "É o canal oficial para o cidadão relatar condutas irregulares, abusos ou descumprimento de deveres por parte de funcionários da Secretaria da Fazenda."
   },
   {
-    "id": 91,
+    "id": 181,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -819,7 +1629,7 @@
     "descricao": "Cadastro e registro de notas fiscais que entraram ou saíram no Posto Fiscal do Mucuripe no sistema SITRAM para controle fiscal."
   },
   {
-    "id": 92,
+    "id": 182,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -828,7 +1638,7 @@
     "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE IMPORTAÇÃO JÁ ABERTA PELA CENTRAL DE IMPORTAÇÃO"
   },
   {
-    "id": 93,
+    "id": 183,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -837,7 +1647,7 @@
     "descricao": "Registrar ou selar no SITRAM, Nota Fiscal Avulsa - NFA de entrada de mercadorias no Ceará, quando não tiver sido feito na divisa do Estado, com solicitação por meio do Sistema TRAMITA."
   },
   {
-    "id": 94,
+    "id": 184,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -846,7 +1656,7 @@
     "descricao": "Registrar ou selar operações de importações via SISCOEX"
   },
   {
-    "id": 95,
+    "id": 185,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -855,7 +1665,7 @@
     "descricao": "Registrar ou selar notas fiscais, em operações interestaduais no SITRAM por meio de acesso exclusivo a empresa transportadora credenciada na SEFAZ-Ce."
   },
   {
-    "id": 96,
+    "id": 186,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -864,7 +1674,7 @@
     "descricao": "Registrar ou selar notas fiscais, em operações interestaduais, pelo SITRAM (Sistema de Trânsito de Mercadorias) quando não tiver sido feito na divisa do Estado."
   },
   {
-    "id": 97,
+    "id": 187,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -873,7 +1683,7 @@
     "descricao": "Registrar ou selar nota fiscal em operação interestadual na passagem da mercadoria em posto de divisa ou fronteira"
   },
   {
-    "id": 98,
+    "id": 188,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -882,7 +1692,7 @@
     "descricao": "Registrar ou selar no SITRAM, nota fiscal que acoberta operação de saída de mercadoria do Ceará."
   },
   {
-    "id": 99,
+    "id": 189,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -891,7 +1701,7 @@
     "descricao": "LIBERAÇÃO DE DIVERGÊNCIA DE LACRE NO SIC-TOS"
   },
   {
-    "id": 100,
+    "id": 190,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -900,7 +1710,7 @@
     "descricao": "REQUISIÇÃO DE INCLUSÃO DE NOVAS NOTAS FISCAIS NA PLANILHA DO NAVIO"
   },
   {
-    "id": 101,
+    "id": 191,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -909,7 +1719,7 @@
     "descricao": "Procedimentos para regularizar operação de importação por pessoa física e jurídica não contribuinte do ICMS"
   },
   {
-    "id": 102,
+    "id": 192,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -918,7 +1728,7 @@
     "descricao": "Através do recolhimento do imposto"
   },
   {
-    "id": 103,
+    "id": 193,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -927,7 +1737,7 @@
     "descricao": "Requisição de restituição de valores abaixo de 5.000 UFIRCES relacionados ao ITCD."
   },
   {
-    "id": 104,
+    "id": 194,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -936,7 +1746,7 @@
     "descricao": "Requisição de restituição de valores acima de 5.000 UFIRCES relacionados ao ITCD."
   },
   {
-    "id": 105,
+    "id": 195,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -945,7 +1755,7 @@
     "descricao": "Apresentar contrarrazões a respeito da admissibilidade do Recurso Extraordinário interposto pela Procuradoria Geral do Estado - PGE (Recorrente), com base no despacho fundamentado do Presidente do Conat."
   },
   {
-    "id": 106,
+    "id": 196,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -954,7 +1764,7 @@
     "descricao": "Análise dos pedidos de restituição de valores de ICMS pagos de forma indevida ou em excesso pelos contribuintes nas operações de transporte, garantindo a fiel observância da legislação tributária."
   },
   {
-    "id": 107,
+    "id": 197,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -963,7 +1773,7 @@
     "descricao": "Anular restrições sobre o pagamento do IPVA."
   },
   {
-    "id": 108,
+    "id": 198,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -972,7 +1782,7 @@
     "descricao": "Requerer mudança de informações no cadastro."
   },
   {
-    "id": 109,
+    "id": 199,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -981,7 +1791,7 @@
     "descricao": "Efetuar mudança na razão social de acordo com regulamento."
   },
   {
-    "id": 110,
+    "id": 200,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -990,7 +1800,7 @@
     "descricao": "Informações a respeito da solicitação de análise das declarações de PGDAS-D retidas na Malha Fiscal."
   },
   {
-    "id": 111,
+    "id": 201,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -999,7 +1809,7 @@
     "descricao": "Solicitar autorização de venda de mercadoria abaixo do preço de custo"
   },
   {
-    "id": 112,
+    "id": 202,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1008,7 +1818,7 @@
     "descricao": "Autorregularização de ICMS de que trata o art. 155 do Decreto n.º 34.605/2022, disciplinada na Instrução Normativa nº 102/2022."
   },
   {
-    "id": 113,
+    "id": 203,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1017,7 +1827,7 @@
     "descricao": "Encerrar cadastro de uma entidade."
   },
   {
-    "id": 114,
+    "id": 204,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1026,7 +1836,7 @@
     "descricao": "Solicitar consulta tributária"
   },
   {
-    "id": 115,
+    "id": 205,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1035,7 +1845,7 @@
     "descricao": "Solicitar contestação - manifestação de fabricante local"
   },
   {
-    "id": 116,
+    "id": 206,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1044,7 +1854,7 @@
     "descricao": "Solicitar contestação de suspensão de regime especial tributário (RET) - Outros casos"
   },
   {
-    "id": 117,
+    "id": 207,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1053,7 +1863,7 @@
     "descricao": "Solicitar contestação de suspensão de regime especial tributário (RET) - Débitos Sitram"
   },
   {
-    "id": 118,
+    "id": 208,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1062,7 +1872,7 @@
     "descricao": "Pedido de correção de classificação no programa."
   },
   {
-    "id": 119,
+    "id": 209,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1071,7 +1881,7 @@
     "descricao": "Obter credenciamento como atacadista."
   },
   {
-    "id": 120,
+    "id": 210,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1080,7 +1890,7 @@
     "descricao": "Solicitar credenciamento de transportadora"
   },
   {
-    "id": 121,
+    "id": 211,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1089,7 +1899,7 @@
     "descricao": "Solicitar credenciamento em regime especial para borra, cera bruta e pó de carnaúba, couro e pele"
   },
   {
-    "id": 122,
+    "id": 212,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1098,7 +1908,7 @@
     "descricao": "Solicitar credenciamento em regime especial para castanha de caju, pedúnculo e líquido de castanha de caju"
   },
   {
-    "id": 123,
+    "id": 213,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1107,7 +1917,7 @@
     "descricao": "Solicitar credenciamento em regime especial para lagosta, camarão e pescado"
   },
   {
-    "id": 124,
+    "id": 214,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1116,7 +1926,7 @@
     "descricao": "Solicitar credenciamento em regime especial para mel de abelha"
   },
   {
-    "id": 125,
+    "id": 215,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1125,7 +1935,7 @@
     "descricao": "Crédito da SEFAZ para empresas que compraram MFE com restituição ou compensação."
   },
   {
-    "id": 126,
+    "id": 216,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1134,7 +1944,7 @@
     "descricao": "Pedir a desvinculação de débitos de IPVA para leilão de veículo."
   },
   {
-    "id": 127,
+    "id": 217,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1143,7 +1953,7 @@
     "descricao": "Pedir isenção de IPVA para cooperativas de transporte alternativo."
   },
   {
-    "id": 128,
+    "id": 218,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1152,7 +1962,7 @@
     "descricao": "Pedir isenção de IPVA para veículos furtados, roubados ou sinistrados."
   },
   {
-    "id": 129,
+    "id": 219,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1161,7 +1971,7 @@
     "descricao": "Documentação para termo de credenciamento de transportadora."
   },
   {
-    "id": 130,
+    "id": 220,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1170,7 +1980,7 @@
     "descricao": "Solicitar emissão de certificados no CEFDESP"
   },
   {
-    "id": 131,
+    "id": 221,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1179,7 +1989,7 @@
     "descricao": "Solicitar emissão de certificados no CEFIC"
   },
   {
-    "id": 132,
+    "id": 222,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1188,7 +1998,7 @@
     "descricao": "Solicitar entrega de documentos fiscais em branco"
   },
   {
-    "id": 133,
+    "id": 223,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1197,7 +2007,7 @@
     "descricao": "Solicitar exoneração GLME (Grupo Logístico Multimodal Especial) de importação"
   },
   {
-    "id": 134,
+    "id": 224,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1206,7 +2016,7 @@
     "descricao": "Solicitação de cálculo de ITCD para transmissão por morte."
   },
   {
-    "id": 135,
+    "id": 225,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1215,7 +2025,7 @@
     "descricao": "Pedir Cálculo de ITCD – Sobrepartilha é o serviço que permite solicitar à Secretaria da Fazenda do Estado do Ceará o cálculo do imposto devido em casos de sobrepartilha, quando bens não incluídos na partilha original de herança são posteriormente transmitidos aos herdeiros."
   },
   {
-    "id": 136,
+    "id": 226,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1224,7 +2034,7 @@
     "descricao": "Solicitar impugnação de débitos inscritos em dívida ativa"
   },
   {
-    "id": 137,
+    "id": 227,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1233,7 +2043,7 @@
     "descricao": "Solicitar impugnação do Valor Adicionado Fiscal (VAF)"
   },
   {
-    "id": 138,
+    "id": 228,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1242,7 +2052,7 @@
     "descricao": "Solicitar imunidade de ICMS ou outros casos especiais"
   },
   {
-    "id": 139,
+    "id": 229,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1251,7 +2061,7 @@
     "descricao": "Solicitar inclusão de empresa no Ato COTEPE 13/2013"
   },
   {
-    "id": 140,
+    "id": 230,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1260,7 +2070,7 @@
     "descricao": "Solicitar inclusão de empresa no Ato COTEPE 13/2013"
   },
   {
-    "id": 141,
+    "id": 231,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1269,7 +2079,7 @@
     "descricao": "Pedido para incluir, alterar ou remover contador do MEI."
   },
   {
-    "id": 142,
+    "id": 232,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1278,7 +2088,7 @@
     "descricao": "Solicitar inclusão, mudança ou exclusão de contador - Produtor Rural."
   },
   {
-    "id": 143,
+    "id": 233,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1287,7 +2097,7 @@
     "descricao": "Pedido de acesso a informações públicas através da Lei de Acesso à Informação."
   },
   {
-    "id": 144,
+    "id": 234,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1296,7 +2106,7 @@
     "descricao": "Registrar empresa no cadastro estadual."
   },
   {
-    "id": 145,
+    "id": 235,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1305,7 +2115,7 @@
     "descricao": "Solicitar isenção de ICMS para taxistas"
   },
   {
-    "id": 146,
+    "id": 236,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1314,7 +2124,7 @@
     "descricao": "Pedir isenção de IPVA para entidades filantrópicas."
   },
   {
-    "id": 147,
+    "id": 237,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1323,7 +2133,7 @@
     "descricao": "Pedir isenção de IPVA para veículos de transporte escolar."
   },
   {
-    "id": 148,
+    "id": 238,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1332,7 +2142,7 @@
     "descricao": "Pedir isenção de IPVA para veículos de cooperativas."
   },
   {
-    "id": 149,
+    "id": 239,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1341,7 +2151,7 @@
     "descricao": "Pedir isenção de IPVA para veículos de mototaxistas."
   },
   {
-    "id": 150,
+    "id": 240,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1350,7 +2160,7 @@
     "descricao": "Pedir isenção de IPVA para Pessoas com Deficiência (PcD)"
   },
   {
-    "id": 151,
+    "id": 241,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1359,7 +2169,7 @@
     "descricao": "Pedir isenção de IPVA para veículos de taxistas."
   },
   {
-    "id": 152,
+    "id": 242,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1368,7 +2178,7 @@
     "descricao": "Pedir isenção de IPVA para ônibus de transporte coletivo."
   },
   {
-    "id": 153,
+    "id": 243,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1377,7 +2187,7 @@
     "descricao": "Solicitar isenção de ICMS para ônibus, micro-ônibus e vans"
   },
   {
-    "id": 154,
+    "id": 244,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1386,7 +2196,7 @@
     "descricao": "Dividir o valor do IPVA em até 24 parcelas de no mínimo 50 reais."
   },
   {
-    "id": 155,
+    "id": 245,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1395,7 +2205,7 @@
     "descricao": "Solicitar revogação da isenção do IPVA concedida anteriormente."
   },
   {
-    "id": 156,
+    "id": 246,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1404,7 +2214,7 @@
     "descricao": "Solicitar informações ou realizar procedimentos relacionados a Convênios e Protocolos"
   },
   {
-    "id": 157,
+    "id": 247,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1413,7 +2223,7 @@
     "descricao": "Solicitar informações ou realizar procedimentos relacionados a Convênios e Protocolos"
   },
   {
-    "id": 158,
+    "id": 248,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1422,7 +2232,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação com Redução da Base de Cálculo - Convênio 19/2018 - Novo"
   },
   {
-    "id": 159,
+    "id": 249,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1431,7 +2241,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação com Redução da Base de Cálculo - Convênio 19/2018 - Novo"
   },
   {
-    "id": 160,
+    "id": 250,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1440,7 +2250,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação com Redução da Base de Cálculo - Convênio 19/2018"
   },
   {
-    "id": 161,
+    "id": 251,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1449,7 +2259,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Alimentos e Congêneres - Novo"
   },
   {
-    "id": 162,
+    "id": 252,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1458,7 +2268,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Alimentos e Congêneres"
   },
   {
-    "id": 163,
+    "id": 253,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1467,7 +2277,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Aços Planos"
   },
   {
-    "id": 164,
+    "id": 254,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1476,7 +2286,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Brita e Gesso"
   },
   {
-    "id": 165,
+    "id": 255,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1485,7 +2295,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para CT-E - Novo"
   },
   {
-    "id": 166,
+    "id": 256,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1494,7 +2304,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para CT-E"
   },
   {
-    "id": 167,
+    "id": 257,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1503,7 +2313,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Carga Líquida de Águas Minerais e Adicionadas de Sais"
   },
   {
-    "id": 168,
+    "id": 258,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1512,7 +2322,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Cerâmica - Novo"
   },
   {
-    "id": 169,
+    "id": 259,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1521,7 +2331,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Cerâmica"
   },
   {
-    "id": 170,
+    "id": 260,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1530,7 +2340,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Coobilling - Novo"
   },
   {
-    "id": 171,
+    "id": 261,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1539,7 +2349,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Coobilling - Novo"
   },
   {
-    "id": 172,
+    "id": 262,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1548,7 +2358,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Coobilling"
   },
   {
-    "id": 173,
+    "id": 263,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1557,7 +2367,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Crédito Presumido Telecom - Novo"
   },
   {
-    "id": 174,
+    "id": 264,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1566,7 +2376,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Crédito Presumido Telecom - Novo"
   },
   {
-    "id": 175,
+    "id": 265,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1575,7 +2385,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Crédito Presumido Telecom"
   },
   {
-    "id": 176,
+    "id": 266,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1584,7 +2394,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para FDI - Novo"
   },
   {
-    "id": 177,
+    "id": 267,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1593,7 +2403,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para FDI"
   },
   {
-    "id": 178,
+    "id": 268,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1602,7 +2412,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Feiras e Eventos - Novo"
   },
   {
-    "id": 179,
+    "id": 269,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1611,7 +2421,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Feiras e Eventos"
   },
   {
-    "id": 180,
+    "id": 270,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1620,7 +2430,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Fios, Malhas e Tecidos"
   },
   {
-    "id": 181,
+    "id": 271,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1629,7 +2439,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Material de Construção - Novo"
   },
   {
-    "id": 182,
+    "id": 272,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1638,7 +2448,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Material de Construção"
   },
   {
-    "id": 183,
+    "id": 273,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1647,7 +2457,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Móveis, Eletrodomésticos e Utilidades Domésticas - Novo"
   },
   {
-    "id": 184,
+    "id": 274,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1656,7 +2466,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Móveis, Eletrodomésticos e Utilidades Domésticas"
   },
   {
-    "id": 185,
+    "id": 275,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1665,7 +2475,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Outros setores - Novo"
   },
   {
-    "id": 186,
+    "id": 276,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1674,7 +2484,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Outros setores"
   },
   {
-    "id": 187,
+    "id": 277,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1683,7 +2493,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Peças Automotivas - Novo"
   },
   {
-    "id": 188,
+    "id": 278,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1692,7 +2502,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Peças Automotivas"
   },
   {
-    "id": 189,
+    "id": 279,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1701,7 +2511,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Produtos Farmacêuticos - Canal Farma - Novo"
   },
   {
-    "id": 190,
+    "id": 280,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1710,7 +2520,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Produtos Farmacêuticos - Canal Farma"
   },
   {
-    "id": 191,
+    "id": 281,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1719,7 +2529,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Produtos Farmacêuticos - Canal Hospitalar - Novo"
   },
   {
-    "id": 192,
+    "id": 282,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1728,7 +2538,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Produtos Farmacêuticos - Canal Hospitalar"
   },
   {
-    "id": 193,
+    "id": 283,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1737,7 +2547,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Produtos de Informática - Novo"
   },
   {
-    "id": 194,
+    "id": 284,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1746,7 +2556,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Produtos de Informática"
   },
   {
-    "id": 195,
+    "id": 285,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1755,7 +2565,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Restaurantes Coletivos"
   },
   {
-    "id": 196,
+    "id": 286,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1764,7 +2574,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Rochas Ornamentais - Novo"
   },
   {
-    "id": 197,
+    "id": 287,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1773,7 +2583,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Rochas Ornamentais"
   },
   {
-    "id": 198,
+    "id": 288,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1782,7 +2592,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Transporte de Passageiros - Novo"
   },
   {
-    "id": 199,
+    "id": 289,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1791,7 +2601,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Transporte de Passageiros"
   },
   {
-    "id": 200,
+    "id": 290,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1800,7 +2610,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Águas Minerais - Novo"
   },
   {
-    "id": 201,
+    "id": 291,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1809,7 +2619,7 @@
     "descricao": "Solicitar renovação do Regime Especial de Tributação para Águas Minerais"
   },
   {
-    "id": 202,
+    "id": 292,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1818,7 +2628,7 @@
     "descricao": "REQUISIÇÃO DE REGISTRO DE NOTA FISCAL EM REFATURAMENTO"
   },
   {
-    "id": 203,
+    "id": 293,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1827,7 +2637,7 @@
     "descricao": "Solicitar regime especial de recolhimento para produtos primários"
   },
   {
-    "id": 204,
+    "id": 294,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1836,7 +2646,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Restaurantes Coletivos - Novo"
   },
   {
-    "id": 205,
+    "id": 295,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1845,7 +2655,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Carga Líquida de Águas Minerais e Adicionadas de Sais - Novo"
   },
   {
-    "id": 206,
+    "id": 296,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1854,7 +2664,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Indústria de Tecidos e Aviamentos - Novo"
   },
   {
-    "id": 207,
+    "id": 297,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1863,7 +2673,7 @@
     "descricao": "Solicitar relatório do Valor Adicionado Fiscal (VAF)"
   },
   {
-    "id": 208,
+    "id": 298,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1872,7 +2682,7 @@
     "descricao": "Solicitar ressarcimento de ICMS decorrente de operações interestaduais declaradas no sistema SCANC."
   },
   {
-    "id": 209,
+    "id": 299,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1881,7 +2691,7 @@
     "descricao": "Solicitar restituição e ressarcimento de ICMS relativo à operações com combustíveis e lubrificantes, não compreendendo operações realizadas no sistema SCANC,"
   },
   {
-    "id": 210,
+    "id": 300,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1890,7 +2700,7 @@
     "descricao": "Solicitar reembolso do ICMS retido por substituição tributária com base em convênios e protocolos"
   },
   {
-    "id": 211,
+    "id": 301,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1899,7 +2709,7 @@
     "descricao": "Solicitar reembolso do ICMS retido por substituição tributária com base no decreto"
   },
   {
-    "id": 212,
+    "id": 302,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1908,7 +2718,7 @@
     "descricao": "Solicitar reembolso do ICMS retido por substituição tributária sem retenção pelo emitente"
   },
   {
-    "id": 213,
+    "id": 303,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1917,7 +2727,7 @@
     "descricao": "Solicitar reembolso do ICMS pago por atacadistas de alimentos com regime especial"
   },
   {
-    "id": 214,
+    "id": 304,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1926,7 +2736,7 @@
     "descricao": "Solicitar reembolso do ICMS pago por atacadistas de peças e pneus com regime especial"
   },
   {
-    "id": 215,
+    "id": 305,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1935,7 +2745,7 @@
     "descricao": "Solicitar reembolso do ICMS sobre diesel utilizado em embarcações pesqueiras"
   },
   {
-    "id": 216,
+    "id": 306,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1944,7 +2754,7 @@
     "descricao": "Solicitar reembolso do ICMS sobre diesel utilizado em embarcações pesqueiras"
   },
   {
-    "id": 217,
+    "id": 307,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1953,7 +2763,7 @@
     "descricao": "Solicitar reembolso do ICMS sobre diesel utilizado em embarcações pesqueiras"
   },
   {
-    "id": 218,
+    "id": 308,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1962,7 +2772,7 @@
     "descricao": "Solicitar restituição e ressarcimento de ICMS relativo à operações com combustíveis e lubrificantes, não compreendendo operações realizadas no sistema SCANC,"
   },
   {
-    "id": 219,
+    "id": 309,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1971,7 +2781,7 @@
     "descricao": "Pedir restituição do IPVA pago a mais ou indevidamente."
   },
   {
-    "id": 220,
+    "id": 310,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1980,7 +2790,7 @@
     "descricao": "Solicitar estorno de débito de ICMS pago em fatura de telecomunicações contestada"
   },
   {
-    "id": 221,
+    "id": 311,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1989,7 +2799,7 @@
     "descricao": "Solicitar estorno de débito de ICMS pago em fatura de telecomunicações contestada"
   },
   {
-    "id": 222,
+    "id": 312,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -1998,7 +2808,7 @@
     "descricao": "Solicitar restituição do ICMS retido por substituição tributária com base em convênios e protocolos"
   },
   {
-    "id": 223,
+    "id": 313,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2007,7 +2817,7 @@
     "descricao": "Solicitar restituição de ICMS para pessoa física ou jurídica sem inscrição estadual ou CGF"
   },
   {
-    "id": 224,
+    "id": 314,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2016,7 +2826,7 @@
     "descricao": "Solicitar restituição do ICMS pago por regime normal de apuração"
   },
   {
-    "id": 225,
+    "id": 315,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2025,7 +2835,7 @@
     "descricao": "Solicitar restituição do ICMS pago na importação"
   },
   {
-    "id": 226,
+    "id": 316,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2034,7 +2844,7 @@
     "descricao": "Solicitar restituição de taxas."
   },
   {
-    "id": 227,
+    "id": 317,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2043,7 +2853,7 @@
     "descricao": "É o serviço utilizado para atualizar os dados de uma empresa (como endereço, sócios ou atividade econômica) no registro estadual."
   },
   {
-    "id": 228,
+    "id": 318,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2052,7 +2862,7 @@
     "descricao": "Requisitar processos de fusão, cisão ou incorporação de empresas."
   },
   {
-    "id": 229,
+    "id": 319,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2061,7 +2871,7 @@
     "descricao": "Análise e liberação da GLME por meio do sistema TRAMITA."
   },
   {
-    "id": 230,
+    "id": 320,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2070,7 +2880,7 @@
     "descricao": "Verificação documental e cobrança do ICMS incidente sobre mercadorias provenientes de leilões da Receita Federal nos casos de bens apreendidos e abandonados."
   },
   {
-    "id": 231,
+    "id": 321,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2079,7 +2889,7 @@
     "descricao": "Liberação e registro de importações por meio do sistema SISCOEX e SITRAM."
   },
   {
-    "id": 232,
+    "id": 322,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2088,7 +2898,7 @@
     "descricao": "Análise e liberação de Declaração de Importação por meio do sistema TRAMITA e SITRAM."
   },
   {
-    "id": 233,
+    "id": 323,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2097,7 +2907,7 @@
     "descricao": "Análise da Guia de Liberação de Mercadoria Estrangeira (GLME) e Declaração de Importação (DI) pelo sistema SISCOEX."
   },
   {
-    "id": 234,
+    "id": 324,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2106,7 +2916,7 @@
     "descricao": "Análise de Processo Tramita de Selagem de Notas Fiscais de Importação cuja mercadoria já se encontra no estabelecimento do importador."
   },
   {
-    "id": 235,
+    "id": 325,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2115,7 +2925,7 @@
     "descricao": "Utilizar crédito extemporâneo para compensar débitos futuros"
   },
   {
-    "id": 236,
+    "id": 326,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2124,7 +2934,7 @@
     "descricao": "Solicitação para usar MFE em eventos fora do estabelecimento."
   },
   {
-    "id": 237,
+    "id": 327,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2133,7 +2943,7 @@
     "descricao": "É o pedido para encerrar o registro de uma empresa de outro estado que vendia produtos para cá com o imposto já pago antecipadamente."
   },
   {
-    "id": 238,
+    "id": 328,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2142,7 +2952,7 @@
     "descricao": "É o pedido para que uma empresa possa pagar o ICMS de forma antecipada ou diferenciada, seguindo um regime especial."
   },
   {
-    "id": 239,
+    "id": 329,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2151,7 +2961,7 @@
     "descricao": "Fabricantes de MFE solicitam cadastramento na SEFAZ CE."
   },
   {
-    "id": 240,
+    "id": 330,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2160,7 +2970,7 @@
     "descricao": "Software House solicita cadastramento na SEFAZ CE."
   },
   {
-    "id": 241,
+    "id": 331,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2169,7 +2979,7 @@
     "descricao": "Solicitar cadastro de NFA-e de veículo novo que acoberta operação de importação, para fins de lançamento inicial no Sistema IPVA da SEFAZ-Ce e troca de informações junto ao DETRAN no primeiro emplacamento."
   },
   {
-    "id": 242,
+    "id": 332,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2178,7 +2988,7 @@
     "descricao": "Solicitar liberação do serviço de cadastro de NF-e de veículo novo com compra/venda autorizada no RENAVE, para fins de lançamento inicial no Sistema IPVA da SEFAZ-Ce e troca de informações junto ao DETRAN no primeiro emplacamento."
   },
   {
-    "id": 243,
+    "id": 333,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2187,7 +2997,7 @@
     "descricao": "Solicitar compensação de ICMS com débitos inscritos em dívida ativa"
   },
   {
-    "id": 244,
+    "id": 334,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2196,7 +3006,7 @@
     "descricao": "Solicitar correção de duplicidade de pagamento de ICMS através do mesmo DAE-GNRE."
   },
   {
-    "id": 245,
+    "id": 335,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2205,7 +3015,7 @@
     "descricao": "Credenciamento para gráfica de selos fiscais de controle de água."
   },
   {
-    "id": 246,
+    "id": 336,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2214,7 +3024,7 @@
     "descricao": "É o pedido para que uma gráfica receba autorização oficial do governo para imprimir blocos ou formulários de notas fiscais."
   },
   {
-    "id": 247,
+    "id": 337,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2223,7 +3033,7 @@
     "descricao": "Solicitar o cadastro para empresas como transportadoras e permitir que recolham ICMS."
   },
   {
-    "id": 248,
+    "id": 338,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2232,7 +3042,7 @@
     "descricao": "É o ato de o contribuinte confessar um erro ou atraso no pagamento de impostos ao governo antes de qualquer fiscalização começar."
   },
   {
-    "id": 249,
+    "id": 339,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2241,7 +3051,7 @@
     "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE IMPORTAÇÃO JÁ ABERTA PELA CENTRAL DE IMPORTAÇÃO"
   },
   {
-    "id": 250,
+    "id": 340,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2250,7 +3060,7 @@
     "descricao": "Solicitação de dispensa do MFE para varejistas com receita bruta R$ 250.000,00."
   },
   {
-    "id": 251,
+    "id": 341,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2259,7 +3069,7 @@
     "descricao": "Solicitar denúncia espontânea com exclusão de culpabilidade (Documentos ou livros fiscais)."
   },
   {
-    "id": 252,
+    "id": 342,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2268,7 +3078,7 @@
     "descricao": "É o pedido para retirar o nome de uma pessoa ou empresa de uma lista pública de irregularidades (edital) após a situação ter sido resolvida."
   },
   {
-    "id": 253,
+    "id": 343,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2277,7 +3087,7 @@
     "descricao": "Mudança cadastral com exclusão de edital."
   },
   {
-    "id": 254,
+    "id": 344,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2286,7 +3096,7 @@
     "descricao": "Solicitar a exclusão do registro de NF-e no Sistema IPVA, por desfazimento da aquisição de veículo novo, em razão de ocorrência de devolução."
   },
   {
-    "id": 255,
+    "id": 345,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2295,7 +3105,7 @@
     "descricao": "Solicitar a inclusão de marca/modelo de veículo novo na Tabela de IPVA para fins de realizar o cadastro da NF-e de compra e lançamento inicial no Sistema IPVA da SEFAZ-CE."
   },
   {
-    "id": 256,
+    "id": 346,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2304,7 +3114,7 @@
     "descricao": "Solicitar informações ou realizar procedimentos relacionados a ICMS de SCANC."
   },
   {
-    "id": 257,
+    "id": 347,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2313,7 +3123,7 @@
     "descricao": "Solicitar o cadastro de Contribuinte com Matriz em outro Estado."
   },
   {
-    "id": 258,
+    "id": 348,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2322,7 +3132,7 @@
     "descricao": "Solicita a inscrição estadual do Produtor Rural."
   },
   {
-    "id": 259,
+    "id": 349,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2331,7 +3141,7 @@
     "descricao": "Solicitar isenção de ICMS para Pessoas com Deficiência."
   },
   {
-    "id": 260,
+    "id": 350,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2340,7 +3150,7 @@
     "descricao": "Análise e liberação da Declaração Única de Importação (DUIMP) por meio do Portal Único do Comércio Exterior e SITRAM."
   },
   {
-    "id": 261,
+    "id": 351,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2349,7 +3159,7 @@
     "descricao": "Liberação da mercadoria retida após atendimento das exigências legais ou fiscais."
   },
   {
-    "id": 262,
+    "id": 352,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2358,7 +3168,7 @@
     "descricao": "Análise e liberação de importação de outros Estados cuja mercadoria irá apenas transitar pelo Estado do Ceará. A formalização do Trânsito Livre é feita através da abertura de uma ação fiscal no sistema SITRAM que ficará no \"status\" de pendente até a sua efetiva \"baixa\" no posto fiscal na fronteira de saída do Estado."
   },
   {
-    "id": 263,
+    "id": 353,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2367,7 +3177,7 @@
     "descricao": "Regularizar imunidade do IPVA."
   },
   {
-    "id": 264,
+    "id": 354,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2376,7 +3186,7 @@
     "descricao": "Pedir isenção de IPVA para instituições de educação."
   },
   {
-    "id": 265,
+    "id": 355,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2385,7 +3195,7 @@
     "descricao": "Solicitar isenção de IPVA para templos religiosos."
   },
   {
-    "id": 266,
+    "id": 356,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2394,7 +3204,7 @@
     "descricao": "É o pedido para que veículos de igrejas ou de órgãos dos governos federal, estadual e municipal fiquem livres de pagar o imposto."
   },
   {
-    "id": 267,
+    "id": 357,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2403,7 +3213,7 @@
     "descricao": "Interpor Recurso Extraordinário para a Câmara Superior, no caso de decisões divergentes das Câmaras de Julgamento sobre a mesma matéria, quanto à interpretação do direito em tese ."
   },
   {
-    "id": 268,
+    "id": 358,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2412,7 +3222,7 @@
     "descricao": "Interpor Recurso Ordinário para as Câmaras de Julgamento (Segunda Instância), nas decisões contrárias ao sujeito passivo (autuado) ou ao requerente, no todo ou em parte."
   },
   {
-    "id": 269,
+    "id": 359,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2421,7 +3231,7 @@
     "descricao": "Solicitar acesso ao Regime Especial de Tributação para Aços Planos - Novo"
   },
   {
-    "id": 270,
+    "id": 360,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2430,7 +3240,7 @@
     "descricao": "É o pedido feito por empresas de comunicação (como rádio e TV) para pagar impostos de uma forma diferenciada e simplificada, prevista na lei."
   },
   {
-    "id": 271,
+    "id": 361,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2439,7 +3249,7 @@
     "descricao": "REQUISIÇÃO DE AÇÃO FISCAL PARA RETIRADA DO PORTO"
   },
   {
-    "id": 272,
+    "id": 362,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2448,7 +3258,7 @@
     "descricao": "REQUISIÇÃO DE AÇÃO FISCAL DE MERCADORIA EM TRÂNSITO PELO CEARÁ"
   },
   {
-    "id": 273,
+    "id": 363,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2457,7 +3267,7 @@
     "descricao": "Transferir créditos acumulados para exportação"
   },
   {
-    "id": 274,
+    "id": 364,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2466,7 +3276,7 @@
     "descricao": "Registrar solicitação para corrigir falhas ou inconsistências nos sistemas do ITCD."
   },
   {
-    "id": 275,
+    "id": 365,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2475,7 +3285,7 @@
     "descricao": "Análise e validação de Declaração de Livre Trânsito (DLT) para mercadorias em trânsito dentro do Estado do Ceará (operações internas)."
   },
   {
-    "id": 276,
+    "id": 366,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2484,7 +3294,7 @@
     "descricao": "Análise e validação de Nota Fiscal Avulsa do Comércio Exterior (exportação) dentro do sistema SINFA-NFA, quando o despacho aduaneiro ocorrer no Posto Fiscal do Mucuripe."
   },
   {
-    "id": 277,
+    "id": 367,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2493,7 +3303,7 @@
     "descricao": "Análise e validação de Nota Fiscal Avulsa do Comércio Exterior (Importação) dentro do sistema SINFA-NFA."
   },
   {
-    "id": 278,
+    "id": 368,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2502,7 +3312,7 @@
     "descricao": "Emissão de NFA-e por parte do contribuinte."
   },
   {
-    "id": 279,
+    "id": 369,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2511,7 +3321,7 @@
     "descricao": "Informações a respeito da mudança para Regime Normal após ultrapassar sublimite de R$ 3,6M."
   },
   {
-    "id": 280,
+    "id": 370,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2520,7 +3330,7 @@
     "descricao": "É o serviço que permite ao cidadão pedir a atualização ou a entrada de novos produtos na tabela de preços utilizada pelo Estado."
   },
   {
-    "id": 281,
+    "id": 371,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2529,7 +3339,7 @@
     "descricao": "Transferir créditos acumulados para outra inscrição estadual"
   },
   {
-    "id": 282,
+    "id": 372,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2538,7 +3348,7 @@
     "descricao": "Verificação da autenticidade de certidão negativa estadual."
   },
   {
-    "id": 283,
+    "id": 373,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2547,7 +3357,7 @@
     "descricao": "Validar a Certidão de Baixa Cadastral"
   },
   {
-    "id": 284,
+    "id": 374,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2556,7 +3366,7 @@
     "descricao": "Verificar a autenticidade da certidão de quitação do IPVA."
   },
   {
-    "id": 285,
+    "id": 375,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2565,7 +3375,7 @@
     "descricao": "Verificação de validade da Certidão de Recolhimento de Receita para Não-Contribuinte"
   },
   {
-    "id": 286,
+    "id": 376,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2574,7 +3384,7 @@
     "descricao": "Verificação da validade da Certificação de Regularidade"
   },
   {
-    "id": 287,
+    "id": 377,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2583,7 +3393,7 @@
     "descricao": "Verificar a autenticidade da GLME"
   },
   {
-    "id": 288,
+    "id": 378,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2592,7 +3402,7 @@
     "descricao": "O serviço que permite confirmar a autenticidade e a integridade das guias de ITCD emitidas, garantindo que o documento foi gerado corretamente e em ambiente protegido pela Secretaria da Fazenda, evitando fraudes e erros no pagamento."
   },
   {
-    "id": 289,
+    "id": 379,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2601,7 +3411,7 @@
     "descricao": "Agendamento para visitar o Centro de Memória."
   },
   {
-    "id": 290,
+    "id": 380,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2610,7 +3420,7 @@
     "descricao": "Causa Mortis – EITCD – Manual de Preenchimento é o guia que orienta os contribuintes no correto preenchimento eletrônico da declaração do ITCD em casos de transmissão de bens por falecimento, detalhando passo a passo os campos, documentos necessários e procedimentos exigidos pela Secretaria da Fazenda do Estado do Ceará."
   },
   {
-    "id": 291,
+    "id": 381,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
@@ -2619,7 +3429,7 @@
     "descricao": "Guia prático com instruções para o correto preenchimento de documentos e formulários relacionados ao divórcio."
   },
   {
-    "id": 292,
+    "id": 382,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
