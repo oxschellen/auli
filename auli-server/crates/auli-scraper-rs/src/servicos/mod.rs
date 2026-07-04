@@ -1,7 +1,7 @@
 // servicos scraper (SEFAZ-RS).
 //
-// Headless Chrome renderiza as páginas de listagem por público; o ureq busca cada página de detalhe
-// e raspa a descrição (`extrair_descricoes` / `utils`). Os arquivos per-tipo são gravados durante o
+// A listagem de cada público vem do endpoint JSON interno do CMS (sem navegador); o ureq busca cada
+// página de detalhe e raspa a descrição (`extrair_descricoes` / `utils`). Os arquivos per-tipo são gravados durante o
 // scrape (recuperação de falha) em `raw/scrape/<filename>.json` — subdiretório próprio para não
 // colidir com os per-público que o `process` deriva em `raw/<slug>.json` — e agregados em
 // `Vec<ServicoRaw>` no snapshot. A derivação dos artefatos (contrato, prints, per-público, index) é

@@ -1,12 +1,13 @@
-use headless_chrome::{Browser, LaunchOptions};
 use regex::Regex;
 use scraper::{Html, Selector};
+use serde::Deserialize;
+use std::collections::HashMap;
 use std::sync::LazyLock;
 use std::thread::sleep;
 use std::time::Duration;
 use ureq::Agent;
 
-use super::types::Servico;
+use super::types::{Servico, TipoServicos};
 use super::utils::{get_tipo_servicos, save_servicos_to_json, scrape_recovery_path};
 
 const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
@@ -42,9 +43,8 @@ pub fn extrair_descricoes_json(
 
         let filename_json = scrape_recovery_path(data_dir, file_s);
 
-        let html_content = fetch_webpage(data_dir, url_s, use_cache)?;
-
-        let servicos = parse_html_and_extract_cards(&html_content, tipo_s)?;
+        let servicos =
+            extrair_servicos_da_api(data_dir, &http_client, tipo_servicos, use_cache)?;
 
         let mut new_vec_servicos_com_descricao: Vec<Servico> = Vec::new();
 
@@ -99,145 +99,133 @@ pub fn extrair_descricoes_json(
     Ok(failed_urls)
 }
 
-fn fetch_webpage(
-    data_dir: &str,
-    url: &str,
-    use_cache: bool,
-) -> Result<String, Box<dyn std::error::Error>> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
-        println!("Cache hit (listagem): {}", url);
-        return Ok(cached);
-    }
-    if use_cache {
-        return Err(format!(
-            "cache miss para a listagem {} (modo --usecache, sem rede)",
-            url
-        )
-        .into());
-    }
+/// Base do endpoint interno do CMS Matriz (PROCERGS) que devolve os serviços de cada público em
+/// JSON. As 5 listagens do RS são montadas NO CLIENTE por `capaservicos.js` a partir dele — não há
+/// barreira de JS de fato, então o ureq basta e dispensa navegador headless.
+const SERVICOS_API_BASE: &str = "https://www.fazenda.rs.gov.br/_service/tudofacil/capaservicos";
 
-    println!("Fetching webpage from: {}", url);
+/// O `parent` (ids separados por vírgula) que a API espera vem do atributo `data-servico-parent` do
+/// HTML-esqueleto, que já vem server-rendered (visível sem executar JS).
+static PARENT_REGEX: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"data-servico-parent="([^"]+)""#).unwrap());
 
-    let browser = Browser::new(
-        LaunchOptions::default_builder()
-            .headless(true)
-            .window_size(Some((1920, 1080)))
-            .build()
-            .map_err(|e| e.to_string())?,
-    )?;
-
-    let tab = browser.new_tab()?;
-
-    println!("Navigating to: {}", url);
-    tab.navigate_to(url)?;
-
-    println!("Waiting for page to load...");
-    tab.wait_until_navigated()?;
-
-    println!("Waiting for network activity to settle...");
-    tab.wait_for_element("body")?;
-
-    // Wait for the JS-rendered service cards (the elements parse_html_and_extract_cards needs)
-    // rather than sleeping a fixed amount: this returns as soon as the cards appear but tolerates
-    // a slow render up to the timeout. If they never show, the page did not load properly — abort
-    // with a descriptive error instead of caching/parsing an incomplete page.
-    tab.wait_for_element_with_custom_timeout(".card", Duration::from_secs(15))
-        .map_err(|e| {
-            format!(
-                "a página de serviços não carregou corretamente (nenhum card encontrado) em {}: {}",
-                url, e
-            )
-        })?;
-
-    println!("Extracting final HTML content...");
-    let html_content = tab.get_content()?;
-
-    println!(
-        "Successfully fetched {} bytes (after JS execution)",
-        html_content.len()
-    );
-
-    auli_scraper_kit::cache::write(data_dir, url, &html_content);
-
-    Ok(html_content)
+/// Um serviço no JSON da API. Campos que não usamos (`id`, `link`) são ignorados na desserialização.
+#[derive(Deserialize)]
+struct ApiServico {
+    href: String,
+    text: String,
+    #[serde(rename = "siglaOrgao", default)]
+    sigla_orgao: String,
 }
 
-// Parses the stored HTML file and extracts card information into `Service` objects.
-//  `tipo` is the category label (e.g. "Cidadãos") assigned to every service
-//  extracted from this page. The card title is used as the `classe` field.
-fn parse_html_and_extract_cards(
-    html_content: &str,
-    tipo: &str,
-) -> Result<Vec<Servico>, Box<dyn std::error::Error>> {
-    let document = Html::parse_document(html_content);
+/// Uma página da API: `categoria -> serviços`, mais o flag de paginação.
+#[derive(Deserialize)]
+struct ApiPage {
+    resultados: HashMap<String, Vec<ApiServico>>,
+    #[serde(rename = "mais-resultados", default)]
+    mais_resultados: bool,
+}
 
-    let services_selector = Selector::parse(".services").unwrap();
-    let card_selector = Selector::parse(".card").unwrap();
-    let card_title_selector = Selector::parse(".card-title").unwrap();
-    let card_label_selector = Selector::parse(".label").unwrap();
-    let link_selector = Selector::parse("ul li a").unwrap();
+/// Deriva o rótulo curto do órgão exibido no card, replicando `getOrgao(siglaOrgao)` de
+/// capaservicos.js (substring case-insensitive, nesta ordem de prioridade). É fiel ao JS — inclusive
+/// no `"te"` genérico do fallback — porque o objetivo é reproduzir exatamente o card renderizado.
+fn orgao_do_card(sigla: &str) -> &'static str {
+    let s = sigla.to_lowercase();
+    let contem = |palavras: &[&str]| palavras.iter().any(|p| s.contains(p));
+    if contem(&["fazenda", "sefaz"]) {
+        "FAZENDA"
+    } else if contem(&["receita"]) {
+        "RECEITA"
+    } else if contem(&["cage"]) {
+        "CAGE"
+    } else if contem(&["tesouro", "te"]) {
+        "TESOURO"
+    } else {
+        ""
+    }
+}
 
-    let mut services: Vec<Servico> = Vec::new();
-    let mut global_id = 1;
-
-    let services_count = document.select(&services_selector).count();
-    println!("Found {} services containers", services_count);
-    println!("Extracting service data from cards...");
-
-    for (card_index, card_element) in document.select(&card_selector).enumerate() {
-        let card_title =
-            if let Some(title_element) = card_element.select(&card_title_selector).next() {
-                title_element
-                    .text()
-                    .collect::<Vec<_>>()
-                    .join(" ")
-                    .trim()
-                    .to_string()
-            } else {
-                format!("Card #{}", card_index + 1)
-            };
-
-        let card_label =
-            if let Some(label_element) = card_element.select(&card_label_selector).next() {
-                label_element
-                    .text()
-                    .collect::<Vec<_>>()
-                    .join(" ")
-                    .trim()
-                    .to_string()
-            } else {
-                "N/A".to_string()
-            };
-
-        let mut link_count = 0;
-        for link_element in card_element.select(&link_selector) {
-            if let Some(href) = link_element.value().attr("href") {
-                let link_text = link_element
-                    .text()
-                    .collect::<Vec<_>>()
-                    .join(" ")
-                    .trim()
-                    .to_string();
-
-                services.push(Servico {
-                    id: global_id,
-                    tipo: tipo.to_string(),
-                    classe: card_title.clone(),
-                    orgao: card_label.clone(),
-                    link: href.to_string(),
-                    titulo: link_text,
-                    descricao: String::new(),
-                });
-                global_id += 1;
-                link_count += 1;
+/// Monta os `Servico` de um público a partir das páginas da API do mesmo jeito que
+/// `capaservicos.js` monta os cards: categorias em ordem alfabética com `"Outros"` por último, órgão
+/// derivado do 1º serviço da categoria (aplicado a todos), link `<url>/<href>` e título aparado.
+/// Produz a MESMA lista e ordem que o parser do DOM renderizado pelo Chrome produzia (mesmos `id`s).
+fn montar_servicos(tipo: &TipoServicos, paginas: Vec<ApiPage>) -> Vec<Servico> {
+    // Consolida por categoria preservando a ordem de chegada DENTRO da categoria (Vec).
+    let mut categorias: Vec<String> = Vec::new();
+    let mut por_categoria: HashMap<String, Vec<ApiServico>> = HashMap::new();
+    for page in paginas {
+        for (categoria, lista) in page.resultados {
+            if !por_categoria.contains_key(&categoria) {
+                categorias.push(categoria.clone());
             }
+            por_categoria.entry(categoria).or_default().extend(lista);
         }
-
-        println!("Processed card: '{}' ({} services)", card_title, link_count);
     }
 
-    println!("\nTotal services extracted: {}", services.len());
-    Ok(services)
+    // Ordem de renderização do capaservicos.js: alfabética, com "Outros" sempre por último.
+    categorias.sort();
+    if let Some(pos) = categorias.iter().position(|c| c == "Outros") {
+        let outros = categorias.remove(pos);
+        categorias.push(outros);
+    }
+
+    let mut servicos = Vec::new();
+    let mut id: usize = 1;
+    for categoria in &categorias {
+        let lista = &por_categoria[categoria];
+        let Some(primeiro) = lista.first() else {
+            continue;
+        };
+        let orgao = orgao_do_card(&primeiro.sigla_orgao).to_string();
+        for s in lista {
+            servicos.push(Servico {
+                id,
+                tipo: tipo.tipo.clone(),
+                classe: categoria.clone(),
+                orgao: orgao.clone(),
+                // `${window.location.href}/${href}` no JS — reproduz o href exato do card do Chrome.
+                link: format!("{}/{}", tipo.url, s.href),
+                titulo: s.text.trim().to_string(),
+                descricao: String::new(),
+            });
+            id += 1;
+        }
+    }
+    servicos
+}
+
+/// Busca os serviços de um público direto do endpoint JSON (sem navegador): lê o `parent` do shell,
+/// pagina a API e delega a montagem/ordenação a `montar_servicos`. O `fetch_html` cuida do
+/// cache-first, do modo `--usecache` e das retentativas — igual às páginas de detalhe.
+fn extrair_servicos_da_api(
+    data_dir: &str,
+    client: &Agent,
+    tipo: &TipoServicos,
+    use_cache: bool,
+) -> Result<Vec<Servico>, Box<dyn std::error::Error>> {
+    let shell = fetch_html(data_dir, client, &tipo.url, use_cache)?;
+    let parent = PARENT_REGEX
+        .captures(&shell)
+        .and_then(|c| c.get(1))
+        .map(|m| m.as_str().to_string())
+        .ok_or_else(|| format!("atributo data-servico-parent ausente em {}", tipo.url))?;
+
+    let mut paginas = Vec::new();
+    let mut pagina = 1;
+    loop {
+        let url = format!("{}?parent={}&page={}", SERVICOS_API_BASE, parent, pagina);
+        let raw = fetch_html(data_dir, client, &url, use_cache)?;
+        let page: ApiPage = serde_json::from_str(&raw)
+            .map_err(|e| format!("JSON inválido da API de serviços em {}: {}", url, e))?;
+        let mais = page.mais_resultados;
+        paginas.push(page);
+        if !mais {
+            break;
+        }
+        pagina += 1;
+    }
+
+    Ok(montar_servicos(tipo, paginas))
 }
 
 fn fetch_html(
@@ -427,4 +415,76 @@ fn extract_selector_content(
     }
 
     Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn orgao_do_card_replica_o_getorgao_do_js() {
+        assert_eq!(orgao_do_card("SECRETARIA DA FAZENDA"), "FAZENDA");
+        assert_eq!(orgao_do_card("SEFAZ/RS"), "FAZENDA");
+        assert_eq!(orgao_do_card("RECEITA ESTADUAL  - ICMS, IPVA E ITDC"), "RECEITA");
+        assert_eq!(orgao_do_card("CAGE - Contadoria e Auditoria-Geral"), "CAGE");
+        assert_eq!(orgao_do_card("TESOURO DO ESTADO"), "TESOURO");
+        // Fallback genérico "te" do JS (peculiar, mas replicado fielmente).
+        assert_eq!(orgao_do_card("COMITE GESTOR"), "TESOURO");
+        // Nada casa -> rótulo vazio (o card renderiza um `.label` vazio, que o pipeline lê como "").
+        assert_eq!(orgao_do_card("PROCERGS"), "");
+    }
+
+    #[test]
+    fn montar_servicos_ordena_e_mapeia_como_o_js() {
+        let tipo = TipoServicos {
+            tipo: "Empresas".into(),
+            filename: "servicos-a-empresas".into(),
+            url: "https://www.fazenda.rs.gov.br/servicos-a-empresas".into(),
+        };
+        // "Outros" declarado primeiro e categorias fora de ordem, de propósito.
+        let json = r#"{
+            "resultados": {
+                "Outros": [
+                    {"id":9,"href":"servicos?servico=9","text":"Zeta","siglaOrgao":"PROCERGS"}
+                ],
+                "Cadastro": [
+                    {"id":1,"href":"servicos?servico=1","text":"  Alfa  ","siglaOrgao":"RECEITA ESTADUAL"},
+                    {"id":2,"href":"servicos?servico=2","text":"Beta","siglaOrgao":"SEFAZ"}
+                ],
+                "Atendimento": [
+                    {"id":3,"href":"servicos?servico=3","text":"Gama","siglaOrgao":"SECRETARIA DA FAZENDA"}
+                ]
+            },
+            "mais-resultados": false
+        }"#;
+        let page: ApiPage = serde_json::from_str(json).unwrap();
+        let servicos = montar_servicos(&tipo, vec![page]);
+
+        // Ordem: categorias alfabéticas, "Outros" por último; ids sequenciais na ordem de render.
+        let vistos: Vec<(&str, &str)> =
+            servicos.iter().map(|s| (s.classe.as_str(), s.titulo.as_str())).collect();
+        assert_eq!(
+            vistos,
+            vec![
+                ("Atendimento", "Gama"),
+                ("Cadastro", "Alfa"),
+                ("Cadastro", "Beta"),
+                ("Outros", "Zeta"),
+            ]
+        );
+        assert_eq!(servicos.iter().map(|s| s.id).collect::<Vec<_>>(), vec![1, 2, 3, 4]);
+
+        // Órgão vem do 1º serviço da categoria e vale para todos: Cadastro -> RECEITA (não SEFAZ).
+        assert_eq!(servicos[1].orgao, "RECEITA");
+        assert_eq!(servicos[2].orgao, "RECEITA");
+        assert_eq!(servicos[0].orgao, "FAZENDA");
+        assert_eq!(servicos[3].orgao, ""); // PROCERGS não casa
+
+        // Link reconstruído e título aparado.
+        assert_eq!(
+            servicos[1].link,
+            "https://www.fazenda.rs.gov.br/servicos-a-empresas/servicos?servico=1"
+        );
+        assert_eq!(servicos[1].titulo, "Alfa");
+    }
 }
