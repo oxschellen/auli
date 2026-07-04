@@ -1,0 +1,227 @@
+[
+  {
+    "id": 1,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://efisco.sefaz.pe.gov.br/",
+    "titulo": "e-Fisco - ARE Virtual",
+    "descricao": ""
+  },
+  {
+    "id": 2,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Paginas/DAE-10.aspx",
+    "titulo": "DAE 10",
+    "descricao": ""
+  },
+  {
+    "id": 3,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Paginas/DAE-20.aspx",
+    "titulo": "DAE 20",
+    "descricao": ""
+  },
+  {
+    "id": 4,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.gnre.pe.gov.br:444/gnre/portal/GNRE_Principal.jsp",
+    "titulo": "GNRE Online",
+    "descricao": ""
+  },
+  {
+    "id": 5,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Documents/ICMS_FRETE.html",
+    "titulo": "Cálculo ICMS Frete",
+    "descricao": ""
+  },
+  {
+    "id": 6,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Institucional/Programas/Paginas/consulta-selo-agua-mineral.aspx",
+    "titulo": "Consulta Selo Água Mineral",
+    "descricao": ""
+  },
+  {
+    "id": 7,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Nota-Fiscal-de-Energia-Eletrica-Eletronica/Paginas/Consultas-Ambiente-de-Homologacao-(sem-valor-fiscal).aspx",
+    "titulo": "Nota Fiscal de Energia Elétrica Eletrônica",
+    "descricao": ""
+  },
+  {
+    "id": 8,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Nota-Fiscal-Eletronica",
+    "titulo": "Nota Fiscal Eletrônica",
+    "descricao": ""
+  },
+  {
+    "id": 9,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Nota-Fiscal-de-Consumidor-Eletronica",
+    "titulo": "Nota Fiscal de Consumidor Eletrônica",
+    "descricao": ""
+  },
+  {
+    "id": 10,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Conhecimento-de-Transporte-Eletronico",
+    "titulo": "Conhecimento de Transporte Eletrônico",
+    "descricao": ""
+  },
+  {
+    "id": 11,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Manifesto-Eletronico-de-Documentos-Fiscais/Paginas/Apresentacao.aspx",
+    "titulo": "Manifesto Eletrônico de Documentos Fiscais",
+    "descricao": ""
+  },
+  {
+    "id": 12,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Substituicao-Tributaria",
+    "titulo": "Substituição Tributária",
+    "descricao": ""
+  },
+  {
+    "id": 13,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/TATE",
+    "titulo": "TATE",
+    "descricao": ""
+  },
+  {
+    "id": 14,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Sintegra",
+    "titulo": "SINTEGRA",
+    "descricao": ""
+  },
+  {
+    "id": 15,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/ipca/Paginas/default.aspx",
+    "titulo": "IPCA",
+    "descricao": ""
+  },
+  {
+    "id": 16,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Emissor-de-Cupom-Fiscal",
+    "titulo": "ECF",
+    "descricao": ""
+  },
+  {
+    "id": 17,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/SEFI",
+    "titulo": "SEF I",
+    "descricao": ""
+  },
+  {
+    "id": 18,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/SEFII",
+    "titulo": "SEF II",
+    "descricao": ""
+  },
+  {
+    "id": 19,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Paginas/GIA.aspx",
+    "titulo": "GIA",
+    "descricao": ""
+  },
+  {
+    "id": 20,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Paginas/GIA-ST.aspx",
+    "titulo": "GIA-ST",
+    "descricao": ""
+  },
+  {
+    "id": 21,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Paginas/SEFAZnet.aspx",
+    "titulo": "SEFAZ-Net",
+    "descricao": ""
+  },
+  {
+    "id": 22,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/SEDIF/Paginas/default.aspx",
+    "titulo": "SEDIF-SN / DeSTDA",
+    "descricao": ""
+  },
+  {
+    "id": 23,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Paginas/Libera%C3%A7%C3%A3o-de-Mercadorias.aspx",
+    "titulo": "Liberação de Mercadoria",
+    "descricao": ""
+  },
+  {
+    "id": 24,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Convenio_ICMS_115_03/Paginas/default.aspx",
+    "titulo": "Convênio ICMS 115/03",
+    "descricao": ""
+  },
+  {
+    "id": 25,
+    "tipo": "Empresas",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Programa-de-Conformidade-e-Autorregularizacao-Coopera/Paginas/Documentos-Economicos-Fiscais.aspx",
+    "titulo": "Programa de Conformidade e Autorregularização - Coopera",
+    "descricao": ""
+  }
+]

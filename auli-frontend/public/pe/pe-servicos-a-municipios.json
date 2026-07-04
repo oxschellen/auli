@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+    "tipo": "Municípios",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://efisco.sefaz.pe.gov.br/",
+    "titulo": "e-Fisco - ARE Virtual",
+    "descricao": ""
+  },
+  {
+    "id": 2,
+    "tipo": "Municípios",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Transparencia/Financas/Municipios/Paginas/Informacoes.aspx",
+    "titulo": "Informações",
+    "descricao": ""
+  },
+  {
+    "id": 3,
+    "tipo": "Municípios",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br:8443/RPM/Scripts/TaxasRepasseCons.asp",
+    "titulo": "Índice de Repasse",
+    "descricao": ""
+  },
+  {
+    "id": 4,
+    "tipo": "Municípios",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br:8443/RPM/Scripts/TaxasRepasseConsIndices.asp",
+    "titulo": "Índice de Repasse Detalhado",
+    "descricao": ""
+  },
+  {
+    "id": 5,
+    "tipo": "Municípios",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Transparencia/Financas/Municipios/Paginas/Transferencias-Constitucionais.aspx",
+    "titulo": "Tributos Transferências Constitucionais",
+    "descricao": ""
+  },
+  {
+    "id": 6,
+    "tipo": "Municípios",
+    "classe": "Tributos Transferências Constitucionais",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Transparencia/Financas/Municipios/Paginas/Transferencias-Constitucionais-ICMS-e-IPI.aspx",
+    "titulo": "ICMS e IPI",
+    "descricao": ""
+  },
+  {
+    "id": 7,
+    "tipo": "Municípios",
+    "classe": "Tributos Transferências Constitucionais",
+    "orgao": "SEFAZ-PE",
+    "link": "https://arevirtualws.sefaz.pe.gov.br/sfar/sfar_municipio_periodo.php",
+    "titulo": "IPVA",
+    "descricao": ""
+  },
+  {
+    "id": 8,
+    "tipo": "Municípios",
+    "classe": "Tributos Transferências Constitucionais",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Transparencia/Financas/Municipios/Paginas/Transferencias-Constitucionais-Demais.aspx",
+    "titulo": "Demais",
+    "descricao": ""
+  },
+  {
+    "id": 9,
+    "tipo": "Municípios",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Transparencia/Financas/Municipios/Paginas/Dados-Socio-Ambientais.aspx",
+    "titulo": "Dados Sócio-Ambientais",
+    "descricao": ""
+  }
+]
