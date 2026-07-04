@@ -105,6 +105,12 @@ de embedding mudar.**
 > `auli-collections <id>` re-deriva os contratos offline e `build-packs.sh` regera os packs
 > (substitui o antigo subcomando `rebuild`, removido).
 
+> ⚠️ **O cache é sempre lido primeiro — mesmo sem `--usecache`.** Uma página já cacheada **não** é
+> re-buscada num novo scrape; `--usecache` apenas transforma um cache-miss em erro (modo offline).
+> Para forçar o refetch (novos serviços do portal, conteúdo alterado), **apague o cache antes de
+> raspar**: `rm -rf data/<id>/raw/cache/`. No SC isso inclui a listagem paginada e o `buildId`, então
+> serviços novos do portal só aparecem depois de limpar o cache.
+
 ### 4.2 Entidades (`data/registry.toml`)
 
 A lista de entidades e o caminho do prompt de cada uma vêm do **registro único**

@@ -14,7 +14,13 @@ use std::sync::LazyLock;
 
 use serde::Deserialize;
 
-pub const DEFAULT_ENTITY: &str = "rs";
+/// Default entity id — the **first** entity in the registry, the same rule the frontend uses
+/// (`entities[0].id` in `gen-frontend-entities.mjs`), so reordering `registry.toml` moves BOTH
+/// defaults together instead of silently diverging. Falls back to `"rs"` if the registry is
+/// unreadable/empty.
+pub static DEFAULT_ENTITY: LazyLock<String> = LazyLock::new(|| {
+    read_registry().entities.into_iter().next().map(|e| e.id).unwrap_or_else(|| "rs".to_string())
+});
 
 // Fallback system prompt used when an entity has no prompt file.
 const DEFAULT_SYSTEM_PROMPT: &str = r#"
@@ -68,27 +74,28 @@ pub fn data_dir() -> PathBuf {
 
 pub static ENTITIES: LazyLock<HashMap<String, EntityConfig>> = LazyLock::new(load_entities);
 
-fn load_entities() -> HashMap<String, EntityConfig> {
-    let mut map = HashMap::new();
-    let base = data_dir();
-    let registry_path = base.join("registry.toml");
-
+/// Parse `registry.toml` (entities in file order). Empty on read/parse error (already logged), so
+/// callers degrade gracefully. Read at startup by both `ENTITIES` and `DEFAULT_ENTITY`.
+fn read_registry() -> Registry {
+    let registry_path = data_dir().join("registry.toml");
     let text = match fs::read_to_string(&registry_path) {
         Ok(t) => t,
         Err(e) => {
             eprintln!("⚠️  Não foi possível ler o registro de entidades {:?}: {}", registry_path, e);
-            return map;
+            return Registry { entities: Vec::new() };
         }
     };
-    let registry: Registry = match toml::from_str(&text) {
-        Ok(r) => r,
-        Err(e) => {
-            eprintln!("⚠️  registry.toml inválido ({:?}): {}", registry_path, e);
-            return map;
-        }
-    };
+    toml::from_str(&text).unwrap_or_else(|e| {
+        eprintln!("⚠️  registry.toml inválido ({:?}): {}", registry_path, e);
+        Registry { entities: Vec::new() }
+    })
+}
 
-    for ent in registry.entities {
+fn load_entities() -> HashMap<String, EntityConfig> {
+    let mut map = HashMap::new();
+    let base = data_dir();
+
+    for ent in read_registry().entities {
         let system_prompt = if ent.prompt.is_empty() {
             DEFAULT_SYSTEM_PROMPT.to_string()
         } else {
@@ -108,7 +115,7 @@ fn load_entities() -> HashMap<String, EntityConfig> {
 
 // Resolve an entity id. None / empty -> DEFAULT_ENTITY. Unknown id -> Err with a message.
 pub fn get_entity(id: Option<&str>) -> Result<&'static EntityConfig, String> {
-    let id = id.map(str::trim).filter(|s| !s.is_empty()).unwrap_or(DEFAULT_ENTITY);
+    let id = id.map(str::trim).filter(|s| !s.is_empty()).unwrap_or_else(|| DEFAULT_ENTITY.as_str());
 
     ENTITIES
         .get(id)

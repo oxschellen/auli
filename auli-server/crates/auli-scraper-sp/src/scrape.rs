@@ -126,6 +126,7 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(Vec<ServicoRaw>, Vec<P
     let pubs = publicos();
     let mut items: Vec<ServicoRaw> = Vec::new();
     let mut sem_publico = 0;
+    let mut sem_link = 0;
     for s in &svcs {
         let classe = s
             .home360
@@ -142,16 +143,23 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(Vec<ServicoRaw>, Vec<P
             sem_publico += 1;
             continue;
         }
+        let link = canonical(s.url.as_deref().unwrap_or_default());
+        if link.is_empty() {
+            sem_link += 1;
+        }
         items.push(ServicoRaw {
             titulo: clean(&s.title),
             descricao: build_corpo(s),
-            link: canonical(s.url.as_deref().unwrap_or_default()),
+            link,
             orgao: "SEFAZ-SP".to_string(),
             ocorrencias,
         });
     }
     if sem_publico > 0 {
         eprintln!("⚠️  SP: {} serviço(s) sem nenhuma faceta de público — fora do catálogo.", sem_publico);
+    }
+    if sem_link > 0 {
+        eprintln!("⚠️  SP: {} serviço(s) sem URL — link vazio no contrato (a linha ainda é a identidade).", sem_link);
     }
     println!("SP: {} serviços com público (de {} no catálogo)", items.len(), svcs.len());
 
