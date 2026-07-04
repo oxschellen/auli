@@ -15,6 +15,20 @@ contrato em `data/<id>/raw/<id>-<kind>.json` e o `auli update` o consome.
 > carregando as 4, valida cada manifesto contra a identidade local, `/v1/health → OK`,
 > `api.auli.com.br` roteia, e o RAG responde por estado citando os links certos (verificado ponta a
 > ponta). Status item a item abaixo.
+>
+> **Revisão 2026-07-04 (scraper RS sem navegador + mg).** Duas correções ao quadro acima:
+>
+> 1. **Serviços do RS agora sem headless Chrome** (PR #10). Os cards das 5 listagens eram tidos como
+>    "JS-rendered" e vinham do Chrome; na verdade são montados no cliente por `capaservicos.js` a
+>    partir de um endpoint JSON interno do CMS (`/_service/tudofacil/capaservicos?parent=<ids>&page=<n>`,
+>    com `parent` no atributo `data-servico-parent` do shell server-rendered). Não há barreira de JS
+>    de fato, então o `ureq` basta: `extrair_servicos_da_api` reproduz **byte a byte** o snapshot e os
+>    artefatos `raw/` do scrape com Chrome. `headless_chrome` foi removido (−18 crates) e **nenhum**
+>    estado usa mais navegador.
+>    `D-RS-OBSCURA: gate de equivalência (Obscura) aprovado em 2026-07-04, mas a adoção foi o caminho`
+>    `ureq/API JSON — mais leve e robusto; headless_chrome removido.`
+> 2. **`mg` entrou**: são **5** entidades no ar (rs, sc, sp, pr, mg), não 4. E os snapshots são **v3**
+>    por coleção (`<id>-<kind>-snapshot.json`, full-overwrite, sem merge), não v2.
 
 ---
 
