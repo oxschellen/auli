@@ -2,8 +2,10 @@
 //
 // Headless Chrome renderiza as páginas de listagem por público; o ureq busca cada página de detalhe
 // e raspa a descrição (`extrair_descricoes` / `utils`). Os arquivos per-tipo são gravados durante o
-// scrape (recuperação de falha) e agregados em `Vec<ServicoRaw>` no snapshot. A derivação dos
-// artefatos (contrato, prints, per-público, index) é o `auli-collections process`.
+// scrape (recuperação de falha) em `raw/scrape/<filename>.json` — subdiretório próprio para não
+// colidir com os per-público que o `process` deriva em `raw/<slug>.json` — e agregados em
+// `Vec<ServicoRaw>` no snapshot. A derivação dos artefatos (contrato, prints, per-público, index) é
+// o `auli-collections process`.
 
 mod extrair_descricoes;
 mod types;
@@ -48,7 +50,7 @@ fn load_per_tipo(
 ) -> Result<PerPublicoServicos, Box<dyn std::error::Error>> {
     let mut loaded = Vec::new();
     for tipo in tipos {
-        let path = format!("{}/{}.json", data_dir, tipo.filename);
+        let path = utils::scrape_recovery_path(data_dir, &tipo.filename);
         if !std::path::Path::new(&path).exists() {
             continue;
         }
