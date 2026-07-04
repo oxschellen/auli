@@ -70,3 +70,11 @@ uf = "BA"
 state = "Bahia"
 prompt = "prompts/ba.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "rj"
+name = "SEFAZ-RJ"
+uf = "RJ"
+state = "Rio de Janeiro"
+prompt = "prompts/rj.txt"
+collections = ["servicos"]
