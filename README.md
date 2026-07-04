@@ -122,7 +122,7 @@ The only backend endpoint the frontend calls is `POST /v1/question` (via `VITE_A
 
 Collection is a **two-step, synchronous** pipeline. First a **per-entity scraper binary**
 (`auli-scraper-<id>`) fetches the portal and writes a versioned **snapshot**
-(`data/<id>/<id>-snapshot.json`); the scrapers share `auli-scraper-kit` (HTTP cache, service
+(one per collection: `data/<id>/<id>-servicos-snapshot.json`, plus `<id>-faqs-snapshot.json` for RS); the scrapers share `auli-scraper-kit` (HTTP cache, service
 aggregation, snapshot I/O). Then **`auli-collections <id> process`** derives, offline, the typed
 `auli-contract` artifacts (`Table<Faq>` / `Table<Servico>` → `data/<id>/raw/<id>-<kind>.json`,
 materializing each record's `text_to_embed`) plus the human-readable `portal-<kind>.txt` audit

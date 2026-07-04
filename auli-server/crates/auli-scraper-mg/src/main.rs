@@ -1,8 +1,8 @@
 // auli-scraper-mg — scraper da SEF-MG (serviços, portal ServiceNow CSM, API JSON). Sem headless
 // Chrome.
 //
-// Conhece UMA entidade ("mg"); não lê o registry. Grava o snapshot v2; a derivação dos artefatos é
-// o `auli-collections mg`.
+// Conhece UMA entidade ("mg"); não lê o registry. Grava o snapshot de serviços (v3); a derivação dos
+// artefatos é o `auli-collections mg`.
 
 mod mg;
 

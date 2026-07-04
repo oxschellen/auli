@@ -64,7 +64,7 @@ O **server** lê os packs de `data/<id>/packs/` e as entidades do registry; o **
 `entities.ts` e `public/<id>/` **gerados** de `data/` por `scripts/`.
 
 ```text
-[auli-scraper-<e>]  →  data/<id>/<id>-snapshot.json  →  [auli-collections <e>]  →  data/<id>/raw/<id>-<kind>.json
+[auli-scraper-<e>]  →  data/<id>/<id>-<kind>-snapshot.json  →  [auli-collections <e>]  →  data/<id>/raw/<id>-<kind>.json
   scrape do portal            (snapshot v2)                deriva (offline)                    │
                                                                                               │
 [auli-server] auli update  → data/<id>/packs/ (vetoriza o contrato)  ←─────────────────────────┘
@@ -113,7 +113,7 @@ auli-server/                       # workspace único, Cargo.lock compartilhado
 
 > **Fase 2 (scrapers em crates próprios).** A coleta saiu do `auli-collections` para **um binário por
 > entidade** (`auli-scraper-<e>`) sobre o **`auli-scraper-kit`**; todos gravam a mesma fronteira, o
-> **snapshot v2** (`data/<id>/<id>-snapshot.json`, tipos em `auli_contract::snapshot`). O
+> **snapshot v3** (um por coleção: `data/<id>/<id>-servicos-snapshot.json` + `<id>-faqs-snapshot.json` no RS; tipos em `auli_contract::snapshot`). O
 > `auli-collections <e>` virou **só derivação** (offline): lê o snapshot e produz o contrato +
 > prints + index + per-público. As citações a `auli-collections/src/{faqs,servicos}/…` na §5 vivem
 > hoje em `auli-scraper-rs/src/…` (ver §5 reescrita).
@@ -379,7 +379,7 @@ A coleta é **um binário por entidade** (`auli-scraper-<e>`) sobre o **`auli-sc
 `auli-collections` virou **só derivação** (offline). A fronteira entre os dois é o **snapshot v2**.
 
 ```text
-auli-scraper-<e> (rede)  →  data/<id>/<id>-snapshot.json (v2)  →  auli-collections <e> (offline)  →  data/<id>/raw/
+auli-scraper-<e> (rede)  →  data/<id>/<id>-<kind>-snapshot.json (v3)  →  auli-collections <e> (offline)  →  data/<id>/raw/
 ```
 
 ### 5.1 O kit compartilhado (`auli-scraper-kit`)
@@ -392,8 +392,8 @@ auli-scraper-<e> (rede)  →  data/<id>/<id>-snapshot.json (v2)  →  auli-colle
 
 ### 5.2 O snapshot v2 (`auli_contract::snapshot`)
 
-Cada scraper grava `data/<id>/<id>-snapshot.json` (`SNAPSHOT_SCHEMA_VERSION = 2`): metadados do
-scraper + as coleções. Serviços são `ServicoRaw { titulo, descricao, link, orgao, ocorrencias:
+Cada scraper grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (`SNAPSHOT_SCHEMA_VERSION = 3`): metadados do
+scraper + a coleta daquela coleção (sem merge entre coleções). Serviços são `ServicoRaw { titulo, descricao, link, orgao, ocorrencias:
 Vec<Ocorrencia> }` com `Ocorrencia { publico, classe }` — um serviço em N públicos/classes é **N
 ocorrências nativas** (resolveu o limite multi-classe do modelo antigo). FAQs são `Vec<FaqRaw>`
 (pergunta/resposta/origin/url), lista **achatada**.

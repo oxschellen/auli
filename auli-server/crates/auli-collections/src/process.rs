@@ -1,47 +1,39 @@
-//! O subcomando `process` — deriva os artefatos do snapshot, **offline**.
+//! O subcomando `process` — deriva os artefatos dos snapshots, **offline**.
 //!
-//! Lê `../data/<id>/<id>-snapshot.json`, valida `schema_version`/`entidade`, e para cada coleta
-//! presente chama as derivações de [`crate::derive_faqs::process`] / [`crate::servicos::process`].
-//! Coleção ausente é pulada (não é erro). É aqui que mora a validação amigável do schema — o
-//! `auli-contract` segue só serde, sem domínio (mesmo precedente da `Table<P>`: quem lê é que reclama).
+//! Lê os snapshots por coleção (`../data/<id>/<id>-servicos-snapshot.json` e, se houver,
+//! `<id>-faqs-snapshot.json`) e, para cada um presente, chama a derivação de
+//! [`crate::derive_faqs::process`] / [`crate::servicos::process`]. Coleção ausente é pulada (não é
+//! erro). A validação de `schema_version`/`entidade` mora no `load` do kit (header-first); aqui só
+//! orquestramos.
 
-use auli_contract::SNAPSHOT_SCHEMA_VERSION;
+use auli_contract::{ColetaFaqs, ColetaServicos};
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
 
-/// Carrega o snapshot da entidade e deriva os artefatos das coleções presentes.
+/// Carrega os snapshots por coleção da entidade e deriva os artefatos dos que existirem.
 pub fn run(entity: &EntityConfig) -> Result<()> {
-    let snapshot = auli_scraper_kit::snapshot::load(&entity.id, &entity.data_dir)?.ok_or_else(|| {
-        format!(
-            "snapshot ausente para '{}' — rode `auli-scraper-{} faqs` e/ou `auli-scraper-{} servicos` antes do process.",
-            entity.id, entity.id, entity.id
-        )
-    })?;
+    let id = &entity.id;
+    let dir = &entity.data_dir;
 
-    if snapshot.schema_version != SNAPSHOT_SCHEMA_VERSION {
+    let faqs = auli_scraper_kit::snapshot::load::<ColetaFaqs>(id, dir, "faqs")?;
+    let servicos = auli_scraper_kit::snapshot::load::<ColetaServicos>(id, dir, "servicos")?;
+
+    if faqs.is_none() && servicos.is_none() {
         return Err(format!(
-            "snapshot de '{}' está na versão de schema v{} (esperado v{}). Re-raspe a entidade — o \
-             snapshot é regenerável do cache, não há migração.",
-            entity.id, snapshot.schema_version, SNAPSHOT_SCHEMA_VERSION
-        )
-        .into());
-    }
-    if snapshot.entidade != entity.id {
-        return Err(format!(
-            "entidade do snapshot ('{}') não bate com a pedida ('{}').",
-            snapshot.entidade, entity.id
+            "nenhum snapshot para '{}' — rode `auli-scraper-{} faqs` e/ou `auli-scraper-{} servicos` antes do process.",
+            id, id, id
         )
         .into());
     }
 
-    match &snapshot.colecoes.faqs {
-        Some(coleta) => crate::derive_faqs::process(&entity.id, &entity.data_dir, coleta)?,
-        None => println!("⏭️  sem coleção de faqs no snapshot — pulando"),
+    match &faqs {
+        Some(snap) => crate::derive_faqs::process(id, dir, &snap.coleta)?,
+        None => println!("⏭️  sem snapshot de faqs — pulando"),
     }
-    match &snapshot.colecoes.servicos {
-        Some(coleta) => crate::servicos::process(&entity.id, &entity.data_dir, coleta)?,
-        None => println!("⏭️  sem coleção de serviços no snapshot — pulando"),
+    match &servicos {
+        Some(snap) => crate::servicos::process(id, dir, &snap.coleta)?,
+        None => println!("⏭️  sem snapshot de serviços — pulando"),
     }
 
     Ok(())

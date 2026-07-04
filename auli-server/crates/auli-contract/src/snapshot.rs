@@ -1,9 +1,9 @@
 //! `snapshot` — a fronteira **scraper → collections**.
 //!
-//! O *snapshot de coleta* é o arquivo único e padronizado por entidade
-//! (`data/<id>/<id>-snapshot.json`) que cada scraper grava. O `auli-collections process`
-//! o lê e deriva todos os artefatos ([`crate::Table<P>`], per-público JSONs, `portal-*.txt`).
-//! Assim a coleta (rede) fica separada do processamento (offline).
+//! O *snapshot de coleta* é gravado por cada scraper **um arquivo por coleção**:
+//! `data/<id>/<id>-servicos-snapshot.json` e (só o RS) `data/<id>/<id>-faqs-snapshot.json`. O
+//! `auli-collections process` os lê e deriva todos os artefatos ([`crate::Table<P>`], per-público
+//! JSONs, `portal-*.txt`). Assim a coleta (rede) fica separada do processamento (offline).
 //!
 //! Duas invariantes desenham o tipo (D-S1/D-S2 da TAREFA):
 //!
@@ -11,6 +11,9 @@
 //!   collections→engine. Ambos vivem aqui, no crate magro.
 //! - O snapshot carrega dado **bruto porém limpo**: texto já normalizado, mas **sem campos
 //!   derivados** — sem `id` sequencial e sem `text_to_embed`. Quem deriva é o `process`.
+//!
+//! Um arquivo por coleção (v3): cada scrape grava só o seu arquivo, sem merge nem read-modify-write
+//! do arquivo do vizinho — nomes honestos, sem corrida entre scrapes, raio de dano isolado.
 //!
 //! Como o resto do crate, este módulo é só `serde`: não valida nada. O consumidor (o `process`,
 //! etapa C) é quem compara [`SNAPSHOT_SCHEMA_VERSION`] e reclama de versão desconhecida — mesmo
@@ -21,22 +24,25 @@ use serde::{Deserialize, Serialize};
 /// Versão do schema do snapshot. O produtor grava; o `process` compara contra esta constante e
 /// emite erro amigável se não bater. Bump quando o formato mudar de forma incompatível.
 ///
-/// v2 (fase 2): `ServicoRaw` troca `classe`/`publicos` por `ocorrencias` (par público×classe),
-/// para representar serviços listados sob mais de uma classe no portal. Sem migração — o snapshot é
-/// regenerável do cache.
-pub const SNAPSHOT_SCHEMA_VERSION: u32 = 2;
+/// v2 (fase 2): `ServicoRaw` troca `classe`/`publicos` por `ocorrencias` (par público×classe).
+/// v3: **um arquivo por coleção** ([`CollectionSnapshot`]) no lugar do `Snapshot` com `colecoes`
+/// mesclado. Sem migração automática — o snapshot é regenerável do cache.
+pub const SNAPSHOT_SCHEMA_VERSION: u32 = 3;
 
-/// O snapshot de coleta de uma entidade. Persistido como JSON em `data/<id>/<id>-snapshot.json`.
+/// O snapshot de **uma** coleção de uma entidade. Persistido como JSON em
+/// `data/<id>/<id>-<kind>-snapshot.json` (kind ∈ {`servicos`, `faqs`)}. `C` é a coleta concreta
+/// ([`ColetaServicos`] ou [`ColetaFaqs`]); o `kind` é o nome do arquivo, não um campo — o tipo já
+/// discrimina a coleção.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Snapshot {
+pub struct CollectionSnapshot<C> {
     /// Versão do schema (ver [`SNAPSHOT_SCHEMA_VERSION`]).
     pub schema_version: u32,
     /// Id da entidade (ex.: `"rs"`).
     pub entidade: String,
     /// Quem gerou o snapshot.
     pub scraper: ScraperInfo,
-    /// As coleções raspadas. Cada uma é opcional (ver [`Colecoes`]).
-    pub colecoes: Colecoes,
+    /// A coleta desta coleção.
+    pub coleta: C,
 }
 
 /// Identificação do scraper que gravou o snapshot.
@@ -46,19 +52,6 @@ pub struct ScraperInfo {
     pub nome: String,
     /// Versão do scraper (ex.: `CARGO_PKG_VERSION`).
     pub versao: String,
-}
-
-/// As coleções de um snapshot. Cada scrape atualiza **só a sua** coleção e preserva a outra
-/// (merge, não overwrite do arquivo inteiro), por isso os campos são `Option` e uma coleção
-/// ausente serializa como omitida. `Default` habilita o `load_or_default` da etapa B.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct Colecoes {
-    /// Coleção de faqs, se presente.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub faqs: Option<ColetaFaqs>,
-    /// Coleção de serviços, se presente.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub servicos: Option<ColetaServicos>,
 }
 
 /// A coleta de faqs: quando foi raspada e os registros brutos.
@@ -142,91 +135,66 @@ pub struct Ocorrencia {
 mod tests {
     use super::*;
 
-    fn sample_snapshot() -> Snapshot {
-        Snapshot {
+    fn sample_servicos() -> CollectionSnapshot<ColetaServicos> {
+        CollectionSnapshot {
             schema_version: SNAPSHOT_SCHEMA_VERSION,
             entidade: "rs".into(),
             scraper: ScraperInfo { nome: "auli-collections".into(), versao: "0.1.0".into() },
-            colecoes: Colecoes {
-                faqs: Some(ColetaFaqs {
-                    coletado_em: "2026-07-01T09:14:00-03:00".into(),
-                    items: vec![FaqRaw {
-                        pergunta: "Como emitir a guia?".into(),
-                        resposta: "Acesse o portal.".into(),
-                        origin: "Inicial | FAQ".into(),
-                        url: "https://exemplo/faq/1".into(),
-                    }],
-                }),
-                servicos: Some(ColetaServicos {
-                    coletado_em: "2026-07-01T10:02:00-03:00".into(),
-                    publicos_ordem: vec![
-                        Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() },
-                        Publico { nome: "Empresas".into(), slug: "servicos-a-empresas".into() },
+            coleta: ColetaServicos {
+                coletado_em: "2026-07-01T10:02:00-03:00".into(),
+                publicos_ordem: vec![
+                    Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() },
+                    Publico { nome: "Empresas".into(), slug: "servicos-a-empresas".into() },
+                ],
+                items: vec![ServicoRaw {
+                    titulo: "Emitir guia".into(),
+                    descricao: "Corpo limpo.".into(),
+                    link: "https://exemplo/svc/1".into(),
+                    orgao: "SEFAZ".into(),
+                    ocorrencias: vec![
+                        Ocorrencia { publico: "Empresas".into(), classe: "ICMS".into() },
+                        Ocorrencia { publico: "Cidadãos".into(), classe: "ICMS".into() },
                     ],
-                    items: vec![ServicoRaw {
-                        titulo: "Emitir guia".into(),
-                        descricao: "Corpo limpo.".into(),
-                        link: "https://exemplo/svc/1".into(),
-                        orgao: "SEFAZ".into(),
-                        ocorrencias: vec![
-                            Ocorrencia { publico: "Empresas".into(), classe: "ICMS".into() },
-                            Ocorrencia { publico: "Cidadãos".into(), classe: "ICMS".into() },
-                        ],
-                    }],
-                }),
+                }],
             },
         }
     }
 
     #[test]
-    fn snapshot_roundtrips_through_json() {
-        let snap = sample_snapshot();
+    fn servicos_snapshot_roundtrips_through_json() {
+        let snap = sample_servicos();
         let json = serde_json::to_string(&snap).unwrap();
-        let back: Snapshot = serde_json::from_str(&json).unwrap();
+        let back: CollectionSnapshot<ColetaServicos> = serde_json::from_str(&json).unwrap();
 
         assert_eq!(back.schema_version, SNAPSHOT_SCHEMA_VERSION);
         assert_eq!(back.entidade, "rs");
         assert_eq!(back.scraper.nome, "auli-collections");
-
-        let faqs = back.colecoes.faqs.unwrap();
-        assert_eq!(faqs.items.len(), 1);
-        assert_eq!(faqs.items[0].pergunta, "Como emitir a guia?");
-
-        let servicos = back.colecoes.servicos.unwrap();
-        assert_eq!(servicos.publicos_ordem.len(), 2);
-        assert_eq!(servicos.items[0].ocorrencias.len(), 2);
-        assert_eq!(servicos.items[0].ocorrencias[0].publico, "Empresas");
-        assert_eq!(servicos.items[0].ocorrencias[0].classe, "ICMS");
+        assert_eq!(back.coleta.publicos_ordem.len(), 2);
+        assert_eq!(back.coleta.items[0].ocorrencias.len(), 2);
+        assert_eq!(back.coleta.items[0].ocorrencias[0].publico, "Empresas");
+        assert_eq!(back.coleta.items[0].ocorrencias[0].classe, "ICMS");
     }
 
     #[test]
-    fn missing_collection_deserializes_as_none() {
-        let json = r#"{
-            "schema_version": 1,
-            "entidade": "rs",
-            "scraper": { "nome": "auli-collections", "versao": "0.1.0" },
-            "colecoes": {
-                "faqs": { "coletado_em": "2026-07-01T09:14:00-03:00", "items": [] }
-            }
-        }"#;
-        let snap: Snapshot = serde_json::from_str(json).unwrap();
-        assert!(snap.colecoes.faqs.is_some());
-        assert!(snap.colecoes.servicos.is_none());
-    }
-
-    #[test]
-    fn schema_version_present_and_none_collection_omitted() {
-        let snap = Snapshot {
+    fn faqs_snapshot_roundtrips_through_json() {
+        let snap = CollectionSnapshot {
             schema_version: SNAPSHOT_SCHEMA_VERSION,
             entidade: "rs".into(),
             scraper: ScraperInfo { nome: "auli-collections".into(), versao: "0.1.0".into() },
-            colecoes: Colecoes {
-                faqs: Some(ColetaFaqs { coletado_em: "2026-07-01T09:14:00-03:00".into(), items: vec![] }),
-                servicos: None,
+            coleta: ColetaFaqs {
+                coletado_em: "2026-07-01T09:14:00-03:00".into(),
+                items: vec![FaqRaw {
+                    pergunta: "Como emitir a guia?".into(),
+                    resposta: "Acesse o portal.".into(),
+                    origin: "Inicial | FAQ".into(),
+                    url: "https://exemplo/faq/1".into(),
+                }],
             },
         };
         let json = serde_json::to_string(&snap).unwrap();
-        assert!(json.contains("\"schema_version\":2"));
-        assert!(!json.contains("servicos"));
+        assert!(json.contains("\"schema_version\":3"));
+        let back: CollectionSnapshot<ColetaFaqs> = serde_json::from_str(&json).unwrap();
+        assert_eq!(back.coleta.items.len(), 1);
+        assert_eq!(back.coleta.items[0].pergunta, "Como emitir a guia?");
     }
 }
