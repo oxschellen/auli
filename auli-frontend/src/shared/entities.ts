@@ -80,6 +80,13 @@ export const ENTITIES: Entity[] = [
     state: "Rio de Janeiro",
     collections: ["servicos"],
   },
+  {
+    id: "ce",
+    name: "SEFAZ-CE",
+    uf: "CE",
+    state: "Ceará",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";
