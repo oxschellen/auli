@@ -9,16 +9,16 @@
 # Sem argumento, regenera TODAS as entidades do registry. Com `<id>` (ex.: `build-frontend-public.sh
 # rs`), regenera só aquela — útil quando o data/ das outras não está fresco (evita sobrescrevê-las).
 #
-# O que entra em public/<id>/ (todos com o nome já prefixado por `<id>-`, casando com `entityPath` no
-# frontend, que busca `/<id>/<id>-<file>`):
+# O que entra em public/<id>/ (todos com o nome já prefixado por `<id>-` na origem, casando com
+# `entityPath` no frontend, que busca `/<id>/<id>-<file>`):
 #   - data/<id>/raw/*.json   (<id>-servicos-index, <id>-servicos-*, <id>-faqs-tree.json — o que a UI busca)
-#   - data/<id>/ref/*        (portal-pareceres.txt, portal-notas.txt, conteudo_site_tree.json)
+#   - data/<id>/ref/*        (<id>-portal-pareceres.txt, <id>-portal-notas.txt, <id>-conteudo_site_tree.json)
 # NÃO copia os <id>-portal-servicos.txt/<id>-portal-faqs.txt de raw/ (o filtro `*.json` já os exclui;
 # são grandes, alimentam os packs, a UI não usa) nem os contratos do engine `<id>-{faqs,servicos}.json`
 # (lidos pelo `auli update`, a UI não os busca).
 #
-# Todo `raw/` já é prefixado por `<id>-` na origem (o `process`/scraper grava assim), então de raw/ os
-# arquivos são copiados COMO ESTÃO; só os de `ref/` (não prefixados em disco) ganham o prefixo aqui.
+# Tanto `raw/` (gerado) quanto `ref/` (autorado, versionado) já são prefixados por `<id>-` na origem,
+# então os arquivos são copiados COMO ESTÃO — o prefixo deixou de ser adicionado aqui.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
@@ -32,10 +32,10 @@ copy_raw() {
   cp "$1" "$2/$base"
 }
 
-# ref/: NÃO prefixado em disco. Adiciona o prefixo "$3-" ao copiar, casando com `entityPath`.
+# ref/: também já prefixado por "$3-" na origem (arquivos autorados/versionados). Copia como está.
 copy_ref() {
   local base; base="$(basename "$1")"
-  cp "$1" "$2/$3-$base"
+  cp "$1" "$2/$base"
 }
 
 # ids das entidades a partir do registry (linhas `id = "xx"`).
