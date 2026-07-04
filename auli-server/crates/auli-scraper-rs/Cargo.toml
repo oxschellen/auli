@@ -3,15 +3,15 @@ name = "auli-scraper-rs"
 version = "0.1.0"
 edition = "2024"
 
-# Scraper da SEFAZ-RS (faqs + serviços). Headless Chrome só aqui. Depende de auli-contract + o kit —
-# NUNCA de fastembed/ort/vector-store: compila leve, sem WSL.
+# Scraper da SEFAZ-RS (faqs + serviços), só com HTTP (ureq) — sem navegador headless: as listagens
+# de serviços vêm do endpoint JSON interno do CMS. Depende de auli-contract + o kit — NUNCA de
+# fastembed/ort/vector-store: compila leve, sem WSL.
 [dependencies]
 auli-contract = { path = "../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
 ureq = { version = "3", features = ["json"] }
 scraper = "0.27.0"
 regex = "1.12.3"
-headless_chrome = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "2"
