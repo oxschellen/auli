@@ -1,0 +1,1111 @@
+{
+  "schema_version": 3,
+  "entidade": "rj",
+  "scraper": {
+    "nome": "auli-scraper-rj",
+    "versao": "0.1.0"
+  },
+  "coleta": {
+    "coletado_em": "2026-07-04T20:58:21.296066601Z",
+    "publicos_ordem": [
+      {
+        "nome": "Serviços",
+        "slug": "nossos-servicos"
+      }
+    ],
+    "items": [
+      {
+        "titulo": "Agendamento de atendimento presencial",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=284",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Atendimento"
+          }
+        ]
+      },
+      {
+        "titulo": "Central de Serviços",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Atendimento"
+          }
+        ]
+      },
+      {
+        "titulo": "Identificação do Fiel Depositário",
+        "descricao": "",
+        "link": "https://scdi-fiel-depositario.fazenda.rj.gov.br/projetoFielDepositario/faces/pages/identificaFielDepositario/IdentificaFielDepositario.xhtml?certlogin=1",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Atendimento"
+          }
+        ]
+      },
+      {
+        "titulo": "Fale Conosco",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/fale-conosco/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Atendimento"
+          }
+        ]
+      },
+      {
+        "titulo": "Consulta Comprovante de Inscrição e Situação Cadastral (CISC)",
+        "descricao": "",
+        "link": "https://sucief-sincad-web.fazenda.rj.gov.br/sincad-web/index.jsf",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar cadastro de contribuintes do RJ (CISC)",
+        "descricao": "",
+        "link": "https://sucief-sincad-web.fazenda.rj.gov.br/sincad-web/index.jsf",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro"
+          }
+        ]
+      },
+      {
+        "titulo": "Serviços Eletrônicos de Cadastro",
+        "descricao": "",
+        "link": "https://ssa.fazenda.rj.gov.br/ssa/?appf=SEC",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de certidão de regularidade para não inscritos no cadastro de contribuintes (CRF)",
+        "descricao": "",
+        "link": "https://crf-unificada-web.fazenda.rj.gov.br/crf-unificada-web/#/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Certidões e Situação Fiscal"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de certidão de pagamento de ITD",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=325",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Certidões e Situação Fiscal"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir Certidão de Situação Fiscal de IPVA de veículo",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/ipva/certidao-de-situacao-fiscal/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Certidões e Situação Fiscal"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar emissão de certidão de Regularidade Fiscal com fundamento em determinação judicial",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=2",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Certidões e Situação Fiscal"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar emissão de certidão de regularidade fiscal em caso de impossibilidade de emissão pelo fisco fácil",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=4",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Certidões e Situação Fiscal"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar emissão de certidão de regularidade fiscal para contribuinte pessoa física com inscrição ativa",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=5",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Certidões e Situação Fiscal"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar emissão de certidão de regularidade fiscal para pessoas físicas ou jurídicas sem inscrição ativa no CAD-ICMS",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=6",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Certidões e Situação Fiscal"
+          }
+        ]
+      },
+      {
+        "titulo": "Fisco Fácil",
+        "descricao": "",
+        "link": "https://ssa.fazenda.rj.gov.br/ssa/?appf=AUTO%20Fisco%20F%C3%A1cil",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Certidões e Situação Fiscal"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar suspensão de Substituição Tributária para microcervejaria (Lei 9.222 de 23 de março de 2021)",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=322",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cobranças e fiscalização"
+          }
+        ]
+      },
+      {
+        "titulo": "SEI-RJ – Consulta Usuário Externo",
+        "descricao": "",
+        "link": "https://sei.rj.gov.br/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Consultas"
+          }
+        ]
+      },
+      {
+        "titulo": "SEI (pesquisa pública)",
+        "descricao": "",
+        "link": "https://sei.rj.gov.br/sei/modulos/pesquisa/md_pesq_processo_pesquisar.php?acao_externa=protocolo_pesquisar&acao_origem_externa=protocolo_pesquisar&id_orgao_acesso_externo=6",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Consultas"
+          }
+        ]
+      },
+      {
+        "titulo": "Confirmação de autenticidade de certidão de regularidade fiscal",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/autenticidade",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Consultas"
+          }
+        ]
+      },
+      {
+        "titulo": "Consulta Auto de Infração recebido por AR",
+        "descricao": "",
+        "link": "https://aic-web-recebido-por-ar.fazenda.rj.gov.br/aic-web-recebido-por-ar/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Consultas"
+          }
+        ]
+      },
+      {
+        "titulo": "Consulta Pública de autenticidade da certidão de regularidade fiscal (emitida pelo Fisco Fácil)",
+        "descricao": "",
+        "link": "https://fisco-facil.fazenda.rj.gov.br/SATI-FiscoFacil/publico/autenticidadeHashCertidao/consultaAutenticidadeHash.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Consultas"
+          }
+        ]
+      },
+      {
+        "titulo": "Consulta Tributária",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/consulta-tributaria/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Consultas"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar entrega de declarações de informações de meios de pagamentos (DIMP)",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=32",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Consultas"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar processos",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/consulta-a-processos/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Consultas"
+          }
+        ]
+      },
+      {
+        "titulo": "Atendimento Virtual da Junta de Revisão Fiscal",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=30",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Atendimento Virtual do Conselho de Contribuintes",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=29",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "DECLAN-IPM – Consulta das declarações (DECLAN-IPM) transmitidas e do valor de estoque informado",
+        "descricao": "",
+        "link": "https://declan.fazenda.rj.gov.br/SATI-DECLAN/pages/consultar/entrega.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DECLAN-IPM – Consulta omissos de entrega",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/declan-ipm/consulta-omissos/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DECLAN-IPM – Transmissão da DECLAN- IPM",
+        "descricao": "",
+        "link": "https://declan-transmissao.fazenda.rj.gov.br/SATI-DECLAN/pages/transmitir/arquivo.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DECLAN-IPM – Validação da DECLAN-IPM",
+        "descricao": "",
+        "link": "https://declan-transmissao.fazenda.rj.gov.br/SATI-DECLAN/pages/validar/arquivo.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DEVEC – Informar/retificar/cadastro",
+        "descricao": "",
+        "link": "https://devec-web.fazenda.rj.gov.br/SATI-Devec/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DeSTDA – Consulta das entregas das declarações DeSTDA",
+        "descricao": "",
+        "link": "https://ssa.fazenda.rj.gov.br/ssa/?appf=Painel_DESTDA",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DeSTDA – Progama Gerador da DeSTDA",
+        "descricao": "",
+        "link": "http://www.sedif.pe.gov.br/downloadSedif.html",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DFe – Consulta de contribuintes credenciados",
+        "descricao": "",
+        "link": "http://www4.fazenda.rj.gov.br/sefaz-dfe-consulta-credenciamento/paginas/consulta.faces",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DFe – Consulta e recuperação de arquivo com chave de acesso",
+        "descricao": "",
+        "link": "https://consultadfe.fazenda.rj.gov.br/consultaDFe/paginas/consultaChaveAcesso.faces",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DFe – Consulta e recuperação de arquivo utilizando série e número",
+        "descricao": "",
+        "link": "https://consultadfe.fazenda.rj.gov.br/consultaDFe/paginas/identificacao.faces",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DFe – Geração e manutenção de código de segurança do contribuinte CSC (token)",
+        "descricao": "",
+        "link": "http://www4.fazenda.rj.gov.br/sefaz-dfe-csc/paginas/identificacao.jsf",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DFe – Sistema de reabertura de prazo para cancelamento",
+        "descricao": "",
+        "link": "https://www4.fazenda.rj.gov.br/dfe-cancelamento-ext/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DUB – Acesso à declaração",
+        "descricao": "",
+        "link": "https://www7.fazenda.rj.gov.br/projetoDub",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "EFD – Consulta das entregas de EFD ICMS -IPI",
+        "descricao": "",
+        "link": "https://ssa.fazenda.rj.gov.br/ssa/?appf=EFD-Painel",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "GIA-ICMS – Consulta Entrega de Declarações",
+        "descricao": "",
+        "link": "https://www10.fazenda.rj.gov.br/SATI-GIAICMS/pages/consultar/declaracao.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "GIA-ICMS – Consulta omisso de entrega",
+        "descricao": "",
+        "link": "https://www10.fazenda.rj.gov.br/SATI-GIAICMS/pages/consultar/omissos.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "GIA-ICMS – Testes e verificações antes da trasmissão GIA-ICMS",
+        "descricao": "",
+        "link": "https://www10.fazenda.rj.gov.br/SATI-GIAICMS/pages/validar/arquivo.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "GIA-ICMS – Transmissão da GIA-ICMS",
+        "descricao": "",
+        "link": "https://www10.fazenda.rj.gov.br/SATI-GIAICMS/pages/transmitir/arquivo.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "GIA-ST – Consulta ao comunicado de recebimento ou de não aceite",
+        "descricao": "",
+        "link": "https://giast-web.fazenda.rj.gov.br/SATI-GIAST/pages/consultar/consultaGIAOmissos.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "GIA-ST – Consulta Entrega de Declarações",
+        "descricao": "",
+        "link": "https://giast-web.fazenda.rj.gov.br/SATI-GIAST/pages/consultar/consultaConfirmacaoEntrega.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "GIA-ST – Consulta omissos de entrega",
+        "descricao": "",
+        "link": "https://giast-web.fazenda.rj.gov.br/SATI-GIAST/pages/consultar/consultaGIAOmissos.xhtml",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Sistema SD-ITD",
+        "descricao": "",
+        "link": "https://ssa.fazenda.rj.gov.br/ssa/?appf=SD-ITD",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Sistema de Controle de Declarações de Importação – Fiel Depositário",
+        "descricao": "",
+        "link": "https://scdi-fiel-depositario.fazenda.rj.gov.br/projetoFielDepositario/faces/pages/identificaFielDepositario/IdentificaFielDepositario.xhtml?certlogin=1",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Sistema de Controle de Declarações de Importação – Representante Legal",
+        "descricao": "",
+        "link": "https://scdi.fazenda.rj.gov.br/projetoCDI/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Declarações econômico-fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Comunicação/cancelamento de opção pela forma de emissão de documentos fiscais prevista no Convênio 115/03",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=72",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Documentos fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "NFAe – Emissão de Nota Fiscal Avulsa",
+        "descricao": "",
+        "link": "https://nfae.fazenda.rj.gov.br/sefaz-dfe-nfae/paginas/inicio.faces",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Documentos fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "DEC/Consulta Pública DEC",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/dec/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Domicílio eletrônico"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar autorização de participação em evento (casos especiais)",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=329",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Feiras e eventos"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar autorização para participação em evento (empresas do RJ e MEI-RJ)",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=327",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Feiras e eventos"
+          }
+        ]
+      },
+      {
+        "titulo": "Comunicar realização de evento",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=326",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Feiras e eventos"
+          }
+        ]
+      },
+      {
+        "titulo": "Atualizar condutores autorizados no termo do convênio ICMS 38/2012",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=289",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Isenções e Benefícios Fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Apresentar nota fiscal referente à colocação de acessório ou de adaptação de veículo relativo ao Convênio ICMS 38/2012 quando não tiver saído de fábrica com as características específicas",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=285",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Isenções e Benefícios Fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar processamento de Ressarcimento ST",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=536",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Isenções e Benefícios Fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Reconhecimento de isenção de ICMS na compra de veículo novo por pessoa com deficiência ou autista",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=283",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Isenções e Benefícios Fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Benefícios – manual",
+        "descricao": "",
+        "link": "https://legislacao.fazenda.rj.gov.br/wcc/?web_id=WCC262789",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Isenções e Benefícios Fiscais"
+          }
+        ]
+      },
+      {
+        "titulo": "Calculadora Tributária",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=545",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar pagamentos de IPVA",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=336",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar parcelamentos tributários",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=324",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "DARJ IPVA (Consulta de débitos do IPVA e emissão de DARJ)",
+        "descricao": "",
+        "link": "https://darj-ipva-web.fazenda.rj.gov.br/darj-ipva-web/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão DARJ",
+        "descricao": "",
+        "link": "https://www.fazenda.rj.gov.br/pagamento",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de DARJ em lote",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/pagamentos/emissao-em-lote-darj/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão GNRE",
+        "descricao": "",
+        "link": "https://www.gnre.pe.gov.br:444/gnre/portal/GNRE_Principal.jsp",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir pagamento de ITD",
+        "descricao": "",
+        "link": "https://www.fazenda.rj.gov.br/pagamento",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão GRE",
+        "descricao": "",
+        "link": "https://sisgre-front.fazenda.rj.gov.br/sisgre-front/#/gerar-gre-publica?sefaz=",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Parcelar débitos de ITD",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=334",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Parcelamento de débitos",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/pagamentos/parcelamento-de-debitos/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "IPVA em Dia – Parcelar débitos de IPVA",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=323",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Reimpressão de DARJ",
+        "descricao": "",
+        "link": "https://www1.fazenda.rj.gov.br/portaldepagamentos/br/gov/rj/sef/gct/web/reimpressaoboleto/ReimpressaoBoletoController.jpf",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "Portal de Pagamentos",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/pagamentos/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Pagamentos e Parcelamentos"
+          }
+        ]
+      },
+      {
+        "titulo": "IPVA",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/ipva/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "ITD",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/itd/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Junta de Revisão Fiscal",
+        "descricao": "",
+        "link": "https://portal2.fazenda.rj.gov.br/junta-revisao-fiscal",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Transparência",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/transparencia/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "GRE",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/gre/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "SIAFE-RIO",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/siafe-rio/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Portal de Transparência da Receita Estadual",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/transparencia-da-receita-estadual/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Portal de Transparência dos Royalties do Petróleo",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/petroleo/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Portal do Cadastro de Contribuintes do ICMS",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/cadastro/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Portal do Tesouro",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/tesouro",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Pregão Eletrônico – Licitações",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/licitacoes/pregao-eletronico",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Ouvidoria",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/ouvidoria",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Controle Interno",
+        "descricao": "",
+        "link": "https://portal.fazenda.rj.gov.br/controle-interno/",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Portais"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar outorga de procuração eletrônica (e-procuração) a pedido por baixa de CNPJ",
+        "descricao": "",
+        "link": "https://atendimentodigitalrj.fazenda.rj.gov.br/pages/servico.faces?id=7",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Procuração eletrônica"
+          }
+        ]
+      },
+      {
+        "titulo": "e-Procuração",
+        "descricao": "",
+        "link": "https://ssa.fazenda.rj.gov.br/ssa/?appf=PRCE",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Procuração eletrônica"
+          }
+        ]
+      },
+      {
+        "titulo": "Formulário Eletrônico de Requerimento",
+        "descricao": "",
+        "link": "http://www4.fazenda.rj.gov.br/eprocuracao/publico/solicitacao-procuracao/cadastro.jsf",
+        "orgao": "SEFAZ-RJ",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Procuração eletrônica"
+          }
+        ]
+      }
+    ]
+  }
+}

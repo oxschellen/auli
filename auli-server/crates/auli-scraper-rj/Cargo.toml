@@ -1,0 +1,14 @@
+[package]
+name = "auli-scraper-rj"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-RJ (serviços, catálogo "Nossos Serviços" — WordPress server-rendered, UMA página,
+# 1 GET por raspagem). Sem headless, sem JSON: ureq + parse HTML. Depende de auli-contract + o kit —
+# nunca de fastembed/ort. Decisões D-RJ1..5 em auli_pendencias.md / plano-scraper-rj.md.
+[dependencies]
+auli-contract = { path = "../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = "3"
+scraper = "0.27.0"
+anyhow = "1"
