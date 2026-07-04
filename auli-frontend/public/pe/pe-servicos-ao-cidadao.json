@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+    "tipo": "Cidadãos",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://efisco.sefaz.pe.gov.br/",
+    "titulo": "e-Fisco - ARE Virtual",
+    "descricao": ""
+  },
+  {
+    "id": 2,
+    "tipo": "Cidadãos",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Nota-Fiscal-Avulsa/Paginas/default.aspx",
+    "titulo": "Nota Fiscal Avulsa Eletrônica",
+    "descricao": ""
+  },
+  {
+    "id": 3,
+    "tipo": "Cidadãos",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Paginas/DAE-10.aspx",
+    "titulo": "DAE 10",
+    "descricao": ""
+  },
+  {
+    "id": 4,
+    "tipo": "Cidadãos",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/Paginas/DAE-20.aspx",
+    "titulo": "DAE 20",
+    "descricao": ""
+  },
+  {
+    "id": 5,
+    "tipo": "Cidadãos",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.gnre.pe.gov.br:444/gnre/portal/GNRE_Principal.jsp",
+    "titulo": "GNRE Online",
+    "descricao": ""
+  },
+  {
+    "id": 6,
+    "tipo": "Cidadãos",
+    "classe": "Tributos",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/IPVA",
+    "titulo": "IPVA - e demais serviços para Veículos",
+    "descricao": ""
+  },
+  {
+    "id": 7,
+    "tipo": "Cidadãos",
+    "classe": "Tributos",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/ICMS",
+    "titulo": "ICMS",
+    "descricao": ""
+  },
+  {
+    "id": 8,
+    "tipo": "Cidadãos",
+    "classe": "Tributos",
+    "orgao": "SEFAZ-PE",
+    "link": "https://www.sefaz.pe.gov.br/Servicos/ICD",
+    "titulo": "ICD - Causa Mortis e Doações",
+    "descricao": ""
+  },
+  {
+    "id": 9,
+    "tipo": "Cidadãos",
+    "classe": "Tributos",
+    "orgao": "SEFAZ-PE",
+    "link": "https://efisco.sefaz.pe.gov.br/sfi_trb_gpf/PREmitirCertidaoNegativaNarrativaDebitoFiscal",
+    "titulo": "CND - Certidão Negativa de Débitos",
+    "descricao": ""
+  }
+]

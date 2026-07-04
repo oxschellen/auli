@@ -54,3 +54,11 @@ uf = "MG"
 state = "Minas Gerais"
 prompt = "prompts/mg.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "pe"
+name = "SEFAZ-PE"
+uf = "PE"
+state = "Pernambuco"
+prompt = "prompts/pe.txt"
+collections = ["servicos"]
