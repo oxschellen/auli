@@ -53,6 +53,10 @@ web_config.txt
 *.swp
 *~
 
+# ── Claude Code: commit the shared settings.json (like auli-collections/.claude/), but keep
+#    the per-user settings.local.json out of git ──
+/.claude/settings.local.json
+
 # Data integration (root data/): generated artifacts ignored; prompts/ and <id>/ref/ are versioned
 data/*/raw/
 data/*/raw/cache/
