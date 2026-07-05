@@ -1,0 +1,14 @@
+[
+  {
+    "tipo": "Pessoa Física",
+    "filename": "pessoa-fisica"
+  },
+  {
+    "tipo": "Pessoa Jurídica",
+    "filename": "pessoa-juridica"
+  },
+  {
+    "tipo": "Órgãos Públicos",
+    "filename": "orgaos-publicos"
+  }
+]

@@ -78,7 +78,7 @@ Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
 
 1. **Raspar** (rede, **sem headless**) → grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (v3):
-   `auli-scraper-<id> servicos` para cada uma das **13 entidades** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go/pi); o RS
+   `auli-scraper-<id> servicos` para cada uma das **14 entidades** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go/pi/am); o RS
    também aceita `faqs`/`all`. `--usecache` reusa o cache de páginas (offline, sem rede).
    > **Dependência de runtime do `go`:** o `auli-scraper-go` chama o binário **`curl`** (no PATH) para
    > os GETs de catálogo — a API de GO fica atrás de um WAF que bloqueia o fingerprint TLS do `ureq`
