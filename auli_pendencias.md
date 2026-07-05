@@ -86,14 +86,13 @@ o scraper, a UI e o engine falam um vocabulário só. Os packs saem `<id>-servic
 
 ---
 
-## 6. Conteúdo dos docs de scrapers desatualizado — **pendente (PR próprio)**
+## 6. Conteúdo dos docs de scrapers desatualizado — ✅ **resolvido**
 
-A frota foi movida para `crates/scrapers/` (refactor de layout, só caminhos). Mas o **conteúdo**
-de `auli_code.md` §5 (tabela de scrapers) e do runbook `auli_operations.md` está atrasado:
-param no **MG** (listam 5–6 scrapers, faltam pe/ba/rj/ce) e descrevem o **RS com headless
-Chrome**, quando hoje o RS é **API JSON** (`tudofacil`) e são **9 entidades**. A referência viva e
-correta é [`crates/scrapers/SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md). Atualizar o
-conteúdo dessas duas docs num PR próprio (não misturar com o refactor de movimento).
+`auli_code.md` (§3.1 layout, §5 scrapers/cobertura, §7 resumo) e o runbook `auli_operations.md`
+foram atualizados para as **9 entidades**: RS descrito como **API JSON `tudofacil`** (não mais
+headless), tabela/cobertura completas (pe/ba/rj/ce), contagens atuais, o rótulo `snapshot v2 → v3`,
+e a nota do `auli-docs/` obsoleto removida. Referência viva:
+[`crates/scrapers/SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).
 
 ---
 
