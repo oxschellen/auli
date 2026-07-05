@@ -35,7 +35,6 @@ use ureq::Agent;
 use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://atendimento2.fazenda.mg.gov.br";
-const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 
 /// sys_id do Service Portal "csm" (header `X-Portal` + param `portal_id`). Sem ele a page API
 /// responde sem os dados dos widgets. Estável enquanto a SEF-MG não recriar o portal.
@@ -99,7 +98,7 @@ struct Section {
 /// `publicos_ordem`, prontos para o `aggregate_servicos` dobrar no snapshot.
 type ScrapeResult = (auli_scraper_kit::PerPublicoServicos, Vec<auli_contract::Publico>);
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // 1. Categorias, da página inicial do catálogo.
     let home = fetch_page(data_dir, &agent, "csm_catalogo_de_servicos", &[], use_cache)?;
