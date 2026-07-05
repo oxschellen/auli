@@ -6,7 +6,7 @@
     "versao": "0.1.0"
   },
   "coleta": {
-    "coletado_em": "2026-07-04T22:30:48.9580158Z",
+    "coletado_em": "2026-07-05T02:30:54.786955117Z",
     "publicos_ordem": [
       {
         "nome": "Serviços",
@@ -1372,8 +1372,8 @@
       },
       {
         "titulo": "Parcelar Auto de Infração",
-        "descricao": "Parcelar débitos originados da lavratura de auto de infração.",
-        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f2e170f5a26dc57fd6b",
+        "descricao": "Solicitar o parcelamento de autos de infração",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f60170f5a26dc595d2b",
         "orgao": "SEFAZ-CE",
         "ocorrencias": [
           {
@@ -1384,8 +1384,8 @@
       },
       {
         "titulo": "Parcelar Auto de Infração",
-        "descricao": "Solicitar o parcelamento de autos de infração",
-        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f60170f5a26dc595d2b",
+        "descricao": "Parcelar débitos originados da lavratura de auto de infração.",
+        "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f2e170f5a26dc57fd6b",
         "orgao": "SEFAZ-CE",
         "ocorrencias": [
           {
