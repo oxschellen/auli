@@ -44,7 +44,7 @@ fn run_servicos(use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
     // Montagem direta de `ServicoRaw` (padrão SP/RJ): a identidade é o `_id` do documento e o
     // `aggregate_servicos` (que deduplica por link) não se aplica.
     let (items, publicos_ordem) = ce::scrape(DATA_DIR, use_cache)?;
-    auli_scraper_kit::snapshot::write_servicos(
+    auli_contract::snapshot::write_servicos(
         ENTITY,
         DATA_DIR,
         &scraper_info(),

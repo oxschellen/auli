@@ -3,9 +3,13 @@ name = "auli-contract"
 version = "0.1.0"
 edition = "2024"
 
-# Crate "magro" de contrato: APENAS serde. Nenhuma dependência pesada (sem fastembed/ort/aws-lc),
-# para que tanto o scraper (auli-collections) quanto o engine possam depender dele sem arrastar a
-# árvore do ONNX Runtime. É o lugar único onde produtor e consumidor concordam sobre a forma do dado.
+# Crate LEVE de contrato: serde/serde_json + anyhow/time (I/O do snapshot — D-C1). NUNCA rede
+# (ureq), fastembed/ort ou aws-lc: tanto os scrapers quanto o engine dependem dele sem arrastar
+# a árvore do ONNX Runtime. É o lugar único onde produtor e consumidor concordam sobre a forma do
+# dado — e, desde a D-C1, também sobre o caminho, a versão e a leitura/escrita da fronteira.
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+anyhow = "1"
+# `coletado_em` (RFC 3339, UTC) do snapshot.
+time = { version = "0.3", features = ["formatting"] }

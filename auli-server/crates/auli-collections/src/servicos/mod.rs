@@ -217,10 +217,10 @@ mod tests {
         let Ok(root) = std::env::var("AULI_GOLDEN_DATA") else { return };
         let rs_raw = format!("{}/rs/raw", root);
 
-        let faqs = auli_scraper_kit::snapshot::load::<auli_contract::ColetaFaqs>("rs", &rs_raw, "faqs")
+        let faqs = auli_contract::snapshot::load::<auli_contract::ColetaFaqs>("rs", &rs_raw, "faqs")
             .unwrap();
         let servicos =
-            auli_scraper_kit::snapshot::load::<auli_contract::ColetaServicos>("rs", &rs_raw, "servicos")
+            auli_contract::snapshot::load::<auli_contract::ColetaServicos>("rs", &rs_raw, "servicos")
                 .unwrap()
                 .expect("snapshot de serviços rs ausente — rode o scraper primeiro");
 
@@ -256,7 +256,7 @@ mod tests {
         // Per-público: multiset (link, classe, titulo, orgao) idêntico ao golden (multi-classe incl.).
         for pubx in &servicos.coleta.publicos_ordem {
             let key = |bytes: &[u8]| {
-                let v: Vec<auli_scraper_kit::Servico> = serde_json::from_slice(bytes).unwrap();
+                let v: Vec<auli_contract::ServicoPerPublico> = serde_json::from_slice(bytes).unwrap();
                 let mut k: Vec<_> = v
                     .iter()
                     .map(|s| format!("{}|{}|{}|{}", s.link, s.classe, s.titulo, s.orgao))

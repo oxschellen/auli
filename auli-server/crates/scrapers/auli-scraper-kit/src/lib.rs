@@ -1,21 +1,19 @@
-//! `auli-scraper-kit` — apoio compartilhado dos scrapers por entidade.
+//! `auli-scraper-kit` — apoio compartilhado dos scrapers por entidade: o **como raspar**.
 //!
-//! Reúne o que `auli-scraper-rs` e `auli-scraper-sc` têm em comum, sem arrastar o engine:
-//! - [`snapshot`]: I/O do *snapshot de coleta* (load/merge/save, `coletado_em` UTC);
 //! - [`cache`]: cache de páginas em disco, por URL lógica;
 //! - [`build_agent`]: builder do agent `ureq` (User-Agent + timeout);
-//! - [`Servico`]: o registro de um serviço raspado (entrada da agregação);
-//! - [`aggregate_servicos`]: agrega os serviços per-público em `ServicoRaw` (para o snapshot).
+//! - [`aggregate_servicos`] (+ [`descricao_body`], [`PerPublicoServicos`]): agrega os serviços
+//!   per-público em `ServicoRaw` para o snapshot.
 //!
-//! Depende só de `auli-contract` + rede/serde — nada de fastembed/ort/vector-store.
+//! A **fronteira** (tipos, versão, caminho e I/O do snapshot — incluindo o shape per-público
+//! `ServicoPerPublico`) mora no `auli-contract` (D-C1): produtor e consumidor usam as mesmas
+//! funções de lá. Este kit é exclusivo dos scrapers — nada fora de `crates/scrapers/` depende
+//! dele, e ele nunca depende de fastembed/ort/vector-store.
 
 pub mod cache;
-pub mod snapshot;
 
 mod aggregate;
 mod agent;
-mod servico;
 
 pub use aggregate::{PerPublicoServicos, aggregate_servicos, descricao_body};
 pub use agent::build_agent;
-pub use servico::Servico;

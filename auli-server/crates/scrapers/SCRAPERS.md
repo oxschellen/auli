@@ -19,8 +19,9 @@ Todos os scrapers seguem o mesmo esqueleto:
   registry** — a entidade é hard-coded no crate.
 - **Sem navegador headless.** Nenhum crate depende de `headless_chrome` (o RS já usou, hoje não).
   Doutrina vigente: *discovery-first; API JSON > HTML server-side; navegador nunca*.
-- Dependem de **`auli-contract`** (tipos do snapshot) + **`auli-scraper-kit`** (agent `ureq`,
-  cache em disco, agregação, I/O do snapshot) — **nunca** de `fastembed`/`ort`/vector-store.
+- Dependem de **`auli-contract`** (tipos + I/O do snapshot, shape per-público) +
+  **`auli-scraper-kit`** (agent `ureq`, cache em disco, agregação) — **nunca** de
+  `fastembed`/`ort`/vector-store. Recíproca (D-C1): nada fora de `scrapers/` depende do kit.
 - **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS também aceita `faqs`).
 - **Saída:** `data/<id>/<id>-servicos-snapshot.json` (schema v3), gravado por
   `kit::snapshot::write_servicos`. Cache de páginas/respostas em `data/<id>/raw/cache/` (gitignored).

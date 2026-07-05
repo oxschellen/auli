@@ -13,7 +13,8 @@ use ureq::Agent;
 use ureq::tls::{TlsConfig, TlsProvider};
 
 use auli_contract::Publico;
-use auli_scraper_kit::{PerPublicoServicos, Servico};
+use auli_scraper_kit::PerPublicoServicos;
+use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://portal.sefaz.ba.gov.br";
 const SEED_URL: &str = "https://portal.sefaz.ba.gov.br/scripts/cartadeservicos/index.asp";

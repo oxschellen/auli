@@ -8,7 +8,8 @@ members = [
     "crates/auli-collections",
     # Toda a frota de scrapers (kit + entidades). Glob: entidade nova não toca este arquivo.
     # Invariante: tudo sob `scrapers/` compila leve — depende no máximo de `auli-contract` +
-    # `auli-scraper-kit`, NUNCA de fastembed/ort/auli-core.
+    # `auli-scraper-kit`, NUNCA de fastembed/ort/auli-core. E vale a recíproca (D-C1): NADA fora
+    # de `scrapers/` depende de nada aqui dentro — a fronteira (tipos + I/O) mora no contrato.
     "crates/scrapers/*",
 ]
 

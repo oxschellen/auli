@@ -65,7 +65,7 @@ pub fn run(source: &FaqSource) -> Result<()> {
     std::fs::write(&tree_path, serde_json::to_string_pretty(&tree)?)?;
     println!("Wrote {} (árvore de FAQ p/ o frontend)", tree_path);
 
-    auli_scraper_kit::snapshot::write_faqs(
+    auli_contract::snapshot::write_faqs(
         &source.id,
         &source.data_dir,
         &crate::scraper_info(),

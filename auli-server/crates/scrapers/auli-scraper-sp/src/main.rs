@@ -45,7 +45,7 @@ fn run_servicos(use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
     // monta os `ServicoRaw` direto (um por serviço do catálogo, com suas ocorrências) em vez de passar
     // pelo `aggregate_servicos` do kit (que dedupa por link).
     let (items, publicos_ordem) = scrape::scrape(DATA_DIR, use_cache)?;
-    auli_scraper_kit::snapshot::write_servicos(
+    auli_contract::snapshot::write_servicos(
         ENTITY,
         DATA_DIR,
         &scraper_info(),

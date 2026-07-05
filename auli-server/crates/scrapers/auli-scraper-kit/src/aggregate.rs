@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
 use auli_contract::{Ocorrencia, ServicoRaw};
-
-use crate::Servico;
+use auli_contract::ServicoPerPublico as Servico;
 
 /// Serviços agrupados por público (rótulo do público, serviços daquele público), na ordem de
 /// exibição — a entrada de [`aggregate_servicos`].
