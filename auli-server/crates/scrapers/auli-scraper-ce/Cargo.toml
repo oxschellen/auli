@@ -8,7 +8,7 @@ edition = "2024"
 # fresh do shell público a cada rodada (efêmero). Depende de auli-contract + o kit — nunca de
 # fastembed/ort. Decisões D-CE1..4 no plano-scraper-ce.md / PR.
 [dependencies]
-auli-contract = { path = "../auli-contract" }
+auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
 ureq = { version = "3", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }

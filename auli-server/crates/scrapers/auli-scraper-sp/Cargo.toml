@@ -7,7 +7,7 @@ edition = "2024"
 # headless_chrome e sem parser HTML (as descrições do card são texto puro). Depende de auli-contract
 # + o kit — nunca de fastembed/ort.
 [dependencies]
-auli-contract = { path = "../auli-contract" }
+auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
 ureq = { version = "3", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }

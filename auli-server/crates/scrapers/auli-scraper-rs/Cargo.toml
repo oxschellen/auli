@@ -7,7 +7,7 @@ edition = "2024"
 # de serviços vêm do endpoint JSON interno do CMS. Depende de auli-contract + o kit — NUNCA de
 # fastembed/ort/vector-store: compila leve, sem WSL.
 [dependencies]
-auli-contract = { path = "../auli-contract" }
+auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
 ureq = { version = "3", features = ["json"] }
 scraper = "0.27.0"
