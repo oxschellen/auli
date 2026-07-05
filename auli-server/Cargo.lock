@@ -225,7 +225,9 @@ dependencies = [
 name = "auli-scraper-kit"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "auli-contract",
+ "serde_json",
  "ureq",
 ]
 

@@ -14,7 +14,6 @@
 
 use std::collections::BTreeMap;
 use std::sync::LazyLock;
-use std::thread::sleep;
 use std::time::Duration;
 
 use regex::Regex;
@@ -22,9 +21,9 @@ use serde::Deserialize;
 use ureq::Agent;
 
 use auli_contract::ServicoPerPublico as Servico;
+use auli_scraper_kit::http::GetOpts;
 
 const BASE: &str = "https://www.sef.sc.gov.br";
-const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 
 // SC embeds links as wiki-style `[[https://url anchor text]]` (and bare `[[https://url]]`) inside its
 // text fields. Normalize them to the `anchor "url"` form RS uses, so the RAG text reads consistently.
@@ -148,7 +147,7 @@ impl<'de> Deserialize<'de> for StringOrNum {
 /// per-público files during the scrape — the fan-out is now `process`'s job.
 type ScrapeResult = (auli_scraper_kit::PerPublicoServicos, Vec<auli_contract::Publico>);
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     let build_id = discover_build_id(data_dir, &agent, use_cache)?;
     println!("SC buildId: {}", build_id);
@@ -363,41 +362,21 @@ fn fetch_cached(
     data_url: &str,
     use_cache: bool,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, logical_url) {
+    // A chave de cache é a URL lógica (sem buildId); o fetch é a `data_url`. O retry/backoff é o
+    // `kit::http::get_string` (bridge map_err p/ o Box<dyn Error> deste crate).
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, logical_url, use_cache)
+        .map_err(|e| e.to_string())?
+    {
         return Ok(cached);
     }
-    if use_cache {
-        return Err(format!("cache miss para {} (modo --usecache, sem rede)", logical_url).into());
-    }
-
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last_error = String::new();
-
-    for attempt in 1..=max_attempts {
-        match agent.get(data_url).call() {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(body) if !body.trim().is_empty() => {
-                    auli_scraper_kit::cache::write(data_dir, logical_url, &body);
-                    return Ok(body);
-                }
-                Ok(_) => last_error = "resposta vazia".to_string(),
-                Err(e) => last_error = e.to_string(),
-            },
-            Err(e) => last_error = e.to_string(),
-        }
-
-        if attempt < max_attempts {
-            eprintln!(
-                "SC: requisição falhou para {} (tentativa {}/{}): {}. Retentando em {:?}...",
-                data_url, attempt, max_attempts, last_error, delay
-            );
-            sleep(delay);
-            delay = delay.saturating_mul(2);
-        }
-    }
-
-    Err(format!("falha ao buscar {}: {}", data_url, last_error).into())
+    let body = auli_scraper_kit::http::get_string(
+        agent,
+        data_url,
+        &GetOpts { log_prefix: "SC", ..Default::default() },
+    )
+    .map_err(|e| e.to_string())?;
+    auli_scraper_kit::cache::write(data_dir, logical_url, &body);
+    Ok(body)
 }
 
 #[cfg(test)]

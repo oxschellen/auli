@@ -14,19 +14,18 @@
 //! portal devolveu 1× a página vazia. Pela mesma razão, o cache só é gravado DEPOIS dos guards.
 
 use std::collections::{HashMap, HashSet};
-use std::thread::sleep;
 use std::time::Duration;
 
 use anyhow::{Result, anyhow, bail};
 use auli_contract::{Ocorrencia, Publico, ServicoRaw};
+use auli_scraper_kit::clean;
+use auli_scraper_kit::http::GetOpts;
 use scraper::{ElementRef, Html, Selector};
 
 /// A página única do catálogo (D-RJ1).
 pub const CATALOGO_URL: &str = "https://portal2.fazenda.rj.gov.br/nossos-servicos/";
 /// Host para absolutizar links relativos.
 const BASE: &str = "https://portal2.fazenda.rj.gov.br";
-const USER_AGENT: &str =
-    "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
 
 /// O público único do RJ (D-RJ4).
 const PUBLICO_NOME: &str = "Serviços";
@@ -91,36 +90,16 @@ pub fn scrape(
 /// NÃO grava o cache — quem grava é o [`scrape`], depois dos guards (D-RJ5). Retorna
 /// `(html, veio_do_cache)`.
 fn fetch_catalogo(data_dir: &str, use_cache: bool) -> Result<(String, bool)> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, CATALOGO_URL) {
-        println!("Cache hit (catálogo): {}", CATALOGO_URL);
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, CATALOGO_URL, use_cache)? {
         return Ok((cached, true));
     }
-    if use_cache {
-        bail!("cache miss para {} (modo --usecache, sem rede)", CATALOGO_URL);
-    }
-
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
-
-    println!("Fetching: {}", CATALOGO_URL);
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last = anyhow!("sem tentativa");
-    for attempt in 1..=max_attempts {
-        match agent.get(CATALOGO_URL).call() {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(body) if !body.trim().is_empty() => return Ok((body, false)),
-                Ok(_) => last = anyhow!("resposta vazia"),
-                Err(e) => last = anyhow!(e.to_string()),
-            },
-            Err(e) => last = anyhow!(e.to_string()),
-        }
-        if attempt < max_attempts {
-            eprintln!("⚠️  RJ: tentativa {} falhou ({}); retentando…", attempt, last);
-            sleep(delay);
-            delay *= 2;
-        }
-    }
-    Err(anyhow!("falha ao buscar {} após {} tentativas: {}", CATALOGO_URL, max_attempts, last))
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let body = auli_scraper_kit::http::get_string(
+        &agent,
+        CATALOGO_URL,
+        &GetOpts { log_prefix: "RJ", ..Default::default() },
+    )?;
+    Ok((body, false))
 }
 
 /// Faz o parse da página inteira: menu → categorias na ordem; seção de cada categoria → itens;
@@ -341,11 +320,6 @@ fn validar(catalogo: &Catalogo) -> Result<()> {
         );
     }
     Ok(())
-}
-
-/// Normaliza texto: tira zero-width/nbsp e comprime espaços (padrão SP).
-fn clean(s: &str) -> String {
-    s.replace('\u{200b}', "").replace('\u{00a0}', " ").split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 /// URL canônica do item: trim; absoluto fica; protocol-relative ganha `https:`; relativo `/…`

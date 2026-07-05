@@ -11,15 +11,16 @@ use ureq::Agent;
 
 use auli_contract::Publico;
 use auli_scraper_kit::PerPublicoServicos;
+use auli_scraper_kit::http::GetOpts;
 use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://www.sefaz.pe.gov.br";
 // A home renderiza o menu global completo (verificado também em páginas internas — o menu vem da
 // masterpage `master2013`, presente em todas).
 const SEED_URL: &str = "https://www.sefaz.pe.gov.br/";
-// D-PE4: UA de navegador, como nos demais scrapers (o robots.txt do portal é restritivo a crawlers
-// genéricos; a coleta é de baixíssima frequência e volume mínimo — 1 GET por rodada na fase 1).
-const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
+// D-PE4: UA de navegador (o `kit::USER_AGENT` da frota — o robots.txt do portal é restritivo a
+// crawlers genéricos; a coleta é de baixíssima frequência e volume mínimo — 1 GET por rodada na
+// fase 1).
 // Cortesia entre fetches de rede (irrelevante na fase 1 com 1 GET; vale para uma futura fase 2).
 const COURTESY: Duration = Duration::from_millis(400);
 /// D-PE2: itens de topo (sem subgrupo) recebem esta classe; itens sob subgrupo recebem o texto do
@@ -46,7 +47,7 @@ struct MenuItem {
 
 /// Raspa os serviços do PE e devolve os per-público (na ordem do menu) + a ordem dos públicos.
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Vec<Publico>)> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // 1. Seed: a home, com o menu global.
     let seed = fetch(&agent, data_dir, SEED_URL, use_cache)?;
@@ -184,48 +185,29 @@ fn canonical(href: &str) -> Option<String> {
 }
 
 /// Texto de um elemento com whitespace colapsado (o HTML do portal tem dezenas de `\n` dentro dos
-/// `<a>`) e entidades comuns decodificadas pelo próprio parser.
+/// `<a>`) e entidades comuns decodificadas pelo próprio parser. O squeeze é o `kit::clean`.
 fn text(el: &ElementRef) -> String {
-    el.text().collect::<String>().split_whitespace().collect::<Vec<_>>().join(" ")
+    auli_scraper_kit::clean(&el.text().collect::<String>())
 }
 
 fn sel(s: &str) -> Selector {
     Selector::parse(s).expect("seletor CSS inválido")
 }
 
-/// Busca (ou lê do cache) a página `url`. Em `--usecache` um miss é erro (sem rede). Cortesia entre
-/// fetches de rede; retry com backoff.
+/// Busca (ou lê do cache) a página `url`. Em `--usecache` um miss é erro (sem rede). O retry/backoff
+/// é o `kit::http::get_string`; o wrapper mantém o cache-write e a cortesia entre fetches de rede.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)? {
         return Ok(cached);
     }
-    if use_cache {
-        bail!("cache miss para {} (modo --usecache, sem rede)", url);
-    }
-
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last = anyhow!("sem tentativa");
-    for attempt in 1..=max_attempts {
-        match agent.get(url).call() {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(body) if !body.trim().is_empty() => {
-                    auli_scraper_kit::cache::write(data_dir, url, &body);
-                    sleep(COURTESY);
-                    return Ok(body);
-                }
-                Ok(_) => last = anyhow!("resposta vazia"),
-                Err(e) => last = anyhow!(e.to_string()),
-            },
-            Err(e) => last = anyhow!(e.to_string()),
-        }
-        if attempt < max_attempts {
-            eprintln!("PE: falha em {} (tentativa {}/{}): {}. Retentando...", url, attempt, max_attempts, last);
-            sleep(delay);
-            delay = delay.saturating_mul(2);
-        }
-    }
-    Err(anyhow!("falha ao buscar {}: {}", url, last))
+    let body = auli_scraper_kit::http::get_string(
+        agent,
+        url,
+        &GetOpts { log_prefix: "PE", ..Default::default() },
+    )?;
+    auli_scraper_kit::cache::write(data_dir, url, &body);
+    sleep(COURTESY);
+    Ok(body)
 }
 
 #[cfg(test)]

@@ -6,19 +6,20 @@ use std::sync::LazyLock;
 use std::thread::sleep;
 use std::time::Duration;
 
-use anyhow::{Result, anyhow, bail};
+use anyhow::{Result, bail};
 use regex::Regex;
 use scraper::{Html, Selector};
 use ureq::Agent;
 
 use auli_contract::Publico;
 use auli_scraper_kit::PerPublicoServicos;
+use auli_scraper_kit::http::GetOpts;
+use auli_scraper_kit::{clean_decoded, decode_entities};
 use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://www.fazenda.pr.gov.br";
 // Página interna estável com o mega-menu completo (a raiz pode cair numa splash de campanha).
 const SEED_URL: &str = "https://www.fazenda.pr.gov.br/Pagina/Carta-de-servicos";
-const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
 // Cortesia entre fetches de detalhe (portal marca noindex; coleta de baixa frequência — D-PR6).
 const COURTESY: Duration = Duration::from_millis(400);
 
@@ -45,7 +46,7 @@ struct MenuItem {
 
 /// Raspa os serviços do PR e devolve os per-público (na ordem do menu) + a ordem dos públicos.
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Vec<Publico>)> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // 1. Seed com o mega-menu.
     let seed = fetch(&agent, data_dir, SEED_URL, use_cache)?;
@@ -234,7 +235,7 @@ fn normalize_body_links(html: &str) -> String {
     LINK_RE
         .replace_all(html, |c: &regex::Captures| {
             let href = c[1].trim();
-            let texto = clean_inline(&strip_tags(&c[2]));
+            let texto = clean_decoded(&strip_tags(&c[2]));
             if href.starts_with('#') || href.starts_with("javascript:") {
                 return texto;
             }
@@ -259,12 +260,8 @@ fn strip_tags(html: &str) -> String {
     TAG_RE.replace_all(html, "").into_owned()
 }
 
-/// Decodifica as entidades comuns e comprime espaços numa linha só.
-fn clean_inline(s: &str) -> String {
-    decode_entities(s).split_whitespace().collect::<Vec<_>>().join(" ")
-}
-
-/// Normaliza por linha (comprime espaços, decodifica entidades) e descarta linhas vazias.
+/// Normaliza por linha (comprime espaços, decodifica entidades) e descarta linhas vazias. Line-based
+/// (preserva quebras) — semântica própria do formato, fica local; usa `kit::decode_entities`.
 fn clean_text(s: &str) -> String {
     decode_entities(s)
         .lines()
@@ -274,18 +271,8 @@ fn clean_text(s: &str) -> String {
         .join("\n")
 }
 
-fn decode_entities(s: &str) -> String {
-    s.replace("&nbsp;", " ")
-        .replace("&amp;", "&")
-        .replace("&lt;", "<")
-        .replace("&gt;", ">")
-        .replace("&quot;", "\"")
-        .replace("&#39;", "'")
-        .replace("&aacute;", "á")
-}
-
 fn text(el: &scraper::ElementRef) -> String {
-    clean_inline(&el.text().collect::<String>())
+    clean_decoded(&el.text().collect::<String>())
 }
 
 /// URL canônica de um serviço: só `/servicos/...` viram serviço (D-PR5); host `www.fazenda.pr.gov.br`,
@@ -314,36 +301,17 @@ fn sel(s: &str) -> Selector {
 /// Busca (ou lê do cache) a página `url`. Em `--usecache` um miss é erro (sem rede). Cortesia entre
 /// fetches de rede.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)? {
         return Ok(cached);
     }
-    if use_cache {
-        bail!("cache miss para {} (modo --usecache, sem rede)", url);
-    }
-
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last = anyhow!("sem tentativa");
-    for attempt in 1..=max_attempts {
-        match agent.get(url).call() {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(body) if !body.trim().is_empty() => {
-                    auli_scraper_kit::cache::write(data_dir, url, &body);
-                    sleep(COURTESY);
-                    return Ok(body);
-                }
-                Ok(_) => last = anyhow!("resposta vazia"),
-                Err(e) => last = anyhow!(e.to_string()),
-            },
-            Err(e) => last = anyhow!(e.to_string()),
-        }
-        if attempt < max_attempts {
-            eprintln!("PR: falha em {} (tentativa {}/{}): {}. Retentando...", url, attempt, max_attempts, last);
-            sleep(delay);
-            delay = delay.saturating_mul(2);
-        }
-    }
-    Err(anyhow!("falha ao buscar {}: {}", url, last))
+    let body = auli_scraper_kit::http::get_string(
+        agent,
+        url,
+        &GetOpts { log_prefix: "PR", ..Default::default() },
+    )?;
+    auli_scraper_kit::cache::write(data_dir, url, &body);
+    sleep(COURTESY);
+    Ok(body)
 }
 
 #[cfg(test)]

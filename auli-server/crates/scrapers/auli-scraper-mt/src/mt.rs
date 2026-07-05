@@ -23,6 +23,8 @@ use std::time::Duration;
 
 use anyhow::{Result, anyhow, bail};
 use auli_contract::{Ocorrencia, Publico, ServicoRaw};
+use auli_scraper_kit::clean;
+use auli_scraper_kit::http::GetOpts;
 use serde::Deserialize;
 
 /// Endpoint público da listagem por órgão (same-origin do portal — `window.BACKEND_ENDPOINT`).
@@ -31,9 +33,6 @@ const DEPARTMENT_URL: &str = "https://portal.mt.gov.br/v1/search/department";
 const DEPARTMENT_SLUG: &str = "secretaria-de-estado-de-fazenda";
 /// Base para as URLs canônicas de detalhe.
 const CATALOG_BASE: &str = "https://portal.mt.gov.br/app/catalog";
-
-const USER_AGENT: &str =
-    "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
 
 /// Fallback para serviço sem `targets` (público) ou sem `category` (classe). 0 hoje; defensivo.
 const GERAL: &str = "Geral";
@@ -69,25 +68,13 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // Chave de cache = o endpoint + o órgão. O cache só grava DEPOIS dos guards (D-RJ5).
     let logical = format!("{}#dept={}", DEPARTMENT_URL, DEPARTMENT_SLUG);
-    let (json, from_cache) = match auli_scraper_kit::cache::read(data_dir, &logical) {
-        Some(cached) => {
-            println!("Cache hit: {}", logical);
-            (cached, true)
-        }
-        None => {
-            if use_cache {
-                return Err(anyhow!(
-                    "cache vazio para o catálogo de MT (modo --usecache, sem rede). Rode uma \
-                     coleta com rede primeiro."
-                )
-                .into());
-            }
-            (fetch_department(&agent)?, false)
-        }
+    let (json, from_cache) = match auli_scraper_kit::cache::read_or_bail(data_dir, &logical, use_cache)? {
+        Some(cached) => (cached, true),
+        None => (fetch_department(&agent)?, false),
     };
 
     let raw: Vec<Item> = parse(&json)?;
@@ -118,31 +105,13 @@ fn fetch_department(agent: &ureq::Agent) -> Result<String> {
         "groups": ["CATALOG"],
         "departmentSlug": DEPARTMENT_SLUG,
     });
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last = anyhow!("sem tentativa");
-    println!("POST {} (departmentSlug={})", DEPARTMENT_URL, DEPARTMENT_SLUG);
-    for attempt in 1..=max_attempts {
-        let sent = agent
-            .post(DEPARTMENT_URL)
-            .header("Accept", "application/json")
-            .header("Origin", "https://portal.mt.gov.br")
-            .send_json(&body);
-        match sent {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(s) if !s.trim().is_empty() => return Ok(s),
-                Ok(_) => last = anyhow!("resposta vazia"),
-                Err(e) => last = anyhow!(e.to_string()),
-            },
-            Err(e) => last = anyhow!(e.to_string()),
-        }
-        if attempt < max_attempts {
-            eprintln!("⚠️  MT: tentativa {} falhou ({}); retentando…", attempt, last);
-            std::thread::sleep(delay);
-            delay *= 2;
-        }
-    }
-    Err(anyhow!("falha ao buscar o catálogo após {} tentativas: {}", max_attempts, last))
+    auli_scraper_kit::http::post_json(
+        agent,
+        DEPARTMENT_URL,
+        &[("Origin", "https://portal.mt.gov.br")],
+        &body,
+        &GetOpts { log_prefix: "MT", accept: Some("application/json"), ..Default::default() },
+    )
 }
 
 /// Parseia o array JSON de serviços.
@@ -246,10 +215,6 @@ fn slugify(s: &str) -> String {
     buf.split('-').filter(|p| !p.is_empty()).collect::<Vec<_>>().join("-")
 }
 
-/// Normaliza texto: tira zero-width/nbsp e comprime espaços (padrão da frota).
-fn clean(s: &str) -> String {
-    s.replace('\u{200b}', "").replace('\u{00a0}', " ").split_whitespace().collect::<Vec<_>>().join(" ")
-}
 
 /// Guard D-MT5: invariante dinâmico `únicos == resultTotal` (a API dá o próprio total), depois o
 /// piso estático de folga. Uma resposta capada (menos itens que o total anunciado) reprova alto.

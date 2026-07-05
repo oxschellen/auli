@@ -20,13 +20,32 @@ Todos os scrapers seguem o mesmo esqueleto:
 - **Sem navegador headless.** Nenhum crate depende de `headless_chrome` (o RS já usou, hoje não).
   Doutrina vigente: *discovery-first; API JSON > HTML server-side; navegador nunca*.
 - Dependem de **`auli-contract`** (tipos + I/O do snapshot, shape per-público) +
-  **`auli-scraper-kit`** (agent `ureq`, cache em disco, agregação) — **nunca** de
-  `fastembed`/`ort`/vector-store. Recíproca (D-C1): nada fora de `scrapers/` depende do kit.
+  **`auli-scraper-kit`** (o cardápio comum abaixo) — **nunca** de `fastembed`/`ort`/vector-store.
+  Recíproca (D-C1): nada fora de `scrapers/` depende do kit.
 - **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS também aceita `faqs`).
 - **Saída:** `data/<id>/<id>-servicos-snapshot.json` (schema v3), gravado por
   `kit::snapshot::write_servicos`. Cache de páginas/respostas em `data/<id>/raw/cache/` (gitignored).
 - **Pipeline downstream:** `auli-collections <id>` (deriva `raw/*.json` + `.txt`) →
   `scripts/build-packs.sh <id>` (vetoriza BGE-M3) → `scripts/build-frontend-public.sh <id>`.
+
+### Cardápio do kit (o "como raspar" compartilhado)
+
+Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/scraper_info):
+
+| Item | O que faz | Quem NÃO usa (exceção documentada) |
+|---|---|---|
+| `kit::http::get_string(agent, url, &GetOpts)` | GET com retry 3× + backoff ×2; `GetOpts { log_prefix, accept, headers, attempts, base_delay }` | ba (charset latin1), mg (headers+`Value`), rs-faqs (infra própria) |
+| `kit::http::post_json(agent, url, headers, body, &GetOpts)` | POST JSON com retry (ce/mt) | — |
+| `kit::clean(s)` | zero-width + nbsp + squeeze | — |
+| `kit::clean_decoded(s)` / `kit::decode_entities(s)` | decode de entidades HTML + squeeze (pr/ba) — **sem** strip de zero-width | — |
+| `kit::cache::read_or_bail(dir, url, use_cache)` | cache-read + miss-vira-erro do `--usecache` | ce (terminador de paginação), rs-faqs (mensagem própria) |
+| `kit::USER_AGENT` | identidade de rede padrão (Firefox/124 Linux) | — (os 3 antigos Chrome eram cópia acidental; recoleta ao vivo confirmou ≡) |
+| `ScraperInfo::new(nome, versao)` (contrato) | substitui o `fn scraper_info()` boilerplate | — |
+
+**Regra do UA:** todo scraper usa `kit::USER_AGENT`. Uma divergência local (portal que exija outro
+UA) deve vir **com comentário do motivo** — senão é drift. As variantes *line-based* de limpeza
+(`clean_text`, que preserva quebras) têm semântica própria por formato e **ficam locais** (ba, mg,
+pr, rs).
 
 ### Modelo de dados (contrato v3)
 

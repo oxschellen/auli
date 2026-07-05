@@ -14,7 +14,6 @@ use ureq::Agent;
 use crate::errors::Result;
 use crate::faqs::html::format_html;
 
-const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
 const ACCEPT: &str = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 const ACCEPT_LANGUAGE: &str = "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7";
 
@@ -50,7 +49,7 @@ fn retry<T>(label: &str, mut op: impl FnMut() -> Result<T>) -> Result<T> {
 
 /// Builds a ureq agent with a browser-like User-Agent. (Accept headers are set per request.)
 pub fn build_agent() -> Agent {
-    auli_scraper_kit::build_agent(USER_AGENT, None)
+    auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, None)
 }
 
 /// Fetches (or reads from cache) the rendered HTML of `url`.

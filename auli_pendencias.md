@@ -156,6 +156,33 @@ validado → RAG responde citando o link canônico `portal.mt.gov.br/app/catalog
 
 ---
 
+## 10. Extração das funções comuns da frota para o kit — ✅ **resolvida (Camada 1)**
+
+As cópias por-entidade de `fetch`/retry, `USER_AGENT`, `clean` e `scraper_info` (~500 linhas
+duplicadas nas 11 entidades) foram extraídas para o `auli-scraper-kit`: `http::{get_string,
+post_json}` (retry + backoff, `GetOpts` com `headers`), `USER_AGENT`, `clean`/`clean_decoded`/
+`decode_entities`, `cache::read_or_bail`; e `ScraperInfo::new` no contrato. **Equivalência provada por
+entidade** (recompute `--usecache` ≡ snapshot commitado, byte a byte) e os 3 UAs Chrome (mg/sc/rs)
+migrados para Firefox com **recoleta ao vivo verificada** (eram cópia acidental, nenhum portal exige
+Chrome). Cardápio + regra do UA em [`SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).
+
+Exceções que ficam locais (com comentário): `fetch` do ba (charset latin1 + native-tls), do mg (page
+API ServiceNow: headers + `Value` + parse-antes-de-cachear) e do rs-faqs (cache path-based próprio +
+retry genérico); o `clean_text` line-based (ba/mg/pr/rs); e o cache-terminador de paginação do ce.
+
+**Pendências abertas (fora desta TAREFA):**
+
+- **Camada 2 (2º-consumidor já satisfeito, extrair em TAREFA curta):** `kit::validar_contagem(unicos,
+  total, min, dica)` — o invariante dinâmico de ce (`hits`) e mt (`resultTotal`); `kit::absolutize(base,
+  href)` — o miolo comum de `canonical` de rj/sp/pe; `kit::cli::parse_args()` — o parse de
+  `[--usecache] <cmd>` repetido nos `main.rs`. (Nota: `ms` foi re-ancorado em `união⊆Todos`, então o
+  `validar_contagem` tem 2 consumidores reais — ce, mt —, não 3.)
+- **`AuliBot/x.y (+url)` institucional:** avaliar um User-Agent identificável para a frota toda (hoje
+  todos usam o Firefox/124 de navegador). Decisão de projeto — muda a identidade de rede em todos os
+  portais, exige recoleta verificada.
+
+---
+
 ## Itens relacionados (revisões de código anteriores)
 
 - **`public/<id>/servicos.json` (~660KB) e contratos do engine — ✅ resolvido:** o `build-frontend-public.sh`

@@ -27,14 +27,14 @@ use std::collections::HashSet;
 use std::thread::sleep;
 use std::time::Duration;
 
-use anyhow::{Result, anyhow, bail};
+use anyhow::{Result, bail};
 use auli_contract::{Ocorrencia, Publico, ServicoRaw};
+use auli_scraper_kit::clean;
+use auli_scraper_kit::http::GetOpts;
 use scraper::{Html, Selector};
 
 /// A listagem do catálogo (D-MS1).
 const LISTA_URL: &str = "https://www.sefaz.ms.gov.br/servicos/";
-const USER_AGENT: &str =
-    "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
 
 /// `pp` inicial ("load more" cumulativo). Folgado sobre o catálogo (~276). Se um GET vier com
 /// EXATAMENTE `pp` itens distintos, pode estar capado nesse teto → refazemos UMA vez com `pp*4`.
@@ -60,7 +60,7 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
     // Páginas cruas na ordem (url_lógica, html) — o cache só grava depois dos guards (D-RJ5).
     let mut raw: Vec<(String, String)> = Vec::new();
 
@@ -143,19 +143,15 @@ fn fetch_lista(
     raw: &mut Vec<(String, String)>,
 ) -> Result<(String, Vec<(String, String)>)> {
     let logical = format!("{}?{}ordem=AZ", LISTA_URL, filtro_qs);
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, &logical) {
-        println!("Cache hit: {}", logical);
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, &logical, use_cache)? {
         let itens = parse_lista(&cached);
         return Ok((cached, itens));
-    }
-    if use_cache {
-        bail!("cache miss para {} (modo --usecache, sem rede)", logical);
     }
 
     let mut pp = PP_INICIAL;
     for tentativa in 0..2 {
         let url = format!("{}?{}ordem=AZ&pp={}", LISTA_URL, filtro_qs, pp);
-        let html = get_string(agent, &url)?;
+        let html = auli_scraper_kit::http::get_string(agent, &url, &GetOpts { log_prefix: "MS", ..Default::default() })?;
         sleep(COURTESY);
         let itens = parse_lista(&html);
         // Página não-cheia (< pp): o `pp` cobriu tudo — resultado confiável.
@@ -182,30 +178,6 @@ fn fetch_lista(
         }
     }
     unreachable!("o loop retorna ou dá bail em 2 tentativas");
-}
-
-/// GET com retentativas e backoff (padrão da frota).
-fn get_string(agent: &ureq::Agent, url: &str) -> Result<String> {
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last = anyhow!("sem tentativa");
-    println!("Fetching: {}", url);
-    for attempt in 1..=max_attempts {
-        match agent.get(url).call() {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(s) if !s.trim().is_empty() => return Ok(s),
-                Ok(_) => last = anyhow!("resposta vazia"),
-                Err(e) => last = anyhow!(e.to_string()),
-            },
-            Err(e) => last = anyhow!(e.to_string()),
-        }
-        if attempt < max_attempts {
-            eprintln!("⚠️  MS: tentativa {} falhou ({}); retentando…", attempt, last);
-            sleep(delay);
-            delay *= 2;
-        }
-    }
-    Err(anyhow!("falha ao buscar {} após {} tentativas: {}", url, max_attempts, last))
 }
 
 /// Parseia uma página de listagem: os itens de serviço `(titulo, link)`, dedup por link.
@@ -360,11 +332,6 @@ fn validar(
         );
     }
     Ok(())
-}
-
-/// Normaliza texto: tira zero-width/nbsp e comprime espaços (padrão da frota).
-fn clean(s: &str) -> String {
-    s.replace('\u{200b}', "").replace('\u{00a0}', " ").split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 #[cfg(test)]

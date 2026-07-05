@@ -61,6 +61,15 @@ pub struct ScraperInfo {
     pub versao: String,
 }
 
+impl ScraperInfo {
+    /// Constrói a partir de `&str` — o call site passa `env!("CARGO_PKG_NAME")`/`CARGO_PKG_VERSION`,
+    /// que o `env!` avalia no **crate chamador** (por isso um construtor com args, não uma função no
+    /// kit). Substitui o `fn scraper_info()` boilerplate repetido em cada `main.rs`.
+    pub fn new(nome: &str, versao: &str) -> Self {
+        Self { nome: nome.to_string(), versao: versao.to_string() }
+    }
+}
+
 /// A coleta de faqs: quando foi raspada e os registros brutos.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ColetaFaqs {

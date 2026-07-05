@@ -47,6 +47,20 @@ pub fn write(data_dir: &str, url: &str, content: &str) {
     }
 }
 
+/// Leitura do cache com a convenção da frota: `Some` = hit (imprime o `Cache hit:` padrão),
+/// `None` = "vá à rede", `Err` = miss em modo `--usecache` (mensagem canônica). Cobre só a leitura;
+/// a ordem cache-pós-guards (rj/ms/ce/mt) fica no call site, que decide quando gravar.
+pub fn read_or_bail(data_dir: &str, url: &str, use_cache: bool) -> anyhow::Result<Option<String>> {
+    if let Some(cached) = read(data_dir, url) {
+        println!("Cache hit: {}", url);
+        return Ok(Some(cached));
+    }
+    if use_cache {
+        anyhow::bail!("cache miss para {} (modo --usecache, sem rede)", url);
+    }
+    Ok(None)
+}
+
 /// Turns a URL into a safe cache filename (non `[A-Za-z0-9-_.]` chars become `_`).
 fn url_to_filename(url: &str) -> String {
     url.chars()
