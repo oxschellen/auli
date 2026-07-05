@@ -135,6 +135,27 @@ RAG responde citando o link canônico `ms.gov.br`.
 
 ---
 
+## 9. Entidade `mt` (SEFAZ-MT) integrada — ✅ **resolvida (11ª entidade)**
+
+Scraper `auli-scraper-mt` no molde CE (JSON direto): o "Catálogo de Serviços do X-Via Portal" (SPA
+React de MT) expõe a listagem por órgão na **API pública `POST /v1/search/department`** — **anônima,
+sem token, sem Keycloak** (o `#error=login_required` do shell é ruído do silent-SSO, não do
+catálogo). **27 serviços, 42 ocorrências**, 0 órfãos; descrição rica inline (sem chamada de detalhe).
+Pipeline: snapshot v3 → `auli-collections mt` (2 tabs) → packs BGE-M3 (27) → boot com manifesto
+validado → RAG responde citando o link canônico `portal.mt.gov.br/app/catalog/…`.
+
+- **D-MT1** fonte = catálogo X-Via filtrado pelo órgão SEFAZ (escopo só SEFAZ); a "Carta de Serviços"
+  (PDF Liferay ~85, base GPAS) é fonte divergente → só cross-check.
+- **D-MT2** identidade = `slug`; link canônico `…/app/catalog/<categorySlug>/<slug>`.
+- **D-MT3** anonimato estrito satisfeito (API pública, sem login).
+- **D-MT4 (Cenário B)** públicos = `targets` (Cidadão, Empresa); `classe` = `category`; `ocorrencias`
+  = targets × category.
+- **D-MT5** invariante dinâmico `únicos == resultTotal` (a API dá o próprio total) + piso 15; sem
+  paginação (1 POST traz o catálogo do órgão). Detalhe em
+  [`crates/scrapers/SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).
+
+---
+
 ## Itens relacionados (revisões de código anteriores)
 
 - **`public/<id>/servicos.json` (~660KB) e contratos do engine — ✅ resolvido:** o `build-frontend-public.sh`

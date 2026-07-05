@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-05 (frota com 10 entidades; MS = a mais recente).
+> Última atualização: 2026-07-05 (frota com 11 entidades; MT = a mais recente).
 
 ---
 
@@ -40,7 +40,7 @@ o caso multi-classe).
 | Estratégia | Como | Quem usa |
 |---|---|---|
 | **`aggregate_servicos` (kit)** | dedup **por `link`**; monta `Servico` per-público e agrega | sc, pr, mg, pe, ba |
-| **`ServicoRaw` direto** | o crate monta os registros; o link **não** é a chave única | rs, sp, rj, ce, ms |
+| **`ServicoRaw` direto** | o crate monta os registros; o link **não** é a chave única | rs, sp, rj, ce, ms, mt |
 
 O `ServicoRaw` direto existe porque em alguns portais o link não identifica: SP (vários serviços
 compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `_id`; slug não é
@@ -64,8 +64,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **rj** | SEFAZ-RJ / Rio de Janeiro | WordPress server-rendered; 1 página, 1 GET | HTML | 1 | 91 | **vazia** (v1) | direto | 8 | rustls |
 | **ce** | SEFAZ-CE / Ceará | SPA Sydle ONE; API JSON `getChildren` (POST) | JSON | 1 | 382 | curta (~79) | direto | 6 | rustls |
 | **ms** | SEFAZ-MS / Mato Grosso do Sul | WordPress server-rendered; listagem própria, filtros `?usuario=`/`?categoria=`, `pp` alto | HTML | 5 | 276 | **vazia** (v1) | direto | 7 | rustls |
+| **mt** | SEFAZ-MT / Mato Grosso | X-Via Portal (SPA React); API pública `POST /v1/search/department`, sem token | JSON | 2 | 27 | rica (~168) | direto | 8 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **61** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **69** (todos os crates cobertos).
 
 ---
 
@@ -192,6 +193,23 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **D-MS2 — identidade `link`** (único por construção). **D-MS4 — v1 sem descrição** (a listagem é
   título+link). **D-MS6 — rótulos fiéis** (inclui o slug-typo `comunicacao-e-transparencia`).
 - 276 serviços (601 ocorrências), 5 públicos. 7 testes. `ServicoRaw` direto.
+
+### mt — SEFAZ-MT (Mato Grosso)
+
+- **SPA React (X-Via Portal**, o front do X-Road de MT) — sem HTML server-rendered. A listagem por
+  órgão vem da API pública **`POST /v1/search/department`** com corpo `{groups:["CATALOG"],
+  departmentSlug:"secretaria-de-estado-de-fazenda"}` → **array JSON** de serviços.
+- **D-MT3 — anônimo:** sem token, sem Keycloak. O `#error=login_required` no fragment da URL é
+  ruído do silent-SSO (`prompt=none`) do shell; o catálogo em si é público (curl reproduz).
+- **Listagem rica, sem detalhe:** cada item traz `title`, `description` (inline, ~168 chars médios),
+  `category`+`categorySlug` e `targets` — nenhuma chamada de detalhe.
+- **D-MT4 — Cenário B:** públicos = `targets` (Cidadão, Empresa); `classe` = `category` (uma por
+  serviço); `ocorrencias` = targets × category. Fallback "Geral" para órfãos (0 hoje).
+- **D-MT2 — identidade `slug`**; link canônico `…/app/catalog/<categorySlug>/<slug>`.
+- **D-MT5 — invariante:** a API dá o próprio total em `resultTotal` → guard duro `únicos ==
+  resultTotal` + piso 15. Sem paginação (1 POST traz o catálogo do órgão inteiro).
+- 27 serviços (42 ocorrências), 2 públicos. 8 testes. `ServicoRaw` direto. Escopo = só o órgão
+  SEFAZ (a Carta PDF ~85 é fonte GPAS divergente — só cross-check, D-MT1).
 
 ---
 
