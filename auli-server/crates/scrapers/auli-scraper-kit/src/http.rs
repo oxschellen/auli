@@ -15,6 +15,8 @@ pub struct GetOpts<'a> {
     pub log_prefix: &'a str,
     /// Header `Accept`, se o endpoint exigir (ex.: `Some("application/json;odata=verbose")`).
     pub accept: Option<&'a str>,
+    /// Headers extra do GET (ex.: `Accept-Language`, `X-Portal`), além do `Accept`. Default vazio.
+    pub headers: &'a [(&'a str, &'a str)],
     /// Número de tentativas.
     pub attempts: u32,
     /// Atraso inicial do backoff (dobra a cada tentativa falha).
@@ -23,7 +25,13 @@ pub struct GetOpts<'a> {
 
 impl Default for GetOpts<'_> {
     fn default() -> Self {
-        Self { log_prefix: "", accept: None, attempts: 3, base_delay: Duration::from_millis(800) }
+        Self {
+            log_prefix: "",
+            accept: None,
+            headers: &[],
+            attempts: 3,
+            base_delay: Duration::from_millis(800),
+        }
     }
 }
 
@@ -36,6 +44,9 @@ pub fn get_string(agent: &ureq::Agent, url: &str, opts: &GetOpts) -> Result<Stri
         let mut req = agent.get(url);
         if let Some(a) = opts.accept {
             req = req.header("Accept", a);
+        }
+        for (k, v) in opts.headers {
+            req = req.header(*k, *v);
         }
         match req.call() {
             Ok(mut resp) => match resp.body_mut().read_to_string() {
@@ -100,6 +111,7 @@ mod tests {
         assert_eq!(o.attempts, 3);
         assert_eq!(o.base_delay, Duration::from_millis(800));
         assert!(o.accept.is_none());
+        assert!(o.headers.is_empty());
         assert_eq!(o.log_prefix, "");
     }
 }
