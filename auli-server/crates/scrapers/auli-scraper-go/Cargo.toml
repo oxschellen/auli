@@ -1,0 +1,22 @@
+[package]
+name = "auli-scraper-go"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-GO (serviços; o órgão fazendário de GO é a Secretaria de Estado da Economia).
+# Fonte: API do Portal Expresso (WSO2), catálogo por órgão `servicosOrgaos/20`. SEM headless: JSON
+# direto. Auth = client_credentials ANÔNIMO (token efêmero via /oauth2/token). Primeiro scraper
+# kit-native: usa kit::http/clean/USER_AGENT. Decisões D-GO1..5 em auli_pendencias.md / PR.
+# native-tls (OpenSSL): a API (api.go.gov.br) fica atrás de um WAF que bloqueia por fingerprint TLS
+# (JA3) — o rustls (default do ureq) recebe uma página HTML "Acesso Negado" onde o curl/OpenSSL passa
+# com o MESMO UA/headers. O provider native-tls tem o fingerprint que o WAF aceita. (Mesmo mecanismo
+# do BA, motivo diferente: lá era cipher CBC, aqui é o JA3.)
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json", "native-tls"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1"
+scraper = "0.27.0"
+regex = "1"
