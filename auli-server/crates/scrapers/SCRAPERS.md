@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-04 (frota com 9 entidades; CE = a mais recente, PR #16).
+> Última atualização: 2026-07-05 (frota com 10 entidades; MS = a mais recente).
 
 ---
 
@@ -40,11 +40,13 @@ o caso multi-classe).
 | Estratégia | Como | Quem usa |
 |---|---|---|
 | **`aggregate_servicos` (kit)** | dedup **por `link`**; monta `Servico` per-público e agrega | sc, pr, mg, pe, ba |
-| **`ServicoRaw` direto** | o crate monta os registros; o link **não** é a chave única | rs, sp, rj, ce |
+| **`ServicoRaw` direto** | o crate monta os registros; o link **não** é a chave única | rs, sp, rj, ce, ms |
 
 O `ServicoRaw` direto existe porque em alguns portais o link não identifica: SP (vários serviços
 compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `_id`; slug não é
-único).
+único). MS usa o direto por outro motivo: o link **é** único (id numérico embutido), mas as
+`ocorrencias` são o produto P(s)×C(s) de taxonomias independentes — o crate monta o fold, não o
+`aggregate_servicos`.
 
 ---
 
@@ -61,8 +63,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ba** | SEFAZ-BA / Bahia | ASP clássico; listagem + fichas de detalhe | HTML | 1 | 204 | rica (~1649) | agregada | 5 | **native-tls** |
 | **rj** | SEFAZ-RJ / Rio de Janeiro | WordPress server-rendered; 1 página, 1 GET | HTML | 1 | 91 | **vazia** (v1) | direto | 8 | rustls |
 | **ce** | SEFAZ-CE / Ceará | SPA Sydle ONE; API JSON `getChildren` (POST) | JSON | 1 | 382 | curta (~79) | direto | 6 | rustls |
+| **ms** | SEFAZ-MS / Mato Grosso do Sul | WordPress server-rendered; listagem própria, filtros `?usuario=`/`?categoria=`, `pp` alto | HTML | 5 | 276 | **vazia** (v1) | direto | 7 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **54** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **61** (todos os crates cobertos).
 
 ---
 
@@ -171,6 +174,24 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   `…/servico-geral+<identifier>+<_id>`. Descrição **inline** na listagem → sem chamada de detalhe.
 - 382 serviços, 1 público ("Serviços", classe "Geral"). Guard mín. 350. 6 testes. `ServicoRaw` direto.
 - POC de discovery em `~/Desktop/poc-ce/` (fora do repo).
+
+### ms — SEFAZ-MS (Mato Grosso do Sul)
+
+- **WordPress server-rendered** (catálogo próprio `sefaz.ms.gov.br/servicos/`, tema `new-ms`) — o
+  Portal Único `ms.gov.br` (SPA) é só o destino dos links canônicos (id numérico embutido no slug)
+  e a fonte futura de descrições (Fase 2). Sem headless, sem API.
+- **Grade descoberta DA PÁGINA** (nada hardcoded): filtros `?usuario=<perfil>` (5 públicos) e
+  `?categoria=<slug>` (19 classes), coletados por âncora na listagem "Todos". `pp` alto (`load
+  more` cumulativo) traz o catálogo inteiro em 1 GET por filtro (~26 GETs no total).
+- **D-MS3 — ocorrências = P(s) × C(s):** perfis e categorias são taxonomias **independentes**; um
+  serviço tem um conjunto de perfis e um de categorias, e as `ocorrencias` são o produto. Fallback
+  "Geral" para órfãos (0 hoje).
+- **D-MS5 — invariante sem contador:** o "Mostrando X de N" do portal é **JS-only** (não existe no
+  HTML). O guard é cruzado — `união(filtros) ⊆ Todos` (link de filtro fora do "Todos" = capado) +
+  cap-detect por `pp` + piso 240. `N` = âncoras distintas do "Todos" (dinâmico).
+- **D-MS2 — identidade `link`** (único por construção). **D-MS4 — v1 sem descrição** (a listagem é
+  título+link). **D-MS6 — rótulos fiéis** (inclui o slug-typo `comunicacao-e-transparencia`).
+- 276 serviços (601 ocorrências), 5 públicos. 7 testes. `ServicoRaw` direto.
 
 ---
 

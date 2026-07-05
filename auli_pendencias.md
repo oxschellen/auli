@@ -114,6 +114,27 @@ sem diff.
 
 ---
 
+## 8. Entidade `ms` (SEFAZ-MS) integrada — ✅ **resolvida (10ª entidade)**
+
+Scraper `auli-scraper-ms` no molde HTML (RJ/PR): catálogo próprio `sefaz.ms.gov.br/servicos/`
+(WordPress server-rendered), grade **5 perfis × 19 categorias** descoberta da própria página,
+`ServicoRaw` direto com `ocorrencias` = P(s)×C(s) (D-MS3). **276 serviços, 601 ocorrências**, 0
+órfãos; snapshot v3 → `auli-collections ms` → packs BGE-M3 (276) → boot com manifesto validado →
+RAG responde citando o link canônico `ms.gov.br`.
+
+- **D-MS5 — invariante sem contador:** o "Mostrando X de N" do portal é **JS-only** (não existe no
+  HTML server-rendered; o "277" citado na descoberta era ruído de coordenada SVG). O guard foi
+  re-ancorado em sinais que existem e se cruzam: `união(filtros) ⊆ Todos` (link de filtro fora do
+  "Todos" ⇒ listagem capada) + cap-detect por `pp` + piso estático 240. `N` = âncoras distintas do
+  "Todos" (dinâmico, 276 hoje).
+- Demais decisões: D-MS1 (fonte = catálogo próprio; Portal Único = link canônico + fonte da Fase 2),
+  D-MS2 (identidade = link), D-MS4 (v1 sem descrição), D-MS6 (rótulos fiéis, inclui typo
+  `comunicacao-e-transparencia`). Detalhe em [`crates/scrapers/SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).
+- **Fase 2 (futura):** descrições dos 276 via API de detalhe do Portal Único (SPA) — os ids
+  numéricos já vêm nos links.
+
+---
+
 ## Itens relacionados (revisões de código anteriores)
 
 - **`public/<id>/servicos.json` (~660KB) e contratos do engine — ✅ resolvido:** o `build-frontend-public.sh`

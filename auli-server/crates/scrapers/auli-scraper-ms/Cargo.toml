@@ -1,0 +1,16 @@
+[package]
+name = "auli-scraper-ms"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-MS (serviços, catálogo próprio sefaz.ms.gov.br/servicos — WordPress
+# server-rendered, variante B do plano). Grade 5 perfis × 19 categorias descoberta DA PRÓPRIA
+# página (nada hardcoded); ~26 GETs com `pp` alto ("load more" cumulativo). Sem headless, sem
+# JSON. Decisões D-MS1..6 em auli_pendencias.md. A fetch layer está isolada em fetch_lista(); se um
+# dia o wp-json expuser o catálogo como CPT com taxonomias, a variante A (JSON) pode suceder esta.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = "3"
+scraper = "0.27.0"
+anyhow = "1"
