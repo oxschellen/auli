@@ -228,7 +228,6 @@ dependencies = [
  "anyhow",
  "auli-contract",
  "auli-scraper-kit",
- "regex",
  "scraper",
  "serde",
  "serde_json",

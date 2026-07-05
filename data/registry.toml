@@ -102,3 +102,11 @@ uf = "MT"
 state = "Mato Grosso"
 prompt = "prompts/mt.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "go"
+name = "SEFAZ-GO"
+uf = "GO"
+state = "Goiás"
+prompt = "prompts/go.txt"
+collections = ["servicos"]

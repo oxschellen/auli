@@ -1,9 +1,14 @@
 # Relatório — bloqueio de WAF (JA3) na API do Portal Expresso (GO)
 
-Estado: **Fase 0 do GO concluída e sólida; Fase 1 (crate) escrita e compilando; bloqueada na
-coleta ao vivo por um WAF que barra o fingerprint TLS do `ureq`.** Este doc registra o achado com
-todas as evidências para decidir o caminho depois. O crate `auli-scraper-go` está no branch
-`feat/scraper-go` (não commitado).
+> **RESOLVIDO (spike JA3).** O bloqueio foi confirmado como WAF por fingerprint TLS (JA3) e
+> destravado pela **§5.2**: `kit::http::get_via_curl` (subprocess curl contido no kit) para os GETs
+> de catálogo; o token sai pelo `ureq` (SSO sem WAF). GO integrado como 12ª entidade (94 serviços).
+> Este doc fica como o diagnóstico completo; o registro canônico é `auli_pendencias.md §11 (D-GO-WAF)`
+> com os 4 JA3 medidos. Dependência de runtime: `curl` no PATH.
+
+Estado (histórico): Fase 0 do GO concluída e sólida; Fase 1 (crate) escrita e compilando; a coleta
+ao vivo era bloqueada por um WAF que barra o fingerprint TLS do `ureq`. Este doc registrou o achado
+com todas as evidências.
 
 ---
 

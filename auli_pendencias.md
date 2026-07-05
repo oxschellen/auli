@@ -183,6 +183,43 @@ retry genérico); o `clean_text` line-based (ba/mg/pr/rs); e o cache-terminador 
 
 ---
 
+## 11. Entidade `go` (SEFAZ-GO / Economia) integrada — ✅ **resolvida (12ª entidade)**
+
+Scraper `auli-scraper-go` (molde CE/MT): API do **Portal Expresso** (WSO2), `servicosOrgaos/20` do
+órgão Economia. **94 serviços, 120 ocorrências**, 3 sem categoria (Geral); descrição HTML rica
+(html5ever). Pipeline: snapshot v3 → `auli-collections go` → packs BGE-M3 (94) → boot com manifesto
+validado → RAG responde citando `go.gov.br/servicos/servico/…` e usando "Secretaria de Estado da
+Economia" (a ponte do prompt).
+
+- **D-GO1** fonte = Expresso `servicosOrgaos/20`; CKAN descartado (não tem o catálogo).
+- **D-GO2** id=`go`, name/orgao=`SEFAZ-GO` (a SEFAZ virou Secretaria da Economia; o `go.txt` faz a
+  ponte institucional). **D-GO3** client_credentials anônimo (credenciais públicas do bundle).
+  **D-GO4** Cenário A (público único; classe=categoria via `/categorias`). **D-GO5** slug cru (braille).
+
+**D-GO-WAF (o achado do spike JA3):** `api.go.gov.br` faz allowlist por fingerprint TLS; o `ureq`
+(rustls E native-tls) leva "Acesso Negado", curl passa — com token/headers/HTTP idênticos. Medido:
+
+| cliente | JA3 hash | passa? |
+|---|---|---|
+| curl (baseline) | `32e4b881…a769` | ✅ |
+| ureq rustls | `7822ed71…a179` | ❌ |
+| ureq native-tls | `284deaea…5422` | ❌ |
+
+Campo divergente = **extensões** (curl tem ALPN 16 + ext 49; ureq tem session_ticket 35; ciphers do
+native-tls idênticos ao curl). O `TlsConfig` do ureq 3.3.0 não expõe ALPN/cipher-list/connector →
+§4 do spike morta. Decisão: **`kit::http::get_via_curl`** (subprocess curl contido no kit; só os GETs
+de catálogo — o token sai por `ureq`, o SSO não tem WAF). Diagnóstico completo em `go_waf.md`.
+**Dependência de runtime: `curl` no PATH** (registrado no runbook — desktop E túnel).
+
+## D-NAMING (pendência separada — MG, NÃO é do GO)
+
+Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
+`"SEF-MG"` em [`auli-scraper-mg/src/mg.rs:222`](auli-server/crates/scrapers/auli-scraper-mg/src/mg.rs#L222)
+(o `registry.toml` já usa `SEF-MG`; confirmado 148/148 no snapshot). Muda bytes do snapshot MG →
+**recoleta verificada + commit de dados próprio**, na próxima vez que o MG for tocado.
+
+---
+
 ## Itens relacionados (revisões de código anteriores)
 
 - **`public/<id>/servicos.json` (~660KB) e contratos do engine — ✅ resolvido:** o `build-frontend-public.sh`
