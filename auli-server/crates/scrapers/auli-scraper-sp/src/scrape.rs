@@ -8,15 +8,16 @@ use std::collections::HashMap;
 use std::thread::sleep;
 use std::time::Duration;
 
-use anyhow::{Result, anyhow, bail};
+use anyhow::{Result, anyhow};
 use serde::Deserialize;
 use ureq::Agent;
 
 use auli_contract::{Ocorrencia, Publico, ServicoRaw};
+use auli_scraper_kit::clean;
+use auli_scraper_kit::http::GetOpts;
 
 const BASE: &str = "https://portal.fazenda.sp.gov.br";
 const API: &str = "https://portal.fazenda.sp.gov.br/servicos/_api/web/lists";
-const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
 const COURTESY: Duration = Duration::from_millis(300);
 
 /// Os públicos, na ordem de exibição: as 4 abas do catálogo. `(campo da faceta, nome, slug)`.
@@ -101,7 +102,7 @@ impl SvcRow {
 
 /// Raspa o catálogo da SEFAZ-SP e devolve os `ServicoRaw` (um por serviço) + a ordem dos públicos.
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(Vec<ServicoRaw>, Vec<Publico>)> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // 1. Homes 360: ID -> Assunto (classe).
     let homes_url = format!(
@@ -198,11 +199,6 @@ fn build_corpo(s: &SvcRow) -> String {
     corpo
 }
 
-/// Normaliza texto do SharePoint: tira zero-width/nbsp e comprime espaços.
-fn clean(s: &str) -> String {
-    s.replace('\u{200b}', "").replace('\u{00a0}', " ").split_whitespace().collect::<Vec<_>>().join(" ")
-}
-
 /// URL canônica do serviço (D-SP3): trim; relativo `/...` -> host do portal; externo/absoluto como está.
 fn canonical(url: &str) -> String {
     let u = url.trim();
@@ -238,36 +234,17 @@ fn fetch_all<T: for<'de> Deserialize<'de>>(
 /// Busca (ou lê do cache) uma URL do `_api` (Accept verbose). Retenta falhas transitórias; cortesia
 /// entre chamadas de rede.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)? {
         return Ok(cached);
     }
-    if use_cache {
-        bail!("cache miss para {} (modo --usecache, sem rede)", url);
-    }
-
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last = anyhow!("sem tentativa");
-    for attempt in 1..=max_attempts {
-        match agent.get(url).header("Accept", "application/json;odata=verbose").call() {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(body) if !body.trim().is_empty() => {
-                    auli_scraper_kit::cache::write(data_dir, url, &body);
-                    sleep(COURTESY);
-                    return Ok(body);
-                }
-                Ok(_) => last = anyhow!("resposta vazia"),
-                Err(e) => last = anyhow!(e.to_string()),
-            },
-            Err(e) => last = anyhow!(e.to_string()),
-        }
-        if attempt < max_attempts {
-            eprintln!("SP: falha em {} (tentativa {}/{}): {}. Retentando...", url, attempt, max_attempts, last);
-            sleep(delay);
-            delay = delay.saturating_mul(2);
-        }
-    }
-    Err(anyhow!("falha ao buscar {}: {}", url, last))
+    let body = auli_scraper_kit::http::get_string(
+        agent,
+        url,
+        &GetOpts { log_prefix: "SP", accept: Some("application/json;odata=verbose"), ..Default::default() },
+    )?;
+    auli_scraper_kit::cache::write(data_dir, url, &body);
+    sleep(COURTESY);
+    Ok(body)
 }
 
 #[cfg(test)]
