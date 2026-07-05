@@ -32,6 +32,8 @@ use std::time::Duration;
 
 use anyhow::{Result, anyhow, bail};
 use auli_contract::{Ocorrencia, Publico, ServicoRaw};
+use auli_scraper_kit::clean;
+use auli_scraper_kit::http::GetOpts;
 use serde::Deserialize;
 
 const BASE: &str = "https://portalservicos.sefaz.ce.gov.br";
@@ -46,8 +48,6 @@ const ORG_HEADER: &str = "sefazce";
 /// `_id` do catálogo `servico-geral` (= o ObjectId da URL de listagem).
 const CATALOGO_ID: &str = "648af76264778b7336c470a3";
 
-const USER_AGENT: &str =
-    "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
 /// `pageSize` PEQUENO de propósito: com o sort antigo (inválido), pageSize maior entregava MENOS
 /// (10→382, 100→292, 500→0). O 10 é o que o próprio front usa. Não aumentar sem re-medir a
 /// completude (invariante `hits == únicos`) com o sorter estável, duas coletas seguidas.
@@ -99,7 +99,7 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // Páginas na ordem: (url_lógica, json_cru, parseada). O json cru fica para o cache — que só
     // grava DEPOIS dos guards (D-RJ5); a parseada evita re-parse na montagem.
@@ -185,63 +185,27 @@ pub fn scrape(
 /// Extrai o Bearer token anônimo do shell público (`"Authorization":"Bearer …"`). Efêmero.
 fn fetch_token(agent: &ureq::Agent) -> Result<String> {
     println!("Fetching token (shell): {}", SHELL_URL);
-    let shell = get_string(agent, SHELL_URL)?;
+    let shell = auli_scraper_kit::http::get_string(
+        agent,
+        SHELL_URL,
+        &GetOpts { log_prefix: "CE", ..Default::default() },
+    )?;
     parse_token(&shell)
 }
 
 /// POST `getChildren` de uma página; devolve o corpo JSON cru. Retenta com backoff.
 fn fetch_page(agent: &ureq::Agent, token: &str, page: u32) -> Result<String> {
-    let body = build_body(page);
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last = anyhow!("sem tentativa");
     println!("POST getChildren (página {})", page);
-    for attempt in 1..=max_attempts {
-        let sent = agent
-            .post(GETCHILDREN_URL)
-            .header("Authorization", token)
-            .header("X-Explorer-Account-Token", ORG_HEADER)
-            .header("Accept", "application/json")
-            .send_json(&body);
-        match sent {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(s) if !s.trim().is_empty() => return Ok(s),
-                Ok(_) => last = anyhow!("resposta vazia"),
-                Err(e) => last = anyhow!(e.to_string()),
-            },
-            Err(e) => last = anyhow!(e.to_string()),
-        }
-        if attempt < max_attempts {
-            eprintln!("⚠️  CE: página {} tentativa {} falhou ({}); retentando…", page, attempt, last);
-            sleep(delay);
-            delay *= 2;
-        }
-    }
-    Err(anyhow!("falha ao buscar página {} após {} tentativas: {}", page, max_attempts, last))
+    auli_scraper_kit::http::post_json(
+        agent,
+        GETCHILDREN_URL,
+        &[("Authorization", token), ("X-Explorer-Account-Token", ORG_HEADER)],
+        &build_body(page),
+        &GetOpts { log_prefix: "CE", accept: Some("application/json"), ..Default::default() },
+    )
 }
 
 /// GET simples que devolve o corpo como String (com retentativas).
-fn get_string(agent: &ureq::Agent, url: &str) -> Result<String> {
-    let max_attempts = 3;
-    let mut delay = Duration::from_millis(800);
-    let mut last = anyhow!("sem tentativa");
-    for attempt in 1..=max_attempts {
-        match agent.get(url).call() {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
-                Ok(s) if !s.trim().is_empty() => return Ok(s),
-                Ok(_) => last = anyhow!("resposta vazia"),
-                Err(e) => last = anyhow!(e.to_string()),
-            },
-            Err(e) => last = anyhow!(e.to_string()),
-        }
-        if attempt < max_attempts {
-            sleep(delay);
-            delay *= 2;
-        }
-    }
-    Err(anyhow!("falha ao buscar {} após {} tentativas: {}", url, max_attempts, last))
-}
-
 /// Corpo mínimo do POST `getChildren`. `params.sorters` usa o formato verbatim do front por
 /// fidelidade e dá ordem estável entre páginas; **não** afeta a completude (ver header do módulo:
 /// 382 distintos com qualquer sorter — ou sem nenhum). Qualquer campo válido serve.
@@ -316,11 +280,6 @@ fn canonical(identifier: &str, id: &str) -> String {
     } else {
         format!("{}/servico-geral+{}+{}", BASE, identifier, id)
     }
-}
-
-/// Normaliza texto: tira zero-width/nbsp e comprime espaços (padrão dos demais scrapers).
-fn clean(s: &str) -> String {
-    s.replace('\u{200b}', "").replace('\u{00a0}', " ").split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 /// Guard D-CE (princípio D-RJ5): reprova catálogo capado (abaixo do mínimo). O gap `hits > únicos`
