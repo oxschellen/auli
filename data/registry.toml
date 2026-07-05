@@ -126,3 +126,11 @@ uf = "AM"
 state = "Amazonas"
 prompt = "prompts/am.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "pa"
+name = "SEFA-PA"
+uf = "PA"
+state = "Pará"
+prompt = "prompts/pa.txt"
+collections = ["servicos"]

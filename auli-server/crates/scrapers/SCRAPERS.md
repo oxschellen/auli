@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-05 (frota com 14 entidades; AM = a mais recente).
+> Última atualização: 2026-07-05 (frota com 15 entidades; PA = a mais recente).
 
 ---
 
@@ -87,8 +87,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **go** | SEFAZ-GO / Goiás (Secr. Economia) | Portal Expresso (SPA); API WSO2 `servicosOrgaos/20`, token client_credentials anônimo | JSON | 1 | 94 | rica (inline) | direto | 8 | **curl (WAF JA3)** |
 | **pi** | SEFAZ-PI / Piauí | SPA Sydle ONE; API JSON `_search` (**GET**), catálogo "Carta de Serviços", Bearer anônimo do shell | JSON | 1 | 29 | curta | direto | 10 | rustls |
 | **am** | SEFAZ-AM / Amazonas | Next.js **App Router**; flight **RSC** (header `RSC: 1`), árvore `items`; público via 3 rotas de perfil | JSON (RSC) | 3 | 278 | curta (resumo) | direto | 9 | rustls |
+| **pa** | SEFA-PA / Pará | Catálogo estadual "paradigital" (API Prodepa/Spring); `GET /orgao/48` + `GET /servico/{id}`, anônimo | JSON | 3 | 34 | **rica** (etapas+requisitos) | direto | 8 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **96** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **104** (todos os crates cobertos).
 
 ---
 
@@ -285,6 +286,23 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   **Escopo: só a listagem** (resumo curto); o conteúdo rico do detalhe ficou de fora por decisão.
 - 278 serviços, 423 ocorrências, 3 públicos (PF 147 / PJ 210 / Órgãos 66). 9 testes. `ServicoRaw` direto.
   Links: 239 detalhe / 34 externo / 4 submenu / 1 interno. Detalhes de descoberta em `descoberta-am.md`.
+
+### pa — SEFA-PA (Pará)
+
+- **Catálogo estadual "paradigital"** (SPA Quasar/Vue), API **Prodepa/Spring** em
+  `para-digital.sistemas.pa.gov.br/para-digital-service/portal` — tudo **GET anônimo, sem login**.
+  Multi-tenant **por órgão**: a SEFA é o **órgão 48**. `GET /orgao/48` → `[{id, nome}]` (listagem magra,
+  sem descrição) → obriga o detalhe. `GET /servico/{id}` → payload rico: `finalidade`, `etapaServicos[]`
+  (passo a passo), `requisitoServicos[]`, `contatos[]`, `tema` (classe), flags `cidadao/empresa/estado`
+  (público), `linkAcesso`. Descrição do snapshot = finalidade + "Como proceder" + "Requisitos" + "Acesso".
+- **Público via flags** (sobrepostos → 3 públicos Cidadão/Empresa/Estado; `ocorrencias` = público × classe).
+  `classe` = `tema.descricao` (SEFA: tema único "Tributos e empresas"). Identidade = `id`; `link` = a
+  página do serviço no paradigital (`…/servico/{id}`). Órgão "SEFA-PA".
+- **Primeira entidade com UA institucional `AuliBot`** (não o UA Firefox do kit) + **rate-limit ≥1s**
+  entre GETs — mitigações da decisão de desconsiderar robots (D-PA-ROBOTS). O portal candidato
+  `portal-digital.sefa.pa.gov.br` estava fora do ar (522) e o Joomla foi extinto — ver `descoberta-pa.md`.
+- 34 serviços, 54 ocorrências, 3 públicos (Cidadão 21 / Empresa 30 / Estado 3). 8 testes. `ServicoRaw` direto.
+  O paradigital cobre **63 órgãos** com o mesmo contrato → oportunidade de scraper genérico (D-PA-ACERVO).
 
 ---
 
