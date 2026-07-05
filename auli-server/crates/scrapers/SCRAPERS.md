@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-05 (frota com 12 entidades; GO = a mais recente).
+> Última atualização: 2026-07-05 (frota com 13 entidades; PI = a mais recente).
 
 ---
 
@@ -85,8 +85,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ms** | SEFAZ-MS / Mato Grosso do Sul | WordPress server-rendered; listagem própria, filtros `?usuario=`/`?categoria=`, `pp` alto | HTML | 5 | 276 | **vazia** (v1) | direto | 7 | rustls |
 | **mt** | SEFAZ-MT / Mato Grosso | X-Via Portal (SPA React); API pública `POST /v1/search/department`, sem token | JSON | 2 | 27 | rica (~168) | direto | 8 | rustls |
 | **go** | SEFAZ-GO / Goiás (Secr. Economia) | Portal Expresso (SPA); API WSO2 `servicosOrgaos/20`, token client_credentials anônimo | JSON | 1 | 94 | rica (inline) | direto | 8 | **curl (WAF JA3)** |
+| **pi** | SEFAZ-PI / Piauí | SPA Sydle ONE; API JSON `_search` (**GET**), catálogo "Carta de Serviços", Bearer anônimo do shell | JSON | 1 | 29 | curta | direto | 10 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **77** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **87** (todos os crates cobertos).
 
 ---
 
@@ -249,6 +250,24 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   a ponte). **D-GO4** Cenário A (público único "Serviços"); `classe` = categoria. **D-GO5** slug cru
   (braille `⠳` incluído). Identidade = `idServico`.
 - 94 serviços (120 ocorrências), 1 público. 8 testes. `ServicoRaw` direto.
+
+### pi — SEFAZ-PI (Piauí)
+
+- **SPA Sydle ONE (molde CE)** — sem HTML server-rendered. A classe de conteúdo `5cd32901…` guarda o
+  CMS inteiro (~8421 docs: notícias, legislação, páginas); os serviços do cidadão são o catálogo
+  **"Carta de Serviços"** (`parent._id = 69381cec…`). Listagem = **`GET _search`** (ElasticSearch, o
+  corpo ES vai url-encoded em `?_body=`) → `{hits:{total,hits[]}}`. Cada item traz `name`,
+  `description` (texto plano) e `friendlyUrl`; sem chamada de detalhe.
+- **Auth:** Bearer **anônimo** embutido no shell (`useCookieAuthentication:false`), efêmero →
+  re-extraído do shell a cada rodada (idêntico ao CE). Sem token, `_search` = 403.
+- **⚠️ Gotcha de transporte — o edge Azion reseta TODO POST** do nosso cliente (curl/ureq/Chromium:
+  h2 `PROTOCOL_ERROR`, h1.1 `eof`). Mas `_search` é **GET** e GET passa — então o scraper só usa GET
+  (ureq h1.1, sem browser-headers). Não precisou do `get_via_curl` (o GET do ureq não é bloqueado).
+- **Cenário A** (como CE/RJ): os serviços têm `tags`/`classification`, mas essas classes **não
+  autorizam `_search` anônimo (403)** e o `getTags` é POST (bloqueado) — facetas irresolúveis sem
+  login. Público único "Serviços", classe "Geral". Identidade = `_id`; link = `…/<friendlyUrl>`
+  (rota SPA `/:pathWithId`; sem `friendlyUrl` → `…/<_id>`). Órgão "SEFAZ-PI".
+- 29 serviços (Carta de Serviços). 10 testes. `ServicoRaw` direto.
 
 ---
 

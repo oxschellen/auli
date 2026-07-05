@@ -1,0 +1,263 @@
+[
+  {
+    "id": 1,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/demonstrativo-de-apuracao-da-restituicao-complementacao-do-icms-st",
+    "titulo": "Demonstrativo de Apuração da Restituição/ Complementação do ICMS ST",
+    "descricao": "Demonstrativo de Apuração da Restituição/ Complementação do ICMS ST"
+  },
+  {
+    "id": 2,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/nota-fiscal-avulsa-eletronica",
+    "titulo": "Nota Fiscal Avulsa Eletrônica",
+    "descricao": "Emita sua nota fiscal avulsa de forma rápida e prática."
+  },
+  {
+    "id": 3,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/acompanhe-sua-solicitacao",
+    "titulo": "Acompanhamento de Protocolo SAC",
+    "descricao": "Facilita o acompanhamento dos protocolos e solicitações já realizados pelos cidadãos. Com uma interface intuitiva, possibilitamos o monitoramento em tempo real do status de cada solicitação, garantindo transparência e melhor gestão das demandas."
+  },
+  {
+    "id": 4,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/agendamento",
+    "titulo": "Agendamento de Atendimento Presencial",
+    "descricao": "Oferece aos cidadãos a oportunidade de agendar atendimentos presenciais de acordo com a disponibilidade, assegurando maior organização e comodidade. Essa ferramenta facilita o planejamento de visitas, otimizando o tempo e recursos tanto para os atendentes quanto para os usuários."
+  },
+  {
+    "id": 5,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/cobranca-no-transito-de-mercadorias",
+    "titulo": "Cobrança no Trânsito de Mercadorias",
+    "descricao": "Verificação de cobranças relacionadas ao trânsito de mercadorias."
+  },
+  {
+    "id": 6,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/denuncia-anonima-de-fiscalizacao",
+    "titulo": "Denúncia Anônima de Fiscalização",
+    "descricao": "Permite fazer uma denúncia de forma anônima sobre irregularidades ou problemas."
+  },
+  {
+    "id": 7,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/documentos-fiscais-consulta-publica",
+    "titulo": "Documentos Fiscais - Consulta Pública",
+    "descricao": "Verificação e consulta de documentos fiscais eletrônicos emitidos."
+  },
+  {
+    "id": 8,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/itcmd",
+    "titulo": "ITCMD",
+    "descricao": "Acesso aos serviços do ITCM (Imposto sobre Transmissão Causa Mortis e Doação)."
+  },
+  {
+    "id": 9,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/isencao-de-taxas-e-imunidade-de-ipva",
+    "titulo": "Isenção de Taxas e Imunidade de IPVA",
+    "descricao": "Pedido de isenção de taxas e imunidade do imposto sobre propriedade de veículos automotores."
+  },
+  {
+    "id": 10,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/processo-eletronico-tributario",
+    "titulo": "Processo Eletrônico Tributário",
+    "descricao": "Consulta ao processo eletrônico fiscal e tributário."
+  },
+  {
+    "id": 11,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/agenda-tributaria",
+    "titulo": "Agenda Tributária",
+    "descricao": "Verificação do calendário e prazos de obrigações tributárias."
+  },
+  {
+    "id": 12,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/cadastro-de-contribuintes-cagep",
+    "titulo": "Cadastro de Contribuintes – CAGEP",
+    "descricao": "Registro de contribuintes do Piauí no sistema CAGEP."
+  },
+  {
+    "id": 13,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/calculo-do-diferencial-de-aliquota",
+    "titulo": "Cálculo do Diferencial de Alíquota",
+    "descricao": "Verificação do cálculo do Diferencial de Alíquota do ICMS (Difal)."
+  },
+  {
+    "id": 14,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/comercio-exterior",
+    "titulo": "Comércio Exterior",
+    "descricao": "Acesso às funcionalidades de comércio exterior."
+  },
+  {
+    "id": 15,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/formularios-icms",
+    "titulo": "Formulários - ICMS",
+    "descricao": "Download de formulários relacionados ao ICMS."
+  },
+  {
+    "id": 16,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/mapa-de-comprovacao-de-ressarcimento",
+    "titulo": "Mapa de Comprovação de Ressarcimento",
+    "descricao": "Pedido para obter o mapa de ressarcimento de valores recuperados."
+  },
+  {
+    "id": 17,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/documento-de-arrecadacao-dar",
+    "titulo": "Documento de Arrecadação - DAR",
+    "descricao": "Emissão de documentos para arrecadação de recursos públicos."
+  },
+  {
+    "id": 18,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/siat-web",
+    "titulo": "SIAT WEB",
+    "descricao": "Permite o acesso ao sistema via plataforma online, possibilitando consulta, emissão de documentos e gerenciamento de informações"
+  },
+  {
+    "id": 19,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/cadastro-de-itens-institucional",
+    "titulo": "Inclusão de Item no Catálogo de Materiais e Serviços (CATMAT/CATSERV)",
+    "descricao": "Solicitar Inclusão de Item no Catálogo de Materiais e Serviços (CATMAT/CATSERV)"
+  },
+  {
+    "id": 20,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/solicitar-cadastro-de-usuario-siafe",
+    "titulo": "Cadastro de Usuário de Sistemas do Tesouro",
+    "descricao": "Solicite Cadastro ou alteração de Usuário de Sistemas do Tesouro"
+  },
+  {
+    "id": 21,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/pagamento-ipva",
+    "titulo": "Pagamento IPVA",
+    "descricao": "Emitir DAR IPVA"
+  },
+  {
+    "id": 22,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/notificacoes-de-lancamento-ipva",
+    "titulo": "Notificações de lançamento IPVA",
+    "descricao": "Notificações de lançamento de IPVA por exercício"
+  },
+  {
+    "id": 23,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/notificacoes-de-debitos-de-ipva",
+    "titulo": "Notificações de débitos de IPVA",
+    "descricao": "Notificações de débitos de IPVA"
+  },
+  {
+    "id": 24,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/calculadora-difal-contribuinte",
+    "titulo": "Calculadora DIFAL - Contribuinte",
+    "descricao": "Cálculo Diferencial de Alíquota do ICMS (DIFAL) para Contribuinte Inscrito: entradas Interestaduais para Ativo, Uso ou Consumo"
+  },
+  {
+    "id": 25,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/calculadora-difal-convenio-52-91",
+    "titulo": "Calculadora DIFAL - Convênio 52/91",
+    "descricao": "Cálculo do Diferencial de alíquota (DIFAL) para Convênio 52/91"
+  },
+  {
+    "id": 26,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/dados-das-empresas-estatais-stn",
+    "titulo": "Dados das Empresas Estatais - STN",
+    "descricao": "Serviço que permite o registro, atualização e acompanhamento de informações institucionais, normativas e econômico-financeiras das empresas estatais vinculadas ao ente federativo."
+  },
+  {
+    "id": 27,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/acervo-normativo",
+    "titulo": "Acervo Normativo",
+    "descricao": "Cadastro e organização dos documentos normativos que estruturam a constituição, composição e governança da empresa estatal."
+  },
+  {
+    "id": 28,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/acompanhamento-dos-planos-de-equilibrio-e-recuperacao-empresarial",
+    "titulo": "Acompanhamento dos Planos de Equilíbrio e Recuperação Empresarial",
+    "descricao": "Monitoramento das informações econômico-financeiras e medidas de reestruturação de Estatais"
+  },
+  {
+    "id": 29,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFAZ-PI",
+    "link": "https://portal.sefaz.pi.gov.br/66ec6df8f327ef3a7ecb4337",
+    "titulo": "Serviço de Atendimento ao Consumidor (SAC)",
+    "descricao": "Permite que os cidadãos solicitem diversos serviços de atendimento de forma rápida e prática. Essa plataforma garante um processo ágil de registro de solicitações, promovendo maior comodidade e eficiência na prestação de serviços públicos."
+  }
+]

@@ -211,6 +211,30 @@ native-tls idênticos ao curl). O `TlsConfig` do ureq 3.3.0 não expõe ALPN/cip
 de catálogo — o token sai por `ureq`, o SSO não tem WAF). Diagnóstico completo em `go_waf.md`.
 **Dependência de runtime: `curl` no PATH** (registrado no runbook — desktop E túnel).
 
+## 12. Entidade `pi` (SEFAZ-PI) integrada — ✅ **resolvida (13ª entidade)**
+
+Portal `portal.sefaz.pi.gov.br` = **SPA Sydle ONE (molde CE)**, edge Azion.
+
+- **D-PI1 — fonte:** a classe de conteúdo `5cd32901…` guarda o CMS inteiro (~8421 docs: notícias,
+  legislação, páginas institucionais). O catálogo **cidadão** é **"Carta de Serviços"**
+  (`parent._id = 69381ceceecdd6684a84c49c`) → **29 serviços ativos**. Listagem via **`GET _search`**
+  (ElasticSearch; corpo ES url-encoded em `?_body=`). Escopo confirmado com o usuário: **só a Carta de
+  Serviços** (os catálogos "Serviços de Pessoal", "Tesouro/servidor", etc. NÃO entram — não são a
+  carta-cidadã).
+- **D-PI2 — auth:** Bearer **anônimo** embutido no shell (`useCookieAuthentication:false`), efêmero →
+  re-extraído do shell a cada rodada (idêntico ao CE). Sem token, `_search` = 403.
+- **⚠️ D-PI-POST — o edge Azion reseta TODO POST** do nosso cliente (curl/ureq/Chromium: h2
+  `PROTOCOL_ERROR`, h1.1 `eof`); **GET passa**. Como `_search` é GET, o scraper **só usa GET** (ureq
+  h1.1, sem browser-headers) — não precisou do `get_via_curl` (diferente do GO: aqui o GET do ureq não
+  é bloqueado por JA3). O ground-truth do XHR foi capturado com Chrome real + `--disable-http2`
+  (Playwright), pois o Chromium bundled também falha no h2 desse edge.
+- **D-PI3 — Cenário A:** os serviços têm `tags`/`classification`, mas essas classes **não autorizam
+  `_search` anônimo (403)** e o `getTags` é POST (bloqueado) — facetas irresolúveis sem login. Público
+  único "Serviços", classe "Geral". Identidade = `_id`; link = `…/<friendlyUrl>` (rota `/:pathWithId`;
+  sem `friendlyUrl` → `…/<_id>`). Órgão "SEFAZ-PI".
+- Cache com chave lógica CURTA (`SEARCH_URL#<catálogo>`): a URL real carrega o `_body` gigante
+  url-encoded, longo demais para virar nome de arquivo. 10 testes. `ServicoRaw` direto.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

@@ -110,3 +110,11 @@ uf = "GO"
 state = "Goiás"
 prompt = "prompts/go.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "pi"
+name = "SEFAZ-PI"
+uf = "PI"
+state = "Piauí"
+prompt = "prompts/pi.txt"
+collections = ["servicos"]
