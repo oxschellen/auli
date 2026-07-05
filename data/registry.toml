@@ -94,3 +94,11 @@ uf = "MS"
 state = "Mato Grosso do Sul"
 prompt = "prompts/ms.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "mt"
+name = "SEFAZ-MT"
+uf = "MT"
+state = "Mato Grosso"
+prompt = "prompts/mt.txt"
+collections = ["servicos"]

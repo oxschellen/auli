@@ -236,7 +236,7 @@ N cópias coexistem sem coordenação.
   586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148. O manifest confere — `bytes` e `hash` FNV-1a
   batem com os arquivos (o `packs::load_all` re-hasheia e alerta em divergência); todos os vetores em
   dim 1024; chave `document` preservada.
-- **Boot e2e (modelo real):** o server carrega as 10 entidades, valida cada manifest contra a
+- **Boot e2e (modelo real):** o server carrega as 11 entidades, valida cada manifest contra a
   identidade local e responde `POST /v1/question` por estado citando os links do próprio catálogo
   (verificado ao vivo em várias, incl. rs/ba/rj/ce).
 
@@ -359,7 +359,7 @@ entidades; ambos chamam `selectEntity`.
 ### 4.7 Distinção ativo vs modelado (frontend)
 
 - O frontend é **single-tenant em tempo de execução por deploy**: serve os arquivos de uma
-  pasta `public/` específica; a seleção de entidade (as 10) muda apenas qual `public/<id>/` é
+  pasta `public/` específica; a seleção de entidade (as 11) muda apenas qual `public/<id>/` é
   consultado. Não há, no código, busca de uma lista de entidades vinda do backend — a lista vem de
   [shared/entities.ts](auli-frontend/src/shared/entities.ts), **gerado** de `data/registry.toml`
   (não editado à mão).
@@ -472,8 +472,8 @@ nos packs até serem modelados.
    cópias divergentes de `domain`/`errors`/`entities`.
 2. **Dados de serviços consistentes.** Packs e frontend vêm da **mesma** raspagem (contrato
    `auli-contract`); o engine não declara mais `delimiter`/`EmbedStrategy` próprios para serviços.
-3. **As 10 entidades são reais** do server (serviços rs 586, sc 208, sp 537, pr 141, mg 148, pe 38,
-   ba 204, rj 91, ce 382, ms 276; FAQs 1937 no RS), não só do frontend.
+3. **As 11 entidades são reais** do server (serviços rs 586, sc 208, sp 537, pr 141, mg 148, pe 38,
+   ba 204, rj 91, ce 382, ms 276, mt 27; FAQs 1937 no RS), não só do frontend.
 4. **`pareceres`/`notas`/`conteudos`** (autorados, sem scraper) ficam versionados em `data/<id>/ref/`,
    exibidos no frontend e (pareceres/notas) ingeríveis nos packs quando modelados como `Table<P>`;
    ainda **não** são consultados no RAG ativo.
@@ -493,13 +493,13 @@ mantém um espelho **gerado** (não mais divergente) do registro. Pendências em
   na raiz do repo) e `GET /v1/{kind}/list` (leitura). Escuta configurável (`--bind`, default `0.0.0.0`).
   Público, **sem auth nem banco**; CORS; configuração por `.env` (`config()`); logging via `tracing`.
   Vetorização separada pelo `auli update`.
-- **Dez estados ativos** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms). RAG consulta efetivamente apenas `servicos` (10) +
+- **Onze estados ativos** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt). RAG consulta efetivamente apenas `servicos` (10) +
   `faqs` (20); estreitamento por proximidade presente mas em modo paridade (`band=∞`) até calibração.
-- `auli-frontend`: SPA com seleção de entidade (as 10), chat contra `POST /v1/question` com
+- `auli-frontend`: SPA com seleção de entidade (as 11), chat contra `POST /v1/question` com
   timeout de 25s, abas de referência lendo `public/<id>/` (arquivos prefixados `<id>-`), tema
   claro/escuro, testes Vitest.
-- **Scrapers por entidade** (`auli-scraper-{rs,sc,sp,pr,mg,pe,ba,rj,ce,ms}` sobre `auli-scraper-kit`): FAQs (rs) e
-  serviços (rs API JSON, sc JSON, sp SharePoint, pr Drupal, mg ServiceNow, pe/ba/rj/ms HTML, ce JSON Sydle), cache + `--usecache`,
+- **Scrapers por entidade** (`auli-scraper-{rs,sc,sp,pr,mg,pe,ba,rj,ce,ms,mt}` sobre `auli-scraper-kit`): FAQs (rs) e
+  serviços (rs API JSON, sc JSON, sp SharePoint, pr Drupal, mg ServiceNow, pe/ba/rj/ms HTML, ce/mt JSON), cache + `--usecache`,
   gravando o snapshot v3; `auli-collections <e>` deriva o contrato + `portal-*.txt` +
   `servicos-index.json` + per-público.
 

@@ -94,6 +94,13 @@ export const ENTITIES: Entity[] = [
     state: "Mato Grosso do Sul",
     collections: ["servicos"],
   },
+  {
+    id: "mt",
+    name: "SEFAZ-MT",
+    uf: "MT",
+    state: "Mato Grosso",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";
