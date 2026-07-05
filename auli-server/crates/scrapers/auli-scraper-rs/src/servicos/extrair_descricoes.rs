@@ -9,8 +9,8 @@ use ureq::Agent;
 
 use super::types::{Servico, TipoServicos};
 use super::utils::{get_tipo_servicos, save_servicos_to_json, scrape_recovery_path};
+use auli_scraper_kit::http::GetOpts;
 
-const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 const ACCEPT: &str = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 const ACCEPT_LANGUAGE: &str = "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7";
 
@@ -23,7 +23,7 @@ pub fn extrair_descricoes_json(
     use_cache: bool,
 ) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     // Initialize the HTTP agent (ureq). Accept headers are set per request in fetch_html.
-    let http_client = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let http_client = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // Initializa o Vetor de Tipos de Serviços
     let vec_tipo_servicos = get_tipo_servicos();
@@ -234,48 +234,25 @@ fn fetch_html(
     url: &str,
     use_cache: bool,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
+    // Retry/backoff é o kit::http::get_string (headers Accept + Accept-Language via GetOpts);
+    // bridge map_err p/ o Box<dyn Error> deste crate. Cache-write no wrapper.
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)
+        .map_err(|e| e.to_string())?
+    {
         return Ok(cached);
     }
-    if use_cache {
-        return Err(format!("cache miss para {} (modo --usecache, sem rede)", url).into());
-    }
-
-    let max_attempts = 3;
-    let mut retry_delay = Duration::from_millis(800);
-    let mut last_error: Option<ureq::Error> = None;
-
-    // ureq returns Err on non-2xx by default (http_status_as_error), so there's no error_for_status.
-    for attempt in 1..=max_attempts {
-        match client
-            .get(url)
-            .header("Accept", ACCEPT)
-            .header("Accept-Language", ACCEPT_LANGUAGE)
-            .call()
-        {
-            Ok(mut response) => match response.body_mut().read_to_string() {
-                Ok(body) => {
-                    auli_scraper_kit::cache::write(data_dir, url, &body);
-                    return Ok(body);
-                }
-                Err(error) => last_error = Some(error),
-            },
-            Err(error) => last_error = Some(error),
-        }
-
-        if attempt < max_attempts {
-            eprintln!(
-                "Request failed for {} (attempt {}/{}). Retrying in {:?}...",
-                url, attempt, max_attempts, retry_delay
-            );
-            sleep(retry_delay);
-            retry_delay = retry_delay.saturating_mul(2);
-        }
-    }
-
-    Err(last_error
-        .expect("at least one request attempt should fail before returning error")
-        .into())
+    let body = auli_scraper_kit::http::get_string(
+        client,
+        url,
+        &GetOpts {
+            log_prefix: "RS",
+            headers: &[("Accept", ACCEPT), ("Accept-Language", ACCEPT_LANGUAGE)],
+            ..Default::default()
+        },
+    )
+    .map_err(|e| e.to_string())?;
+    auli_scraper_kit::cache::write(data_dir, url, &body);
+    Ok(body)
 }
 
 fn fetch_cleaned_output_with_retry(

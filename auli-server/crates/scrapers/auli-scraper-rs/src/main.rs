@@ -13,12 +13,10 @@ pub const ENTITY: &str = "rs";
 /// Onde as saídas geradas vivem (o snapshot é gravado em `../data/rs/`, irmão de `raw/`).
 const DATA_DIR: &str = "../data/rs/raw";
 
-/// Identidade deste scraper, gravada como metadado no snapshot.
+/// Identidade deste scraper, gravada como metadado no snapshot. Compartilhada pelas coleções
+/// `servicos` e `faqs` (o `env!` avalia neste crate).
 pub(crate) fn scraper_info() -> auli_contract::ScraperInfo {
-    auli_contract::ScraperInfo {
-        nome: env!("CARGO_PKG_NAME").to_string(),
-        versao: env!("CARGO_PKG_VERSION").to_string(),
-    }
+    auli_contract::ScraperInfo::new(env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"))
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
