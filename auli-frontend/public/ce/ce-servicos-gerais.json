@@ -1021,18 +1021,18 @@
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
-    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f2e170f5a26dc57fd6b",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f60170f5a26dc595d2b",
     "titulo": "Parcelar Auto de Infração",
-    "descricao": "Parcelar débitos originados da lavratura de auto de infração."
+    "descricao": "Solicitar o parcelamento de autos de infração"
   },
   {
     "id": 115,
     "tipo": "Serviços",
     "classe": "Geral",
     "orgao": "SEFAZ-CE",
-    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f60170f5a26dc595d2b",
+    "link": "https://portalservicos.sefaz.ce.gov.br/servico-geral+parcelar-auto-de-infracao+64da4f2e170f5a26dc57fd6b",
     "titulo": "Parcelar Auto de Infração",
-    "descricao": "Solicitar o parcelamento de autos de infração"
+    "descricao": "Parcelar débitos originados da lavratura de auto de infração."
   },
   {
     "id": 116,

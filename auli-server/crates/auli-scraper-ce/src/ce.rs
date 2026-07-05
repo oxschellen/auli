@@ -13,10 +13,18 @@
 //! `…/servico-geral+<identifier>+<_id>`. Os itens não têm `_tags` → sem eixo de público (cenário A,
 //! padrão RJ): público único "Serviços", classe "Geral".
 //!
-//! Guards (princípio D-RJ5): falha alto se o catálogo vier capado; o cache só grava DEPOIS dos
-//! guards. ATENÇÃO ao `pageSize`: o servidor entrega MENOS resultados no total quanto MAIOR o
-//! `pageSize` (10→~382 itens, 100→292, 500→0). Usamos `pageSize=10` (o do front) — o único que
-//! devolve o catálogo inteiro. A paginação para na página VAZIA (o `hits` não é confiável).
+//! Paginação: `params.sorters` usa o formato do front (`{"sort":{"name._current.keyword":"asc"}}`)
+//! por fidelidade — mas a ordenação NÃO muda a completude. Medido empiricamente, o `getChildren`
+//! entrega **382 documentos distintos** (cru=382, zero duplicatas) com QUALQUER sorter — name asc,
+//! name desc, `_lastUpdateDate`, ou sem nenhum. O `hits` do servidor é **inflado** (≈392): é a
+//! contagem do índice, ~10 acima do que a paginação realmente contém (deletados-não-purgados /
+//! destaques pinados servidos por outra via). Por isso o gap `hits > coletados` é só um WARNING, não
+//! reprova — 382 é o catálogo real; o guard duro é `MIN_SERVICOS`. Guards (D-RJ5): o cache só grava
+//! DEPOIS dos guards.
+//!
+//! `pageSize=10` é o do front. Com `pageSize` maior o servidor entrega MENOS (10→382, 100→292,
+//! 500→0) — um defeito de paginação do endpoint. A paginação para na página VAZIA (páginas
+//! não-finais podem vir curtas).
 
 use std::collections::HashSet;
 use std::thread::sleep;
@@ -40,11 +48,14 @@ const CATALOGO_ID: &str = "648af76264778b7336c470a3";
 
 const USER_AGENT: &str =
     "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
-/// `pageSize` PEQUENO de propósito: o servidor Sydle ONE entrega MENOS resultados no total quanto
-/// MAIOR o `pageSize` (10→382 itens, 100→292, 500→0). O 10 é o que o próprio front usa e é o único
-/// que devolve o catálogo inteiro. Não aumentar sem re-medir a completude.
+/// `pageSize` PEQUENO de propósito: com o sort antigo (inválido), pageSize maior entregava MENOS
+/// (10→382, 100→292, 500→0). O 10 é o que o próprio front usa. Não aumentar sem re-medir a
+/// completude (invariante `hits == únicos`) com o sorter estável, duas coletas seguidas.
 const PAGE_SIZE: u32 = 10;
-/// Teto de páginas (guarda contra loop; ~382 itens ÷ 10 ≈ 39 páginas + a vazia).
+/// Marcador do sorter na chave de cache: cache gravado com outro sort NÃO é reaproveitado (a
+/// ordem/cobertura das páginas depende do sorter).
+const SORT_KEY: &str = "name";
+/// Teto de páginas (guarda contra loop; ~392 itens ÷ 10 ≈ 40 páginas + a vazia).
 const MAX_PAGES: u32 = 80;
 /// Cortesia entre páginas.
 const COURTESY: Duration = Duration::from_millis(400);
@@ -57,7 +68,7 @@ const CLASSE_GERAL: &str = "Geral";
 /// Órgão de origem.
 const ORGAO: &str = "SEFAZ-CE";
 
-/// Guard D-CE (princípio D-RJ5): mínimo de serviços (folga sobre os ~382 observados, mas aperta o
+/// Guard D-CE (princípio D-RJ5): mínimo de serviços (folga sobre os ~392 observados, mas aperta o
 /// bastante para rejeitar catálogo capado — inclusive a regressão de `pageSize` que devolvia 292).
 const MIN_SERVICOS: usize = 350;
 
@@ -90,16 +101,19 @@ pub fn scrape(
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
     let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
 
-    // Páginas cruas (logical_url, json), na ordem. O cache grava só DEPOIS dos guards (D-RJ5).
-    let mut raw_pages: Vec<(String, String)> = Vec::new();
+    // Páginas na ordem: (url_lógica, json_cru, parseada). O json cru fica para o cache — que só
+    // grava DEPOIS dos guards (D-RJ5); a parseada evita re-parse na montagem.
+    let mut raw_pages: Vec<(String, String, Page)> = Vec::new();
     let mut token: Option<String> = None; // buscado de forma preguiçosa, uma vez.
     let mut fetched_any = false;
+    let mut hits_max: i64 = 0;
 
     let mut page = 1u32;
     loop {
-        // `pageSize` na chave: um cache gravado com outro pageSize NÃO é reaproveitado (o total
-        // entregue depende do pageSize — ver PAGE_SIZE).
-        let logical = format!("{}#ps={}&page={}", GETCHILDREN_URL, PAGE_SIZE, page);
+        // `pageSize` e o sorter na chave: cache gravado com outros parâmetros NÃO é reaproveitado
+        // (total entregue e cobertura das páginas dependem de ambos — ver PAGE_SIZE/SORT_KEY).
+        let logical =
+            format!("{}#ps={}&sort={}&page={}", GETCHILDREN_URL, PAGE_SIZE, SORT_KEY, page);
         let (json, from_cache) = match auli_scraper_kit::cache::read(data_dir, &logical) {
             Some(cached) => {
                 println!("Cache hit (página {}): {}", page, GETCHILDREN_URL);
@@ -107,11 +121,19 @@ pub fn scrape(
             }
             None => {
                 if use_cache {
-                    return Err(anyhow!(
-                        "cache miss para página {} (modo --usecache, sem rede)",
-                        page
-                    )
-                    .into());
+                    // Só páginas NÃO-vazias entram no cache, então — havendo cache — o primeiro
+                    // miss é a página vazia terminadora: fim da paginação, não erro. Um cache
+                    // genuinamente truncado é pego pelos guards (MIN_SERVICOS / invariante de
+                    // hits), cuja mensagem já manda limpar o cache. Miss na página 1 = não há
+                    // cache algum: aí sim, erro.
+                    if page == 1 {
+                        return Err(anyhow!(
+                            "cache vazio para o catálogo (modo --usecache, sem rede). Rode uma \
+                             coleta com rede primeiro."
+                        )
+                        .into());
+                    }
+                    break;
                 }
                 if token.is_none() {
                     token = Some(fetch_token(&agent)?);
@@ -123,6 +145,7 @@ pub fn scrape(
         };
 
         let parsed = parse_page(&json)?;
+        hits_max = hits_max.max(parsed.hits);
         let n = parsed.items.len();
         // Termina SÓ na página vazia (não em página curta): o front pagina até esvaziar, e páginas
         // não-finais podem vir curtas. Página vazia não entra no cache nem no acumulado.
@@ -130,7 +153,7 @@ pub fn scrape(
             break;
         }
         println!("CE: página {} -> {} itens (hits={})", page, n, parsed.hits);
-        raw_pages.push((logical, json));
+        raw_pages.push((logical, json, parsed));
 
         page += 1;
         if page > MAX_PAGES {
@@ -143,18 +166,17 @@ pub fn scrape(
     }
 
     // Monta os serviços (dedup por `_id`) e valida antes de gravar o cache.
-    let pages: Vec<Page> = raw_pages.iter().map(|(_, j)| parse_page(j)).collect::<Result<_>>()?;
-    let items = build_servicos(&pages);
-    validar(&items)?;
+    let items = build_servicos(raw_pages.iter().map(|(_, _, p)| p));
+    validar(&items, hits_max)?;
 
     // Cache só DEPOIS dos guards (D-RJ5): uma resposta capada nunca envenena o cache.
     if fetched_any {
-        for (logical, json) in &raw_pages {
+        for (logical, json, _) in &raw_pages {
             auli_scraper_kit::cache::write(data_dir, logical, json);
         }
     }
 
-    println!("CE: {} serviços ativos (dedup por _id)", items.len());
+    println!("CE: {} serviços (hits={}, dedup por _id)", items.len(), hits_max);
     let publicos_ordem =
         vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
     Ok((items, publicos_ordem))
@@ -220,7 +242,9 @@ fn get_string(agent: &ureq::Agent, url: &str) -> Result<String> {
     Err(anyhow!("falha ao buscar {} após {} tentativas: {}", url, max_attempts, last))
 }
 
-/// Corpo mínimo do POST `getChildren` (o `searchConfig` completo do front é dispensável).
+/// Corpo mínimo do POST `getChildren`. O `sorters` é OBRIGATÓRIO para paginação determinística
+/// (ver header do módulo): formato verbatim do front, campo da URL de referência. A view padrão
+/// do portal usa o sort curado "Ordem"; para completude qualquer campo válido e estável serve.
 fn build_body(page: u32) -> serde_json::Value {
     serde_json::json!({
         "application": APP_IN_BODY,
@@ -232,7 +256,7 @@ fn build_body(page: u32) -> serde_json::Value {
             "filters": {},
             "pageIndex": page,
             "pageSize": PAGE_SIZE,
-            "sort": { "sort": { "order": "asc" } }
+            "sorters": { "sort": { "name._current.keyword": "asc" } }
         }
     })
 }
@@ -257,12 +281,12 @@ fn parse_page(json: &str) -> Result<Page> {
 }
 
 /// Monta os `ServicoRaw` a partir das páginas, deduplicando por `_id` (ordem de descoberta).
-fn build_servicos(pages: &[Page]) -> Vec<ServicoRaw> {
-    let mut vistos: HashSet<&str> = HashSet::new();
+fn build_servicos<'a>(pages: impl Iterator<Item = &'a Page>) -> Vec<ServicoRaw> {
+    let mut vistos: HashSet<String> = HashSet::new();
     let mut out: Vec<ServicoRaw> = Vec::new();
     for page in pages {
         for it in &page.items {
-            if it.id.is_empty() || !vistos.insert(it.id.as_str()) {
+            if it.id.is_empty() || !vistos.insert(it.id.clone()) {
                 continue;
             }
             let titulo = clean(&it.name);
@@ -284,9 +308,14 @@ fn build_servicos(pages: &[Page]) -> Vec<ServicoRaw> {
     out
 }
 
-/// URL canônica de detalhe: `…/servico-geral+<identifier>+<_id>`.
+/// URL canônica de detalhe: `…/servico-geral+<identifier>+<_id>`. Sem `identifier`, o portal
+/// aceita a forma curta `…/+<_id>` (evita o malformado `servico-geral++<_id>`).
 fn canonical(identifier: &str, id: &str) -> String {
-    format!("{}/servico-geral+{}+{}", BASE, identifier, id)
+    if identifier.is_empty() {
+        format!("{}/+{}", BASE, id)
+    } else {
+        format!("{}/servico-geral+{}+{}", BASE, identifier, id)
+    }
 }
 
 /// Normaliza texto: tira zero-width/nbsp e comprime espaços (padrão dos demais scrapers).
@@ -294,13 +323,24 @@ fn clean(s: &str) -> String {
     s.replace('\u{200b}', "").replace('\u{00a0}', " ").split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
-/// Guard D-CE (princípio D-RJ5): reprova catálogo capado.
-fn validar(items: &[ServicoRaw]) -> Result<()> {
-    if items.len() < MIN_SERVICOS {
+/// Guard D-CE (princípio D-RJ5): reprova catálogo capado (abaixo do mínimo). O gap `hits > únicos`
+/// NÃO reprova — o `hits` do índice infla ~10 acima do que a paginação entrega (ver header do
+/// módulo); é só um WARNING informativo. O guard duro é `MIN_SERVICOS`, que pega a regressão de
+/// `pageSize` (que devolvia 292).
+fn validar(items: &[ServicoRaw], hits_max: i64) -> Result<()> {
+    let unicos = items.len();
+    if hits_max > unicos as i64 {
+        eprintln!(
+            "ℹ️  CE: servidor anuncia {} (hits do índice) mas a paginação entrega {} distinto(s) — \
+             gap conhecido (índice infla; 382 é o catálogo real). Seguindo.",
+            hits_max, unicos
+        );
+    }
+    if unicos < MIN_SERVICOS {
         bail!(
             "catálogo capado? só {} serviço(s) (mínimo {}). Se veio do cache, limpe \
              data/ce/raw/cache/ e re-raspe.",
-            items.len(),
+            unicos,
             MIN_SERVICOS
         );
     }
@@ -324,6 +364,10 @@ mod tests {
       ]
     }"#;
 
+    fn pages(jsons: &[&str]) -> Vec<Page> {
+        jsons.iter().map(|j| parse_page(j).unwrap()).collect()
+    }
+
     #[test]
     fn parse_page_le_hits_e_itens() {
         let p = parse_page(PAGE_JSON).unwrap();
@@ -334,8 +378,8 @@ mod tests {
 
     #[test]
     fn build_mapeia_campos_e_link_canonico() {
-        let pages = vec![parse_page(PAGE_JSON).unwrap()];
-        let items = build_servicos(&pages);
+        let ps = pages(&[PAGE_JSON]);
+        let items = build_servicos(ps.iter());
         assert_eq!(items.len(), 2);
         assert_eq!(items[0].titulo, "Homologar DI - Declaração de Importação");
         assert_eq!(items[0].descricao, "rEQUISIÇÃO DE AÇÃO FISCAL DE D I AINDA NÃO HOMOLOGADA NO SITRAM");
@@ -354,8 +398,8 @@ mod tests {
     #[test]
     fn dedup_por_id_mesmo_id_uma_vez() {
         // O mesmo `_id` em duas páginas vira um único serviço.
-        let pages = vec![parse_page(PAGE_JSON).unwrap(), parse_page(PAGE_JSON).unwrap()];
-        let items = build_servicos(&pages);
+        let ps = pages(&[PAGE_JSON, PAGE_JSON]);
+        let items = build_servicos(ps.iter());
         assert_eq!(items.len(), 2, "dois _id distintos, mesmo repetidos entre páginas");
     }
 
@@ -366,9 +410,23 @@ mod tests {
           {"_id":"id1","identifier":"parcelar-auto-de-infracao","name":"Parcelar Auto A","description":"x"},
           {"_id":"id2","identifier":"parcelar-auto-de-infracao","name":"Parcelar Auto B","description":"y"}
         ]}"#;
-        let items = build_servicos(&[parse_page(json).unwrap()]);
+        let ps = pages(&[json]);
+        let items = build_servicos(ps.iter());
         assert_eq!(items.len(), 2);
         assert_ne!(items[0].link, items[1].link);
+    }
+
+    #[test]
+    fn identifier_vazio_usa_forma_curta_do_link() {
+        let json = r#"{"return":[
+          {"_id":"64adca7b48c5b8191406b1d9","identifier":"","name":"SAC","description":"d"}
+        ]}"#;
+        let ps = pages(&[json]);
+        let items = build_servicos(ps.iter());
+        assert_eq!(
+            items[0].link,
+            "https://portalservicos.sefaz.ce.gov.br/+64adca7b48c5b8191406b1d9"
+        );
     }
 
     #[test]
@@ -378,7 +436,38 @@ mod tests {
     }
 
     #[test]
-    fn validar_reprova_catalogo_capado() {
+    fn build_body_envia_sorter_estavel() {
+        // Sem sorter válido a paginação do ES é instável (perde itens) — o campo é contrato.
+        let body = build_body(3);
+        assert_eq!(body["params"]["pageIndex"], 3);
+        assert_eq!(
+            body["params"]["sorters"]["sort"]["name._current.keyword"], "asc",
+            "sorters.sort deve carregar um campo válido e estável"
+        );
+        assert!(body["params"].get("sort").is_none(), "a chave inválida 'sort' não deve voltar");
+    }
+
+    #[test]
+    fn validar_aceita_hits_inflado_acima_do_minimo() {
+        // `hits` do índice > coletados NÃO reprova (o índice infla ~10; 382 é o real). Desde que
+        // acima do mínimo, a coleta segue.
+        let dummy = |i: usize| ServicoRaw {
+            titulo: format!("S{i}"),
+            descricao: String::new(),
+            link: format!("l{i}"),
+            orgao: ORGAO.into(),
+            ocorrencias: vec![],
+        };
+        let items: Vec<ServicoRaw> = (0..MIN_SERVICOS).map(dummy).collect();
+        assert!(
+            validar(&items, MIN_SERVICOS as i64 + 50).is_ok(),
+            "hits inflado acima do mínimo não deve reprovar"
+        );
+    }
+
+    #[test]
+    fn validar_reprova_catalogo_capado_pelo_minimo() {
+        // hits coerente com o coletado, mas abaixo do mínimo: guard de MIN_SERVICOS.
         let poucos = vec![ServicoRaw {
             titulo: "x".into(),
             descricao: String::new(),
@@ -386,6 +475,7 @@ mod tests {
             orgao: ORGAO.into(),
             ocorrencias: vec![],
         }];
-        assert!(validar(&poucos).is_err());
+        let err = validar(&poucos, 1).unwrap_err().to_string();
+        assert!(err.contains("capado"), "esperava guard de mínimo, veio: {err}");
     }
 }
