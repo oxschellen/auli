@@ -249,8 +249,7 @@ Portal `www.sefaz.am.gov.br/portfolio-servicos` = **Next.js App Router (RSC)**. 
   `$a/$b/$c` no mesmo payload); expandir os accordions no browser NÃO dispara rede. → o scraper nunca
   precisa de navegador (headless foi usado só para _provar_ isso na descoberta).
 - **D-AM3 — escopo = só a listagem:** por decisão, coletamos só o `resumo` curto da listagem (não os
-  278 detalhes). O conteúdo rico do detalhe fica para uma eventual v2 (parser de flight que resolve
-  `$a/$b/$c` + decode de entidades HTML via html5ever — mesma lição do GO).
+  278 detalhes). O conteúdo rico do detalhe fica para uma eventual **v2** — ver **D-AM-V2** abaixo.
 - **D-AM4 — público:** 3 rotas de perfil (`pessoa-fisica/juridica/orgaos-publicos`) com **sobreposição**
   (pf∩pj=98); `ocorrencias` = {público × classe} por pertencimento. **classe** = categoria de topo (19).
   `agendaveis` NÃO é público (a rota devolve os 278) — atributo, ignorado como faceta. **Duplicatas**
@@ -258,6 +257,40 @@ Portal `www.sefaz.am.gov.br/portfolio-servicos` = **Next.js App Router (RSC)**. 
 - **D-AM5 — anomalia do portal:** o id **1436** aparece em uma rota de perfil mas não em `/todos`;
   a fonte de verdade é `/todos` (278) — o 1436 fica fora. Registrado.
 - 278 serviços, 423 ocorrências, 3 públicos (PF 147 / PJ 210 / Órgãos 66). 9 testes. `ServicoRaw` direto.
+
+### D-AM-V2 — descrição rica do detalhe (pendência aberta, NÃO feita)
+
+A v1 usa só o `description` curto da listagem (≈1 frase). O AM publica, por serviço, uma **descrição
+rica** (o diferencial do portal) que hoje NÃO entra no snapshot. Recuperá-la é a **v2 do `am`** — sem
+navegador (a descoberta provou zero-XHR: todo o conteúdo é server-rendered no RSC do detalhe).
+
+**Fonte:** `GET https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/{id}?profile=todos` com header
+`RSC: 1` (mesmo transporte da v1). No flight, o objeto **`serviceDetails`** (extrair por âncora
+`"serviceDetails":{` + balanceamento) traz o mapa de seções:
+
+| campo em `serviceDetails` | seção | forma |
+|---|---|---|
+| `resumo` | O que é | texto plano (inline) |
+| `perfis[]` | A quem se destina | array de strings (= o público, já temos via rotas) |
+| `comoProcederHtml` | Passo a passo / Como proceder | **ref de chunk `$a`** |
+| `documentacaoHtml` | Documentação necessária | **ref de chunk `$b`** |
+| `legislacaoHtml` | Legislação Aplicada | HTML inline |
+| `perguntasRespostasHtml` | Perguntas Frequentes | **ref de chunk `$c`** |
+| `setorResponsavel{nome,sigla}` + `email` + `phone` + `tempoMedioEmDias` | Contato | campos escalares |
+| `visibleSections[]` | quais seções existem | enum (ex.: id 63 não tem `PERGUNTAS_FREQUENTES`) |
+
+**Trabalho técnico da v2 (o que a v1 evitou):**
+1. **Resolver refs de chunk do flight:** `"$a"/"$b"/"$c"` apontam para chunks-texto no MESMO payload,
+   no formato `a:T<hexlen>,<html>` — **alguns colados ao chunk anterior sem `\n`** (o parser tem de
+   varrer por `<ref>:T<hexlen>,` e ler `hexlen` bytes, não confiar em quebra de linha).
+2. **Decodificar entidades HTML** (`&ccedil;`, `&atilde;`, `&ordm;`…) e limpar as tags — a tabela fixa
+   do `kit::decode_entities` NÃO cobre tudo; usar **html5ever (crate `scraper`)**, mesma lição do GO.
+3. Montar a `descricao` concatenando as seções presentes (`visibleSections`) num texto uniforme.
+
+**Custo/risco:** **~278 GETs** (um por serviço, cacheáveis; cortesia entre eles) — mais pesado que
+qualquer scraper atual. Os **39 serviços link-only** (externo/submenu) NÃO têm página de detalhe → sem
+`serviceDetails`; a v2 mantém para eles só o `resumo` da listagem. Guard sugerido: um piso de seções
+não-vazias por serviço para pegar regressão de parser. Evidência e amostras em `descoberta-am.md` (Fase 3).
 
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
