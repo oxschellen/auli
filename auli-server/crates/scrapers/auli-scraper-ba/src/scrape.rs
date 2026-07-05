@@ -14,13 +14,13 @@ use ureq::tls::{TlsConfig, TlsProvider};
 
 use auli_contract::Publico;
 use auli_scraper_kit::PerPublicoServicos;
+use auli_scraper_kit::{clean_decoded, decode_entities};
 use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://portal.sefaz.ba.gov.br";
 const SEED_URL: &str = "https://portal.sefaz.ba.gov.br/scripts/cartadeservicos/index.asp";
-// D-BA4: UA de navegador, como nos demais scrapers (robots.txt restritivo a crawlers genéricos;
-// coleta de baixíssima frequência, ~207 GETs por rodada, com cache).
-const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
+// D-BA4: UA de navegador (o `kit::USER_AGENT` da frota — robots.txt restritivo a crawlers
+// genéricos; coleta de baixíssima frequência, ~207 GETs por rodada, com cache).
 // Cortesia entre fetches de ficha.
 const COURTESY: Duration = Duration::from_millis(500);
 /// D-BA2: ficha sem subtítulo `<small>` (classe do portal) recebe esta classe.
@@ -68,7 +68,7 @@ fn build_agent_native_tls(user_agent: &str, timeout: Duration) -> Agent {
 /// Raspa a Carta de Serviços da BA e devolve os per-público (na ordem de primeira aparição) + a
 /// ordem dos públicos.
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Vec<Publico>)> {
-    let agent = build_agent_native_tls(USER_AGENT, Duration::from_secs(30));
+    let agent = build_agent_native_tls(auli_scraper_kit::USER_AGENT, Duration::from_secs(30));
 
     // 1. Listagem única.
     let seed = fetch(&agent, data_dir, SEED_URL, use_cache)?;
@@ -256,7 +256,7 @@ fn normalize_body_links(html: &str) -> String {
     LINK_RE
         .replace_all(html, |c: &regex::Captures| {
             let href = c[1].trim();
-            let texto = clean_inline(&strip_tags(&c[2]));
+            let texto = clean_decoded(&strip_tags(&c[2]));
             if href.starts_with('#') || href.starts_with("javascript:") {
                 return texto;
             }
@@ -281,12 +281,8 @@ fn strip_tags(html: &str) -> String {
     TAG_RE.replace_all(html, "").into_owned()
 }
 
-/// Decodifica as entidades comuns e comprime espaços numa linha só.
-fn clean_inline(s: &str) -> String {
-    decode_entities(s).split_whitespace().collect::<Vec<_>>().join(" ")
-}
-
-/// Normaliza por linha (comprime espaços, decodifica entidades) e descarta linhas vazias.
+/// Normaliza por linha (comprime espaços, decodifica entidades) e descarta linhas vazias. Line-based
+/// (preserva quebras) — semântica própria do formato, fica local; usa `kit::decode_entities`.
 fn clean_text(s: &str) -> String {
     decode_entities(s)
         .lines()
@@ -296,17 +292,8 @@ fn clean_text(s: &str) -> String {
         .join("\n")
 }
 
-fn decode_entities(s: &str) -> String {
-    s.replace("&nbsp;", " ")
-        .replace("&amp;", "&")
-        .replace("&lt;", "<")
-        .replace("&gt;", ">")
-        .replace("&quot;", "\"")
-        .replace("&#39;", "'")
-}
-
 fn text(el: &ElementRef) -> String {
-    clean_inline(&el.text().collect::<String>())
+    clean_decoded(&el.text().collect::<String>())
 }
 
 /// Slug simples para rótulos de público fora do mapa (D-BA1): minúsculas, [a-z0-9-].
@@ -370,12 +357,11 @@ fn sel(s: &str) -> Selector {
 /// Busca (ou lê do cache) a página `url`. Em `--usecache` um miss é erro (sem rede). Cortesia entre
 /// fetches de rede; retry com backoff. Guarda de charset: o portal declara UTF-8, mas ASP clássico
 /// pode servir bytes latin-1 — bytes inválidos são substituídos com aviso, nunca derrubam a coleta.
+// NB: o retry fica local (não usa `kit::http::get_string`) porque a resposta é lida como bytes e
+// passa por `decode_charset` (o ASP é latin1, não UTF-8) — trabalho real de charset por-portal.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)? {
         return Ok(cached);
-    }
-    if use_cache {
-        bail!("cache miss para {} (modo --usecache, sem rede)", url);
     }
 
     let max_attempts = 3;
