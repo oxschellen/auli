@@ -242,9 +242,9 @@ fn get_string(agent: &ureq::Agent, url: &str) -> Result<String> {
     Err(anyhow!("falha ao buscar {} após {} tentativas: {}", url, max_attempts, last))
 }
 
-/// Corpo mínimo do POST `getChildren`. O `sorters` é OBRIGATÓRIO para paginação determinística
-/// (ver header do módulo): formato verbatim do front, campo da URL de referência. A view padrão
-/// do portal usa o sort curado "Ordem"; para completude qualquer campo válido e estável serve.
+/// Corpo mínimo do POST `getChildren`. `params.sorters` usa o formato verbatim do front por
+/// fidelidade e dá ordem estável entre páginas; **não** afeta a completude (ver header do módulo:
+/// 382 distintos com qualquer sorter — ou sem nenhum). Qualquer campo válido serve.
 fn build_body(page: u32) -> serde_json::Value {
     serde_json::json!({
         "application": APP_IN_BODY,
