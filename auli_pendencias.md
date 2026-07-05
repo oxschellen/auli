@@ -235,6 +235,30 @@ Portal `portal.sefaz.pi.gov.br` = **SPA Sydle ONE (molde CE)**, edge Azion.
 - Cache com chave lógica CURTA (`SEARCH_URL#<catálogo>`): a URL real carrega o `_body` gigante
   url-encoded, longo demais para virar nome de arquivo. 10 testes. `ServicoRaw` direto.
 
+## 13. Entidade `am` (SEFAZ-AM) integrada — ✅ **resolvida (14ª entidade)**
+
+Portal `www.sefaz.am.gov.br/portfolio-servicos` = **Next.js App Router (RSC)**. Descoberta completa em
+`descoberta-am.md`.
+
+- **D-AM1 — transporte (App Router, não Pages Router):** sem `__NEXT_DATA__` nem `/_next/data/{buildId}`
+  (buildId irrelevante). A listagem inteira vem no **flight RSC** via header **`RSC: 1`** na URL
+  (`text/x-component`). Componente `$L8` → `{"items":[…]}` = árvore JSON categoria→(subcat)→serviço,
+  extraída pela âncora única + balanceamento. `ureq` GET basta (Apache/HTTP1.1, sem WAF).
+- **D-AM2 — zero XHR (ponto crítico da descoberta):** o conteúdo do detalhe (accordions: passo a passo,
+  documentação, legislação, FAQ, contato) é **todo server-rendered** no RSC do detalhe (chunks
+  `$a/$b/$c` no mesmo payload); expandir os accordions no browser NÃO dispara rede. → o scraper nunca
+  precisa de navegador (headless foi usado só para _provar_ isso na descoberta).
+- **D-AM3 — escopo = só a listagem:** por decisão, coletamos só o `resumo` curto da listagem (não os
+  278 detalhes). O conteúdo rico do detalhe fica para uma eventual v2 (parser de flight que resolve
+  `$a/$b/$c` + decode de entidades HTML via html5ever — mesma lição do GO).
+- **D-AM4 — público:** 3 rotas de perfil (`pessoa-fisica/juridica/orgaos-publicos`) com **sobreposição**
+  (pf∩pj=98); `ocorrencias` = {público × classe} por pertencimento. **classe** = categoria de topo (19).
+  `agendaveis` NÃO é público (a rota devolve os 278) — atributo, ignorado como faceta. **Duplicatas**
+  publicadas (nome igual, `id` distinto: 5 pares) **mantidas** (fidelidade). Identidade = `id`.
+- **D-AM5 — anomalia do portal:** o id **1436** aparece em uma rota de perfil mas não em `/todos`;
+  a fonte de verdade é `/todos` (278) — o 1436 fica fora. Registrado.
+- 278 serviços, 423 ocorrências, 3 públicos (PF 147 / PJ 210 / Órgãos 66). 9 testes. `ServicoRaw` direto.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

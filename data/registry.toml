@@ -118,3 +118,11 @@ uf = "PI"
 state = "Piauí"
 prompt = "prompts/pi.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "am"
+name = "SEFAZ-AM"
+uf = "AM"
+state = "Amazonas"
+prompt = "prompts/am.txt"
+collections = ["servicos"]

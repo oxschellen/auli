@@ -1,0 +1,1325 @@
+[
+  {
+    "id": 1,
+    "tipo": "Pessoa Física",
+    "classe": "Cadastro / AIDF e PAFS",
+    "orgao": "SEFAZ-AM",
+    "link": "http://online.sefaz.am.gov.br/sintegra/index.asp",
+    "titulo": "Consultar Cadastro de Contribuinte do AM - Base SINTEGRA",
+    "descricao": "Consulta Pública ao Cadastro de Contribuinte do AM - Base SINTEGRA"
+  },
+  {
+    "id": 2,
+    "tipo": "Pessoa Física",
+    "classe": "Certidão de Débitos Estaduais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2742",
+    "titulo": "Emitir Certidão Negativa de Débitos (Contribuinte ICMS) - Consulta Pública",
+    "descricao": "Funcionalidade que permite a emissão de certidão negativa de débitos de contribuinte do ICMS"
+  },
+  {
+    "id": 3,
+    "tipo": "Pessoa Física",
+    "classe": "Certidão de Débitos Estaduais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/541",
+    "titulo": "Emitir Certidão Negativa de Débitos Estaduais (Não Contribuinte ICMS)",
+    "descricao": "A funcionalidade permite emissão de Certidão Negativa de Débitos junto ao Fisco Estadual para Pessoas Físicas e Jurídicas não inscritas no Cadastro de Contribuintes de ICMS do AM. O documento atesta a inexistência de débitos em atraso, inclusive inscritos em dívida ativa."
+  },
+  {
+    "id": 4,
+    "tipo": "Pessoa Física",
+    "classe": "Certidão de Débitos Estaduais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1342",
+    "titulo": "Reemitir Certidão Negativa de Débitos (Não Contribuinte ICMS)",
+    "descricao": "Reemissão de Certidão Negativa de Débitos"
+  },
+  {
+    "id": 5,
+    "tipo": "Pessoa Física",
+    "classe": "Certidão de Débitos Estaduais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1123",
+    "titulo": "Pedir Certidão Negativa de Débitos Estaduais (Situações Excepcionais - Protocolo Virtual) - Pessoa Física",
+    "descricao": "Pedido de Certidão Negativa de Débitos Estaduais para Pessoa Física via Protocolo Virtual, utilizado para situações excepcionais, quando não for possível obtê-la online."
+  },
+  {
+    "id": 6,
+    "tipo": "Pessoa Física",
+    "classe": "Certidão de Débitos Estaduais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1343",
+    "titulo": "Validar Certidão Negativa de Débitos",
+    "descricao": "Funcionalidade que permite a validação de Certidão Negativa de Débitos"
+  },
+  {
+    "id": 7,
+    "tipo": "Pessoa Física",
+    "classe": "Consulta Pública",
+    "orgao": "SEFAZ-AM",
+    "link": "https://buscapreco.sefaz.am.gov.br/home",
+    "titulo": "Busca Preço Amazonas",
+    "descricao": "Ferramenta que oferece serviço gratuito de pesquisa dos preços praticados no comércio do Estado do Amazonas"
+  },
+  {
+    "id": 8,
+    "tipo": "Pessoa Física",
+    "classe": "Consulta Pública",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1862",
+    "titulo": "Nota Fiscal Amazonense",
+    "descricao": "A Nota Fiscal Amazonense é uma ação do Programa Estadual de Cidadania Fiscal, do Governo do Amazonas, com o objetivo de tornar a exigência dos documentos fiscais eletrônicos um hábito por parte dos cidadãos."
+  },
+  {
+    "id": 9,
+    "tipo": "Pessoa Física",
+    "classe": "Contencioso",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1822",
+    "titulo": "Consultar Decisões Proferidas pelo Conselho de Recursos Fiscais-CRF",
+    "descricao": "Nesta opção você pode consultar os julgados (Acórdãos) proferidos pelo Conselho de Recursos Fiscais-CRF, com detalhes da decisão e possibilidade de obter o arquivo correspondente."
+  },
+  {
+    "id": 10,
+    "tipo": "Pessoa Física",
+    "classe": "Contencioso",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1809",
+    "titulo": "Portal do Conselho de Recursos Fiscais - CRF",
+    "descricao": "Neste portal você encontrará legislação do Conselho de Recursos Fiscais - CRF, consulta de decisões, pesquisa de julgamentos realizados por Câmara, entre outros."
+  },
+  {
+    "id": 11,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "http://online.sefaz.am.gov.br/nfselada/consultanf.asp",
+    "titulo": "Consulta de Situação de Nota Fiscal de Entrada",
+    "descricao": "Permite consultar a situação da Nota Fiscal Eletrônica (NF-e) de entrada destinada a contribuinte e não contribuinte no Amazonas, informando se já foi desembaraçada e, quando houver, os motivos de pendência que impedem o desembaraço."
+  },
+  {
+    "id": 12,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "http://online.sefaz.am.gov.br/nfselada/ConsultaNFLote.asp",
+    "titulo": "Consulta de Situação da Nota Fiscal de Entrada - Em Lote",
+    "descricao": "Permite consultar, de forma agrupada, a situação de várias Notas Fiscais Eletrônicas (NF-e) de entrada destinada a contribuinte e não contribuinte no Amazonas, indicando se foram desembaraçadas e apresentando, quando houver, os motivos de pendência que impedem o desembaraço."
+  },
+  {
+    "id": 13,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/401",
+    "titulo": "Liberação de Mercadoria (ICMS DIFAL Não Contribuinte) - DAR Avulso",
+    "descricao": "Permite gerar a guia avulsa de arrecadação do ICMS Diferencial de Alíquota (DIFAL Não Contribuinte), referente à aquisição de mercadorias ou bens provenientes de outros Estados, destinados a pessoa física ou jurídica sem inscrição estadual, possibilitando a liberação da mercadoria no desembaraço."
+  },
+  {
+    "id": 14,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1444",
+    "titulo": "Reanálise de Tributação - ICMS DIFAL Não Contribuinte",
+    "descricao": "Permite solicitar a revisão do tratamento tributário aplicado a notas fiscais destinadas a pessoas físicas ou jurídicas sem inscrição estadual (ICMS DIFAL Não Contribuinte)."
+  },
+  {
+    "id": 15,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1542",
+    "titulo": "Desembaraço Antecipado de Nota Fiscal de Veículo Pesado em Trânsito",
+    "descricao": "Permite o desembaraço antecipado de notas fiscais referentes a caminhões, reboques, semirreboques e similares para fins de emplacamento, de forma a permitir que estes veículos venham rodando de outra UF até o Estado do Amazonas."
+  },
+  {
+    "id": 16,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/221",
+    "titulo": "Desembaraçar DI / DSI (Não Contribuinte)",
+    "descricao": "Formalização de processo com solicitação de desembaraço de Declaração de Importação (DI) e Declaração Simplificada de Importação (DSI)"
+  },
+  {
+    "id": 17,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/301",
+    "titulo": "Pedir Análise da GLME para Desembaraço de DI/DSI",
+    "descricao": "Pedido de análise da Guia para Liberação de Mercadoria Estrangeira sem Comprovação do Recolhimento do ICMS  GLME."
+  },
+  {
+    "id": 18,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/623",
+    "titulo": "Validar DI/ DSI Desembaraçada (Não Contribuinte)",
+    "descricao": "Consulta de Declaração de Importação (DI) e Declaração Simplificada de Importação (DSI) desembaraçadas na Sefaz"
+  },
+  {
+    "id": 19,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1484",
+    "titulo": "Consultar Pendências DF-e (MDF-e ou CT-e)",
+    "descricao": "Informa se no Conhecimento de Transporte Eletrônico (CT-e) ou no Manifesto Eletrônico de Documentos (MDF-e) existe alguma Nota Fiscal Eletrônica (NF-e) com pendência de desembaraço."
+  },
+  {
+    "id": 20,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1483",
+    "titulo": "Consultar Situação de NF-e de Saída",
+    "descricao": "Informa qual a situação da NF-e de saída em relação ao seu desembaraço. Se está desembaraçada ou qual é a pendência do desembaraço."
+  },
+  {
+    "id": 21,
+    "tipo": "Pessoa Física",
+    "classe": "Desembaraço",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2268",
+    "titulo": "Emitir DAR ICMS - Transporte Avulso",
+    "descricao": "Emissão de DAR para pagamento do ICMS sobre o serviço de transporte."
+  },
+  {
+    "id": 22,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2411",
+    "titulo": "Acessar Ambiente de Homologação da NF-e",
+    "descricao": "Acesso ao Ambiente de Homologação da NF-e"
+  },
+  {
+    "id": 23,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "http://sistemas.sefaz.am.gov.br/nfe-consulta/formConsulta.do?tipoConsulta=Completa",
+    "titulo": "Consulta Completa da Nota Fiscal Eletrônica",
+    "descricao": "Consulta Completa da Nota Fiscal Eletrônica (NF-e)"
+  },
+  {
+    "id": 24,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2408",
+    "titulo": "Consulta Inutilização de Numeração de NF-e",
+    "descricao": "Consulta de Numerações Inutilizadasde de Notas fiscais Eletrônicas (NF-e)"
+  },
+  {
+    "id": 25,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2409",
+    "titulo": "Consulta Relação de Contribuintes Emitentes de NF-e",
+    "descricao": "Consulta de Emitentes de NF-e"
+  },
+  {
+    "id": 26,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2407",
+    "titulo": "Consulta Resumida da Nota Fiscal Eletrônica",
+    "descricao": "Consulta Resumida da Nota Fiscal Eletrônica (NF-e)"
+  },
+  {
+    "id": 27,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "http://sistemas.sefaz.am.gov.br/nfe-consulta/formConsultaEmitentesNFe.do?acao=consultarEmitentesNFe",
+    "titulo": "Consultar Contribuintes Emitentes de NF-e",
+    "descricao": "Relação de Contribuintes Emitentes de NF-e"
+  },
+  {
+    "id": 28,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1223",
+    "titulo": "Cadastrar Senha para Emitir NF-e Avulsa: MEI e Produtor Rural",
+    "descricao": "Solicitação de cadastro no sistema Nota Fiscal Avulsa"
+  },
+  {
+    "id": 29,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1224",
+    "titulo": "Cadastrar/ Desbloquear Senha para Emitir NF-e Avulsa: Pessoa Física e Artesão",
+    "descricao": "Solicitação de cadastro no sistema Nota Fiscal Avulsa"
+  },
+  {
+    "id": 30,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1225",
+    "titulo": "Cadastrar/ Desbloquear Senha para Emitir NF-e Avulsa: Prestador de Serviço",
+    "descricao": "Solicitação de cadastro no sistema Nota Fiscal Avulsa"
+  },
+  {
+    "id": 31,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1222",
+    "titulo": "Emitir NF-e Avulsa (NFA)",
+    "descricao": "Serviço que possibilita a emissão eletrônica da Nota Fiscal Avulsa aos não contribuintes, incluindo Pessoa Física, MEI, Prestador de Serviço, Produtor Rural e Artesão."
+  },
+  {
+    "id": 32,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "http://portalnfce.sefaz.am.gov.br/consumidor/consulte-sua-nota/",
+    "titulo": "Consulta Pública NFC-e [Público]",
+    "descricao": "Consultar o extrato de todas as notas fiscais eletrônicas registradas em seu CPF, com total segurança."
+  },
+  {
+    "id": 33,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1683",
+    "titulo": "Consultar Validade do CT-e",
+    "descricao": "Consulta Completa do Conhecimento de Transporte Eletrônico"
+  },
+  {
+    "id": 34,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1433",
+    "titulo": "Acessar Manuais sobre MDF-e",
+    "descricao": "Acesso a Manuais sobre Manifesto Eletrônico de Documentos (MDF-e)"
+  },
+  {
+    "id": 35,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2662",
+    "titulo": "Acessar Perguntas Frequentes sobre MDF-e",
+    "descricao": "Acesso a Perguntas Frequentes sobre Manifesto Eletrônico de Documentos (MDF-e)"
+  },
+  {
+    "id": 36,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2522",
+    "titulo": "Consulta Pública do BP-e",
+    "descricao": "Consulta Pública de Bilhete de Passagem Eletrônico - BP-e (por meio do E-GOV)"
+  },
+  {
+    "id": 37,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://dfe-portal.svrs.rs.gov.br/Bpe",
+    "titulo": "Consultar Portal Nacional do BP-e",
+    "descricao": "Acesso ao Portal do Bilhete de Passagem Eletrônico"
+  },
+  {
+    "id": 38,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1432",
+    "titulo": "Nota Fiscal de Energia Elétrica Eletrônica (NF3-e)",
+    "descricao": "Acesso ao Portal da Nota Fiscal de Energia Elétrica Eletrônica"
+  },
+  {
+    "id": 39,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4522",
+    "titulo": "Nota Fiscal Fácil (NFF)",
+    "descricao": "O objetivo do Regime Especial Nota Fiscal Fácil (NFF) é tornar o processo de emissão de documentos fiscais eletrônicos (DFE) o mais simples possível para o contribuinte, deixando a complexidade de geração dos arquivos XML correspondentes sob a responsabilidade de um sistema centralizado, o Portal Nacional da NFF."
+  },
+  {
+    "id": 40,
+    "tipo": "Pessoa Física",
+    "classe": "Documentos Fiscais Eletrônicos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/projetos-nacionais",
+    "titulo": "Portal Estadual de Documentos Eletrônicos",
+    "descricao": "Portal Estadual de Documentos Eletrônicos"
+  },
+  {
+    "id": 41,
+    "tipo": "Pessoa Física",
+    "classe": "Fiscalização / Plantão Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1429",
+    "titulo": "Plantão Fiscal Online - Perguntas e Respostas",
+    "descricao": "Acesso à ferramenta Plantão Fiscal Online - Perguntas e Respostas"
+  },
+  {
+    "id": 42,
+    "tipo": "Pessoa Física",
+    "classe": "Fornecedores, Precatórios, RPVs e Restituições",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1883",
+    "titulo": "Pedir Devolução de Fiança",
+    "descricao": "Solicitação de devolução de valores de fianças criminais autorizadas mediante despacho judicial."
+  },
+  {
+    "id": 43,
+    "tipo": "Pessoa Física",
+    "classe": "Fornecedores, Precatórios, RPVs e Restituições",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1757",
+    "titulo": "Consultar Comprovante IRRF",
+    "descricao": "Consulta de Comprovante de Imposto de Renda Retido na Fonte - IRRF"
+  },
+  {
+    "id": 44,
+    "tipo": "Pessoa Física",
+    "classe": "Fornecedores, Precatórios, RPVs e Restituições",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1825",
+    "titulo": "Consultar Pagamento de Fornecedores",
+    "descricao": "A consulta para Pagamento de Fornecedores é uma ferramenta inovadora que oferece aos fornecedores do Estado, tanto pessoas físicas quanto jurídicas, uma maneira mais rápida, fácil e segura de consultar seus pagamentos."
+  },
+  {
+    "id": 45,
+    "tipo": "Pessoa Física",
+    "classe": "Fornecedores, Precatórios, RPVs e Restituições",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/submenu/35834",
+    "titulo": "Consultar Relação de Precatórios da Administração Direta",
+    "descricao": "Consulta da Relação de Precatórios da Administração Direta em Ordem Cronológica"
+  },
+  {
+    "id": 46,
+    "tipo": "Pessoa Física",
+    "classe": "Fornecedores, Precatórios, RPVs e Restituições",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1882",
+    "titulo": "Solicitar Liberação de Pagamento Devolvido",
+    "descricao": "Solicitação de liberação de pagamento não efetuado devido a conta considerada inválida pelo banco - Pessoal ou Fornecedor"
+  },
+  {
+    "id": 47,
+    "tipo": "Pessoa Física",
+    "classe": "Fornecedores, Precatórios, RPVs e Restituições",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3124",
+    "titulo": "Solicitar Senha Fornecedor (Pessoa Física)",
+    "descricao": "Pedido de senha para que o credor do Estado (pessoa física) possa visualizar a situação do pagamento das respectivas Programações de Desembolso (PDs) por meio do serviço disponível no portfólio - Consultar Pagamentos"
+  },
+  {
+    "id": 48,
+    "tipo": "Pessoa Física",
+    "classe": "Fornecedores, Precatórios, RPVs e Restituições",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4262",
+    "titulo": "ATESTADO DE CAPACIDADE TÉCNICA - FORNECEDORES",
+    "descricao": "Atestado de Capacidade Técnica emitido para fornecedores que tenham prestado serviços à Secretaria de Estado da Fazenda, com o objetivo de comprovar a execução e a qualidade dos serviços realizados."
+  },
+  {
+    "id": 49,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://online.sefaz.am.gov.br/ipva/ipva.asp",
+    "titulo": "Pagar IPVA (consultas, vencimento e impressão de DAR)",
+    "descricao": "Emita a guia (o DAR) para pagar o IPVA à vista ou em até 3 parcelas. Consulte débitos, dívida ativa e detalhes do cálculo do imposto IPVA."
+  },
+  {
+    "id": 50,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3563",
+    "titulo": "Consultar Vencimento de IPVA 2026",
+    "descricao": "Consulte as datas de vencimento do IPVA de 2026"
+  },
+  {
+    "id": 51,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "http://online.sefaz.am.gov.br/ipva/listarFipeVeiculo.asp",
+    "titulo": "Consultar Base de Cálculo do IPVA",
+    "descricao": "Confira o valor venal do seu veículo, utilizado para calcular o IPVA."
+  },
+  {
+    "id": 52,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3285",
+    "titulo": "Parcelar Débitos: IPVA (Eletrônico)",
+    "descricao": "Serviço de parcelamento de débitos vencidos do IPVA (Imposto sobre a Propriedade de Veículos Automotores), ainda não inscritos em dívida ativa."
+  },
+  {
+    "id": 53,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3402",
+    "titulo": "Parcelar Débitos: IPVA (Representante Legal)",
+    "descricao": "Pedido de parcelamento de débitos vencidos de IPVA, ainda não inscritos em dívida ativa, feito por representante legal ou procurador do titular do débito"
+  },
+  {
+    "id": 54,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3202",
+    "titulo": "Baixa de IPVA e Retificação de Pagamento (REDAR)",
+    "descricao": "Pedido para a correção de erro formal no pagamento do IPVA, inclusive inscrito em dívida ativa."
+  },
+  {
+    "id": 55,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3162",
+    "titulo": "Restituição de IPVA",
+    "descricao": "Solicite a devolução total ou parcial do tributo IPVA pago indevidamente, com base na legislação tributária."
+  },
+  {
+    "id": 56,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/21",
+    "titulo": "Desconto de IPVA: Bom Condutor (Automatizado)",
+    "descricao": "O desconto será aplicado ao IPVA 2026 do condutor que não tenha cometido infrações de trânsito. Solicitação automatizada e desburocratizada do desconto de IPVA anual com base na Lei do Bom Condutor."
+  },
+  {
+    "id": 57,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2762",
+    "titulo": "Desconto de IPVA: Bom Condutor (Situações Excepcionais)",
+    "descricao": "Pedido de desconto no IPVA anual com base na Lei do Bom Condutor (Lei nº 203/14), utilizado em casos EXCEPCIONAIS que impedem a aplicação do desconto pelo serviço automatizado - Bom Condutor Automatizado"
+  },
+  {
+    "id": 58,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/88",
+    "titulo": "Isenção de IPVA para Missões Diplomáticas e Repartições Consulares",
+    "descricao": "Pedido de isenção de IPVA para veículos pertencentes a missões diplomáticas e repartições consulares permanentes."
+  },
+  {
+    "id": 59,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1082",
+    "titulo": "Isenção de IPVA para Responsável por Pessoa com Deficiência Física, Visual, Mental ou Autismo",
+    "descricao": "Pedido de isenção do Imposto sobre a Propriedade de Veículos Automotores - IPVA para veículo registrado em nome do responsável por pessoa com deficiência física, visual, mental severa ou profunda, ou autista."
+  },
+  {
+    "id": 60,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/83",
+    "titulo": "Isenção de IPVA para Táxi",
+    "descricao": "Pedido de isenção do IPVA para veículos da categoria aluguel (placa vermelha), utilizados como táxi."
+  },
+  {
+    "id": 61,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/63",
+    "titulo": "Isenção de IPVA para Veículo Furtado ou Roubado",
+    "descricao": "Pedido de isenção do IPVA para veículo roubado ou furtado."
+  },
+  {
+    "id": 62,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/87",
+    "titulo": "Isenção de IPVA para Veículo Sinistrado com Perda Total",
+    "descricao": "Pedido de isenção de IPVA para veículo sinistrado com perda total."
+  },
+  {
+    "id": 63,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/85",
+    "titulo": "Revisão do Valor de IPVA",
+    "descricao": "Pedido de revisão do valor do IPVA para proprietários de veículos que discordam da base de cálculo ou da alíquota publicadas pela Secretaria de Fazenda do Amazonas."
+  },
+  {
+    "id": 64,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2685",
+    "titulo": "Alteração de Alíquota IPVA para Transporte Escolar",
+    "descricao": "Solicitação de Alteração da Alíquota de Veículos Destinados ao Transporte Escolar"
+  },
+  {
+    "id": 65,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4462",
+    "titulo": "Alteração de Alíquota IPVA para Transporte Coletivo de Passageiros por Fretamento",
+    "descricao": "Solicitação de Alteração de Alíquota de Transporte Coletivo de Passageiros por Fretamento"
+  },
+  {
+    "id": 66,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4484",
+    "titulo": "Isenção de IPVA para Pessoa com Deficiência (geral)",
+    "descricao": "Pedido de isenção do Imposto sobre a Propriedade de Veículos Automotores - IPVA para os veículos automotores de propriedade de pessoas com deficiência, ainda que conduzidos por representante legal, com fundamento no inciso I do art. 10-A da Lei nº 4.719/18."
+  },
+  {
+    "id": 67,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4502",
+    "titulo": "Isenção de IPVA para Pessoa com Deficiência Física (Condutor)",
+    "descricao": "Pedido de isenção do IPVA para pessoas com deficiência física, proprietárias de veículos automotores, habilitadas e aptas à condução veicular, com fundamento no inciso II do art. 10-A da Lei nº 4.719/18. A isenção alcança contribuintes que, até o exercício de 2025, possuíam redução de 50% da base de cálculo e que, após a Lei nº 7.794/2025, passam à isenção integral do imposto."
+  },
+  {
+    "id": 68,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1437",
+    "titulo": "Pré-Cadastro de Veículos Novos (Online)",
+    "descricao": "Funcionalidade que possibilita o cadastro de um veículo novo no sistema estadual, facilitando o processo de solicitação de registro e emplacamento no Departamento Estadual de Trânsito do Amazonas (DETRAN/AM)."
+  },
+  {
+    "id": 69,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/89",
+    "titulo": "Pedir Pré-Cadastro de Veículos Novos por Chassi",
+    "descricao": "Serviço utilizado quando não é possível realizar o pré-cadastro de forma online, geralmente devido a inconsistências nas informações da Nota Fiscal Eletrônica (NFE), que impedem o reconhecimento automático pelo sistema da SEFAZ. Nesses casos, é necessário preencher os dados manualmente."
+  },
+  {
+    "id": 70,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2451",
+    "titulo": "Pré-Cadastro de Veículos - Transferência de UF (Online)",
+    "descricao": "Funcionalidade que possibilita o cadastro de um veículo novo no sistema estadual, facilitando o processo de solicitação de registro e emplacamento no Departamento Estadual de Trânsito do Amazonas (DETRAN/AM)."
+  },
+  {
+    "id": 71,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2452",
+    "titulo": "Pré-Cadastro de Veículos - Mudança de Categoria - Somente Aluguel ou Oficial para Particular (Online)",
+    "descricao": "Funcionalidade que possibilita o cadastro de um veículo novo no sistema estadual, facilitando o processo de solicitação de registro e emplacamento no Departamento Estadual de Trânsito do Amazonas (DETRAN/AM)."
+  },
+  {
+    "id": 72,
+    "tipo": "Pessoa Física",
+    "classe": "IPVA e Veículos",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/82",
+    "titulo": "Cancelamento de Pré-Cadastro de Veículos",
+    "descricao": "O cancelamento do Pré-Cadastro de Veículo tem como finalidade retirar o veículo da lista de pré-cadastrados, eliminando, assim, a obrigação de pagamento do IPVA."
+  },
+  {
+    "id": 73,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2122",
+    "titulo": "Preencher Declaração ITCMD: Doação de Cotas de Sociedade",
+    "descricao": "Formulário online para preenchimento da Declaração de Informações Econômico-Fiscais - DIEF/ITCMD relativo a doações de cotas de Sociedade."
+  },
+  {
+    "id": 74,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2104",
+    "titulo": "Preencher Declaração ITCMD: Doação em Dinheiro (sem Escritura Pública)",
+    "descricao": "Formulário online para preenchimento da Declaração de Informações Econômico-Fiscais - DIEF/ITCMD relativo a doações em espécie."
+  },
+  {
+    "id": 75,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1562",
+    "titulo": "Preencher Declaração ITCMD: Processo Extrajudicial (Uso Cartório - Com Certificado Digital)",
+    "descricao": "Formulário online para fornecer informações e efetuar o pagamento do Imposto de Transmissão Causa Mortis e Doação (ITCMD) em situações como inventários extrajudiciais, divórcios, cessões, renúncia, doações e usufruto via Cartórios de Nota."
+  },
+  {
+    "id": 76,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/261",
+    "titulo": "Preencher Declaração ITCMD: Processo Judicial",
+    "descricao": "Formulário online para preenchimento da Declaração de Informações Econômico-Fiscais - DIEF/ITCMD relacionada a transmissões gratuitas de bens e direitos por causa mortis ou transferência entre vivos via Processo Judicial."
+  },
+  {
+    "id": 77,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3109",
+    "titulo": "Continuar DIEF Não Concluída",
+    "descricao": "Dar continuidade ao preenchimento de uma declaração já iniciada"
+  },
+  {
+    "id": 78,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3108",
+    "titulo": "Criar Declaração ITCMD Retificadora",
+    "descricao": "Criar nova declaração de ITCMD para retificar uma DIEF já registrada"
+  },
+  {
+    "id": 79,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1522",
+    "titulo": "Consultar Protocolo de Declaração ITCMD (DIEF/ITCMD)",
+    "descricao": "Funcionalidade que possibilita o acompanhamento das declarações registradas e envio de documentos, oferecendo informações detalhadas sobre o status, cálculos e documentos relacionados a uma DIEF específica. Utilize esse recurso para consultar e obter informações atualizadas sobre seu protocolo, simplificando a comunicação com a SEFAZ-AM."
+  },
+  {
+    "id": 80,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "http://sistemas.sefaz.am.gov.br/GAE/itcmd/buscarBoleto.do",
+    "titulo": "Gerar DAR: ITCMD",
+    "descricao": "Funcionalidade permite emitir o Documento de Arrecadação para o ITCMD (Imposto sobre Transmissão Causa Mortis e Doação)."
+  },
+  {
+    "id": 81,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3503",
+    "titulo": "Parcelar Débitos: ITCMD (Eletrônico)",
+    "descricao": "Serviço de parcelamento de débitos vencidos de ITCMD (Imposto sobre a Transmissão Causa Mortis e Doação de Quaisquer Bens ou Direitos), ainda não inscritos em dívida ativa."
+  },
+  {
+    "id": 82,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3262",
+    "titulo": "Parcelar Débitos: ITCMD - Representante Legal (Protocolo Virtual)",
+    "descricao": "Pedido de parcelamento de débitos vencidos de ITCMD, ainda não inscritos em dívida ativa, feito por representante legal ou procurador do titular do débito"
+  },
+  {
+    "id": 83,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3282",
+    "titulo": "Pedir Retificação de DAR (REDAR - ITCMD)",
+    "descricao": "Pedido de correção do pagamento de Imposto de Transmissão Causa Mortis e Doação (ITCMD)"
+  },
+  {
+    "id": 84,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3065",
+    "titulo": "Emitir Certidão de Quitação de Débito ITCMD",
+    "descricao": "Certidão de Quitação de débito de ITCMD"
+  },
+  {
+    "id": 85,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3066",
+    "titulo": "Validar Certidão de Quitação de Débito ITCMD",
+    "descricao": "Validar Certidão de Quitação - ITCMD"
+  },
+  {
+    "id": 86,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/62",
+    "titulo": "Pedir Revisão de ITCMD",
+    "descricao": "Pedido de revisão da base de cálculo do ITCMD (Imposto de Transmissão Causa Mortis e Doação) por parte do contribuinte, quando discorda do valor estimado pela SEFAZ/AM ou quando informações incorretas foram fornecidas na Declaração de Informações Econômico-Fiscais ITCMD - DIEF"
+  },
+  {
+    "id": 87,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/61",
+    "titulo": "Pedir Cancelamento de Débito de ITCMD",
+    "descricao": "Solicitação de cancelamento de débito de ITCMD (Imposto de Transmissão Causa Mortis e Doação) por razões justificáveis."
+  },
+  {
+    "id": 88,
+    "tipo": "Pessoa Física",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3143",
+    "titulo": "Pedir Restituição de ITCMD",
+    "descricao": "Solicite a devolução total ou parcial do tributo ITCMD pago indevidamente, com base na legislação tributária."
+  },
+  {
+    "id": 89,
+    "tipo": "Pessoa Física",
+    "classe": "Isenções de ICMS e Regimes Especiais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/304",
+    "titulo": "Pedir Isenção de ICMS: Aquisição de Veículo Novo (Pessoa com Deficiência Condutora do Veículo)",
+    "descricao": "Pedido de Autorização para Aquisição de Veículos Novos com Isenção de ICMS - Pessoa com Deficiência Condutora do Veículo"
+  },
+  {
+    "id": 90,
+    "tipo": "Pessoa Física",
+    "classe": "Isenções de ICMS e Regimes Especiais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/305",
+    "titulo": "Pedir Isenção de ICMS: Aquisição de Veículo Novo (Pessoa com Deficiência Não Condutora do Veículo)",
+    "descricao": "Pedido de Autorização para Aquisição de Veículos Novo com Isenção de ICMS - Pessoa com Deficiência Não Condutora do Veículo"
+  },
+  {
+    "id": 91,
+    "tipo": "Pessoa Física",
+    "classe": "Isenções de ICMS e Regimes Especiais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/303",
+    "titulo": "Pedir Isenção de ICMS: Aquisição de Veículo Novo (Taxista)",
+    "descricao": "Pedido de autorização para aquisição de veículos novo com isenção de ICMS - Taxista"
+  },
+  {
+    "id": 92,
+    "tipo": "Pessoa Física",
+    "classe": "Isenções de ICMS e Regimes Especiais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2062",
+    "titulo": "Pedir Baixa da Restrição Tributária Veicular por Benefício de ICMS",
+    "descricao": "Solicitação para retirar a restrição tributária do prontuário do veículo relacionada ao uso de benefício fiscal de ICMS na aquisição"
+  },
+  {
+    "id": 93,
+    "tipo": "Pessoa Física",
+    "classe": "Isenções de ICMS e Regimes Especiais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4565",
+    "titulo": "Consultar Solicitação de Isenção de ICMS (Aquisição de Veículo Novo)",
+    "descricao": "Consulta de Autorização para aquisição de Veículos Novos com Isenção de ICMS - Taxistas , Pessoas Portadoras com Deficiência"
+  },
+  {
+    "id": 94,
+    "tipo": "Pessoa Física",
+    "classe": "Isenções de ICMS e Regimes Especiais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1666",
+    "titulo": "Validar Autorização para Aquisição de Veículos Novos com Isenção de ICMS",
+    "descricao": "Validação de Autorização para aquisição de Veículos Novos com Isenção de ICMS - Taxistas , Pessoas Portadoras com Deficiência"
+  },
+  {
+    "id": 95,
+    "tipo": "Pessoa Física",
+    "classe": "Isenções de ICMS e Regimes Especiais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2971",
+    "titulo": "Autorização para Realização de Feiras",
+    "descricao": "Regime Especial para Autorização de Realização de Feiras"
+  },
+  {
+    "id": 96,
+    "tipo": "Pessoa Física",
+    "classe": "Isenções de ICMS e Regimes Especiais",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/306",
+    "titulo": "Isenção de ICMS: Energia Elétrica (Produtor Rural)",
+    "descricao": "Regime especial que credencia imóveis situados na zona rural do estado do Amazonas, para usufruir o direito à isenção do ICMS incidente na aquisição de energia elétrica utilizada diretamente na produção primária ou no consumo doméstico da família"
+  },
+  {
+    "id": 97,
+    "tipo": "Pessoa Física",
+    "classe": "Legislação Tributária / Processos ",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3462",
+    "titulo": "Agendar Atendimento Presencial",
+    "descricao": "Agendamento do Atendimento Presencial na Central de Atendimento ao Contribuinte - CAC"
+  },
+  {
+    "id": 98,
+    "tipo": "Pessoa Física",
+    "classe": "Legislação Tributária / Processos ",
+    "orgao": "SEFAZ-AM",
+    "link": "https://sistemas.sefaz.am.gov.br/silt/",
+    "titulo": "Consultar Legislação Tributária (SILT)",
+    "descricao": "Consulta à Legislação Tributária atualizada relativa aos tributos estaduais (ICMS, IPVA, ITCD e Taxas)."
+  },
+  {
+    "id": 99,
+    "tipo": "Pessoa Física",
+    "classe": "Legislação Tributária / Processos ",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3323",
+    "titulo": "Formular Consulta Tributária",
+    "descricao": "Pedido que visa esclarecer dúvidas sobre a aplicação da legislação tributária estadual em situação específica."
+  },
+  {
+    "id": 100,
+    "tipo": "Pessoa Física",
+    "classe": "Legislação Tributária / Processos ",
+    "orgao": "SEFAZ-AM",
+    "link": "http://online.sefaz.am.gov.br/processo/processo.asp",
+    "titulo": "Consultar Tramitação de Processos",
+    "descricao": "Nesta opção você pode consultar os processos em trâmite nesta SEFAZ/AM."
+  },
+  {
+    "id": 101,
+    "tipo": "Pessoa Física",
+    "classe": "Legislação Tributária / Processos ",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1702",
+    "titulo": "Validar Documentos Digitais",
+    "descricao": "Valide a autenticidade e integridade de documento digital emitido com código de validação."
+  },
+  {
+    "id": 102,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4302",
+    "titulo": "Refis 2025 - Lei nº 7.794/2025",
+    "descricao": "Programa tem como objetivo possibilitar a regularização de débitos tributários por meio da redução de multas e juros e da possibilidade de parcelamento facilitado, incentivando os contribuintes a retornarem à regularidade fiscal."
+  },
+  {
+    "id": 103,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4326",
+    "titulo": "Pagar à Vista - Refis 2025 (Situações Excepcionais)",
+    "descricao": "Pedido de adesão ao Refis 2025 para pagamento de débitos à vista, utilizado em casos EXCEPCIONAIS que impedem a utilização da adesão online"
+  },
+  {
+    "id": 104,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4324",
+    "titulo": "Parcelar Débitos de IPVA - Refis 2025 (Situações Excepcionais)",
+    "descricao": "Pedido de adesão ao Refis 2025 para pagamento parcelado de débitos de IPVA, utilizado em casos EXCEPCIONAIS que impedem a utilização da adesão online"
+  },
+  {
+    "id": 105,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/4327",
+    "titulo": "Parcelar Débitos de ITCMD - Refis 2025 (Situações Excepcionais)",
+    "descricao": "Pedido de adesão ao Refis 2025 para pagamento parcelado de débitos de ITCMD, utilizado em casos EXCEPCIONAIS que impedem a utilização da adesão online"
+  },
+  {
+    "id": 106,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1622",
+    "titulo": "Imprimir DAR Avulso - Geral/ Taxa de Expediente",
+    "descricao": "Impressão de Documentos de Arrecadação (DAR) de forma avulsa, para pagamento de valores que não foram objetos de débitos cobrados por lançamento, por antecipação e nem por notificação"
+  },
+  {
+    "id": 107,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://online.sefaz.am.gov.br/daravulso/DarFormARSAM.asp",
+    "titulo": "Imprimir DAR Avulso - ARSEPAM",
+    "descricao": "Impressão de Documentos de Arrecadação (DAR) para pagamento de valores devidos à ARSEPAM - Agência Reguladora de Serviços Públicos Delegados e Contratados do Estado do Amazonas"
+  },
+  {
+    "id": 108,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3302",
+    "titulo": "Informações sobre Débitos Inscritos em Dívida Ativa",
+    "descricao": "Confira informações sobre Débitos Inscritos em Dívida Ativa"
+  },
+  {
+    "id": 109,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/502",
+    "titulo": "Parcelar Débitos: IPVA (Eletrônico)",
+    "descricao": "Serviço de parcelamento de débitos vencidos do IPVA (Imposto sobre a Propriedade de Veículos Automotores), ainda não inscritos em dívida ativa."
+  },
+  {
+    "id": 110,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3382",
+    "titulo": "Parcelar Débitos: IPVA (Representante Legal)",
+    "descricao": "Pedido de parcelamento de débitos vencidos de IPVA, ainda não inscritos em dívida ativa, feito por representante legal ou procurador do titular do débito"
+  },
+  {
+    "id": 111,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/3502",
+    "titulo": "Parcelar Débitos: ITCMD (Eletrônico)",
+    "descricao": "Serviço de parcelamento de débitos vencidos de ITCMD (Imposto sobre a Transmissão Causa Mortis e Doação de Quaisquer Bens ou Direitos), ainda não inscritos em dívida ativa."
+  },
+  {
+    "id": 112,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/501",
+    "titulo": "Parcelar Débitos: ITCMD - Representante Legal (Protocolo Virtual)",
+    "descricao": "Pedido de parcelamento de débitos vencidos de ITCMD, ainda não inscritos em dívida ativa, feito por representante legal ou procurador do titular do débito"
+  },
+  {
+    "id": 113,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/922",
+    "titulo": "Parcelar Débitos: ICMS",
+    "descricao": "Pedido de parcelamento de débitos vencidos do Imposto sobre Operações Relativas à Circulação de Mercadorias e sobre Prestações de Serviços de Transporte Interestadual, Intermunicipal e de Comunicação - ICMS, ainda não inscritos em dívida ativa."
+  },
+  {
+    "id": 114,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1202",
+    "titulo": "Pedir Retificação de DAR (REDAR - IPVA)",
+    "descricao": "Pedido de correção do pagamento de IPVA"
+  },
+  {
+    "id": 115,
+    "tipo": "Pessoa Física",
+    "classe": "Recuperação Fiscal (Refis), Pagamentos, Parcelamentos e REDAR",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1203",
+    "titulo": "Pedir Retificação de DAR (REDAR - ITCMD)",
+    "descricao": "Pedido de correção do pagamento de Imposto de Transmissão Causa Mortis e Doação (ITCMD)"
+  },
+  {
+    "id": 116,
+    "tipo": "Pessoa Física",
+    "classe": "Restituição e Ressarcimento ST - Carta de Crédito",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1182",
+    "titulo": "Pedir Restituição de Indébito de IPVA, ITCMD E ICMS (Contribuinte sem inscrição estadual)",
+    "descricao": "É a devolução, total ou parcial, dos tributos IPVA, ITCMD, ICMS, penalidades ou Contribuições Financeiras"
+  },
+  {
+    "id": 117,
+    "tipo": "Pessoa Física",
+    "classe": "Restituição e Ressarcimento ST - Carta de Crédito",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1756",
+    "titulo": "Consultar Pedido de Restituição de IPVA, ITCMD e ICMS (Contribuintes sem inscrição estadual)",
+    "descricao": "Consulta Pedido de Restituição"
+  },
+  {
+    "id": 118,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "http://www.transparenciafiscal.am.gov.br/transpprd/mnt/info/BGE.do",
+    "titulo": "Balanço Geral do Estado",
+    "descricao": "Consulta anual do Balanço Geral do Estado."
+  },
+  {
+    "id": 119,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2245",
+    "titulo": "COVID-19: Consultar Despesas Públicas no Combate à COVID-19",
+    "descricao": "São todas as aplicações de recursos para realização das ações emergenciais de combate à pandemia causada pelo novo coronavírus."
+  },
+  {
+    "id": 120,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2246",
+    "titulo": "COVID-19: Consultar Orçamento Remanejado no Combate à COVID-19",
+    "descricao": "São todos os recursos orçamentários remanejados para aplicação nas ações emergenciais de combate à pandemia causada pelo novo Coronavírus."
+  },
+  {
+    "id": 121,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2244",
+    "titulo": "COVID-19: Consultar Receitas Públicas no Combate à COVID-19",
+    "descricao": "São todas as receitas que ingressaram nos cofres públicos específicas para despesas em ações emergenciais de combate à pandemia causada pelo novo coronavírus."
+  },
+  {
+    "id": 122,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2247",
+    "titulo": "Consultar Credores Ativos",
+    "descricao": "Relação de pessoas físicas ou pessoas jurídicas, os fornecedores de bens ou serviços para a administração pública."
+  },
+  {
+    "id": 123,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2243",
+    "titulo": "Consultar Despesas Públicas",
+    "descricao": "São todas as aplicações de recursos para realização das ações públicas nas áreas de saúde, educação, segurança, obras de infra-estrutura, entre outros."
+  },
+  {
+    "id": 124,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2274",
+    "titulo": "Consultar Destaque Orçamentário",
+    "descricao": "Execução de Destaque Orçamentário"
+  },
+  {
+    "id": 125,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/1926",
+    "titulo": "Consultar Emendas Parlamentares Estaduais",
+    "descricao": "Consultar Emendas Parlamentares Estaduais"
+  },
+  {
+    "id": 126,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2264",
+    "titulo": "Consultar Empenhos Anulados",
+    "descricao": "Relação de Empenhos Anulados por Órgão"
+  },
+  {
+    "id": 127,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2273",
+    "titulo": "Consultar Execução Orçamentária",
+    "descricao": "Demonstrativo de Execução Orçamentária"
+  },
+  {
+    "id": 128,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2272",
+    "titulo": "Consultar Fila Cronológica para Pagamento",
+    "descricao": "Filas de Ordem Cronológica"
+  },
+  {
+    "id": 129,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2270",
+    "titulo": "Consultar Pagamentos Consignados",
+    "descricao": "Pagamentos Consignados - Órgão"
+  },
+  {
+    "id": 130,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2269",
+    "titulo": "Consultar Pagamentos por Credor",
+    "descricao": "Consulta por Credor."
+  },
+  {
+    "id": 131,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2242",
+    "titulo": "Consultar Receitas Públicas",
+    "descricao": "São todas as entradas nos cofres públicos obtidas por meio de impostos, taxas, transferências, operações de crédito, entre outros, para a cobertura das despesas públicas."
+  },
+  {
+    "id": 132,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2271",
+    "titulo": "Consultar Relação de Pagamentos",
+    "descricao": "Relação de Pagamentos"
+  },
+  {
+    "id": 133,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2276",
+    "titulo": "Consultar Relação de Pagamentos de Diárias",
+    "descricao": "Relação de Pagamentos de Diárias por Órgão"
+  },
+  {
+    "id": 134,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2275",
+    "titulo": "Consultar Salários dos Servidores",
+    "descricao": "Remuneração dos Servidores."
+  },
+  {
+    "id": 135,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2278",
+    "titulo": "Convênios e Transferências: Consultar Convênios de Entrada (Execução de Despesa)",
+    "descricao": "Convênios de Entrada - Execução da Despesa"
+  },
+  {
+    "id": 136,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2277",
+    "titulo": "Convênios e Transferências: Consultar Convênios de Entrada (Receitas de Convênio)",
+    "descricao": "Convênios de Entrada - Receitas de convênio"
+  },
+  {
+    "id": 137,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2279",
+    "titulo": "Convênios e Transferências: Consultar Convênios de Saída",
+    "descricao": "Consulta Convênios de Saída - Execução"
+  },
+  {
+    "id": 138,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2280",
+    "titulo": "Convênios e Transferências: Consultar Transferências Fundo a Fundo",
+    "descricao": "Transferências fundo a fundo - Execução"
+  },
+  {
+    "id": 139,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "http://www.transparenciafiscal.am.gov.br/transpprd/mnt/info/FundebDespesa.do",
+    "titulo": "FUNDEB - Despesas: Consultar",
+    "descricao": "Consulta das despesas do Fundo de Manutenção e Desenvolvimento da Educação Básica e de Valorização dos Profissionais da Educação - FUNDEB."
+  },
+  {
+    "id": 140,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "http://www.transparenciafiscal.am.gov.br/transpprd/mnt/info/FundebReceita.do",
+    "titulo": "FUNDEB - Receitas: Consultar",
+    "descricao": "Consulta das receitas do Fundo de Manutenção e Desenvolvimento da Educação Básica e de Valorização dos Profissionais da Educação - FUNDEB."
+  },
+  {
+    "id": 141,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "http://www.sefaz.am.gov.br/submenu/554",
+    "titulo": "Lei Orçamentária Anual - LOA",
+    "descricao": "Consulta das Leis Orçamentárias Anuais."
+  },
+  {
+    "id": 142,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "http://www.sefaz.am.gov.br/submenu/313",
+    "titulo": "Lei de Diretrizes Orçamentárias - LDO",
+    "descricao": "Consulta das Leis de Diretrizes Orçamentárias - LDO"
+  },
+  {
+    "id": 143,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "http://www.transparenciafiscal.am.gov.br/transpprd/mnt/info/LRF.do",
+    "titulo": "Lei de Responsabilidade Fiscal - LRF",
+    "descricao": "Consulta de relatórios da Lei de Responsabilidade Fiscal."
+  },
+  {
+    "id": 144,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/2281",
+    "titulo": "Licitações e Contratos: Consultar",
+    "descricao": "Acompanhamento das Compras e dos Contratos Governamentais."
+  },
+  {
+    "id": 145,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "http://www.transparenciafiscal.am.gov.br/transpprd/mnt/info/Recolhimento.do",
+    "titulo": "Municípios: Consultar Recolhimento de ISS",
+    "descricao": "Consulta de recolhimento de ISS nos municípios."
+  },
+  {
+    "id": 146,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "https://sistemas.sefaz.am.gov.br/srt/publico.do",
+    "titulo": "Municípios: Consultar Relatório de Repasse",
+    "descricao": "Consulta do relatório mensal de repasses para municípios."
+  },
+  {
+    "id": 147,
+    "tipo": "Pessoa Física",
+    "classe": "Transparência Fiscal",
+    "orgao": "SEFAZ-AM",
+    "link": "http://www.transparenciafiscal.am.gov.br/transpprd/mnt/info/Repasse.do?tipo=tributo",
+    "titulo": "Municípios: Consultar Repartição das Receitas Tributárias, Transferências da União x Rateio aos Municípios",
+    "descricao": "Consulta da distribuição de receitas tributárias e transferências da União aos municípios."
+  }
+]

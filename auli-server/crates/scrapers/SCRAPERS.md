@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-05 (frota com 13 entidades; PI = a mais recente).
+> Última atualização: 2026-07-05 (frota com 14 entidades; AM = a mais recente).
 
 ---
 
@@ -86,8 +86,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **mt** | SEFAZ-MT / Mato Grosso | X-Via Portal (SPA React); API pública `POST /v1/search/department`, sem token | JSON | 2 | 27 | rica (~168) | direto | 8 | rustls |
 | **go** | SEFAZ-GO / Goiás (Secr. Economia) | Portal Expresso (SPA); API WSO2 `servicosOrgaos/20`, token client_credentials anônimo | JSON | 1 | 94 | rica (inline) | direto | 8 | **curl (WAF JA3)** |
 | **pi** | SEFAZ-PI / Piauí | SPA Sydle ONE; API JSON `_search` (**GET**), catálogo "Carta de Serviços", Bearer anônimo do shell | JSON | 1 | 29 | curta | direto | 10 | rustls |
+| **am** | SEFAZ-AM / Amazonas | Next.js **App Router**; flight **RSC** (header `RSC: 1`), árvore `items`; público via 3 rotas de perfil | JSON (RSC) | 3 | 278 | curta (resumo) | direto | 9 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **87** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **96** (todos os crates cobertos).
 
 ---
 
@@ -268,6 +269,22 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   login. Público único "Serviços", classe "Geral". Identidade = `_id`; link = `…/<friendlyUrl>`
   (rota SPA `/:pathWithId`; sem `friendlyUrl` → `…/<_id>`). Órgão "SEFAZ-PI".
 - 29 serviços (Carta de Serviços). 10 testes. `ServicoRaw` direto.
+
+### am — SEFAZ-AM (Amazonas)
+
+- **Next.js App Router (RSC), NÃO Pages Router** — sem `__NEXT_DATA__` nem `/_next/data/{buildId}`
+  (buildId irrelevante). A listagem inteira vem **server-rendered no flight RSC**, obtido com o header
+  **`RSC: 1`** na própria URL (`text/x-component`). No flight, o componente `$L8` traz `{"items":[…]}`
+  = a **árvore pura em JSON** categoria → (subcategoria) → serviço; extraída pela âncora única
+  `{"items":[` + balanceamento de colchetes. **Zero XHR:** o conteúdo do detalhe (accordions) é todo
+  server-rendered — verificado expandindo no Chrome (não dispara rede). Coleta = `ureq` GET, sem navegador.
+- **Público via 3 rotas de perfil** (`/portfolio-servicos/{pessoa-fisica,pessoa-juridica,orgaos-publicos}`):
+  `ocorrencias` = {público × classe} por pertencimento; públicos **se sobrepõem** (um serviço pode ser
+  PF+PJ). **classe** = categoria de topo da árvore (19). `agendaveis` NÃO é público (a rota devolve tudo)
+  — atributo, ignorado como faceta. Identidade = `id`; `link` absolutiza relativos e tira `?profile=`.
+  **Escopo: só a listagem** (resumo curto); o conteúdo rico do detalhe ficou de fora por decisão.
+- 278 serviços, 423 ocorrências, 3 públicos (PF 147 / PJ 210 / Órgãos 66). 9 testes. `ServicoRaw` direto.
+  Links: 239 detalhe / 34 externo / 4 submenu / 1 interno. Detalhes de descoberta em `descoberta-am.md`.
 
 ---
 
