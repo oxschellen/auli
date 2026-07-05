@@ -6,7 +6,7 @@ edition = "2024"
 # Scraper da SEF-SC (serviços, API JSON Next.js). SEM headless_chrome (exclusivo do RS). Depende de
 # auli-contract + o kit — nunca de fastembed/ort.
 [dependencies]
-auli-contract = { path = "../auli-contract" }
+auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
 ureq = { version = "3", features = ["json"] }
 regex = "1.12.3"

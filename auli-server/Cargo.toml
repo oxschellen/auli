@@ -6,16 +6,10 @@ members = [
     "crates/auli-core",
     "crates/auli-cli",
     "crates/auli-collections",
-    "crates/auli-scraper-kit",
-    "crates/auli-scraper-rs",
-    "crates/auli-scraper-sc",
-    "crates/auli-scraper-pr",
-    "crates/auli-scraper-sp",
-    "crates/auli-scraper-mg",
-    "crates/auli-scraper-pe",
-    "crates/auli-scraper-ba",
-    "crates/auli-scraper-rj",
-    "crates/auli-scraper-ce",
+    # Toda a frota de scrapers (kit + entidades). Glob: entidade nova não toca este arquivo.
+    # Invariante: tudo sob `scrapers/` compila leve — depende no máximo de `auli-contract` +
+    # `auli-scraper-kit`, NUNCA de fastembed/ort/auli-core.
+    "crates/scrapers/*",
 ]
 
 # Single shared Cargo.lock across the workspace: the `server` and `update` modes can never pick

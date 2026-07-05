@@ -52,7 +52,7 @@ respondeu por estado com o serviço/link corretos:
 
 A aba de FAQs voltou a ter fonte: o scraper agora **serializa a árvore** (`faqs-tree.json`, com
 `page_type`/`children`) ao lado do snapshot
-([faqs/mod.rs](auli-server/crates/auli-scraper-rs/src/faqs/mod.rs)), e o frontend a busca
+([faqs/mod.rs](auli-server/crates/scrapers/auli-scraper-rs/src/faqs/mod.rs)), e o frontend a busca
 ([FaqsList.tsx:17](auli-frontend/src/pages/faqslist/FaqsList.tsx#L17), `faqs-tree.json`). O
 `build-frontend-public.sh` agora **pula os contratos do engine** (`<id>-faqs.json`/`<id>-servicos.json`,
 que a UI não consome) — sem peso morto nem colisão de nome em `public/`.
@@ -83,6 +83,17 @@ contrato.
 A auditoria de consistência **unificou o kind vetorial `services` → `servicos` ponta a ponta**
 (`corpus`/`update`/`rag`/`packs`/`manifest`). Não há mais tradução por convenção: o `registry.toml`,
 o scraper, a UI e o engine falam um vocabulário só. Os packs saem `<id>-servicos.json`.
+
+---
+
+## 6. Conteúdo dos docs de scrapers desatualizado — **pendente (PR próprio)**
+
+A frota foi movida para `crates/scrapers/` (refactor de layout, só caminhos). Mas o **conteúdo**
+de `auli_code.md` §5 (tabela de scrapers) e do runbook `auli_operations.md` está atrasado:
+param no **MG** (listam 5–6 scrapers, faltam pe/ba/rj/ce) e descrevem o **RS com headless
+Chrome**, quando hoje o RS é **API JSON** (`tudofacil`) e são **9 entidades**. A referência viva e
+correta é [`crates/scrapers/SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md). Atualizar o
+conteúdo dessas duas docs num PR próprio (não misturar com o refactor de movimento).
 
 ---
 

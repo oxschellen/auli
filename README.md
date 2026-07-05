@@ -82,7 +82,7 @@ space is shared by construction.
 | [`crates/auli-core`](auli-server/crates/auli-core/)               | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash).                                                                 |
 | [`crates/auli-cli`](auli-server/crates/auli-cli/)                 | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`.                                                                                                                   |
 | [`crates/auli-collections`](auli-server/crates/auli-collections/) | Offline **derivation** (`<id> process`): snapshot → `auli-contract` tables (`<id>-<kind>.json`) + artifacts.                                                                                                                            |
-| [`crates/auli-scraper-<id>`](auli-server/crates/) + [`auli-scraper-kit`](auli-server/crates/auli-scraper-kit/) | The **scrapers** — one binary per state (`rs`/`sc`/`sp`/`pr`/`mg`) writing a snapshot; `auli-scraper-kit` is their shared cache / aggregation / snapshot I/O.                                                                                                                            |
+| [`crates/scrapers/auli-scraper-<id>`](auli-server/crates/) + [`auli-scraper-kit`](auli-server/crates/scrapers/auli-scraper-kit/) | The **scrapers** — one binary per state (`rs`/`sc`/`sp`/`pr`/`mg`) writing a snapshot; `auli-scraper-kit` is their shared cache / aggregation / snapshot I/O.                                                                                                                            |
 
 Two modes:
 

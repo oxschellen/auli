@@ -4,7 +4,7 @@ Referência das 9 implementações de scraper da frota Auli. Cada crate é um **
 entidade** que raspa o catálogo de serviços (e, no RS, também as FAQs) de uma SEFAZ estadual e
 grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
-Fonte da verdade das entidades: [`data/registry.toml`](../../data/registry.toml). Este doc
+Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
 > Última atualização: 2026-07-04 (frota com 9 entidades; CE = a mais recente, PR #16).
@@ -175,10 +175,11 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 
 ## 5. Checklist de integração de uma nova entidade
 
-1. Crate em `auli-server/crates/auli-scraper-<id>/` + adicionar aos `members` do
-   [`auli-server/Cargo.toml`](Cargo.toml).
+1. Crate em `auli-server/crates/scrapers/auli-scraper-<id>/`. O `members` do
+   [`auli-server/Cargo.toml`](../../Cargo.toml) usa o glob `crates/scrapers/*` — **não precisa
+   editá-lo** para uma entidade nova.
 2. `cargo test -p auli-scraper-<id>` — o gate verde de verdade.
-3. **Registrar em [`data/registry.toml`](../../data/registry.toml)** (bloco `[[entities]]`) +
+3. **Registrar em [`data/registry.toml`](../../../data/registry.toml)** (bloco `[[entities]]`) +
    criar `data/prompts/<id>.txt`. ⚠️ Passo fácil de esquecer — sem ele, `auli-collections <id>`
    falha com "Entidade desconhecida".
 4. `node scripts/gen-frontend-entities.mjs` → regenera `auli-frontend/src/shared/entities.ts`

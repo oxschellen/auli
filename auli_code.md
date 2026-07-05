@@ -384,7 +384,7 @@ auli-scraper-<e> (rede)  →  data/<id>/<id>-<kind>-snapshot.json (v3)  →  aul
 
 ### 5.1 O kit compartilhado (`auli-scraper-kit`)
 
-[crates/auli-scraper-kit](auli-server/crates/auli-scraper-kit): peças comuns aos scrapers —
+[crates/scrapers/auli-scraper-kit](auli-server/crates/scrapers/auli-scraper-kit): peças comuns aos scrapers —
 `snapshot::{load, write_faqs, write_servicos}` (grava/lê o snapshot v2), `cache::{read, write}`
 (cache de página por URL; arquivo vazio conta como _miss_), `build_agent(user_agent, timeout)`
 (agente `ureq`), e `aggregate_servicos` + `descricao_body` (dobra registros per-público em `ServicoRaw`
@@ -402,20 +402,20 @@ ocorrências nativas** (resolveu o limite multi-classe do modelo antigo). FAQs s
 
 | Crate | Entidade | Plataforma / técnica | CLI |
 | ----- | -------- | -------------------- | --- |
-| [auli-scraper-rs](auli-server/crates/auli-scraper-rs) | SEFAZ-RS | FAQs (portal CMS via **AJAX/`ureq`**, sem browser) + serviços (5 públicos via **headless Chrome**, detalhe via `ureq`) | `[--usecache] faqs\|servicos\|all` |
-| [auli-scraper-sc](auli-server/crates/auli-scraper-sc) | SEF-SC | serviços via **API JSON Next.js** (sem browser) | `[--usecache] servicos` |
-| [auli-scraper-sp](auli-server/crates/auli-scraper-sp) | SEFAZ-SP | serviços via **REST SharePoint** (JSON anônimo: listas `Serviços` + `Homes 360`) | `[--usecache] servicos` |
-| [auli-scraper-pr](auli-server/crates/auli-scraper-pr) | SEFA-PR | serviços via **HTML Drupal** server-side (mega-menu "Serviços para você!") | `[--usecache] servicos` |
-| [auli-scraper-mg](auli-server/crates/auli-scraper-mg) | SEF-MG | serviços via **API JSON ServiceNow CSM** (page API, sem browser) | `[--usecache] servicos` |
+| [auli-scraper-rs](auli-server/crates/scrapers/auli-scraper-rs) | SEFAZ-RS | FAQs (portal CMS via **AJAX/`ureq`**, sem browser) + serviços (5 públicos via **headless Chrome**, detalhe via `ureq`) | `[--usecache] faqs\|servicos\|all` |
+| [auli-scraper-sc](auli-server/crates/scrapers/auli-scraper-sc) | SEF-SC | serviços via **API JSON Next.js** (sem browser) | `[--usecache] servicos` |
+| [auli-scraper-sp](auli-server/crates/scrapers/auli-scraper-sp) | SEFAZ-SP | serviços via **REST SharePoint** (JSON anônimo: listas `Serviços` + `Homes 360`) | `[--usecache] servicos` |
+| [auli-scraper-pr](auli-server/crates/scrapers/auli-scraper-pr) | SEFA-PR | serviços via **HTML Drupal** server-side (mega-menu "Serviços para você!") | `[--usecache] servicos` |
+| [auli-scraper-mg](auli-server/crates/scrapers/auli-scraper-mg) | SEF-MG | serviços via **API JSON ServiceNow CSM** (page API, sem browser) | `[--usecache] servicos` |
 
 - **RS** é o único com FAQs e o único que puxa **headless Chrome**. A **árvore** de FAQ
   (`FaqNode { title, url, page_type, origin, children, faq_items }`) é serializada em
-  `faqs-tree.json` para a aba de FAQs do frontend ([faqs/mod.rs](auli-server/crates/auli-scraper-rs/src/faqs/mod.rs));
+  `faqs-tree.json` para a aba de FAQs do frontend ([faqs/mod.rs](auli-server/crates/scrapers/auli-scraper-rs/src/faqs/mod.rs));
   o snapshot leva a lista achatada.
 - **SC/RS/PR** dobram os registros per-público via `aggregate_servicos` (**dedup por `link`**). **SP
   é a exceção**: no portal paulista a URL **não** é única (vários serviços distintos compartilham um
   login), então o scraper monta os `ServicoRaw` **direto** (um por linha do catálogo), sem o
-  aggregate, para não colapsar serviços distintos ([sp/scrape.rs](auli-server/crates/auli-scraper-sp/src/scrape.rs)).
+  aggregate, para não colapsar serviços distintos ([sp/scrape.rs](auli-server/crates/scrapers/auli-scraper-sp/src/scrape.rs)).
 - **Cache + `--usecache`:** cada scraper cacheia páginas por URL (`data/<id>/raw/cache/…`, ignorado
   pelo git); `--usecache` reprocessa offline e torna um _miss_ um erro.
 
