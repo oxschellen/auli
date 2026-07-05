@@ -340,6 +340,33 @@ Fonte = `portal.es.gov.br` (SPA React sobre **X-Via**, MESMO stack do MT). O `co
   órgãos** sob a mesma API → **D-PA-ACERVO** ganha 2º caso (scraper estadual genérico serviria PA/Prodepa
   **e** ES/X-Via).
 
+## 16. Entidade `ro` (SEFIN-RO) integrada — ✅ **resolvida (17ª entidade)**
+
+Agência Virtual = SPA **Sydle ONE geração "conecta-360" (= molde PI, NÃO o CE)**. Descoberta em
+`descoberta-ro.md`.
+
+- **D-RO-FONTE:** shell em `agenciavirtual.sefin.ro.gov.br` (Bearer anônimo efêmero → re-extrair a cada
+  rodada), API em `sydleone.sefin.ro.gov.br` (**tenant por host**, sem header de conta como o CE). App
+  `servicedesk-embedded`. Listagem = **`GET _search`** (ES, `?_body=`) na classe de conteúdo
+  `5cd32901…` (a MESMA do PI), filtrando o catálogo **"Serviços"** (`parent._id 662c1875…`). Escopo = só
+  "Serviços" (194); "Temas" (42)/"Conteúdos" (28) informativos, fora (consistente com o CE).
+- **D-RO-MODELO — Cenário A:** `tags` null e `classification` **403 anon** → público único "Serviços",
+  classe "Geral". Identidade = `_id`; `link` = `agenciavirtual…/catalogo-servicos+{identifier}+{_id}`.
+  Invariante `únicos == total ES`. UA institucional AuliBot (D-PA-ROBOTS preventivo).
+- 194 serviços, 1 público. 8 testes.
+
+### D-XX-SYDLE-COMPARTILHADO (aberta — a decisão de arquitetura mais importante)
+
+**PI e RO são a MESMA geração Sydle ONE (conecta-360):** mesmo contrato `_search`, mesmas classes de
+plataforma (conteúdo `5cd32901…`, catálogo `5ca3bca7…`, classification `5d66ec59…`). Diferem só em
+`{BASE_API_URL host, app, catálogo _id, prefixo-de-link}`. → oportunidade de **um scraper parametrizável
+cobrindo PI + RO** (e futuros conecta-360). **O CE NÃO entra** — é a geração antiga (`getChildren`,
+classes diferentes, tenant por header `X-Explorer-Account-Token`). **Não decidir/refatorar sem alinhar:**
+o trade-off é DRY (1 crate, N estados) × acoplar 2 estados a um contrato de terceiros que evolui. O
+"3º tenant PA/portal-digital" ficou **inconclusivo** (estava em 522 na descoberta do PA; usamos o
+paradigital/Prodepa — outra plataforma). Correlato ao D-AM-V2: RO/PI têm `contentHtml` inline para uma
+eventual descrição rica v2.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-05 (frota com 16 entidades; ES = a mais recente).
+> Última atualização: 2026-07-05 (frota com 17 entidades; RO = a mais recente).
 
 ---
 
@@ -89,8 +89,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **am** | SEFAZ-AM / Amazonas | Next.js **App Router**; flight **RSC** (header `RSC: 1`), árvore `items`; público via 3 rotas de perfil | JSON (RSC) | 3 | 278 | curta (resumo) | direto | 9 | rustls |
 | **pa** | SEFA-PA / Pará | Catálogo estadual "paradigital" (API Prodepa/Spring); `GET /orgao/48` + `GET /servico/{id}`, anônimo | JSON | 3 | 34 | **rica** (etapas+requisitos) | direto | 8 | rustls |
 | **es** | SEFAZ-ES / Espírito Santo | portal.es.gov.br (X-Via, molde MT); `POST /v1/search` por `departmentSlug`, anônimo | JSON | 2 | 45 | **rica** (`serviceLetterContent` HTML) | direto | 8 | rustls |
+| **ro** | SEFIN-RO / Rondônia | Agência Virtual (Sydle ONE conecta-360, molde PI); `GET _search`, catálogo "Serviços", Bearer anônimo | JSON | 1 | 194 | curta | direto | 8 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **112** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **120** (todos os crates cobertos).
 
 ---
 
@@ -321,6 +322,21 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   ganha 2º caso.
 - 45 serviços, 60 ocorrências, 2 públicos (Cidadão 43 / Empresa 17). 8 testes. `ServicoRaw` direto.
   Detalhes de descoberta em `descoberta-es.md`.
+
+### ro — SEFIN-RO (Rondônia)
+
+- **Agência Virtual = SPA Sydle ONE, geração "conecta-360" (MESMO contrato do PI, NÃO do CE).** Shell em
+  `agenciavirtual.sefin.ro.gov.br` (Bearer anônimo embutido → re-extrair a cada rodada), API em
+  `sydleone.sefin.ro.gov.br` (tenant por **host**, sem header de conta como o CE). Listagem = **`GET
+  _search`** (ES, `?_body=` url-encoded) na classe de conteúdo `5cd32901…` (compartilhada com o PI),
+  filtrando o catálogo **"Serviços"** (`parent._id 662c1875…`). O CE (geração antiga) usa `getChildren`
+  → dá 400 no RO; a prova está em `descoberta-ro.md`.
+- **Cenário A** (como CE/PI): `tags` null e `classification` 403 anon → público único "Serviços", classe
+  "Geral". Identidade = `_id`; `link` = `…/catalogo-servicos+{identifier}+{_id}`. **Escopo = só "Serviços"**
+  (194); "Temas" (42) e "Conteúdos" (28) são informativos, fora. Invariante `únicos == total ES`.
+- UA institucional **AuliBot** (D-PA-ROBOTS preventivo). Há `contentHtml` inline p/ uma v2 rica (como o AM).
+- 194 serviços, 1 público. 8 testes. `ServicoRaw` direto. **RO + PI = mesma geração Sydle → oportunidade
+  de scraper parametrizável** (não o CE); ver D-XX em `auli_pendencias.md` §16.
 
 ---
 
