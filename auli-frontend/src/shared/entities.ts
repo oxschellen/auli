@@ -136,6 +136,13 @@ export const ENTITIES: Entity[] = [
     state: "Espírito Santo",
     collections: ["servicos"],
   },
+  {
+    id: "ro",
+    name: "SEFIN-RO",
+    uf: "RO",
+    state: "Rondônia",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";

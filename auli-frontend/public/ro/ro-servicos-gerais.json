@@ -1,0 +1,1748 @@
+[
+  {
+    "id": 1,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+internamento-de-mercadorias-destinadas-a-area-de-livre-comercio-de-guajara-mirim-alcgm+698b4b1410460b39b42618bc",
+    "titulo": "Internamento de Mercadorias destinadas à Área de Livre Comércio de Guajará-Mirim (ALCGM)",
+    "descricao": "Procedimento destinado à comprovação da regularidade do ingresso físico de mercadorias na Área de Livre Comércio de Guajará-Mirim (ALCGM), mediante vistoria fiscal no Posto Fiscal do Iata e registro do evento correspondente na NF-e pela SEFIN/RO."
+  },
+  {
+    "id": 2,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+adesao-ao-refaz-icms-2025+663d9feaee982159b74db5d4",
+    "titulo": "Adesão ao REFAZ ICMS 2025",
+    "descricao": "Programa de Recuperação de Créditos que concede descontos nas multas e juros para pagamento à vista e parcelado de débitos de ICMS."
+  },
+  {
+    "id": 3,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+solicitacao-de-internamento-de-notas-fiscais-exceto-alc-de-guajara-mirim+663da105ee982159b74fba26",
+    "titulo": "Solicitação de internamento de Notas Fiscais (exceto ALC de Guajará-Mirim)",
+    "descricao": "Solicitar internamento de Notas fiscais para sua empresa."
+  },
+  {
+    "id": 4,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credito-presumido-nas-importacoes-lei-1473-2005+66b60aac88e17761d7a2f20a",
+    "titulo": "Crédito presumido nas importações - Lei 1473/2005",
+    "descricao": "Obtenha benefícios fiscais por meio do crédito presumido nas importações de mercadorias, conforme as disposições da Lei 1473/2005."
+  },
+  {
+    "id": 5,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credenciamento-cte-os+663da10fee982159b74fcbc0",
+    "titulo": "Credenciamento Cte OS",
+    "descricao": "Credenciamento para emissão de Conhecimento de Transporte Eletrônico para Outros Serviços."
+  },
+  {
+    "id": 6,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credenciamento-emissor-nf-e+663da114ee982159b74fd430",
+    "titulo": "Credenciamento Emissor NF-e",
+    "descricao": "Credenciamento para emissão de Nota Fiscal Eletrônica."
+  },
+  {
+    "id": 7,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credenciamento-nfcom+68890429b0cb911d03dd8e07",
+    "titulo": "Credenciamento NFCom",
+    "descricao": "Credenciamento de emissor Nota Fiscal Fatura de Serviços de Comunicação Eletrônica (NFCom)"
+  },
+  {
+    "id": 8,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credito-presumido-para-bares-e-restaurantes-in-n-41-2025+69b9926c2b74a53666452953",
+    "titulo": "Crédito presumido para bares e restaurantes – IN nº 41/2025",
+    "descricao": "É o serviço para optar pelo benefício fiscal de crédito presumido aplicável ao fornecimento de alimentação e bebidas em bares e restaurantes."
+  },
+  {
+    "id": 9,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credenciamento-bpe+663da10cee982159b74fc580",
+    "titulo": "Credenciamento BPe",
+    "descricao": "Credenciamento para emissão de Bilhete de Passagem Eletrônico."
+  },
+  {
+    "id": 10,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+conder-lei-1558-2005+66ec217258b9a9524cece04d",
+    "titulo": "CONDER - Lei 1558/2005",
+    "descricao": "Acompanhe os incentivos fiscais concedidos pelo CONDER, regulamentados pela Lei 1558/2005."
+  },
+  {
+    "id": 11,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credenciamento-emissor-nfc-e+663da118ee982159b74fdad0",
+    "titulo": "Credenciamento Emissor NFC-e",
+    "descricao": "Realizar credenciamento para emissão de Nota Fiscal de Consumidor Eletrônica."
+  },
+  {
+    "id": 12,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credenciamento-emissor-ct-e+663da112ee982159b74fd003",
+    "titulo": "Credenciamento Emissor CT-e",
+    "descricao": "Credenciamento para emissão de Conhecimento de transporte eletrônico."
+  },
+  {
+    "id": 13,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+pagamento-do-ipva+663d00efee982159b70d913f",
+    "titulo": "Pagamento do IPVA",
+    "descricao": "O serviço para pagamento do IPVA permite gerar rapidamente o DARE de qualquer débito tributário vinculado ao veículo."
+  },
+  {
+    "id": 14,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+tabela-de-precos-base-de-calculo-ipva+663da05fee982159b74e8c97",
+    "titulo": "Tabela de Preços - Base de cálculo IPVA",
+    "descricao": "Base de cálculo para definição de valor do IPVA."
+  },
+  {
+    "id": 15,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+protocolar-defesa-recurso-no-processo-administrativo-julgado-pelo-tate+663da12cee982159b74ffae9",
+    "titulo": "Protocolar defesa/recurso no processo administrativo julgado pelo TATE",
+    "descricao": "Realizar protocolização de defesa ou recurso dentro de um processos administrativo."
+  },
+  {
+    "id": 16,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+simulacao-calculo-refaz-de-auto-de-infracao+66e89a7e5ce9ef3514c81740",
+    "titulo": "Simulação cálculo REFAZ de auto de infração",
+    "descricao": "Simule o cálculo do REFAZ para verificar os valores de quitação de um auto de infração com descontos ou condições especiais."
+  },
+  {
+    "id": 17,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+apresentacao-de-defesa-recurso-dos-responsaveis-solidarios+66e89a7c5ce9ef3514c8080b",
+    "titulo": "Apresentação de defesa/recurso dos responsáveis solidários",
+    "descricao": "Submeta defesa ou recurso em processos fiscais envolvendo responsáveis solidários por tributos ou infrações."
+  },
+  {
+    "id": 18,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consultar-o-andamento-da-tramitacao-de-um-auto-de-infracao+663da133ee982159b750045a",
+    "titulo": "Consultar o andamento da tramitação de um auto de infração",
+    "descricao": "Realizar consulta de processos físicos e virtuais no TATE."
+  },
+  {
+    "id": 19,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+protocolo-de-documentos-de-auto-de-infracao+66e89a7d5ce9ef3514c81442",
+    "titulo": "Protocolo de documentos de auto de infração",
+    "descricao": "Envie documentos e informações referentes a autos de infração, garantindo a correta formalização do processo."
+  },
+  {
+    "id": 20,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+suspensao-de-lancamento-de-auto-de-infracao-com-defesa-recurso+66e89a7d5ce9ef3514c812c3",
+    "titulo": "Suspensão de lançamento de auto de infração com defesa/recurso",
+    "descricao": "Solicite a suspensão do lançamento de um auto de infração enquanto o processo de defesa ou recurso está em andamento."
+  },
+  {
+    "id": 21,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+registrar-a-ciencia-do-auto-de-infracao-para-abertura-do-processo+66e89a7d5ce9ef3514c815c1",
+    "titulo": "Registrar a ciência do auto de infração para abertura do processo",
+    "descricao": "Confirme o recebimento e a ciência do auto de infração, iniciando oficialmente o processo administrativo ou fiscal."
+  },
+  {
+    "id": 22,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acessar-copia-de-processo-administrativo-referente-a-auto-de-infracao+663da027ee982159b74e15e3",
+    "titulo": "Acessar Cópia de Processo administrativo referente a auto de infração",
+    "descricao": "Acessar Cópia de Processo administrativo referente a auto de infração"
+  },
+  {
+    "id": 23,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-dare-para-pagamento-parcial-de-auto-de-infracao+66e89a7d5ce9ef3514c80fc5",
+    "titulo": "Emissão de DARE para pagamento parcial de auto de infração",
+    "descricao": "Gere o DARE para realizar o pagamento parcial de débitos relacionados a um auto de infração fiscal."
+  },
+  {
+    "id": 24,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-pagamento-de-dare+663d0015ee982159b7fa9a18",
+    "titulo": "Consulta Pagamento de DARE",
+    "descricao": "Consultar situação de pagamento de DARE do IPVA."
+  },
+  {
+    "id": 25,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-cadastro-do-veiculo-no-detran-ro+663da095ee982159b74f26e0",
+    "titulo": "Consulta cadastro do veículo no DETRAN-RO",
+    "descricao": "Verificar dados de cadastro do veículo no DETRAN-RO."
+  },
+  {
+    "id": 26,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-dare-com-dados-de-parcelamento+663da094ee982159b74f2228",
+    "titulo": "Emissão de DARE com dados de parcelamento",
+    "descricao": "Gere o documento de pagamento estadual (DARE) com informações detalhadas sobre o parcelamento dos seus débitos."
+  },
+  {
+    "id": 27,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+restituicao-do-ipva-pago-indevidamente+663d0148ee982159b711979d",
+    "titulo": "Restituição do IPVA pago indevidamente",
+    "descricao": "Solicitar restituição do IPVA em casos de pagamento duplicidade com condição de crédito no exercício seguinte (com limite de até 1000 UPF)."
+  },
+  {
+    "id": 28,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+parcelamento-do-ipva+663d01ddee982159b7150ce2",
+    "titulo": "Parcelamento do IPVA",
+    "descricao": "Realizar o parcelamento do pagamento do IPVA."
+  },
+  {
+    "id": 29,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-pagamento-de-precatorios+6740bf5ca568f452a8fd4cc9",
+    "titulo": "Consulta pagamento de precatórios",
+    "descricao": "Consulta pagamento de precatórios"
+  },
+  {
+    "id": 30,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-nfc-e+663da0e3ee982159b74f7cad",
+    "titulo": "Consulta NFC-e",
+    "descricao": "Consulta de Nota Fiscal do Consumidor Eletrônica."
+  },
+  {
+    "id": 31,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+autenticacao-de-certidao-negativa-de-tributos-estaduais+663da149ee982159b750293a",
+    "titulo": "Autenticação de Certidão Negativa de Tributos Estaduais",
+    "descricao": "Consulta de autenticidade de certidão negativa de tributos estaduais."
+  },
+  {
+    "id": 32,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-certidao-negativa-de-tributos-estaduais+663da14eee982159b750309e",
+    "titulo": "Emissão de Certidão Negativa de Tributos Estaduais",
+    "descricao": "Emissão de certidão negativa de tributos estaduais."
+  },
+  {
+    "id": 33,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+mudancas-e-transporte-de-bens-pessoais-usados-nao-contribuintes+68c8297d07e9c5338533d6f3",
+    "titulo": "Mudanças e Transporte de bens pessoais usados - Não Contribuintes",
+    "descricao": "Com o fim de facilitar eventual fiscalização, o transporte dos bens poderá fazer-se acompanhar de declaração do proprietário informando tratar-se de transporte promovido por não contribuinte e de documentos que comprovem a propriedade do bem transportado e a natureza da operação declarada."
+  },
+  {
+    "id": 34,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credenciamento-nota-fiscal-facil-nff+66e8e7915ce9ef3514eee7b4",
+    "titulo": "Credenciamento - Nota Fiscal Fácil (NFF)",
+    "descricao": "Cadastre-se no sistema NFF para emitir notas fiscais simplificadas de maneira rápida e acessível."
+  },
+  {
+    "id": 35,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+informacoes-gerais-nota-fiscal-facil+672002ca763e4472d74eb136",
+    "titulo": "Informações Gerais Nota Fiscal Fácil",
+    "descricao": "Informações gerais"
+  },
+  {
+    "id": 36,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+restituicao-do-icms-pago-indevidamente+663da052ee982159b74e73b5",
+    "titulo": "Restituição do ICMS pago indevidamente",
+    "descricao": "Solicitar restituição do ICMS."
+  },
+  {
+    "id": 37,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+vinculacao-de-pagamento-de-ate-1000-mil-upf-realizado-em-duplicidade-ou-com-erro-no-processamento-de-baixa+67866dd3db900651808926aa",
+    "titulo": "Vinculação de pagamento de até 1000 (mil) UPF realizado em duplicidade ou com erro no processamento de baixa",
+    "descricao": "Vinculação de pagamento realizado em duplicidade ou com erro no processamento de baixa"
+  },
+  {
+    "id": 38,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+servicos-informativos-do-difal+663da08cee982159b74f119d",
+    "titulo": "Serviços informativos do DIFAL",
+    "descricao": "Informações relacionadas ao DIFAL."
+  },
+  {
+    "id": 39,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+solicitacao-de-regime-especial+663da1bcee982159b750e7c4",
+    "titulo": "Solicitação de Regime Especial",
+    "descricao": "Serviço de solicitação para inclusão em regime especial."
+  },
+  {
+    "id": 40,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+internamento-de-notas-fiscais-consulta+663da102ee982159b74fb4ba",
+    "titulo": "Internamento de Notas Fiscais Consulta",
+    "descricao": "Consultar solicitação de internamento de Notas fiscais."
+  },
+  {
+    "id": 41,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+solicitacao-de-arquivos-xml-documentos-eletronicos+663da0ffee982159b74fb08d",
+    "titulo": "Solicitação de Arquivos XML – Documentos Eletrônicos",
+    "descricao": "Download de documentos fiscais eletrônicos."
+  },
+  {
+    "id": 42,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-conhecimento-de-transporte-eletronico-ct-e+663da09cee982159b74f35c5",
+    "titulo": "Consulta Conhecimento de Transporte Eletrônico (CT-e)",
+    "descricao": "Realizar Consulta de Conhecimento de Transporte Eletrônico."
+  },
+  {
+    "id": 43,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+gerar-qrcode-somente-graficas+663da0e7ee982159b74f8334",
+    "titulo": "Gerar QRCode (somente gráficas)",
+    "descricao": "Realizar geração de QR Code para gráficas."
+  },
+  {
+    "id": 44,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-nota-fiscal-avulsa+663da0f9ee982159b74fa6e9",
+    "titulo": "Emissão de Nota Fiscal Avulsa",
+    "descricao": "Realização de emissão de Nota Fiscal avulsa."
+  },
+  {
+    "id": 45,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-nota-fiscal-eletronica-nf-e+663da0fcee982159b74faa70",
+    "titulo": "Consulta Nota Fiscal Eletrônica (NF-e)",
+    "descricao": "Consultar autenticidade de Nota Fiscal Eletrônica."
+  },
+  {
+    "id": 46,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+requisitar-csg-somente-graficas+663da0eaee982159b74f87b5",
+    "titulo": "Requisitar CSG (somente gráficas)",
+    "descricao": "Requisitar Código de Segurança de Gráficas por meio do Portal do Contribuinte."
+  },
+  {
+    "id": 47,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-nota-fiscal-eletronica-do-produtor-rural+663da0f6ee982159b74fa2e3",
+    "titulo": "Emissão de Nota Fiscal Eletrônica do Produtor Rural",
+    "descricao": "Emissão de Nota Fiscal Eletrônica do Produtor rural."
+  },
+  {
+    "id": 48,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-manifesto-eletronico-de-documentos-fiscais-mdf-e+663da0e0ee982159b74f741b",
+    "titulo": "Consulta Manifesto Eletrônico de Documentos Fiscais (MDF-e)",
+    "descricao": "Consulta Manifesto Eletrônico de Documentos Fiscais (MDF-e)."
+  },
+  {
+    "id": 49,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+liquidacao-de-debito-fiscal-desvinculado-da-conta-grafica-empresas-do-regime-normal+698cc3ca4343492d38407041",
+    "titulo": "Liquidação de Débito Fiscal Desvinculado da Conta Gráfica - EMPRESAS DO REGIME NORMAL",
+    "descricao": "O conteúdo desta página tem caráter informativo e não substitui o disposto na legislação tributária vigente, publicada no Diário Oficial do Estado"
+  },
+  {
+    "id": 50,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+requisitar-csc+663da0ecee982159b74f8b96",
+    "titulo": "Requisitar CSC",
+    "descricao": "Requisitar Código de Segurança do Contribuinte por meio do Portal do Contribuinte."
+  },
+  {
+    "id": 51,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-nota-fiscal-de-produtor-rural+663da0f4ee982159b74f96f1",
+    "titulo": "Consulta nota fiscal de produtor rural",
+    "descricao": "Realizar consulta de autenticidade das notas fiscais geradoras por produtores rurais."
+  },
+  {
+    "id": 52,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-nota-fiscal-facil-nff+66eae8a858b9a9524cb60cfa",
+    "titulo": "Emissão - Nota Fiscal Fácil (NFF)",
+    "descricao": "Emita suas notas fiscais de forma fácil e digital pelo sistema Nota Fiscal Fácil (NFF), agilizando o processo fiscal."
+  },
+  {
+    "id": 53,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-gnre+663da04dee982159b74e6962",
+    "titulo": "Emissão de GNRE",
+    "descricao": "Solicitar emissão do GNRE."
+  },
+  {
+    "id": 54,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+reprocessamento-de-efd-icms-ipi-sped-notificada-com-erro-0884+673357363e49494d2463b990",
+    "titulo": "Reprocessamento de EFD ICMS IPI – SPED (notificada com erro 0884)",
+    "descricao": "Permitir o processamento de EFD substituta quando haja, no período, débitos inscritos em Dívida Ativa ou Parcelado e haja redução do débito anterior."
+  },
+  {
+    "id": 55,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+reativacao-de-ie-para-produtor-rural+663da1b3ee982159b750d656",
+    "titulo": "Reativação de IE para Produtor Rural",
+    "descricao": "Reativar sua inscrição estadual para produtor rural."
+  },
+  {
+    "id": 56,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+reativacao-de-ie-para-empresas-em-geral+663da1b7ee982159b750de9e",
+    "titulo": "Reativação de IE para Empresas em geral",
+    "descricao": "Reativar a inscrição estadual para empresas em geral."
+  },
+  {
+    "id": 57,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+termo-de-concessao-de-acesso-ao-portal-do-contribuinte+675700fdf54087162e97b6aa",
+    "titulo": "Termo de Concessão de Acesso ao Portal do Contribuinte",
+    "descricao": "Orientações de como ter acesso ao Portal do Contribuinte"
+  },
+  {
+    "id": 58,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+pedido-de-baixa-de-inscricao-estadual+663da168ee982159b750550e",
+    "titulo": "Pedido de baixa de Inscrição Estadual",
+    "descricao": "Solicitar a baixa eletrônica do registro da sua empresa."
+  },
+  {
+    "id": 59,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+autorizacao-para-retificacao-efd-icms-ipi-sped+6733501ee3d7d969b4dc11de",
+    "titulo": "Autorização para retificação EFD ICMS IPI - SPED",
+    "descricao": "Concessão de autorização para retificação e transmissões com data superior ao último dia do terceiro mês subsequente ao encerramento do mês da apuração"
+  },
+  {
+    "id": 60,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+inscricao-estadual-de-produtor-rural+663da16dee982159b75060cd",
+    "titulo": "Inscrição Estadual de PRODUTOR RURAL",
+    "descricao": "Cadastrar produtor rural para fins tributários."
+  },
+  {
+    "id": 61,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+como-funciona-o-processamento-da-escrituracao-fiscal-digital-efd-icms-ipi+66e8e79c5ce9ef3514ef1b8f",
+    "titulo": "Como Funciona o Processamento da Escrituração Fiscal Digital (EFD-ICMS/IPI)",
+    "descricao": "Funcionamento do processamento das declarações enviadas no EFD ICMS IPI dentro do sistema SPED."
+  },
+  {
+    "id": 62,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+suspensao-temporaria-de-inscricao-estadual+665502ddd4382909a75e0b4f",
+    "titulo": "Suspensão temporária de Inscrição Estadual",
+    "descricao": "A Suspensão temporária de Inscrição casos excepcionais."
+  },
+  {
+    "id": 63,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+cancelamento-regular-de-nf-e-nfc-e-e-ct-e+66ead1f658b9a9524c626c08",
+    "titulo": "Cancelamento regular de NF-e, NFC-e e CT-e",
+    "descricao": "Realize o cancelamento de notas fiscais eletrônicas (NF-e), de consumidor (NFC-e) e de transporte (CT-e) dentro dos prazos e normas estabelecidos."
+  },
+  {
+    "id": 64,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acordo-de-precatorios-edital-n-09-2024+674096d6a568f452a863c484",
+    "titulo": "Acordo de Precatórios – Edital nº 09/2024",
+    "descricao": "Acordos de precatórios"
+  },
+  {
+    "id": 65,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+cancelamento-extemporaneo-de-nf-e-nfc-e-e-ct-e+663da0e2ee982159b74f795c",
+    "titulo": "Cancelamento extemporâneo de NF-e, NFC-e e CT-e",
+    "descricao": "Realizar cancelamento extemporâneo de Nota Fiscal Eletrônica e Conhecimento de Transporte Eletrônico."
+  },
+  {
+    "id": 66,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acordo-direto-de-precatorios-edital-n-10-2025-revogado+693c2002a4ed5b7093bfbdb2",
+    "titulo": "Acordo Direto de Precatórios - Edital nº 10/2025 (REVOGADO)",
+    "descricao": "Acordos Direto de precatórios"
+  },
+  {
+    "id": 67,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+peticao-ao-nucleo-de-cadastro+663da1a2ee982159b750bd61",
+    "titulo": "Petição ao núcleo de cadastro",
+    "descricao": "Envie uma petição ao núcleo de cadastro para questões relacionadas à inscrição estadual."
+  },
+  {
+    "id": 68,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-cnpj+663da171ee982159b7506814",
+    "titulo": "Consulta CNPJ",
+    "descricao": "Consulta de CNPJ no site da Receita Federal."
+  },
+  {
+    "id": 69,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+inscricao-estadual-para-comercio-de-combustivel+663da176ee982159b75071ff",
+    "titulo": "Inscrição Estadual para Comércio de COMBUSTÍVEL",
+    "descricao": "Inscrição"
+  },
+  {
+    "id": 70,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+atualizacao-ou-exclusao-do-responsavel-contabil-contador-ou-escritorio-contabil+674dd2ce554cb66c3c92e2db",
+    "titulo": "Atualização ou Exclusão do Responsável Contábil – Contador ou Escritório Contábil",
+    "descricao": "Atualizar as informações do contador associado à sua empresa."
+  },
+  {
+    "id": 71,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+orientacao-para-acesso-ao-portal-do-contribuinte+69e108e6f44f5a6235c472bc",
+    "titulo": "Orientação para acesso ao Portal do Contribuinte",
+    "descricao": "Os serviços logados, aqueles que exigem senha ou perfil de acesso (ex: Portal do Contribuinte, Fisconforme, ePAT, etc…)"
+  },
+  {
+    "id": 72,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-cadastro-sintegra+6798f6c59325290de76c1394",
+    "titulo": "Consulta Cadastro - SINTEGRA",
+    "descricao": "Consultar o cadastro no Sistema Integrado de Informações Sobre Operações Interestaduais com Mercadorias e Serviços (SINTEGRA)."
+  },
+  {
+    "id": 73,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+alteracao-de-dados-cadastrais+663da160ee982159b75044d6",
+    "titulo": "Alteração de dados cadastrais",
+    "descricao": "Realizar alteração de cadastro do contribuinte"
+  },
+  {
+    "id": 74,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+credenciamento-efd-icms-ipi-sped+66f2c1f4fd0b7219f8aa871a",
+    "titulo": "Credenciamento - EFD ICMS IPI - SPED",
+    "descricao": "Credenciamento para empresas que precisam transmitir a Escrituração Fiscal Digital (EFD) relativa ao ICMS e IPI no Sistema Público de Escrituração Digital (SPED)."
+  },
+  {
+    "id": 75,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-cadastro-sintegra-desativado+663da16fee982159b75064c7",
+    "titulo": "Consulta cadastro - SINTEGRA - Desativado",
+    "descricao": "Consultar o cadastro no Sistema Integrado de Informações Sobre Operações Interestaduais com Mercadorias e Serviços (SINTEGRA)."
+  },
+  {
+    "id": 76,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+reativacao-de-ie-para-combustivel+663da1a8ee982159b750c5b1",
+    "titulo": "Reativação de IE para Combustível",
+    "descricao": "Reativar sua inscrição estadual para atividades relacionadas a combustíveis."
+  },
+  {
+    "id": 77,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+envio-da-declaracao-efd-icms-ipi-sped+663da139ee982159b7500f89",
+    "titulo": "Envio da Declaração - EFD ICMS IPI - SPED",
+    "descricao": "Declaração eletrônica por meio do SPED."
+  },
+  {
+    "id": 78,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+ativacao-reativacao-de-inscricao-estadual-para-comercio-de-combustiveis+663da164ee982159b7504c6a",
+    "titulo": "Ativação/Reativação de inscrição estadual para Comércio de combustíveis",
+    "descricao": "Ativação de inscrição estadual para iniciar operações comerciais."
+  },
+  {
+    "id": 79,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+principais-erros-e-solucoes-efd-icms-ipi-sped+66e8e79c5ce9ef3514ef1a36",
+    "titulo": "Principais Erros e Soluções - EFD ICMS IPI - SPED",
+    "descricao": "Consulte os erros mais comuns no envio da EFD ICMS IPI e suas soluções, garantindo a conformidade das informações fiscais."
+  },
+  {
+    "id": 80,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+ativacao-de-inscricao-estadual-para-area-de-livre-comercio-de-guajara-mirim+668c0295955b774a5fced6cb",
+    "titulo": "Ativação de inscrição estadual para Área de Livre comércio de Guajará Mirim",
+    "descricao": "Ativação de Inscrição Estadual para início das operações na Área de Livre Comércio de Guajará-Mirim."
+  },
+  {
+    "id": 81,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+alteracao-de-regime-de-pagamento+695fe18001cdce706451b7af",
+    "titulo": "Alteração de Regime de Pagamento",
+    "descricao": "Serviço destinado à solicitação de alteração do regime de pagamento, a ser realizada por meio da abertura de SAC, conforme as regras e procedimentos estabelecidos pela Secretaria de Estado de Finanças."
+  },
+  {
+    "id": 82,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+reativacao-de-ie-para-area-de-livre-comercio-de-guajara-mirim+663da1acee982159b750cc10",
+    "titulo": "Reativação de IE para Área de Livre Comércio de Guajará-Mirim",
+    "descricao": "Reativação de IE para Área de Livre Comércio de Guajará-Mirim"
+  },
+  {
+    "id": 83,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+reativacao-de-ie-para-mei+663da1afee982159b750d146",
+    "titulo": "Reativação de IE para MEI",
+    "descricao": "Reativar sua inscrição estadual para Microempreendedor Individual (MEI)."
+  },
+  {
+    "id": 84,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+isencao-do-icms-ipva-para-taxista+663da17dee982159b750826d",
+    "titulo": "Isenção do ICMS/IPVA para Taxista",
+    "descricao": "Solicitar Isenção do ICMS e IPVA para Taxista."
+  },
+  {
+    "id": 85,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+guia-de-transito-livre-documento-substituido-pela-declaracao-de-transito-livre+68b87776f88b180cc971f481",
+    "titulo": "Guia de Trânsito Livre (documento substituído pela Declaração de Trânsito Livre)",
+    "descricao": "Documento que foi usado até setembro/25."
+  },
+  {
+    "id": 86,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+parcelamento-do-icms+663da04aee982159b74e6290",
+    "titulo": "Parcelamento do ICMS",
+    "descricao": "Realizar o parcelamento do pagamento do ICMS."
+  },
+  {
+    "id": 87,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-parcelamento+663da04bee982159b74e6632",
+    "titulo": "Consulta Parcelamento",
+    "descricao": "Consultar dados do parcelamento de tributos realizado."
+  },
+  {
+    "id": 88,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+isencao-do-ipva-para-mototaxista+663da17fee982159b75085d1",
+    "titulo": "Isenção do IPVA para Mototaxista",
+    "descricao": "Solicitar isenção do IPVA para mototaxistas."
+  },
+  {
+    "id": 89,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-in-pauta-fiscal+663da07cee982159b74ec469",
+    "titulo": "Consulta IN - Pauta Fiscal",
+    "descricao": "Realizar Consultas de Instruções Normativas e respeito da Pauta fiscal."
+  },
+  {
+    "id": 90,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+envio-de-documentos-incentivos-fiscais-e-regimes-especiais+68d429d1e3b2463662ceea93",
+    "titulo": "Envio de Documentos - Incentivos Fiscais e Regimes Especiais",
+    "descricao": "Envio de Documentos - Incentivos Fiscais e Regimes Especiais"
+  },
+  {
+    "id": 91,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+programa-contribuinte-legal+679b80009325290de7ee1253",
+    "titulo": "Programa Contribuinte Legal",
+    "descricao": "Informações sobre o Programa Contribuinte Legal"
+  },
+  {
+    "id": 92,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+reconhecimento-da-nao-incidencia-do-ipva+663da19fee982159b750b9cc",
+    "titulo": "Reconhecimento da não incidência do IPVA",
+    "descricao": "Solicitação do reconhecimento da não incidência do IPVA."
+  },
+  {
+    "id": 93,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acessar-copia-de-processo+663da126ee982159b74ff2ac",
+    "titulo": "Acessar Cópia de Processo",
+    "descricao": "Consulte e obtenha cópias de processos administrativos ou fiscais diretamente pela plataforma do estado."
+  },
+  {
+    "id": 94,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+regularidade-fiscal-do-estado-de-rondonia+67449a5661811c105c8d58fc",
+    "titulo": "Regularidade fiscal do Estado de Rondônia",
+    "descricao": "Consultas relacionadas às certidões e declarações de regularidade fiscal do Estado de Rondônia."
+  },
+  {
+    "id": 95,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+isencao-do-icms-ipva-para-mototaxista+663da177ee982159b75076f7",
+    "titulo": "Isenção do ICMS/IPVA para Mototaxista",
+    "descricao": "Solicitar Isenção do ICMS para Mototaxista."
+  },
+  {
+    "id": 96,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+solicitacao-da-inclusao-de-produtos-na-pauta-fiscal+663da078ee982159b74ebe9c",
+    "titulo": "Solicitação da Inclusão de Produtos na Pauta Fiscal",
+    "descricao": "Solicitação de adição de produtos na Pauta Fiscal."
+  },
+  {
+    "id": 97,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+isencao-do-ipva-para-taxista+663da183ee982159b7508e79",
+    "titulo": "Isenção do IPVA para Taxista",
+    "descricao": "Solicitar isenção do IPVA para taxistas."
+  },
+  {
+    "id": 98,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+isencao-do-icms-na-aquisicao-de-veiculos-por-pcd+663da17aee982159b7507cb8",
+    "titulo": "Isenção do ICMS na aquisição de veículos por PcD",
+    "descricao": "Solicitar Isenção do ICMS e IPVA para PcD."
+  },
+  {
+    "id": 99,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+isencao-do-ipva-para-pcd+663da181ee982159b7508a0b",
+    "titulo": "Isenção do IPVA para PcD",
+    "descricao": "Solicitar isenção do IPVA para PcD."
+  },
+  {
+    "id": 100,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+solicitacao-da-alteracao-de-produtos-na-pauta-fiscal+663da075ee982159b74eb93c",
+    "titulo": "Solicitação da Alteração de Produtos na Pauta Fiscal",
+    "descricao": "Solicite alterações na Pauta Fiscal de Rondônia, ajustando produtos para fins de tributação."
+  },
+  {
+    "id": 101,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+isencao-do-ipva-para-motorista-de-aplicativo+677bfa91db900651803e02dd",
+    "titulo": "Isenção do IPVA para Motorista de Aplicativo",
+    "descricao": "Isenção do IPVA para Motorista de Aplicativo"
+  },
+  {
+    "id": 102,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+comprovante-anual-de-rendimentos-pagos-ou-creditados-e-de-retencao-de-imposto-de-renda-na-fonte-pf-e-pj+678a49c2d1fc7677050f5323",
+    "titulo": "Comprovante Anual de Rendimentos Pagos ou Creditados e de Retenção de Imposto de Renda na Fonte - PF e PJ",
+    "descricao": "Disponibilização, todos os anos, do Comprovante de Rendimentos de Precatórios, que detalha os valores pagos ou creditados e o imposto de renda retido na fonte (se aplicável)."
+  },
+  {
+    "id": 103,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+selo-agua-credenciamento-de-estabelecimentos-envasadores+6889045eb0cb911d03e4a994",
+    "titulo": "Selo Água – credenciamento de estabelecimentos envasadores",
+    "descricao": "Credenciamento de estabelecimentos envasadores de água."
+  },
+  {
+    "id": 104,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+registro-de-denuncia+663da1baee982159b750e280",
+    "titulo": "Registro de denúncia",
+    "descricao": "Realizar denúncias à Secretaria de Estado de Rondônia SEFIN-RO."
+  },
+  {
+    "id": 105,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+selo-agua-solicitacao-de-selos-pelos-estabelecimentos-envasadores+663da109ee982159b74fbfbe",
+    "titulo": "Selo Água - Solicitação de selos pelos estabelecimentos envasadores",
+    "descricao": "Obtenção de Selo Água."
+  },
+  {
+    "id": 106,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+precatorias-pagamentos-de-sentencas-judiciais+663da06eee982159b74eaa9f",
+    "titulo": "Precatórias (Pagamentos de Sentenças Judiciais)",
+    "descricao": "Consulta de pagamento de sentença Judiciais."
+  },
+  {
+    "id": 107,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+envio-e-retificacao-de-anexos-scanc+66eac771f811957f471d2d5a",
+    "titulo": "Envio e Retificação de anexos SCANC",
+    "descricao": "Submeta ou corrija os anexos do SCANC, usados para apuração e controle do ICMS no setor de combustíveis."
+  },
+  {
+    "id": 108,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+icms+6791267dd1fc7677057595bb",
+    "titulo": "ICMS",
+    "descricao": "Definição do ICMS"
+  },
+  {
+    "id": 109,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+repasse-aos-municipios-icms+663da089ee982159b74f0d94",
+    "titulo": "Repasse aos municípios ICMS",
+    "descricao": "Verifique os valores de ICMS repassados aos municípios, conforme a arrecadação estadual."
+  },
+  {
+    "id": 110,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+informacoes-sobre-o-programa-cidadania-empresarial+663d0bffee982159b7c35216",
+    "titulo": "Informações sobre o Programa Cidadania Empresarial",
+    "descricao": "Saiba mais sobre o Programa Cidadania Empresarial."
+  },
+  {
+    "id": 111,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+protocolo-de-entrada-e-transito+663d9fe3ee982159b74da9da",
+    "titulo": "Protocolo de entrada e trânsito",
+    "descricao": "Consultar abertura de protocolo de entrada e transito."
+  },
+  {
+    "id": 112,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+liberacao-de-di-duimp+663da136ee982159b75009dc",
+    "titulo": "Liberação de DI/DUIMP",
+    "descricao": "Acompanhe a liberação da Declaração de Importação (DI) ou Declaração Única de Importação (DUIMP) no PCCE."
+  },
+  {
+    "id": 113,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+regime-optativo-de-tributacao-rot-st-para-contribuintes-do-segmento-varejista+6797a540db90065180985ba6",
+    "titulo": "Regime Optativo de Tributação (ROT- ST) para contribuintes do segmento varejista",
+    "descricao": "Regime Optativo de Tributação (ROT- ST) para contribuintes do segmento varejista"
+  },
+  {
+    "id": 114,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acesso-ao-portal-da-legislacao+663da071ee982159b74eb107",
+    "titulo": "Acesso ao Portal da Legislação",
+    "descricao": "Acesse de forma rápida o portal oficial com toda a legislação vigente no Estado de Rondônia."
+  },
+  {
+    "id": 115,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+indice-de-participacao-dos-municipios+663da085ee982159b74f048c",
+    "titulo": "Índice de participação dos municípios",
+    "descricao": "Divulgação de dados relacionados ao índice de participação dos municípios na arrecadação estadual."
+  },
+  {
+    "id": 116,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+capacitacoes-para-cadastro-e-emissao-de-notas-para-o-produtor-rural+663e4cb1ee982159b7c349f7",
+    "titulo": "Capacitações para cadastro e emissão de notas para o produtor rural",
+    "descricao": "Saiba mais sobre o Programa Cidadania Rural."
+  },
+  {
+    "id": 117,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+regularizacao-de-imoveis-escrituras-autorizacoes-e-baixas-de-hipoteca+674496e56ff45a22e8760edc",
+    "titulo": "Regularização de Imóveis: Escrituras, Autorizações e Baixas de Hipoteca",
+    "descricao": "Analisar documentos e fornecer informações."
+  },
+  {
+    "id": 118,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+calculo-de-frete+663d9fe0ee982159b74da3a1",
+    "titulo": "Cálculo de Frete",
+    "descricao": "Ferramenta para cálculo de frete."
+  },
+  {
+    "id": 119,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+sidiec+663da05cee982159b74e86ad",
+    "titulo": "SIDIEC",
+    "descricao": "Sistema de Divulgação de Informações Econômicas."
+  },
+  {
+    "id": 120,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-de-itcd+663da090ee982159b74f1b1c",
+    "titulo": "Consulta de ITCD",
+    "descricao": "Consultar processos abertos do ITCD."
+  },
+  {
+    "id": 121,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+programa-gerador-de-das-mei+663da057ee982159b74e7f97",
+    "titulo": "Programa Gerador de DAS (MEI)",
+    "descricao": "Emitir Documento de Arrecadação do Simples Nacional (DAS) para MEI."
+  },
+  {
+    "id": 122,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+atualizacao-de-cadastro-de-substituto-tributario+663da166ee982159b7504fb6",
+    "titulo": "Atualização de cadastro de substituto tributário",
+    "descricao": "Atualize as informações no cadastro de Substituto Tributário."
+  },
+  {
+    "id": 123,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+cadastro-de-substituto-tributario+663cfb0aee982159b7cca536",
+    "titulo": "Cadastro de substituto tributário",
+    "descricao": "Realizar cadastro como substituto tributário para obrigações fiscais."
+  },
+  {
+    "id": 124,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+reativacao-de-inscricao-de-substituto-tributario+663da1b6ee982159b750db5b",
+    "titulo": "Reativação de inscrição de substituto tributário",
+    "descricao": "Reativar sua inscrição estadual para Substituto tributário."
+  },
+  {
+    "id": 125,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+preco-sugerido-pelo-fabricante+663da06cee982159b74ea624",
+    "titulo": "Preço sugerido pelo Fabricante",
+    "descricao": "Preços sugeridos pelos fabricantes de carros, motos, cigarros e sorvetes."
+  },
+  {
+    "id": 126,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acesso-ao-fisconforme+663da01dee982159b74e015a",
+    "titulo": "Acesso ao Fisconforme",
+    "descricao": "Disponibilização de link e instruções para acessar o Fisconforme por meio do portal do contribuinte."
+  },
+  {
+    "id": 127,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+gia-st+663da147ee982159b7502488",
+    "titulo": "GIA-ST",
+    "descricao": "Informações relacionadas ao sistema GIA-ST."
+  },
+  {
+    "id": 128,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-tributaria+663da073ee982159b74eb4f4",
+    "titulo": "Consulta Tributária",
+    "descricao": "É um processo administrativo para esclarecer dúvidas sobre a interpretação e aplicação da legislação tributária em situações concretas ou de interesse geral."
+  },
+  {
+    "id": 129,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+parcelamento-do-itcd+663d095bee982159b7969125",
+    "titulo": "Parcelamento do ITCD",
+    "descricao": "Realizar o parcelamento do pagamento do ITCD."
+  },
+  {
+    "id": 130,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+atendimento-relacionado-as-empresas-extintas-ou-em-liquidacao+674477a06ff45a22e8aaffbf",
+    "titulo": "Atendimento relacionado as empresas extintas ou em liquidação",
+    "descricao": "Fornecer informações e analisar documentos"
+  },
+  {
+    "id": 131,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+repasse-aos-municipios-ipva+663da088ee982159b74f0a0c",
+    "titulo": "Repasse aos municípios IPVA",
+    "descricao": "Divulgação da quantia repassada para cada município em relação a arrecadação do IPVA."
+  },
+  {
+    "id": 132,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+autenticacao-do-livro-de-ocorrencias-rudfto-modelo-6+68504100dadbea4190482b2c",
+    "titulo": "Autenticação do Livro de Ocorrências – RUDFTO (Modelo 6)",
+    "descricao": "Este processo é físico e deve ser protocolado presencialmente na Agência de Rendas da circunscrição do contribuinte."
+  },
+  {
+    "id": 133,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+declaracao-de-conteudo-eletronica-dc-e+69d53a3551282514fb5b1e66",
+    "titulo": "Declaração de Conteúdo Eletrônica (DC-e)",
+    "descricao": "ㅤ"
+  },
+  {
+    "id": 134,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+informacoes-sobre-o-programa-cidadania-empresarial+673b4143a6ef533b74a26478",
+    "titulo": "Informações sobre o Programa Cidadania Empresarial",
+    "descricao": "Conteúdo sobre cidadania empresarial"
+  },
+  {
+    "id": 135,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+programa-nota-legal-rondoniense+6733687fa6ef533b740a8df6",
+    "titulo": "Programa Nota Legal Rondoniense",
+    "descricao": "O Programa Nota Legal Rondoniense é uma iniciativa que visa promover a cidadania fiscal e combater a sonegação fiscal em Rondônia."
+  },
+  {
+    "id": 136,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+baixa-no-cadastro-de-substituto-tributario+663da16bee982159b7505c53",
+    "titulo": "Baixa no cadastro de substituto tributário",
+    "descricao": "Solicitar baixa do cadastro como substituto tributário."
+  },
+  {
+    "id": 137,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-aidf+663da11fee982159b74fe6af",
+    "titulo": "Consulta AIDF",
+    "descricao": "Consulta de Autorização para Impressão de Documentos Fiscais."
+  },
+  {
+    "id": 138,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+revisao-de-lancamento-de-entrada-regularizacao-fiscal+663da030ee982159b74e2e98",
+    "titulo": "Revisão de lançamento de entrada - Regularização Fiscal",
+    "descricao": "Verifique e ajuste os lançamentos de entrada para garantir que estejam em conformidade com a regularidade fiscal exigida."
+  },
+  {
+    "id": 139,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+arquivos-administradoras-de-cartoes-e-meios-de-pagamento-tef+663da09aee982159b74f31f3",
+    "titulo": "Arquivos - Administradoras de Cartões e Meios de Pagamento - TEF",
+    "descricao": "Link para download do DIMP."
+  },
+  {
+    "id": 140,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+agendar-atendimento-presencial-e-videoconferencia+67e4432df442ed0743eebf99",
+    "titulo": "Agendar Atendimento - Presencial e Videoconferência",
+    "descricao": "Serviço responsável pela solução de agendamento. Esse serviço foi criado no intuito de hospedar as configurações da solução de Agendamento, alterações nas configurações do serviço podem impactar diretamente a solução de Agendamento."
+  },
+  {
+    "id": 141,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-pgdas-d-simples-nacional+663da056ee982159b74e7c44",
+    "titulo": "Emissão de PGDAS-D (Simples Nacional)",
+    "descricao": "Orientações sobre o Programa Gerador do Documento de Arrecadação do Simples Nacional."
+  },
+  {
+    "id": 142,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-nota-fiscal-mei+663da0e5ee982159b74f7fde",
+    "titulo": "Emissão de Nota Fiscal MEI",
+    "descricao": "Emitir nota fiscal com inscrição estadual optante pelo MEI."
+  },
+  {
+    "id": 143,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+declaracao-de-itcd+663da091ee982159b74f1ed3",
+    "titulo": "Declaração de ITCD",
+    "descricao": "Declare formalmente o ITCD, informando a transmissão de bens ou valores para fins de tributação conforme exigido pela legislação."
+  },
+  {
+    "id": 144,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+base-de-calculo-cafe-metal+663da067ee982159b74e9d45",
+    "titulo": "Base de Cálculo (Café/Metal)",
+    "descricao": "Base de cálculo para definição do preço do Café e do Metal."
+  },
+  {
+    "id": 145,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+cancelamento-nfa-e-para-mei-dentro-de-24-h-iniciais+66e8e5b35ce9ef3514e492fb",
+    "titulo": "Cancelamento NFA-e para MEI (dentro de 24h iniciais)",
+    "descricao": "Cancelamento"
+  },
+  {
+    "id": 146,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+base-de-calculo-do-icms-st-preco-medio-ponderado-a-consumidor-final-pmpf+663da062ee982159b74e92a4",
+    "titulo": "Base de Cálculo do ICMS-ST (preço médio ponderado a consumidor final PMPF)",
+    "descricao": "Base de Cálculo para definição valor do ICMS-ST (preço médio ponderado a consumidor final PMPF)."
+  },
+  {
+    "id": 147,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+revisao-de-lancamento-manual+663da02fee982159b74e29fa",
+    "titulo": "Revisão de lançamento MANUAL",
+    "descricao": "Solicitar uma revisão manual dos lançamentos fiscais, visando a regularização do contribuinte nos casos que forem devidos."
+  },
+  {
+    "id": 148,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-optantes-do-simples-nacional+663da054ee982159b74e77d6",
+    "titulo": "Consulta optantes do Simples Nacional",
+    "descricao": "Consulta de CNPJ a respeito da opção pelo Simples Nacional."
+  },
+  {
+    "id": 149,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+proibidos-de-contratar-com-o-poder-publico+663da061ee982159b74e8f54",
+    "titulo": "Proibidos de Contratar com o Poder Público",
+    "descricao": "Lista de empresas proibidas de realizar contratos com o Poder Público."
+  },
+  {
+    "id": 150,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+solicitacao-aidf+663da122ee982159b74febda",
+    "titulo": "Solicitação AIDF",
+    "descricao": "Solicitação para Autorização para Impressão de Documentos Fiscais."
+  },
+  {
+    "id": 151,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-dare-do-itcd+663da08eee982159b74f1700",
+    "titulo": "Emissão de DARE do ITCD",
+    "descricao": "Emitir DARE para pagamento do ITCD."
+  },
+  {
+    "id": 152,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+restituicao-do-itcd-pago-indevidamente+663d026bee982159b7193ae0",
+    "titulo": "Restituição do ITCD pago indevidamente",
+    "descricao": "Solicitar restituição de pagamento indevido do ITCD."
+  },
+  {
+    "id": 153,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+graficas+663da11bee982159b74fdfc0",
+    "titulo": "Gráficas",
+    "descricao": "Credenciamento de gráficas para emissão de documentos fiscais."
+  },
+  {
+    "id": 154,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+peticao-ao-delegado+663da02cee982159b74e2444",
+    "titulo": "Petição ao delegado",
+    "descricao": "Submeta uma petição ao delegado da Receita Estadual para resolução de demandas tributárias específicas."
+  },
+  {
+    "id": 155,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acesso-ao-portal-do-conhecimento+663da01eee982159b74e046f",
+    "titulo": "Acesso ao Portal do Conhecimento",
+    "descricao": "Disponibilização de link para acessar o Portal do conhecimento."
+  },
+  {
+    "id": 156,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+peticao-ao-agente-de-rendas+663da02aee982159b74e1f9a",
+    "titulo": "Petição ao agente de rendas",
+    "descricao": "Pedido de petição formal endereçado ao agente de rendas."
+  },
+  {
+    "id": 157,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acesso-ao-daep-pelo-portal-do-contribuinte+663cfeebee982159b7e98c94",
+    "titulo": "Acesso ao DAEP pelo Portal do Contribuinte",
+    "descricao": "Acesso ao Declaração Anual de Energia Produzida por meio do Portal do contribuinte."
+  },
+  {
+    "id": 158,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+remessa-para-formacao-de-lote+66e8e4dbfd0b7219f896c9bc",
+    "titulo": "Remessa para formação de lote",
+    "descricao": "Envie produtos ao exterior para formação de lote."
+  },
+  {
+    "id": 159,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+regularizacao-vaf-negativo+663d9fadee982159b74d5515",
+    "titulo": "Regularização VAF Negativo",
+    "descricao": "Orientações para processo de regularização do VAF."
+  },
+  {
+    "id": 160,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-dare-para-pagamento-de-impostos-estaduais-leilao+67604e1cf54087162edb0a52",
+    "titulo": "Emissão de DARE para pagamento de impostos estaduais (Leilão)",
+    "descricao": "Emissão de DARE para pagamento de impostos estaduais (Leilão)"
+  },
+  {
+    "id": 161,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+exportacao-indireta-remessa-com-fim-especifico-de-exportacao+66e8e4dbfd0b7219f896c7df",
+    "titulo": "Exportação Indireta (Remessa com fim específico de exportação)",
+    "descricao": "Envie mercadorias para outra empresa no Brasil que irá exportá-las, com fim específico de exportação."
+  },
+  {
+    "id": 162,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+veiculos-novos-tabelas-de-precos-convenio-icms-199-17+6a282bede1b9247524341d1f",
+    "titulo": "Veículos Novos - Tabelas de Preços (Convênio ICMS 199/17)",
+    "descricao": "Consulta das tabelas de preços sugeridos de veículos automotores novos, disponibilizadas conforme o Convênio ICMS 199/17, para fins de aplicação da Substituição Tributária do ICMS."
+  },
+  {
+    "id": 163,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+acesso-ao-sien-pelo-portal-do-contribuinte+663cfcefee982159b7dc83cd",
+    "titulo": "Acesso ao SIEN pelo Portal do Contribuinte",
+    "descricao": "Acesso ao Sistema de Entrada de Notas por meio do Portal do contribuinte."
+  },
+  {
+    "id": 164,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+substituicao-tributaria-convenios-protocolos-normas+6756dd08f54087162e068f65",
+    "titulo": "Substituição Tributária - Convênios | Protocolos | Normas",
+    "descricao": "Consultar legislação e Informações sobre Substituição Tributária."
+  },
+  {
+    "id": 165,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+exportacao-direta+66e8e4dbfd0b7219f896c67c",
+    "titulo": "Exportação Direta",
+    "descricao": "Realize a exportação de produtos diretamente ao comprador internacional, sem intermediários."
+  },
+  {
+    "id": 166,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+suporte-tecnico+675afdc6c7d3f533cc6cec6b",
+    "titulo": "Suporte técnico",
+    "descricao": "Suporte"
+  },
+  {
+    "id": 167,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+notificacao-itcd-por-whatsapp-ou-e-mail+69f23b69efc22175cfe840b2",
+    "titulo": "Notificação ITCD (por Whatsapp ou e-mail)",
+    "descricao": "ㅤ"
+  },
+  {
+    "id": 168,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+aviso-sobre-o-inicio-do-lancamento-do-acrescimo-de-aliquota-relativo-ao-fecoep-ro-no-momento-da-entrada-no-estado+675c57bf554cb66c3cda6181",
+    "titulo": "Aviso sobre o início do lançamento do acréscimo de alíquota relativo ao FECOEP | RO, no momento da entrada no Estado.",
+    "descricao": "Aviso e Informações sobre o iinício do lançamento do acréscimo de alíquota relativo ao FECOEP | RO, no momento da entrada no Estado."
+  },
+  {
+    "id": 169,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-dare+663da043ee982159b74e55a8",
+    "titulo": "Emissão de DARE",
+    "descricao": "Emitir Documento de Arrecadação Estadual (DARE) para pagamento."
+  },
+  {
+    "id": 170,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-bancos-conveniados+663da03aee982159b74e4549",
+    "titulo": "Consulta Bancos conveniados",
+    "descricao": "Consultar quais os bancos conveniados para receber pagamento de DARE."
+  },
+  {
+    "id": 171,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+restituicao-de-imposto-de-renda+673b30533e49494d242596c4",
+    "titulo": "Restituição de imposto de renda",
+    "descricao": "Conteúdo sobre Restituição de imposto de renda"
+  },
+  {
+    "id": 172,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+autenticidade-das-declaracoes-apresentadas-imposto-de-renda+673b371fa6ef533b7474acd8",
+    "titulo": "Autenticidade das declarações apresentadas (Imposto de Renda)",
+    "descricao": "Autenticidade das declarações apresentadas (Imposto de Renda)"
+  },
+  {
+    "id": 173,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+recurso-para-o-delegado-regional+663da029ee982159b74e1b84",
+    "titulo": "Recurso para o delegado regional",
+    "descricao": "Apelação apresentada ao delegado regional em resposta a uma decisão administrativa."
+  },
+  {
+    "id": 174,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+destaque-da-retencao-e-recolhimento-imposto-de-renda+6735fa9ea6ef533b74bceaa0",
+    "titulo": "Destaque da Retenção e Recolhimento Imposto de Renda",
+    "descricao": "Conteúdo sobre Destaque da Retenção e Recolhimento Imposto de Renda"
+  },
+  {
+    "id": 175,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+informacao-e-download+663da01bee982159b74dfd4a",
+    "titulo": "Informação e download",
+    "descricao": "Link para download de aplicativo Menor Preço Brasil."
+  },
+  {
+    "id": 176,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+ouvidoria-e-manifestacoes+673cafa761811c105c8e6c96",
+    "titulo": "Ouvidoria e Manifestações:",
+    "descricao": "Canal para você apresentar sugestões, elogios, solicitações, reclamações e denúncias."
+  },
+  {
+    "id": 177,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-taxa-de-servico+663da03cee982159b74e48a0",
+    "titulo": "Emissão de Taxa de serviço",
+    "descricao": "Emitir Documento de Arrecadação Estadual (DARE) para Pagamento de Taxas administrativas."
+  },
+  {
+    "id": 178,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+responsabilidade-tributaria-e-obrigacoes-acessorias+6734e1dc3e49494d243fd936",
+    "titulo": "Responsabilidade tributária e obrigações acessórias",
+    "descricao": "Orientações"
+  },
+  {
+    "id": 179,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-dare-avulso+663da041ee982159b74e5126",
+    "titulo": "Emissão de DARE Avulso",
+    "descricao": "Emitir Documento de Arrecadação Estadual (DARE) para pagamento Avulso."
+  },
+  {
+    "id": 180,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+emissao-de-dare-parcial+663da03eee982159b74e4c25",
+    "titulo": "Emissão de DARE parcial",
+    "descricao": "Emitir Documento de Arrecadação Estadual (DARE) para pagamento Parcial."
+  },
+  {
+    "id": 181,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+sistema-pge+663d9fd2ee982159b74d89a4",
+    "titulo": "Sistema PGE",
+    "descricao": "Acesso ao sistema da PGE para órgãos governamentais."
+  },
+  {
+    "id": 182,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+estoque-de-divida-ativa+663d9fd4ee982159b74d8edd",
+    "titulo": "Estoque de dívida ativa",
+    "descricao": "O Sistema de Estoque da Dívida Ativa oferece dados sobre créditos tributários e não tributários para órgãos governamentais."
+  },
+  {
+    "id": 183,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+consulta-lista-de-depositario+663d9fdcee982159b74d9de2",
+    "titulo": "Consulta Lista de Depositário",
+    "descricao": "Realizar consulta de lista de depositário."
+  },
+  {
+    "id": 184,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+atendimento-a-ex-funcionarios-de-empresas-extintas-ou-em-liquidacao+674491b06ff45a22e84a302c",
+    "titulo": "Atendimento a ex-funcionários de empresas extintas ou em liquidação",
+    "descricao": "Atendimento a ex-funcionários de empresas extintas ou em liquidação"
+  },
+  {
+    "id": 185,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+dispensa-de-retencao-de-imposto-de-renda+6735e687a6ef533b7457025a",
+    "titulo": "Dispensa de Retenção de Imposto de Renda",
+    "descricao": "Dispensa de retenção"
+  },
+  {
+    "id": 186,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+envio-de-arquivos-convenio-115+66ead37258b9a9524c73a4d8",
+    "titulo": "Envio de arquivos convênio 115",
+    "descricao": "Submeta os arquivos referentes à prestação de informações fiscais sobre operações interestaduais para controle e acompanhamento tributário."
+  },
+  {
+    "id": 187,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+atendimento-a-cartorios-de-notas-e-registro-de-imoveis+674495256ff45a22e861e644",
+    "titulo": "Atendimento a Cartórios de Notas e Registro de Imóveis",
+    "descricao": "Análise de documentos necessários."
+  },
+  {
+    "id": 188,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+base-de-calculo-da-retencao-de-imposto-de-renda+6734d5d63e49494d240e8d46",
+    "titulo": "Base de cálculo da Retenção de Imposto de Renda",
+    "descricao": "Definição da base de cálculo."
+  },
+  {
+    "id": 189,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+aspectos-gerais-da-retencao-de-imposto-de-renda-na-fonte+6734d15a3e49494d24f36b61",
+    "titulo": "Aspectos gerais da retenção de imposto de renda na fonte",
+    "descricao": "Definição e Informações"
+  },
+  {
+    "id": 190,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+imunidade-isencao-tributaria-e-nao-incidencia-imposto-de-renda+6735e89ee3d7d969b4cc7ef5",
+    "titulo": "Imunidade, Isenção Tributária e Não Incidência (imposto de renda)",
+    "descricao": "conteúdo sobre Imunidade, Isenção Tributária e Não Incidência do imposto de renda"
+  },
+  {
+    "id": 191,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+autolancamento+663da038ee982159b74e410f",
+    "titulo": "Autolançamento",
+    "descricao": "Realizar lançamento do ICMS por meio do Portal do Contribuinte."
+  },
+  {
+    "id": 192,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+agenda-com-o-secretario-de-financas+6790e912db90065180680707",
+    "titulo": "Agenda com o Secretário de Finanças",
+    "descricao": "Agendar reuniões com o Secretário de Finanças do Estado de Rondônia."
+  },
+  {
+    "id": 193,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+cartao-cidade+663d9fdaee982159b74d994a",
+    "titulo": "Cartão cidade",
+    "descricao": "Acesso ao sistema Cartão cidade."
+  },
+  {
+    "id": 194,
+    "tipo": "Serviços",
+    "classe": "Geral",
+    "orgao": "SEFIN-RO",
+    "link": "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+dimp-layout-atual+663d9fd7ee982159b74d9319",
+    "titulo": "DIMP (layout atual)",
+    "descricao": "Acesso ao download do DIMP em sua versão atual."
+  }
+]

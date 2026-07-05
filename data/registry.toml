@@ -142,3 +142,11 @@ uf = "ES"
 state = "Espírito Santo"
 prompt = "prompts/es.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "ro"
+name = "SEFIN-RO"
+uf = "RO"
+state = "Rondônia"
+prompt = "prompts/ro.txt"
+collections = ["servicos"]
