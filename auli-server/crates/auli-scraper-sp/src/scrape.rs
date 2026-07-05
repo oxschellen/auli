@@ -128,32 +128,15 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(Vec<ServicoRaw>, Vec<P
     let mut sem_publico = 0;
     let mut sem_link = 0;
     for s in &svcs {
-        let classe = s
-            .home360
-            .as_ref()
-            .and_then(|h| assunto.get(&h.id))
-            .cloned()
-            .unwrap_or_default();
-        let ocorrencias: Vec<Ocorrencia> = pubs
-            .iter()
-            .filter(|(campo, ..)| !s.facet(campo).is_empty())
-            .map(|(_, nome, _)| Ocorrencia { publico: nome.to_string(), classe: classe.clone() })
-            .collect();
-        if ocorrencias.is_empty() {
-            sem_publico += 1;
-            continue;
+        match build_servico(s, &assunto, &pubs) {
+            Some(sr) => {
+                if sr.link.is_empty() {
+                    sem_link += 1;
+                }
+                items.push(sr);
+            }
+            None => sem_publico += 1,
         }
-        let link = canonical(s.url.as_deref().unwrap_or_default());
-        if link.is_empty() {
-            sem_link += 1;
-        }
-        items.push(ServicoRaw {
-            titulo: clean(&s.title),
-            descricao: build_corpo(s),
-            link,
-            orgao: "SEFAZ-SP".to_string(),
-            ocorrencias,
-        });
     }
     if sem_publico > 0 {
         eprintln!("⚠️  SP: {} serviço(s) sem nenhuma faceta de público — fora do catálogo.", sem_publico);
@@ -168,6 +151,37 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(Vec<ServicoRaw>, Vec<P
         .map(|(_, nome, slug)| Publico { nome: nome.to_string(), slug: slug.to_string() })
         .collect();
     Ok((items, publicos_ordem))
+}
+
+/// Monta o `ServicoRaw` de um serviço: uma `Ocorrencia` por faceta de público preenchida (todas com
+/// a mesma `classe` = Assunto do Home360). `None` quando o serviço não tem nenhuma faceta (fora do
+/// catálogo). A linha é a identidade — a URL não é única no SP, então link vazio ainda vira registro.
+fn build_servico(
+    s: &SvcRow,
+    assunto: &HashMap<i64, String>,
+    pubs: &[(&str, &str, &str)],
+) -> Option<ServicoRaw> {
+    let classe = s
+        .home360
+        .as_ref()
+        .and_then(|h| assunto.get(&h.id))
+        .cloned()
+        .unwrap_or_default();
+    let ocorrencias: Vec<Ocorrencia> = pubs
+        .iter()
+        .filter(|(campo, ..)| !s.facet(campo).is_empty())
+        .map(|(_, nome, _)| Ocorrencia { publico: nome.to_string(), classe: classe.clone() })
+        .collect();
+    if ocorrencias.is_empty() {
+        return None;
+    }
+    Some(ServicoRaw {
+        titulo: clean(&s.title),
+        descricao: build_corpo(s),
+        link: canonical(s.url.as_deref().unwrap_or_default()),
+        orgao: "SEFAZ-SP".to_string(),
+        ocorrencias,
+    })
 }
 
 /// Corpo do card: descrição (limpa) + "Formas de acesso: ...". Sem o conteúdo dos subsites (D-SP4).
@@ -254,4 +268,113 @@ fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<St
         }
     }
     Err(anyhow!("falha ao buscar {}: {}", url, last))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn clean_normaliza_nbsp_zerowidth_e_espacos() {
+        assert_eq!(clean("a\u{00a0}b   c"), "a b c");
+        assert_eq!(clean("x\u{200b}y"), "xy");
+        assert_eq!(clean("  vários   espaços  "), "vários espaços");
+    }
+
+    #[test]
+    fn canonical_cobre_os_formatos() {
+        assert_eq!(canonical("https://x.sp.gov.br/a"), "https://x.sp.gov.br/a");
+        assert_eq!(canonical(" https://y.sp.gov.br "), "https://y.sp.gov.br"); // trim
+        assert_eq!(canonical("/Pages/Consulta.aspx"), format!("{}/Pages/Consulta.aspx", BASE));
+        assert_eq!(canonical("relativo-sem-barra"), "relativo-sem-barra"); // fica como está
+        assert_eq!(canonical(""), "");
+    }
+
+    // Fixture fiel ao shape verbose do SharePoint (`{ "d": { "results": [...], "__next": ... } }`),
+    // com as facetas como `{ "results": [...] }`.
+    const SVC_JSON: &str = r#"{
+      "Title":"Consulta Pública de Cadastro",
+      "Descricao":"Permite ver a ficha cadastral.",
+      "URL":"https://www.cadesp.fazenda.sp.gov.br/x.aspx",
+      "Home360":{"ID":4},
+      "Cidadao":{"results":[]},
+      "Empresa":{"results":["Contribuinte de ICMS","Simples Nacional"]},
+      "Servidor":{"results":["Servidor da Secretaria da Fazenda"]},
+      "Tributo":{"results":["ICMS"]},
+      "Acesso":{"results":["Público"]}
+    }"#;
+
+    #[test]
+    fn parse_verbose_e_facet() {
+        let s: SvcRow = serde_json::from_str(SVC_JSON).unwrap();
+        assert_eq!(s.title, "Consulta Pública de Cadastro");
+        assert_eq!(s.home360.as_ref().unwrap().id, 4);
+        assert!(s.facet("Cidadao").is_empty());
+        assert_eq!(s.facet("Empresa").len(), 2);
+        assert_eq!(s.facet("Servidor"), &["Servidor da Secretaria da Fazenda"]);
+        assert!(s.facet("DesconhecidO").is_empty());
+    }
+
+    #[test]
+    fn parse_resp_segue_results_e_next() {
+        let json = format!(r#"{{"d":{{"results":[{}],"__next":"https://x/next"}}}}"#, SVC_JSON);
+        let r: Resp<SvcRow> = serde_json::from_str(&json).unwrap();
+        assert_eq!(r.d.results.len(), 1);
+        assert_eq!(r.d.next.as_deref(), Some("https://x/next"));
+        // sem __next -> None
+        let json2 = format!(r#"{{"d":{{"results":[{}]}}}}"#, SVC_JSON);
+        let r2: Resp<SvcRow> = serde_json::from_str(&json2).unwrap();
+        assert!(r2.d.next.is_none());
+    }
+
+    #[test]
+    fn build_corpo_junta_descricao_e_formas_de_acesso() {
+        let s: SvcRow = serde_json::from_str(SVC_JSON).unwrap();
+        assert_eq!(build_corpo(&s), "Permite ver a ficha cadastral.\nFormas de acesso: Público");
+
+        // Descrição vazia -> só as formas de acesso.
+        let sem_desc: SvcRow =
+            serde_json::from_str(r#"{"Descricao":"","Acesso":{"results":["Público","Restrito"]}}"#)
+                .unwrap();
+        assert_eq!(build_corpo(&sem_desc), "Formas de acesso: Público, Restrito");
+    }
+
+    #[test]
+    fn build_servico_uma_ocorrencia_por_faceta_com_classe_do_assunto() {
+        let s: SvcRow = serde_json::from_str(SVC_JSON).unwrap();
+        let assunto: HashMap<i64, String> = [(4i64, "Cadastro".to_string())].into_iter().collect();
+        let pubs = publicos();
+        let sr = build_servico(&s, &assunto, &pubs).unwrap();
+        // Cidadão vazio é pulado; Empresa/Servidor/Tributo preenchidos -> 3 ocorrências.
+        let ocs: Vec<(&str, &str)> =
+            sr.ocorrencias.iter().map(|o| (o.publico.as_str(), o.classe.as_str())).collect();
+        assert_eq!(
+            ocs,
+            vec![("Empresa", "Cadastro"), ("Servidor Público", "Cadastro"), ("Tributos", "Cadastro")]
+        );
+        assert_eq!(sr.titulo, "Consulta Pública de Cadastro");
+        assert_eq!(sr.orgao, "SEFAZ-SP");
+    }
+
+    #[test]
+    fn build_servico_sem_faceta_e_none() {
+        // Nenhuma faceta de público preenchida -> fora do catálogo (None), mesmo com Acesso.
+        let s: SvcRow = serde_json::from_str(
+            r#"{"Title":"Interno","Cidadao":{"results":[]},"Acesso":{"results":["Público"]}}"#,
+        )
+        .unwrap();
+        let pubs = publicos();
+        assert!(build_servico(&s, &HashMap::new(), &pubs).is_none());
+    }
+
+    #[test]
+    fn build_servico_sem_home360_classe_vazia() {
+        let s: SvcRow =
+            serde_json::from_str(r#"{"Title":"X","Cidadao":{"results":["Todos"]}}"#).unwrap();
+        let pubs = publicos();
+        let sr = build_servico(&s, &HashMap::new(), &pubs).unwrap();
+        assert_eq!(sr.ocorrencias[0].publico, "Cidadão");
+        assert_eq!(sr.ocorrencias[0].classe, "", "sem Home360 -> classe vazia");
+        assert_eq!(sr.link, "", "sem URL -> link vazio (a linha ainda é a identidade)");
+    }
 }

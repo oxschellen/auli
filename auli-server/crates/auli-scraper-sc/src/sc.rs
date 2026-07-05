@@ -288,7 +288,11 @@ fn discover_build_id(
 ) -> Result<String, Box<dyn std::error::Error>> {
     let logical = format!("{}/servicos/buscar", BASE);
     let html = fetch_cached(data_dir, agent, &logical, &logical, use_cache)?;
+    parse_build_id(&html)
+}
 
+/// Extracts the Next.js `buildId` from the `"buildId":"…"` marker in a portal page's HTML.
+fn parse_build_id(html: &str) -> Result<String, Box<dyn std::error::Error>> {
     let marker = "\"buildId\":\"";
     let start = html
         .find(marker)
@@ -394,4 +398,109 @@ fn fetch_cached(
     }
 
     Err(format!("falha ao buscar {}: {}", data_url, last_error).into())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_links_cobre_os_formatos() {
+        // [[url âncora]] -> `âncora "url"`; [[url]] -> `"url"`; texto sem link fica igual.
+        assert_eq!(
+            normalize_links("[[https://x.sc.gov.br/a Clique aqui]]"),
+            "Clique aqui \"https://x.sc.gov.br/a\""
+        );
+        assert_eq!(normalize_links("[[https://x.sc.gov.br/a]]"), "\"https://x.sc.gov.br/a\"");
+        assert_eq!(normalize_links("sem link nenhum"), "sem link nenhum");
+        // Amostra real do portal.
+        assert_eq!(
+            normalize_links("[[https://caf2.sef.sc.gov.br/Views/x.aspx Dúvidas? Acesse aqui.]]"),
+            "Dúvidas? Acesse aqui. \"https://caf2.sef.sc.gov.br/Views/x.aspx\""
+        );
+    }
+
+    #[test]
+    fn parse_build_id_extrai_do_marker() {
+        let html = r#"<script>{"props":{},"buildId":"LEoHxAKKyLD8ldaA4Q9Wm","isFallback":false}</script>"#;
+        assert_eq!(parse_build_id(html).unwrap(), "LEoHxAKKyLD8ldaA4Q9Wm");
+        assert!(parse_build_id("<html>sem buildId</html>").is_err());
+    }
+
+    #[test]
+    fn string_or_num_aceita_string_e_numero() {
+        // `paginasTotais` volta ora número, ora string — os dois devem virar a mesma String.
+        let n: StringOrNum = serde_json::from_str("22").unwrap();
+        assert_eq!(n.0, "22");
+        let s: StringOrNum = serde_json::from_str("\"22\"").unwrap();
+        assert_eq!(s.0, "22");
+    }
+
+    // Fixture fiel ao shape real da listagem Next.js (`_next/data/<buildId>/servicos/buscar.json`).
+    const LISTING_JSON: &str = r#"{"pageProps":{"respostaApi":{"responseServicos":{
+      "paginasTotais": 22,
+      "itens":[
+        {"id":1,"nome":"Acessar Anexos de Documentos de Fiscalização",
+         "slug":"acessar-anexos-de-documentos-de-fiscalizacao",
+         "publicos":[{"id":3,"nome":"Cidadão"},{"id":4,"nome":"Empresa"}]},
+        {"id":2,"nome":"Outro Serviço","slug":"outro-servico","publicos":[]}
+      ]}}}}"#;
+
+    #[test]
+    fn parse_listagem_le_itens_paginas_e_publicos() {
+        let parsed: NextData<ListingApi> = serde_json::from_str(LISTING_JSON).unwrap();
+        let rs = parsed.page_props.resposta_api.response_servicos;
+        assert_eq!(rs.paginas_totais.0, "22");
+        assert_eq!(rs.itens.len(), 2);
+        assert_eq!(rs.itens[0].slug, "acessar-anexos-de-documentos-de-fiscalizacao");
+        let ids: Vec<i64> = rs.itens[0].publicos.iter().map(|p| p.id).collect();
+        assert_eq!(ids, vec![3, 4]);
+        assert!(rs.itens[1].publicos.is_empty());
+    }
+
+    // Fixture fiel ao shape real do detalhe (`_next/data/<buildId>/servicos/<slug>.json`).
+    const DETAIL_JSON: &str = r#"{"pageProps":{"respostaApi":{"servico":{"dadosJson":{
+      "finalidade":"Garantir o contraditório.",
+      "etapasProcesso":["Acessar o link;","Preencher o formulário."],
+      "requisitosExigidosus":["Estar cadastrado"],
+      "grupoServico":{"nome":"Contencioso Tributário","id":181},
+      "orgao":{"nome":"Secretaria de Estado da Fazenda"},
+      "publicos":[{"id":3,"nome":"Cidadão"}]
+    }}}}}"#;
+
+    #[test]
+    fn parse_detalhe_le_dados_json() {
+        let parsed: NextData<DetailApi> = serde_json::from_str(DETAIL_JSON).unwrap();
+        let d = parsed.page_props.resposta_api.servico.dados_json;
+        assert_eq!(d.finalidade, "Garantir o contraditório.");
+        assert_eq!(d.etapas_processo.len(), 2);
+        assert_eq!(d.requisitos, vec!["Estar cadastrado"]);
+        assert_eq!(d.grupo_servico.as_ref().unwrap().nome, "Contencioso Tributário");
+        assert_eq!(d.orgao.as_ref().unwrap().nome, "Secretaria de Estado da Fazenda");
+        assert_eq!(d.publicos[0].id, 3);
+    }
+
+    #[test]
+    fn build_descricao_tem_header_de_3_linhas_e_corpo() {
+        let d = DadosJson {
+            finalidade: "Fim do serviço.".to_string(),
+            etapas_processo: vec!["Passo 1".to_string(), "".to_string()],
+            requisitos: vec!["Requisito A".to_string()],
+            grupo_servico: None,
+            orgao: None,
+            publicos: vec![],
+        };
+        let s = build_descricao("Cidadão", "Grupo X", "Meu Título", &d);
+        let linhas: Vec<&str> = s.lines().collect();
+        // As 3 primeiras linhas são o header tipo/classe/titulo (que descricao_body descarta).
+        assert_eq!(&linhas[0..3], &["Cidadão", "Grupo X", "Meu Título"]);
+        assert!(s.contains("Fim do serviço."));
+        assert!(s.contains("Etapas para realização do serviço:"));
+        assert!(s.contains("- Passo 1"));
+        assert!(!s.contains("- \n"), "etapa vazia é filtrada");
+        assert!(s.contains("Requisitos:"));
+        assert!(s.contains("- Requisito A"));
+        // O corpo (sem o header) começa na finalidade.
+        assert!(auli_scraper_kit::descricao_body(&s).starts_with("Fim do serviço."));
+    }
 }

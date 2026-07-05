@@ -344,3 +344,102 @@ fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<St
     }
     Err(anyhow!("falha ao buscar {}: {}", url, last))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn canonical_so_aceita_links_de_servico() {
+        assert_eq!(
+            canonical("/servicos/Cidadao/Agendamento/Agendar-ybrz"),
+            Some(format!("{}/servicos/Cidadao/Agendamento/Agendar-ybrz", BASE))
+        );
+        // fragmento é descartado
+        assert_eq!(
+            canonical("/servicos/Empresa/X-abc#topo"),
+            Some(format!("{}/servicos/Empresa/X-abc", BASE))
+        );
+        // href absoluto que contém /servicos/ é ancorado a partir dali
+        assert_eq!(
+            canonical("https://www.fazenda.pr.gov.br/servicos/Y-def"),
+            Some(format!("{}/servicos/Y-def", BASE))
+        );
+        // não-serviço -> None
+        assert_eq!(canonical("/Pagina/Carta-de-servicos"), None);
+        assert_eq!(canonical("https://externo.org/outra"), None);
+    }
+
+    #[test]
+    fn canonical_any_absolutiza_o_corpo() {
+        assert_eq!(canonical_any("https://x.pr.gov.br/a"), "https://x.pr.gov.br/a");
+        assert_eq!(canonical_any("/Pagina/x"), format!("{}/Pagina/x", BASE));
+        assert_eq!(canonical_any("relativo"), "relativo");
+    }
+
+    #[test]
+    fn normalize_body_links_vira_texto_url() {
+        assert_eq!(
+            normalize_body_links(r#"<a href="/x">Clique</a>"#),
+            format!("Clique \"{}/x\"", BASE)
+        );
+        // âncora vazia -> só a url
+        assert_eq!(normalize_body_links(r#"<a href="/y"></a>"#), format!("\"{}/y\"", BASE));
+        // # e javascript: viram só o texto (sem url)
+        assert_eq!(normalize_body_links(r##"<a href="#topo">Ir ao topo</a>"##), "Ir ao topo");
+        assert_eq!(normalize_body_links(r#"<a href="javascript:void(0)">X</a>"#), "X");
+    }
+
+    #[test]
+    fn decode_entities_e_clean_text() {
+        assert_eq!(decode_entities("&aacute;gua &amp; sal &#39;x&#39;"), "água & sal 'x'");
+        assert_eq!(clean_text("  a   linha  \n\n   b  "), "a linha\nb");
+    }
+
+    #[test]
+    fn html_block_to_text_quebra_blocos_e_normaliza_links() {
+        let out = html_block_to_text(r#"<p>Oi <a href="/l">link</a></p><p>Fim</p>"#);
+        assert_eq!(out, format!("Oi link \"{}/l\"\nFim", BASE));
+    }
+
+    // Fixture fiel ao DOM do mega-menu Drupal: painel -> li.agrupador (header = classe) ->
+    // ul.lista-sub-agrupadores -> a[href="/servicos/..."] (item).
+    const PANEL_HTML: &str = r##"<div id="servicos-tema-cidado"><ul class="lista-categorias agrupamento">
+      <li class="agrupador"><a href="#">Agendamento</a>
+        <ul class="lista-sub-agrupadores">
+          <li class="row grupos-links">
+            <a href="/servicos/Cidadao/Agendamento/Agendar-atendimento-ybrz" class="nome-servico">Agendar atendimento na Receita</a>
+          </li>
+        </ul>
+      </li>
+      <li class="agrupador"><a href="#">CCRF</a>
+        <ul class="lista-sub-agrupadores">
+          <li class="row grupos-links">
+            <a href="/servicos/Cidadao/CCRF/Acompanhar-sessoes-dloe" class="nome-servico">Acompanhar as sessões do CCRF</a>
+          </li>
+          <li class="row grupos-links">
+            <a href="https://externo.org/pagina" class="nome-servico">Link externo (não é serviço)</a>
+          </li>
+        </ul>
+      </li>
+    </ul></div>"##;
+
+    #[test]
+    fn parse_panel_extrai_titulo_link_e_classe_e_filtra_nao_servico() {
+        let doc = Html::parse_document(PANEL_HTML);
+        let items = parse_panel(&doc, "servicos-tema-cidado");
+        // 3 âncoras de item, mas a externa (sem /servicos/) é filtrada -> 2 itens.
+        assert_eq!(items.len(), 2);
+        assert_eq!(items[0].titulo, "Agendar atendimento na Receita");
+        assert_eq!(items[0].classe, "Agendamento");
+        assert_eq!(items[0].link, format!("{}/servicos/Cidadao/Agendamento/Agendar-atendimento-ybrz", BASE));
+        assert_eq!(items[1].titulo, "Acompanhar as sessões do CCRF");
+        assert_eq!(items[1].classe, "CCRF", "a classe vem do header <a> do agrupador");
+    }
+
+    #[test]
+    fn parse_panel_id_inexistente_vem_vazio() {
+        let doc = Html::parse_document(PANEL_HTML);
+        assert!(parse_panel(&doc, "servicos-tema-nao-existe").is_empty());
+    }
+}
