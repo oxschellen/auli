@@ -1,0 +1,23 @@
+[package]
+name = "auli-scraper-go"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-GO (Secretaria de Estado da Economia; serviços via API do Portal Expresso,
+# WSO2 API Manager, auth client_credentials ANÔNIMO). Molde CE/MT (JSON direto). kit-native.
+#
+# ATENÇÃO — WAF/JA3: `api.go.gov.br` fica atrás de um WAF que faz allowlist por fingerprint TLS.
+# O ClientHello do `ureq` (rustls E native-tls) difere do curl nas extensões, e o TlsConfig do
+# ureq 3 não expõe ALPN/cipher-list para alinhar — medido no spike (D-GO-WAF). Por isso os GETs de
+# catálogo usam `kit::http::get_via_curl` (subprocess curl, exceção documentada); o token sai pelo
+# `ureq` normal (o host de SSO NÃO tem o WAF). Dependência de runtime: binário `curl` no PATH.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
+# scraper (html5ever) só para decodificar as entidades HTML das descrições (`&ccedil;`, `&atilde;`,
+# … fora da tabela fixa do kit::decode_entities). Ver `html_to_text` no go.rs.
+scraper = "0.27.0"

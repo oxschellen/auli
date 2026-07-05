@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-05 (frota com 11 entidades; MT = a mais recente).
+> Última atualização: 2026-07-05 (frota com 12 entidades; GO = a mais recente).
 
 ---
 
@@ -59,7 +59,7 @@ o caso multi-classe).
 | Estratégia | Como | Quem usa |
 |---|---|---|
 | **`aggregate_servicos` (kit)** | dedup **por `link`**; monta `Servico` per-público e agrega | sc, pr, mg, pe, ba |
-| **`ServicoRaw` direto** | o crate monta os registros; o link **não** é a chave única | rs, sp, rj, ce, ms, mt |
+| **`ServicoRaw` direto** | o crate monta os registros; o link **não** é a chave única | rs, sp, rj, ce, ms, mt, go |
 
 O `ServicoRaw` direto existe porque em alguns portais o link não identifica: SP (vários serviços
 compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `_id`; slug não é
@@ -84,8 +84,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ce** | SEFAZ-CE / Ceará | SPA Sydle ONE; API JSON `getChildren` (POST) | JSON | 1 | 382 | curta (~79) | direto | 6 | rustls |
 | **ms** | SEFAZ-MS / Mato Grosso do Sul | WordPress server-rendered; listagem própria, filtros `?usuario=`/`?categoria=`, `pp` alto | HTML | 5 | 276 | **vazia** (v1) | direto | 7 | rustls |
 | **mt** | SEFAZ-MT / Mato Grosso | X-Via Portal (SPA React); API pública `POST /v1/search/department`, sem token | JSON | 2 | 27 | rica (~168) | direto | 8 | rustls |
+| **go** | SEFAZ-GO / Goiás (Secr. Economia) | Portal Expresso (SPA); API WSO2 `servicosOrgaos/20`, token client_credentials anônimo | JSON | 1 | 94 | rica (inline) | direto | 8 | **curl (WAF JA3)** |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **69** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **77** (todos os crates cobertos).
 
 ---
 
@@ -229,6 +230,25 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   resultTotal` + piso 15. Sem paginação (1 POST traz o catálogo do órgão inteiro).
 - 27 serviços (42 ocorrências), 2 públicos. 8 testes. `ServicoRaw` direto. Escopo = só o órgão
   SEFAZ (a Carta PDF ~85 é fonte GPAS divergente — só cross-check, D-MT1).
+
+### go — SEFAZ-GO (Goiás / Secretaria de Estado da Economia)
+
+- **SPA Angular (Portal Expresso)** — sem HTML server-rendered. A listagem por órgão vem da API
+  WSO2 **`GET /expresso/2.0.0/servicosOrgaos/20`** (órgão Economia = id 20); `/orgaos`
+  (`qtdeServicosPublicados` = invariante) e `/categorias` (id→nome da classe) completam. Descrição
+  (`infoServico`) é HTML inline — limpa via html5ever (as entidades `&ccedil;`/`&atilde;`/… ficam
+  fora da tabela do `kit::decode_entities`).
+- **D-GO3 — auth client_credentials ANÔNIMO:** `POST sso.go.gov.br/oauth2/token` (Basic com as
+  credenciais **públicas** do bundle Angular — não são segredo) → Bearer efêmero. Sem login.
+- **⚠️ D-GO-WAF — WAF por fingerprint TLS (JA3):** `api.go.gov.br` só aceita o ClientHello do
+  curl/browser; o `ureq` (rustls **e** native-tls) recebe "Acesso Negado" (medido no spike: diferem
+  nas extensões — falta ALPN, sobra session_ticket; o `TlsConfig` do ureq 3 não expõe ALPN/cipher).
+  Por isso os GETs de catálogo usam **`kit::http::get_via_curl`** (subprocess curl — dependência de
+  runtime). O **token** sai pelo `ureq` normal (o host de SSO não tem o WAF).
+- **D-GO2** id=`go`, name/orgao=`SEFAZ-GO` (a SEFAZ virou Secretaria da Economia; o `go.txt` carrega
+  a ponte). **D-GO4** Cenário A (público único "Serviços"); `classe` = categoria. **D-GO5** slug cru
+  (braille `⠳` incluído). Identidade = `idServico`.
+- 94 serviços (120 ocorrências), 1 público. 8 testes. `ServicoRaw` direto.
 
 ---
 

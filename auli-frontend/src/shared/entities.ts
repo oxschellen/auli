@@ -101,6 +101,13 @@ export const ENTITIES: Entity[] = [
     state: "Mato Grosso",
     collections: ["servicos"],
   },
+  {
+    id: "go",
+    name: "SEFAZ-GO",
+    uf: "GO",
+    state: "Goiás",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";
