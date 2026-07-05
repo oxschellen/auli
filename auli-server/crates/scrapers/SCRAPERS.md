@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-05 (frota com 15 entidades; PA = a mais recente).
+> Última atualização: 2026-07-05 (frota com 16 entidades; ES = a mais recente).
 
 ---
 
@@ -88,8 +88,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **pi** | SEFAZ-PI / Piauí | SPA Sydle ONE; API JSON `_search` (**GET**), catálogo "Carta de Serviços", Bearer anônimo do shell | JSON | 1 | 29 | curta | direto | 10 | rustls |
 | **am** | SEFAZ-AM / Amazonas | Next.js **App Router**; flight **RSC** (header `RSC: 1`), árvore `items`; público via 3 rotas de perfil | JSON (RSC) | 3 | 278 | curta (resumo) | direto | 9 | rustls |
 | **pa** | SEFA-PA / Pará | Catálogo estadual "paradigital" (API Prodepa/Spring); `GET /orgao/48` + `GET /servico/{id}`, anônimo | JSON | 3 | 34 | **rica** (etapas+requisitos) | direto | 8 | rustls |
+| **es** | SEFAZ-ES / Espírito Santo | portal.es.gov.br (X-Via, molde MT); `POST /v1/search` por `departmentSlug`, anônimo | JSON | 2 | 45 | **rica** (`serviceLetterContent` HTML) | direto | 8 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **104** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **112** (todos os crates cobertos).
 
 ---
 
@@ -303,6 +304,23 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   `portal-digital.sefa.pa.gov.br` estava fora do ar (522) e o Joomla foi extinto — ver `descoberta-pa.md`.
 - 34 serviços, 54 ocorrências, 3 públicos (Cidadão 21 / Empresa 30 / Estado 3). 8 testes. `ServicoRaw` direto.
   O paradigital cobre **63 órgãos** com o mesmo contrato → oportunidade de scraper genérico (D-PA-ACERVO).
+
+### es — SEFAZ-ES (Espírito Santo)
+
+- **portal.es.gov.br = SPA React sobre X-Via (MESMO stack do MT).** O `conectacidadao`/`guiadeservicos`
+  do enunciado migraram/morreram (307 → portal.es.gov.br). Listagem por órgão = **`POST /v1/search`**
+  `{query:"", groups:["CATALOG"], departmentSlug, from, size}` → **array JSON anônimo**. SEFAZ =
+  `departmentSlug "secretaria-de-estado-da-fazenda"` (achado via `GET /v1/department`).
+- Cada item traz o conteúdo COMPLETO inline (sem chamada de detalhe): `title`, `description` (resumo),
+  **`serviceLetterContent`** (a carta, **HTML** → `html_to_text` com html5ever), `category` (classe),
+  `targets` (público). `descricao` = resumo + carta. **público via `targets` NORMALIZADOS** (o dado
+  publicado traz `cidadao` E `Cidadão` — colapsam num só; Cidadão/Empresa, sobrepostos). `classe` =
+  `category` (5). Identidade = `slug`; `link` = `…/servico/{slug}`.
+- **Invariante `únicos == resultTotal`** (a API dá o próprio total, lição MT). UA institucional
+  **AuliBot** + ≥1s (D-PA-ROBOTS, ES = 2º caso). O X-Via tem 48 órgãos sob a mesma API → D-PA-ACERVO
+  ganha 2º caso.
+- 45 serviços, 60 ocorrências, 2 públicos (Cidadão 43 / Empresa 17). 8 testes. `ServicoRaw` direto.
+  Detalhes de descoberta em `descoberta-es.md`.
 
 ---
 

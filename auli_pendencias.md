@@ -318,6 +318,28 @@ o candidato `portal-digital` estava fora do ar (522) e o Joomla foi extinto.
 - **⏳ D-PA-PORTALDIGITAL (aberta):** `portal-digital.sefa.pa.gov.br` (SPA SEFA-específica, ids Mongo
   ObjectId) estava em 522 na coleta. Se voltar, reavaliar (pode ter conteúdo próprio).
 
+## 15. Entidade `es` (SEFAZ-ES) integrada — ✅ **resolvida (16ª entidade)**
+
+Fonte = `portal.es.gov.br` (SPA React sobre **X-Via**, MESMO stack do MT). O `conectacidadao`/
+`guiadeservicos` do enunciado migraram/morreram (307 → portal.es.gov.br). Descoberta em `descoberta-es.md`.
+
+- **D-ES-FONTE / D-ES-MOLDE-MT:** listagem por órgão = **`POST /v1/search`**
+  `{query:"", groups:["CATALOG"], departmentSlug, from, size}`, **anônima**. SEFAZ =
+  `departmentSlug "secretaria-de-estado-da-fazenda"` (via `GET /v1/department`). Molde MT: array JSON,
+  conteúdo rico inline, invariante `únicos == resultTotal`, sem paginação (um `size` alto basta).
+- **D-ES-MODELO:** identidade = `slug`; `descricao` = `description` (resumo) + `serviceLetterContent`
+  (a carta, **HTML** → `html_to_text` com html5ever); `classe` = `category` (5); `link` =
+  `portal.es.gov.br/servico/{slug}`; órgão "SEFAZ-ES".
+- **D-ES-PUBLICO:** público = `targets` **normalizados** — o dado publicado traz `cidadao` **E**
+  `Cidadão` (mesma pessoa, grafias diferentes) → colapsam num só "Cidadão" (senão duplicaria a
+  ocorrência). Resultado: Cidadão 43 / Empresa 17 (sobrepostos). `agendável` = atributo, não público
+  (alinhado ao AM).
+- **D-ES-ROBOTS:** coberto por **D-PA-ROBOTS** (ES = 2º caso) — UA institucional AuliBot + ≥1s + cache;
+  a API não bloqueia. Nenhuma autenticação (Acesso Cidadão intocado).
+- 45 serviços, 60 ocorrências, 2 públicos. 8 testes. `ServicoRaw` direto. O X-Via do ES tem **48
+  órgãos** sob a mesma API → **D-PA-ACERVO** ganha 2º caso (scraper estadual genérico serviria PA/Prodepa
+  **e** ES/X-Via).
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
