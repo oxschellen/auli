@@ -9,14 +9,6 @@ mod sc;
 pub const ENTITY: &str = "sc";
 const DATA_DIR: &str = "../data/sc/raw";
 
-/// Identidade deste scraper, gravada como metadado no snapshot.
-pub(crate) fn scraper_info() -> auli_contract::ScraperInfo {
-    auli_contract::ScraperInfo {
-        nome: env!("CARGO_PKG_NAME").to_string(),
-        versao: env!("CARGO_PKG_VERSION").to_string(),
-    }
-}
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // CLI: auli-scraper-sc [--usecache] servicos   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
@@ -45,7 +37,7 @@ fn run_servicos(use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
     auli_contract::snapshot::write_servicos(
         ENTITY,
         DATA_DIR,
-        &scraper_info(),
+        &auli_contract::ScraperInfo::new(env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")),
         publicos_ordem,
         items,
     )?;
