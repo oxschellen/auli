@@ -292,6 +292,32 @@ qualquer scraper atual. Os **39 serviços link-only** (externo/submenu) NÃO tê
 `serviceDetails`; a v2 mantém para eles só o `resumo` da listagem. Guard sugerido: um piso de seções
 não-vazias por serviço para pegar regressão de parser. Evidência e amostras em `descoberta-am.md` (Fase 3).
 
+## 14. Entidade `pa` (SEFA-PA) integrada — ✅ **resolvida (15ª entidade)**
+
+Fonte = catálogo estadual **paradigital** (API Prodepa/Spring), escolhida na descoberta (`descoberta-pa.md`);
+o candidato `portal-digital` estava fora do ar (522) e o Joomla foi extinto.
+
+- **D-PA-FONTE — API anônima:** `para-digital.sistemas.pa.gov.br/para-digital-service/portal`, tudo GET
+  sem login. Multi-tenant por órgão: SEFA = **órgão 48**. `GET /orgao/48` → `[{id, nome}]` (listagem
+  magra) → obriga o detalhe `GET /servico/{id}` (rico: finalidade, `etapaServicos`, `requisitoServicos`,
+  contatos, tema, flags de público, `linkAcesso`). 34 serviços.
+- **D-PA-ROBOTS — robots desconsiderado (decisão do mantenedor)** por ser conteúdo público (LAI), baixo
+  volume. **Mitigações aplicadas no scraper:** UA institucional **`AuliBot/0.1 (+repo; email)`** (1ª
+  entidade da frota a usá-lo, não o UA Firefox do kit), **cortesia ≥1s** entre GETs (sem paralelismo),
+  cache agressivo (cada URL 1×; `--usecache` miss=erro), **nunca autenticar**. Na prática o paradigital
+  libera por robots — a mitigação é preventiva.
+- **D-PA-MODELO:** `ServicoRaw` direto; identidade = `id`; `descricao` = finalidade + "Como proceder"
+  (etapas) + "Requisitos" + "Acesso" (linkAcesso); `classe` = `tema.descricao` (SEFA: tema único
+  "Tributos e empresas"); `publico` via flags `cidadao/empresa/estado` (sobrepostos → 3 públicos,
+  `ocorrencias` = público × classe); `link` = `paradigital.pa.gov.br/servico/{id}`; órgão "SEFA-PA".
+  54 ocorrências (Cidadão 21 / Empresa 30 / Estado 3). 8 testes.
+- **⏳ D-PA-ACERVO (aberta, NÃO feita):** o paradigital é um catálogo estadual **multi-tenant com 63
+  órgãos** sob o MESMO contrato (`/orgao/{idOrgao}` + `/servico/{id}`). Um **scraper estadual genérico**
+  parametrizado por `idOrgao` cobriria os 63 órgãos sem novo código — oportunidade forte para o Acervo.
+  Registrado; não implementado (foge do modelo "1 entidade = 1 órgão" atual).
+- **⏳ D-PA-PORTALDIGITAL (aberta):** `portal-digital.sefa.pa.gov.br` (SPA SEFA-específica, ids Mongo
+  ObjectId) estava em 522 na coleta. Se voltar, reavaliar (pode ter conteúdo próprio).
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

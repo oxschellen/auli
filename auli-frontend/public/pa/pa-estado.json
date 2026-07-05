@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "tipo": "Estado",
+    "classe": "Tributos e empresas",
+    "orgao": "SEFA-PA",
+    "link": "https://www.paradigital.pa.gov.br/servico/455",
+    "titulo": "Consulta Nota Fiscal do Consumidor Eletrônica-Nfce",
+    "descricao": "autenticidade -consulta pela chave\n\nComo proceder:\ndigitar a chave de acesso\nao entrar no Portal de Serviço da SEFA e escolher Documentário Fiscal opção Nota Fiscal do Consumidor Eletronica-NFCe será direcionado a pagina que solicita a digitação da CHAVE DE ACESSO que vem em todas DANFE(antigo cupom fiscal de compras))\n\nRequisitos:\nter a chave de acesso\n\nAcesso: https://app.sefa.pa.gov.br/consulta-nfce/#/consulta"
+  },
+  {
+    "id": 2,
+    "tipo": "Estado",
+    "classe": "Tributos e empresas",
+    "orgao": "SEFA-PA",
+    "link": "https://www.paradigital.pa.gov.br/servico/1034",
+    "titulo": "Dispensa de pagamento IPVA",
+    "descricao": "É a solicitação de dispensa do pagamento do IPVA concedida pela SEFA quando ocorrer perda total do veículo, por furto, roubo ou sinistro. Se concedido, o contribuinte pagará somente o valor proporcional ao período em que esteve na posse do veículo.\n\nComo proceder:\nDeve solicitar na unidade CEEAT IPVA quando estiver na área metropolitana ou numa unidade fazendária mais próxima. Levar os documentos necessário :https://app.sefa.pa.gov.br/pservicos/\n\nRequisitos:\nComo solicitar: O contribuinte poderá protocolar seu pedido na Coordenação Executiva Especial de Administração Tributária de IPVA-ITCD, quando localizado na região metropolitana Belém/Ananindeua ou na unidade fazendária mais próxima, quando localizado no interior do Estado. Para efetuar o pagamento do IPVA proporcional, o contribuinte deverá acessar o Portal de serviços da SEFA, na opção: \"DAE de IPVA\".\nDocumentos comuns a todos os pedidos: ♦ documento de identidade e de inscrição no Cadastro de Pessoa Física- CPF ou no Cadastro Nacional de Pessoa Jurídica- CNPJ, conforme o caso; ♦ nos casos de pessoas jurídicas, o ato constitutivo, estatuto, contrato social, inclusive no caso de filial, registro comercial ou lei de criação, conforme o caso; ♦ Certificado de Registro de Veículos- CRV ou Nota Fiscal de aquisição, em nome do requerente; ♦ ata de posse ou procuração outorgada pelo requerente que autoriza o signatário do requerimento a solicitar o benefício em seu nome, se for o caso;\nDocumentos adicionais: a) quando se tratar de pedido de dispensa do pagamento do imposto por furto ou roubo do veículo: 1. Boletim de Ocorrência Policial, atestando o fato; 2. documento expedido por autoridade policial competente comprovando a situação atual do veículo, relativamente à continuidade da perda ou posse ou devolução do veículo ao proprietário; b) quando se tratar de pedido de dispensa do imposto por perda total do veículo, em decorrência de sinistro: 1. O documento comprobatório deve declarar expressamente a indisponibilidade de uso do veículo, em decorrência do sinistro, definindo o caráter transitório ou definitivo da indisponibilidade. 2. Boletim de Ocorrência, atestando o fato; 3. laudo expedido por perito do Departamento Estadual de Trânsito- DETRAN, ou Centro de Perícias Científicas \"Renato Chaves\" , atestando a perda total do veículo, em decorrência do sinistro; 4. declaração do Departamento Estadual de Trânsito- DETRAN, do Departamento de Aviação Civil- DAC, do Ministério da Aeronáutica ou da Capitania dos Portos, atestando que foi solicitada a baixa total da inscrição do veículo automotor terrestre, aéreo ou aquaviário, respectivamente. O contribuinte terá direito à dispensa, no caso de roubo ou furto, a contar da data do registro do Boletim de ocorrência, sendo o imposto dispensado proporcional a partir desta data. Será devido o IPVA para o período anterior ao registro do Boletim de ocorrência.\nObservações: 1) O contribuinte terá direito ao perdão do débito, em se tratando de casos de roubo ou furto, a contar da data da comunicação do ilícito perante a autoridade policial competente, sendo o imposto dispensado proporcional a partir desta data. O decreto nº 1.610/2009, com efeitos a contar de 23 de abril de 2009, dispensa o requerimento para a dispensa do ipva nesses casos, sendo a remissão concedida automaticamente. Será devido o IPVA para o período anterior ao registro do fato (boletim de ocorrência) no órgão competente, bastando o contribuinte acessar o site da SEFA (www.sefa.pa.gov.br) em pagamentos – dae de ipva para imprimir o DAE. 2) Os documentos de que trata este tipo de pedido deverão ser apresentados com a cópia autenticada em Cartório, ou no original, com cópia simples para ser autenticada por servidor fazendário. 3) Os pedidos podem ser considerados improcedentes, a critério da autoridade administrativa responsável pela decisão, sempre que a documentação apresentada não se reverter em prova idônea da pretensão do requerente."
+  },
+  {
+    "id": 3,
+    "tipo": "Estado",
+    "classe": "Tributos e empresas",
+    "orgao": "SEFA-PA",
+    "link": "https://www.paradigital.pa.gov.br/servico/1152",
+    "titulo": "Portaria imunidade ou isenção",
+    "descricao": "Permite consultar as portarias de IPVA (imunidade ou isenção). Podem solicitar esse serviço os beneficiários de isenção ou imunidade ou representante legal.\n\nComo proceder:\nir na área pública do Portal de Serviços da SEFA opção PORTARIA IMUNIDADE ou ISENÇÃO\n\nRequisitos:\nNa área pública do Portal de Serviços da SEFA, na opção Portaria Imunidade ou Isenção.\n\nAcesso: https://app.sefa.pa.gov.br/consulta-isencao-ipva/index.action"
+  }
+]

@@ -1,0 +1,16 @@
+[package]
+name = "auli-scraper-pa"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFA-PA (serviços, catálogo estadual "paradigital" — API Prodepa/Spring). SEM headless,
+# SEM login: a listagem por órgão (`GET /orgao/48`) + o detalhe rico (`GET /servico/{id}`) são JSON
+# anônimo. UA institucional AuliBot + rate-limit ≥1s (mitigações D-PA-ROBOTS). Depende de auli-contract
+# + o kit — nunca de fastembed/ort. Decisões em descoberta-pa.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1"
