@@ -96,6 +96,24 @@ e a nota do `auli-docs/` obsoleto removida. Referência viva:
 
 ---
 
+## 7. Fronteira do snapshot absorvida pelo contrato (D-C1/2/3) — ✅ **resolvido**
+
+O **I/O do snapshot** (`load`/`write_faqs`/`write_servicos`/`snapshot_path`) e o shape per-público
+`ServicoPerPublico` saíram do `auli-scraper-kit` para o `auli-contract`:
+
+- **D-C1:** a fronteira (tipos + versão + caminho + leitura/escrita) mora só no contrato; o kit
+  fica com o "como raspar" (cache, agente `ureq`, agregação). Recíproca: **nada fora de
+  `crates/scrapers/` depende do kit**.
+- **D-C2:** `ServicoPerPublico` (o JSON per-público que o frontend consome) é contrato, não infra de
+  scraper — os scrapers e o `process` usam o alias `auli_contract::ServicoPerPublico as Servico`.
+- **D-C3:** o `auli-collections` **larga a dep do kit** e usa `auli_contract::snapshot::load` — seu
+  grafo não puxa mais `ureq` (o alvo pesado; `time` fica, via contrato, mas é leve e só do write).
+
+Verificado: build/test/clippy verdes; invariante geográfico vazio; golden do `auli-collections`
+sem diff.
+
+---
+
 ## Itens relacionados (revisões de código anteriores)
 
 - **`public/<id>/servicos.json` (~660KB) e contratos do engine — ✅ resolvido:** o `build-frontend-public.sh`

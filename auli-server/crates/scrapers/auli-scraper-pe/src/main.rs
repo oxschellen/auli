@@ -50,7 +50,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn run_servicos(use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
     let (inputs, publicos_ordem) = scrape::scrape(DATA_DIR, use_cache)?;
     let items = auli_scraper_kit::aggregate_servicos(&inputs);
-    auli_scraper_kit::snapshot::write_servicos(
+    auli_contract::snapshot::write_servicos(
         ENTITY,
         DATA_DIR,
         &scraper_info(),

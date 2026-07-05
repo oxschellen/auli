@@ -10,7 +10,8 @@ use scraper::{ElementRef, Html, Selector};
 use ureq::Agent;
 
 use auli_contract::Publico;
-use auli_scraper_kit::{PerPublicoServicos, Servico};
+use auli_scraper_kit::PerPublicoServicos;
+use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://www.sefaz.pe.gov.br";
 // A home renderiza o menu global completo (verificado também em páginas internas — o menu vem da

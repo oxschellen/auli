@@ -7,8 +7,6 @@ edition = "2024"
 [dependencies]
 # Contrato compartilhado com o engine: Table<P>/Faq/Servico. O `process` preenche `text_to_embed`.
 auli-contract = { path = "../auli-contract" }
-# Apoio: I/O do snapshot (load), Servico. O collections lê o snapshot e deriva.
-auli-scraper-kit = { path = "../scrapers/auli-scraper-kit" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "2"

@@ -99,10 +99,10 @@ auli-server/                       # workspace único, Cargo.lock compartilhado
     ├── vector-store/      # BAIXO — store plano por cosseno, agnóstico (sabe só id+vetor+payload P)
     ├── auli-core/         # MEIO  — domínio auli: embed (BGE-M3), corpus, manifest
     ├── auli-cli/          # TOPO  — o binário `auli`: server (RAG) + update (ingestão)
-    ├── auli-contract/     # forma do dado (serde-only) compartilhada scraper↔engine
+    ├── auli-contract/     # forma + I/O do snapshot (D-C1) — a fronteira, compartilhada scraper↔engine
     ├── auli-collections/  # DERIVA os artefatos do snapshot (offline) — ver §5
     └── scrapers/          # a frota (compila leve; nunca importa o engine) — ver §5 / SCRAPERS.md
-        ├── auli-scraper-kit/    # kit compartilhado (cache, agente HTTP, snapshot, aggregate)
+        ├── auli-scraper-kit/    # kit compartilhado: o "como raspar" (cache, agente HTTP, aggregate)
         └── auli-scraper-<id>/   # um binário por entidade (9): rs sc sp pr mg pe ba rj ce
 ```
 
@@ -380,11 +380,13 @@ auli-scraper-<e> (rede)  →  data/<id>/<id>-<kind>-snapshot.json (v3)  →  aul
 
 ### 5.1 O kit compartilhado (`auli-scraper-kit`)
 
-[crates/scrapers/auli-scraper-kit](auli-server/crates/scrapers/auli-scraper-kit): peças comuns aos scrapers —
-`snapshot::{load, write_faqs, write_servicos}` (grava/lê o snapshot v3), `cache::{read, write}`
-(cache de página por URL; arquivo vazio conta como _miss_), `build_agent(user_agent, timeout)`
-(agente `ureq`), e `aggregate_servicos` + `descricao_body` (dobra registros per-público em `ServicoRaw`
-**deduplicando por `link`**). Sem `fastembed`/`ort` — os scrapers compilam leves.
+[crates/scrapers/auli-scraper-kit](auli-server/crates/scrapers/auli-scraper-kit): o **como raspar** —
+`cache::{read, write}` (cache de página por URL; arquivo vazio conta como _miss_),
+`build_agent(user_agent, timeout)` (agente `ureq`), e `aggregate_servicos` + `descricao_body` (dobra
+registros per-público em `ServicoRaw` **deduplicando por `link`**). O **I/O do snapshot** (`load`/
+`write_faqs`/`write_servicos`) e o shape per-público `ServicoPerPublico` **saíram do kit para o
+`auli-contract`** (D-C1) — a fronteira mora no contrato. Sem `fastembed`/`ort` — os scrapers compilam
+leves; nada fora de `scrapers/` depende do kit.
 
 ### 5.2 O snapshot v3 (`auli_contract::snapshot`)
 

@@ -12,7 +12,8 @@ use scraper::{Html, Selector};
 use ureq::Agent;
 
 use auli_contract::Publico;
-use auli_scraper_kit::{PerPublicoServicos, Servico};
+use auli_scraper_kit::PerPublicoServicos;
+use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://www.fazenda.pr.gov.br";
 // Página interna estável com o mega-menu completo (a raiz pode cair numa splash de campanha).

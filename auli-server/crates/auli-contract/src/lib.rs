@@ -7,10 +7,11 @@
 //! O arquivo `portal-*.txt` deixa de ser contrato e passa a ser um *print* legível da struct
 //! (unidirecional: só escrito, nunca lido de volta).
 //!
-//! Este crate é deliberadamente magro (só `serde`): nada de embedder, HTTP ou domínio de
-//! tributação. É o único ponto onde produtor e consumidor concordam.
+//! Este crate é deliberadamente leve (serde + anyhow/time para o I/O do snapshot — D-C1): nada
+//! de embedder, HTTP ou domínio de tributação. É o único ponto onde produtor e consumidor
+//! concordam — sobre a forma E sobre o caminho/versão/leitura/escrita da fronteira.
 
-mod snapshot;
+pub mod snapshot;
 pub use snapshot::*;
 
 use serde::{Deserialize, Serialize};

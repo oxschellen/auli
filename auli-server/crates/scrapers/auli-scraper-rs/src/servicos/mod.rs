@@ -32,7 +32,7 @@ fn write_servicos_snapshot(
     publicos_ordem: Vec<auli_contract::Publico>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let items = auli_scraper_kit::aggregate_servicos(inputs);
-    auli_scraper_kit::snapshot::write_servicos(
+    auli_contract::snapshot::write_servicos(
         crate::ENTITY,
         data_dir,
         &crate::scraper_info(),

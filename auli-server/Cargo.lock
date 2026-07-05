@@ -166,7 +166,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "auli-contract",
- "auli-scraper-kit",
  "serde",
  "serde_json",
  "thiserror",
@@ -177,8 +176,10 @@ dependencies = [
 name = "auli-contract"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "serde",
  "serde_json",
+ "time",
 ]
 
 [[package]]
@@ -224,11 +225,7 @@ dependencies = [
 name = "auli-scraper-kit"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "auli-contract",
- "serde",
- "serde_json",
- "time",
  "ureq",
 ]
 

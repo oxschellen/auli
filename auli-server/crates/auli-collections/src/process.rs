@@ -16,8 +16,8 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
     let id = &entity.id;
     let dir = &entity.data_dir;
 
-    let faqs = auli_scraper_kit::snapshot::load::<ColetaFaqs>(id, dir, "faqs")?;
-    let servicos = auli_scraper_kit::snapshot::load::<ColetaServicos>(id, dir, "servicos")?;
+    let faqs = auli_contract::snapshot::load::<ColetaFaqs>(id, dir, "faqs")?;
+    let servicos = auli_contract::snapshot::load::<ColetaServicos>(id, dir, "servicos")?;
 
     if faqs.is_none() && servicos.is_none() {
         return Err(format!(

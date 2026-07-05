@@ -1,3 +1,3 @@
-// O registro de serviço raspado (e o shape dos JSONs per-público) mora no kit; aqui só reexportamos
-// para o `process` (saída per-público) e para o scraper SC.
-pub use auli_scraper_kit::Servico;
+// O shape dos JSONs per-público é CONTRATO (o frontend o consome) e mora no `auli-contract` como
+// `ServicoPerPublico` (D-C1/D-C2); o alias local mantém o vocabulário curto deste módulo.
+pub use auli_contract::ServicoPerPublico as Servico;

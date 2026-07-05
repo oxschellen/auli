@@ -3,14 +3,9 @@ name = "auli-scraper-kit"
 version = "0.1.0"
 edition = "2024"
 
-# Apoio compartilhado dos scrapers (auli-scraper-rs / auli-scraper-sc): I/O do snapshot, cache de
-# páginas, builder do agent ureq e a agregação de serviços. Magro — depende de `auli-contract`
-# (forma do dado) + rede/serde, NUNCA de fastembed/ort/vector-store.
+# Apoio compartilhado dos scrapers — o COMO raspar: cache de páginas, builder do agent ureq e a
+# agregação de serviços. A fronteira (tipos + I/O do snapshot) mora no `auli-contract` (D-C1).
+# Exclusivo de `crates/scrapers/`; NUNCA depende de fastembed/ort/vector-store.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
-ureq = { version = "3", features = ["json"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-# `coletado_em` (RFC 3339, UTC) do snapshot.
-time = { version = "0.3", features = ["formatting"] }
-anyhow = "1"
+ureq = "3"

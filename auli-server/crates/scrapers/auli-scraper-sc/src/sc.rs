@@ -21,7 +21,7 @@ use regex::Regex;
 use serde::Deserialize;
 use ureq::Agent;
 
-use auli_scraper_kit::Servico;
+use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://www.sef.sc.gov.br";
 const USER_AGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
