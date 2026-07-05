@@ -278,11 +278,14 @@ fn fetch_page(
         BASE, page_id, query, PORTAL_ID
     );
 
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, &logical) {
+    // O retry+headers abaixo fica local (exceção documentada): a page API exige os headers
+    // ServiceNow (`X-Portal`/`X-Requested-With`), retorna `Value` (parse-antes-de-cachear) e o crate
+    // usa `Box<dyn Error>` — não encaixa no `kit::http::get_string` (só `accept`, devolve String).
+    // Só a leitura do cache é do kit.
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, &logical, use_cache)
+        .map_err(|e| e.to_string())?
+    {
         return Ok(serde_json::from_str(&cached)?);
-    }
-    if use_cache {
-        return Err(format!("cache miss para {} (modo --usecache, sem rede)", logical).into());
     }
 
     let max_attempts = 3;
