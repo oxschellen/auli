@@ -381,12 +381,19 @@ auli-scraper-<e> (rede)  →  data/<id>/<id>-<kind>-snapshot.json (v3)  →  aul
 ### 5.1 O kit compartilhado (`auli-scraper-kit`)
 
 [crates/scrapers/auli-scraper-kit](auli-server/crates/scrapers/auli-scraper-kit): o **como raspar** —
-`cache::{read, write}` (cache de página por URL; arquivo vazio conta como _miss_),
+`cache::{read, write, read_or_bail}` (cache de página por URL; arquivo vazio conta como _miss_;
+`read_or_bail` encapsula o miss-vira-erro do `--usecache`), `http::{get_string, post_json}` (GET/POST
+com retry 3× + backoff ×2, via `GetOpts { log_prefix, accept, headers, … }`), `USER_AGENT` (identidade
+de rede padrão da frota), `clean`/`clean_decoded`/`decode_entities` (normalização de texto),
 `build_agent(user_agent, timeout)` (agente `ureq`), e `aggregate_servicos` + `descricao_body` (dobra
-registros per-público em `ServicoRaw` **deduplicando por `link`**). O **I/O do snapshot** (`load`/
-`write_faqs`/`write_servicos`) e o shape per-público `ServicoPerPublico` **saíram do kit para o
-`auli-contract`** (D-C1) — a fronteira mora no contrato. Sem `fastembed`/`ort` — os scrapers compilam
-leves; nada fora de `scrapers/` depende do kit.
+registros per-público em `ServicoRaw` **deduplicando por `link`**). Essas funções comuns foram
+**extraídas das cópias por-entidade** (fetch/UA/clean/scraper_info, ~500 linhas duplicadas); as
+variantes genuinamente próprias ficam locais com comentário (charset do ba, page-API `Value` do mg,
+`clean_text` line-based, cache do rs-faqs). O `ScraperInfo::new(nome, versao)` (no contrato) substitui
+o `fn scraper_info()` boilerplate. O **I/O do snapshot** (`load`/`write_faqs`/`write_servicos`) e o
+shape per-público `ServicoPerPublico` **saíram do kit para o `auli-contract`** (D-C1) — a fronteira
+mora no contrato. Sem `fastembed`/`ort` — os scrapers compilam leves; nada fora de `scrapers/`
+depende do kit.
 
 ### 5.2 O snapshot v3 (`auli_contract::snapshot`)
 
