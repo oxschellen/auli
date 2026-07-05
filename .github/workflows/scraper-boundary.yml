@@ -1,0 +1,22 @@
+name: scraper-boundary
+
+# Guard-rail barato do invariante geográfico da fronteira (D-C1): nada fora de
+# `auli-server/crates/scrapers/` referencia o `auli-scraper-kit`. A fronteira (tipos + I/O do
+# snapshot) mora no `auli-contract`, o crate leve; o kit é exclusivo dos scrapers. Não compila
+# Rust (fastembed/ort são pesados); o build/test roda localmente (ver auli_operations.md).
+on:
+  pull_request:
+    paths:
+      - "auli-server/crates/**"
+      - "scripts/check-scraper-boundary.sh"
+      - ".github/workflows/scraper-boundary.yml"
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: scraper boundary guard
+        run: bash scripts/check-scraper-boundary.sh
