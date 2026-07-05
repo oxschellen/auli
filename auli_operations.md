@@ -54,12 +54,13 @@ export CMAKE_POLICY_VERSION_MINIMUM=3.5
 cargo build --release --workspace      # ou só o engine: cargo build --release --bin auli
 ```
 
-- Binários em `auli-server/target/release/`: **`auli`** (server/update) e um scraper por entidade —
-  **`auli-scraper-rs`** (headless Chrome; FAQs + serviços), **`auli-scraper-sc`** (API JSON Next.js),
-  **`auli-scraper-sp`** (REST SharePoint, JSON), **`auli-scraper-pr`** (HTML Drupal server-side) e
-  **`auli-scraper-mg`** (API JSON ServiceNow Service Portal). Só o `-rs` puxa headless Chrome.
+- Binários em `auli-server/target/release/`: **`auli`** (server/update) e **um scraper por entidade**
+  (9): `auli-scraper-{rs,sc,sp,pr,mg,pe,ba,rj,ce}`. **Nenhum usa headless Chrome** — todos são ureq +
+  HTML/JSON (o RS migrou para API JSON `tudofacil`; o BA usa `native-tls`/OpenSSL por causa do TLS
+  1.2-CBC do portal). A técnica de cada um está em
+  [`crates/scrapers/SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).
 - 1º build recompila fastembed/ort/aws-lc (alguns minutos); depois é incremental (segundos). Os
-  scrapers **não** dependem de fastembed/ort — compilam leves.
+  scrapers **não** dependem de fastembed/ort — compilam leves (invariante do `crates/scrapers/`).
 - Numa máquina com cmake de sistema, **nenhuma** das `export` é necessária.
 - Testes: `cargo test --workspace`.
 
@@ -76,10 +77,9 @@ Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data
 
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
 
-1. **Raspar** (rede; headless Chrome só no RS) → grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (v3):
-   `auli-scraper-rs [faqs|servicos|all]` (RS), `auli-scraper-sc servicos` (SC),
-   `auli-scraper-sp servicos` (SP), `auli-scraper-pr servicos` (PR) e `auli-scraper-mg servicos`
-   (MG). `--usecache` reusa o cache de páginas (offline, sem rede).
+1. **Raspar** (rede, **sem headless**) → grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (v3):
+   `auli-scraper-<id> servicos` para cada uma das **9 entidades** (rs/sc/sp/pr/mg/pe/ba/rj/ce); o RS
+   também aceita `faqs`/`all`. `--usecache` reusa o cache de páginas (offline, sem rede).
 2. **Derivar** (offline) → o contrato `<id>-faqs.json`/`<id>-servicos.json` + prints + index +
    per-público (e a árvore `faqs-tree.json` p/ a UI, no RS) em `data/<id>/raw/`:
    `./target/release/auli-collections <id>`.
@@ -87,16 +87,18 @@ Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo
 
 ```bash
 cd auli-server
-./target/release/auli-scraper-rs all && ./target/release/auli-collections rs && cd .. && scripts/build-packs.sh rs
-# SC: (cd auli-server && ./target/release/auli-scraper-sc servicos && ./target/release/auli-collections sc) && scripts/build-packs.sh sc
-# SP: (cd auli-server && ./target/release/auli-scraper-sp servicos && ./target/release/auli-collections sp) && scripts/build-packs.sh sp
-# PR: (cd auli-server && ./target/release/auli-scraper-pr servicos && ./target/release/auli-collections pr) && scripts/build-packs.sh pr
-# MG: (cd auli-server && ./target/release/auli-scraper-mg servicos && ./target/release/auli-collections mg) && scripts/build-packs.sh mg
+# RS (FAQs + serviços):
+./target/release/auli-scraper-rs all && ./target/release/auli-collections rs && (cd .. && scripts/build-packs.sh rs)
+# Demais (só serviços) — a partir de auli-server/:
+for id in sc sp pr mg pe ba rj ce; do
+  ./target/release/auli-scraper-$id servicos && ./target/release/auli-collections $id && (cd .. && scripts/build-packs.sh $id)
+done
 ```
 
 Produz, por entidade, `data/<id>/packs/<id>-servicos.json` + `<id>.manifest.json` (`strategy_version: 2`,
 kind `servicos`) — e `<id>-faqs.json` onde houver FAQs (hoje só RS). Contagens atuais: **rs** serviços
-586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148. `pareceres`/`notas` são autorados (sem scraper) e
+586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148, **pe** 38, **ba** 204, **rj** 91,
+**ce** 382. `pareceres`/`notas` são autorados (sem scraper) e
 ainda **não** têm fonte struct no contrato — ficam **ausentes** até serem modelados; o server tolera
 packs ausentes (sobe com a coleção vazia). **Só precisa rodar de novo quando o conteúdo ou a estratégia
 de embedding mudar.**
