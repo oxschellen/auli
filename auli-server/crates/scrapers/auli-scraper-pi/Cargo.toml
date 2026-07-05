@@ -1,0 +1,17 @@
+[package]
+name = "auli-scraper-pi"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-PI (serviços, "Carta de Serviços" — SPA Sydle ONE, molde CE). SEM headless: a
+# listagem vem da API JSON `_search` (GET, ElasticSearch) sobre a classe de conteúdo, filtrando o
+# catálogo "Carta de Serviços". Token Bearer anônimo é extraído fresh do shell público a cada rodada
+# (efêmero). Só GET (o edge Azion reseta POST); ureq h1.1 basta. Depende de auli-contract + o kit —
+# nunca de fastembed/ort. Decisões no plano-scraper-pi.md / PR.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1"
