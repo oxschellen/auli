@@ -408,6 +408,25 @@ Descoberta em `descoberta-ma.md`.
   `linkExterno` ou página de conteúdo. Identidade = `id`.
 - 38 serviços, 38 ocorrências, 4 públicos. 6 testes.
 
+## 19. Entidade `ap` (SEFAZ-AP) integrada — ✅ **resolvida (20ª entidade)**
+
+Portal `www.sefaz.ap.gov.br` = **SPA Angular (FUSE)**. Descoberta em `descoberta-ap.md`.
+
+- **D-AP-FONTE — catálogo hardcoded no bundle JS:** a página `#/categorias/{cat}/{servico}` mostra
+  descrição rica, mas **nenhuma API dispara** — os dados são arrays `mock*` embutidos no chunk lazy
+  `categorias_routes`, renderizados em runtime. O HTML servido é o shell vazio (pegar do DOM exigiria
+  headless por página; ~50 renders). Pegamos do JS: **headless-free**. As chaves `route`/`titulo`/
+  `descricao` **não são minificadas** → parse estável; só o **hash do chunk muda por deploy**.
+- **D-AP-CHUNK — descoberta do hash:** shell → `runtime.<hash>.js` → mapa `"<CHUNK_NAME>":"<hash>"` →
+  `<CHUNK_NAME>.<hash>.js`. Parse (regex) por categoria (`const mock<X> =`) casando
+  `route → introducao.titulo → introducao.descricao`; `descricao` é template literal HTML → `html_to_text`.
+- **D-AP-MODELO:** 5 categorias = **classe** (Cadastro/ICMS/ITCMD/Regime Especial/Veículos); público
+  único "Serviços"; `link` = `…/#/categorias/{slug}/{route}`; identidade = link. `introducao.descricao`
+  já traz "o que é" + Quem Pode Utilizar + Setor + Tipo. v2 possível: `documentos`/`requisitos`/`legislacao`.
+- **Fragilidade:** é a fonte mais frágil da frota (parse de JS webpack). Se o `mock*` mudar de forma
+  (chaves minificadas, virar API), o parse quebra; o guard de contagem (piso 44) avisa.
+- 49 serviços, 1 público. 4 testes. `ServicoRaw` direto.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

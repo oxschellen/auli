@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-06 (frota com 19 entidades; MA = a mais recente).
+> Última atualização: 2026-07-06 (frota com 20 entidades; AP = a mais recente).
 
 ---
 
@@ -92,8 +92,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ro** | SEFIN-RO / Rondônia | Agência Virtual (Sydle ONE conecta-360, molde PI); `GET _search`, catálogo "Serviços", Bearer anônimo | JSON | 1 | 194 | curta | direto | 8 | rustls |
 | **to** | SEFAZ-TO / Tocantins | Carta de Serviços (ASP.NET/IIS, HTML); `listar_servico.aspx?cod_empresa=37` + detalhe por span `lbl*` | HTML | 4 | 45 | **rica** (Carta) | direto | 8 | rustls |
 | **ma** | SEFAZ-MA / Maranhão | Portal SGC (Angular + Spring); login anônimo público + `GET /portal/servicos` + `conteudos/{id}` | JSON | 4 | 38 | **rica** (conteúdo) | direto | 6 | **rustls + cert** |
+| **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 4 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **134** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **138** (todos os crates cobertos).
 
 ---
 
@@ -374,6 +375,21 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   CERTIFICATE→Certidões); `classe` = "Geral" (sem categoria). `link` = `linkExterno` / página de conteúdo.
 - 38 serviços, 4 públicos (Empresa 22 / Cidadão 10 / Órgão Público 2 / Certidões 4). 6 testes.
   `ServicoRaw` direto. Descoberta em `descoberta-ma.md`.
+
+### ap — SEFAZ-AP (Amapá)
+
+- **SPA Angular (FUSE); o catálogo rico está HARDCODED no bundle JS**, não em API. A página
+  `#/categorias/{cat}/{servico}` renderiza em runtime a partir de arrays `mock*` embutidos no chunk lazy
+  `categorias_routes` (nenhuma API dispara; o HTML servido é o shell vazio). Pegar do DOM exigiria
+  headless por página — pegamos do JS (headless-free): as **chaves `route`/`titulo`/`descricao` NÃO são
+  minificadas** (estável); só o **hash do chunk muda por deploy** → descoberto via `runtime.js`.
+- **Descoberta do chunk:** shell → `runtime.<hash>.js` → mapa `"<CHUNK_NAME>":"<hash>"` → o chunk. **Parse**
+  (regex): por categoria (`const mock<X> =`), casa `route → introducao.titulo → introducao.descricao`; a
+  `descricao` é template literal HTML autocontido (o que é + Quem Pode/Setor/Tipo) → `html_to_text`.
+- 5 categorias = **classe** (Cadastro 10 / ICMS 15 / ITCMD 2 / Regime Especial 5 / Veículos 17);
+  público único "Serviços". `link` = `…/#/categorias/{slug}/{route}`; identidade = link. É a **fonte mais
+  frágil da frota** (parse de JS webpack), mas as chaves estáveis a tornam robusta na prática.
+- 49 serviços. 4 testes. `ServicoRaw` direto. Descoberta em `descoberta-ap.md`.
 
 ---
 

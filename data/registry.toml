@@ -166,3 +166,11 @@ uf = "MA"
 state = "Maranhão"
 prompt = "prompts/ma.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "ap"
+name = "SEFAZ-AP"
+uf = "AP"
+state = "Amapá"
+prompt = "prompts/ap.txt"
+collections = ["servicos"]
