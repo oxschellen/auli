@@ -1,0 +1,443 @@
+[
+  {
+    "id": 1,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/mei",
+    "titulo": "Pedido de Inscrição Estadual para Microempreendedor Individual - MEI",
+    "descricao": "Este serviço permite que contribuintes MEI solicitem a inscrição estadual, seja presencialmente ou via REDESIM. Os documentos são verificados na COATE e protocolados no sistema SATE. Um número é gerado no SATE, para acompanhamento, encaminhado ao Núcleo de Informações Fiscais (NUIEF). Quem Pode Utilizar: Microempreendedores Individuais (MEI) com CNPJ ativo, domiciliados no estado do Amapá. Setor Responsável: Núcleo de Informações Fiscais – NUIEF. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 2,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/simples-nacional",
+    "titulo": "Pedido de Inscrição Estadual para Simples Nacional e Normal",
+    "descricao": "Contribuintes podem solicitar a inscrição estadual para Simples Nacional e Normal, presencialmente ou via REDESIM. Os documentos são conferidos na COATE e, caso estejam corretos, um número SATE é gerado e o processo é encaminhado ao Núcleo de Informações Fiscais (NUIEF). Quem Pode Utilizar: Empresas (Simples Nacional e Normal) com CNPJ ativo, estabelecidas no estado do Amapá. Setor Responsável: Núcleo de Informações Fiscais – NUIEF. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 3,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/alteracao-cadastral",
+    "titulo": "Pedido de Alteração Cadastral com Alteração de Endereço",
+    "descricao": "Este serviço permite que contribuintes solicitem a alteração cadastral com mudança de endereço, seja presencialmente ou via REDESIM. Os documentos são verificados na COATE e, se tudo estiver correto, um número é gerado no sistema SATE e o processo é encaminhado ao Núcleo de Informações Fiscais (NUIEF). Quem Pode Utilizar: Empresas com CNPJ ativo e Inscrição Estadual no estado do Amapá que necessitam alterar o endereço cadastral. Setor Responsável: Núcleo de Informações Fiscais – NUIEF. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 4,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/inclusao-contador",
+    "titulo": "Pedido de Alteração de Inclusão de Contador",
+    "descricao": "Este serviço permite que contribuintes solicitem a inclusão de um contador, seja presencialmente ou via REDESIM. Os documentos são verificados na COATE e um número é gerado no SATE, sendo encaminhado ao Núcleo de Informações Fiscais (NUIEF). Quem Pode Utilizar: Empresas com CNPJ ativo e Inscrição Estadual no estado do Amapá que desejam incluir ou alterar o contador responsável. Setor Responsável: Núcleo de Informações Fiscais – NUIEF. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 5,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/cessacao-contador",
+    "titulo": "Termo de Cessação de Responsabilidade Técnica de Contador",
+    "descricao": "Este serviço permite que contribuintes solicitem o termo de cessação de responsabilidade técnica de contador, realizado presencialmente ou online. Os documentos são verificados e um número é gerado pelo SATE, sendo encaminhado ao Núcleo de Informações Fiscais (NUIEF). Quem Pode Utilizar: Empresas com CNPJ ativo e Inscrição Estadual no estado do Amapá que desejam formalizar a cessação da responsabilidade técnica do contador. Setor Responsável: Núcleo de Informações Fiscais – NUIEF. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 6,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/reativacao-empresa",
+    "titulo": "Pedido de Reativação da Empresa",
+    "descricao": "Este serviço permite que contribuintes solicitem a reativação da empresa, realizado presencialmente ou online. Os documentos são verificados na COATE e um número é gerado pelo SATE, sendo encaminhado ao Núcleo de Informações Fiscais (NUIEF). Quem Pode Utilizar: Empresas com CNPJ ativo e Inscrição Estadual suspensa ou cancelada no estado do Amapá que desejam reativar suas atividades. Setor Responsável: Núcleo de Informações Fiscais – NUIEF. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 7,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/substituto-tributario",
+    "titulo": "Pedido de Inscrição Estadual, Alteração ou Baixa - Substituto Tributário",
+    "descricao": "Este serviço permite que contribuintes entrem com um pedido de inscrição estadual, alteração ou baixa cadastral como substituto tributário. Os documentos são verificados na COATE e, se tudo estiver correto, um número é gerado pelo SATE e encaminhado ao Núcleo de Informações Fiscais (NUIEF). Quem Pode Utilizar: Contribuintes que atuam como Substitutos Tributários, ou seja, aqueles que são responsáveis por reter e recolher o ICMS devido em operações subsequentes. Setor Responsável: Núcleo de Informações Fiscais – NUIEF. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 8,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/baixa-dados-cadastrais",
+    "titulo": "Pedido de Baixa de Dados Cadastrais, a Pedido do Contribuinte",
+    "descricao": "Este serviço permite que contribuintes solicitem a baixa de dados cadastrais, realizado presencialmente ou online. Os documentos são verificados na COATE e um número é gerado pelo SATE, sendo encaminhado à Coordenadoria de Fiscalização (COFIS). Quem Pode Utilizar: Empresas com CNPJ ativo e Inscrição Estadual no estado do Amapá que desejam dar baixa nos seus dados cadastrais. Setor Responsável: Núcleo de Informações Fiscais – NUIEF. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 9,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/implantacao-simples-nacional",
+    "titulo": "Processo de Implantação do Simples Nacional",
+    "descricao": "Este serviço permite que contribuintes ICMS entrem com um pedido de implantação do Simples Nacional. Os documentos são verificados na COATE e um número é gerado pelo SATE. O processo é encaminhado à COFIS, analisado, e, se deferido, retorna ao atendimento para ciência do contribuinte, sendo então registrado e arquivado. Quem Pode Utilizar: Contribuintes que exercem atividades sujeitas ao ICMS e que atendam aos requisitos para adesão ao Simples Nacional. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 10,
+    "tipo": "Serviços",
+    "classe": "Cadastro",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/cadastro/exclusao-simples-nacional",
+    "titulo": "Processo de Exclusão do Simples Nacional",
+    "descricao": "Este serviço permite que contribuintes ICMS entrem com um pedido de exclusão do Simples Nacional. Os documentos são verificados na COATE e se estiverem corretos, um número é gerado pelo SATE e o processo é encaminhado à COFIS e analisado. Se deferido, retorna ao atendimento para ciência do contribuinte, sendo então registrado e arquivado. Quem Pode Utilizar: Contribuintes que exercem atividades sujeitas ao ICMS e que estão atualmente enquadrados no Simples Nacional, mas desejam ou precisam ser excluídos do regime. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 11,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/analise-restituicao-ressarcimento-icms",
+    "titulo": "Pedido de Análise de Restituição – Ressarcimento de ICMS",
+    "descricao": "O contribuinte entra com um pedido de análise de restituição – ressarcimento de ICMS junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Arrecadação (COARE) para análise. Quem Pode Utilizar: Contribuintes com ICMS no Estado do Amapá. Setor Responsável: Coordenadoria de Arrecadação - COARE. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 12,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/gnre-pago-duplicidade",
+    "titulo": "Pedido de Guia Nacional de Recolhimento Estadual – GNRE Pago em Duplicidade",
+    "descricao": "O contribuinte entra com um pedido de guia nacional de recolhimento estadual (GNRE) pago em duplicidade junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Arrecadação (COARE) para análise. Quem Pode Utilizar: Contribuintes com ICMS no Estado do Amapá. Setor Responsável: Coordenadoria de Arrecadação - COARE. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 13,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/restituicao-pagamento-duplicidade",
+    "titulo": "Restituição – Pagamento em Duplicidade",
+    "descricao": "O contribuinte entra com um pedido de restituição por pagamento em duplicidade junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COARE) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COARE. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 14,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/inclusao-sugerida-st",
+    "titulo": "Pedido de Inclusão Sugerido para Cobrança de ST – Substituto Tributário",
+    "descricao": "O contribuinte entra com um pedido de inclusão sugerido para cobrança de substituto tributário junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 15,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/ressarcimento-icms-st",
+    "titulo": "Ressarcimento de ICMS – Substituto Tributário",
+    "descricao": "O contribuinte entra com um pedido de ressarcimento de ICMS – Substituto Tributário junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 16,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/restituicao-icms-st",
+    "titulo": "Restituição de ICMS – Substituto Tributário",
+    "descricao": "O contribuinte entra com um pedido de restituição de ICMS – Substituto Tributário junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 17,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/comunicacao-extravio-documentos-fiscais",
+    "titulo": "Comunicação de Extravio de Documentos Fiscais",
+    "descricao": "O contribuinte entra com um pedido de comunicação de extravio de documentos fiscais junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 18,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/inutilizacao-perda-mercadorias",
+    "titulo": "Inutilização ou Perda de Mercadorias",
+    "descricao": "O contribuinte entra com um pedido de inutilização ou perda de mercadorias junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 19,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/processo-cumprimento-notificacao",
+    "titulo": "Processo de Cumprimento da Notificação",
+    "descricao": "O contribuinte entra com um pedido de processo de cumprimento da notificação junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 20,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/prorrogacao-prazo-remessa-conserto-reparo",
+    "titulo": "Prorrogação de Prazo de Remessa - Conserto e Reparo",
+    "descricao": "O contribuinte entra com um pedido de prorrogação de prazo de remessa para conserto e reparo junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 21,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/impressao-conjunta-nota-fiscal",
+    "titulo": "Impressão Conjunta da Nota Fiscal",
+    "descricao": "O contribuinte entra com um pedido de impressão conjunta da nota fiscal junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 22,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/pedido-emissao-selo-fiscal-eletronico",
+    "titulo": "Pedido de Emissão de Selo Fiscal Eletrônico ou Registro Extemporâneo de Ingresso",
+    "descricao": "O contribuinte entra com um pedido de emissão de selo fiscal eletrônico ou registro extemporâneo de ingresso junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 23,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/pedido-copia-arquivo-xml",
+    "titulo": "Pedido de Cópia de Arquivo XML de Documento Fiscal Eletrônico",
+    "descricao": "O contribuinte entra com um pedido de cópia de arquivo XML de documento fiscal eletrônico – por arquivo junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 24,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/copia-reprografica-processo",
+    "titulo": "Cópia Reprográfica ou Semelhante de Processo",
+    "descricao": "O contribuinte entra com um pedido de cópia reprográfica ou semelhante de processo junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Observação: Pode ser solicitada em qualquer coordenadoria, de acordo com o setor no qual o processo do contribuinte foi associado. Para tal solicitação, o contribuinte deve ter o número do processo. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 25,
+    "tipo": "Serviços",
+    "classe": "ICMS",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/icms/relatorios-convenio-telecomunicacao-regime-especial",
+    "titulo": "Relatórios Exigidos em Convênio ou Apuração de Tributos de Telecomunicação ou Relatórios Exigidos em Regime Especial",
+    "descricao": "O contribuinte entra com um pedido de relatórios exigidos em convênio, apuração de tributos de telecomunicação ou relatórios exigidos em regime especial junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte e, posteriormente, para registro e arquivamento. Quem Pode Utilizar: Contribuintes ICMS. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 26,
+    "tipo": "Serviços",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/itcmd/avaliacao-calculo-itcmd-mortis",
+    "titulo": "Avaliação e Cálculo de ITCMD – MORTIS",
+    "descricao": "O contribuinte entra com um pedido de avaliação e cálculo de ITCMD – MORTIS junto ao atendimento/COATE, onde são conferidos os documentos exigidos. Em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS). O processo será analisado e o pedido poderá ser deferido ou indeferido. Caso deferido, o pedido do contribuinte será encaminhado ao atendimento para ciência. Após a ciência do interessado, o processo é encaminhado para registro e arquivamento. Quem Pode Utilizar: Herdeiros e Meeiro. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial."
+  },
+  {
+    "id": 27,
+    "tipo": "Serviços",
+    "classe": "ITCMD",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/itcmd/avaliacao-calculo-itcmd-doacao",
+    "titulo": "Avaliação e Cálculo de ITCMD – DOAÇÃO",
+    "descricao": "O contribuinte entra com um pedido de avaliação e cálculo de ITCMD – DOAÇÃO junto ao atendimento/COATE, onde são conferidos os documentos exigidos. Em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS). O processo será analisado e o pedido poderá ser deferido ou indeferido. Caso deferido, o pedido do contribuinte será encaminhado ao atendimento para ciência. Após a ciência do interessado, o processo é encaminhado para registro e arquivamento. Quem Pode Utilizar: Doador e Donatário. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial."
+  },
+  {
+    "id": 28,
+    "tipo": "Serviços",
+    "classe": "Regime Especial",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/regime-especial/pedido-regime-especial-beneficio-fiscal-exportacao",
+    "titulo": "Pedido de Regime Especial Relativo a Benefício Fiscal ou Exportação Direta de Mercadorias",
+    "descricao": "O contribuinte entra com um pedido de regime especial ou termo de acordo junto ao atendimento/COATE para formalização do processo. No atendimento, são colhidas todas as informações referentes ao pedido do contribuinte e, em seguida, é gerado um número controlado para que o processo seja identificado via sistema. O processo é então encaminhado à Coordenadoria de Tributação (COTRI). O processo será analisado e o pedido poderá ser deferido ou indeferido. Caso deferido, a COTRI emite o Ato Declaratório ou o Termo de Acordo e lança o documento no SATE, encaminhando o processo físico ao GAB/SEFAZ. Emitido o AD ou TA, será apreciado pela Secretaria da Receita para homologação. Caso homologado, o Gabinete da Secretaria encaminha os gabaritos para a imprensa oficial (Publicação no D.O.E). O AD e o TA, juntamente com o processo, depois de homologado pelo Secretário, retornam para o Atendimento para que o contribuinte tome ciência da conclusão. Após, deverá ser registrada no sistema, pelo atendimento, a data da ciência do contribuinte, o que resultará na alteração do status do documento no sistema de cadastro (Dossiê do contribuinte). Posteriormente, a COTRI arquiva o processo. Quem Pode Utilizar: Pessoa jurídica interessada em um regime especial de tributação. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 29,
+    "tipo": "Serviços",
+    "classe": "Regime Especial",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/regime-especial/pedido-prorrogacao-alteracao-regime-especial",
+    "titulo": "Pedido de Prorrogação ou Alteração de Regime Especial Relativo a Benefício Fiscal ou Exportação Direta de Mercadorias",
+    "descricao": "O contribuinte entra com um pedido de prorrogação ou alteração de regime especial ou termo de acordo junto ao atendimento/COATE para formalização do processo. No atendimento, são colhidas todas as informações referentes ao pedido do contribuinte e, em seguida, é gerado um número controlado para que o processo seja identificado via sistema. O processo é então encaminhado à Coordenadoria de Tributação (COTRI). O processo será analisado e o pedido poderá ser deferido ou indeferido. Caso deferido, a COTRI emite o Ato Declaratório ou o Termo de Acordo e lança o documento no SATE, encaminhando o processo físico ao GAB/SEFAZ. Emitido o AD ou TA, será apreciado pela Secretaria da Receita para homologação. Caso homologado, o Gabinete da Secretaria encaminha os gabaritos para a imprensa oficial (Publicação no D.O.E). O AD e o TA, juntamente com o processo, depois de homologado pelo Secretário, retornam para o Atendimento para que o contribuinte tome ciência da conclusão. Após, deverá ser registrada no sistema, pelo atendimento, a data da ciência do contribuinte, o que resultará na alteração do status do documento no sistema de cadastro (Dossiê do contribuinte). Posteriormente, a COTRI arquiva o processo. Quem Pode Utilizar: Pessoa jurídica interessada em um regime especial de tributação. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 30,
+    "tipo": "Serviços",
+    "classe": "Regime Especial",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/regime-especial/pedido-regime-especial-obrigacoes-acessorias",
+    "titulo": "Pedido de Regime Especial, Prorrogação ou Alteração Relativo a Obrigações Acessórias (Sem Concessão de Benefício Fiscal)",
+    "descricao": "O contribuinte entra com um pedido de regime especial ou termo de acordo junto ao atendimento para formalização do processo. No atendimento, são colhidas todas as informações referentes ao pedido do contribuinte e, em seguida, é gerado um número controlado para que o processo seja identificado via sistema. O processo é então encaminhado à Coordenadoria de Tributação (COTRI). O processo será analisado e o pedido poderá ser deferido ou indeferido. Caso deferido, a COTRI emite o Ato Declaratório ou o Termo de Acordo e lança o documento no SATE, encaminhando o processo físico ao GAB/SEFAZ. Emitido o AD ou TA, será apreciado pela Secretaria da Receita para homologação. Caso homologado, o Gabinete da Secretaria encaminha os gabaritos para a imprensa oficial (Publicação no D.O.E). O AD e o TA, juntamente com o processo, depois de homologado pelo Secretário, retornam para o Atendimento para que o contribuinte tome ciência da conclusão. Após, deverá ser registrada no sistema, pelo atendimento, a data da ciência do contribuinte, o que resultará na alteração do status do documento no sistema de cadastro (Dossiê do contribuinte). Posteriormente, a COTRI arquiva o processo. Quem Pode Utilizar: Pessoa jurídica interessada em um regime especial de tributação. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 31,
+    "tipo": "Serviços",
+    "classe": "Regime Especial",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/regime-especial/pedido-regime-especial-marketing-direto",
+    "titulo": "Pedido de Regime Especial, Prorrogação ou Alteração: Marketing Direto",
+    "descricao": "O contribuinte entra com um pedido de regime especial ou termo de acordo junto ao atendimento para formalização do processo. No atendimento, são colhidas todas as informações referentes ao pedido do contribuinte e, em seguida, é gerado um número controlado para que o processo seja identificado via sistema. O processo é então encaminhado à Coordenadoria de Tributação (COTRI). O processo será analisado e o pedido poderá ser deferido ou indeferido. Caso deferido, a COTRI emite o Ato Declaratório ou o Termo de Acordo e lança o documento no SATE, encaminhando o processo físico ao GAB/SEFAZ. Emitido o AD ou TA, será apreciado pela Secretaria da Receita para homologação. Caso homologado, o Gabinete da Secretaria encaminha os gabaritos para a imprensa oficial (Publicação no D.O.E). O AD e o TA, juntamente com o processo, depois de homologado pelo Secretário, retornam para o Atendimento para que o contribuinte tome ciência da conclusão. Após, deverá ser registrada no sistema, pelo atendimento, a data da ciência do contribuinte, o que resultará na alteração do status do documento no sistema de cadastro (Dossiê do contribuinte). Posteriormente, a COTRI arquiva o processo. Quem Pode Utilizar: Pessoa jurídica interessada em um regime especial de tributação. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 32,
+    "tipo": "Serviços",
+    "classe": "Regime Especial",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/regime-especial/desoneracao-icms-importacao-equipamento-medico-hospitalar",
+    "titulo": "Desoneração de ICMS na Importação de Equipamento Médico-Hospitalar",
+    "descricao": "O contribuinte entra com um pedido de regime especial ou termo de acordo junto ao atendimento para formalização do processo. No atendimento, são colhidas todas as informações referentes ao pedido do contribuinte e, em seguida, é gerado um número controlado para que o processo seja identificado via sistema. O processo é então encaminhado à Coordenadoria de Tributação (COTRI). O processo será analisado e o pedido poderá ser deferido ou indeferido. Caso deferido, a COTRI emite o Ato Declaratório ou o Termo de Acordo e lança o documento no SATE, encaminhando o processo físico ao GAB/SEFAZ. Emitido o AD ou TA, será apreciado pela Secretaria da Receita para homologação. Caso homologado, o Gabinete da Secretaria encaminha os gabaritos para a imprensa oficial (Publicação no D.O.E). O AD e o TA, juntamente com o processo, depois de homologado pelo Secretário, retornam para o Atendimento para que o contribuinte tome ciência da conclusão. Após, deverá ser registrada no sistema, pelo atendimento, a data da ciência do contribuinte, o que resultará na alteração do status do documento no sistema de cadastro (Dossiê do contribuinte). Posteriormente, a COTRI arquiva o processo. Quem Pode Utilizar: Pessoa jurídica interessada em um regime especial de tributação. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 33,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/saida-definitiva-veiculo-alcms",
+    "titulo": "Autorização de Saída Definitiva de Veículo da ALCMS",
+    "descricao": "O contribuinte entra com um pedido de autorização de saída definitiva de veículo da Área de Livre Comércio de Macapá e Santana (ALCMS) junto ao atendimento/COATE, onde são conferidos os documentos exigidos. Em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Fiscalização (COFIS). O pedido será analisado e poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do contribuinte. Após a ciência, o processo é encaminhado para registro e arquivamento. Quem Pode Utilizar: Proprietários de veículos que foram adquiridos com incentivos fiscais na Área de Livre Comércio de Macapá e Santana (ALCMS) e que desejam retirá-los definitivamente da área. Setor Responsável: Coordenadoria de Fiscalização – COFIS. Tipo de Atendimento: Presencial."
+  },
+  {
+    "id": 34,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-icms-pcd-veiculo-novo",
+    "titulo": "Pedido de Isenção de ICMS para Portadores com Deficiência – PCD – Veículo Novo",
+    "descricao": "O contribuinte entra com um pedido de isenção de ICMS para portadores com deficiência (PCD) para a aquisição de veículo novo junto ao atendimento/COATE. No atendimento COATE, são conferidos os documentos exigidos referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Arrecadação (COARE). Quem Pode Utilizar: Pessoas com deficiência física, mental, visual ou autista, conforme os critérios estabelecidos na legislação. Setor Responsável: Coordenadoria de Arrecadação - COARE. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 35,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-maquinas-agricolas",
+    "titulo": "Pedido de Isenção de IPVA para Máquinas Agrícolas, de Terraplanagem e Similares",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 008/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado e enviado à Agência de Atendimento Descentralizada da SRE no DETRAN para competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Produtores rurais que possuam máquinas agrícolas, de terraplanagem e similares, utilizadas exclusivamente na atividade rural. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 36,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-perda-total",
+    "titulo": "Pedido de Isenção de IPVA nos Casos de Perda Total do Veículo por Furto, Roubo ou Sinistro",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 008/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado e enviado à Agência de Atendimento Descentralizada da SRE no DETRAN para a competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Proprietários de veículos que tiveram perda total comprovada por furto, roubo ou sinistro, devidamente documentados. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 37,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/imunidade-ipva-instituicao-religiosa",
+    "titulo": "Imunidade de IPVA para Entidade de Instituição Religiosa (Não-Incidência)",
+    "descricao": "O contribuinte entra com um pedido de não incidência de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 008/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado e enviado à Agência de Atendimento Descentralizada da SRE no DETRAN para a competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Instituições religiosas devidamente registradas e que utilizem os veículos exclusivamente em suas atividades religiosas. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 38,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-reboques-semirreboques",
+    "titulo": "Pedido de Isenção IPVA para Reboques e Semirreboques",
+    "descricao": "O contribuinte entra com um pedido de não incidência de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 008/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado e enviado à Agência de Atendimento Descentralizada da SER no DETRAN para a competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Pessoas físicas que possuam reboques e semirreboques. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 39,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-pcd",
+    "titulo": "Pedido de Isenção de IPVA para Deficiente Físico, Visual, Mental ou Autista",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 001/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento, juntamente com 5 (cinco) vias da autorização, conforme estabelece o art. 4º do Decreto nº 0007/2013. Após a ciência do interessado, o processo é encaminhado à COARE para registro e arquivamento. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Deficientes físicos, visuais, mentais severos ou profundos, ou autistas, ou seus representantes legais, conforme os critérios estabelecidos na legislação. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 40,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/nao-incidencia-ipva-educacao-assistencia",
+    "titulo": "Não Incidência de IPVA para Instituições de Educação e Assistência Social",
+    "descricao": "O contribuinte entra com um pedido de não incidência de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 008/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado e enviado à Agência de Atendimento Descentralizada da SRE no DETRAN para a competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Instituições de Educação e Assistência Social sem fins lucrativos, devidamente registradas e reconhecidas como de utilidade pública. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 41,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-transporte-urbano-metropolitano",
+    "titulo": "Pedido de Isenção de IPVA para Veículo de Transporte Urbano ou Metropolitano com Linha Regular e Permanente Concedida pelo Poder Público",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA para veículos de transporte urbano ou metropolitano, com linha regular e permanente concedida pelo Poder Público. No atendimento/COATE, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado e enviado à Agência de Atendimento Descentralizada da SRE no DETRAN para a competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Proprietários de veículos de transporte urbano ou metropolitano com linha regular e permanente concedida pelo Poder Público (empresas de ônibus, vans etc.). Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 42,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-embarcacoes-produtores-pescadores",
+    "titulo": "Pedido de Isenção de IPVA para Embarcações Pertencentes a Produtor Agrícola e Pescadores Profissionais, Pessoa Física",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 008/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado e enviado à Agência de Atendimento Descentralizada da SER no DETRAN para a competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Produtores agrícolas e pescadores profissionais (pessoa física) que possuam embarcações utilizadas exclusivamente em suas atividades. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 43,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-representacoes-consulares",
+    "titulo": "Pedido de Isenção de IPVA para Veículos de Representações Consulares, Agentes Consulares e Funcionários de Carreira do Serviço Consular",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA junto ao atendimento/COATE. No atendimento são conferidos os documentos exigidos na IN nº 008/2008 referentes ao pedido, e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado, bem como enviado à Agência de Atendimento Descentralizada da SRE no DETRAN, para a competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Representações consulares, agentes consulares e funcionários de carreira do serviço consular, devidamente credenciados pelo Ministério das Relações Exteriores. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 44,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-turistas-estrangeiros",
+    "titulo": "Pedido de Isenção de IPVA para Veículos de Turistas Estrangeiros",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 008/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado e à Agência de Atendimento Descentralizada da SER no DETRAN para a competente baixa do IPVA no SATE. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Turistas estrangeiros em viagem no Amapá. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 45,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-icms-veiculo-taxi",
+    "titulo": "Pedido de Isenção de ICMS para Táxi para Condutor Autônomo",
+    "descricao": "O contribuinte entra com um pedido de isenção de ICMS junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos na IN nº 001/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Coordenadoria de Tributação (COTRI) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento, juntamente com 5 (cinco) vias da autorização, conforme estabelece o art. 6º do Decreto nº 4872/2005. Após a ciência do interessado, o processo é encaminhado à Coordenadoria de Arrecadação (COARE) para registro e arquivamento. Caso indeferido, o contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Proprietários de veículos usados como transporte de passageiros – Táxi. Setor Responsável: Coordenadoria de Tributação – COTRI. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 46,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/restituicao-pagamento-ipva",
+    "titulo": "Pedido de Restituição de Pagamento do IPVA",
+    "descricao": "O contribuinte entra com um pedido de restituição de pagamento do IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado ao Núcleo de Planejamento e Controle de Arrecadação (NUPAR) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado. Após a ciência, o processo é encaminhado para registro e arquivamento. Quem Pode Utilizar: Proprietários de veículos que efetuaram pagamento indevido ou em duplicidade do IPVA. Setor Responsável: Núcleo de Planejamento e Controle de Arrecadação – NUPAR. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 47,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/prescricao-parcelamento-ipva",
+    "titulo": "Pedido de Prescrição de Parcelamento de IPVA",
+    "descricao": "O contribuinte entra com um pedido de prescrição de parcelamento de IPVA junto ao atendimento/COATE. No atendimento, são conferidos os documentos exigidos e, em seguida, é gerado um número pelo SATE. O processo será encaminhado ao Núcleo de Planejamento e Controle de Arrecadação (NUPAR) para análise. O pedido poderá ser deferido ou indeferido. Caso deferido, o processo será encaminhado ao atendimento para ciência do interessado. Após a ciência, o processo é encaminhado para registro e arquivamento. Quem Pode Utilizar: Proprietários de veículos que possuem parcelamentos de IPVA em atraso há mais de 5 anos. Setor Responsável: Núcleo de Planejamento e Controle de Arrecadação – NUPAR. Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 48,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/renovacao-isencao-ipva-pcd",
+    "titulo": "Isenção de IPVA para Deficiente Físico, Visual, Mental ou Autista – Renovação",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA junto ao atendimento. No atendimento, são conferidos os documentos exigidos na IN nº 001/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Unidade de Atendimento de Departamento de Trânsito (UADETRAN) para análise. O pedido poderá ser deferido ou indeferido. O contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Deficientes físicos, visuais, mentais ou autistas que já possuem a isenção de IPVA e desejam renovar o benefício. Setor Responsável: Unidade de Atendimento de Departamento de Trânsito (UADETRAN). Tipo de Atendimento: Presencial e Online."
+  },
+  {
+    "id": 49,
+    "tipo": "Serviços",
+    "classe": "Veículos",
+    "orgao": "SEFAZ-AP",
+    "link": "https://www.sefaz.ap.gov.br/#/categorias/veiculos/isencao-ipva-taxi-mototaxi",
+    "titulo": "Isenção de IPVA para Táxi e Moto Táxi",
+    "descricao": "O contribuinte entra com um pedido de isenção de IPVA junto ao atendimento. No atendimento, são conferidos os documentos exigidos na IN nº 001/2008 referentes ao pedido e, em seguida, é gerado um número pelo SATE. O processo será encaminhado à Unidade de Atendimento de Departamento de Trânsito (UADETRAN) para análise. O pedido poderá ser deferido ou indeferido. O contribuinte toma ciência da decisão e o processo será arquivado no atendimento. Quem Pode Utilizar: Taxistas e mototaxistas devidamente autorizados a exercer a atividade. Setor Responsável: Unidade de Atendimento de Departamento de Trânsito (UADETRAN). Tipo de Atendimento: Presencial e Online."
+  }
+]
