@@ -144,12 +144,11 @@ fn parse_ids(html: &str) -> Vec<String> {
     let mut seen: HashSet<String> = HashSet::new();
     let mut out: Vec<String> = Vec::new();
     for a in doc.select(&sel) {
-        if let Some(href) = a.value().attr("href") {
-            if let Some(id) = extract_cod(href) {
-                if seen.insert(id.clone()) {
-                    out.push(id);
-                }
-            }
+        if let Some(href) = a.value().attr("href")
+            && let Some(id) = extract_cod(href)
+            && seen.insert(id.clone())
+        {
+            out.push(id);
         }
     }
     out
@@ -197,7 +196,19 @@ fn build_servico(id: &str, det: &Detail, publicos_ordem: &mut Vec<String>) -> Op
 
     let mut publicos = parse_publicos(&det.relacionamento);
     if publicos.is_empty() {
-        publicos.push(GERAL.to_string());
+        // Nenhum termo do vocabulário casou. Se o campo trouxe algo (um público NOVO fora do
+        // vocabulário), preserva o texto cru (avisa, para o vocabulário ser atualizado) em vez de
+        // descartá-lo em "Geral". Vazio de verdade -> "Geral".
+        let raw = det.relacionamento.trim();
+        if raw.is_empty() {
+            publicos.push(GERAL.to_string());
+        } else {
+            eprintln!(
+                "⚠️  TO: público fora do vocabulário (serviço {}): {:?} — usando cru. Atualize PUBLICOS_VOCAB.",
+                id, raw
+            );
+            publicos.push(raw.to_string());
+        }
     }
     let mut ocorrencias = Vec::with_capacity(publicos.len());
     for p in &publicos {
@@ -358,6 +369,29 @@ mod tests {
         let s = build_servico("1", &det, &mut ord).unwrap();
         assert_eq!(s.ocorrencias.len(), 1);
         assert_eq!(s.ocorrencias[0].publico, "Órgão Público");
+    }
+
+    #[test]
+    fn publico_fora_do_vocabulario_usa_cru_e_vazio_vira_geral() {
+        let base = |rel: &str| Detail {
+            nome: "X".into(),
+            conceituacao: "c".into(),
+            requisito: String::new(),
+            documentacao: String::new(),
+            taxa: String::new(),
+            prazo: String::new(),
+            relacionamento: rel.into(),
+            grupo: "G".into(),
+        };
+        // valor fora do vocabulário -> preserva o cru (não vira "Geral").
+        let mut ord = Vec::new();
+        let s = build_servico("1", &base("Produtor Rural"), &mut ord).unwrap();
+        assert_eq!(s.ocorrencias.len(), 1);
+        assert_eq!(s.ocorrencias[0].publico, "Produtor Rural");
+        // campo vazio -> "Geral".
+        let mut ord2 = Vec::new();
+        let s2 = build_servico("2", &base(""), &mut ord2).unwrap();
+        assert_eq!(s2.ocorrencias[0].publico, "Geral");
     }
 
     #[test]

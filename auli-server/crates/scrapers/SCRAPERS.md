@@ -90,9 +90,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **pa** | SEFA-PA / Pará | Catálogo estadual "paradigital" (API Prodepa/Spring); `GET /orgao/48` + `GET /servico/{id}`, anônimo | JSON | 3 | 34 | **rica** (etapas+requisitos) | direto | 8 | rustls |
 | **es** | SEFAZ-ES / Espírito Santo | portal.es.gov.br (X-Via, molde MT); `POST /v1/search` por `departmentSlug`, anônimo | JSON | 2 | 45 | **rica** (`serviceLetterContent` HTML) | direto | 8 | rustls |
 | **ro** | SEFIN-RO / Rondônia | Agência Virtual (Sydle ONE conecta-360, molde PI); `GET _search`, catálogo "Serviços", Bearer anônimo | JSON | 1 | 194 | curta | direto | 8 | rustls |
-| **to** | SEFAZ-TO / Tocantins | Carta de Serviços (ASP.NET/IIS, HTML); `listar_servico.aspx?cod_empresa=37` + detalhe por span `lbl*` | HTML | 4 | 45 | **rica** (Carta) | direto | 7 | rustls |
+| **to** | SEFAZ-TO / Tocantins | Carta de Serviços (ASP.NET/IIS, HTML); `listar_servico.aspx?cod_empresa=37` + detalhe por span `lbl*` | HTML | 4 | 45 | **rica** (Carta) | direto | 8 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **127** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **128** (todos os crates cobertos).
 
 ---
 
@@ -353,7 +353,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   = `lblTxtServicoGrupo`. `link` = a própria página de detalhe. UA institucional AuliBot + cortesia 500ms
   (D-PA-ROBOTS, 3º caso).
 - 45 serviços, 79 ocorrências, 4 públicos (Cidadão 35 / Empresa 38 / Órgão Público 5 / Servidor 1),
-  2 classes. 7 testes. `ServicoRaw` direto. Descoberta em `descoberta-to.md`. Portal multi-órgão →
+  2 classes. 8 testes. `ServicoRaw` direto. Descoberta em `descoberta-to.md`. Portal multi-órgão →
   3ª ocorrência de D-PA-ACERVO (mas em ASP.NET/HTML).
 
 ---
