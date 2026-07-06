@@ -386,6 +386,28 @@ HTML-scraping (como BA/RJ), NÃO SPA/JSON. Descoberta em `descoberta-to.md`.
   2 classes. 8 testes. Portal multi-órgão → **3ª ocorrência de D-PA-ACERVO** (mas em ASP.NET/HTML, não
   JSON — parametrização menos direta que PA/ES).
 
+## 18. Entidade `ma` (SEFAZ-MA) integrada — ✅ **resolvida (19ª entidade)**
+
+Portal SGC (`portal-sgc.sefaz.ma.gov.br`) = **SPA Angular + API REST Spring Boot** (`/sgc/api`).
+Descoberta em `descoberta-ma.md`.
+
+- **D-MA-AUTH — anônima (molde GO):** o front loga com **credenciais PÚBLICAS baked no bundle**
+  (`{id_cliente:"41", senha:"<bcrypt>", portal:true}` → `POST /sgc/api/login` → `{authtoken}`); token no
+  header **`AuthorizationPortal`** (não `Authorization`). **Não são segredo** (servidas a todo visitante)
+  — comentário no código p/ scanners (lição GO). Re-login a cada rodada (JWT efêmero).
+- **D-MA-CATALOGO:** `GET /portal/servicos` com filtros obrigatórios (`flgPublicado=true&flgLocal=PORTAL&notOutros=false&page&pageSize`)
+  → `{items, total}` (38). Descrição rica = `GET /portal/conteudos/{idConteudo}` (HTML→texto; 27 têm, 11
+  link-only). JSON é UTF-8. Guard = `total` (invariante `únicos == total`).
+- **⚠️ D-MA-TLS (gotcha novo):** o servidor manda **cadeia incompleta** (só a folha; falta o
+  intermediário GlobalSign GCC R3). curl/ureq/rustls rejeitam; browser passa via AIA. Fix: **embutir o
+  intermediário como trust anchor** (`RootCerts::new_with_certs`) — rustls padrão, SEM native-tls (cipher
+  moderno). Difere do BA (native-tls por CBC). Se o cert for reemitido por outro intermediário, o
+  handshake falha e avisa.
+- **D-MA-MODELO:** `público` = `flgTipoServico` (COMPANY/CITIZEN/PUBLIC_AGENCY/CERTIFICATE →
+  Empresa/Cidadão/Órgão Público/Certidões); `classe` = "Geral" (portal não usa categoria). `link` =
+  `linkExterno` ou página de conteúdo. Identidade = `id`.
+- 38 serviços, 38 ocorrências, 4 públicos. 6 testes.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

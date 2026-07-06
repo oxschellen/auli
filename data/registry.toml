@@ -158,3 +158,11 @@ uf = "TO"
 state = "Tocantins"
 prompt = "prompts/to.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "ma"
+name = "SEFAZ-MA"
+uf = "MA"
+state = "Maranhão"
+prompt = "prompts/ma.txt"
+collections = ["servicos"]

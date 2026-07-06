@@ -1,0 +1,19 @@
+[package]
+name = "auli-scraper-ma"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-MA (serviços, portal-sgc.sefaz.ma.gov.br — Angular SPA + API Spring Boot). SEM
+# headless: catálogo JSON com token ANÔNIMO (login com credenciais públicas baked no bundle), header
+# `AuthorizationPortal`. Descrição rica vem de `conteudos/{id}` (HTML). Gotcha TLS: o servidor manda
+# cadeia incompleta (falta o intermediário GlobalSign) — embutimos o intermediário como trust anchor
+# no rustls (não precisa native-tls; o cipher é moderno). Decisões em descoberta-ma.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1"
+# scraper (html5ever) para transformar a `descricao` do conteúdo (HTML) em texto.
+scraper = "0.27.0"

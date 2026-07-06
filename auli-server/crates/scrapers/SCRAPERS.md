@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-05 (frota com 18 entidades; TO = a mais recente).
+> Última atualização: 2026-07-06 (frota com 19 entidades; MA = a mais recente).
 
 ---
 
@@ -91,8 +91,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **es** | SEFAZ-ES / Espírito Santo | portal.es.gov.br (X-Via, molde MT); `POST /v1/search` por `departmentSlug`, anônimo | JSON | 2 | 45 | **rica** (`serviceLetterContent` HTML) | direto | 8 | rustls |
 | **ro** | SEFIN-RO / Rondônia | Agência Virtual (Sydle ONE conecta-360, molde PI); `GET _search`, catálogo "Serviços", Bearer anônimo | JSON | 1 | 194 | curta | direto | 8 | rustls |
 | **to** | SEFAZ-TO / Tocantins | Carta de Serviços (ASP.NET/IIS, HTML); `listar_servico.aspx?cod_empresa=37` + detalhe por span `lbl*` | HTML | 4 | 45 | **rica** (Carta) | direto | 8 | rustls |
+| **ma** | SEFAZ-MA / Maranhão | Portal SGC (Angular + Spring); login anônimo público + `GET /portal/servicos` + `conteudos/{id}` | JSON | 4 | 38 | **rica** (conteúdo) | direto | 6 | **rustls + cert** |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **128** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **134** (todos os crates cobertos).
 
 ---
 
@@ -355,6 +356,24 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - 45 serviços, 79 ocorrências, 4 públicos (Cidadão 35 / Empresa 38 / Órgão Público 5 / Servidor 1),
   2 classes. 8 testes. `ServicoRaw` direto. Descoberta em `descoberta-to.md`. Portal multi-órgão →
   3ª ocorrência de D-PA-ACERVO (mas em ASP.NET/HTML).
+
+### ma — SEFAZ-MA (Maranhão)
+
+- **Portal SGC = SPA Angular + API REST Spring Boot** (`/sgc/api`). **Auth ANÔNIMA** (molde GO): o front
+  loga com **credenciais públicas baked no bundle** (`{id_cliente:"41", senha:"<bcrypt>", portal:true}`
+  → `POST /sgc/api/login` → `{authtoken}`), token no header **`AuthorizationPortal`** (não `Authorization`).
+  Catálogo = **`GET /sgc/api/portal/servicos`** (filtros obrigatórios `flgPublicado=true&flgLocal=PORTAL&notOutros=false&page&pageSize`)
+  → `{items, total}`; **guard = `total`**. Descrição rica = **`GET /sgc/api/portal/conteudos/{idConteudo}`**
+  (HTML → `html_to_text`; 27/38 têm; 11 link-only). JSON é UTF-8 (só erros são latin1).
+- **⚠️ Gotcha TLS (novo na frota): cadeia de certificado incompleta.** O servidor manda só a folha
+  (falta o intermediário GlobalSign GCC R3); curl/ureq/rustls rejeitam ("unable to verify the first
+  certificate"), o browser passa via AIA. Fix: **embutir o intermediário como trust anchor** no rustls
+  (`RootCerts::new_with_certs(&[cert])`) — NÃO precisa de native-tls (cipher é TLS 1.3 AEAD). Difere do
+  BA (que usa native-tls por causa de cipher CBC).
+- **público** = `flgTipoServico` mapeado (COMPANY→Empresa, CITIZEN→Cidadão, PUBLIC_AGENCY→Órgão Público,
+  CERTIFICATE→Certidões); `classe` = "Geral" (sem categoria). `link` = `linkExterno` / página de conteúdo.
+- 38 serviços, 4 públicos (Empresa 22 / Cidadão 10 / Órgão Público 2 / Certidões 4). 6 testes.
+  `ServicoRaw` direto. Descoberta em `descoberta-ma.md`.
 
 ---
 

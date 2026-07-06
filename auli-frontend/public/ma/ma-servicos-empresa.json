@@ -1,0 +1,200 @@
+[
+  {
+    "id": 1,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://sefaznet.sefaz.ma.gov.br/sefaznet/login.do?method=prepareLogin",
+    "titulo": "SEFAZNET",
+    "descricao": ""
+  },
+  {
+    "id": 2,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3918",
+    "titulo": "Benefícios Fiscais previstos na legislação do ICMS",
+    "descricao": "Benefícios Fiscais Concedidos pelo Estado do Maranhão Agricultura Combustíveis e Lubrificantes Comércio Atacadista Cultura Exportação e Importação Frutos do Mar e Rio Hortifrutigranjeiros Indústria Pecuária PEM Produtos Diversos Setores Diversos Benefícios Fiscais - Produtos, Operações ou Serviços Beneficiados com Isenção por Tempo Indeterminado Beneficiados com Isenção por Tempo Determinado Beneficiados com Diferimento Beneficiados com Redução de Base de Cálculo Beneficiados com Crédito Presumido"
+  },
+  {
+    "id": 3,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3197",
+    "titulo": "Manuais de orientação aos contribuintes",
+    "descricao": ":: Manuais e Notas de Orientação ao Contribuinte Aqui o usuário tem acesso a todos os materiais elaborados pela SEFAZ MA, visando auxiliar e facilitar o cumprimento das obrigações tributárias do contribuinte. Os manuais são periodicamente atualizados e estão divididos por assunto, para facilitar a busca. Caso exista algum tema cujo manual não está disponibilizado, o usuário pode entrar em contato conosco através do nosso FALE CONOSCO . IMPOSTOS ICMS, IPVA e ITCD - Principais dúvidas dos contribuintes CADASTRO DE CONTRIBUINTES DO ICMS Informações sobre Inscrição Estadual, Alteração Cadastral, Baixa de Empresa e muito mais. Motivos de suspensão/cancelamento da inscrição estadua l (Novo) DOWNLOAD XML / DOCUMENTOS FISCAIS ELETRÔNICOS Manual de uso do sistema Nota de Orientação ao contribuinte (versão 1.2) DARE - DOCUMENTO DE ARREDAÇÃO D ARE - Como emitir EFD - ESCRITURAÇÃO FISCAL DIGITAL Manual Simplificado da EFD - novo Guia de Orientação - EFD ICMS RECOLHIDO POR ANTECIPAÇÃO ICMS Dfal ATIVO MOBILIZADO ICMS Dfal CONSUMO ICMS ST ENTRADA COBRADO POR TVI ICMS ST ENTRADA ICMS - IMPOSTO SOBRE A CIRCULAÇÃO DE MERCADORIAS E SERVIÇOS ICMS - Parcelamento ICMS Restituição IPVA - IMPOSTO SOBRE A PROPRIEDADE DE VEÍCULOS AUTOMOTORES REFIS 2026 Pagamento Parcelamento Regularizando seus Débitos Restituição Prorrogação automática da isenção de IPVA para PCDs - Nota de orientação ao contribuinte. (Novo) ITCD - IMPOSTO SOBRE A TRANSMISSÃO \"CAUSA MORTIS\" E DOAÇÃO DE QUAISQUER BENS OU DIREITOS Como preencher a declaração Manual de Declaração - Causa Mortis (Versão 1.0) Manual de Declaração - Doação (Versão 1.0) MALHAS FISCAIS Malhas da SEFAZ Manual de Orientação para regularização Malha 100% NOTA FISCAL AVULSA ELETRÔNICA (NFA-e): NFA-e - como acessar NFA-e - Como preencher ORIENTAÇÃO TRIBUTÁRIA Pedido de Consulta Fiscal Pedido de Regime Especial para emissão e escrituração de livros e documentos fiscais de ICMS Agendamento de Plantão Fiscal Consulta Interna e Legislação Tributária ﻿ SEFAZNET SEFAZNET - Como acessar SEFAZNET - Principais operações SEFAZNET - Como trocar o email SEFAZNET - Atualização periódica de contatos no SEFAZ.NET (Novo)"
+  },
+  {
+    "id": 4,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3528",
+    "titulo": "EFD",
+    "descricao": ":: EFD A Escrituração Fiscal Digital (EFD) é uma das principais ferramentas do Sistema Público de Escrituração Digital (SPED), um projeto do Governo Federal que visa integrar as administrações tributárias e fiscalizar as operações econômicas de maneira mais eficiente. Instituído para simplificar e padronizar as informações fiscais prestadas pelos contribuintes, o SPED faz parte da modernização do controle sobre o cumprimento das obrigações tributárias, facilitando o trabalho das administrações tributárias. A EFD ICMS IPI tem como foco o ICMS (Imposto sobre Circulação de Mercadorias e Serviços) e o IPI (Imposto sobre Produtos Industrializados), e é obrigatória para diversos contribuintes, especialmente aqueles do Regime Normal de apuração. Sua implementação é regulada pelo Convênio ICMS nº 143/2006 , que instituiu Escrituração Fiscal Digital (EFD); pelo Ajuste SINIEF 02/2009 , que dispõe sobre a EFD; pelo Ato Cotepe ICMS nº 44/2018 , que dispõe sobre as especificações técnicas para a geração de arquivos EFD; pela Lei Complementar nº 87/1996 (Lei Kandir), que estabelece as diretrizes do ICMS a nível nacional e pela Legislação estadual , como o RICMS do Maranhão, que estabelece normas complementares no âmbito estadual. No Maranhão, a partir da dispensa da DIEF (Declaração de Informações Econômico-Fiscais) para os contribuintes do regime normal, a EFD passou a ser a única declaração exigida para o ICMS. Este sistema centraliza as informações fiscais, gerando as contas correntes da SEFAZ com base nos valores declarados e nos ajustes informados."
+  },
+  {
+    "id": 5,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3574",
+    "titulo": "Comércio Exterior",
+    "descricao": ":: COMÉRCIO EXTERIOR Bem-vindo à página do Setor de Comércio Exterior da Secretaria de Estado da Fazenda do Maranhão - COMEX. O setor tem como objetivo realizar o efetivo controle das operações relacionadas ao comércio exterior de forma eficiente e justa, garantindo o cumprimento das normas legais no que se refere ao ICMS e contribuindo, assim, para o desenvolvimento do Estado do Maranhão e dos setores atuantes nesta área. Nesta página você irá encontrar respostas e orientações sobre a legislação tributária maranhense no que se refere a operações de importação e exportação, por meio de arquivos de “perguntas frequentes” e manuais para utilização dos nossos sistemas eletrônicos. Para qualquer dúvida ou atendimento, a empresa pode entrar em contato com a equipe pelo e-mail comex@sefaz.ma.gov.br ou entrar em contato por telefone/Whatsapp no número (98) 3219 9165. O Que Fazemos O Setor de Comércio Exterior é responsável por: Monitoramento e Fiscalização das empresas que atuam no segmento de Comércio Exterior. Liberação de Mercadoria Estrangeira : Análise das importações no que se refere à incidência do ICMS e emissão de autorização para liberação das mercadorias do recinto alfandegado. Análise de Créditos Decorrentes de Exportação (Homologação de Crédito): Realização de auditoria fiscal para validação de créditos acumulados, devidamente escriturados, decorrentes de exportação. Transferência de Créditos Homologados: Análise e autorização de transferência de créditos previamente homologados pela SEFAZ a outros contribuintes estabelecidos no Estados nos termos da legislação em vigor. Apoio ao Contribuinte : Equipe disponível em regime de plantão com intuito de dirimir dúvidas e orientar os contribuintes em suas demandas. Líder do Comércio Exterior Renata Ribeiro Dias d’Arce renata.dias@sefaz.ma.gov.br (98) 3219-9165"
+  },
+  {
+    "id": 6,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3567",
+    "titulo": "NFC-e",
+    "descricao": ":: Parceiros NFC-e Para baixar o emissor gratuito da NFC-e, clique nos parceiros abaixo. Varejista terá que usar Nota Fiscal Eletrônica do Consumidor até o final de 2017 SAIBA TAMBÉM... NFC-e - Informações Básicas A Nota Fiscal de Consumidor Eletrônica – NFC-e - é um documento de existência apenas digital, emitido e armazenado eletronicamente, com o intuito de documentar as operações comerciais de venda presencial ou venda para entrega em domicilio ao consumidor final (pessoa física ou jurídica) em operação interna e sem geração de crédito de ICMS ao adquirente. A NFC-e substitui a nota fiscal de venda a consumidor, modelo 2, e o cupom fiscal emitido por ECF. As principais as vantagens da NFC-e, são: Dispensa de homologação do software pelo Fisco; Uso de Impressora não fiscal, térmica ou a laser; Simplificação de obrigações acessórias (dispensa de impressão de Redução Z e Leitura X, Mapa Resumo, etc.); Dispensa da figura do interventor técnico; Os requisitos necessários para a emissão da NFC-e são: Possuir certificado digital no padrão ICP-Brasil. Posuir um software emissor de NFC-e ou poderá fazer uso do Emissor Gratuito disponível para download acima indicado para pequenos emissores Solicitar o Credenciamento e Código de Segurança do Contribuinte - CSC (token) de produção – que deve ser realizado l no portal do autoatendimento SEFAZNET Estar com a inscrição estadual regular; Emissor gratuito da NFC-e Em parceria com a Confederação das Associações Comercias , o fisco estadual prestou orientações técnicas a entidades que demonstraram o interesse em desenvolver uma solução gratuita, gerando esse projeto que visa disponibilizar emissores gratuitos de NFC-e para acelerar e facilitar a adoção da NFC-e pelas empresas. Credenciamento O credenciamento para emissão de NFCE já pode ser realizado pelo próprio contribuinte, inscrito no Estado do Maranhão por meio do SEFAZ.NET (sistema de autoatendimento). No SEFAZNET a empresa tem acesso a duas aplicações no MENU SISTEMAS /ATENDIMENTO/CONTRIBUINTE /NFCE : 1) Credenciamento de NFCE Contribuinte vai informar a Inscrição Estadual que deseja credenciar. Será credenciado de forma automática para os ambientes de produção e homologação. 2) Código de Segurança do Contribuinte - CSC (token) O Código de Segurança do Contribuinte - CSC (token) é um código numérico, de conhecimento exclusivo do contribuinte e da SEFAZ, usado para garantir a autoria e a autenticidade do DANFE-NFC-e. ATENÇÃO O Código de Segurança do Contribuinte - CSC (token) é requisito de validade do DANFE-NFC-e, portanto deve ser cadastrado no programa emissor do contribuinte antes da primeira nota fiscal emitida. Manutenção de CSC/consulta Será permitido gerar 2 CSC (Código de Segurança do Contribuinte) - Token - por raiz de CNPJ. Anote esse número gerado para colocar no sistema emissor da NFC-e do contribuinte o que permitirá emitir a NFc-e Será permitido até 2 CSC (Código de Segurança do Contribuinte) - Token - por raiz de CNPJ. O credenciamento e a geração do código CSC são obrigatórios para a emissão da NFCe. correto credenciamento da empresa. Maiores informações em perguntas frequentes: nfce.encat.org/institucional/"
+  },
+  {
+    "id": 7,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3563",
+    "titulo": "GIA-ST",
+    "descricao": ":: GIA-ST - APRESENTAÇÃO O Programa da Guia Nacional de Informação e Apuração do ICMS Substituição Tributária - GIA-ST é destinado às Empresas Susbtitutas Tributárias que desejam enviar a sua declaração de forma cômoda e segura. Aqui o Contribuinte receberá apenas um comprovante de envio da Declaração. O recibo definitivo pode ser obtido neste site da Gerência de Estado da Receita Estadual, tendo em mãos o número do Protocolo e o número da Chave constantes no Recibo de Transmissão. A GIA-ST será entregue, para cada mês de referência, somente por meio de transmissão eletrônica de dados, por intermédio da INTERNET. A Gerência de Estado da Receita Estadual não aceitará arquivos por meio de disquetes ou papel. Para transmitir as GIA-ST para o nosso estado, deve ser feito o download do programa de transmissão que se encontra nesta página. Este programa somente funcionará em computadores com windows 95 ou superior. O programa de Digitação também encontra-se nesta página para \"download\"."
+  },
+  {
+    "id": 8,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3552",
+    "titulo": "BP-e",
+    "descricao": ":: Apresentação BP-e O Bilhete de Passagem Eletrônico- BP-e é o documento emitido e armazenado eletronicamente, de existência apenas digital, com o intuito de documentar as prestações de serviço de transporte de passageiros, cuja validade jurídica é garantida pela assinatura digital do emitente e autorização de uso pela administração tributária da unidade federada do contribuinte, antes da ocorrência do fato gerador. O Bilhete de Passagem Eletrônico - BP-e, modelo 63, poderá ser utilizado pelos contribuintes do Imposto sobre Operações Relativas à Circulação de Mercadorias e sobre a Prestação de Serviços de Transporte Interestadual e Intermunicipal e de Comunicação - ICMS em substituição: Circulação de Mercadorias e sobre a Prestação de Serviços de Transporte Interestadual e Intermunicipal e de Comunicação - ICMS em substituição: I - ao Bilhete de Passagem Rodoviário, modelo 13; II - ao Bilhete de Passagem Aquaviário, modelo 14; III - ao Bilhete de Passagem Ferroviário, modelo 16; IV - ao Cupom Fiscal Bilhete de Passagem emitido por equipamento Emissor de Cupom Fiscal (ECF). O BP-e deverá ser emitido com base no leiaute estabelecido no Manual de Orientações do Contribuinte, por meio de software desenvolvido ou adquirido pelo contribuinte."
+  },
+  {
+    "id": 9,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3542",
+    "titulo": "CT-e",
+    "descricao": ":: Apresentação CT-e O projeto do Conhecimento de Transporte eletrônico (CT-e) tem por objetivo a implantação de um modelo nacional de documento fiscal eletrônico que venha substituir a sistemática atual de emissão de documentos fiscais em papel. Serviços mais Acessados Consultar disponibilidade Consultar CTe Completo Consultar Resumo do CTe FAQ Software Emissor CT-e Gratuito Relação de Serviços Web"
+  },
+  {
+    "id": 10,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3558",
+    "titulo": "NF-e",
+    "descricao": ":: Nota Fiscal Eletrônica Credenciamento NF-e Este projeto é coordenado pelo ENCAT (Encontro Nacional dos Administradores e Coordenadores Tributários Estaduais) e desenvolvido em parceria com a Receita Federal do Brasil e tem como finalidade a alteração da sistemática atual de emissão da nota fiscal em papel, por nota fiscal eletrônica com validade jurídica para todos os fins. Sefaz-MA atualizou e disponibiliza emissor gratuito de NF-e cedido pela SEFAZ-SP, de 01/01/2017 até 01/11/2017, quando foi disponibilizado o emissor gratuito do Sebrae. Consulta Completa de NF-e Consulta Resumida de NF-e Manual de Integração NF-e versão 3.0"
+  },
+  {
+    "id": 11,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3515",
+    "titulo": "SIMBA",
+    "descricao": ":: SIMBA Sistema de Investigação de Movimentações Bancárias – SIMBA O Sistema de Investigação de Movimentações Bancárias (SIMBA) é um conjunto de processos, módulos e normas para tráfego de informações entre instituições financeiras e equiparadas e órgãos governamentais. Foi desenvolvido pela Procuradoria Geral da República (PGR), do Ministério Público Federal (MPF), e é compartilhado com as administrações tributárias. O SIMBA possibilita celeridade aos procedimentos investigativos de fiscalização em curso, especialmente aqueles que envolvem a transferência do sigilo bancário para o sigilo fiscal dos investigados, necessária à auditoria contábil e financeira. Em 2024, a Secretaria de Estado da Fazenda do Maranhão (SEFAZ-MA) firmou Acordo de Cooperação Técnica com o MPF, de forma que está apta a utilizar o SIMBA para recepção, validação, transmissão, processamento e análise de dados bancários de contribuintes e pessoas relacionadas, de forma sistematizada e segura, através da rede mundial de computadores (internet). O SIMBA será operacionalizado pela Célula de Gestão para Administração Tributária Área de Controle e Planejamento da Fiscalização - CEGAT/UPCAF e pelo Gabinete da Secretaria, assegurado o sigilo e observada a legislação tributária pertinente. Validador e Transmissor Bancário – SIMBA Clique Aqui Amparo Legal Lei Complementar Federal nº 105/2001 Portaria 523/2023 Carta Circular Banco Central Ações Diretas de Inconstitucionalidade (ADI) ADI Nº 2386/DF ADI Nº 2390/DF ADI Nº 2397/DF ADI Nº 2859/DF Informações sobre o SIMBA SIMBA (site Ministério Público Federal): https://www.mpf.mp.br/atuacao-tematica/sppea/sistemas/simba-1 Validador e Transmissor Bancário: https://asspaweb.pgr.mpf.mp.br/site/index.php/projeto-simba/sigilo-bancario-simba Memorando de Instrução Sigilo bancário. Leiaute. Instruções sobre formatação e encaminhamento de dados bancários pela Internet. Validador e Transmissor Bancário: https://asspaweb.pgr.mpf.mp.br/site/index.php/component/jdownloads/download/27-normas-e-comunicados/94-mi-001-sigilobancario-bancos-v2-3-atualizado-21-06-2016 Contatos: Email: simba@sefaz.ma.gov.br Telefone: (98) 3217-4562"
+  },
+  {
+    "id": 12,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3532",
+    "titulo": "MDF-e",
+    "descricao": ":: MDF-e O Projeto MDF-e tem como objetivo a implantação de um modelo nacional de documento fiscal eletrônico com validade jurídica garantida pela assinatura digital do emitente, que venha substituir a sistemática atual de emissão do documento em papel, simplificando as obrigações acessórias dos contribuintes e que permita o acompanhamento em tempo real das operações comerciais pelo Fisco. Serviços mais Acessados FAQ Software Emissor Gratuito"
+  },
+  {
+    "id": 13,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://www.gnre.pe.gov.br:444/gnre/portal/GNRE_Principal.jsp",
+    "titulo": "GNRE",
+    "descricao": ""
+  },
+  {
+    "id": 14,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3519",
+    "titulo": "Incentivos Fiscais",
+    "descricao": "apresentação"
+  },
+  {
+    "id": 15,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/pagina?id=3202",
+    "titulo": "PAF-e",
+    "descricao": ""
+  },
+  {
+    "id": 16,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3514",
+    "titulo": "Valores de Referência",
+    "descricao": "Valores de Referência Agricultura Água Mineral Refrigerantes Cervejas Bebidas Quentes Isotônico/Energético/Bebida Mista Materiais de Construção Frutos do Mar e Rio ﻿ Hortifrutigranjeiro Pecuária Madeira Sucata e Vasilhame Sorvetes e Picolés Transporte (Frete) Tabela de Cálculo de base do ICMS incidente sobre operações de transporte de carga correspondente a 100% do valor aplicável anexo único da Portaria Nº 482/2023 1 - Na prestação de serviço de transporte, com percurso inferior a 25 Km, a base de cálculo do ICMS será o valor efetivo da prestação informado pelo prestador do serviço. 2 - Verificar o valor real da prestação de serviço de transporte, se superior ao valor de referência, aplicar o valor da operação. 3 - O CRT deverá ser emitido com seguintes alíquotas. a) Nas operações internas e interestaduais a consumidor final = 22% b) Nas operações interestaduais = 12% Clique nos ítens abaixo de acordo com o intervalo de tonelas e veja a tabela: 01 a 09 Toneladas 10 a 18 Toneladas 19 a 27 Toneladas 28 a 36 Toneladas 37 a 45 Toneladas 46 a 54 Toneladas 55 a 63 Toneladas Simbologia das Unidades de Medidas Unidades de Medidas Saiba como entender a codificação das Tabelas dos Produtos"
+  },
+  {
+    "id": 17,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3286",
+    "titulo": "SIFMA",
+    "descricao": "SIFMA O Sistema de Fiscalização e Monitoramento do Agronegócio e da Vegetação Nativa (SIFMA) é uma iniciativa inovadora desenvolvida na SEFAZ-MA para otimizar a fiscalização tributária e promover a sincronia entre a arrecadação e a produção de grãos. Financiado pelo Banco Interamericano de Desenvolvimento (BID), o SIFMA utiliza tecnologias avançadas, incluindo inteligência artificial, imagens de satélite de alta resolução, imagens de radar e banco de dados geográfico. Surgiu em 2021 e conta com parceria estratégica com a EMBRAPA para desenvolvimento de modelos de estimativa em conjunto. Seu objetivo central é promover a rastreabilidade da produção agrícola, realizar cruzamentos socioambientais e monitorar a vegetação nativa em todo o território maranhense. Além disso, a plataforma oferece funcionalidades para o gerenciamento de propriedades por parte dos produtores rurais. Essa plataforma pioneira impulsiona a transparência e a sustentabilidade na produção agrícola do estado. Links diretos: SIFMA - https://sifma.sefaz.ma.gov.br/ Empresa Fácil - https://www.empresafacil.ma.gov.br/produtor-rural/inscricao-estadual/alteracao Recadastramento - https://sistemas1.sefaz.ma.gov.br/portalsefaz/jsp/pagina/pagina.jsf?codigo=7899"
+  },
+  {
+    "id": 18,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3374",
+    "titulo": "Tribunal Administrativo - TARF",
+    "descricao": "TARF - Tribunal Administrativo de Recursos Fiscais O Tribunal Administrativo de Recursos Fiscais da Secretaria de Fazenda do Maranhão torna públicas as pautas de julgamento dos processos administrativos fiscais, que serão analisados pelas três câmaras do TARF no atual exercício. Contatos do TARF : 3219-9062 / 3219-9063 / 3219-9064"
+  },
+  {
+    "id": 19,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3342",
+    "titulo": "DIEF",
+    "descricao": "Declaração de Informações Econômico-Fiscais - DIEF Sobre a DIEF O software da Declaração de Informações Econômico-Fiscais - DIEF é a ferramenta que permite ao contribuinte declarar todas as informações de movimentação econômica da sua empresa para a Secretaria da Fazenda do Maranhão. Este programa gera o arquivo eletrônico no qual as empresas informam, mensalmente, suas operações de entradas e saídas de mercadorias, prestações de serviços de transporte e comunicação e a apuração do ICMS. O software foi idealizado a partir da norma adotada pelo Sistema Integrado de Informações sobre Operações Interestaduais com Mercadorias e Serviço - SINTEGRA. O layout das informações do arquivo SINTEGRA é o mesmo definido no Convênio 57/95, para os contribuintes usuários do Sistema Eletrônico de Processamento de Dados PED, acrescido de alguns registros e campos específicos para recepcionar informações econômico-fiscais dos demais contribuintes obrigados à apresentação da DIEF. O prazo para a entrega da DIEF e pagamento do ICMS vence no dia 20 de cada mês subseqüente ao das operações realizadas pelo estabelecimento. Para saber qual versão da DIEF você vai precisar baixar acesse o menu DIEF >> Downloads Atualizada DIEF 6.3.7 A nova DIEF 6.3 já disponibiliza a alíquota de 18% para as informações do ECF/ cupom fiscal e campo específico para as informações do valor do ICMS devido ao Estado nas vendas interestaduais a consumidor final. O novo instalador da DIEF 6.3 está disponível para download e deverá ser baixado por todos os contribuintes. O arquivo pode ser encontrado no menu Serviços/ DIEF/Downloads da página da SEFAZ. Uma das novidades da nova versão é que os estabelecimentos do comércio varejista, que estão obrigados a preencher o anexo da DIEF com os dados do consumidor (Nota Legal), transmitirão para a SEFAZ apenas um arquivo ao invés de dois, eliminado a emissão do recibo provisório para transmissão do anexo. Para o funcionamento da DIEF 6.3 é imprescindível que o usuário esteja utilizando o programa Java com a versão miníma 6.0. Disponível para download no portal da Sefaz a versão 8. O programa da DIEF é compatível com os sistemas operacionais Windows Vista e Windows 7 e 8, não sendo necessário que o programa seja executado no modo administrador/compatibilidade com XP. A operação da DIEF 6.3 Na nova DIEF 6.3, os contribuintes do ICMS que operam no varejo e emitem cupom fiscal ou nota série D, continuam obrigados a preencher o Anexo da DIEF. No anexo são lançadas as informações do consumidor, inclusive o CPF. As Notas Fiscais Eletrônicas não precisam ser lançadas no Anexo. As informações são importadas para o anexo da DIEF a partir do arquivo eletrônico gerado pelo programa PAF ECF que comanda o equipamento Emissor de Cupom Fiscal e pelo programa de preenchimento da NF Série D que está disponível no item manuais na seção DIEF do menu SERVIÇOS da home Page da SEFAZ. Essas notas série D também podem digitadas pelo usuário. Validação do Anexo para geração do arquivo Para gerar e transmitir o arquivo da DIEF o usuário obrigatoriamente fará uma validação em um botão do menu do anexo. Nesta validação é feito o confronto entre os dados importados ou digitados no Anexo, com os dados informados na DIEF ( mapa resumo de cupom fiscal, intervalos diários da série D, Nota Fiscal Eletrônica e NFC do consumidor). Se as informações contidas no Anexo estiverem em desacordo com o resumo da DIEF, o arquivo não poderá ser gerado para transmissão, só após correção. A validação no anexo deverá ser feita mesmo que a empresa não esteja obrigada a preenchê-lo, e também no caso de DIEF sem movimento."
+  },
+  {
+    "id": 20,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3196",
+    "titulo": "Simples Nacional",
+    "descricao": "Simples Nacional :: O que é o Simples Nacional? Normas gerais tributárias (e de conteúdo não tributário), instituídas em um modelo alternativo e opcional ao regime normal de tributação, a fim de proporcionar um tratamento diferenciado e favorecido às microempresas e empresas de pequeno porte, com recolhimento unificado e centralizado dos seguintes tributos: IRPJ, IPI, CSLL, COFINS, PIS/Pasep, CPP, ICMS e ISS. ● Fica instituído o Regime Especial Unificado de Arrecadação de Tributos e Contribuições devidos pelas Microempresas e Empresas de Pequeno Porte - Simples Nacional . [LC 123/06, Art. 12] ● O Simples Nacional não exclui a incidência de outros impostos ou contribuições, na forma da LC 123/2006, devidos na qualidade de contribuinte ou responsável, em relação aos quais será observada a legislação aplicável às demais pessoas jurídicas, a ilustrar: substituição tributária, diferencial de alíquota e antecipação parcial do ICMS. A legislação do Simples adota como optante as figuras jurídicas da microempresa e da empresa de pequeno porte, estabelecidas na forma da sociedade empresária, sociedade simples, empresa individual de responsabilidade limitada e o empresário a que se refere o art. 966 da Lei n o 10.406/02 (Código Civil) , devidamente inscritas no Registro de Empresas Mercantis ou no Registro Civil de Pessoas Jurídicas, nos respectivos tetos estabelecidos de receita bruta auferida anualmente, ainda que proporcional, no caso de início de atividade, alcançando ainda, dentro do conceito de microempresa, o pequeno empresário (MEI - arts. 18-A, 18-E, §3º e 68 da LC 123/06 e art. 970 Código Civil). Considera-se microempresa a empresa que aufira, em cada ano-calendário, receita bruta igual ou inferior a R$ 360.000,00 (trezentos e sessenta mil reais) e empresa de pequeno porte que aufira, em cada ano-calendário, receita bruta superior a R$ 360.000,00 (trezentos e sessenta mil reais) e igual ou inferior a R$ 4.800.000,00 (quatro milhões e oitocentos mil reais). [art. 3º, incisos I e II da LC 123/06] Considera-se receita bruta , para fins do disposto no caput deste artigo, o produto da venda de bens e serviços nas operações de conta própria, o preço dos serviços prestados e o resultado nas operações em conta alheia, não incluídas as vendas canceladas e os descontos incondicionais concedidos. [art. 3º, §1º da LC 123/06] Visite a seção histórica do Limite/Sublimite-MA para consultar a receita bruta. LEGISLAÇÃO FUNDAMENTAL HISTÓRICO DA RECEITA BRUTA CADASTRO AGENDAMENTO TERMO DE EXCLUSÃO ANTECIPAÇÃO PARCIAL DO ICMS DIFERENCIAL DE ALÍQUOTA DO ICMS SUBSTITUIÇÃO TRIBUTÁRIA NOTIFICAÇÕES MALHA FISCAL OBRIGAÇÕES ACESSÓRIAS﻿ Cadastro e Dúvidas: simplesnacional@sefaz.ma.gov.br Tel: (98) 3217-4524 (14h às 18h) Contestação de malhas: Malha PGDASxDF: snmalhapgdasdxdief@sefaz.ma.gov.br Malha Valor Fixo: snmalhabf@sefaz.ma.gov.br Malha Isenção: snmalhabf@sefaz.ma.gov.br Malha ST: snmalhast@sefaz.ma.gov.br Malha Imunidade: snmalhaimun@sefaz.ma.gov.br Malha Lançamento de Ofício: malhalo@sefaz.ma.gov.br Malha Retido: pgdasdretido@sefaz.ma.gov.br _________________ Autorizada a divulgação por qualquer meio desde que preservada a fonte das informações – portal.sefaz.ma.gov.br"
+  },
+  {
+    "id": 21,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3275",
+    "titulo": "Mercadoria em Trânsito",
+    "descricao": ":: UNIDADE DE FISCALIZAÇÃO DE MERCADORIA EM TRÂNSITO Bem-vindo à página do Setor de Fiscalização de Mercadoria em Trânsito da Secretaria da Fazenda do Maranhão. Nosso setor desempenha um papel crucial na fiscalização e controle de mercadorias que circulam pelo estado, garantindo a conformidade tributária e contribuindo para a justiça fiscal. Para qualquer solicitação de atendimento, preencher o formulário ( LINK ), e enviar para cegaf.transito@sefaz.ma.gov.br . : : O Que Fazemos O Setor de Fiscalização de Mercadoria em Trânsito é responsável por: Monitoramento e Fiscalização : Verificação de documentos fiscais e mercadorias em trânsito para garantir que estejam em conformidade com a legislação tributária. Análise de Irregularidades : Identificação e processamento de infrações fiscais, aplicando as medidas necessárias para corrigir irregularidades. Apoio ao Contribuinte : Prestação de serviços para resolver questões e impugnações relacionadas a autuações fiscais. : : Atividade de Videomonitoramento Além da fiscalização presencial, o setor utiliza tecnologias de videomonitoramento para aprimorar o controle e a segurança das operações. : : SIFMA O Sistema de Fiscalização e Monitoramento do Agronegócio e da Vegetação Nativa (SIFMA), desenvolvido pela SEFAZ-MA e financiado pelo BID, utiliza tecnologias avançadas para otimizar a fiscalização tributária e sincronizar a arrecadação com a produção de grãos. : : Postos Fiscais Contamos com sete postos fiscais estrategicamente localizados no estado: Posto Fiscal de Estiva Posto Fiscal de Estreito Posto Fiscal de Timon Posto Fiscal de Itinga Posto Fiscal de Quatro Bocas Posto Fiscal de Barão de Grajaú Posto Fiscal de Piranji Clique aqui e confira os contatos. Além desses postos, temos o Canal Verde que fica na Unidade da CEGAF Trânsito: (98) 3219-9091/ 3217-4577 cegaf.transito@sefaz.ma.gov.br Gestor da CEGAF Trânsito Raimundo Nonato Campos Arouche raimundo.arouche@sefaz.ma.gov.br (98) 3219-9092 Gestor do COTAF Trânsito Daniel Lira Lima Silva daniel.silva@sefaz.ma.gov.br (98) 3219-9039"
+  },
+  {
+    "id": 22,
+    "tipo": "Empresa",
+    "classe": "Geral",
+    "orgao": "SEFAZ-MA",
+    "link": "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3235",
+    "titulo": "Cadastro/Ativação",
+    "descricao": ":: CADASTRO Bem vindo à página do Cadastro MA. O Setor de Cadastro de Contribuinte de ICMS tem a função de controle de inscrição dos contribuintes do Estado do Maranhão e a devida manutenção das informações necessárias à SEFAZ-MA, visando o controle da Administração Tributária, bem como promover as ações necessárias à gestão cadastral atinente às seguintes atividades: Atendimento ao público que concerne ao cadastro; Analisar solicitação de ativação de “Nova Empresa”; Sanear ato de Inscrição Estadual; Sanear ato de Alteração de Dados da Ficha cadastral; Sanear ato de Baixa de Inscrição Estadual; Reativação de Inscrição Estadual de Empresa MEI nos termos da Portaria 183/2020 e suas atualizações; e Baixa de Inscrição Estadual com Base no CNPJ Baixado na Receita Federal nos termos da Portaria 365/2016 e suas atualizações. Telefone : (98) 3217-4518 E-mail(s): cadastro@sefaz.ma.gov.br / protocolo.cadastro@sefaz.ma.gov.br (formalização de processos)"
+  }
+]
