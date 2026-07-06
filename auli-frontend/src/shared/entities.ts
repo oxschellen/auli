@@ -164,6 +164,13 @@ export const ENTITIES: Entity[] = [
     state: "Amapá",
     collections: ["servicos"],
   },
+  {
+    id: "ac",
+    name: "SEFAZ-AC",
+    uf: "AC",
+    state: "Acre",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";

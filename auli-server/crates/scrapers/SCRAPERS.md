@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-06 (frota com 20 entidades; AP = a mais recente).
+> Última atualização: 2026-07-06 (frota com 21 entidades; AC = a mais recente).
 
 ---
 
@@ -93,8 +93,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **to** | SEFAZ-TO / Tocantins | Carta de Serviços (ASP.NET/IIS, HTML); `listar_servico.aspx?cod_empresa=37` + detalhe por span `lbl*` | HTML | 4 | 45 | **rica** (Carta) | direto | 8 | rustls |
 | **ma** | SEFAZ-MA / Maranhão | Portal SGC (Angular + Spring); login anônimo público + `GET /portal/servicos` + `conteudos/{id}` | JSON | 4 | 38 | **rica** (conteúdo) | direto | 6 | **rustls + cert** |
 | **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 4 | rustls |
+| **ac** | SEFAZ-AC / Acre | WordPress + Elementor; Carta (`page_id=6732`) → 17 posts (`?p=`), corpo em `.elementor-widget-theme-post-content` | HTML | 1 | 17 | **rica** (post) | direto | 4 | **rustls + cert** |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **138** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **142** (todos os crates cobertos).
 
 ---
 
@@ -390,6 +391,23 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   público único "Serviços". `link` = `…/#/categorias/{slug}/{route}`; identidade = link. É a **fonte mais
   frágil da frota** (parse de JS webpack), mas as chaves estáveis a tornam robusta na prática.
 - 49 serviços. 4 testes. `ServicoRaw` direto. Descoberta em `descoberta-ap.md`.
+
+### ac — SEFAZ-AC (Acre)
+
+- **WordPress + Elementor**, HTML server-rendered (`wp-json` = 404). A **Carta de Serviços**
+  (`?page_id=6732`) lista **17 serviços** em cards agrupados por categoria (Geral / Notas Fiscais e
+  Documentos Eletrônicos / Cadastros / IPVA); cada card aponta para um **post** (`?p=NNNNN`) com a
+  descrição rica. Parse: regex na seção "Lista de Serviços" (cards `?p=` + heading `Serviços …` =
+  categoria). Detalhe: o corpo do serviço está em **`.elementor-widget-theme-post-content`** (1× por
+  post) — `scraper` seleciona o container e pega o texto, **removendo `<style>`/`<script>`** (o
+  Elementor injeta CSS inline dentro do container).
+- **⚠️ Gotcha TLS:** o servidor manda o intermediário ERRADO (Sectigo RSA OV antigo) faltando o **R36**
+  (emissor real do leaf) → nem o store do sistema nem o Mozilla/rustls fecham a cadeia. Fix: embutir o
+  R36 como trust anchor no rustls (`RootCerts::new_with_certs`), como o MA. Diagnóstico:
+  `openssl s_client -showcerts` mostra o intermediário que não bate com o issuer do leaf.
+- **classe** = categoria; público único "Serviços"; `link` = `…/?p={post}`; identidade = o post.
+- 17 serviços, 4 classes (Geral 6 / Notas Fiscais 3 / Cadastros 4 / IPVA 4). 4 testes. `ServicoRaw`
+  direto. Descoberta em `descoberta-ac.md`.
 
 ---
 
