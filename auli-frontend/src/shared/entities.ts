@@ -143,6 +143,13 @@ export const ENTITIES: Entity[] = [
     state: "Rondônia",
     collections: ["servicos"],
   },
+  {
+    id: "to",
+    name: "SEFAZ-TO",
+    uf: "TO",
+    state: "Tocantins",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";

@@ -1,0 +1,19 @@
+[package]
+name = "auli-scraper-to"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-TO (serviços, "Carta de Serviços" — servicos.to.gov.br, ASP.NET WebForms/IIS,
+# HTML server-rendered). SEM headless: listagem por órgão (`listar_servico.aspx?cod_empresa=37`) +
+# detalhe rico (`servico_detalhado.aspx?cod=...`), parseados por id de span ASP.NET (`lbl*`). Público
+# (`lblTipoRelacionamento`) e categoria (`lblTxtServicoGrupo`) estruturados → Cenário B. UA
+# institucional AuliBot (D-PA-ROBOTS). Decisões em descoberta-to.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1"
+# scraper (html5ever) para parsear o HTML e decodificar as entidades das descrições.
+scraper = "0.27.0"

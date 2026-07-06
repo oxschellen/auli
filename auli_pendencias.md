@@ -367,6 +367,25 @@ o trade-off é DRY (1 crate, N estados) × acoplar 2 estados a um contrato de te
 paradigital/Prodepa — outra plataforma). Correlato ao D-AM-V2: RO/PI têm `contentHtml` inline para uma
 eventual descrição rica v2.
 
+## 17. Entidade `to` (SEFAZ-TO) integrada — ✅ **resolvida (18ª entidade)**
+
+Carta de Serviços em `servicos.to.gov.br` — **ASP.NET WebForms / IIS (HTML server-rendered)**, molde
+HTML-scraping (como BA/RJ), NÃO SPA/JSON. Descoberta em `descoberta-to.md`.
+
+- **D-TO-FONTE:** SEFAZ = órgão **`cod_empresa=37`**. Listagem (1 GET) `listar_servico.aspx?cod_empresa=37`
+  → 45 serviços; identidade = `cod_assunto_documento_tipo`. Detalhe (1 GET/serviço)
+  `servico_detalhado.aspx?cod=…` — conteúdo rico (padrão gov.br "Carta de Serviços") em spans com id
+  ASP.NET estável (`ctl00_…_lbl*`), parseados por id via `scraper` (html5ever decodifica entidades) —
+  mais robusto que os accordions aninhados.
+- **D-TO-MODELO — Cenário B:** `descricao` = Conceituação + Como solicitar + Documentos + Custos + Prazo
+  (seções não-vazias, ~1,1 KB mediana). **público** = `lblTipoRelacionamento` (vocabulário fixo
+  concatenado — Cidadão/Empresa/Órgão Público/Servidor; parse longest-first p/ "Órgão Público" não virar
+  dois). **classe** = `lblTxtServicoGrupo`. `ocorrencias` = público × classe. `link` = a página de
+  detalhe. UA institucional AuliBot + cortesia 500ms (D-PA-ROBOTS, 3º caso; robots.txt = 404).
+- 45 serviços, 79 ocorrências, 4 públicos (Cidadão 35 / Empresa 38 / Órgão Público 5 / Servidor 1),
+  2 classes. 7 testes. Portal multi-órgão → **3ª ocorrência de D-PA-ACERVO** (mas em ASP.NET/HTML, não
+  JSON — parametrização menos direta que PA/ES).
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
