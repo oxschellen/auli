@@ -427,6 +427,24 @@ Portal `www.sefaz.ap.gov.br` = **SPA Angular (FUSE)**. Descoberta em `descoberta
   (chaves minificadas, virar API), o parse quebra; o guard de contagem (piso 44) avisa.
 - 49 serviços, 1 público. 4 testes. `ServicoRaw` direto.
 
+## 20. Entidade `ac` (SEFAZ-AC) integrada — ✅ **resolvida (21ª entidade)**
+
+Portal `sefaz.ac.gov.br` = **WordPress + Elementor** (HTML server-rendered). Descoberta em `descoberta-ac.md`.
+
+- **D-AC-FONTE:** `wp-json` = 404 (sem REST). A **Carta de Serviços** (`?page_id=6732`) lista **17
+  serviços** em cards por categoria (Geral / Notas Fiscais / Cadastros / IPVA); cada card → post
+  (`?p=NNNNN`) com descrição rica. Parse (regex) da Carta + `scraper` no detalhe: o corpo está em
+  `.elementor-widget-theme-post-content` (1× por post) — **removendo `<style>`/`<script>`** (o Elementor
+  injeta CSS inline no container; sem remover, a descrição vem poluída de CSS).
+- **⚠️ D-AC-TLS:** o servidor manda o intermediário ERRADO (Sectigo RSA OV antigo) faltando o **R36**
+  (emissor real do leaf) → nem sistema nem Mozilla/rustls fecham. Fix: embutir o R36 como trust anchor
+  no rustls (`RootCerts::new_with_certs`), como o MA. (Diferente do MA, onde faltava o intermediário;
+  aqui o servidor manda o intermediário ERRADO.)
+- **D-AC-MODELO:** classe = categoria (Geral 6 / Notas Fiscais e Documentos Eletrônicos 3 / Cadastros 4 /
+  IPVA 4); público único "Serviços"; `link` = `…/?p={post}`; identidade = o post. Robots desconsiderado
+  (decisão do usuário; UA AuliBot).
+- 17 serviços, 4 classes. 4 testes.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

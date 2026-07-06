@@ -1,0 +1,16 @@
+[package]
+name = "auli-scraper-ac"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-AC (serviços, sefaz.ac.gov.br — WordPress + Elementor). SEM headless: a Carta de
+# Serviços (?page_id=6732) lista 17 posts (?p=NNNNN), cada um com descrição rica no container
+# `.elementor-widget-theme-post-content`. Gotcha TLS: o servidor manda o intermediário ERRADO (falta o
+# Sectigo R36) → embutimos o R36 como trust anchor no rustls (como o MA). Decisões em descoberta-ac.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json"] }
+anyhow = "1"
+scraper = "0.27.0"   # html5ever: parse do HTML Elementor (corpo do post + entidades)
+regex = "1"          # parse da listagem da Carta (cards ?p= + categorias)
