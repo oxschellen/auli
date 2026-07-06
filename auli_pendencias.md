@@ -383,7 +383,7 @@ HTML-scraping (como BA/RJ), NÃO SPA/JSON. Descoberta em `descoberta-to.md`.
   dois). **classe** = `lblTxtServicoGrupo`. `ocorrencias` = público × classe. `link` = a página de
   detalhe. UA institucional AuliBot + cortesia 500ms (D-PA-ROBOTS, 3º caso; robots.txt = 404).
 - 45 serviços, 79 ocorrências, 4 públicos (Cidadão 35 / Empresa 38 / Órgão Público 5 / Servidor 1),
-  2 classes. 7 testes. Portal multi-órgão → **3ª ocorrência de D-PA-ACERVO** (mas em ASP.NET/HTML, não
+  2 classes. 8 testes. Portal multi-órgão → **3ª ocorrência de D-PA-ACERVO** (mas em ASP.NET/HTML, não
   JSON — parametrização menos direta que PA/ES).
 
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
