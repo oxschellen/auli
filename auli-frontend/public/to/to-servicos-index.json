@@ -1,0 +1,18 @@
+[
+  {
+    "tipo": "Cidadão",
+    "filename": "servicos-cidadao"
+  },
+  {
+    "tipo": "Empresa",
+    "filename": "servicos-empresa"
+  },
+  {
+    "tipo": "Órgão Público",
+    "filename": "servicos-orgao-publico"
+  },
+  {
+    "tipo": "Servidor",
+    "filename": "servicos-servidor"
+  }
+]

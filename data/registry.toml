@@ -150,3 +150,11 @@ uf = "RO"
 state = "Rondônia"
 prompt = "prompts/ro.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "to"
+name = "SEFAZ-TO"
+uf = "TO"
+state = "Tocantins"
+prompt = "prompts/to.txt"
+collections = ["servicos"]

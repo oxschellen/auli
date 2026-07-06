@@ -421,6 +421,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "auli-scraper-to"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "auli-contract",
+ "auli-scraper-kit",
+ "scraper",
+ "serde",
+ "serde_json",
+ "ureq",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
