@@ -1,0 +1,173 @@
+[
+  {
+    "id": 1,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/abrir-inscricao-estadual-de-micro-empreendedor-individual-mei",
+    "titulo": "Abrir Inscrição Estadual de Micro Empreendedor Individual - MEI",
+    "descricao": "A abertura para Inscrição Estadual Micro Empreendedor Individual - MEI, o qual deverá efetuar sua formalização no Portal do Micro Empreendedor Individual, possibilita o registro no Cadastro Nacional de Pessoas Jurídicas (CNPJ) e a Inscrição Estadual. Com esta Inscrição estadual o contribuinte poderá emitir Nota Fiscal Avulsa Eletrônica (NFA-e) via portal da SEFAZ/MT para operacionalizar seus produtos e mercadorias ou credenciar-se para emitir Nota Fiscal Eletrônica (NF-e). Microempreendedor Individual (MEI): é a pessoa que trabalha por conta própria e que se legaliza como pequeno empresário. Para ser um microempreendedor individual, é necessário faturar no máximo até R$ 81.000,00 por ano e não ter participação em outra empresa como sócio ou titular. Também pode ter um empregado contratado que receba salário mínimo ou o piso da categoria. Entre as vantagens está o registro no Cadastro Nacional de Pessoas Jurídicas (CNPJ), o que facilita a abertura de conta bancária, o pedido de empréstimos e a emissão de notas fiscais."
+  },
+  {
+    "id": 2,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/alterar-a-representacao-de-contabilista-de-uma-empresa-ou-de-um-produtor-rural",
+    "titulo": "Alterar a Representação de Contabilista de uma Empresa ou de um Produtor Rural",
+    "descricao": "Procedimento pelo qual uma empresa ou produtor rural solicita a alteração do contador."
+  },
+  {
+    "id": 3,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/alterar-cadastro-da-inscricao-estadual-de-micro-empreendedor-individual-mei",
+    "titulo": "Alterar Cadastro da Inscrição Estadual de Micro Empreendedor Individual - MEI",
+    "descricao": "Procedimento pelo qual o usuário/cidadão atualiza os dados da sua inscrição de Microempreendedor Individual – MEI, em decorrência de qualquer alteração no cadastro da empresa."
+  },
+  {
+    "id": 4,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/baixar-inscricao-estadual-de-microempreendedor-individual-mei",
+    "titulo": "Baixar Inscrição Estadual de Microempreendedor Individual - MEI",
+    "descricao": "Procedimento pelo qual a empresa solicita baixa da Inscrição Estadual do Microempreendedor Individual – MEI"
+  },
+  {
+    "id": 5,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/consultar-e-emitir-o-imposto-sobre-a-propriedade-de-veiculos-automotores-ipva",
+    "titulo": "Consultar e Emitir o Imposto sobre a Propriedade de Veículos Automotores - IPVA",
+    "descricao": "Procedimento para consultar extrato e/ou emitir guia para pagamento ou parcelamento de débito do IPVA - Imposto sobre a Propriedade de Veículos Automotores."
+  },
+  {
+    "id": 6,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/emitir-certidao-negativa-de-debitos-e-de-relatorio-de-dividas-e-pendencias-fiscais",
+    "titulo": "Emitir Certidão Negativa de Débitos e de Relatório de Dívidas e Pendências Fiscais",
+    "descricao": "Este serviço permite a emissão da Certidão Conjunta de pendências tributárias e não tributárias junto à SEFAZ e à PGE do Estado de Mato Grosso (CND), que comprova que uma pessoa física ou jurídica não possui débitos pendentes com a SEFAZ e a PGE. Se houver pendências, é emitida uma Certidão Positiva de Débitos, que traz um relatório com a lista de dívidas, obrigações não cumpridas e outras irregularidades fiscais."
+  },
+  {
+    "id": 7,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/emitir-documento-de-arrecadacao-dar-1aut-diversos",
+    "titulo": "Emitir Documento de Arrecadação - DAR-1/Aut - Diversos",
+    "descricao": "É o procedimento pelo qual o contribuinte emite Documento de Arrecadação (DAR-1/AUT) para pagamento de tributos, fundos e contribuições."
+  },
+  {
+    "id": 8,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/emitir-nota-fiscal-avulsa-eletronica-(nfa-e)-cidadao-sem-inscricao-estadual",
+    "titulo": "Emitir Nota Fiscal Avulsa Eletrônica (NFA-e) - Cidadão Sem Inscrição Estadual",
+    "descricao": "AA Nota Fiscal Eletrônica - Avulsa (NFA-e) é um documento fiscal emitido e armazenado eletronicamente, de existência apenas digital, com o objetivo de documentar as operações realizadas por pessoas físicas e jurídicas não inscritas no Cadastro de Contribuintes do Estado e para a regularização do trânsito de bens e mercadorias que tenham sido objeto de ação fiscal."
+  },
+  {
+    "id": 9,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/emitir-nota-fiscal-avulsa-eletronica-(nfa-e)-contribuinte-com-inscricao-estadual",
+    "titulo": "Emitir Nota Fiscal Avulsa Eletrônica (NFA-e) - Contribuinte com Inscrição Estadual",
+    "descricao": "Procedimento de emissão de Nota Fiscal Avulsa (NFA-e) para contribuintes inscritos no Cadastro de Contribuintes do Estado de Mato Grosso não obrigados ao uso da Nota Fiscal Eletrônica (NF-e)."
+  },
+  {
+    "id": 10,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/emitir-nota-fiscal-avulsa-eletronica-(nfa-e)-e-documento-de-arrecadacao-(dar-1aut)p-recolhimento-icms-veiculo-arrematado-em-leilao",
+    "titulo": "Emitir Nota Fiscal Avulsa Eletrônica (NFA-e) e Documento de Arrecadação (DAR-1/Aut)P/ recolhimento ICMS - Veículo Arrematado em Leilão",
+    "descricao": "Procedimento pelo qual o usuário/cidadão emite Nota Fiscal Eletrônica Avulsa (NFA) e Documento de Arrecadação – DAR-1/AUT- Diversos, para pagamento do ICMS de veículo automotor arrematado em leilão público."
+  },
+  {
+    "id": 11,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/incluir-ou-alterar-e-mail-oue-telefone-no-sistema-cadastral-da-sefaz-mt-de-contribuinte-com-insc.-estadual",
+    "titulo": "Incluir ou Alterar E-mail ou/e Telefone no Sistema Cadastral da SEFAZ-MT de Contribuinte com Insc. Estadual",
+    "descricao": "Procedimento pelo qual a empresa solicita inclusão ou alteração de e-mail e/ou telefone no Sistema de Cadastro de Contribuintes Estadual (CCE)."
+  },
+  {
+    "id": 12,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/inscrever-no-cadastro-de-contribuintes-eletronicos-do-estado",
+    "titulo": "Inscrever no Cadastro de Contribuintes Eletrônicos do Estado",
+    "descricao": "Procedimento pelo qual o Usuário/Cidadão solicita inscrição estadual no Cadastro de Contribuintes no Estado de Mato Grosso, definidas em lei como contribuintes do ICMS."
+  },
+  {
+    "id": 13,
+    "tipo": "Empresa",
+    "classe": "Comunicação e Transparência",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/comunicacao-e-transparencia/orcamento-cidadao",
+    "titulo": "Orçamento Cidadão",
+    "descricao": "O Orçamento Cidadão usa a linguagem simples para explicar os principais conceitos da receita e despesa pública, com um passo a passo de todo processo orçamentário que ocorre desde a elaboração até a publicação."
+  },
+  {
+    "id": 14,
+    "tipo": "Empresa",
+    "classe": "Comunicação e Transparência",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/comunicacao-e-transparencia/participar-da-audiencia-publica-do-projeto-de-lei-de-diretrizes-orcamentarias-pldo",
+    "titulo": "Participar da Audiência Pública do Projeto de Lei de Diretrizes Orçamentárias - PLDO",
+    "descricao": "A Audiência Pública é uma reunião pública online ou presencial para promover a participação popular no processo de elaboração do Projeto de Lei de Diretrizes Orçamentárias do Estado."
+  },
+  {
+    "id": 15,
+    "tipo": "Empresa",
+    "classe": "Comunicação e Transparência",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/comunicacao-e-transparencia/participar-da-audiencia-publica-do-projeto-de-lei-orcamentaria-anual-ploa",
+    "titulo": "Participar da Audiência Pública do Projeto de Lei Orçamentária Anual - PLOA",
+    "descricao": "A Audiência Pública é uma reunião pública online ou presencial para promover a participação popular no processo de elaboração do Projeto de Lei de Orçamentária Anual do Estado."
+  },
+  {
+    "id": 16,
+    "tipo": "Empresa",
+    "classe": "Comunicação e Transparência",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/comunicacao-e-transparencia/participar-da-consulta-publica-eletronica-do-projeto-de-lei-de-diretrizes-orcamentarias-pldo",
+    "titulo": "Participar da Consulta Pública Eletrônica do Projeto de Lei de Diretrizes Orçamentárias - PLDO",
+    "descricao": "Participar na construção do Projeto de Lei de Diretrizes Orçamentária do Estado de Mato Grosso, por meio do preenchimento de formulário eletrônico de Consulta Pública com perguntas de diversas áreas do governo para o cidadão opinar sobre as ações que entende ser de maior importância para o desenvolvimento do Estado de Mato Grosso."
+  },
+  {
+    "id": 17,
+    "tipo": "Empresa",
+    "classe": "Comunicação e Transparência",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/comunicacao-e-transparencia/participar-da-consulta-publica-eletronica-do-projeto-de-lei-orcamentaria-anual-ploa",
+    "titulo": "Participar da Consulta Pública Eletrônica do Projeto de Lei Orçamentária Anual - PLOA",
+    "descricao": "Participar na construção do Projeto de Lei Orçamentária Anual do Estado de Mato Grosso, por meio do preenchimento de formulário eletrônico de Consulta Pública com perguntas de diversas áreas do governo para o cidadão opinar sobre as ações que entende ser de maior importância para o desenvolvimento do Estado de Mato Grosso."
+  },
+  {
+    "id": 18,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/reativar-inscricao-estadual-de-micro-empreendedor-individual-mei",
+    "titulo": "Reativar Inscrição Estadual de Micro Empreendedor Individual - MEI",
+    "descricao": "Procedimento pelo qual a empresa solicita reativação da Inscrição Estadual suspensa do Microempreendedor Individual – MEI"
+  },
+  {
+    "id": 19,
+    "tipo": "Empresa",
+    "classe": "Finanças e Tributação",
+    "orgao": "SEFAZ-MT",
+    "link": "https://portal.mt.gov.br/app/catalog/financas-e-tributacao/tirar-duvidas-orientacao-e-informacao-sobre-legislacao-tributaria-estadual-e-procedimentos",
+    "titulo": "Tirar dúvidas, orientação e informação sobre Legislação Tributária Estadual E Procedimentos",
+    "descricao": "Orientações e informações sobre dúvidas referentes à legislação tributária e ao cumprimento de obrigações principal e acessória, entrega de documentos e declarações fiscais e utilização dos sistemas fazendários."
+  }
+]

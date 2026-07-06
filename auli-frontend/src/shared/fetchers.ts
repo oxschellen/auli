@@ -28,4 +28,14 @@ export const textFetcher = (url: string): Promise<string> =>
   axios.get<string>(url, { responseType: "text" }).then((res) => res.data);
 
 export const jsonFetcher = <T = unknown>(url: string): Promise<T> =>
-  axios.get<T>(url).then((res) => res.data);
+  axios.get<T>(url).then((res) => {
+    // Apache serves index.html (200) for any missing static file (FallbackResource
+    // /index.html), so a not-yet-built data file arrives as an HTML string rather
+    // than a 404. axios leaves that unparseable body as a raw string; treat it as a
+    // load failure so callers get an SWR error (alert) instead of feeding HTML into
+    // logic that expects an object/array and crashing the app.
+    if (typeof res.data === "string") {
+      throw new Error(`Resposta inválida (esperado JSON) de ${url}`);
+    }
+    return res.data;
+  });
