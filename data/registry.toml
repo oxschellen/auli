@@ -190,3 +190,11 @@ uf = "DF"
 state = "Distrito Federal"
 prompt = "prompts/df.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "rn"
+name = "SEFAZ-RN"
+uf = "RN"
+state = "Rio Grande do Norte"
+prompt = "prompts/rn.txt"
+collections = ["servicos"]

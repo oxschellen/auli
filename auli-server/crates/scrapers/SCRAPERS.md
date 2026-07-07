@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-06 (frota com 22 entidades; DF = a mais recente).
+> Última atualização: 2026-07-06 (frota com 23 entidades; RN = a mais recente).
 
 ---
 
@@ -95,8 +95,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 4 | rustls |
 | **ac** | SEFAZ-AC / Acre | WordPress + Elementor; Carta (`page_id=6732`) → 17 posts (`?p=`), corpo em `.elementor-widget-theme-post-content` | HTML | 1 | 17 | **rica** (post) | direto | 4 | **rustls + cert** |
 | **df** | SEFAZ-DF / Distrito Federal | Carta de Serviços (ColdFusion); a listagem embute a **árvore JS inteira** (1 fetch → 472), detalhe `servico.cfm` accordion `.panel-body` | HTML | 2 | 472 | **rica** (~893) | direto | 4 | **curl (WAF JA3)** |
+| **rn** | SEFAZ-RN / Rio Grande do Norte | WordPress + SPA React; WP REST `wp/v2/servicos` (15 cards), enriquece os que linkam `/postagem/` com o ACF `Matéria` | JSON | 1 | 15 | **parcial** (5/15, post) | direto | 4 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **146** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **150** (todos os crates cobertos).
 
 ---
 
@@ -429,6 +430,23 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   subcategoria; `link` = a URL absoluta do `servico.cfm` (única por serviço); identidade = `codServico`.
 - 472 serviços, 142 classes, descrição rica (~893). 4 testes. `ServicoRaw` direto. Descoberta em
   `descoberta-df.md`.
+
+---
+
+### rn — SEFAZ-RN (Rio Grande do Norte)
+
+- **WordPress + SPA React** (tema `govrn_adi`; o mesmo shell de 8,6 KB serve qualquer rota). O portal
+  **não tem uma Carta de Serviços descritiva** — o único catálogo estruturado é o CPT **`servicos`** da
+  WP REST (`/wp-json/wp/v2/servicos?per_page=100`, **15 cards**): `title` + `acf.categories` (classe) +
+  `acf.link` (destino), **sem corpo próprio**. A UVT (`uvt.sefaz.rn.gov.br`) é app AngularJS/IIS
+  **transacional**, sem catálogo público → fora de escopo.
+- **Modelagem (decisão B):** monta os 15 cards e **enriquece** os que apontam para um post
+  (`/postagem/<slug>/`) buscando o corpo no ACF **`Matéria`** (o `content.rendered` desse tema é `null`);
+  os demais (apps externos UVT/SEI, ou `acf.link=false`) ficam com descrição vazia. 5/15 ricos.
+- `titulo`/`Matéria`/categoria vêm com entidades HTML → `html_to_text` (html5ever). `link` = `acf.link`
+  (absolutizado se relativo; permalink do card quando `acf.link=false`); identidade = o link; público
+  único "Serviços"; classe = categoria WP (`Finanças e Impostos` em 12/15). UA institucional AuliBot.
+- 15 serviços, 4 classes. 4 testes. `ServicoRaw` direto. Descoberta em `descoberta-rn.md`.
 
 ---
 

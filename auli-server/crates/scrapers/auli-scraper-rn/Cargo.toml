@@ -1,0 +1,18 @@
+[package]
+name = "auli-scraper-rn"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-RN (serviços, www.sefaz.rn.gov.br — WordPress + SPA React). SEM headless: o portal
+# não tem Carta descritiva; o CPT `servicos` (WP REST `wp/v2/servicos`) são 15 cards de atalho
+# (título + categoria + link). Enriquecemos os que apontam para `/postagem/` buscando o corpo do post
+# (campo ACF `Matéria`); os demais (apps externos UVT/SEI) ficam só com o link. Decisões em
+# descoberta-rn.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = { version = "3", features = ["json"] }
+serde_json = "1.0"   # acf tem shape variável (servicos vs postagem) → Value, não struct fixa
+anyhow = "1"
+scraper = "0.27.0"   # html5ever: texto do título/Matéria (HTML rico) + entidades
+regex = "1"          # extrair o slug do /postagem/<slug>/ no link do card
