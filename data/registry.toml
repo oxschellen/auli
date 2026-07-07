@@ -206,3 +206,11 @@ uf = "PB"
 state = "Paraíba"
 prompt = "prompts/pb.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "al"
+name = "SEFAZ-AL"
+uf = "AL"
+state = "Alagoas"
+prompt = "prompts/al.txt"
+collections = ["servicos"]

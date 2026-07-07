@@ -1,0 +1,17 @@
+[package]
+name = "auli-scraper-al"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-AL (serviços, Portal Alagoas Digital — API REST pública "Dados Abertos", sem auth).
+# SEM headless: `organs.json` (deriva o UUID da SEFAZ: acronym=SEFAZ, nature=Estadual) +
+# `services.json?organ_id={UUID}` (stubs) + `services/{id}.json` (detalhe rico). Público vem de
+# `audiences[]` (vocab controlado); classe de `categories[]`; textos são HTML+entidades. Guardas
+# dinâmicas (não hardcodar 60 nem o UUID). Decisões em descoberta-AL.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = "3"           # tipo do Agent devolvido por kit::build_agent (GET simples)
+serde_json = "1.0"   # shapes variáveis (active string↔bool, campos nuláveis) → Value, não struct fixa
+anyhow = "1"
+scraper = "0.27.0"   # html5ever: texto dos campos HTML (description/steps/…) + entidades
