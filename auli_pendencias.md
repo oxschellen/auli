@@ -543,6 +543,19 @@ Portal SharePoint 2013 (molde do PE), mas a Carta é uma **única página HTML**
   fixtures que contêm âncoras.
 - 91 serviços, 8 classes, descrição rica (~900). 4 testes.
 
+## 26. Entidade `rr` (SEFAZ-RR) integrada — ✅ **resolvida (27ª entidade)**
+
+Portal `www.sefaz.rr.gov.br` = site custom sem catálogo server-rendered. Descoberta em `descoberta-rr.md`.
+
+- **D-RR-FONTE:** o nav só tem Ouvidoria/Transparência/Downloads; os serviços são apps GeneXus/SIATE em
+  `portalweb.sefaz.rr.gov.br` (sem landing "Central de Serviços", tudo 404). MAS o `script.js` da home
+  embute `const apps = [{category, title, description, href}, …]` (molde AP) — catálogo estruturado com
+  descrição curta. **20 entradas → 16 hrefs distintos** (4 em `cidadao` E `empresa`).
+- **D-RR-MODELO:** parse (regex) do array; `titulo`=`title`; `descricao`=`description` (curta ~97, teto da
+  fonte); **público**=`category` (Cidadão/Empresa); `classe`="Serviços"; `link`=`href` (identidade, dedup
+  acumulando o outro público). O FAQ (`faq-chat.php`) é matcher, não catálogo → fora de escopo.
+- 16 serviços, 20 ocorrências (Empresa 14 / Cidadão 6), 2 públicos. 3 testes.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

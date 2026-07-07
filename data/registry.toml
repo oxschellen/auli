@@ -222,3 +222,11 @@ uf = "SE"
 state = "Sergipe"
 prompt = "prompts/se.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "rr"
+name = "SEFAZ-RR"
+uf = "RR"
+state = "Roraima"
+prompt = "prompts/rr.txt"
+collections = ["servicos"]
