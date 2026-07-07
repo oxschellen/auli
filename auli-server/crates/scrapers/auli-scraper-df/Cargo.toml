@@ -1,0 +1,17 @@
+[package]
+name = "auli-scraper-df"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-DF (serviços, receita.fazenda.df.gov.br — Carta de Serviços em ColdFusion). SEM
+# headless: qualquer `listaSubCategorias.cfm` embute a ÁRVORE inteira do catálogo como objeto JS
+# ({'url':...,'desc':...} agrupados por subcategoria) → 1 fetch enumera os 472 serviços; cada
+# `servico.cfm` traz a descrição rica num accordion (`div.panel-body`). Público = codTipoPessoa
+# (Cidadão/Empresa). Gotcha WAF (JA3): o host reseta o ureq mas responde ao curl → coleta via
+# `kit::http::get_via_curl` (requer curl no PATH), como o GO. Decisões em descoberta-df.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+anyhow = "1"
+scraper = "0.27.0"   # html5ever: corpo do serviço (panels do accordion) + entidades
+regex = "1"          # parse da árvore JS da listagem (tuplos url/desc + chave-pai = classe)

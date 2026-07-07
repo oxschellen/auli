@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-06 (frota com 21 entidades; AC = a mais recente).
+> Última atualização: 2026-07-06 (frota com 22 entidades; DF = a mais recente).
 
 ---
 
@@ -94,8 +94,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ma** | SEFAZ-MA / Maranhão | Portal SGC (Angular + Spring); login anônimo público + `GET /portal/servicos` + `conteudos/{id}` | JSON | 4 | 38 | **rica** (conteúdo) | direto | 6 | **rustls + cert** |
 | **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 4 | rustls |
 | **ac** | SEFAZ-AC / Acre | WordPress + Elementor; Carta (`page_id=6732`) → 17 posts (`?p=`), corpo em `.elementor-widget-theme-post-content` | HTML | 1 | 17 | **rica** (post) | direto | 4 | **rustls + cert** |
+| **df** | SEFAZ-DF / Distrito Federal | Carta de Serviços (ColdFusion); a listagem embute a **árvore JS inteira** (1 fetch → 472), detalhe `servico.cfm` accordion `.panel-body` | HTML | 2 | 472 | **rica** (~893) | direto | 4 | **curl (WAF JA3)** |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **142** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **146** (todos os crates cobertos).
 
 ---
 
@@ -408,6 +409,26 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **classe** = categoria; público único "Serviços"; `link` = `…/?p={post}`; identidade = o post.
 - 17 serviços, 4 classes (Geral 6 / Notas Fiscais 3 / Cadastros 4 / IPVA 4). 4 testes. `ServicoRaw`
   direto. Descoberta em `descoberta-ac.md`.
+
+---
+
+### df — SEFAZ-DF (Distrito Federal)
+
+- **Carta de Serviços em ColdFusion** (`receita.fazenda.df.gov.br/aplicacoes/CartaServicos/`). Achado
+  central: **qualquer** `listaSubCategorias.cfm?...` (independente dos params) embute a **árvore
+  inteira** do catálogo como um objeto JS — subcategorias mapeando para
+  `{'item':[{'url':'…servico.cfm?…','desc':'Título'}, …]}`. Logo **1 fetch** enumera os **472**
+  serviços; cada `servico.cfm` traz a descrição rica num **accordion** (`div.panel-body`: Descrição,
+  prazo, requisitos, canais, legislação). Parse por regex dos tuplos `url`/`desc`; a **classe** é a
+  chave-pai imediata (subcategoria, 142 distintas). Sem headless.
+- **⚠️ Gotcha WAF (JA3):** o host **reseta a conexão do `ureq`** (rustls/native-tls) mas responde 200 ao
+  `curl` — allowlist por fingerprint TLS, como o GO. Toda a coleta via `kit::http::get_via_curl`
+  (subprocess curl; requer `curl` no PATH). A cadeia de certificados em si fecha (o bloqueio é do
+  ClientHello do ureq).
+- **público** = `codTipoPessoa`: Cidadão (6/22, 168 svc) e Empresa (7/8, 304 svc); **classe** =
+  subcategoria; `link` = a URL absoluta do `servico.cfm` (única por serviço); identidade = `codServico`.
+- 472 serviços, 142 classes, descrição rica (~893). 4 testes. `ServicoRaw` direto. Descoberta em
+  `descoberta-df.md`.
 
 ---
 

@@ -260,6 +260,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "auli-scraper-df"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "auli-contract",
+ "auli-scraper-kit",
+ "regex",
+ "scraper",
+]
+
+[[package]]
 name = "auli-scraper-es"
 version = "0.1.0"
 dependencies = [

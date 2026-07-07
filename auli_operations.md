@@ -78,11 +78,12 @@ Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
 
 1. **Raspar** (rede, **sem headless**) → grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (v3):
-   `auli-scraper-<id> servicos` para cada uma das **21 entidades** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go/pi/am/pa/es/ro/to/ma/ap/ac); o RS
+   `auli-scraper-<id> servicos` para cada uma das **22 entidades** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go/pi/am/pa/es/ro/to/ma/ap/ac/df); o RS
    também aceita `faqs`/`all`. `--usecache` reusa o cache de páginas (offline, sem rede).
-   > **Dependência de runtime do `go`:** o `auli-scraper-go` chama o binário **`curl`** (no PATH) para
-   > os GETs de catálogo — a API de GO fica atrás de um WAF que bloqueia o fingerprint TLS do `ureq`
-   > (JA3; ver `go_waf.md`/pendências §11). Garantir `curl` instalado no **desktop de coleta E no host
+   > **Dependência de runtime do `go` e do `df`:** os scrapers `auli-scraper-go` e `auli-scraper-df` chamam
+   > o binário **`curl`** (no PATH) para os GETs de catálogo — os hosts de GO e DF ficam atrás de um WAF
+   > que bloqueia o fingerprint TLS (JA3) do `ureq`
+   > (ver `go_waf.md`/pendências §11). Garantir `curl` instalado no **desktop de coleta E no host
    > do túnel**, se a coleta rodar lá. No modo `--usecache` o curl não é chamado (lê do cache).
 2. **Derivar** (offline) → o contrato `<id>-faqs.json`/`<id>-servicos.json` + prints + index +
    per-público (e a árvore `faqs-tree.json` p/ a UI, no RS) em `data/<id>/raw/`:

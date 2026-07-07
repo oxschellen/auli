@@ -182,3 +182,11 @@ uf = "AC"
 state = "Acre"
 prompt = "prompts/ac.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "df"
+name = "SEFAZ-DF"
+uf = "DF"
+state = "Distrito Federal"
+prompt = "prompts/df.txt"
+collections = ["servicos"]

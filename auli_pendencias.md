@@ -445,6 +445,25 @@ Portal `sefaz.ac.gov.br` = **WordPress + Elementor** (HTML server-rendered). Des
   (decisão do usuário; UA AuliBot).
 - 17 serviços, 4 classes. 4 testes.
 
+## 21. Entidade `df` (SEFAZ-DF) integrada — ✅ **resolvida (22ª entidade)**
+
+Portal da Receita/SEEC-DF: **Carta de Serviços em ColdFusion** (`receita.fazenda.df.gov.br/aplicacoes/CartaServicos/`).
+Descoberta em `descoberta-df.md`.
+
+- **D-DF-FONTE:** **qualquer** `listaSubCategorias.cfm?...` (independente dos params) embute a **árvore
+  inteira** do catálogo como objeto JS — subcategorias → `{'item':[{'url':'…servico.cfm?…','desc':'Título'}]}`.
+  Logo **1 fetch** enumera os **472** serviços; cada `servico.cfm` traz descrição rica num **accordion**
+  (`div.panel-body`). Parse (regex) dos tuplos `url`/`desc`; classe = chave-pai imediata (subcategoria,
+  142 distintas). `index.cfm`/`/` = 404/erro CF (não existem). Sem headless.
+- **⚠️ D-DF-WAF (JA3):** o host **reseta a conexão do `ureq`** (rustls/native-tls: `Connection reset by
+  peer`) mas responde **200 ao `curl`** com o mesmo UA/URL → allowlist por fingerprint TLS, **igual ao
+  GO** (§11). Toda a coleta via `kit::http::get_via_curl` (subprocess curl; requer `curl` no PATH). A
+  cadeia de certificados fecha (curl `ssl_verify_result=0`); o bloqueio é do ClientHello do ureq.
+- **D-DF-MODELO:** público = `codTipoPessoa` (Cidadão 6/22 = 168; Empresa 7/8 = 304); classe =
+  subcategoria; `link` = URL absoluta do `servico.cfm` (única por serviço); identidade = `codServico`
+  (0 serviços multi-subcategoria → 1:1). `ServicoRaw` direto.
+- 472 serviços, 142 classes, descrição rica (~893). 4 testes.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
