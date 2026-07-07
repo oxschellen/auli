@@ -522,6 +522,27 @@ Abertos", sem auth). Descoberta/validação em `descoberta-AL.md`.
   puro**; basta relaxar o filtro `organ_id` para virar scraper estadual genérico. Não implementado.
 - 60 serviços, 166 ocorrências, 7 públicos, 3 classes, descrição rica (~1030). 6 testes.
 
+## 25. Entidade `se` (SEFAZ-SE) integrada — ✅ **resolvida (26ª entidade)**
+
+Portal SharePoint 2013 (molde do PE), mas a Carta é uma **única página HTML**. Descoberta em
+`descoberta-se.md`.
+
+- **D-SE-FONTE:** a Carta de Serviços é `SitePages/servicos_cidadao.aspx` (~890 KB, Bootstrap accordion,
+  **91 painéis**), chegada pelo menu SERVIÇOS → CARTAS DE SERVIÇOS. **1 GET**, sem detalhe por serviço.
+  Becos descartados: "Servicos Importantes" (lista SP de 12 atalhos), "Biblioteca de Servicos" (library
+  de PDFs/ZIPs por tema), `servicos_empresa.aspx` (404).
+- **D-SE-MODELO:** `titulo` = heading (`<a href="#{id}">▾ Título</a>`, `id` = identidade); `descricao` =
+  `panel-body` (campos `<strong>Rótulo:</strong> valor`), cortado no próximo `panel-heading` (evita vazar
+  com `<div>` aninhado) + cap 2500 (1 painel do ITCMD tem ~22 KB); **público único "Serviços"**; `classe`
+  = tema do `accordion_<tema>` que contém o painel (DFe/ICMS/ITCMD/IPVA/Simples/Contencioso/Cadastro;
+  standalone antes do 1º tema → "Serviços Gerais"); `link` = `…#{id}`.
+- **⚠️ D-SE-REDE:** o `ureq` falha com `unexpected end of file` na página de 890 KB (o SharePoint fecha a
+  conexão de um jeito que o rustls rejeita, o curl tolera) → coleta via `kit::http::get_via_curl` (curl
+  no PATH), como GO/DF — mas por **EOF**, não por JA3.
+- **Raw string Rust:** o `href="#id"` contém `"#`, que fecha `r#"…"#` cedo → usar `r##"…"##` nas regex/
+  fixtures que contêm âncoras.
+- 91 serviços, 8 classes, descrição rica (~900). 4 testes.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

@@ -1,0 +1,1111 @@
+{
+  "schema_version": 3,
+  "entidade": "se",
+  "scraper": {
+    "nome": "auli-scraper-se",
+    "versao": "0.1.0"
+  },
+  "coleta": {
+    "coletado_em": "2026-07-07T11:01:41.338623651Z",
+    "publicos_ordem": [
+      {
+        "nome": "Serviços",
+        "slug": "servicos-gerais"
+      }
+    ],
+    "items": [
+      {
+        "titulo": "Plantão Fiscal",
+        "descricao": "Descrição do serviço: Serviço de esclarecimento acerca da legislação tributária. Legislação vinculada: Decreto 29.803/2014. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Onde solicitar o serviço: Canais de Atendimento Forma de prestação do serviço: E-mail, telefone e pessoalmente. Canais de relacionamento: Telefone: 79 3216-7318 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: 1- Acesse o site; 2- Vá até “Canais de Atendimento” na página inicial; 3- Selecione a opção “Fale conosco\"; 4- Nessa nova página selecione “Formulário de Atendimento Tributário”; 5- Preencha as informações solicitadas, escolhendo como tema “Legislação Tributária”. https://www.sefaz.se.gov.br/SitePages/faleconosco.aspx",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#plantao_fiscal",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultas Tributárias",
+        "descricao": "Descrição do serviço: Emissão de Parecer Consultivo sobre as consultas formais solicitadas pelos usuários. Legislação vinculada: Lei 7.651/2013. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Onde solicitar o serviço: Via E-doc. Forma de prestação do serviço: Online. Requisitos: Nome ou razão social do consulente; Número de inscrição estadual, se for o caso; Endereço do consulente, telefone/fax e e-mail; A matéria de direito e/ou de fato objeto da consulta; Se já ocorreu ou não o fato gerador da obrigação tributária; O entendimento do consulente sobre a matéria e, se for o caso, os procedimentos que adotou; Declaração de que a consulente não se enquadra nas hipóteses do art. 145 deste regulamento. Prazo para conclusão do serviço: 45 dias Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: Fazer a solicitação via E-doc: https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#consultas_tributarias",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Restituição de ICMS, ITCMD e TAXAS",
+        "descricao": "Descrição do serviço: Análise do pedido e emissão de Parecer deliberativo deferindo ou indeferindo a restituição. Legislação vinculada: Art.110 a 117 do RICMS, art.24 da lei 3.796/96. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Onde solicitar o serviço: Via E-doc. Forma de prestação do serviço: Online. Requisitos: Comprovação do pagamento indevido (Ver § 1º do Art. 113 do RICMS). Prazo para conclusão do serviço: 90 dias Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: Fazer a solicitação via E-doc: https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#restituicao_icms_itcmd_taxas",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de Cópia de Processos Fiscais",
+        "descricao": "Área responsável pelo serviço: GECAP - Gerência de Suporte, Controle e Acompanhamento de Processos. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Quando a empresa foi autuada e não tiver inscrição estadual, solicita cópia dos processos fiscais pelo e-mail do setor. Legislação vinculada ao serviço: Lei 9.357 de 29/12/2023 Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Ter sido autuado na SEFAZ/SE Forma de prestação do serviço: Pelo E-mail: gerar@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#solicitacao_copia_processos_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Inscrição de Créditos não Tributários na Dívida Ativa - CNT",
+        "descricao": "Descrição do serviço: Habilitar órgãos a se inscreverem em dívida ativa não tributária. Legislação vinculada: Legislação em vigor N° 3796/96 Área responsável pelo serviço: Gerência da Dívida Ativa - GEDAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): O responsável pelo órgão deverá encaminhar, via e-doc, um ofício à SEFAZ, direcionado ao setor da Dívida Ativa Estadual, informando os dados (nome, CPF, etc.) daqueles servidores que terão acesso ao sistema. Onde solicitar o serviço: Via E-doc Forma de prestação do serviço: E-doc, pelo link: https://www.edocsergipe.se.gov.br/protocolo-externo/ Prazo para conclusão do serviço: Em média 6 meses Canais de relacionamento: Telefone: 79 3216-7321 E-mail: gerar@fazenda.se.gov.br Passo a passo: Solicitar ao TI encaixar a página desse serviço: https://www.sefaz.se.gov.br/SitePages/CNT.aspx",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#cnt",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Consulta pública da dívida ativa",
+        "descricao": "Descrição do serviço: A Lista de Devedores apresenta a relação de pessoas (físicas ou jurídicas) com débitos inscritos em dívida ativa do Estado. Não relaciona devedores com exigibilidade suspensa ou ação ajuizada garantida em Juízo. Legislação vinculada: PORTARIA SEFAZ Nº. 81/2013 Área responsável pelo serviço: Gerência da Dívida Ativa - GEDAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): CPF, CNPJ ou inscrição estadual Onde solicitar o serviço: Site da SEFAZ: Link para consulta Forma de prestação do serviço: Online Canais de relacionamento: E-mail: gedat@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#consulta_publica_divida_ativa",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultar Negativação SERASA",
+        "descricao": "Descrição do serviço: Consultar negativações indevidas do SERASA, CADIN e realizar exclusões. Legislação vinculada: Legislação em vigor N° 3796/96 Área responsável pelo serviço: Gerência da Dívida Ativa - GEDAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Estar com débito pago; CPF ou CNPJ Onde solicitar o serviço: Link do serviço Forma de prestação do serviço: E-mail, telefone e presencial Locais de prestação do serviço: Qualquer CEAC Sistema de agendamento para atendimento presencial: Pelo Agenda Fácil: https://agendafacil.se.gov.br/#/ ou por ordem de chegada Canais de relacionamento: Telefone: 79 3216-7000 (Opção 1) E-mail: gedat@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#consultar_negativacao_serasa",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Consultas Tributárias",
+        "descricao": "Descrição do serviço: Emissão de Parecer Consultivo sobre as consultas formais solicitadas pelos usuários. Legislação vinculada: Lei 7.651/2013. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Onde solicitar o serviço: Via E-doc. Forma de prestação do serviço: Online. Requisitos: Nome ou razão social do consulente; Número de inscrição estadual, se for o caso; Endereço do consulente, telefone/fax e e-mail; A matéria de direito e/ou de fato objeto da consulta; Se já ocorreu ou não o fato gerador da obrigação tributária; O entendimento do consulente sobre a matéria e, se for o caso, os procedimentos que adotou; Declaração de que a consulente não se enquadra nas hipóteses do art. 145 deste regulamento. Prazo para conclusão do serviço: 45 dias Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: Fazer a solicitação via E-doc: https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#consultas_tributarias2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Confirmação de pagamento de Imposto/Taxa",
+        "descricao": "Descrição/Finalidade do serviço: Solicitação de confirmação de pagamento de imposto/taxa, quando esta não aparece no sistema. Área responsável pelo serviço: GERAR - Gerência de Arrecadação Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Legislação vinculada ao serviço: Lei 9.357 de 29/12/2023 Passo a passo: Confirmar o pagamento pelo link: https://www.sefaz.se.gov.br/SitePages/consulta_publica_DAE.aspx Canais de relacionamento: Telefones: 3216-7323 / 3216-7249 / 3216-7333 E-mail: gerar@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#confirmacao_pagamento_imposto_taxa",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Serviços Gerais"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de Nota Fiscal Avulsa",
+        "descricao": "Legislação vinculada: Art. 225-A. do RICMS/SE Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Pessoa física e não contribuinte: Comprovante de residência, Documento de identificação. Pessoa jurídica: CNPJ Onde solicitar o serviço: Pelo site: https://www.sefaz.se.gov.br/SitePages/servico_frame.aspx (Acesso via login e senha) Forma de prestação do serviço: Site da SEFAZ / Portal do contribuinte MEI Canais de relacionamento: Telefone: 79 3216-7321 E-mail: dfe@fazenda.se.gov.br Passo a passo: 1 - Enviar documentação por e-mail; 2 - Emitir a NFAe pelo site da Sefaz: Link para emissão",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_nf_avulsa",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Documentos Fiscais Eletrônicos"
+          }
+        ]
+      },
+      {
+        "titulo": "Cancelamento de Documentos Fiscais Eletrônicos",
+        "descricao": "Descrição do serviço: Cancelamento do NFA-e, dentro do prazo de 24 horas da emissão. Legislação vinculada: Conferir legislação vigente. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos: Número da NFAe; Chave de acesso ou DANFE da NFAe Onde solicitar o serviço: https://www.sefaz.se.gov.br/SitePages/servico_frame.aspx Forma de prestação do serviço: No site \"NFAe\" Canais de relacionamento: Telefone: 79 3216-7321 E-mail: dfe@fazenda.se.gov.br Passo a passo: 1 - No site (Emissor da NFAe), acessar a aba “Cancelamento”.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#cancelamento_nfa_e",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Documentos Fiscais Eletrônicos"
+          }
+        ]
+      },
+      {
+        "titulo": "Cancelamento extemporâneo de Documentos Fiscais Eletrônicos",
+        "descricao": "Descrição do serviço: Cancelamento do NFA-e, após o prazo de 24 horas da emissão. Legislação vinculada: Conferir legislação vigente. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Número da NFAe; Chave de acesso da NFAe ou DANFE da NFAe; Descritivo do motivo. Onde solicitar o serviço: Via E-doc Forma de prestação do serviço: E-doc, pelo link: https://www.edocsergipe.se.gov.br/protocolo-externo/ Prazo para conclusão do serviço: Em média 30 dias Canais de relacionamento: Telefone: 79 3216-7321 E-mail: dfe@fazenda.se.gov.br Passo a passo: 1 - Acessar o E-doc; 2 - Em “novo protocolo”, detalhar o motivo e anexar documentos; 3 - Enviar e aguardar o retorno por e-mail.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#cancelamento_extemporaneo_nfae",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Documentos Fiscais Eletrônicos"
+          }
+        ]
+      },
+      {
+        "titulo": "Autorizar AIDF (Empresas com vendas fora do estabelecimento)",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Possibilitar a empresa emitir NF-e para contribuintes fora do estabelecimento. Legislação vinculada ao serviço: Regulamento: 21400/2002 Requisitos exigidos do usuário: Apresentar IE e estar em dia com obrigações fiscais Formas de prestação do serviço: Online, via e-mail: dfe@fazenda.se.gov.br Canais de relacionamento: Telefone: E-mail: dfe@fazenda.se.gov.br Passo a passo: Realizar a solicitação pelo e-mail dfe@fazenda.se.gov.br e aguardar retorno.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#autorizar_aidf",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Documentos Fiscais Eletrônicos"
+          }
+        ]
+      },
+      {
+        "titulo": "Comunicar enquadramento no Simples",
+        "descricao": "Descrição do serviço: Atualizar cadastro da empresa na SEFAZ. Legislação vinculada: Resolução CGSB nº 140/2018. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Requisitos exigidos do usuário: CNPJ da empresa. Onde solicitar o serviço: Telefone, e-mail. Forma de prestação do serviço: Telefone, e-mail. Onde acompanhar o serviço: Pelo portal do contribuinte: Acesse aqui . Prazo para conclusão do serviço: Em média 2 dias úteis. Canais de relacionamento: Telefone: 79 3216-7405 / 79 3216-7016 E-mail: simples.nacional@fazenda.se.gov.br Passo a passo: Enviar e-mail ao setor com a solicitação.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#comunicar_enquadramento",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Simples Nacional"
+          }
+        ]
+      },
+      {
+        "titulo": "Comunicar contestação contra a exclusão do Simples",
+        "descricao": "Descrição do serviço: Revisar motivos da exclusão. Legislação vinculada: Resolução CGSB nº 140/2018. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Requisitos exigidos do usuário: CNPJ da empresa; Documentos comprobatórios da contestação. Onde solicitar o serviço: E-doc. Forma de prestação do serviço: E-doc. Onde acompanhar o serviço: E-doc. Prazo para conclusão do serviço: Em média 5 dias úteis. Canais de relacionamento: Telefone: 79 3216-7405 / 79 3216-7016 E-mail: simples.nacional@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#contestacao_exclusao",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Simples Nacional"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar regularização de omissões de DASMEI",
+        "descricao": "Descrição do serviço: Retirar as omissões geradas pela SEFAZ. Legislação vinculada: Resolução CGSB nº 140/2018. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Requisitos exigidos do usuário: CNPJ da empresa. Onde solicitar o serviço: Telefone; E-mail. Forma de prestação do serviço: Telefone; E-mail. Onde acompanhar o serviço: Pelo portal do contribuinte: Acesse aqui . Prazo para conclusão do serviço: Em média 2 dias úteis. Canais de relacionamento: Telefone: 79 3216-7405 / 79 3216-7016 E-mail: simples.nacional@fazenda.se.gov.br Passo a passo: Enviar e-mail ao setor com a solicitação.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#regularizacao_dasmei",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Simples Nacional"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar regularização de omissões de PGDAS-D",
+        "descricao": "Descrição do serviço: Retirar as omissões geradas pela SEFAZ. Legislação vinculada: Resolução CGSB nº 140/2018. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Requisitos exigidos do usuário: CNPJ da empresa. Onde solicitar o serviço: Telefone; E-mail. Forma de prestação do serviço: Telefone; E-mail. Onde acompanhar o serviço: Pelo portal do contribuinte: Acesse aqui . Prazo para conclusão do serviço: Em média 2 dias úteis. Canais de relacionamento: Telefone: 79 3216-7405 / 79 3216-7016 E-mail: simples.nacional@fazenda.se.gov.br Passo a passo: Enviar e-mail ao setor com a solicitação.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#regularizacao_pgdas",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Simples Nacional"
+          }
+        ]
+      },
+      {
+        "titulo": "Comunicar exclusão do Simples",
+        "descricao": "Descrição do serviço: Atualizar cadastro da empresa na SEFAZ. Legislação vinculada: Resolução CGSB nº 140/2018. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Requisitos exigidos do usuário: CNPJ da empresa. Onde solicitar o serviço: Telefone; E-mail. Forma de prestação do serviço: Telefone; E-mail. Onde acompanhar o serviço: Pelo portal do contribuinte: Acesse aqui . Prazo para conclusão do serviço: Em média 2 dias úteis. Canais de relacionamento: Telefone: 79 3216-7405 / 79 3216-7016 E-mail: simples.nacional@fazenda.se.gov.br Passo a passo: Enviar e-mail ao setor com a solicitação.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#exclusao_simples",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Simples Nacional"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitar liberação de pendência em solicitação de opção pelo Simples",
+        "descricao": "Descrição do serviço: Deferimento da solicitação de opção. Legislação vinculada: Resolução CGSB nº 140/2018. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Requisitos exigidos do usuário: CNPJ da empresa. Onde solicitar o serviço: Telefone; E-mail. Forma de prestação do serviço: Telefone; E-mail. Onde acompanhar o serviço: Pelo portal do contribuinte: Acesse aqui . Prazo para conclusão do serviço: Em média 2 dias úteis. Canais de relacionamento: Telefone: 79 3216-7405 / 79 3216-7016 E-mail: simples.nacional@fazenda.se.gov.br Passo a passo: Enviar e-mail ao setor com a solicitação.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#liberacao_pendencia",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Simples Nacional"
+          }
+        ]
+      },
+      {
+        "titulo": "Dúvidas Frequentes",
+        "descricao": "Para esclarecer dúvidas frequentes sobre o ITCMD, visite a página oficial: Portal ITCMD .",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#duvidas_frequentes_itcmd",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ITCMD"
+          }
+        ]
+      },
+      {
+        "titulo": "Entrada - Declaração De ITCMD Inter Vivos - Protocolo Virtual",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Entrada no processo de ITCMD. Legislação vinculada ao serviço: Consultar no link: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Forms/AllItems.aspx Requisitos exigidos do usuário (documentos, dados adicionais, custos): ITCMD INTER VIVOS I (Excedente de Meação/ Quinhão decorrente de Inventário ou Sobrepartilha; Instituição de Usufruto; Doação Pura e Simples e outras). Documentos a serem protocolados, obedecendo à seguinte ordem: 1. DECLARAÇÃO DO ITCMD “INTER VIVOS I” (Excedente de Meação/ Quinhão decorrente de Inventário ou Sobrepartilha; Instituição de Usufruto; Doação Pura e Simples e outras), a ser emitida através do site: www.sefaz.se.gov.br, acessando SERVIÇOS ⇒MANUAIS DE SERVIÇO ⇒ PORTAL DO ITCMD ⇒ TIPO DE PROCESSO ⇒ Inter Vivos (Doação) ⇒ Processo de Doação Inter Vivos I ⇒ DECLARAÇÃO DO ITCMD. A declaração deverá ser impressa em 03 (três) vias originais, assinadas pelo responsável, conforme documento de identificação. As três vias deverão ser assinadas, uma a uma, devendo constar em todas as vias, a assinatura original do contribuinte ou seu representante legal, pois não aceitamos cópia. Nota 1: Caso a Declaração seja assinada pelo representante legal, apresentar a procuração respectiva. Nota 2: O Manual de Preenchimento da Declaração do ITCMD “INTER VIVOS I” (Excedente de Meação/ Quinhão decorrente de Inventário ou Sobrepartilha; Instituição de Usufruto; Doação Pura e Simples e outras), encontra-se disponível no site: www.sefaz.se.gov.br, acessando SERVIÇOS ⇒ MANUAIS DE SERVIÇO ⇒ PORTAL ITCMD ⇒ TIPO DE PROCESSO ⇒ Inter Vivos (Doação) ⇒ Processo de Doação Inter Vivos I ⇒ MANUAL DE PREENCHIMENTO DA DECLARAÇÃO. 2. DAE(‘s) – Documento(s) de Arrecadação Estadual devidamente quitado(s). Nota 1: O DAE encontra-se disponível para emissão no site da SEFAZ: www.sefaz.se.gov.br, acessando SERVIÇOS ⇒ MANUAIS DE SERVIÇO ⇒ PORTAL DO ITCMD ⇒ TIPO DE PROCESSO ⇒ Inter Vivos (Doação) ⇒ Processo de Doação Inter Vivos I ⇒ EMISSÃO DE DAE PARA PAGAMENTO À VISTA. Nota 2: No campo “observação”, informar o nome e o CPF do doador. Nota 3: Em se tratando de pagamento a menor do imposto devido, o contribuinte deverá emitir o DAE Complementar, através do site da SEFAZ: www.sefaz.se.gov.br, acessando SERVIÇOS ⇒ MANUAIS DE SERVIÇO ⇒ PORTAL DO ITCMD ⇒ TIPO DE PROCESSO ⇒ Inter Vivos (Doação) …",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#entrada_decl_itcmd_inter_vivos",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ITCMD"
+          }
+        ]
+      },
+      {
+        "titulo": "Entrada - Declaração DE ITCMD Causa Mortis - Protocol",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Descrição/Finalidade do serviço: Entrada no processo de ITCMD. Legislação vinculada ao serviço: Consultar no link: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Forms/AllItems.aspx Requisitos exigidos do usuário (documentos, dados adicionais, custos): ITCMD CAUSA MORTIS Inventário/ Sobrepartilha (por via judicial) Documentos a serem protocolados, obedecendo à seguinte ordem: 1. DECLARAÇÃO DO ITCMD “CAUSA MORTIS” (Inventário/ Sobrepartilha), a ser emitida através do site: www.sefaz.se.gov.br, acessando SERVIÇOS ⇒ MANUAIS DE SERVIÇO ⇒ PORTAL DO ITCMD ⇒ TIPO DE PROCESSO ⇒ Causa Mortis (Herança) ⇒ DECLARAÇÃO DO ITCMD. A declaração deverá ser impressa em 03 (três) vias originais, assinadas pelo responsável, conforme documento de identificação. As três vias deverão ser assinadas, uma a uma, devendo constar em todas as vias a assinatura original do inventariante ou seu representante legal, pois não aceitamos cópia. Nota 1: Para cada fato gerador (evento morte), emite-se uma DECLARAÇÃO DO ITCMD “CAUSA MORTIS” (Inventário/ Sobrepartilha). Nota 2: Caso a Declaração seja assinada pelo representante legal, apresentar a procuração respectiva. Nota 3: O Manual de Preenchimento da Declaração do ITCMD “CAUSA MORTIS” (Inventário/ Sobrepartilha), encontra-se disponível no site: www.sefaz.se.gov.br, acessando SERVIÇOS ⇒ MANUAIS DE SERVIÇO ⇒ PORTAL DO ITCMD ⇒ TIPO DE PROCESSO ⇒ Causa Mortis (Herança) ⇒ MANUAL DE PREENCHIMENTO DA DECLARAÇÃO. 2. DAE(‘s) – Documento(s) de Arrecadação Estadual devidamente quitado(s). Nota 1: O DAE encontra-se disponível para emissão no site da SEFAZ: www.sefaz.se.gov.br , acessando SERVIÇOS ⇒ MANUAIS DE SERVIÇO ⇒ PORTAL DO ITCMD ⇒ TIPO DE PROCESSO ⇒ Causa Mortis (Herança) ⇒ EMISSÃO DE DAE PARA PAGAMENTO À VISTA. Nota 2: Deverão ser emitidos tantos DAE’s quantos herdeiros houver, independente da quantidade de bens contidos no quinhão legal de cada herdeiro, ou seja, o DAE deverá ser emitido por herdeiro e não por bem. Nota 3: Ressaltamos que, a data do fato gerador é a data do falecimento. Nota 4: Ao emitir o DAE, informar como base de cálculo, o valor do “Quinhão Legal” de cada herdeiro, conforme constante na DECLARAÇÃO DO ITCMD “CAUSA MORTIS” (Inventário/ Sobrepartilha), campo 8 – coluna Meação/ Quinhão Legal. Ressaltamos que “Quinhão Legal”, corresponde à soma total dos valores dos …",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#entrada_decl_itcmd_causa_mortis",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ITCMD"
+          }
+        ]
+      },
+      {
+        "titulo": "Atualização de valores de bens para cálculo do ITCMD",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Atualização De Valores De Bens Para Cálculo Do ITCMD. Legislação vinculada ao serviço: Consultar no link Forma de prestação do serviço: Online, pelo link Onde solicitar o serviço: Link Canais de relacionamento: Telefone: 3216-7272 | 3216-7273 E-mail: itcmd@fazenda.se.gov.br Passo a passo: 1- Acessar o link 2- Preencher as informações requisitadas.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#atualizacao_valores_bens_itcmd",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ITCMD"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de pedido de Reanálise de Processos Fiscais",
+        "descricao": "Área responsável pelo serviço: GECAP - Gerência de Suporte, Controle e Acompanhamento de Processos. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Solicitação de reanálise de débitos de Processos Fiscais, quando o contribuinte entende que existe incorreção na atribuição de um débito inscrito em dívida ativa com valor até 671 UFPs. Legislação vinculada ao serviço: Lei 9.357 de 29/12/2023 Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Ter sido autuado na SEFAZ/SE; - Ter débitos inscritos em dívida ativa Forma de prestação do serviço: E-doc; Domicílio Eletrônico - DEH. Onde solicitar o serviço: E-doc ou domicílio eletrônico (DEH). Prazo para conclusão do serviço: Em média 180 dias Canais disponíveis para acompanhamento do serviço: Via protocolo gerado pelo e-doc ou telefone. Canais de relacionamento: Telefone: 3216-7215 E-mail: gercat@fazenda.se.gov.br Passo a passo: 1- Após ser autuado, o contribuinte será citado via AR, DEH ou Diário Eletrônico e terá 30 dias úteis para apresentar a defesa, via DEH ou E-doc.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#reanalise_processos_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de pedido de Reconsideração de Processos Fiscais",
+        "descricao": "Área responsável pelo serviço: GECAP - Gerência de Suporte, Controle e Acompanhamento de Processos. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Descrição/Finalidade do serviço: Solicitação de Pedido de Reconsideração de débitos de Processos Fiscais, quando o contribuinte entende que existe incorreção na atribuição de um débito inscrito em dívida ativa com valor maior que 671 UFPs. Legislação vinculada ao serviço: Lei 9.357 de 29/12/2023 . Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Ter sido autuado na SEFAZ/SE; - Ter débitos inscritos em dívida ativa Forma de prestação do serviço: E-doc; Domicílio Eletrônico - DEH. Onde solicitar o serviço: E-doc ou caixa postal do contribuinte Prazo para conclusão do serviço: Em média 60 dias Canais disponíveis para acompanhamento do serviço: Via protocolo gerado pelo e-doc ou telefone Canais de relacionamento: Telefone: 3216-7215 E-mail: gercat@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#reconsideracao_processos_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de pedido de Revisão de julgamento de Processos Fiscais",
+        "descricao": "Área responsável pelo serviço: GECAP - Gerência de Suporte, Controle e Acompanhamento de Processos. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Solicitação de Revisão de Resultado de julgamento de processos Fiscais, com valor até 671 UFPs, até 15 dias úteis após a decisão em primeira instância, quando o contribuinte discordar ou precisar de esclarecimento acerca do resultado do julgamento. Legislação vinculada ao serviço: Lei 9.357 de 29/12/2023 Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Ter sido autuado na SEFAZ/SE Forma de prestação do serviço: E-doc; Domicílio Eletrônico - DEH. Onde solicitar o serviço: E-doc ou domicílio eletrônico (DEH) Canais disponíveis para acompanhamento do serviço: Via protocolo gerado pelo e-doc; Caixa Postal do Contribuinte. Canais de relacionamento: Telefone: 3216-7215 E-mail: gercat@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#revisao_julgamento_processos_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Defesa de Processos Fiscais",
+        "descricao": "Área responsável pelo serviço: GECAP - Gerência de Suporte, Controle e Acompanhamento de Processos. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Quando o contribuinte autuado pretende se defender da autuação, pode entrar com a Defesa em até 30 dias úteis, após a ciência do Processo Fiscal. Legislação vinculada ao serviço: Lei 9.357 de 29/12/2023 Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Ter sido autuado na SEFAZ/SE Forma de prestação do serviço: E-doc; Domicílio Eletrônico - DEH. Onde solicitar o serviço: E-doc; Caixa Postal do Contribuinte. Canais disponíveis para acompanhamento do serviço: Via protocolo gerado pelo e-doc; Telefone. Canais de relacionamento: telefone: 3216-7215 / 3216-7365 e-mail: gercat@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#defesa_processos_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Recurso de Processos Fiscais",
+        "descricao": "Área responsável pelo serviço: GECAP - Gerência de Suporte, Controle e Acompanhamento de Processos. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Após julgamento em primeira instância e possuindo o Resultado Procedente Total ou Procedente em Parte, a empresa autuada pode entrar com recurso até 15 dias úteis, após o resultado do julgamento singular. Legislação vinculada ao serviço: Lei 9.357 de 29/12/2023 Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Ter sido autuado na SEFAZ/SE Forma de prestação do serviço: E-doc; Domicílio Eletrônico - DEH. Onde solicitar o serviço: E-doc; Caixa Postal do Contribuinte. Canais disponíveis para acompanhamento do serviço: Via protocolo gerado pelo e-doc; Telefone. Canais de relacionamento: telefone: 3216-7215 / 3216-7365 e-mail: gercat@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#recurso_processos_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Recurso Especial de Processos Fiscais",
+        "descricao": "Área responsável pelo serviço: GECAP - Gerência de Suporte, Controle e Acompanhamento de Processos. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Após julgamento em segunda instância e tendo o Resultado Procedente Total ou Procedente em Parte, a empresa autuada pode entrar com Recurso Especial, até 15 dias úteis após o resultado do julgamento colegiado. Legislação vinculada ao serviço: Lei 9.357 de 29/12/2023 Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Ter sido autuado na SEFAZ/SE Forma de prestação do serviço: E-doc; Domicílio Eletrônico - DEH. Onde solicitar o serviço: E-doc; Caixa Postal do Contribuinte. Canais disponíveis para acompanhamento do serviço: Via protocolo gerado pelo e-doc; Telefone. Canais de relacionamento: telefone: 3216-7215 / 3216-7365 e-mail: gercat@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#recurso_especial_processos_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir certidão negativa e de baixa",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Solução de pendências impeditivas para emissão das certidões. Legislação vinculada ao serviço: Regulamento 21400/2002 Online, pelo site: https://www.sefaz.se.gov.br/SitePages/certidoes.aspx Presencialmente. Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documentos: Inscrição estadual, CPF ou CNPJ. Forma de prestação do serviço: Online, pelo site: https://www.sefaz.se.gov.br/SitePages/certidoes.aspx Presencialmente. Onde solicitar o serviço: Presencial; Site: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=9&Url=https%3a//sic-certidao-negativa.apps.sefaz.se.gov.br/emissao&ShowBanner=1 Alternativa de atendimento: Presencial. Local de atendimento: Qualquer CEAC. Canais de relacionamento: telefone: e-mail: ipva@fazenda.se.gov.br Passo a passo: Realizar o serviço pelo site: https://www.sefaz.se.gov.br/SitePages/emissao.aspx Em caso de pendências, procurar o CEAC mais próximo.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emitir_certidao_negativa_e_de_baixa",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Manual Inscrição de Créditos não Tributários na Dívida Ativa",
+        "descricao": "Para acessar clique aqui .",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#manual_inscricao_creditos",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Contencioso"
+          }
+        ]
+      },
+      {
+        "titulo": "Liberação de importação (Exoneração de ICMS)",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Exoneração de ICMS na importação de mercadorias Legislação vinculada ao serviço: Regulamento 21400/2002 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Nota Fiscal Eletrônica Declaração de Importação Invoice (Nota fiscal estrangeira) Forma de prestação do serviço: Online, pelo site: https://www.sefaz.se.gov.br/SitePages/protocolovirtual.aspx Onde solicitar o serviço: Pelo e-doc, pelo link: https://www.sefaz.se.gov.br/SitePages/protocolovirtual.aspx Canais disponíveis para acompanhamento do serviço: Pelo E-doc Passo a passo: Faça o download da Guia de Liberação de Mercadoria Estrangeira pelo link: https://www.sefaz.se.gov.br/Biblioteca%20de%20Servicos/ICMS/GLME.doc Preencha a guia. Após o preenchimento, envie através do serviço de Protocolo Virtual em um único anexo no formato PDF, com tamanho máximo de 20Mb, juntamente com os documentos exigidos.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#liberacao_importacao_icms",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção ICMS PCD (Condutor)",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Solicitar Isenção de ICMS para PCD Legislação vinculada ao serviço: Regulamento 21400/2002 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Laudo médico do Detran/SE - Permanente Carteira Nacional de Habilitação (CNH) Comprovante de residência (água, luz ou energia) em nome do condutor Termo de responsabilidade da concessionária (isenção total de ICMS até R$ 70.000,00 e entre R$ 70.000,01 e R$ 120.000,00 paga o proporcional) Declaração do Imposto de Renda comprovando renda - Sergipe Autorização do IPI - Receita Federal Certidão negativa de débito estadual - SEFAZ Taxas de ICMS / IPVA - SEFAZ Certidão de quitação eleitoral dos condutores e não condutores - TRE (últimos 2 anos) Forma de prestação do serviço: Online, pelo site: Clique aqui Onde solicitar o serviço: Pelo site da SEFAZ: Clique aqui Canais disponíveis para acompanhamento do serviço: Pela senha gerada pelo E-doc, após o pagamento da taxa, ou senha gerada no atendimento presencial Local de atendimento: CEAC Sede Canais de relacionamento: E-mail: ipva@fazenda.se.gv.br ceacaju@fazenda.se.gv.br Passo a passo: Realizar a solicitação pelo site: Clique aqui Realizar o pagamento da taxa e enviar a documentação via E-doc (na aba \"CEAC Isenção\").",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_icms_pcd",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção ICMS TAXISTA",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Solicitar Isenção de ICMS para taxista Legislação vinculada ao serviço: Regulamento 21400/2002 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documentos: Declaração de regularidade de situação do contribuinte individual do INSS (DRSCI) Cadastro Nacional de Informações Sociais Atividades do INSS (CNIS) Carteira Nacional de Habilitação (CNH) com observação \"Exerce Atividade Remunerada\" ou \"EAR\" Comprovante de residência (água, luz ou telefone) Autorização do IPI - Receita Federal Comprovação de 01 (um) ano de ponto Alvará ou declaração da SMTT Declaração da Prefeitura para isenção de ICMS - SMTT Certidão negativa de débito estadual - SEFAZ Taxa de ICMS / IPVA - SEFAZ Forma de prestação do serviço: Online, pelo site: Clique aqui Onde solicitar o serviço: Pelo site da SEFAZ: Clique aqui Canais disponíveis para acompanhamento do serviço: Pela senha gerada pelo E-doc Local de atendimento: CEAC Sede Canais de relacionamento: E-mail: gedat@fazenda.se.gov.br Passo a passo: Realizar a solicitação pelo site: Clique aqui Realizar o pagamento da taxa e enviar a documentação via E-doc (na aba \"CEAC Isenção\").",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_icms_taxista",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de Parecer Deliberativo referente ao ITCMD",
+        "descricao": "Descrição do serviço: Emissão de Parecer Deliberativo deferindo ou indeferindo o pedido de isenção, restituição ou imunidade do ITCMD. Legislação vinculada: Leis estaduais 2.704/1989, 7.724/2013 e CF/1988. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos pelo usuário: Pedido formal via E-doc Documentos listados: Para Intervivos 1: Clique aqui Para Intervivos 2 (Judicial): Clique aqui Para Intervivos (Extrajudicial): Clique aqui Para Causa Mortis (Judicial): Clique aqui Para Causa Mortis (Extrajudicial): Clique aqui Prazo para conclusão do serviço: Em média 30 (trinta) dias Onde solicitar o serviço: Via E-doc Forma de prestação do serviço: E-doc Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: Fazer a solicitação via E-doc: Clique aqui",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#parecer_deliberativo_itcmd",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Análise da Concessão do Apoio Fiscal do PSDI",
+        "descricao": "Descrição do serviço: Emissão de Parecer referente ao PSDI deferindo ou indeferindo pedido de apoio fiscal a ser concedido pelo CDI/SEDETEC. Legislação vinculada: Lei Estadual nº 3.140/1991. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Forma de prestação do serviço: Online. Requisitos: Documentação requisitada pela CODISE/SEDETEC. Onde solicitar o serviço: Via E-doc Prazo para conclusão do serviço: 5 (cinco) dias Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: Fazer a solicitação via E-doc: https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf .",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#analise_apoio_fiscal_psdi",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Regime Especial de Tributação",
+        "descricao": "Descrição do serviço: Concessão de Termos de Acordo e Termos de Autorização ao Contribuinte. Legislação vinculada: Arts. 52 a 56 da Lei 3.796/96 e art. 131 do RICMS. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Onde solicitar o serviço: Via E-doc Forma de prestação do serviço: Online Requisitos: Pedido anexando Contrato Social Demais documentações necessárias, de acordo com o decreto que se enquadra cada tipo de contribuinte (em caso de dúvidas, entrar em contato pelo telefone do setor) Pagamento de taxa (ver Art. 133 do RICMS) Prazo para conclusão do serviço: 15 dias Canais de relacionamento: Telefone: 3216-7375 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: Fazer a solicitação do serviço por meio do Protocolo do E-doc - Gerenciador Eletrônico de Documentos e Processos: Clique aqui Após o envio das documentações, aguardar contato para comparecer presencialmente para assinatura dos documentos.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#regime_especial_tributacao",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Imunidade e Isenção de ITCMD",
+        "descricao": "Descrição do serviço: Emissão de Parecer Deliberativo deferindo ou indeferindo o pedido. Legislação vinculada: Lei 7.724/2013 Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos: Documentos comprobatórios do pedido. Ver Decreto nº 29.994/2015: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Decretos/2015/dec29994-15.pdf Prazo para conclusão do serviço: 90 dias Onde solicitar o serviço: Via E-doc. Forma de prestação do serviço: Online. Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: 1- Fazer a solicitação do serviço por meio do Protocolo do e-DOC - Gerenciador Eletrônico de Documentos e Processos; https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf . 2- Aguardar resultado do parecer pelo e-mail informado.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#imunidade_isencao_itcmd",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Elaboração de Parecer Relativo a Créditos Fiscais",
+        "descricao": "Descrição do serviço: Análise do pedido e emissão de Parecer deliberativo deferindo ou indeferindo o crédito fiscal. Legislação vinculada: Art.117 do RICMS. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Onde solicitar o serviço: Via E-doc. Forma de prestação do serviço: Online. Requisitos: Documentação comprobatória da alegação. Ver Lei complementar 123/2006. https://www.planalto.gov.br/ccivil_03/LEIS/LCP/Lcp123.htm Prazo para conclusão do serviço: 45 dias Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: 1- Fazer a solicitação do serviço por meio do Protocolo do e-DOC - Gerenciador Eletrônico de Documentos e Processos; https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf . 2- Aguardar resultado do parecer pelo Domicílio Eletrônico.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#parecer_creditos_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Análise de Pedidos de Benefícios Fiscais",
+        "descricao": "Descrição do serviço: Emissão de Nota técnica acerca do pedido do novo benefício. Legislação vinculada: Art.117 do RICMS. Área responsável pelo serviço: GEROT - Gerência de Orientação Tributária Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Onde solicitar o serviço: Via E-doc. Forma de prestação do serviço: Online. Requisitos: 1- Documento de identificação; 2- Documentação comprobatória da alegação. Prazo para conclusão do serviço: 45 dias Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: 1- Fazer a solicitação do serviço por meio do Protocolo do e-DOC - Gerenciador Eletrônico de Documentos e Processos; https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf . 2- Aguardar resultado do parecer pelo Domicílio Eletrônico.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#analise_beneficios_fiscais",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Pagamento de DAE para antecipação tributária",
+        "descricao": "Descrição/Finalidade do serviço: Pagamento de DAE para antecipação tributária, quando o contribuinte destinatário da mercadoria estiver inapto. Legislação vinculada: Instrução normativa 0017/2023 Área responsável pelo serviço: Gerência de Fiscalização de Trânsito de Mercadorias – GERAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Ter nota fiscal registrada no sistema SIT; Estar inapto. Forma de prestação do serviço: Presencial e online Locais físicos de prestação do serviço: Postos fiscais e transportadoras credenciadas Onde solicitar o serviço: Site da Sefaz \"Emitir DAE\": https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https://sae-emissao-dae.apps.sefaz.se.gov.br/emissao/avulso/&ShowBanner=1 Canais de relacionamento: Telefone: 3216-7447 3216-7446 3216-7450 E-mail: gerat@fazenda.se.gov.br Passo a passo: 1- Emitir DAE 2- Realizar pagamento. OBS: O serviço também pode ser realizado via CEAC.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#pagamento_dae_antecipacao",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Pagamento de DAE para DIFAL",
+        "descricao": "Legislação vinculada: Emenda Constitucional 87/2015 C/C Lei complementar 190/2022 Área responsável pelo serviço: Gerência de Fiscalização de Trânsito de Mercadorias – GERAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Forma de prestação do serviço: Online Locais físicos de prestação do serviço: Postos fiscais e transportadoras credenciadas Onde solicitar o serviço: Site da Sefaz \"Emitir DAE\": https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https://sae-emissao-dae.apps.sefaz.se.gov.br/emissao/avulso/&ShowBanner=1 Canais de relacionamento: Telefone: 3216-7447 3216-7446 3216-7450 E-mail: gerat@fazenda.se.gov.br Passo a passo: 1- Emitir DAE 2- Realizar pagamento.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#pagamento_dae_difal",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de DAE para pagamento de antecipação tributária",
+        "descricao": "Descrição/Finalidade do serviço: Emissão de DAE para pagamento de antecipação tributária, quando o contribuinte destinatário da mercadoria estiver inapto. Legislação vinculada: Instrução normativa 0017/2023 Área responsável pelo serviço: Gerência de Fiscalização de Trânsito de Mercadorias – GERAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Apresentar número da etiqueta ou chave da nota fiscal Forma de prestação do serviço: Presencial e online Locais físicos de prestação do serviço: Postos fiscais e transportadoras credenciadas Onde solicitar o serviço: Site da SEFAZ - \"Emitir DAE\": Clique aqui Canais de relacionamento: Telefone: 3216-7447 3216-7446 3216-7450 E-mails dos postos fiscais: Cristinápolis: pfcristinapolis@fazenda.se.gov.br Propriá: pfpropria@fazenda.se.gov.br Carira: pfcarira@fazenda.se.gov.br Simão Dias: pfsimaodias@fazenda.se.gov.br E-mail GERAT: gerat@fazenda.se.gov.br Passo a passo: Acessar o site da SEFAZ Ir em \"Acesso\" Logar com o certificado digital Acessar \"Escrituração Digital\" Emitir DAE",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_dae_antecipacao",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de DAE para quitação auto de infração",
+        "descricao": "Descrição/Finalidade do serviço: Emissão de DAE para quitação de auto de infração, para regularizar a situação fiscal. Legislação vinculada: Art. 72 da Lei 3796/96 Área responsável pelo serviço: Gerência de Fiscalização de Trânsito de Mercadorias – GERAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Apresentar o número do auto de infração Forma de prestação do serviço: Presencial e online Locais físicos de prestação do serviço: Postos fiscais e CEACs Onde solicitar o serviço: Site da SEFAZ - \"Emitir DAE\": Clique aqui Canais de relacionamento: Telefone: 3216-7447 3216-7446 3216-7450 E-mails dos postos fiscais: Cristinápolis: pfcristinapolis@fazenda.se.gov.br Propriá: pfpropria@fazenda.se.gov.br Carira: pfcarira@fazenda.se.gov.br Simão Dias: pfsimaodias@fazenda.se.gov.br Correios: pfcorreios@fazenda.se.gov.br E-mail GERAT: gerat@fazenda.se.gov.br Passo a passo: Acessar o site da SEFAZ Ir em \"Acesso\" Logar com o certificado digital Acessar \"Processos Fiscais\" Emitir DAE",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_dae_quitacao_auto_infracao",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de DAE para quitação auto de infração",
+        "descricao": "Descrição/Finalidade do serviço: Emissão de DAE para quitação de auto de infração, para regularizar a situação fiscal. Legislação vinculada: Art. 72 da Lei 3796/96 Área responsável pelo serviço: Gerência de Fiscalização de Trânsito de Mercadorias – GERAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Apresentar o número do auto de infração Forma de prestação do serviço: Presencial e online Locais físicos de prestação do serviço: Postos fiscais e CEACs Onde solicitar o serviço: Site da SEFAZ - \"Emitir DAE\": Clique aqui Canais de relacionamento: Telefone: 3216-7447 3216-7446 3216-7450 E-mails dos postos fiscais: Cristinápolis: pfcristinapolis@fazenda.se.gov.br Propriá: pfpropria@fazenda.se.gov.br Carira: pfcarira@fazenda.se.gov.br Simão Dias: pfsimaodias@fazenda.se.gov.br Correios: pfcorreios@fazenda.se.gov.br E-mail GERAT: gerat@fazenda.se.gov.br Passo a passo: Acessar o site da SEFAZ Ir em \"Acesso\" Logar com o certificado digital Acessar \"Processos fiscais\" Emitir DAE",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_dae_quitacao_auto_infracao_duplicado",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Emitir declaração de recolhimento de ICMS",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Emitir declaração de recolhimento de ICMS para comprovar regularidade Legislação vinculada ao serviço: Regulamento 21400/2002 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documentos: Inscrição estadual, CPF ou CNPJ Forma de prestação do serviço: Online, pelo link: Clique aqui Onde solicitar o serviço: Presencial Site: Clique aqui Alternativa de atendimento: Presencial Local de atendimento: Qualquer CEAC Canais de relacionamento: E-mail: geinf@fazenda.se.gov.br Passo a passo: Realizar o serviço pelo site: Clique aqui Em caso de pendências, procurar o CEAC mais próximo",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emitir_declaracao_recolhimento_icms",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Reemitir declaração de recolhimento de ICMS",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Reemitir declaração de recolhimento de ICMS para comprovar regularidade Legislação vinculada ao serviço: Regulamento 21400/2002 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Nº da Declaração Autenticação Forma de prestação do serviço: Online, pelo link: Clique aqui Onde solicitar o serviço: Presencial Site: Clique aqui Alternativa de atendimento: Presencial Local de atendimento: Qualquer CEAC Canais de relacionamento: E-mail: geinf@fazenda.se.gov.br Passo a passo: Realizar o serviço pelo site: Clique aqui Em caso de pendências, procurar o CEAC mais próximo",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#reemitir_declaracao_recolhimento_icms",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Manual Demonstrativo de ICMS Antecipado",
+        "descricao": "Para acessar clique aqui .",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#manual_demonstrativo_icms_antecipado",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "ICMS"
+          }
+        ]
+      },
+      {
+        "titulo": "Cadastro de contribuinte não inscrito",
+        "descricao": "Área responsável pelo serviço: GECRET Subsecretaria responsável pelo serviço: SURE Descrição/Finalidade do serviço: Cadastramento de contribuinte não inscrito para quitação de débitos. Legislação vinculada ao serviço: Regulamento: 21400/2002 Requisitos exigidos do usuário (documentos, dados adicionais, custos): - RG; - CPF; - Comprovante de Residência. Forma de prestação do serviço: Telefone; E-mail. Canais de relacionamento: telefone: 3216-7215 / 3216-7365 e-mail: gercat@sefaz.se.gov.br Passo a passo: Fazer a solicitação por e-mail ou telefone.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#cadastro_contribuinte_nao_inscrito",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Análise de Impugnação de Exclusão do Simples Nacional",
+        "descricao": "Descrição do serviço: Emissão de Parecer Deliberativo acatando ou não os argumentos do Contribuinte. Requisitos: Qualificação do requerente Local, data e endereço do requerente Número de inscrição no CNPJ e no CACESE ou, se for o caso, número do CPF e da carteira de identidade Comprovante do pagamento indevido Motivo de fato e de direito em que se fundamenta a pretensão Prazo para conclusão do serviço: 90 dias Legislação vinculada: Lei complementar 123/2006. Área responsável pelo serviço: GEROT Subsecretaria responsável pelo serviço: SURE Onde solicitar o serviço: Via E-doc. Forma de prestação do serviço: Online. Canais de relacionamento: Telefone: 3216-7313 E-mail: plantaofiscal@fazenda.se.gov.br Passo a passo: 1- Fazer a solicitação do serviço por meio do Protocolo do e-DOC - Gerenciador Eletrônico de Documentos e Processos; https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf . 2- Aguardar resultado do parecer pelo Domicílio Eletrônico.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#analise_impugnacao_exclusao_simples",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Credenciamento de Contabilista",
+        "descricao": "Descrição do serviço: O credenciamento do contabilista é pré-requisito para uma série de atividades a serem realizadas por esse profissional no ambiente informatizado da SEFAZ. Legislação vinculada: Art.163 do Decreto 21.400/02 Área responsável pelo serviço: GEINF Subsecretaria responsável pelo serviço: SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): O Contabilista que pretenda atuar profissionalmente junto à SEFAZ deverá solicitar o credenciamento, acessando o site da SEFAZ na INTERNET, e preencher os campos do Cadastro de Contabilista, com os seguintes dados de identificação pessoal e profissional: - Carteira de Identidade, CPF ou CNPJ, Endereço do Escritório ou da Empresa de Contabilidade; - Número do registro no CRC/SE do Contabilista e/ou Empresa, observado ainda: 1- Somente será credenciado o contabilista habilitado ao exercício da função, e em situação regular junto ao Conselho Regional de Contabilidade – CRC/SE; 2- Os Contabilistas inscritos no CRC de outra Unidade da Federação, que prestem serviços aos contribuintes do Estado de Sergipe, devem ter, obrigatoriamente, inscrição secundária no CRC/SE, além de estar em situação regular junto ao CRC do Estado de origem; 3- A empresa de contabilidade deverá indicar o responsável pelo estabelecimento no ato do credenciamento. Onde solicitar o serviço: Site da Sefaz pelo link: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//security.sefaz.se.gov.br/internet/publico/cleanProcess.jsp&AppName=SIC&TransId=T5678&CancelUrl=paginaInicial.jsp Forma de prestação do serviço: Portal da SEFAZ Serviços Serviços On-line Credenciamento Contabilista/ Solicitar Credenciamento https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//security.sefaz.se.gov.br/internet/publico/cleanProcess.jsp&AppName=SIC&TransId=T5678&CancelUrl=paginaInicial.jsp Onde acompanhar o serviço: Via telefone. Canais de relacionamento: Telefone: 79 3216-7333 E-mail: geinf@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#credenciamento_contabilista",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Credenciamento de Transportadora",
+        "descricao": "Descrição do serviço: A empresa de transporte que pretenda usufruir dos benefícios da dispensa provisória de etiquetagem de notas fiscais e pagamento do imposto devido pelos contribuintes inaptos, nos postos fiscais de fronteira deste Estado, nos moldes do art. 640, V e art. 783, §1º, deste Regulamento, deverá solicitar o credenciamento junto a SEFAZ Legislação vinculada: Art.651-A, §único, do Decreto 21.400/02 Área responsável pelo serviço: GEINF Subsecretaria responsável pelo serviço: SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): A IE da transportadora a ser credenciada deve estar Ativa. Forma de prestação do serviço: Online Onde solicitar o serviço: Site da Sefaz pelo link: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//security.sefaz.se.gov.br/internet/publico/cleanProcess.jsp&AppName=SIC&TransId=T5678&CancelUrl=paginaInicial.jsp Prazo para conclusão do serviço: Em média 72 horas Onde acompanhar o serviço: No portal do contribuinte em \"Solicitações do Usuário\" Canais de relacionamento: Telefone: 79 3216-7333 E-mail: geinf@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#credenciamento_transportadora",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Cadastramento de Contribuinte Substituto",
+        "descricao": "Descrição do serviço: O contribuinte substituto (contribuintes de fora de Sergipe, que recolhem ICMS para o Estado), definido em convênio ou protocolo de atribuição de responsabilidade por substituição tributária, que remete mercadorias para contribuinte localizado no Estado de Sergipe, deverá requerer sua inscrição no CACESE. Legislação vinculada: Art.161 do Decreto 21.400/02 Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documento constitutivo da empresa, devidamente atualizado e, quando se tratar de sociedade por ações, também da ata da última assembléia de designação ou eleição da diretoria; Cópia do CNPJ. Forma de prestação do serviço: Online Onde solicitar o serviço: Portal Agiliza. (agiliza.se.gov.br) Prazo para conclusão do serviço: Em média 72 horas, após o recebimento da documentação pela GEINF Onde acompanhar o serviço: Site da Sefaz, no acesso do usuário. (https://www.sefaz.se.gov.br/SitePages/acesso_usuario.aspx), em \"Protocolo de Solicitação\". Canais de relacionamento: Telefone: 79 3216-7333 E-mail: geinf@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#cadastramento_contribuinte_substituto",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Alteração cadastral de Contribuinte Substituto",
+        "descricao": "Descrição do serviço: O contribuinte substituto após ter realizado seu credenciamento terá a possibilidade de realizar qualquer alteração cadastral por meio do seu acesso ao Portal do Contribuinte. Legislação vinculada: Art.161 do Decreto 21.400/02 Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): O único requisito exigido é estar regularmente credenciado na SEFAZ. Forma de prestação do serviço: Online Onde solicitar o serviço: Portal Agiliza. (agiliza.se.gov.br) Prazo para conclusão do serviço: Em média 72 horas, após o recebimento da documentação pela GEINF Onde acompanhar o serviço: Portal Agiliza. (agiliza.se.gov.br) Canais de relacionamento: Telefone: 79 3216-7333 E-mail: geinf@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#alteracao_cadastral_contribuinte_substituto",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Alteração cadastral para demais contribuintes",
+        "descricao": "Descrição do serviço: O contribuinte que por algum motivo não conseguir realizar sua alteração por meio do Portal Agiliza Sergipe, pode solicitar qualquer alteração cadastral pelo seu acesso ao Portal do Contribuinte. Legislação vinculada: Art.161 do Decreto 21.400/02 Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): O único requisito exigido é estar regularmente credenciado na SEFAZ. Forma de prestação do serviço: Online. Onde solicitar o serviço: Portal Agiliza. (agiliza.se.gov.br) Prazo para conclusão do serviço: Em média 72 horas, após o recebimento da documentação pela GEINF Onde acompanhar o serviço: Portal Agiliza. (agiliza.se.gov.br) Canais de relacionamento: Telefone: 79 3216-7333 E-mail: geinf@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#alteracao_cadastral_demais_contribuintes",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Credenciamento ao Domicílio Eletrônico Habilitado",
+        "descricao": "Para não contribuintes: Descrição do serviço: Credenciamento ao Domicílio Eletrônico Habilitado para contribuintes em inscrição no estado de Sergipe, a fim de facilitar a comunicação com a fazenda. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Ter sido autuado no estado; Ter acesso ao certificado digital A1 ou A3 . Forma de prestação do serviço: Online. Onde solicitar o serviço: Na página da sefaz, no botão superior direito \"Acesso\" ou pelo link: https://www.sefaz.se.gov.br/SitePages/acesso_usuario.aspx Onde acompanhar o serviço: Sistema de Informações do contribuinte por meio do login. Canais de relacionamento: Telefone: 79 3216-7321 E-mail: deh@fazenda.se.gov.br Passo a passo: 1 - Após receber a autuação, acessar o sistema da Sefaz (https://www.sefaz.se.gov.br/SitePages/acesso_usuario.aspx) com o certificado digital. 2- Clicar na opção \"Credenciamento DEH\"; 3- Preencher formulário e finalizar. Para Contribuintes: Descrição do serviço: Credenciamento ao Domicílio Eletrônico Habilitado, para cadastrados no CACESE, a fim de facilitar a comunicação entre contribuinte e fazenda. Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Ser inscrito no cadastro de Contribuinte do Estado de Sergipe (CACESE) nas condições de ativos e inapto, pessoa física e jurídica do interesse da Administração Tributária. Forma de prestação do serviço: Online. Onde solicitar o serviço: Na página da sefaz, no botão superior direito \"Acesso\" ou pelo link: https://www.sefaz.se.gov.br/SitePages/acesso_usuario.aspx Onde acompanhar o serviço: Sistema de Informações do contribuinte por meio do login. Canais de relacionamento: Telefone: 79 3216-7321 E-mail: deh @fazenda.se.gov.br Passo a passo: 1- Ao se inscrever no CACESE, automaticamente ocorre o credenciamento",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#credenciamento_domicilio_eletronico",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de Fiel depositário",
+        "descricao": "Descrição/Finalidade do serviço: Solicitação da guarda da mercadoria retida com DAEs pendentes. Legislação vinculada: Art. 808 e 809 do Regulamento 21400/02 Área responsável pelo serviço: Gerência de Fiscalização de Trânsito de Mercadorias – GERAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Apresentar número da etiqueta ou chave da nota fiscal Forma de prestação do serviço: Presencial e online Locais físicos de prestação do serviço: Postos fiscais e CEACs Onde solicitar o serviço: Pelo e-mail do posto fiscal que gerou a pendência ou pelo e-mail da GERAT Canais de relacionamento: Telefone: 3216-7447 3216-7446 3216-7450 E-mails dos postos fiscais: Cristinápolis: pfcristinapolis@fazenda.se.gov.br Propriá: pfpropria@fazenda.se.gov.br Carira: pfcarira@fazenda.se.gov.br Simão Dias: pfsimaodias@fazenda.se.gov.br Central de Comandos: ctlcomandos@fazenda.se.gov.br E-mail GERAT: gerat@fazenda.se.gov.br Passo a passo: Preencher o requerimento disponível no link: Clique aqui Enviar a solicitação por e-mail",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#solicitacao_fiel_depositario",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de Imunidade do IPVA",
+        "descricao": "Descrição do serviço: Solicitar imunidade de IPVA para Órgãos Públicos, Partidos Políticos, Sindicatos de Trabalhadores, Instituições de Educação, Assistência Social sem fins lucrativos e templos de qualquer culto. Requisitos: Apresentar os seguintes documentos: CRLV - Certificado de Registro de Licenciamento de Veículo (veículo usado) Ofício da instituição Documento de identidade e CPF do presidente CNPJ Legislação vinculada: Art. 110 a 117 do RICMS, art. 24 da Lei 3.796/96 Área responsável pelo serviço: GIPVA Subsecretaria responsável pelo serviço: SURE Onde solicitar o serviço: Via E-doc Forma de prestação do serviço: Online Canais de relacionamento: Protocolo da SEFAZ: (79) 3216-7223 (7h às 13h) CEAC Sede Aracaju: (79) 3216-7400 ou (79) 9.9175-4758 (WhatsApp) E-mail: ceac.isencao@sefaz.se.gov.br Passo a passo: Preencher os dados do solicitante na página da SEFAZ Providenciar a documentação necessária Enviar através do serviço de Protocolo Virtual em um único arquivo com no máximo 20MB Aguardar o retorno via Protocolo Virtual",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#solicitacao_imunidade_ipva",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção de IPVA para motos até 50 cilindradas",
+        "descricao": "Descrição do serviço: Isenção de IPVA para veículo de duas rodas de até 50 cilindradas. Não há necessidade de solicitar a isenção, o reconhecimento se dá pelo tipo do veículo. No entanto, caso o proprietário tenha mais de um veículo com a mesma caracterização, só terá o benefício da isenção a moto de primeira aquisição pelo contribuinte. Legislação vinculada: Lei 7655/2013. Decreto 29684/2014. Área responsável pelo serviço: GIPVA Subsecretaria responsável pelo serviço: SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Onde solicitar o serviço: Não há necessidade de requerimento. Forma de prestação do serviço: O serviço é prestado a partir da análise automática dos dados disponíveis no sistema da SEFAZ/SE. Canais de relacionamento: Telefone: 79 3216-7312 E-mail: ipva@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_motos_50cc",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Rode Bem - Isenção de IPVA para motos de 51 cilindradas até 160 cilindradas",
+        "descricao": "Descrição do serviço: Isenção de IPVA para veículos de duas rodas que possuem entre 51 cilindradas e 160 cilindradas. Legislação vinculada: Lei 7.655/2013 (alterada pela Lei 9.349/2023). Decreto 596/2024. Área responsável pelo serviço: GIPVA Subsecretaria responsável pelo serviço: SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Possuir um veículo de duas rodas de fabricação nacional, com cilindrada entre 51 e 160, e não possuir outro tipo de veículo Estar cadastrado no Cadastro Único ou preencher o formulário disponível no site: Clique aqui e aguardar a aprovação do cadastro pela SEASIC Onde solicitar o serviço: No caso dos requisitos referentes à comprovação de renda salarial de até 2 salários mínimos, o contribuinte que não estiver cadastrado no Cadastro Único deverá preencher o formulário disponível no site: Clique aqui Forma de prestação do serviço: No tocante aos requisitos analisados pela SEFAZ/SE, o serviço é prestado a partir da análise automática dos dados disponíveis no sistema da SEFAZ/SE Canais de relacionamento: Telefone: (79) 3216-7312 E-mail: ipva@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_motos_51_160cc",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção de IPVA para Transporte Escolar",
+        "descricao": "Descrição do serviço: Isenção de IPVA para veículos rodoviários empregados exclusivamente no Transporte Escolar, com capacidade mínima de 7 passageiros e máxima de 20, de propriedade de motorista profissional autônomo ou cooperativado, devidamente habilitado para dirigir este tipo de veículo. O benefício é limitado a 1 veículo por beneficiário, desde que seja portador de concessão ou permissão do órgão municipal competente e registrado na categoria de aluguel junto ao DETRAN/SE. Legislação vinculada: Lei 7.655/2013. Decreto 29.684/2014. Área responsável pelo serviço: GIPVA - Gerência de Auditoria do IPVA Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Certificado de Regularidade e Licenciamento de Veículo (CRLV) - categoria aluguel Carteira Nacional de Habilitação (CNH) - categorias \"D\" ou \"E\" (com observação \"Exerce Atividade Remunerada\" ou \"EAR\") Comprovante de inscrição no Instituto Nacional de Seguridade Social (INSS) e sua correspondente regularidade Comprovante de residência atualizado (mínimo 6 meses) Documento comprovando a condição de motorista auxiliar de transporte escolar, emitido pela SMTT Comprovante de concessão ou permissão do órgão municipal competente - SMTT Veículo com capacidade mínima para 7 passageiros Onde solicitar o serviço: Site da SEFAZ: Clique aqui Forma de prestação do serviço: Internet Onde acompanhar o serviço: Via protocolo e código de acesso gerado a partir da solicitação no site da SEFAZ/SE Prazo para conclusão do serviço: Em média 30 dias Canais de relacionamento: Telefone: (79) 3216-7312 E-mail: ipva@fazenda.se.gov.br Passo a passo: Realizar a solicitação no site da SEFAZ/SE: Clique aqui",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_transporte_escolar",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção de IPVA para Transporte Público",
+        "descricao": "Descrição do serviço: Isenção de IPVA para ônibus ou micro-ônibus empregados exclusivamente no transporte público de passageiros, urbano ou metropolitano, devidamente autorizado pelos órgãos competentes. Legislação vinculada: Lei 7.655/2013. Decreto 29.684/2014. Área responsável pelo serviço: GIPVA Subsecretaria responsável pelo serviço: SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documento de comprovação da entidade Documento de registro do veículo Onde solicitar o serviço: Solicitar aqui Forma de prestação do serviço: Internet Locais físicos de prestação do serviço: Não se aplica Onde acompanhar o serviço: Via protocolo e código de acesso gerado a partir da solicitação no site da SEFAZ/SE Prazo para conclusão do serviço: Em média 30 dias Canais de relacionamento: Telefone: (79) 3216-7312 E-mail: ipva@fazenda.se.gov.br Passo a passo: Fazer a solicitação no site da SEFAZ/SE: Clique aqui Anexar, via E-doc, documento de comprovação da existência da entidade e do veículo",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_transporte_publico",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção do IPVA PCD",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Isenção do IPVA para pessoas portadoras de deficiência Legislação vinculada ao serviço: Decreto 29.684/2014 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Condutor: Estar enquadrado na perícia do DETRAN Laudo médico do DETRAN/SE - Permanente CRLV - Certificado de Registro de Licenciamento de Veículo (veículo usado) Carteira Nacional de Habilitação (CNH) Nota fiscal do veículo com valor venal de até R$ 70.000,00 (veículo novo) Taxa de IPVA - SEFAZ Não condutor: Carteira de Habilitação - CNH (Condutor Autorizado) Documento de identidade e CPF CRLV - Certificado de Registro de Licenciamento de Veículo (veículo usado) Laudo de avaliação médica e psicológica - Receita Federal Documento de comprovação do representante legal com os mesmos requisitos do PCD Taxa de IPVA - SEFAZ Nota fiscal do veículo com valor venal de até R$ 70.000,00 (veículo novo) Canais disponíveis para acompanhamento do serviço: Senha gerada pelo E-doc Forma de prestação do serviço: Online Onde solicitar o serviço: Solicitar aqui Local de atendimento: CEAC Sede Canais de relacionamento: Telefone: E-mail: ipva@fazenda.se.gov.br Passo a passo: Fazer a solicitação no site da SEFAZ: Clique aqui Realizar o pagamento da taxa gerada Enviar a documentação exigida pelo E-doc: Clique aqui",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_pcd",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção do IPVA TAXISTA",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Isenção do IPVA para taxistas Legislação vinculada ao serviço: Decreto 29.684/2014 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documentos: Declaração ou alvará emitido pelo órgão municipal competente comprovando a atividade - SMTT Declaração da SMTT (capital) ou alvará (interior) CRLV - Certificado de Registro de Licenciamento de Veículo (veículo usado) CNH - Carteira Nacional de Habilitação (com observação \"Exerce Atividade Remunerada\" ou \"EAR\") Comprovante da inscrição e regularidade de seguridade social (INSS) Nota fiscal (veículo zero km) Taxa de IPVA - SEFAZ Formas de prestação do serviço: Online Onde solicitar o serviço: Solicitar aqui Canais disponíveis para acompanhamento do serviço: Senha gerada pelo E-doc Local de atendimento: CEAC Sede Canais de relacionamento: Telefone: E-mail: ipva@fazenda.se.gov.br Passo a passo: Fazer a solicitação no site da SEFAZ: Clique aqui Realizar o pagamento da taxa gerada Enviar a documentação exigida pelo E-doc: Clique aqui",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_taxista",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de restituição de IPVA",
+        "descricao": "Descrição do serviço: Solicitação de restituição de IPVA quando o contribuinte entende que realizou um pagamento indevido. Legislação vinculada: Lei 7.655/2013. Decreto 29.684/2014. Área responsável pelo serviço: GIPVA - Gerência de Auditoria do IPVA Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Preenchimento do formulário disponível no site da SEFAZ/SE: Clique aqui Protocolo da solicitação via E-doc Onde solicitar o serviço: CEAC E-doc, pela aba \"Protocolo Externo\" Forma de prestação do serviço: Presencial Online Locais físicos de prestação do serviço: CEAC Sede CEAC Itabaiana CEAC Propriá CEAC Estância CEAC N. S. da Glória CEAC Tobias Barreto CEAC Lagarto Onde acompanhar o serviço: Via protocolo gerado pelo E-doc Telefone Prazo para conclusão do serviço: Em média 30 dias Canais de relacionamento: Telefone: (79) 3216-7312 E-mail: ipva@fazenda.se.gov.br Passo a passo: Preencher o formulário no site da SEFAZ/SE: Clique aqui Criar protocolo no E-doc Anexar formulário e documentação comprobatória dos fatos",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#solicitacao_restituicao_ipva",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de reanálise de débitos de IPVA",
+        "descricao": "Descrição do serviço: Solicitação de reanálise de débitos de IPVA quando o contribuinte entende que existe incorreção na atribuição de um débito inscrito ou não inscrito em dívida ativa. Legislação vinculada: Lei 7.655/2013. Decreto 29.684/2014. Área responsável pelo serviço: GIPVA - Gerência de Auditoria do IPVA Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Preenchimento do formulário disponível no site da SEFAZ/SE: Clique aqui Protocolo da solicitação via E-doc Onde solicitar o serviço: CEAC E-doc, pela aba \"Protocolo Externo\" Forma de prestação do serviço: Presencial Online Locais físicos de prestação do serviço: CEAC Sede CEAC Itabaiana CEAC Propriá CEAC Estância CEAC N. S. da Glória CEAC Tobias Barreto CEAC Lagarto Onde acompanhar o serviço: Via protocolo gerado pelo E-doc Telefone Prazo para conclusão do serviço: Em média 30 dias Canais de relacionamento: Telefone: (79) 3216-7312 E-mail: ipva@fazenda.se.gov.br Passo a passo: Preencher o formulário no site da SEFAZ/SE: Clique aqui Criar protocolo no E-doc Anexar formulário e documentação comprobatória dos fatos",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#solicitacao_reanalise_debitos_ipva",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Atendimento pendências do DIA",
+        "descricao": "Descrição/Finalidade do serviço: Sanamento de dúvidas gerais. Área responsável pelo serviço: Gerência de Fiscalização de Trânsito de Mercadorias – GERAT Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Apresentar número da etiqueta ou chave da nota fiscal. (Demais requisitos são variáveis) Forma de prestação do serviço: E-mail; Telefone. Canais de relacionamento: Telefone: 3216-7323 3216-7249 3216-7333 E-mail: gercat@sefaz.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#atendimento_pendencias_dia",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Dúvidas ITCMD Online via e-mail",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Descrição/Finalidade do serviço: Solucionar qualquer dúvida que o contribuinte venha a ter no processo de ITCMD. Legislação vinculada ao serviço: Consultar no link: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Forms/AllItems.aspx Forma de prestação do serviço: Online via e-mail Onde solicitar o serviço: E-doc Canais disponíveis para acompanhamento do serviço: E-doc Alternativa de atendimento: Presencial. Local de atendimento: Sede da Sefaz (Boulevard); Ceac Sede, Ceac Itabaiana; Ceac Propriá,Ceac Estância; Ceac de N. S. da Glória; Ceac Tobias Barreto; Ceac Lagarto. Canais de relacionamento: Telefone: 3216-7272 3216-7273 E-mail: itcmd@fazenda.se.gov.br Passo a passo: Enviar e-mail com dúvidas, contendo informações detalhadas.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#duvidas_itcmd_email",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de DAE Pagamento à Vista ITCMD Inter Vivos",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Descrição/Finalidade do serviço: Geração de DAE para pagamento à vista do ITCMD. Legislação vinculada ao serviço: Consultar no link: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Forms/AllItems.aspx Forma de prestação do serviço: Online. Onde solicitar o serviço: Link: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//security.sefaz.se.gov.br /internet/publico/cleanProcess.jsp&AppName=SAE&TransId=T29750&CancelUrl=paginaInicial.jsp&ShowBanner=1 Canais de relacionamento: Telefone: 3216-7272 3216-7273 E-mail: itcmd@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_dae_itcmd_inter_vivos",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de DAE Pagamento à Vista ITCMD Causa Mortis",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Descrição/Finalidade do serviço: Geração de DAE para pagamento à vista do ITCMD. Legislação vinculada ao serviço: Consultar no link: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Forms/AllItems.aspx Forma de prestação do serviço: Online. Onde solicitar o serviço: Link: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//security.sefaz.se.gov.br/internet/publico/cleanProcess.jsp&AppName=SAE&TransId=T29750&CancelUrl=paginaInicial.jsp&ShowBanner=2 Canais de relacionamento: Telefone: 3216-7272 3216-7273 E-mail: itcmd@fazenda.se.gov.br.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_dae_itcmd_causa_mortis",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de DAE Complementar do ITCMD Inter Vivos",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Descrição/Finalidade do serviço: Geração de DAE complementar do ITCMD. Requisitos para solicitar o serviço: Ter emitido um DAE anterior. Legislação vinculada ao serviço: Consultar no link: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Forms/AllItems.aspx Forma de prestação do serviço: Online. Onde solicitar o serviço: Link: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//security.sefaz.se.gov.br/internet/publico/cleanProcess.jsp&AppName=SAE&TransId=T29591&CancelUrl=paginaInicial.jsp&ShowBanner=1 Canais de relacionamento: Telefone: 3216-7272 3216-7273 E-mail: itcmd@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_dae_complementar_itcmd_inter_vivos",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "E missão de DAE Complementar do ITCMD Causa Mortis",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Descrição/Finalidade do serviço: Geração de DAE complementar do ITCMD. Requisitos para solicitar o serviço: Ter emitido um DAE anterior. Legislação vinculada ao serviço: Consultar no link: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Forms/AllItems.aspx Forma de prestação do serviço: Online. Onde solicitar o serviço: Link: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//security.sefaz.se.gov.br/internet/publico/cleanProcess.jsp&AppName=SAE&TransId=T29591&CancelUrl=paginaInicial.jsp&ShowBanner=2 Canais de relacionamento: Telefone: 3216-7272; 3216-7273. E-mail: itcmd@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_dae_complementar_itcmd_causa_mortis",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Atendimento Externo - Contribuinte ITCMD",
+        "descricao": "Área responsável pelo serviço: GAITCMD - Gerência de Auditoria do ITCMD Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Atendimento presencial ao contribuinte, em caso de notificações. Requisitos para solicitar o serviço: Ter emitido um DAE anterior. Legislação vinculada ao serviço: Consultar no link: http://legislacaoonline.sefaz.se.gov.br:17501/ITCMD/Forms/AllItems.aspx Forma de prestação do serviço: Presencial Locais físicos de prestação do serviço: Sede da Sefaz (Boulevard); Ceac Itabaiana; Ceac Propriá,Ceac Estância; Ceac de N. S. da Glória; Ceac Tobias Barreto; Ceac Lagarto. Onde solicitar o serviço: Link: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//security.sefaz.se.gov.br/internet/publico/cleanProcess.jsp&AppName=SAE&TransId=T29591&CancelUrl=paginaInicial.jsp&ShowBanner=2 Sistema de agendamento: Via telefone Telefones fixos (Sefaz): 3216-7272 e 3216-7273 Ceac Itabaiana: (79) 9-9191-2215 Ceac Propriá: (79) 9-9191-2430 Ceac Estância: (79) 9-9191-2431 Ceac de N. S. da Glória: (79) 9-9191-2465 Ceac Tobias Barreto: (79) 9-9191-2483 Ceac Lagarto: (79) 9-9175-3386 Canais de relacionamento: Telefone: Telefones fixos (Sefaz): 3216-7272 e 3216-7273 Ceac Itabaiana: (79) 9-9191-2215 Ceac Propriá: (79) 9-9191-2430 Ceac Estância: (79) 9-9191-2431 Ceac de N. S. da Glória: (79) 9-9191-2465 Ceac Tobias Barreto: (79) 9-9191-2483 Ceac Lagarto: (79) 9-9175-3386",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#atendimento_externo_contribuinte_itcmd",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Reinício de Senha",
+        "descricao": "Descrição do serviço: O contribuinte que por algum motivo perder a senha do Portal do Contribuinte precisa solicitar a redefinição de senha. Tal solicitação deve ser realizada por e-mail. Legislação vinculada: Art.2 Lei 8638/2019. Tabela X Área responsável pelo serviço: GEINF - Gerência de Informações Fiscais Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Comprovante de pagamento do DAE Forma de prestação do serviço: Online. Onde solicitar o serviço: Portal da Sefaz para emitir a taxa de pagamento. ( https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//sae-emissao-dae.apps.sefaz.se.gov.br/identificacao?redirect=emissao/tfsd&ShowBanner=1 ) Agiliza sergipe: agiliza.se.gov.br Prazo para conclusão do serviço: Em média 48 horas úteis. Onde acompanhar o serviço: E-mail Canais de relacionamento: Telefone: 79 3216-7333 E-mail: geinf@fazenda.se.gov.br Passo a passo: 1- Emitir um DAE de taxa de fiscalização e serviços diversos no valor de 0,35 UFPSE; 2- Realizar pagamento; 3- Encaminhar o comprovante de pagamento para o e-mail geinf@fazenda.se.gov.br, solicitando a redefinição da senha.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#reinicio_senha",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Reemitir DAE",
+        "descricao": "Área responsável pelo serviço: GERAR - Gerência de Arrecadação Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Número do documento de arrecadação dentro da validade Forma de prestação do serviço: Online Onde solicitar o serviço: Site da Sefaz (https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//sae-emissao-dae.apps.sefaz.se.gov.br/reemissao/&ShowBanner=1) Canais de relacionamento: Telefone: 3216-7323 3216-7249 3216-7333 E-mail: gerar@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#reemitir_dae",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Pagar DAE com cartão de crédito",
+        "descricao": "Área responsável pelo serviço: GERAR - Gerência de Arrecadação Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Número do documento de arrecadação Forma de prestação do serviço: Online Onde solicitar o serviço: Site da Sefaz: (https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//sae-emissao-dae.apps.sefaz.se.gov.br/cartao-de-credito/&ShowBanner=1) Canais de relacionamento: Telefone: 3216-7323 3216-7249 3216-7333 E-mail: gerar@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#pagar_dae_cartao_credito",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Feriado - Vencimento prazo",
+        "descricao": "Área responsável pelo serviço: GERAR - Gerência de Arrecadação Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Legislação vinculada ao serviço: Art. 38. Os prazos fixados na legislação serão contínuos, excluindo-se na sua contagem o dia de início e incluindo-se o de vencimento. Parágrafo único. Quando não houver expediente bancário no prazo de vencimento estabelecido na legislação, o ICMS deverá ser pago até o último dia útil imediatamente anterior. (efeitos a partir de 1º.11.2017) Canais de relacionamento: Telefone: 3216-7323 3216-7249 3216-7333 E-mail: gerar@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#feriado_vencimento_prazo",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Retificação de DAE e GNRE",
+        "descricao": "Descrição/Finalidade do serviço: Solicitação de alteração de documentos de arrecadação (DAE E GNRE) Área responsável pelo serviço: GERAR - Gerência de Arrecadação Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documento: Documentos a serem alterados; Pagamento da TFSD pertinente. Forma de prestação do serviço: Online Onde solicitar o serviço: E-doc: https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf Canais de relacionamento: Telefone: 3216-7323 3216-7249 3216-7333 E-mail: gerar@fazenda.se.gov.br Passo a passo: 1- Realizar o pagamento da taxa, na página: https://www.sefaz.se.gov.br /SitePages/servico.aspx?cod=1&Url=https%3a//sae-emissao-dae.apps.sefaz.se.gov.br/identificacao?redirect=emissao/tfsd&ShowBanner=1 2- Após o pagamento, elaborar um documento único no formato pdf que contenha a solicitação e o comprovante de pagamento da taxa. 3- Encaminhar o documento à GERAR - Gerência de Arrecadação da SEFAZ/SE através do protocolo externo do Governo de Sergipe: https://edoc.se.gov.br/docflow/xhtml/docflow/external/login/auth.jsf",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#retificacao_dae_gnre",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Emissão de DAE Para Pagamento das Taxas Conforme Lei 8638/19",
+        "descricao": "Descrição/Finalidade do serviço: Emissão de TFSD Área responsável pelo serviço: GERAR - Gerência de Arrecadação Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Legislação vinculada ao serviço: Lei nº 8.638/2019 Requisitos exigidos do usuário (documentos, dados adicionais, custos): - Número do documento de arrecadação dentro da validade Forma de prestação do serviço: Online Onde solicitar o serviço: Site da Sefaz pelo link: https://www.sefaz.se.gov.br/Biblioteca%20de%20Servicos/VALORES%20DE%20TAXAS%20DA%20SEFAZ/Manual%20para%20emiss%C3%A3o%20da%20Taxa%20de%20Servi%C3%A7os.pdf Canais de relacionamento: Telefone: 3216-7323 3216-7249 3216-7333 E-mail: gerar@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#emissao_dae_pagamento_taxas_lei_8638_19",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Dificuldades na emissão de DAE",
+        "descricao": "Como resolver: 1- Dê permissão ao seu navegador (browser) para abrir o POP-UP das páginas da SEFAZ/SE. 2- Persistindo a dificuldade verificar os níveis de segurança do browser, ou do computador, ou a política de segurança da empresa e/ou instituição. Área responsável pelo serviço: GERAR - Gerência de Arrecadação Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Canais de relacionamento: Telefone: 3216-7323 3216-7249 3216-7333 E-mail: gerar@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#dificuldades_emissao_dae",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Domicílio Eletrônico Habilitado",
+        "descricao": "Manual: https://www.sefaz.se.gov.br/SitePages/DEH.aspx Perguntas e respostas: http://manuais.sefaz.se.gov.br/DEH/perguntaserespostas.pdf",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#domicilio_eletronico_habilitado",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "Cadastro de Contribuinte"
+          }
+        ]
+      },
+      {
+        "titulo": "Parcelamento (ICMS; IPVA; ITCMD)",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE. Descrição/Finalidade do serviço: Realizar parcelamento de débitos. Legislação vinculada ao serviço: Conforme o tipo de parcelamento. Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documentação: Inscrição estadual; CPF Forma de prestação do serviço: Presencial. Onde solicitar o serviço: Pelo portal da autorregularização: https://www.sefaz.se.gov.br/SitePages/login_autoreg.aspx ou presencialmente. Local de atendimento: Qualquer CEAC. Canais de relacionamento: e-mail: geinf @fazenda.se.gov.br ceacaju@fazenda.se.gov.br Passo a passo: Realizar o parcelamento no site: https://www.sefaz.se.gov.br/SitePages/login_autoreg.aspx ou presencialmente",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#parcelamento_icms_ipva_itcmd",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de Imunidade do IPVA",
+        "descricao": "Descrição do serviço: Solicitar imunidade de IPVA para Órgãos Públicos, Partidos Políticos; Sindicatos de trabalhadores; Instituições de Educação, Assistência Social, sem fins lucrativos e templos de qualquer culto . Requisitos: Apresentar os seguintes documentos: CRLV - CERTIFICADO DE REGISTRO DE LICENCIAMENTO DE VEÍCULO (VEÍCULO USADO); OFÍCIO DA INSTITUIÇÃO; BALANCETE DA INSTITUIÇÃO; DOCUMENTO DE IDENTIDADE E CPF DO PRESIDENTE; CNPJ; Legislação vinculada: Art.110 a 117 do RICMS, art.24 da lei 3.796/96. Área responsável pelo serviço: GIPVA Subsecretaria responsável pelo serviço: SURE Onde solicitar o serviço: Via E-doc. Forma de prestação do serviço: Online. Canais de relacionamento: Protocolo da SEFAZ (79) 3216-7223 (7 h às 13 h); CEAC Sede Aracaju (79) 3216-7400 ou 9.9175-4758 (whatsapp); e-mail: ceac.isencao@sefaz.se.gov.br Passo a passo: 1 - Preencher os dados do solicitante na página da Sefaz ; 2 Providenciar a documentação necessária; 3 - Enviar através do serviço de Protocolo Virtual em um único arquivo com no máximo 20Mb; 4- Aguardar o retorno via protocolo virtual.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#solicitacao_imunidade_ipva_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção de IPVA para motos até 50 cilindradas",
+        "descricao": "Descrição do serviço: Isenção de IPVA para veículo de duas rodas de até 50 cilindradas. Não há necessidade de solicitar a isenção, o reconhecimento se dá pelo tipo do veículo. No entanto, caso o proprietário tenha mais de um veículo com a mesma caracterização, só terá o benefício da isenção a moto de primeira aquisição pelo contribuinte. Legislação vinculada: Lei 7655/2013. Decreto 29684/2014. Área responsável pelo serviço: GIPVA Subsecretaria responsável pelo serviço: SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Onde solicitar o serviço: Não há necessidade de requerimento. Forma de prestação do serviço: O serviço é prestado a partir da análise automática dos dados disponíveis no sistema da SEFAZ/SE. Canais de relacionamento: Telefone: 79 3216-7312 E-mail: ipva@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_motos_50cc_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Rode Bem - Isenção de IPVA para motos de 51 cilindradas até 160 cilindradas",
+        "descricao": "Descrição do serviço: Isenção de IPVA para veículos de duas rodas que possuem a partir de 51 cilindradas até 160 cilindradas. Legislação vinculada: Lei 7655/2013 (alterada pela Lei 9.349/2023). Decreto 596/2024. Área responsável pelo serviço: GIPVA Subsecretaria responsável pelo serviço: SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Possuir um veículo de duas rodas de fabricação nacional, de 51 cilindradas até 160 cilindradas, e não possuir outro tipo de veículo. Estar cadastrado no Cadastro Único ou preencher o formulário disponível no site https://rodebem.assistenciasocial.se.gov.br/ e aguardar a aprovação desse cadastro pela SEASIC. Onde solicitar o serviço: No caso dos requisitos referentes à comprovação de renda salarial de até 02 salários mínimos, o contribuinte que não estiver cadastrado no Cadastro Único, deverá preencher o formulário disponível no site : https://rodebem.assistenciasocial.se.gov.br/ . Forma de prestação do serviço: No tocante aos requisitos analisados pela SEFAZ/SE, o serviço é prestado a partir da análise automática dos dados disponíveis no sistema da SEFAZ/SE. Canais de relacionamento: Telefone: 79 3216-7312 E-mail: ipva@fazenda.se.gov.br",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_motos_51_160cc_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção de IPVA para Transporte Escolar",
+        "descricao": "Descrição do serviço: Isenção de IPVA para os veículos rodoviários empregados exclusivamente no Transporte Escolar, com capacidade mínima de 07 (sete) passageiros limitada a 20 (vinte), de propriedade de motorista profissional autônomo ou cooperativado, devidamente habilitado para dirigir este tipo de veículo, limitado a 01 (um) veículo por beneficiário, desde que seja portador de concessão ou permissão do Órgão Municipal competente e comprovadamente registrado na categoria de aluguel junto ao DETRAN/SE. Legislação vinculada: Lei 7655/2013. Decreto 29684/2014. Área responsável pelo serviço: GIPVA - Gerência de Auditoria do IPVA. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Certificado de regularidade e licenciamento de veículo - CRLV, categoria aluguel; Carteira nacional de habilitação-cnh, categoria \"d\"ou\"e\" (com observação “exerce atividade remunerada” ou \"ear\"); Comprovante da inscrição no instituto nacional de seguridade social (inss) e da sua correspondente regularidade; Comprovante de residência atualizado (pelo menos 6 meses); Documento comprovante de motorista auxiliar transporte escolar, emitido pela smtt; Comprovante a condição de portador de concessão ou permissão do órgão municipal competente - SMTT; Veículo capacidade mínima 7 passageiros; Onde solicitar o serviço: Site da SEFAZ: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//ipva-app.apps.sefaz.se.gov.br/ipva/public/isencao-ipva Forma de prestação do serviço: Internet; Onde acompanhar o serviço: Via protocolo e código de acesso gerado a partir da solicitação no site da SEFAZ/SE. Prazo para conclusão do serviço: Em média 30 dias. Canais de relacionamento: Telefone: 79 3216-7312. E-mail: ipva@fazenda.se.gov.br Passo a passo: Realizar a solicitação disponível no site da SEFAZ/SE ( https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//ipva-app.apps.sefaz.se.gov.br/ipva/public/isencao-ipva ).",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_transporte_escolar_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção de IPVA para Transporte Público",
+        "descricao": "Descrição do serviço: Isenção de IPVA para os ônibus ou microônibus empregados exclusivamente no transporte público de passageiros, urbano ou metropolitano, devidamente autorizado pelos órgãos competentes; Legislação vinculada: Lei 7655/2013. Decreto 29684/2014. Área responsável pelo serviço: GIPVA Subsecretaria responsável pelo serviço: SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): documento de comprovação da entidade; documento de registro do veículo. Onde solicitar o serviço: Site da SEFAZ: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//ipva-app.apps.sefaz.se.gov.br/ipva/public/isencao-ipva Forma de prestação do serviço: Internet. Locais físicos de prestação do serviço: não se aplica. Onde acompanhar o serviço: via protocolo e código de acesso gerado a partir da solicitação no site da SEFAZ/SE. Prazo para conclusão do serviço: Em média 30 dias. Canais de relacionamento: Telefone: 79 3216-7312 E-mail: ipva@fazenda.se.gov.br Passo a passo: Fazer a solicitação disponível no site https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//ipva-app.apps.sefaz.se.gov.br/ipva/public/isencao-ipva. Anexar, via e-doc, algum documento de comprovação da existência da entidade e do veículo.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_transporte_publico_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção do IPVA PCD",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Isenção do IPVA para pessoas portadoras de deficiência. Legislação vinculada ao serviço: Decreto: 29684/2014 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Estar enquadrado na perícia do detran; Documentos (condutor): laudo médico do detran/se - permanente; CRLV- certificado de registro de licenciamento de veículo (veículo usado); Carteira Nacional De Habilitação - CNH; Nota fiscal do veículo no valor venal até R$ 70.000,00 (veículo novo); Taxa de IPVA - Sefaz; Documentos (não condutor): Carteira De Habilitação - CNH (Condutor Autorizado); Documento De Identidade E Cpf; Crlv - Certificado De Registro De Licenciamento De Veículo (Veículo Usado); Laudo De Avaliação Médica E Psicológica - Receita Federal; Documento de Comprovação Representante Legal Com Os Mesmo Requisito Do PCD; Taxa De IPVA - Sefaz; Nota fiscal do veículo no valor venal até R$ 70.000,00 (Veículo Novo); Canais disponíveis para acompanhamento do serviço: senha gerada pelo E-doc Forma de prestação do serviço: Online Onde solicitar o serviço: Site da SEFAZ: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//ipva-app.apps.sefaz.se.gov.br/ipva/public/isencao-ipva/a Local de atendimento: CEAC sede Canais de relacionamento: Telefone: – E-mail: ipva@fazenda.se.gov.br Passo a passo: Fazer a solicitação no site da SEFAZ: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//ipva-app.apps.sefaz.se.gov.br/ipva/public/isencao-ipva Realizar o pagamento da taxa gerada; Enviar a documentação exigida pelo E-doc: https://www.edocsergipe.se.gov.br/protocolo-externo/",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_pcd_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Isenção do IPVA TAXISTA",
+        "descricao": "Área responsável pelo serviço: CEAC - Centro de Atendimento ao Cidadão Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Descrição/Finalidade do serviço: Isenção do IPVA para taxistas Legislação vinculada ao serviço: Decreto: 29684/2014 Requisitos exigidos do usuário (documentos, dados adicionais, custos): Documentos: Declaração ou alvará emitido pelo órgão municipal competente comprovando sua atividade - SMTT; Declaração da SMTT (capital) ou alvará (interior); CRLV - certificado de registro de licenciamento de veículo (veículo usado); CNH - carteira nacional de habilitação (com observação \"exerce atividade remunerada\" ou \"EAR\"); Comprovante da inscrição e regularidade de seguridade social (INSS); Nota fiscal (veículo zero km); Taxa de IPVA - Sefaz. Formas de prestação do serviço: Online Onde solicitar o serviço: Site da Sefaz: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//ipva-app.apps.sefaz.se.gov.br/ipva/public/isencao-ipva Canais disponíveis para acompanhamento do serviço: Senha gerada pelo E-doc Local de atendimento: CEAC sede Canais de relacionamento: Telefone: (inserir número de telefone) E-mail: [endereço de e-mail removido] Passo a passo: Fazer a solicitação no site da SEFAZ: https://www.sefaz.se.gov.br/SitePages/servico.aspx?cod=1&Url=https%3a//ipva-app.apps.sefaz.se.gov.br/ipva/public/isencao-ipva Realizar o pagamento da taxa gerada; Enviar documentação exigida pelo e-doc: https://www.edocsergipe.se.gov.br/protocolo-externo/ Observações: Certifique-se de que todos os documentos estejam legíveis e em bom estado de conservação. O prazo para análise e concessão da isenção pode variar. Em caso de dúvidas, entre em contato com a Sefaz através dos canais de atendimento disponíveis. Informações adicionais: A isenção do IPVA para taxistas é um benefício concedido aos profissionais que exercem essa atividade e que atendem aos requisitos estabelecidos na legislação. A solicitação da isenção deve ser feita anualmente. É importante manter os documentos sempre atualizados para evitar problemas na renovação da isenção.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#isencao_ipva_taxista_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de restituição de IPVA",
+        "descricao": "Descrição do serviço: Solicitação de restituição de IPVA, quando o contribuinte entende que realizou um pagamento indevido de IPVA. Legislação vinculada: Lei 7655/2013. Decreto 29.684/2014 Área responsável pelo serviço: GIPVA - Gerência de Auditoria do IPVA. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Preenchimento de formulário disponível no site da SEFAZ/SE, por meio do link: https://www.sefaz.se.gov.br/Biblioteca%20de%20Servicos /IPVA/Modelo%20de%20documento%20de%20defesa%20em%20processo%20de%20IPVA%20_1_.pdf O formulário deve ser protocolado por meio do E-doc. Onde solicitar o serviço: CEAC; E-doc, pela aba \"Protocolo Externo\". Forma de prestação do serviço: Presencial; Internet. Locais físicos de prestação do serviço: CEAC Sede; CEAC Itabaiana; CEAC Propriá; CEAC Estância; CEAC Nossa Senhora da Glória; CEAC Tobias Barreto; CEAC Lagarto. Onde acompanhar o serviço: Via protocolo gerado pelo E-doc ou telefone. Prazo para conclusão do serviço: Em média 30 dias. Canais de relacionamento: Telefone: 79 3216-7312 E-mail: https://www.sefaz.se.gov.br/ Passo a passo: Preencher o formulário no site da SEFAZ, pelo link: https://www.sefaz.se.gov.br/Biblioteca%20de%20Servicos /IPVA/Modelo%20de%20documento%20de%20defesa%20em%20processo%20de%20IPVA%20_1_.pdf Criar protocolo no E-doc; Anexar formulário e documentação comprobatória dos fatos. Observações: Certifique-se de que todos os documentos estejam legíveis e em bom estado de conservação. O prazo para análise e restituição do IPVA pode variar. Em caso de dúvidas, entre em contato com a SEFAZ através dos canais de atendimento disponíveis. Informações adicionais: A restituição do IPVA é um direito do contribuinte que realizou pagamento indevido ou a maior. A solicitação da restituição deve ser feita o mais breve possível após o pagamento indevido. É importante manter os documentos sempre atualizados para evitar problemas na análise da solicitação.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#solicitacao_restituicao_ipva_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      },
+      {
+        "titulo": "Solicitação de reanálise de débitos de IPVA",
+        "descricao": "Descrição do serviço: Solicitação de reanálise de débitos de IPVA, quando o contribuinte entende que existe incorreção na atribuição de um débito inscrito ou não inscrito em dívida ativa. Legislação vinculada: Lei 7655/2013. Decreto 29.684/2014 Área responsável pelo serviço: GIPVA - Gerência de Auditoria do IPVA. Subsecretaria responsável pelo serviço: Subsecretaria da Receita Estadual – SURE Requisitos exigidos do usuário (documentos, dados adicionais, custos): Preenchimento de formulário disponível no site da SEFAZ/SE, por meio do link: https://www.sefaz.se.gov.br/Biblioteca%20de%20Servicos/IPVA/ Modelo%20de%20documento%20de%20defesa%20em%20processo%20de%20IPVA%20_1_.pdf e protocolado por meio do E-doc. Onde solicitar o serviço: CEAC; E-doc, pela aba \"Protocolo externo\". Forma de prestação do serviço: Presencial; Internet. Locais físicos de prestação do serviço: Ceac Sede; Ceac Itabaiana; Ceac Propriá; Ceac Estância; Ceac de N. S. da Glória; Ceac Tobias Barreto; Ceac Lagarto. Onde acompanhar o serviço: Via protocolo gerado pelo e-doc ou telefone Prazo para conclusão do serviço: Em média 30 dias Canais de relacionamento: Telefone: 79 3216-7312 E-mail: [endereço de e-mail removido] Passo a passo: Preencher o formulário no site da Sefaz, pelo link: https://www.sefaz.se.gov.br/Biblioteca%20de%20Servicos/IPVA /Modelo%20de%20documento%20de%20defesa%20em%20processo%20de%20IPVA%20_1_.pdf ; Criar protocolo no e-doc; Anexar formulário e documentação comprobatória dos fatos. Observações: Certifique-se de que todos os documentos estejam legíveis e em bom estado de conservação. O prazo para análise e reanálise do débito de IPVA pode variar. Em caso de dúvidas, entre em contato com a Sefaz através dos canais de atendimento disponíveis. Informações adicionais: A reanálise de débitos de IPVA é um direito do contribuinte que se sente lesado por uma cobrança indevida ou incorreta. A solicitação da reanálise deve ser feita o mais breve possível após a identificação do erro. É importante manter os documentos sempre atualizados para evitar problemas na análise da solicitação.",
+        "link": "https://www.sefaz.se.gov.br/SitePages/servicos_cidadao.aspx#solicitacao_reanalise_debitos_ipva_2",
+        "orgao": "SEFAZ-SE",
+        "ocorrencias": [
+          {
+            "publico": "Serviços",
+            "classe": "IPVA"
+          }
+        ]
+      }
+    ]
+  }
+}

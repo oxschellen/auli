@@ -214,3 +214,11 @@ uf = "AL"
 state = "Alagoas"
 prompt = "prompts/al.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "se"
+name = "SEFAZ-SE"
+uf = "SE"
+state = "Sergipe"
+prompt = "prompts/se.txt"
+collections = ["servicos"]
