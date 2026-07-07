@@ -1,0 +1,128 @@
+[
+  {
+    "id": 1,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/cnd/servlet/wp_siate_emitircndcentralservicopublica",
+    "titulo": "Certidão Negativa",
+    "descricao": "Emite a certidão negativa de débitos estaduais para consulta e comprovação de regularidade fiscal."
+  },
+  {
+    "id": 2,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/consultapagamento/servlet/wp_dfmt_verificapagamento",
+    "titulo": "Consultar Pagamento DARE",
+    "descricao": "Permite verificar a efetivação do pagamento de DARE por documento, tributo e código de barras."
+  },
+  {
+    "id": 3,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/cipe/servlet/wp_cipe_consulta",
+    "titulo": "Emissão CIPE",
+    "descricao": "Consulta o cadastro de inadimplentes vinculado ao CIPE por CPF ou CNPJ."
+  },
+  {
+    "id": 4,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/cipe/servlet/wp_cipe_validacao",
+    "titulo": "Validação CIPE",
+    "descricao": "Valida o código informado em certidão CIPE impressa para conferir autenticidade e situação."
+  },
+  {
+    "id": 5,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/gimonline/servlet/wp_siate_index",
+    "titulo": "Gim On-Line",
+    "descricao": "Acessa o sistema para envio e consulta da Guia de Informação Mensal do contribuinte."
+  },
+  {
+    "id": 6,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/siate/servlet/wp_siate_index",
+    "titulo": "Serviços ao Contribuinte",
+    "descricao": "Central de serviços fiscais para empresas, com acesso a rotinas e consultas do contribuinte estadual."
+  },
+  {
+    "id": 7,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://cnae.ibge.gov.br/",
+    "titulo": "Consultar CNAE",
+    "descricao": "Abre a busca online do IBGE para pesquisar códigos e descrições de atividades econômicas da CNAE."
+  },
+  {
+    "id": 8,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/consultataxas/servlet/wp_siate_consultataxaexpediente",
+    "titulo": "Consultar Taxas",
+    "descricao": "Permite consultar taxas de expediente e localizar códigos de receita e tributos vinculados ao atendimento."
+  },
+  {
+    "id": 9,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/sintegra/servlet/wp_siate_consultasintegra",
+    "titulo": "SINTEGRA",
+    "descricao": "Consulta pública do cadastro estadual para verificar dados cadastrais e situação do contribuinte em Roraima."
+  },
+  {
+    "id": 10,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/cnd/servlet/wp_siate_acessocentralservicovalidacndpublica",
+    "titulo": "CND Validação",
+    "descricao": "Valida a autenticidade da certidão negativa emitida, conferindo os dados e o código do documento."
+  },
+  {
+    "id": 11,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/darenumeroguia/servlet/wp_dfmt_buscadebito",
+    "titulo": "Impressão DARE nº Guia",
+    "descricao": "Permite reimprimir o DARE já gerado a partir do número da guia e da data de pagamento."
+  },
+  {
+    "id": 12,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/alterarsenha/servlet/wp_siate_alterarsenhacontribuinte",
+    "titulo": "Alteração de Senha",
+    "descricao": "Atualiza a senha de acesso do contribuinte vinculado à inscrição estadual no portal da SEFAZ."
+  },
+  {
+    "id": 13,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/DareNaoContribuinte/servlet/wp_dfmt_naocontribuinte",
+    "titulo": "Emissão de DARE para Contribuintes Não Inscritos",
+    "descricao": "Consulta débitos de operações com NF-e para não inscritos e direciona à geração do respectivo DARE."
+  },
+  {
+    "id": 14,
+    "tipo": "Empresa",
+    "classe": "Serviços",
+    "orgao": "SEFAZ-RR",
+    "link": "https://portalweb.sefaz.rr.gov.br/daretransportadora/servlet/wp_dfmt_transportadora_reg",
+    "titulo": "Portal transportadoras",
+    "descricao": "Consulta passes, placas e DAREs de transportadoras, com acesso para operações com e sem regime especial."
+  }
+]

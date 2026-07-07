@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-07 (frota com 26 entidades; SE = a mais recente).
+> Última atualização: 2026-07-07 (frota com 27 entidades; RR = a mais recente).
 
 ---
 
@@ -99,8 +99,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **pb** | SEFAZ-PB / Paraíba | Carta de Serviços (PHP); `servicos.php` accordion → `saibamais.php?id=N` ficha rica (pares `<h3>/<h6>`) | HTML | 2 | 101 | **rica** (~1584) | direto | 4 | rustls |
 | **al** | SEFAZ-AL / Alagoas | Portal Alagoas Digital (API REST pública, "Dados Abertos"); `organs.json`→`services.json?organ_id`→`services/{id}.json` | JSON | 7 | 60 | **rica** (~1030) | direto | 6 | rustls |
 | **se** | SEFAZ-SE / Sergipe | SharePoint 2013; Carta = 1 página (`servicos_cidadao.aspx`, Bootstrap accordion, 91 painéis), 1 GET | HTML | 1 | 91 | **rica** (~900) | direto | 4 | **curl (EOF ureq)** |
+| **rr** | SEFAZ-RR / Roraima | Site custom; catálogo no array `apps` do `script.js` (`{category,title,description,href}`) | JS (bundle) | 2 | 16 | curta (~97) | direto | 3 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **164** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **167** (todos os crates cobertos).
 
 ---
 
@@ -513,6 +514,22 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   (curl no PATH), como o GO/DF (mas por EOF, não por JA3).
 - 91 serviços, 8 classes (Cadastro 33 / ICMS 17 / IPVA 10 / Gerais 9 / Contencioso 8 / Simples 6 / DFe 4
   / ITCMD 4), descrição rica (~900). 4 testes. `ServicoRaw` direto. Descoberta em `descoberta-se.md`.
+
+---
+
+### rr — SEFAZ-RR (Roraima)
+
+- Portal `www.sefaz.rr.gov.br` = site **custom/estático** ("Portal de Aplicações", JS puro, sem CMS). O
+  nav só tem Ouvidoria/Transparência/Downloads — **sem catálogo server-rendered**; os serviços são apps
+  GeneXus/SIATE em `portalweb.sefaz.rr.gov.br` (sem landing "Central de Serviços", tudo 404).
+- **Achado (molde AP):** o `script.js` da home embute `const apps = [{category, title, description,
+  href}, …]` — catálogo estruturado com descrição. **20 entradas → 16 hrefs distintos** (4 serviços em
+  `cidadao` E `empresa`). Parse por regex do array; dedup por `href` acumulando o outro público.
+- `titulo`=`title`; `descricao`=`description` (curta, ~97 chars — teto da fonte; os apps GeneXus são
+  transacionais, sem detalhe); **público**=`category` (Cidadão/Empresa); `classe`="Serviços" (sem eixo de
+  tema); `link`=`href` (identidade). O FAQ (`faq-chat.php`) é um matcher, não catálogo → fora de escopo.
+- 16 serviços, 20 ocorrências (Empresa 14 / Cidadão 6), 2 públicos. 3 testes. `ServicoRaw` direto.
+  UA AuliBot. Descoberta em `descoberta-rr.md`.
 
 ---
 
