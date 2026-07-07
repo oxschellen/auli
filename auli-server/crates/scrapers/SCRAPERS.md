@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-06 (frota com 23 entidades; RN = a mais recente).
+> Última atualização: 2026-07-06 (frota com 24 entidades; PB = a mais recente).
 
 ---
 
@@ -96,8 +96,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ac** | SEFAZ-AC / Acre | WordPress + Elementor; Carta (`page_id=6732`) → 17 posts (`?p=`), corpo em `.elementor-widget-theme-post-content` | HTML | 1 | 17 | **rica** (post) | direto | 4 | **rustls + cert** |
 | **df** | SEFAZ-DF / Distrito Federal | Carta de Serviços (ColdFusion); a listagem embute a **árvore JS inteira** (1 fetch → 472), detalhe `servico.cfm` accordion `.panel-body` | HTML | 2 | 472 | **rica** (~893) | direto | 4 | **curl (WAF JA3)** |
 | **rn** | SEFAZ-RN / Rio Grande do Norte | WordPress + SPA React; WP REST `wp/v2/servicos` (15 cards), enriquece os que linkam `/postagem/` com o ACF `Matéria` | JSON | 1 | 15 | **parcial** (5/15, post) | direto | 4 | rustls |
+| **pb** | SEFAZ-PB / Paraíba | Carta de Serviços (PHP); `servicos.php` accordion → `saibamais.php?id=N` ficha rica (pares `<h3>/<h6>`) | HTML | 2 | 101 | **rica** (~1584) | direto | 4 | rustls |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **150** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **154** (todos os crates cobertos).
 
 ---
 
@@ -447,6 +448,24 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   (absolutizado se relativo; permalink do card quando `acf.link=false`); identidade = o link; público
   único "Serviços"; classe = categoria WP (`Finanças e Impostos` em 12/15). UA institucional AuliBot.
 - 15 serviços, 4 classes. 4 testes. `ServicoRaw` direto. Descoberta em `descoberta-rn.md`.
+
+---
+
+### pb — SEFAZ-PB (Paraíba)
+
+- **Carta de Serviços em PHP** (`cartaservico.sefaz.pb.gov.br`, server-rendered; o portal institucional
+  `www.sefaz.pb.gov.br` é Joomla). `servicos.php` = accordion aninhado (categoria → público → subcategoria
+  → serviço) com links `saibamais.php?id=N` (**101 serviços**, cada id aparece 2× — árvores por público
+  → dedup por id). Cada `saibamais.php?id=N` é uma **ficha rica** com pares `<h3>Rótulo:</h3><h6>Valor</h6>`
+  (O que é, Público-alvo, Forma, Taxa, Exigências, Etapas, Documentação, Horário, Contato).
+- **Modelagem (molde TO/DF):** `titulo` = `title=` do `inputbutton01`; `descricao` = os pares (menos o
+  Público-alvo) + "Acessar o serviço: {URL}" (URL do `redireciona('id','URL')`, decodificada — o onclick
+  às vezes vem com `&amp;amp;`); campos vazios ("-") descartados. **público** = campo "Público-alvo" da
+  ficha (Cidadão/Empresa, per-serviço); `classe` = subcategoria imediata da listagem (botão de accordion
+  mais próximo que não é rótulo de público); `link` = `saibamais.php?id=N` (identidade). `ocorrencias` =
+  público × classe.
+- 101 serviços, 164 ocorrências, 51 classes, descrição rica (~1584). 4 testes. `ServicoRaw` direto.
+  UA AuliBot. Descoberta em `descoberta-pb.md`.
 
 ---
 
