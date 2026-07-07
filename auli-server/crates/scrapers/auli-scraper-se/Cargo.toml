@@ -1,0 +1,16 @@
+[package]
+name = "auli-scraper-se"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-SE (serviços, www.sefaz.se.gov.br — SharePoint 2013). SEM headless: a Carta de
+# Serviços é uma única página HTML (`servicos_cidadao.aspx`, ~890 KB) com 91 serviços num Bootstrap
+# accordion; cada painel traz título (heading) + corpo rico (`panel-body`, campos <strong>Rótulo:</strong>).
+# 1 GET, sem detalhe por serviço. Público único; classe = tema (accordion_<tema>). O ureq falha na
+# página de ~890 KB (unexpected EOF) → coleta via kit::http::get_via_curl (curl no PATH). Decisões em descoberta-se.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+anyhow = "1"
+scraper = "0.27.0"   # html5ever: texto dos painéis + entidades
+regex = "1"          # parse do accordion (headings, painéis, temas)

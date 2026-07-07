@@ -78,11 +78,12 @@ Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
 
 1. **Raspar** (rede, **sem headless**) → grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (v3):
-   `auli-scraper-<id> servicos` para cada uma das **25 entidades** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go/pi/am/pa/es/ro/to/ma/ap/ac/df/rn/pb/al); o RS
+   `auli-scraper-<id> servicos` para cada uma das **26 entidades** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go/pi/am/pa/es/ro/to/ma/ap/ac/df/rn/pb/al/se); o RS
    também aceita `faqs`/`all`. `--usecache` reusa o cache de páginas (offline, sem rede).
-   > **Dependência de runtime do `go` e do `df`:** os scrapers `auli-scraper-go` e `auli-scraper-df` chamam
-   > o binário **`curl`** (no PATH) para os GETs de catálogo — os hosts de GO e DF ficam atrás de um WAF
-   > que bloqueia o fingerprint TLS (JA3) do `ureq`
+   > **Dependência de runtime do `go`, `df` e `se`:** os scrapers `auli-scraper-go`, `auli-scraper-df` e
+   > `auli-scraper-se` chamam o binário **`curl`** (no PATH) para os GETs de catálogo — GO e DF ficam
+   > atrás de um WAF que bloqueia o fingerprint TLS (JA3) do `ureq`, e o SharePoint do SE encerra a
+   > conexão de um jeito que o `ureq` rejeita (`unexpected end of file`) mas o curl tolera
    > (ver `go_waf.md`/pendências §11). Garantir `curl` instalado no **desktop de coleta E no host
    > do túnel**, se a coleta rodar lá. No modo `--usecache` o curl não é chamado (lê do cache).
 2. **Derivar** (offline) → o contrato `<id>-faqs.json`/`<id>-servicos.json` + prints + index +

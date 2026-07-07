@@ -7,7 +7,7 @@ grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-07 (frota com 25 entidades; AL = a mais recente).
+> Última atualização: 2026-07-07 (frota com 26 entidades; SE = a mais recente).
 
 ---
 
@@ -98,8 +98,9 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **rn** | SEFAZ-RN / Rio Grande do Norte | WordPress + SPA React; WP REST `wp/v2/servicos` (15 cards), enriquece os que linkam `/postagem/` com o ACF `Matéria` | JSON | 1 | 15 | **parcial** (5/15, post) | direto | 4 | rustls |
 | **pb** | SEFAZ-PB / Paraíba | Carta de Serviços (PHP); `servicos.php` accordion → `saibamais.php?id=N` ficha rica (pares `<h3>/<h6>`) | HTML | 2 | 101 | **rica** (~1584) | direto | 4 | rustls |
 | **al** | SEFAZ-AL / Alagoas | Portal Alagoas Digital (API REST pública, "Dados Abertos"); `organs.json`→`services.json?organ_id`→`services/{id}.json` | JSON | 7 | 60 | **rica** (~1030) | direto | 6 | rustls |
+| **se** | SEFAZ-SE / Sergipe | SharePoint 2013; Carta = 1 página (`servicos_cidadao.aspx`, Bootstrap accordion, 91 painéis), 1 GET | HTML | 1 | 91 | **rica** (~900) | direto | 4 | **curl (EOF ureq)** |
 
-Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **160** (todos os crates cobertos).
+Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **164** (todos os crates cobertos).
 
 ---
 
@@ -490,6 +491,28 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   **"Contribuinte"** (nunca "Serviços", cujo slug `servicos` colidiria com o arquivo agregado).
 - 60 serviços, 166 ocorrências, 7 públicos, 3 classes, descrição rica (~1030). 6 testes. `ServicoRaw`
   direto. UA AuliBot + 500 ms. Descoberta/validação em `descoberta-AL.md`.
+
+---
+
+### se — SEFAZ-SE (Sergipe)
+
+- Portal **SharePoint 2013** (molde do PE), mas a Carta de Serviços é **uma única página HTML**:
+  `SitePages/servicos_cidadao.aspx` (~890 KB, chegada pelo menu SERVIÇOS → CARTAS DE SERVIÇOS →
+  `manuais_servicos.aspx`). **1 GET**, sem detalhe por serviço. (Becos: "Servicos Importantes" = lista
+  SP de 12 atalhos; "Biblioteca de Servicos" = library de PDFs/ZIPs; `servicos_empresa.aspx` = 404.)
+- **91 serviços**, cada um um painel Bootstrap: `titulo` no heading (`<a href="#{id}">▾ Título</a>`,
+  `id` = âncora/identidade); `descricao` no `panel-body` (campos `<p><strong>Rótulo:</strong> valor</p>`:
+  Descrição, Legislação, Área responsável, Requisitos, Onde solicitar, Forma de prestação, Canais).
+  Corpo cortado no próximo `panel-heading` (evita vazamento com `<div>` aninhado) + cap 2500 (1 painel
+  do ITCMD tem ~22 KB de formulário).
+- **público único "Serviços"** (a Carta é geral, cobre PF e PJ nos requisitos); `classe` = tema do
+  accordion que contém o painel (`accordion_<tema>` → DFe/ICMS/ITCMD/IPVA/Simples Nacional/Contencioso/
+  Cadastro de Contribuinte; standalone antes do 1º tema → "Serviços Gerais"); `link` = `…#{id}`.
+- **⚠️ Gotcha de rede:** o `ureq` falha com `unexpected end of file` na página de 890 KB (o SharePoint
+  encerra a conexão de um jeito que o rustls rejeita mas o curl tolera) → coleta via `get_via_curl`
+  (curl no PATH), como o GO/DF (mas por EOF, não por JA3).
+- 91 serviços, 8 classes (Cadastro 33 / ICMS 17 / IPVA 10 / Gerais 9 / Contencioso 8 / Simples 6 / DFe 4
+  / ITCMD 4), descrição rica (~900). 4 testes. `ServicoRaw` direto. Descoberta em `descoberta-se.md`.
 
 ---
 
