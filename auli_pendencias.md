@@ -499,6 +499,29 @@ Carta de Serviços em **PHP** (`cartaservico.sefaz.pb.gov.br`; o portal instituc
   `saibamais.php?id=N` (identidade). `ocorrencias` = público × classe. ureq OK (sem gotcha JA3).
 - 101 serviços, 164 ocorrências, 51 classes, descrição rica (~1584). 4 testes.
 
+## 24. Entidade `al` (SEFAZ-AL) integrada — ✅ **resolvida (25ª entidade)**
+
+A SEFAZ-AL não tem portal próprio: serviços no **Portal Alagoas Digital** (API REST pública "Dados
+Abertos", sem auth). Descoberta/validação em `descoberta-AL.md`.
+
+- **D-AL-FONTE:** `organs.json` (deriva o UUID da SEFAZ: `acronym=SEFAZ` + `nature=Estadual`, 1 match) →
+  `services.json?organ_id={UUID}` (stubs) → `services/{id}.json` (detalhe rico). `robots.txt` libera
+  tudo (`Disallow:` vazio) — D-AL-2 trivial, sem disregard. Sem headless.
+- **D-AL-GUARDA (lição CE):** não hardcodar 60 nem o UUID; ler o tamanho da lista em runtime; bail se
+  vazia; **guarda de coerência** `organ==UUID` em todo stub (senão o filtro falhou); cache só após guardas.
+- **D-AL-MODELO:** `titulo`=`name`; `descricao`=`description`+prazo+etapas(canais)+requisitos+outras
+  (HTML→texto); **público** = `audiences[]` (vocab controlado — **corrigido na validação:** NÃO
+  `applicants[].type`, que é texto livre com 35+ valores); `classe` = `categories[]` (grosso: ~tudo
+  "Economia e Finanças"); `link`=`url`; `ocorrencias`=público×classe.
+- **Gotchas confirmados na validação:** `active` string↔bool (organs vs detalhe) → `serde_json::Value`;
+  `requirements`/`estimated_time.min|max` **nuláveis**; enum `providing_channels[].type` =
+  {WEB,TELEFONE,APLICATIVO-MOVEL,E-MAIL} (não o chutado PRESENCIAL/EMAIL/APP) + fallback; textos com tags
+  **entity-encodadas** (`&lt;b&gt;`) → strip antes E depois do decode; público fallback = **"Contribuinte"**
+  (não "Serviços": slug `servicos` colidiria com o arquivo agregado `al-servicos.json`).
+- **D-AL-1 (escopo SEFAZ-only, aberta):** o portal é multi-órgão (1664 serviços/71 órgãos) → **D-PA-ACERVO
+  puro**; basta relaxar o filtro `organ_id` para virar scraper estadual genérico. Não implementado.
+- 60 serviços, 166 ocorrências, 7 públicos, 3 classes, descrição rica (~1030). 6 testes.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

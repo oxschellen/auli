@@ -1,0 +1,30 @@
+[
+  {
+    "tipo": "Empresa",
+    "filename": "empresa"
+  },
+  {
+    "tipo": "Produtor Rural",
+    "filename": "produtor-rural"
+  },
+  {
+    "tipo": "Cidadão",
+    "filename": "cidadao"
+  },
+  {
+    "tipo": "Servidor",
+    "filename": "servidor"
+  },
+  {
+    "tipo": "Estudantes",
+    "filename": "estudantes"
+  },
+  {
+    "tipo": "Setor Público",
+    "filename": "setor-publico"
+  },
+  {
+    "tipo": "Contribuinte",
+    "filename": "contribuinte"
+  }
+]
