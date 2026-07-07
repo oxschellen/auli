@@ -464,6 +464,25 @@ Descoberta em `descoberta-df.md`.
   (0 serviços multi-subcategoria → 1:1). `ServicoRaw` direto.
 - 472 serviços, 142 classes, descrição rica (~893). 4 testes.
 
+## 22. Entidade `rn` (SEFAZ-RN) integrada — ✅ **resolvida (23ª entidade)**
+
+Portal `www.sefaz.rn.gov.br` = **WordPress + SPA React**; a UVT (`uvt.sefaz.rn.gov.br`) é app
+AngularJS/IIS transacional. Descoberta em `descoberta-rn.md`.
+
+- **D-RN-FONTE:** o RN **não tem uma Carta de Serviços descritiva**. O único catálogo estruturado é o
+  CPT **`servicos`** da WP REST (`/wp-json/wp/v2/servicos`, **15 cards**): `title` + `acf.categories`
+  (classe) + `acf.link` (destino), **sem corpo próprio**. A UVT é transacional (login/emitir), sem
+  catálogo público (`usuarios-api` sem swagger, `/api/servicos`=404) → fora de escopo.
+- **D-RN-MODELO (decisão B do usuário):** montar os 15 cards e **enriquecer** os que apontam para um
+  post (`/postagem/<slug>/`) buscando o corpo no ACF **`Matéria`** (o `content.rendered` desse tema é
+  `null`); os demais (UVT/SEI externos, ou `acf.link=false`) ficam com descrição vazia. **5/15 ricos.**
+  `titulo`/`Matéria`/categoria vêm com entidades HTML → `html_to_text`. `link` = `acf.link`
+  (absolutizado se relativo; permalink quando `false`); identidade = link; público único; classe =
+  categoria WP. `ServicoRaw` direto, UA AuliBot.
+- **D-RN-ACERVO (aberta):** RN é intrinsecamente menu-only (molde RJ/PE, mas via API JSON limpa).
+  Reavaliar se/quando o RN publicar uma Carta descritiva ou a UVT expor um catálogo público.
+- 15 serviços (5 ricos), 4 classes. 4 testes.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

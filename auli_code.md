@@ -236,7 +236,7 @@ N cópias coexistem sem coordenação.
   586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148. O manifest confere — `bytes` e `hash` FNV-1a
   batem com os arquivos (o `packs::load_all` re-hasheia e alerta em divergência); todos os vetores em
   dim 1024; chave `document` preservada.
-- **Boot e2e (modelo real):** o server carrega as 22 entidades, valida cada manifest contra a
+- **Boot e2e (modelo real):** o server carrega as 23 entidades, valida cada manifest contra a
   identidade local e responde `POST /v1/question` por estado citando os links do próprio catálogo
   (verificado ao vivo em várias, incl. rs/ba/rj/ce).
 
@@ -479,8 +479,8 @@ nos packs até serem modelados.
    cópias divergentes de `domain`/`errors`/`entities`.
 2. **Dados de serviços consistentes.** Packs e frontend vêm da **mesma** raspagem (contrato
    `auli-contract`); o engine não declara mais `delimiter`/`EmbedStrategy` próprios para serviços.
-3. **As 22 entidades são reais** do server (serviços rs 586, sc 208, sp 537, pr 141, mg 148, pe 38,
-   ba 204, rj 91, ce 382, ms 276, mt 27, go 94, pi 29, am 278, pa 34, es 45, ro 194, to 45, ma 38, ap 49, ac 17, df 472; FAQs 1937 no RS), não só do frontend.
+3. **As 23 entidades são reais** do server (serviços rs 586, sc 208, sp 537, pr 141, mg 148, pe 38,
+   ba 204, rj 91, ce 382, ms 276, mt 27, go 94, pi 29, am 278, pa 34, es 45, ro 194, to 45, ma 38, ap 49, ac 17, df 472, rn 15; FAQs 1937 no RS), não só do frontend.
 4. **`pareceres`/`notas`/`conteudos`** (autorados, sem scraper) ficam versionados em `data/<id>/ref/`,
    exibidos no frontend e (pareceres/notas) ingeríveis nos packs quando modelados como `Table<P>`;
    ainda **não** são consultados no RAG ativo.
