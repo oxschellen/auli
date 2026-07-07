@@ -483,6 +483,22 @@ AngularJS/IIS transacional. Descoberta em `descoberta-rn.md`.
   Reavaliar se/quando o RN publicar uma Carta descritiva ou a UVT expor um catálogo público.
 - 15 serviços (5 ricos), 4 classes. 4 testes.
 
+## 23. Entidade `pb` (SEFAZ-PB) integrada — ✅ **resolvida (24ª entidade)**
+
+Carta de Serviços em **PHP** (`cartaservico.sefaz.pb.gov.br`; o portal institucional
+`www.sefaz.pb.gov.br` é Joomla). Descoberta em `descoberta-pb.md`.
+
+- **D-PB-FONTE:** `servicos.php` = accordion aninhado (categoria → público → subcategoria → serviço) com
+  links `saibamais.php?id=N` (**101 serviços**; cada id aparece **2×** — árvores por público → dedup por
+  id). Cada `saibamais.php?id=N` = ficha rica com pares `<h3>Rótulo:</h3><h6>Valor</h6>`. Sem headless.
+- **D-PB-MODELO (molde TO/DF):** `titulo` = `title=` do `inputbutton01`; `descricao` = os pares (menos o
+  Público-alvo) + "Acessar o serviço: {URL}" (URL do `redireciona('id','URL')`, decodificada — o onclick
+  às vezes vem com `&amp;amp;` duplo-encodado → html_to_text + colapsar `&amp;`); campos "-" descartados.
+  **público** = campo "Público-alvo" da ficha (Cidadão/Empresa, per-serviço, pode ser ambos); `classe` =
+  subcategoria imediata da listagem (botão de accordion mais próximo ≠ rótulo de público); `link` =
+  `saibamais.php?id=N` (identidade). `ocorrencias` = público × classe. ureq OK (sem gotcha JA3).
+- 101 serviços, 164 ocorrências, 51 classes, descrição rica (~1584). 4 testes.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

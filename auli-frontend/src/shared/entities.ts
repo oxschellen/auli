@@ -185,6 +185,13 @@ export const ENTITIES: Entity[] = [
     state: "Rio Grande do Norte",
     collections: ["servicos"],
   },
+  {
+    id: "pb",
+    name: "SEFAZ-PB",
+    uf: "PB",
+    state: "Paraíba",
+    collections: ["servicos"],
+  },
 ];
 
 export const DEFAULT_ENTITY_ID = "rs";

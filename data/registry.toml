@@ -198,3 +198,11 @@ uf = "RN"
 state = "Rio Grande do Norte"
 prompt = "prompts/rn.txt"
 collections = ["servicos"]
+
+[[entities]]
+id = "pb"
+name = "SEFAZ-PB"
+uf = "PB"
+state = "Paraíba"
+prompt = "prompts/pb.txt"
+collections = ["servicos"]

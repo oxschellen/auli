@@ -1,0 +1,17 @@
+[package]
+name = "auli-scraper-pb"
+version = "0.1.0"
+edition = "2024"
+
+# Scraper da SEFAZ-PB (serviços, cartaservico.sefaz.pb.gov.br — Carta de Serviços em PHP). SEM
+# headless: `servicos.php` lista os 101 serviços num accordion (`saibamais.php?id=N`); cada detalhe é
+# uma ficha rica com pares `<h3>Label:</h3><h6>Valor</h6>` (O que é, Público-alvo, Forma, Taxa,
+# Exigências, Etapas, Documentação, Horário, Contato) + o link real em `redireciona('id','URL')`.
+# Público vem do campo "Público-alvo" do detalhe (Cidadão/Empresa). Decisões em descoberta-pb.md.
+[dependencies]
+auli-contract = { path = "../../auli-contract" }
+auli-scraper-kit = { path = "../auli-scraper-kit" }
+ureq = "3"           # tipo do Agent devolvido por kit::build_agent (GET simples, sem json)
+anyhow = "1"
+scraper = "0.27.0"   # html5ever: texto das fichas + entidades
+regex = "1"          # parse da listagem (accordion) e dos pares do detalhe
