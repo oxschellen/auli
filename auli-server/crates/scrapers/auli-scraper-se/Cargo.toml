@@ -7,7 +7,7 @@ edition = "2024"
 # Serviços é uma única página HTML (`servicos_cidadao.aspx`, ~890 KB) com 91 serviços num Bootstrap
 # accordion; cada painel traz título (heading) + corpo rico (`panel-body`, campos <strong>Rótulo:</strong>).
 # 1 GET, sem detalhe por serviço. Público único; classe = tema (accordion_<tema>). O ureq falha na
-# página de ~890 KB (unexpected EOF) → coleta via kit::http::get_via_curl (curl no PATH). Decisões em descoberta-se.md.
+# página de ~890 KB (unexpected EOF) → coleta via kit::http::get_via_curl (curl no PATH). Decisões em descobertas.md#se.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

@@ -6,7 +6,7 @@ edition = "2024"
 # Scraper da SEFAZ-AP (serviços, www.sefaz.ap.gov.br — SPA Angular/FUSE). SEM headless: o catálogo
 # rico está HARDCODED no bundle JS (arrays `mock*` no chunk lazy `categorias_routes`), não em API. O
 # scraper descobre o chunk via runtime.js (hash dinâmico) e parseia os `mock*` (chaves NÃO minificadas
-# → estável). Descrição = campo HTML `introducao.descricao`. Decisões em descoberta-ap.md.
+# → estável). Descrição = campo HTML `introducao.descricao`. Decisões em descobertas.md#ap.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

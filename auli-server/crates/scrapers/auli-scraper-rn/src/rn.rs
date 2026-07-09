@@ -1,6 +1,6 @@
 //! Coleta dos serviços da SEFAZ-RN a partir da WP REST (`www.sefaz.rn.gov.br`).
 //!
-//! O portal é WordPress + SPA React e **não tem uma Carta de Serviços descritiva** (descoberta-rn.md).
+//! O portal é WordPress + SPA React e **não tem uma Carta de Serviços descritiva** (descobertas.md#rn).
 //! O único catálogo estruturado é o custom post type **`servicos`** (`/wp-json/wp/v2/servicos`,
 //! 15 itens): cards de atalho com `title`, `acf.categories` (classe) e `acf.link` (destino), **sem
 //! corpo próprio**. Modelagem (decisão B): montamos os 15 cards e **enriquecemos** os que apontam
