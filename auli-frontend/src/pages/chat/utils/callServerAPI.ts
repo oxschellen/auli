@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { Dispatch, SetStateAction } from "react";
 import type { Message } from "../../../types/chat";
+import type { QuestionType } from "./useQuestionType";
 
 interface CallServerAPIArgs {
   prompt: string;
@@ -11,6 +12,8 @@ interface CallServerAPIArgs {
   API_URL: string;
   /** Active entity id (state), so the backend queries the right tenant's collections. */
   entityId?: string;
+  /** Selected query type ("1" = Serviços+FAQs, "2" = Pareceres); sent as the numeric `type` field. */
+  questionType: QuestionType;
 }
 
 interface QuestionResponse {
@@ -37,6 +40,7 @@ export const callServerAPI = async ({
   setLoading,
   API_URL,
   entityId,
+  questionType,
 }: CallServerAPIArgs): Promise<void> => {
   setLoading(true);
 
@@ -64,7 +68,11 @@ export const callServerAPI = async ({
   try {
     const res = await axios.post<QuestionResponse>(
       API_URL,
-      entityId ? { question: prompt, entity: entityId } : { question: prompt },
+      {
+        question: prompt,
+        ...(entityId ? { entity: entityId } : {}),
+        type: Number(questionType),
+      },
       { signal: controller.signal },
     );
 

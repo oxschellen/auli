@@ -5,8 +5,10 @@ import { Messages } from "./Messages";
 import { Input } from "./Input";
 import { usePrompt } from "./utils/usePrompt";
 import { useMessages } from "./utils/useMessages";
+import { useQuestionType } from "./utils/useQuestionType";
 import { callServerAPI } from "./utils/callServerAPI";
 import { isPromptValid } from "./utils/prompt";
+import { SelectQuestionType } from "./SelectQuestionType";
 import { useSelectedEntity } from "../../shared/EntityContext";
 
 // Override per environment with VITE_API_URL (e.g. a staging endpoint); falls
@@ -18,6 +20,7 @@ export const Chat = () => {
   const entity = useSelectedEntity();
   const { prompt, setPrompt, updatePrompt } = usePrompt();
   const { messages, setMessages } = useMessages();
+  const { questionType, updateQuestionType } = useQuestionType();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isSubmittingRef = useRef(false);
@@ -44,6 +47,7 @@ export const Chat = () => {
         setLoading,
         API_URL,
         entityId: entity.id,
+        questionType,
       });
     } finally {
       isSubmittingRef.current = false;
@@ -51,7 +55,7 @@ export const Chat = () => {
   };
 
   return (
-    <Flex flexDirection="column" w="100%" flex={1} bg="bg.app" pb="150px">
+    <Flex flexDirection="column" w="100%" flex={1} bg="bg.app" pb="185px">
       <Messages messages={messages} setPrompt={setPrompt} />
       <div ref={messagesEndRef} />
 
@@ -68,6 +72,8 @@ export const Chat = () => {
           backgroundColor: "var(--chakra-colors-bg-canvas)",
         }}
       >
+        <SelectQuestionType questionType={questionType} updateQuestionType={updateQuestionType} />
+
         <Input
           textareaRef={textareaRef}
           prompt={prompt}
