@@ -6,7 +6,7 @@ edition = "2024"
 # Scraper da SEFAZ-AC (serviços, sefaz.ac.gov.br — WordPress + Elementor). SEM headless: a Carta de
 # Serviços (?page_id=6732) lista 17 posts (?p=NNNNN), cada um com descrição rica no container
 # `.elementor-widget-theme-post-content`. Gotcha TLS: o servidor manda o intermediário ERRADO (falta o
-# Sectigo R36) → embutimos o R36 como trust anchor no rustls (como o MA). Decisões em descoberta-ac.md.
+# Sectigo R36) → embutimos o R36 como trust anchor no rustls (como o MA). Decisões em descobertas.md#ac.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

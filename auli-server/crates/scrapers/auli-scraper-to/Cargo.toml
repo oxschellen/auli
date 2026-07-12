@@ -7,7 +7,7 @@ edition = "2024"
 # HTML server-rendered). SEM headless: listagem por órgão (`listar_servico.aspx?cod_empresa=37`) +
 # detalhe rico (`servico_detalhado.aspx?cod=...`), parseados por id de span ASP.NET (`lbl*`). Público
 # (`lblTipoRelacionamento`) e categoria (`lblTxtServicoGrupo`) estruturados → Cenário B. UA
-# institucional AuliBot (D-PA-ROBOTS). Decisões em descoberta-to.md.
+# institucional AuliBot (D-PA-ROBOTS). Decisões em descobertas.md#to.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

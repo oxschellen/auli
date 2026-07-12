@@ -7,7 +7,7 @@ edition = "2024"
 # headless: `servicos.php` lista os 101 serviços num accordion (`saibamais.php?id=N`); cada detalhe é
 # uma ficha rica com pares `<h3>Label:</h3><h6>Valor</h6>` (O que é, Público-alvo, Forma, Taxa,
 # Exigências, Etapas, Documentação, Horário, Contato) + o link real em `redireciona('id','URL')`.
-# Público vem do campo "Público-alvo" do detalhe (Cidadão/Empresa). Decisões em descoberta-pb.md.
+# Público vem do campo "Público-alvo" do detalhe (Cidadão/Empresa). Decisões em descobertas.md#pb.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

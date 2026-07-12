@@ -6,7 +6,7 @@ edition = "2024"
 # Scraper da SEFAZ-RR (serviços, www.sefaz.rr.gov.br — site custom). SEM headless: o portal não tem
 # catálogo server-rendered, mas o `script.js` embute um array `const apps = [{category, title,
 # description, href}, …]` (molde AP) — 20 entradas, 16 hrefs distintos. Público = category
-# (Cidadão/Empresa); descrição = a linha do `description`; link = href. Decisões em descoberta-rr.md.
+# (Cidadão/Empresa); descrição = a linha do `description`; link = href. Decisões em descobertas.md#rr.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

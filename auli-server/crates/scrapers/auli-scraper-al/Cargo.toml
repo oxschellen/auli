@@ -7,7 +7,7 @@ edition = "2024"
 # SEM headless: `organs.json` (deriva o UUID da SEFAZ: acronym=SEFAZ, nature=Estadual) +
 # `services.json?organ_id={UUID}` (stubs) + `services/{id}.json` (detalhe rico). Público vem de
 # `audiences[]` (vocab controlado); classe de `categories[]`; textos são HTML+entidades. Guardas
-# dinâmicas (não hardcodar 60 nem o UUID). Decisões em descoberta-AL.md.
+# dinâmicas (não hardcodar 60 nem o UUID). Decisões em descobertas.md#al.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

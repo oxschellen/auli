@@ -7,7 +7,7 @@ edition = "2024"
 # headless: catálogo JSON com token ANÔNIMO (login com credenciais públicas baked no bundle), header
 # `AuthorizationPortal`. Descrição rica vem de `conteudos/{id}` (HTML). Gotcha TLS: o servidor manda
 # cadeia incompleta (falta o intermediário GlobalSign) — embutimos o intermediário como trust anchor
-# no rustls (não precisa native-tls; o cipher é moderno). Decisões em descoberta-ma.md.
+# no rustls (não precisa native-tls; o cipher é moderno). Decisões em descobertas.md#ma.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

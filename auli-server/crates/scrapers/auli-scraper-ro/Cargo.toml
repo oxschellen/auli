@@ -7,7 +7,7 @@ edition = "2024"
 # contrato do PI, NÃO do CE). SEM headless: a listagem vem do método público `_search` (GET,
 # ElasticSearch) sobre a classe de conteúdo, filtrando o catálogo "Serviços". Token Bearer anônimo é
 # extraído fresh do shell da Agência Virtual a cada rodada (efêmero). Depende de auli-contract + o
-# kit — nunca de fastembed/ort. Decisões em descoberta-ro.md.
+# kit — nunca de fastembed/ort. Decisões em descobertas.md#ro.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

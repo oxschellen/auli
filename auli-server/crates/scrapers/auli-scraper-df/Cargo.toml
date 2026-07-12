@@ -8,7 +8,7 @@ edition = "2024"
 # ({'url':...,'desc':...} agrupados por subcategoria) → 1 fetch enumera os 472 serviços; cada
 # `servico.cfm` traz a descrição rica num accordion (`div.panel-body`). Público = codTipoPessoa
 # (Cidadão/Empresa). Gotcha WAF (JA3): o host reseta o ureq mas responde ao curl → coleta via
-# `kit::http::get_via_curl` (requer curl no PATH), como o GO. Decisões em descoberta-df.md.
+# `kit::http::get_via_curl` (requer curl no PATH), como o GO. Decisões em descobertas.md#df.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

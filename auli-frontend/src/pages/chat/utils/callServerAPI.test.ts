@@ -31,6 +31,7 @@ function makeArgs() {
       setPrompt,
       setLoading,
       API_URL: "https://api.test/question",
+      questionType: "1" as const,
     },
   };
 }
@@ -79,6 +80,19 @@ describe("callServerAPI", () => {
     expect(last).toMatchObject({ from: "server", text: "Resposta do servidor", showButton: true });
     expect(final).toHaveLength(3); // greeting + user + answer (placeholder removed)
     expect(setPrompt).toHaveBeenCalledWith("");
+  });
+
+  it("sends question, entity, and the selected type in the request body", async () => {
+    mockedPost.mockResolvedValue({ data: { answer: "ok" } });
+    const { args } = makeArgs();
+
+    await callServerAPI({ ...args, entityId: "rs", questionType: "2" });
+
+    expect(mockedPost).toHaveBeenCalledWith(
+      args.API_URL,
+      { question: args.prompt, entity: "rs", type: 2 },
+      expect.anything(),
+    );
   });
 
   it("falls back to a copy message when the answer is empty", async () => {

@@ -4,7 +4,7 @@
 //! REST pública "Dados Abertos"** (sem auth). Coleta: `organs.json` (deriva o UUID da SEFAZ) →
 //! `services.json?organ_id={UUID}` (stubs) → `services/{id}.json` (detalhe rico). Sem headless.
 //!
-//! Modelagem (validada em descoberta-AL.md): `titulo` = `name`; `descricao` = `description` + prazo +
+//! Modelagem (validada em descobertas.md#al): `titulo` = `name`; `descricao` = `description` + prazo +
 //! etapas (com canais) + requisitos + outras informações (tudo **HTML+entidades** → `html_to_text`);
 //! **público** = `audiences[]` (vocab controlado — NÃO `applicants[].type`, que é texto livre);
 //! `classe` = `categories[]`; `link` = `url`. Guardas dinâmicas: derivar o UUID (não hardcodar),

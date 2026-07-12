@@ -7,7 +7,7 @@ edition = "2024"
 # headless, SEM token: a listagem por órgão vem da API pública `POST /v1/search` (anônima) com
 # `{groups:["CATALOG"], departmentSlug}`. Cada item já traz o conteúdo rico inline
 # (`serviceLetterContent`, HTML), a categoria (classe) e `targets` (públicos) — sem chamada de
-# detalhe. UA institucional AuliBot + ≥1s (D-PA-ROBOTS, ES = 2º caso). Decisões em descoberta-es.md.
+# detalhe. UA institucional AuliBot + ≥1s (D-PA-ROBOTS, ES = 2º caso). Decisões em descobertas.md#es.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

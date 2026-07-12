@@ -7,7 +7,7 @@ edition = "2024"
 # não tem Carta descritiva; o CPT `servicos` (WP REST `wp/v2/servicos`) são 15 cards de atalho
 # (título + categoria + link). Enriquecemos os que apontam para `/postagem/` buscando o corpo do post
 # (campo ACF `Matéria`); os demais (apps externos UVT/SEI) ficam só com o link. Decisões em
-# descoberta-rn.md.
+# descobertas.md#rn.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
