@@ -1,4 +1,5 @@
 mod derive_faqs;
+mod derive_pareceres;
 mod domain;
 mod errors;
 mod process;
@@ -25,6 +26,9 @@ fn main() -> errors::Result<()> {
     match collection.as_str() {
         // OFFLINE: deriva contrato, prints, index e per-público do snapshot já gravado.
         "process" => process::run(entity)?,
+        // OFFLINE: ingere pareceres do `.txt` autorado em `ref/` -> `Table<Parecer>` no `raw/`.
+        // Passo incremental até haver scraper de pareceres.
+        "pareceres" => derive_pareceres::run(entity)?,
         "faqs" | "servicos" => {
             return Err(
                 "a coleta agora é feita pelos binários `auli-scraper-rs` / `auli-scraper-sc`; \
@@ -33,7 +37,9 @@ fn main() -> errors::Result<()> {
             );
         }
         other => {
-            return Err(format!("subcomando desconhecido: '{}'. Use: process (padrão)", other).into());
+            return Err(
+                format!("subcomando desconhecido: '{}'. Use: process (padrão) | pareceres", other).into(),
+            );
         }
     }
 
