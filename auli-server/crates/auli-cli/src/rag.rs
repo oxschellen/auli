@@ -7,7 +7,7 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::sync::Arc;
 
-use auli_core::corpus::{FAQS, SERVICES};
+use auli_core::corpus::{FAQS, PARECERES, SERVICES};
 use auli_core::embed::Embedder;
 use tracing::{debug, info, trace, warn};
 use vector_store::ReadStore;
@@ -29,6 +29,29 @@ const SVC_FLOOR: usize = 0;
 const SVC_BAND: f32 = f32::INFINITY;
 const FAQ_FLOOR: usize = 0;
 const FAQ_BAND: f32 = f32::INFINITY;
+const PAR_FLOOR: usize = 0;
+const PAR_BAND: f32 = f32::INFINITY;
+
+/// Which corpus a question targets. Sent by the UI as an integer `type` (see `dto::Question`).
+/// The default (and any missing/unknown code) is `ServicosFaqs`, preserving the original behavior.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum QueryType {
+    /// Serviços + FAQs — the default RAG path.
+    ServicosFaqs,
+    /// Pareceres only.
+    Pareceres,
+}
+
+impl QueryType {
+    /// Map the wire code (`1`/`2`) to a `QueryType`. `None` or any unexpected value falls back to
+    /// `ServicosFaqs`, so a malformed `type` degrades gracefully instead of failing the request.
+    pub fn from_code(code: Option<u8>) -> Self {
+        match code {
+            Some(2) => QueryType::Pareceres,
+            _ => QueryType::ServicosFaqs,
+        }
+    }
+}
 
 /// Keep the top `floor` docs always; beyond that, keep docs within `band` of the best score.
 /// Stops early once a doc falls outside the band, since everything after it is farther still.
@@ -85,6 +108,7 @@ pub async fn exec_all_question(
     embedder: Arc<Embedder>,
     question: String,
     entity: Option<String>,
+    query_type: QueryType,
 ) -> Result<String> {
     debug!("Executando consulta: {}", question);
 
@@ -109,19 +133,38 @@ pub async fn exec_all_question(
             .ok_or("Não foi possível gerar embedding para a pergunta.")?
     };
 
-    // Look up this entity's servicos + faqs stores and retrieve concurrently.
-    let svc_store = collections.get(&cfg.collection(SERVICES.kind)).cloned();
-    let faq_store = collections.get(&cfg.collection(FAQS.kind)).cloned();
+    // Assemble the RAG context for the requested query type. The system-prompt/LLM/log tail below is
+    // shared across types (the entity prompt is reused for every type).
+    let rag = match query_type {
+        QueryType::ServicosFaqs => {
+            // Look up this entity's servicos + faqs stores and retrieve concurrently.
+            let svc_store = collections.get(&cfg.collection(SERVICES.kind)).cloned();
+            let faq_store = collections.get(&cfg.collection(FAQS.kind)).cloned();
 
-    let svc_fut = retrieve(svc_store, "svc", embedding.clone(), SERVICES.n_results, SVC_FLOOR, SVC_BAND);
-    let faq_fut = retrieve(faq_store, "faq", embedding, FAQS.n_results, FAQ_FLOOR, FAQ_BAND);
-    let (svc_docs, faq_docs) = tokio::try_join!(svc_fut, faq_fut)?;
-    info!("Foram selecionados {} serviços e {} faqs", svc_docs.len(), faq_docs.len());
+            let svc_fut = retrieve(svc_store, "svc", embedding.clone(), SERVICES.n_results, SVC_FLOOR, SVC_BAND);
+            let faq_fut = retrieve(faq_store, "faq", embedding, FAQS.n_results, FAQ_FLOOR, FAQ_BAND);
+            let (svc_docs, faq_docs) = tokio::try_join!(svc_fut, faq_fut)?;
+            info!("Foram selecionados {} serviços e {} faqs", svc_docs.len(), faq_docs.len());
 
-    // Assemble RAG context (formatting preserved from the original pipeline).
-    let rag_service = render(&svc_docs, |i, doc| format!("\n## servico\n{i}\n{doc}\n"));
-    let rag_faq = render(&faq_docs, |i, doc| format!("\n// Resultado: {i}\n{doc}\n"));
-    let rag = format!("{}\n{}", rag_service, rag_faq);
+            // Assemble RAG context (formatting preserved from the original pipeline).
+            let rag_service = render(&svc_docs, |i, doc| format!("\n## servico\n{i}\n{doc}\n"));
+            let rag_faq = render(&faq_docs, |i, doc| format!("\n// Resultado: {i}\n{doc}\n"));
+            format!("{}\n{}", rag_service, rag_faq)
+        }
+        QueryType::Pareceres => {
+            let par_store = collections.get(&cfg.collection(PARECERES.kind)).cloned();
+            let par_docs =
+                retrieve(par_store, "par", embedding, PARECERES.n_results, PAR_FLOOR, PAR_BAND).await?;
+            info!("Foram selecionados {} pareceres", par_docs.len());
+
+            // No pareceres vectorized for this entity yet — answer with a friendly notice instead of
+            // prompting the LLM on empty context (which would invite a hallucinated answer).
+            if par_docs.is_empty() {
+                return Ok("A consulta de Pareceres ainda não está disponível para esta entidade.".to_string());
+            }
+            render(&par_docs, |i, doc| format!("\n## parecer\n{i}\n{doc}\n"))
+        }
+    };
 
     // System prompt = entity prompt + RAG context, closed with the original delimiter.
     let system_prompt = format!("{}{}'''", cfg.system_prompt, rag);
@@ -150,10 +193,19 @@ fn log_question(content: String) -> std::io::Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::select_by_proximity;
+    use super::{select_by_proximity, QueryType};
 
     fn scored(pairs: &[(&str, f32)]) -> Vec<(String, f32)> {
         pairs.iter().map(|(d, s)| (d.to_string(), *s)).collect()
+    }
+
+    #[test]
+    fn query_type_from_code_maps_2_to_pareceres_and_everything_else_to_default() {
+        assert_eq!(QueryType::from_code(Some(2)), QueryType::Pareceres);
+        assert_eq!(QueryType::from_code(Some(1)), QueryType::ServicosFaqs);
+        assert_eq!(QueryType::from_code(None), QueryType::ServicosFaqs);
+        // Unknown code degrades to the default rather than erroring.
+        assert_eq!(QueryType::from_code(Some(9)), QueryType::ServicosFaqs);
     }
 
     #[test]

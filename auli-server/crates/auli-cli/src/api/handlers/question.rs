@@ -12,7 +12,7 @@ use tracing::{debug, info};
 
 use crate::api::dto::{Answer, Question};
 use crate::api::ratelimit::client_ip;
-use crate::rag::exec_all_question;
+use crate::rag::{exec_all_question, QueryType};
 use crate::state::AppState;
 
 pub async fn question_handler(
@@ -26,12 +26,24 @@ pub async fn question_handler(
     let client_ip = client_ip(&headers).unwrap_or_else(|| addr.ip());
     let entity = req.entity;
     let question = req.question;
+    let query_type = QueryType::from_code(req.query_type);
 
-    info!(ip = %client_ip, entity = entity.as_deref().unwrap_or("rs"), "Consulta: {}", question);
+    info!(
+        ip = %client_ip,
+        entity = entity.as_deref().unwrap_or("rs"),
+        query_type = ?query_type,
+        "Consulta: {}", question
+    );
 
-    let answer = exec_all_question(state.collections.clone(), state.embedder.clone(), question.clone(), entity)
-        .await
-        .unwrap_or_else(|e| e.to_string());
+    let answer = exec_all_question(
+        state.collections.clone(),
+        state.embedder.clone(),
+        question.clone(),
+        entity,
+        query_type,
+    )
+    .await
+    .unwrap_or_else(|e| e.to_string());
 
     debug!("Consulta concluída em {} ms", started.elapsed().as_millis());
 
