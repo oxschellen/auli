@@ -21,6 +21,9 @@ name = "SEFAZ-RS"
 uf = "RS"
 state = "Rio Grande do Sul"
 prompt = "prompts/rs.txt"
+# Prompt específico para consultas de pareceres (query type=2). Opcional: entidades sem este campo
+# usam o prompt-padrão de pareceres. Campos de UI (uf/state/collections) são ignorados pelo backend.
+prompt_pareceres = "prompts/rs-pareceres.txt"
 collections = ["servicos", "faqs", "pareceres", "notas", "conteudos"]
 
 [[entities]]

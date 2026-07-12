@@ -166,8 +166,12 @@ pub async fn exec_all_question(
         }
     };
 
-    // System prompt = entity prompt + RAG context, closed with the original delimiter.
-    let system_prompt = format!("{}{}'''", cfg.system_prompt, rag);
+    // System prompt = base prompt (per query type) + RAG context, closed with the original delimiter.
+    let base_prompt = match query_type {
+        QueryType::ServicosFaqs => &cfg.system_prompt,
+        QueryType::Pareceres => &cfg.pareceres_prompt,
+    };
+    let system_prompt = format!("{}{}'''", base_prompt, rag);
     trace!("System instructions with RAG: {}", system_prompt);
 
     let answer = llm::chat(&system_prompt, &question).await?;
