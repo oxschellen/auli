@@ -19,7 +19,7 @@ O parecer analisa consulta de uma empresa do setor de supermercados sobre o trat
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297905&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 25148
+## PARECER Nº 25148
 
 ICMS – Crédito fiscal nas aquisições interestaduais de mercadorias que integram a cesta básica de alimentos do RS.
 
@@ -88,7 +88,7 @@ O parecer analisa o tratamento tributário do ICMS aplicável a remessas interna
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297728&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 25091
+## PARECER Nº 25091
 
 REMESSA INTERNA E INTERESTADUAL DE BENS E MERCADORIAS ENTRE ESTABELECIMENTOS DE MESMA TITULARIDADE.
 
@@ -200,7 +200,7 @@ O parecer analisa consulta tributária sobre o procedimento de **ressarcimento d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297273&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24429
+## PARECER Nº 24429
 
 Ressarcimento de ICMS com relação a operações de vendas de óleo diesel para uso em embarcações, realizadas por postos de revenda que compraram a mercadoria direto de distribuidoras.
 
@@ -307,7 +307,7 @@ Parecer legal que analisa a aplicação do regime de substituição tributária 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297312&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24239
+## PARECER Nº 24239
 
 ICMS – Substituição tributária nas operações com fermentado de uva desalcoolizado.
 
@@ -353,7 +353,7 @@ Parecer jurídico que analisa a aplicação da alíquota de ICMS nas operações
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297846&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24220
+## PARECER Nº 24220
 
 ICMS – Alíquota do imposto nas operações com tratores.
 
@@ -404,7 +404,7 @@ O parecer analisa os requisitos para classificação cadastral de uma empresa co
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297738&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24214
+## PARECER Nº 24214
 
 REQUISITOS PARA CLASSIFICAÇÃO CADASTRAL COMO ESTABELECIMENTO INDUSTRIAL.
 ------------------------------------------------------------------------------------------
@@ -489,7 +489,7 @@ Parecer tributário que aborda consulta de uma empresa de minimercado sobre a po
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297311&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24200
+## PARECER Nº 24200
 
 ICMS – Inscrição de depósito fechado.
 
@@ -535,7 +535,7 @@ Parecer jurídico emitido por entidade governamental do Rio Grande do Sul analis
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297845&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24171
+## PARECER Nº 24171
 
 RESSARCIMENTO DE VALORES DE ICMS PAGOS INDEVIDAMENTE.
 
@@ -590,7 +590,7 @@ Parecer tributário que analisa a possibilidade de uma empresa optante pelo Simp
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297844&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24140
+## PARECER Nº 24140
 
 ICMS – Utilização de nota fiscal eletrônica ou nota fiscal de consumidor eletrônica na realização de cursos on-line.
 
@@ -633,7 +633,7 @@ O parecer trata da consulta de um produtor rural sobre a **tributação** do **I
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297309&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24136
+## PARECER Nº 24136
 
 CORRETA TRIBUTAÇÃO EM OPERAÇÕES COM ALHO.
 
@@ -696,7 +696,7 @@ O parecer analisa uma consulta tributária sobre a apuração do ICMS devido na 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296711&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24134
+## PARECER Nº 24134
 
 ICMS – Apuração do montante devido em decorrência do disposto no § 4º do artigo 46 do Livro I do RICMS, no caso de entrada de mercadoria em operação sujeita à alíquota de 4%.
 
@@ -750,7 +750,7 @@ Parecer tributário analisando consulta sobre procedimentos em **ICMS** relacion
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297219&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24118
+## PARECER Nº 24118
 
 ICMS – Procedimentos relativos à remessa de mercadorias para comercialização em pontos de vendas automáticos, localizados em condomínios.
 
@@ -803,7 +803,7 @@ O parecer analisa a consulta de uma empresa do setor de fertilizantes sobre a vi
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297136&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24114
+## PARECER Nº 24114
 
 Compensação do pagamento do ICMS devido pela importação de fertilizantes, com saldo credor de imposto.
 --------------------------------------------------------------------------------------------
@@ -872,7 +872,7 @@ Parecer jurídico tributário que aborda a incidência de ICMS em operações de
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297070&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24085
+## PARECER Nº 24085
 
 ICMS – PRESTAÇÃO DE SERVIÇO DE TRANSPORTE DE PASSAGEIROS.
 
@@ -923,7 +923,7 @@ Parecer jurídico tributário analisando a possibilidade de uma empresa (comérc
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296583&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24075
+## PARECER Nº 24075
 
 ICMS – Apropriação de crédito fiscal quando o imposto é destacado em valor superior ao previsto na legislação.
 
@@ -969,7 +969,7 @@ Parecer jurídico tributário estadual analisando a aplicação do ICMS na comer
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297593&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24059
+## PARECER Nº 24059
 
 ICMS – Comercialização de “kits” ou conjuntos de mercadorias.
 
@@ -1017,7 +1017,7 @@ Parecer legal que analisa a aplicabilidade do regime de substituição tributár
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297261&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24046
+## PARECER Nº 24046
 
 Substituição tributária em operações com parafusos, da posição 7318.12.00, de uso exclusivo na indústria moveleira.
 
@@ -1098,7 +1098,7 @@ Parecer tributário emitido pelo Fisco do Rio Grande do Sul (RS) analisando cons
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297592&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24043
+## PARECER Nº 24043
 
 ICMS – Remessa de embalagem para industrialização por encomenda.
 
@@ -1153,7 +1153,7 @@ O parecer analisa consulta de contribuinte substituído no regime de **substitui
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297589&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24030
+## PARECER Nº 24030
 
 ICMS – Possibilidade de destaque do imposto em nota fiscal emitida por contribuinte substituído.
 
@@ -1229,7 +1229,7 @@ Essa descrição é otimizada para armazenamento em sistemas de RAG, priorizando
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297650&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 24010
+## PARECER Nº 24010
 
 Operações com combustíveis na modalidade monofásica.
 --------------------------------------------------------------------------------------------
@@ -1321,7 +1321,7 @@ O parecer analisa consulta tributária de empresa do setor agroindustrial, focad
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297347&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23442
+## PARECER Nº 23442
 
 Operações com combustíveis na modalidade monofásica.
 
@@ -1390,7 +1390,7 @@ O parecer analisa consulta de uma empresa de telecomunicações sobre o direito 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297118&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23239
+## PARECER Nº 23239
 
 ICMS – Direito a crédito fiscal pela entrada de energia elétrica consumida na prestação de serviço de comunicação.
 
@@ -1465,7 +1465,7 @@ Parecer legal emitido pela Receita Estadual do Rio Grande do Sul analisando cons
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297117&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23231
+## PARECER Nº 23231
 
 ICMS – Apropriação de crédito fiscal presumido na fabricação de laticínios produzidos com leite fluido integral de uso industrial a granel.
 
@@ -1528,7 +1528,7 @@ O parecer aborda uma consulta tributária sobre a aplicação do ICMS em operaç
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296822&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23222
+## PARECER Nº 23222
 
 ICMS – Remessa para demonstração.
 
@@ -1575,7 +1575,7 @@ Parecer jurídico tributário que analisa a possibilidade de apropriação de **
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296821&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23209
+## PARECER Nº 23209
 
 ICMS – Crédito fiscal de energia elétrica para contribuinte que não realiza saídas de mercadorias a cada período de apuração.
 
@@ -1627,7 +1627,7 @@ O parecer analisa o tratamento tributário do ICMS aplicável às operações de
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296820&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23201
+## PARECER Nº 23201
 
 ICMS – Tratamento tributário aplicável nas saídas de cerveja promovidas por estabelecimento atacadista, que recebeu as mercadorias de estabelecimento industrial deste Estado.
 
@@ -1695,7 +1695,7 @@ Parecer tributário que aborda consulta de supermercado optante pelo **ROT ST** 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296953&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21156
+## PARECER Nº 21156
 
 Procedimentos pertinentes ao Ajuste-ST, previsto nos artigos 25-B e 25-C do Livro III, considerando a não ocorrência de operação posterior a consumidor final, realizada por supermercado optante pelo ROT ST, com a mesma mercadoria adquirida (boi casado).
 
@@ -1752,7 +1752,7 @@ Parecer jurídico tributário que analisa a possibilidade de uma empresa industr
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297214&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14180
+## PARECER Nº 14180
 
 Manutenção de créditos fiscais em função da realização de exportações, sendo optante de crédito fiscal presumido que veda a adjudicação de outros créditos.
 
@@ -1837,7 +1837,7 @@ Parecer de reconsideração parcial de consulta tributária sobre a inaplicabili
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296622&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23444
+## PARECER Nº 23444
 
 Reconsideração parcial do Parecer nº 22477, o qual, entre outros assuntos, tratou da correta tributação em operações com bebidas (drinques e coquetéis).
 
@@ -1900,7 +1900,7 @@ Essa descrição é otimizada para armazenamento em sistemas de RAG, focando no 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296197&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23335
+## PARECER Nº 23335
 
 ICMS – Substituição tributária nas operações com produtos utilizados na fabricação e a manutenção de máquinas e equipamentos industriais.
 
@@ -1958,7 +1958,7 @@ O parecer aborda uma consulta tributária de uma empresa sobre o regime de tribu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297346&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23282
+## PARECER Nº 23282
 
 Operações com combustíveis na modalidade monofásica.
 
@@ -2022,7 +2022,7 @@ O parecer analisa uma consulta tributária sobre a transferência de saldo credo
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296978&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23269
+## PARECER Nº 23269
 
 Desconto do valor do ICMS relativo aos créditos do estoque, por ocasião da realização de transferência de saldo credor, acumulado pela realização de operações diferidas.
 --------------------------------------------------------------------------------------------
@@ -2115,7 +2115,7 @@ O parecer trata de consulta sobre procedimentos tributários para devolução de
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297732&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23234
+## PARECER Nº 23234
 
 Procedimentos em operações de devolução de compras de produtos, recebidos ao abrigo da substituição tributária, depois da publicação dos Decretos Estaduais números 56.601/22 e 56.669/22.
 
@@ -2232,7 +2232,7 @@ O parecer analisa o critério para determinação do sublimite de receita bruta 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297116&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23223
+## PARECER Nº 23223
 
 Critério para determinação do sublimite previsto para optantes do Simples Nacional, no caso de pessoa física ser única sócia de duas empresas diferentes, sendo uma modalidade geral.
 
@@ -2307,7 +2307,7 @@ O parecer analisa consulta de uma empresa industrializadora de embalagens plást
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297031&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23219
+## PARECER Nº 23219
 
 Apropriação extemporânea do crédito fiscal presumido, previsto no inciso CXXVII do artigo 32 do Livro I do RICMS, contemplado a empresas industrializadoras de produtos para embalagens.
 --------------------------------------------------------------------------------------------
@@ -2415,7 +2415,7 @@ Parecer jurídico tributário emitido por entidade governamental do Rio Grande d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296627&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23198
+## PARECER Nº 23198
 
 ICMS – Inscrição estadual para empresa que realiza atividades de provedor de conteúdo e outros serviços de informação na internet.
 
@@ -2447,7 +2447,7 @@ O parecer analisa consulta de empresa fabricante de **peças e acessórios** par
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=295858&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23194
+## PARECER Nº 23194
 
 ICMS – Substituição tributária nas operações com partes e peças para reboques e semirreboques.
 
@@ -2495,7 +2495,7 @@ Parecer jurídico-tributário emitido pela Receita Estadual do Rio Grande do Sul
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297012&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23190
+## PARECER Nº 23190
 
 Conceito de salmoura, para efeitos de adjudicação do crédito fiscal presumido do inciso CXXXIII do artigo 32 do Livro I do RICMS.
 
@@ -2567,7 +2567,7 @@ Parecer jurídico tributário analisando a aplicação do ICMS sobre a parcela d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296628&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23172
+## PARECER Nº 23172
 
 ICMS – Pagamento da parcela do imposto relativo à operação subsequente na hipótese de devolução das mercadorias ao fornecedor de outro Estado.
 
@@ -2618,7 +2618,7 @@ O parecer analisa uma consulta tributária de uma empresa industrializadora de d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296629&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23147
+## PARECER Nº 23147
 
 ICMS – Crédito fiscal presumido nas operações com farinha de trigo e mistura para a preparação de pães.
 
@@ -2686,7 +2686,7 @@ Parecer jurídico tributário analisando o **desenquadramento retroativo** de **
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296132&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23123
+## PARECER Nº 23123
 
 ICMS – Desenquadramento de contribuinte optante pelo Simples Nacional.
 
@@ -2730,7 +2730,7 @@ Parecer jurídico que aborda o tratamento tributário de ICMS aplicável às ope
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296129&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23113
+## PARECER Nº 23113
 
 ICMS – Tratamento tributário aplicável nas vendas de jet skis usados promovidas por empresa optante pelo Simples Nacional.
 
@@ -2792,7 +2792,7 @@ Parecer legal emitido pela Receita Estadual do Rio Grande do Sul sobre a consult
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297778&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23098
+## PARECER Nº 23098
 
 Correta tributação nas operações internas com bebidas vegetais, da posição 2202.99.00, da NBM/SH-NCM.
 
@@ -2880,7 +2880,7 @@ Parecer jurídico tributário analisando o direito de uma empresa industrial a a
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296128&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23097
+## PARECER Nº 23097
 
 Direito a valor de crédito fiscal, após encerrado o prazo regulamentar, erroneamente não aproveitado, relativo à compra de bem destinado ao ativo permanente.
 
@@ -2942,7 +2942,7 @@ O parecer trata de uma consulta tributária sobre a obrigatoriedade de recolhime
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=295936&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23084
+## PARECER Nº 23084
 
 Operações de fornecimento de mercadorias para empresas de construção civil. Pagamento do diferencial de alíquotas.
 
@@ -3020,7 +3020,7 @@ O parecer trata da reformulação de uma análise anterior sobre a aplicação d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293270&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23066
+## PARECER Nº 23066
 
 Reformulação do Parecer nº 22155, que tratou da substituição tributária em operações com compressores para ar-condicionado, da posição 8414.30.91, da NBM-SH/NCM.
 
@@ -3072,7 +3072,7 @@ O parecer analisa a consulta de uma associação representando distribuidores at
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293252&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23044
+## PARECER Nº 23044
 
 Aplicação do PMPF já publicado, na base de cálculo do ICMS-ST, por ocasião da simples troca de GTIN/EAN, mas com manutenção das principais características do medicamento, como princípio ativo, fabricante e nome comercial.
 
@@ -3143,7 +3143,7 @@ O parecer analisa consulta sobre a aplicação da substituição tributária em 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293157&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23043
+## PARECER Nº 23043
 
 Base de cálculo da substituição tributária, nas operações com produtos farmacêuticos.
 
@@ -3251,7 +3251,7 @@ Parecer legal sobre consulta de empresa fabricante de produtos suínos quanto à
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296320&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23037
+## PARECER Nº 23037
 
 ICMS – Cálculo do crédito fiscal presumido nas saídas de linguiças, mortadelas, salsichas e salsichões.
 
@@ -3303,7 +3303,7 @@ Parecer jurídico tributário emitido pela administração pública do Rio Grand
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296318&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23015
+## PARECER Nº 23015
 
 ICMS – Tratamento tributário aplicável em relação a serviço de transporte prestado por empresa de outro Estado.
 
@@ -3353,7 +3353,7 @@ O parecer aborda consulta de uma empresa de comércio varejista de produtos alim
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296317&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23012
+## PARECER Nº 23012
 
 ICMS – Emissão de documento fiscal nas vendas realizadas fora do estabelecimento.
 
@@ -3397,7 +3397,7 @@ O parecer analisa a **tributação** do **ICMS** em **operações de revenda de 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=295857&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23005
+## PARECER Nº 23005
 
 Correta tributação em operações de revenda de adubos, com destino a produtor rural localizado em outra unidade federada.
 
@@ -3449,7 +3449,7 @@ Parecer jurídico tributário analisando a aplicabilidade de isenção de ICMS s
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=295855&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 23003
+## PARECER Nº 23003
 
 ICMS – Isenção do diferencial de alíquotas na aquisição de máquina de origem estrangeira de fornecedor localizado em outra unidade da Federação.
 
@@ -3509,7 +3509,7 @@ O parecer analisa a tributação de serviços de valor adicionado (SVA), como st
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293485&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22499
+## PARECER Nº 22499
 
 Tributação nas prestações de serviço de valor adicionado (SVA) realizadas pelos provedores de acesso à internet (SCM).
 
@@ -3589,7 +3589,7 @@ Parecer legal sobre consulta tributária referente ao ressarcimento ou compensa�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293484&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22495
+## PARECER Nº 22495
 
 Ressarcimento de ICMS no conta corrente da filial de XXX, pago a maior pela matriz estabelecida no Paraná, não inscrita no CGC/TE deste Estado.
 
@@ -3649,7 +3649,7 @@ Parecer legal que aborda a tributação adequada para operações em farmácias 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293249&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22385
+## PARECER Nº 22385
 
 Correta tributação em operações de manipulação de medicamentos e similares, não vinculados a fórmulas personalizadas.
 
@@ -3700,7 +3700,7 @@ Parecer legal que analisa consulta de empresa optante pelo Simples Nacional, atu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293483&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22491
+## PARECER Nº 22491
 
 Utilização de Talões de Notas Fiscais, modelo 2-D1, nas vendas para consumidor final.
 
@@ -3762,7 +3762,7 @@ Este parecer legal reformula parcialmente um anterior (nº 22411) e aborda consu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292904&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22486
+## PARECER Nº 22486
 
 Reformulação parcial do Parecer nº 22411 que tratou do diferimento do imposto nas saídas de produtos agropecuários e da abrangência do conceito de pecuária.
 
@@ -3842,7 +3842,7 @@ O parecer aborda consulta tributária sobre o tratamento fiscal de **sobras** ou
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297077&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22447
+## PARECER Nº 22447
 
 Operações com sucatas que sobram da realização de industrialização por encomenda, nos casos em que são inservíveis para o encomendante e permanecem no estabelecimento industrializador, para uso como matéria-prima ou para revenda.
 
@@ -3913,7 +3913,7 @@ O parecer analisa o direito de uma empresa do setor de comercialização de arti
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293231&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22431
+## PARECER Nº 22431
 
 Direito de adjudicar crédito fiscal relativo à compra de veículos que são utilizados pelos vendedores da empresa.
 
@@ -3968,7 +3968,7 @@ O parecer analisa consulta de uma empresa industrial de embalagens de vidro sobr
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292892&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22288
+## PARECER Nº 22288
 
 Direito a crédito fiscal em relação à reconstrução parcial de um forno de fusão de vidro, com substituição de alguns itens, e possibilidade de usar o diferimento em operações de importação.
 
@@ -4118,7 +4118,7 @@ O parecer aborda dúvidas de uma empresa optante pelo Simples Nacional sobre pro
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=295955&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22285
+## PARECER Nº 22285
 
 Procedimentos relativos a vendas fora do estabelecimento, sujeitas à substituição tributária, realizadas por contribuinte optante pelo Simples Nacional.
 
@@ -4180,7 +4180,7 @@ O parecer trata de consulta tributária sobre a obrigatoriedade de emissão de d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293431&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22256
+## PARECER Nº 22256
 
 Emissão de NF-e para documentar a entrada de mercadorias adquiridas de produtor rural, estabelecido em outra unidade da Federação.
 
@@ -4228,7 +4228,7 @@ O parecer aborda a orientação tributária sobre o procedimento para regulariza
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293430&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22251
+## PARECER Nº 22251
 
 ICMS – Procedimento para a regularização de encerramento de atividades de empresa que teve sua inscrição baixada de ofício.
 
@@ -4271,7 +4271,7 @@ O parecer trata de uma consulta tributária sobre a possibilidade e os procedime
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292459&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22235
+## PARECER Nº 22235
 
 Apropriação extemporânea do crédito fiscal presumido previsto no inciso XXI do artigo 32 do Livro I do RICMS, contemplado a empresas prestadoras de serviço de transporte.
 
@@ -4330,7 +4330,7 @@ Parecer legal que analisa a possibilidade de um contribuinte do varejo de produt
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293429&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22207
+## PARECER Nº 22207
 
 ICMS – Crédito fiscal dos estoques para contribuinte que era optante pelo Simples Nacional.
 
@@ -4396,7 +4396,7 @@ O parecer trata de uma consulta tributária de uma empresa do setor de comércio
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291893&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22175
+## PARECER Nº 22175
 
 Cumprimento de regras relacionadas com o Programa de Fidelidade Nota Fiscal Gaúcha e o ROT ST.
 
@@ -4474,7 +4474,7 @@ Parecer legal que analisa a aplicação da substituição tributária em operaç
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293070&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22155
+## PARECER Nº 22155
 
 Substituição tributária em operações com compressores para ar-condicionado, da posição 8414.30.91, da NBM-SH/NCM.
 
@@ -4521,7 +4521,7 @@ O parecer aborda uma consulta tributária sobre o procedimento de recolhimento d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292622&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22149
+## PARECER Nº 22149
 
 Pagamento do ICMS na ocorrência do fato gerador, por ocasião de vendas de madeiras, para fora do Estado, por contribuinte optante pelo Simples Nacional.
 --------------------------------------------------------------------------------------------
@@ -4573,7 +4573,7 @@ O parecer analisa o tratamento tributário de ICMS aplicável às operações in
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=295849&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22140
+## PARECER Nº 22140
 
 Tratamento tributário nas operações com farelo de arroz “gordo”.
 
@@ -4639,7 +4639,7 @@ Parecer legal sobre o cálculo do crédito fiscal presumido de ICMS aplicável a
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292618&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22134
+## PARECER Nº 22134
 
 ICMS – Cálculo de crédito fiscal presumido no caso da operação estar sujeita ao diferimento parcial do imposto.
 
@@ -4692,7 +4692,7 @@ O parecer analisa a tributação de serviços farmacêuticos prestados por uma r
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292443&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22133
+## PARECER Nº 22133
 
 Tributação em prestações de serviços farmacêuticos, como aplicação de vacinas, imunização humana e aplicação de medicamentos injetáveis.
 --------------------------------------------------------------------------------------------
@@ -4787,7 +4787,7 @@ O parecer analisa o direito a crédito fiscal de ICMS para um estabelecimento de
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292617&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22126
+## PARECER Nº 22126
 
 ICMS – Direito a crédito fiscal para estabelecimento que aderiu ao regime diferenciado de apuração de bares e restaurantes, no caso de devolução de compras.
 
@@ -4858,7 +4858,7 @@ Essa descrição é otimizada para armazenamento em sistema de RAG, permitindo r
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292280&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22110
+## PARECER Nº 22110
 
 Regras para apropriação do crédito fiscal presumido do inciso CXCIII do artigo 32, e do gozo do diferimento previsto no inciso VI do artigo 53, ambos do Livro I do RICMS.
 
@@ -5094,7 +5094,7 @@ Parecer legal emitido por entidade governamental analisando consulta tributária
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297010&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22102
+## PARECER Nº 22102
 
 Crédito fiscal presumido nas operações com morcela, pão de carne, salaminho e mortadela defumada.
 
@@ -5144,7 +5144,7 @@ Parecer legal emitido pela Receita Estadual do Rio Grande do Sul (Parecer Nº 22
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293401&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22082
+## PARECER Nº 22082
 
 Inclusão das operações com banha suína, da posição 1501 da NBM-SH/NCM, no montante para o cálculo do crédito fiscal presumido, previsto no inciso CXXXIII do artigo 32 do Livro I do RICMS.
 
@@ -5252,7 +5252,7 @@ O parecer trata de uma consulta tributária de uma empresa fabricante de móveis
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292264&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22057
+## PARECER Nº 22057
 
 ICMS – Crédito fiscal presumido concedido nas operações interestaduais com móveis de fabricação própria.
 
@@ -5324,7 +5324,7 @@ Parecer legal sobre o direito ao crédito fiscal de ICMS em aquisições de merc
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292261&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22051
+## PARECER Nº 22051
 
 Crédito fiscal relativo a aquisições de mercadorias destinadas ao uso ou consumo, de estabelecimento industrializador de madeiras.
 
@@ -5381,7 +5381,7 @@ Parecer legal que analisa a incidência de **ICMS** sobre **diferencial de alíq
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297757&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22042
+## PARECER Nº 22042
 
 ICMS – Diferencial de alíquotas na aquisição de equipamento de fornecedor de outro Estado, destinado ao Ativo Imobilizado do adquirente.
 
@@ -5436,7 +5436,7 @@ Parecer jurídico emitido pela autoridade tributária do Rio Grande do Sul (RS) 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292333&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22037
+## PARECER Nº 22037
 
 ICMS – Substituição tributária nas operações com biscoitos de polvilho.
 
@@ -5479,7 +5479,7 @@ Parecer tributário estadual analisando a incidência de ICMS em operações de 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292259&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22031
+## PARECER Nº 22031
 
 ICMS – Emissão de nota fiscal no caso do pagamento da venda se dar através de pontos ganhos pelo cliente em programa de fidelidade.
 
@@ -5525,7 +5525,7 @@ Parecer tributário estadual analisando a incidência de ICMS sobre vendas de me
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291882&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22023
+## PARECER Nº 22023
 
 ICMS – Vendas de mercadorias pagas com cartão de crédito clonado.
 
@@ -5562,7 +5562,7 @@ Parecer legal que aborda consulta sobre o **cálculo do débito de substituiçã
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291881&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22010
+## PARECER Nº 22010
 
 ICMS – Cálculo do débito de substituição tributária nas operações com mercadorias sujeitas ao diferimento parcial previsto no artigo 1º-L do Livro III do RICMS.
 
@@ -5626,7 +5626,7 @@ O parecer analisa a consulta de uma entidade assistencial sem fins lucrativos (S
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291880&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 22003
+## PARECER Nº 22003
 
 Isenção do imposto no fornecimento de refeições promovido por entidade assistencial.
 
@@ -5704,7 +5704,7 @@ O parecer analisa consulta tributária de uma empresa industrial de **produtos t
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293322&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21397
+## PARECER Nº 21397
 
 Concomitância de créditos fiscais presumidos relativos às saídas interestaduais de produtos têxteis e de artigos de vestuário, ao FUNDOPEM-RS e a revenda de mercadorias importadas.
 
@@ -5823,7 +5823,7 @@ Parecer tributário emitido por entidade governamental do Rio Grande do Sul, ana
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292283&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21385
+## PARECER Nº 21385
 
 Transferências de materiais sujeitos a processo de preparação do “woodframe”, como material para construção de unidade imobiliária autônoma (casa).
 
@@ -6024,7 +6024,7 @@ Parecer legal emitido pela Secretaria da Fazenda do Rio Grande do Sul, responden
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289935&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21152
+## PARECER Nº 21152
 
 Aplicação da substituição tributária e alíquota aplicável nas operações com produtos da indústria de panificação.
 
@@ -6151,7 +6151,7 @@ Parecer legal emitido por entidade governamental (Consultoria Tributária) respo
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292612&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18484
+## PARECER Nº 18484
 
 Crédito fiscal relativo a compras de partes e peças, adquiridas em separado, para substituição das desgastadas.
 
@@ -6235,7 +6235,7 @@ Parecer jurídico que analisa o tratamento tributário aplicável ao "couvert ar
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289929&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20075
+## PARECER Nº 20075
 
 ICMS – Tratamento tributário aplicável em relação ao couvert artístico cobrado por estabelecimento fornecedor de refeições.
 
@@ -6286,7 +6286,7 @@ O parecer analisa a tributação aplicável à prestação de serviços de exame
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289930&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21296
+## PARECER Nº 21296
 
 Tributação em prestações de serviços de exames laboratoriais.
 
@@ -6369,7 +6369,7 @@ O parecer analisa consulta de empresa importadora de componentes de ar-condicion
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292282&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21408
+## PARECER Nº 21408
 
 Aplicação do diferimento na importação de partes e peças que serão comercializadas sob forma de uma unidade conjunta maior, e direito ao crédito fiscal presumido do inciso CXCIII do artigo 32 do Livro I, na posterior revenda.
 
@@ -6506,7 +6506,7 @@ O parecer analisa o cálculo do diferencial de alíquotas (DIFAL) de ICMS em ope
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289806&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21377
+## PARECER Nº 21377
 
 Cálculo do diferencial de alíquotas a ser pago ao Estado de destino, em atendimento à Emenda Constitucional nº 87/15, quando a operação está sujeita à base de cálculo reduzida.
 
@@ -6577,7 +6577,7 @@ O parecer analisa a aplicação do diferencial de alíquotas (DIFAL) de ICMS, co
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289805&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21351
+## PARECER Nº 21351
 
 Diferencial de alíquotas a ser pago em atendimento à Emenda Constitucional nº 87/15, quando a operação está sujeita à base de cálculo reduzida.
 
@@ -6668,7 +6668,7 @@ Parecer jurídico que analisa o tratamento tributário do **ICMS** nas operaçõ
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=290094&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21329
+## PARECER Nº 21329
 
 ICMS – Tratamento tributário aplicável na saída de pão francês e pão congelado, promovida por empresa optante pelo Simples Nacional.
 
@@ -6714,7 +6714,7 @@ Parecer jurídico tributário que analisa a obrigatoriedade de recolhimento do d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289804&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21327
+## PARECER Nº 21327
 
 Pagamento de diferencial de alíquotas em relação a compras interestaduais de toalhas, destinadas ao uso hoteleiro.
 
@@ -6797,7 +6797,7 @@ Parecer jurídico que aborda consulta de empresa sobre procedimentos tributário
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289149&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21281
+## PARECER Nº 21281
 
 Procedimentos relativos ao não pagamento do DIFAL EC 87, ao Rio Grande do Sul, após êxito em Mandado de Segurança.
 
@@ -6857,7 +6857,7 @@ Parecer jurídico sobre consulta tributária referente à possibilidade de trans
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289576&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21272
+## PARECER Nº 21272
 
 ICMS – Transferência de saldo credor do imposto para aquisição de equipamentos usados de estabelecimento que não é o fabricante dos produtos.
 
@@ -6926,7 +6926,7 @@ O parecer analisa consulta de empresa sobre a possibilidade de aplicar redução
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291352&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21241
+## PARECER Nº 21241
 
 Aplicação de base de cálculo reduzida em operações com embalagens para uso no processo a vácuo, no acondicionamento de mercadorias da cesta básica de alimentos/RS.
 
@@ -6987,7 +6987,7 @@ Essa descrição é otimizada para armazenamento em sistemas de RAG, focando no 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291351&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21231
+## PARECER Nº 21231
 
 ICMS – Não estorno do crédito fiscal pela entrada de mercadoria utilizada na fabricação de máquinas e implementos agrícolas
 
@@ -7058,7 +7058,7 @@ Parecer jurídico tributário emitido por entidade governamental do Rio Grande d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291350&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21228
+## PARECER Nº 21228
 
 ICMS – Cálculo do crédito fiscal presumido nas saídas sujeitas ao diferimento parcial do pagamento do imposto.
 
@@ -7131,7 +7131,7 @@ Parecer jurídico-tributário analisando a aplicação do regime de substituiç�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289575&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21225
+## PARECER Nº 21225
 
 Aplicação do regime de substituição tributária em operações com produtos destinados à higiene de animais domésticos.
 
@@ -7179,7 +7179,7 @@ O parecer analisa a aplicação de **redução de base de cálculo** do **ICMS**
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289574&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21200
+## PARECER Nº 21200
 
 ICMS – Base de cálculo nas operações de importação de carne bovina e ovina.
 --------------------------------------------------------------------------------------------
@@ -7239,7 +7239,7 @@ Parecer jurídico tributário emitido pela entidade governamental do Rio Grande 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=287987&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21184
+## PARECER Nº 21184
 
 ICMS – Apropriação de crédito fiscal pela entrada de mercadorias que na saída são beneficiadas com a redução de base de cálculo aplicável à cesta básica de medicamentos.
 
@@ -7332,7 +7332,7 @@ Parecer tributário que analisa a aplicação de carga tributária, incluindo po
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291381&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21179
+## PARECER Nº 21179
 
 Carga tributária aplicável nas operações internas com diferentes tipos de pães, da posição 1905.90.10, da NBM-SH/NCM.
 
@@ -7390,7 +7390,7 @@ O parecer analisa consulta de empresa varejista sobre o cálculo do ICMS por sub
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=290125&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21163
+## PARECER Nº 21163
 
 ICMS – Substituição tributária nas aquisições de açúcar de fornecedor estabelecido em outra unidade da Federação.
 
@@ -7449,7 +7449,7 @@ Parecer legal que analisa a aplicação do regime de substituição tributária 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289148&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21121
+## PARECER Nº 21121
 
 Aplicação do regime de substituição tributária nas operações com suplementos alimentares, da posição 2309.90.90 da NBM-SH/NCM, com diferentes composições e formas de apresentação.
 
@@ -7510,7 +7510,7 @@ O parecer trata da aplicação correta da **Margem de Valor Agregado (MVA)** em 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297113&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21120
+## PARECER Nº 21120
 
 Correta MVA a ser aplicada em operações interestaduais com mercadorias cuja carga tributária interna, deste Estado, é menor que a alíquota interestadual incidente na operação.
 
@@ -7593,7 +7593,7 @@ O parecer trata de uma consulta tributária formulada por uma empresa do setor d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=277175&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21105
+## PARECER Nº 21105
 
 Obrigações acessórias pertinentes ao regime diferenciado de tributação, contemplado aos bares, restaurantes e similares (artigo 38-A do Livro I).
 
@@ -7687,7 +7687,7 @@ Parecer legal que fornece esclarecimentos sobre o cálculo do **ICMS-ST** na ent
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=290124&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21095
+## PARECER Nº 21095
 
 Esclarecimentos sobre o Parecer nº 20083, que tratou do cálculo do ICMS-ST, na entrada de óleo de soja adquirido de fornecedor de Estado não signatário de Protocolo relativo à substituição tributária.
 
@@ -7789,7 +7789,7 @@ Parecer tributário que analisa a possibilidade de aplicação de base de cálcu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289321&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21089
+## PARECER Nº 21089
 
 Aplicação da base de cálculo reduzida, assegurada a produtos da cesta básica de alimentos, nas operações com bacon salmourado e defumado.
 
@@ -7848,7 +7848,7 @@ Parecer tributário sobre consulta de empresa gaúcha (RS) relativa a operaçõe
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291368&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21057
+## PARECER Nº 21057
 
 Remessa de mercadorias para conserto, no exterior, com saída diretamente do fornecedor original, sem retornar ao adquirente.
 
@@ -7914,7 +7914,7 @@ O parecer analisa a consulta de uma associação produtora de derivados de leite
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289350&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21027
+## PARECER Nº 21027
 
 Direito a crédito fiscal presumido aos fabricantes de leite em pó, relativamente à industrialização dessa mercadoria e às aquisições do leite in natura.
 
@@ -8050,7 +8050,7 @@ Parecer legal emitido por entidade governamental respondendo a consulta de empre
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292891&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21020
+## PARECER Nº 21020
 
 Obrigações acessórias pertinentes ao regime diferenciado de tributação, contemplado aos bares, restaurantes e similares (artigo 38-A do Livro I).
 
@@ -8116,7 +8116,7 @@ O parecer aborda consulta sobre a aplicação da legislação tributária do ICM
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289319&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21017
+## PARECER Nº 21017
 
 ICMS – Alíquota e base de cálculo do imposto nas operações com presuntos.
 
@@ -8168,7 +8168,7 @@ Parecer jurídico-tributário que analisa a aplicação do diferencial de alíqu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289802&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21003
+## PARECER Nº 21003
 
 ICMS – Diferencial de alíquotas na venda de semirreboques, promovida por contribuinte de outra unidade da Federação, com destino a clientes do RS.
 
@@ -8230,7 +8230,7 @@ Essa descrição é otimizada para armazenamento em sistemas de RAG, priorizando
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289801&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 21002
+## PARECER Nº 21002
 
 ICMS – Tratamento tributário aplicável na aquisição de peças ou na manutenção de veículos realizada por empresa do RS em estabelecimento localizado em outra unidade da Federação.
 
@@ -8296,7 +8296,7 @@ Este parecer analisa dúvidas de uma empresa atacadista de mercadorias (como mat
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=280568&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20313
+## PARECER Nº 20313
 
 Aplicação do regime de substituição tributária em operações destinadas à revenda e em operações destinadas ao consumo pelo adquirente.
 
@@ -8407,7 +8407,7 @@ O parecer analisa consulta tributária de empresa geradora de energia eólica so
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289146&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18156
+## PARECER Nº 18156
 
 Pagamento do diferencial de alíquotas em relação a bens destinados ao ativo permanente de contribuinte, gerador de energia eólica, e direito ao crédito fiscal das suas compras.
 
@@ -8547,7 +8547,7 @@ Este parecer analisa consulta de contribuinte de São Paulo sobre o cálculo do 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=280565&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20340
+## PARECER Nº 20340
 
 ICMS – Cálculo do débito de substituição tributária nas vendas interestaduais de açúcar para contribuintes do RS.
 
@@ -8627,7 +8627,7 @@ Parecer legal que analisa a possibilidade de aplicação de **redução de base 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289800&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20334
+## PARECER Nº 20334
 
 Aplicação de redução de base de cálculo por ocasião da determinação do diferencial de alíquotas, previsto na Emenda Constitucional nº 87/15, e da substituição tributária devida ao Estado destinatário.
 
@@ -8727,7 +8727,7 @@ O parecer retifica uma orientação anterior sobre a aplicação de imunidade tr
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276705&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20324
+## PARECER Nº 20324
 
 Retificação do Parecer nº 18463, o qual tratou da imunidade tributária na comercialização de mercadorias para instituição de caridade.
 
@@ -8780,7 +8780,7 @@ Parecer jurídico tributário analisando a possibilidade de enquadramento de con
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=280564&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20320
+## PARECER Nº 20320
 
 ICMS – Inclusão de conservas de produtos hortícolas na cesta básica de alimentos do RS.
 
@@ -8825,7 +8825,7 @@ Parecer jurídico que analisa a aplicação de isenção de ICMS em operações 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291158&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20308
+## PARECER Nº 20308
 
 ICMS – Isenção do imposto nas operações com cogumelos fatiados e desidratados.
 
@@ -8861,7 +8861,7 @@ resumo   : ### Descrição Resumida para RAG
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289799&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20304
+## PARECER Nº 20304
 
 Operações interestaduais de revenda para pessoa física, com destino a consumo final, de mercadorias adquiridas ao abrigo de regime de substituição tributária.
 
@@ -8923,7 +8923,7 @@ Parecer legal sobre a tributação de **ICMS** em operações de **venda** e **e
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289798&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20301
+## PARECER Nº 20301
 
 Venda e entrega de mercadorias em endereço diverso do destinatário, pessoa jurídica não contribuinte do ICMS, de outra unidade federada, envolvendo obras de construção civil.
 
@@ -9000,7 +9000,7 @@ Parecer legal emitido por entidade governamental (Receita Estadual do Rio Grande
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276639&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20266
+## PARECER Nº 20266
 
 Procedimentos pertinentes ao ajuste de substituição tributária previsto nos artigos 25-B e 25-C do Livro III, considerando a não ocorrência de operação posterior a consumidor final, realizada por supermercado, com a mesma mercadoria adquirida.
 
@@ -9065,7 +9065,7 @@ Parecer jurídico tributário emitido por entidade governamental do Rio Grande d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=285928&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20260
+## PARECER Nº 20260
 
 Aplicação da substituição tributária nas operações com produtos com propriedades desinfetantes e sanitizantes, da posição 3808.94.19, para uso em lavagem de roupas.
 
@@ -9117,7 +9117,7 @@ O parecer trata de consulta tributária de uma empresa optante pelo Simples Naci
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297082&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20256
+## PARECER Nº 20256
 
 Tributação nas operações com produtos destinados à reciclagem e reutilização ou ao descarte.
 
@@ -9204,7 +9204,7 @@ O parecer trata de uma consulta tributária sobre a possibilidade de uma empresa
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276846&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20245
+## PARECER Nº 20245
 
 ICMS – Apropriação extemporânea de crédito fiscal presumido concedido a empresas fabricantes de doces e chocolates.
 
@@ -9283,7 +9283,7 @@ Parecer tributário emitido pela Receita Estadual do Rio Grande do Sul, responde
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276642&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20229
+## PARECER Nº 20229
 
 Procedimentos pertinentes ao ajuste de substituição tributária previsto nos artigos 25-B e 25-C do Livro III, considerando a não ocorrência de operação posterior a consumidor final, com a mesma mercadoria adquirida.
 
@@ -9338,7 +9338,7 @@ Parecer tributário emitido pela autoridade fiscal do Rio Grande do Sul, analisa
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289797&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20212
+## PARECER Nº 20212
 
 Venda de peças de veículos para seguradoras, sendo a remessa das mercadorias efetuadas diretamente para a oficina que realizará o conserto, ambas localizadas em Santa Catarina.
 
@@ -9416,7 +9416,7 @@ Parecer jurídico sobre consulta de contribuinte (fabricante de produtos químic
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276537&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20186
+## PARECER Nº 20186
 
 ICMS – Direito a crédito fiscal em relação ao serviço de coleta de mercadorias iniciado em outro Estado, quando contratado pelo contribuinte e cujo imposto tenha sido pago através de GNRE.
 
@@ -9468,7 +9468,7 @@ O parecer analisa consulta tributária de uma empresa do ramo de comércio varej
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276641&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20164
+## PARECER Nº 20164
 
 Procedimentos pertinentes ao ajuste de substituição tributária previsto nos artigos 25-B a 25-C do Livro III, considerando a não ocorrência de operação final destinada a consumidor final, com a mesma mercadoria que foi adquirida.
 
@@ -9519,7 +9519,7 @@ O parecer trata de consulta sobre o tratamento tributário do ICMS em operaçõe
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289796&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20163
+## PARECER Nº 20163
 
 ICMS – Tratamento tributário aplicável nas vendas de tinta para contribuinte de outra unidade da Federação, sendo a mercadoria entregue em obra localizada no Estado do RS.
 
@@ -9573,7 +9573,7 @@ O parecer analisa consulta de empresa fabricante de equipamentos eletromédicos 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276847&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20154
+## PARECER Nº 20154
 
 Apropriação cumulativa dos créditos fiscais presumidos previstos nos incisos CXLIX e CLXVII, do artigo 32 do Livro I do RICMS.
 
@@ -9650,7 +9650,7 @@ Parecer jurídico-tributário que analisa a determinação do período de apura�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276536&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20143
+## PARECER Nº 20143
 
 Determinação do correto período de apuração para apropriação de crédito fiscal presumido.
 
@@ -9705,7 +9705,7 @@ Essa descrição é otimizada para armazenamento em sistemas de RAG, priorizando
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276640&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20093
+## PARECER Nº 20093
 
 Procedimentos pertinentes ao ajuste de substituição tributária previsto nos artigos 25-B a 25-C do Livro III, a serem feitos por supermercado, considerando a não ocorrência de operação final destinada a consumidor final, e outros assuntos.
 
@@ -9842,7 +9842,7 @@ O parecer analisa a aplicação de regras tributárias do ICMS (Imposto sobre Ci
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296290&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20033
+## PARECER Nº 20033
 
 Correta carga tributária nas operações com sorvetes, comercializados para consumo imediato no estabelecimento fornecedor.
 
@@ -9901,7 +9901,7 @@ Parecer legal emitido pela autoridade tributária do Rio Grande do Sul (SEFAZ/RS
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292890&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20019
+## PARECER Nº 20019
 
 Carga tributária aplicável nas operações internas com bacalhau.
 
@@ -9955,7 +9955,7 @@ Parecer legal que analisa a possibilidade de aplicação do diferimento do ICMS 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276535&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 20013
+## PARECER Nº 20013
 
 Aplicação do diferimento em operações posteriores de remessas de mercadorias em substituição ou em complementação.
 
@@ -10017,7 +10017,7 @@ Parecer legal analisando a aplicação do **ICMS** em operação de venda de mer
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275194&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17378
+## PARECER Nº 17378
 
 ICMS – Diferencial de alíquotas no caso de venda de mercadoria para cliente localizado em São Paulo, mas que será entregue no Rio Grande do Sul.
 
@@ -10052,7 +10052,7 @@ Parecer legal que analisa a aplicação do regime de **substituição tributári
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=285929&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19437
+## PARECER Nº 19437
 
 Aplicação da substituição tributária nas operações com produtos com propriedades desinfetantes e sanitizantes, da posição 3808.94.19, para uso em lavagem de roupas.
 
@@ -10131,7 +10131,7 @@ O parecer analisa a incidência tributária do ICMS em operações envolvendo o 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296331&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19368
+## PARECER Nº 19368
 
 Carga tributária nas operações com sucos de frutas, elaborados em restaurantes, inclusive com uso de xarope concentrado, servidos ou não com as refeições.
 
@@ -10213,7 +10213,7 @@ Parecer jurídico sobre consulta de empresa do setor de supermercados quanto ao 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297585&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19335
+## PARECER Nº 19335
 
 ICMS – Direito a crédito fiscal pela aquisição de materiais de acondicionamento.
 
@@ -10262,7 +10262,7 @@ Parecer jurídico tributário que analisa a possibilidade de uma empresa exercer
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271426&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19304
+## PARECER Nº 19304
 
 ICMS – Realização concomitante das atividades de Armazém Geral e de prestação de serviço de transporte em um mesmo estabelecimento.
 
@@ -10320,7 +10320,7 @@ O parecer fornece esclarecimentos e atualizações a um parecer anterior (nº 19
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271091&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19289
+## PARECER Nº 19289
 
 Esclarecimentos relativos ao Parecer nº 19222, que tratou da aplicação de base de cálculo reduzida, na realização do ajuste do montante do imposto retido por substituição tributária, previsto nos artigos 25-A a 25-C do Livro III.
 
@@ -10368,7 +10368,7 @@ O parecer analisa consulta tributária de empresa sobre a apropriação extempor
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276848&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19285
+## PARECER Nº 19285
 
 Apropriação de crédito fiscal presumido extemporâneo em valor superior ao permitido pela nota 02 do “caput” do artigo 32 do Livro I do RICMS.
 
@@ -10475,7 +10475,7 @@ O parecer analisa consulta de empresa do setor de móveis sobre possibilidade de
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289795&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19268
+## PARECER Nº 19268
 
 Ressarcimento de imposto pago a maior, a título de diferencial de alíquotas, em razão de equívoco no enquadramento da alíquota no destino.
 
@@ -10547,7 +10547,7 @@ O parecer aborda consulta de uma empresa sobre a **restituição do ICMS** retid
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=280769&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19246
+## PARECER Nº 19246
 
 Restituição do ICMS pago em operações sujeitas à substituição tributária.
 
@@ -10623,7 +10623,7 @@ Parecer tributário que aborda a aplicação correta do **CFOP** em operações 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275394&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19201
+## PARECER Nº 19201
 
 ICMS – CFOP a ser utilizado nas vendas de mercadorias que foram recebidas de estabelecimento fabricante pertencente à mesma empresa.
 
@@ -10670,7 +10670,7 @@ O parecer analisa a carga tributária de ICMS aplicável às operações interna
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=277166&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19146
+## PARECER Nº 19146
 
 ICMS - carga tributária aplicável nas operações com massas alimentícias recheadas e refrigeradas, classificadas na posição 1902.20.00 da NBM/SH-NCM.
 
@@ -10727,7 +10727,7 @@ Parecer legal que fornece esclarecimentos adicionais sobre o tratamento tributá
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276849&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19123
+## PARECER Nº 19123
 
 ICMS – Esclarecimentos em relação ao Parecer nº 19027.
 
@@ -10793,7 +10793,7 @@ Este parecer jurídico analisa o tratamento tributário aplicável às operaçõ
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297241&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19111
+## PARECER Nº 19111
 
 Tributação nas operações com aipim descascado, cortado, higienizado, congelado e embalado.
 
@@ -10856,7 +10856,7 @@ Parecer legal emitido por entidade governamental (provavelmente Secretaria da Fa
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=277165&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19031
+## PARECER Nº 19031
 
 ICMS - carga tributária aplicável nas operações com produtos alimentícios, classificados nas posições 1901.20.00 e 1905.90.90, da NBM/SH-NCM, considerando diferentes interpretações por parte dos fornecedores, quanto à tributação e classificação.
 
@@ -10933,7 +10933,7 @@ Parecer legal emitido pela Consultoria Tributária do Rio Grande do Sul analisan
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271545&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18498
+## PARECER Nº 18498
 
 Possibilidade de compensar créditos fiscais presumidos extemporâneos com débitos inscritos em dívida ativa e parcelados.
 
@@ -11035,7 +11035,7 @@ Parecer jurídico tributário analisando consulta de empresa prestadora de servi
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=276750&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18494
+## PARECER Nº 18494
 
 Dispensa de obrigatoriedade de inscrição estadual e de emissão de documentação fiscal para o transporte de bens pertencentes a não contribuinte.
 
@@ -11119,7 +11119,7 @@ O parecer analisa consultas de uma empresa fabricante de vestuário sobre a form
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292937&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18465
+## PARECER Nº 18465
 
 Forma de cálculo do crédito fiscal presumido previsto no inciso CXXXV do artigo 32 do Livro I do RICMS.
 
@@ -11201,7 +11201,7 @@ O parecer analisa a tributação aplicável no âmbito do ICMS (Imposto sobre Ci
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291159&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18459
+## PARECER Nº 18459
 
 Correta tributação nas operações com louro, orégano, mandioquinha, mandioca e aipim.
 
@@ -11283,7 +11283,7 @@ O parecer analisa a consulta de uma empresa distribuidora de energia elétrica s
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293329&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18445
+## PARECER Nº 18445
 
 ICMS – Incidência do imposto em relação à atividade de distribuição de energia elétrica.
 
@@ -11358,7 +11358,7 @@ O parecer analisa uma consulta tributária sobre a aplicação de **crédito fis
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293004&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18444
+## PARECER Nº 18444
 
 Dúvida a respeito do crédito fiscal presumido, assegurado aos estabelecimentos distribuidores dos produtos farmacêuticos, relacionados no item VI da Seção III do Apêndice II do RICMS.
 
@@ -11442,7 +11442,7 @@ O parecer trata de uma consulta tributária sobre a aplicação retroativa de cr
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293003&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18443
+## PARECER Nº 18443
 
 Dúvida a respeito do crédito fiscal presumido, assegurado aos estabelecimentos distribuidores dos produtos farmacêuticos, relacionados no item VI da Seção III do Apêndice II do RICMS.
 
@@ -11517,7 +11517,7 @@ O parecer trata de uma consulta tributária sobre o **crédito fiscal presumido*
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275261&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18439
+## PARECER Nº 18439
 
 Dúvida a respeito do crédito fiscal presumido, assegurado aos estabelecimentos distribuidores dos produtos farmacêuticos, relacionados no item VI da Seção III do Apêndice II do RICMS.
 
@@ -11602,7 +11602,7 @@ Este parecer analisa a consulta de uma empresa do ramo de restaurantes sobre a c
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296289&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18425
+## PARECER Nº 18425
 
 Carga tributária nas operações com sucos de frutas, elaborados em restaurantes, com uso de xarope concentrado, servidos ou não com as refeições.
 
@@ -11694,7 +11694,7 @@ Parecer legal emitido por entidade governamental (provavelmente Secretaria da Fa
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291892&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18414
+## PARECER Nº 18414
 
 Correta tributação nas operações internas com leite de coco, da posição 2009.89.90 da NBM/SH-NCM.
 
@@ -11767,7 +11767,7 @@ Parecer jurídico-tributário analisando consulta de empresa optante pelo **Simp
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=292627&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18385
+## PARECER Nº 18385
 
 Aquisições de mercadorias que serão transformadas em refeições e outros produtos alimentícios, e comercializadas ao abrigo da base de cálculo reduzida, e adjudicação proporcional do imposto correspondente ao débito próprio e ao ICMS-ST.
 
@@ -11871,7 +11871,7 @@ O parecer analisa a tributação correta de ICMS em operações internas no Rio 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=273535&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18357
+## PARECER Nº 18357
 
 Correta tributação das operações internas com massas alimentícias, da posição 1902.20.00, e com bolos e outros produtos de panificação, da posição 1905.90.90, da NBM/SH-NCM.
 
@@ -11946,7 +11946,7 @@ Parecer jurídico-tributário emitido pela autoridade fiscal do Rio Grande do Su
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296933&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18330
+## PARECER Nº 18330
 
 Aplicação da isenção e ou da base de cálculo reduzida na comercialização de alho-porro, da posição 0703.90.90 da NBM/SH-NCM.
 
@@ -12001,7 +12001,7 @@ Parecer jurídico tributário analisando consulta sobre aplicação de isenção
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296932&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18306
+## PARECER Nº 18306
 
 ICMS - Isenção do imposto nas saídas de alho-porro, comercializados "in natura", em fardos amarrados.
 
@@ -12058,7 +12058,7 @@ Parecer tributário estadual (Rio Grande do Sul) respondendo a consulta de empre
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271196&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18284
+## PARECER Nº 18284
 
 Operação de venda à ordem, tendo como destinatário final contratante de serviço de limpeza, não inscrito no CGC/TE, e como adquirente original empresa de outra unidade da Federação.
 
@@ -12118,7 +12118,7 @@ Parecer legal que analisa a aplicação do **ICMS** em operações de **venda de
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271195&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18270
+## PARECER Nº 18270
 
 ICMS - Venda de mercadoria por empresa estabelecida em outra Unidade da Federação, que possui filial no Estado do RS.
 
@@ -12158,7 +12158,7 @@ O parecer analisa consulta tributária sobre o **crédito fiscal presumido** de 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293002&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18233
+## PARECER Nº 18233
 
 Crédito fiscal presumido assegurado aos distribuidores de produtos farmacêuticos, arrolados no item VI da Sessão III do Apêndice II do RICMS.
 
@@ -12230,7 +12230,7 @@ O parecer retifica um entendimento anterior sobre a inclusão do açúcar mascav
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=260241&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18160
+## PARECER Nº 18160
 
 Retificação do Parecer n.º 03082, de 08.05.2003, o qual tratou da inclusão do açúcar mascavo na cesta básica de alimentos do Rio Grande do Sul, arrolados no Apêndice IV do RICMS.
 
@@ -12276,7 +12276,7 @@ Parecer legal emitido por entidade governamental (provavelmente Secretaria da Fa
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289318&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18117
+## PARECER Nº 18117
 
 Correta tributação nas operações de importação e de posterior revenda interna de produtos de charcutaria, à base de carne suína.
 
@@ -12361,7 +12361,7 @@ resumo   : ### Descrição Resumida para RAG
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293001&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18100
+## PARECER Nº 18100
 
 Apropriação retroativa do crédito fiscal presumido previsto no inciso CXLIX do artigo 32 do Livro I do RICMS.
 
@@ -12438,7 +12438,7 @@ O parecer analisa consulta tributária de empresa do setor de laticínios sobre 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=277073&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18030
+## PARECER Nº 18030
 
 ICMS - Crédito fiscal presumido concedido aos industrializadores de leite.
 Processo n.º : XXX Parecer n.º 18030
@@ -12601,7 +12601,7 @@ Parecer tributário analisando a possibilidade de isenção de ICMS nas operaç�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296931&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 18021
+## PARECER Nº 18021
 
 ICMS – Isenção do imposto nas saídas de alho-porro.
 
@@ -12645,7 +12645,7 @@ Parecer tributário que analisa a obrigatoriedade de recolhimento do **diferenci
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=272031&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17440
+## PARECER Nº 17440
 
 Diferencial de alíquotas a ser pago em atendimento à Emenda Constitucional n.º 87/15, quando a mercadoria comercializada não transita para fora do Estado.
 
@@ -12703,7 +12703,7 @@ Parecer legal analisando a aplicação da **Margem de Valor Agregado (MVA)** no 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=272034&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17405
+## PARECER Nº 17405
 
 ICMS – MVA utilizada no cálculo do débito de substituição tributária no caso de remessa de peças em virtude de garantia dada pelo fabricante.
 
@@ -12774,7 +12774,7 @@ Parecer tributário estadual (RS) que analisa consulta de empresa sobre o tratam
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271231&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17388
+## PARECER Nº 17388
 
 Regularização de aquisição de mercadorias que foram extraviadas pela transportadora, mas ressarcidas pela seguradora.
 
@@ -12834,7 +12834,7 @@ O parecer trata de uma consulta tributária formulada por uma empresa fabricante
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275164&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17385
+## PARECER Nº 17385
 
 Aplicação de benefícios fiscais por ocasião do cálculo do diferencial de alíquotas previsto na Emenda Constitucional n.º 87/15.
 
@@ -12905,7 +12905,7 @@ O parecer trata de uma consulta tributária de uma empresa sobre o correto preen
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275153&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17348
+## PARECER Nº 17348
 
 Preenchimento do Registro C176 no SPED-FISCAL ICMS/IPI.
 
@@ -12997,7 +12997,7 @@ O parecer trata da **retificação parcial** de um entendimento anterior sobre a
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293005&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17337
+## PARECER Nº 17337
 
 Retificação parcial do Parecer n.º 17298, o qual tratou da aplicação da base de cálculo reduzida relativamente ao débito fiscal próprio, nas saídas internas de cosméticos, perfumaria, artigos de higiene pessoal e de toucador, relacionados no item XXII da Seção III do Apêndice II do RICMS.
 
@@ -13055,7 +13055,7 @@ O parecer analisa consulta de uma empresa sobre a aplicação de benefícios fis
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291586&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17326
+## PARECER Nº 17326
 
 Redução de base em cálculo e crédito fiscal presumido em operações com produtos que tiveram sua classificação fiscal alterada pela Receita Federal do Brasil.
 
@@ -13121,7 +13121,7 @@ Parecer jurídico-tributário emitido por entidade governamental (Receita Estadu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275163&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17299
+## PARECER Nº 17299
 
 Pagamento do diferencial de alíquotas por ocasião de aquisições de veículos usados, de outras unidades da Federação.
 
@@ -13175,7 +13175,7 @@ O parecer analisa a aplicação de redução na base de cálculo do ICMS para o 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=293504&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17298
+## PARECER Nº 17298
 
 Aplicação da base de cálculo reduzida relativamente ao débito fiscal próprio, nas saídas internas de cosméticos, perfumaria, artigos de higiene pessoal e de toucador, relacionados no item XXII da Seção III do Apêndice II do RICMS.
 
@@ -13262,7 +13262,7 @@ Parecer legal que analisa consulta de empresa sobre o direito ao crédito de ICM
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291980&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17291
+## PARECER Nº 17291
 
 Crédito fiscal relativo à energia elétrica utilizada em processos de limpeza e secagem de cereais, retroativamente a 2012.
 
@@ -13346,7 +13346,7 @@ Parecer jurídico-tributário emitido pela Secretaria da Fazenda do Rio Grande d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271194&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17266
+## PARECER Nº 17266
 
 ICMS – Venda à ordem em operações com o exterior.
 
@@ -13458,7 +13458,7 @@ O parecer analisa a aplicação do regime de substituição tributária no ICMS 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=277072&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17160
+## PARECER Nº 17160
 
 Substituição tributária nas aquisições de mercadorias que serão transformadas em refeições, e comercializadas ao abrigo da base de cálculo reduzida, e adjudicação proporcional do imposto
 
@@ -13561,7 +13561,7 @@ Parecer legal que analisa a aplicação do regime de **substituição tributári
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=272035&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17147
+## PARECER Nº 17147
 
 Aplicação da substituição tributária nas remessas de mercadorias para reparo ou troca, em razão de garantia.
 
@@ -13664,7 +13664,7 @@ Parecer tributário que analisa consulta de empresa prestadora de serviços (suj
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271193&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17144
+## PARECER Nº 17144
 
 Realização de vendas à ordem.
 
@@ -13719,7 +13719,7 @@ Parecer legal emitido pela Secretaria da Fazenda do Rio Grande do Sul, responden
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=272032&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 17092
+## PARECER Nº 17092
 
 Emissão de documento fiscal no fornecimento de refeições e bebidas.
 
@@ -13783,7 +13783,7 @@ O parecer analisa consulta tributária de uma empresa fabricante de medicamentos
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291366&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 19326
+## PARECER Nº 19326
 
 Regras para apropriação dos créditos fiscais presumidos previstos nos incisos LXXIV, CXVII e CXLIX, do artigo 32 do Livro I do RICMS, de forma concomitante, em algumas situações.
 
@@ -13963,7 +13963,7 @@ O parecer analisa a aplicação da **substituição tributária** e a **alíquot
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289317&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16393
+## PARECER Nº 16393
 
 Substituição tributária nas operações com torresmo suíno.
 
@@ -14020,7 +14020,7 @@ O parecer aborda consulta tributária de uma empresa sobre o regime especial par
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297218&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16390
+## PARECER Nº 16390
 
 Esclarecimentos sobre o comércio de mercadorias através de máquinas de autoatendimento.
 
@@ -14098,7 +14098,7 @@ O parecer analisa a **tributação** de **ICMS** em **vendas presenciais** de pe
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=272030&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16382
+## PARECER Nº 16382
 
 Tributação nas vendas presenciais para não contribuintes e para pessoas jurídicas, de outras unidades da Federação.
 
@@ -14169,7 +14169,7 @@ O parecer analisa a aplicação do regime de **substituição tributária** no *
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=277070&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16358
+## PARECER Nº 16358
 
 Substituição tributária nas aquisições de mercadorias que serão transformadas em refeições, e comercializadas ao abrigo da base de cálculo reduzida.
 --------------------------------------------------------------------------------------------
@@ -14277,7 +14277,7 @@ O parecer analisa a aplicação da alíquota de ICMS incidente sobre o fornecime
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271230&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16329
+## PARECER Nº 16329
 
 Correta aplicação da alíquota no fornecimento de energia elétrica para contribuintes enquadrados como extratores de minerais (calcário agrícola).
 
@@ -14347,7 +14347,7 @@ O parecer trata de consulta tributária sobre a incidência de ICMS em vendas pr
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=272033&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16288
+## PARECER Nº 16288
 
 Tributação nas vendas presenciais para não contribuintes e para pessoas jurídicas, de outras unidades da Federação.
 
@@ -14403,7 +14403,7 @@ Parecer jurídico emitido por entidade governamental analisando consulta sobre a
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275162&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16259
+## PARECER Nº 16259
 
 Correta tributação nas operações com energia elétrica.
 
@@ -14463,7 +14463,7 @@ O parecer trata de uma consulta tributária sobre a aplicação de regras de ICM
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291891&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16253
+## PARECER Nº 16253
 
 Tributação nas operações com peixes e pescados.
 --------------------------------------------------------------------------------------------
@@ -14513,7 +14513,7 @@ Parecer tributário que aborda consulta de empresa sobre a possibilidade de rest
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275263&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16185
+## PARECER Nº 16185
 
 Restituição dos valores relativos ao AMPARA/RS, em razão da devolução de mercadorias, cujas operações anteriores foram tributadas pela substituição tributária.
 
@@ -14560,7 +14560,7 @@ Parecer legal que aborda consulta de contribuinte sobre obrigações acessórias
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275155&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16157
+## PARECER Nº 16157
 
 Obrigações acessórias relativas a operações com mercadorias, cujas operações não estão mais sujeitas à substituição tributária.
 
@@ -14610,7 +14610,7 @@ Parecer jurídico tributário emitido por entidade governamental (provavelmente 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275244&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16143
+## PARECER Nº 16143
 
 Emissão de Nota Fiscal nos casos de substituição de peças em razão de garantia dada pelo fabricante, quando a operação está sujeita à substituição tributária.
 
@@ -14664,7 +14664,7 @@ Essa descrição é otimizada para armazenamento em sistemas de RAG, priorizando
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275195&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N° 16135
+## PARECER N° 16135
 
 ICMS – Recolhimento do diferencial de alíquotas após a vigência da Emenda Constitucional nº 87/15.
 
@@ -14729,7 +14729,7 @@ Parecer legal sobre consulta tributária de uma empresa varejista (supermercado)
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275265&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16085
+## PARECER Nº 16085
 
 Procedimentos relativos ao recolhimento do AMPARA/RS.
 
@@ -14790,7 +14790,7 @@ O parecer analisa a aplicação do diferencial de alíquotas (DIFAL) em operaç�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271191&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16072
+## PARECER Nº 16072
 
 Cálculo do diferencial de alíquotas a ser pago, em atendimento à Emenda Constitucional n.º 87/2015, em várias operações com entrega da mercadoria em endereço diverso do destinatário.
 
@@ -14859,7 +14859,7 @@ Parecer legal que analisa consulta de empresa de transporte de cargas sobre poss
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275151&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16056
+## PARECER Nº 16056
 
 Cancelamento de CT-e, depois de transcorrido o prazo legal.
 
@@ -14921,7 +14921,7 @@ Parecer jurídico tributário emitido por entidade governamental sobre a aplica�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275243&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16022
+## PARECER Nº 16022
 
 ICMS – Operação de venda com entrega em endereço diverso daquele do adquirente.
 
@@ -14970,7 +14970,7 @@ Parecer legal emitido por entidade governamental que aborda consulta de empresa 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275242&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 16002
+## PARECER Nº 16002
 
 ICMS – Prazo para utilização da nota fiscal depois de emitida.
 
@@ -15004,7 +15004,7 @@ O parecer analisa o tratamento tributário aplicável ao ICMS em operações int
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=246575&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15211
+## PARECER Nº 15211
 
 Tratamento tributário aplicável nas operações interestaduais com mostruário de mercadorias.
 
@@ -15127,7 +15127,7 @@ O parecer analisa a aplicação de **redução de base de cálculo** no cálculo
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=246576&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15187
+## PARECER Nº 15187
 
 Aplicação da base de cálculo reduzida no cálculo do crédito fiscal a ser admitido, em aquisições sujeitas a 4% e 12%.
 
@@ -15192,7 +15192,7 @@ O parecer analisa uma consulta tributária de uma empresa do setor de comércio 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275196&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15148
+## PARECER Nº 15148
 
 Tributação nas operações com mercadorias destinadas ao uso e consumo.
 
@@ -15258,7 +15258,7 @@ O parecer analisa consulta de empresa de engenharia civil sobre a aplicação do
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275262&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15272
+## PARECER Nº 15272
 
 Remessa de mercadorias destinadas ao uso em obras de construção civil fora do Estado.
 
@@ -15311,7 +15311,7 @@ O parecer trata de consulta tributária sobre o procedimento adequado para o rec
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275241&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15216
+## PARECER Nº 15216
 
 Recebimento de mercadorias, quando a carga entregue não confere com a descrição do documento fiscal.
 
@@ -15361,7 +15361,7 @@ Parecer legal sobre procedimentos tributários no âmbito do ICMS para correçã
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=246579&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15197
+## PARECER Nº 15197
 
 Procedimento a ser adotado quando existir divergência entre a quantidade de mercadorias efetivamente comercializadas e a que constou no documento fiscal que acobertou a operação.
 
@@ -15432,7 +15432,7 @@ O parecer aborda consulta tributária de uma empresa optante pelo Simples Nacion
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=246577&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15191
+## PARECER Nº 15191
 
 Base de cálculo reduzida em operações de fornecimento de refeições por bares, restaurantes e estabelecimentos similares.
 
@@ -15507,7 +15507,7 @@ Parecer legal emitido pela Receita Estadual do Rio Grande do Sul (Parecer nº 15
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=246465&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15190
+## PARECER Nº 15190
 
 Adjudicação de crédito fiscal relativo a compras de diesel.
 
@@ -15560,7 +15560,7 @@ O parecer analisa a tributação, especificamente a incidência de ICMS, no forn
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=246574&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15181
+## PARECER Nº 15181
 
 Tributação no fornecimento de estruturas pré-moldadas de concreto, fabricadas fora do canteiro de obras.
 
@@ -15606,7 +15606,7 @@ Parecer jurídico emitido por entidade governamental que analisa procedimentos f
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=246580&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15174
+## PARECER Nº 15174
 
 ICMS – Procedimentos a serem adotados no caso de operação com benefício fiscal que condicione a fruição do abatimento do valor do ICMS desonerado.
 
@@ -15686,7 +15686,7 @@ O parecer analisa consulta de uma empresa industrial sobre o direito ao crédito
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242783&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15163
+## PARECER Nº 15163
 
 ICMS – Crédito fiscal sobre a entrada de energia elétrica consumida no processo de industrialização.
 
@@ -15754,7 +15754,7 @@ O parecer analisa uma consulta tributária sobre a aplicação de base de cálcu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242785&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 15160
+## PARECER N.º 15160
 
 Industrialização por encomenda, em operações sujeitas à substituição tributária.
 
@@ -15807,7 +15807,7 @@ Parecer legal emitido por entidade governamental (provavelmente do Rio Grande do
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242784&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15147
+## PARECER Nº 15147
 
 ICMS – Questões diversas relativas a operações com produtos médicos e hospitalares.
 
@@ -15870,7 +15870,7 @@ Parecer tributário que aborda dúvidas de uma empresa do setor de comércio var
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242806&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 15134
+## PARECER N.º 15134
 
 Correto preenchimento da GIA e correspondência com EFD.
 
@@ -15926,7 +15926,7 @@ Parecer jurídico tributário que analisa o início da vigência da Emenda Const
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242786&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 15132
+## PARECER N.º 15132
 
 Início da vigência da Emenda Constitucional n.º 87/2015.
 
@@ -15967,7 +15967,7 @@ Parecer jurídico que analisa a data correta para o início da exoneração do I
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242787&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 15121
+## PARECER N.º 15121
 
 IPVA - Data correta para início da exoneração do imposto.
 
@@ -16025,7 +16025,7 @@ Parecer legal que analisa a tributação de valores relativos a frete, seguro e 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242802&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 15118
+## PARECER N.º 15118
 
 Tributação dos valores de frete, seguro e despesas acessórias, quando a operação está sujeita à substituição tributária ou à base de cálculo reduzida.
 
@@ -16086,7 +16086,7 @@ O parecer analisa uma consulta tributária de uma empresa de autopeças sobre os
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242807&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 15114
+## PARECER N.º 15114
 
 Emissão de Nota Fiscal nos casos de devolução de mercadorias adquiridas em operações sujeitas à substituição tributária.
 
@@ -16165,7 +16165,7 @@ O parecer analisa uma consulta tributária de uma empresa sobre os procedimentos
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242803&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 15108
+## PARECER N.º 15108
 
 Compensação de imposto pago a maior.
 
@@ -16220,7 +16220,7 @@ Parecer jurídico sobre o tratamento tributário do ICMS aplicável às operaç�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271190&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15031
+## PARECER Nº 15031
 
 ICMS – Tratamento tributário aplicável nas operações com o produto mistura para bolo.
 
@@ -16264,7 +16264,7 @@ Esta descrição é otimizada para armazenamento em sistema de RAG, focando no t
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240154&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15024
+## PARECER Nº 15024
 
 Aplicação do diferimento em operações realizadas por optantes pelo Simples Nacional.
 
@@ -16341,7 +16341,7 @@ O parecer trata de uma consulta tributária sobre o **preenchimento da Ficha de 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242800&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 15019
+## PARECER N.º 15019
 
 Preenchimento da Ficha de Conteúdo de Importação (FCI).
 
@@ -16397,7 +16397,7 @@ O parecer analisa consulta sobre a **não incidência de ICMS** no **trânsito i
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=246578&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 15009
+## PARECER Nº 15009
 
 Não incidência de ICMS no trânsito de equinos.
 
@@ -16533,7 +16533,7 @@ O parecer trata de uma consulta sobre a apuração do ICMS devido na entrada de 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242782&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-INFORMAÇÃO Nº 15008
+## INFORMAÇÃO Nº 15008
 
 ICMS – Apuração do montante devido em decorrência do disposto no § 4º do artigo 46 do Livro I do RICMS, no caso de entrada de mercadoria em operação sujeita à alíquota de 4%.
 
@@ -16595,7 +16595,7 @@ Parecer legal que analisa a incidência de diferencial de alíquotas de ICMS em 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242804&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-INFORMAÇÃO N.º 15007
+## INFORMAÇÃO N.º 15007
 
 Compras interestaduais de máquinas destinadas ao imobilizado de contribuintes optantes pelo SN, sujeitas à alíquota de 4%.
 
@@ -16656,7 +16656,7 @@ Parecer legal sobre consulta tributária relativa ao ICMS incidente em operaçõ
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242805&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-INFORMAÇÃO N.º 15006
+## INFORMAÇÃO N.º 15006
 
 Compras interestaduais de máquinas destinadas ao imobilizado de contribuintes da categoria geral, sujeitas à alíquota de 4%.
 
@@ -16716,7 +16716,7 @@ Parecer legal emitido pela Secretaria da Fazenda do Rio Grande do Sul (SEFAZ-RS)
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242808&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-INFORMAÇÃO N.º 15001
+## INFORMAÇÃO N.º 15001
 
 Emissão de segunda via da Nota Fiscal que foi entregue ao adquirente.
 
@@ -16785,7 +16785,7 @@ Parecer legal que analisa a aplicação do § 4.º do artigo 46 do Livro I do RI
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240172&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14211
+## PARECER Nº 14211
 
 Aplicação do § 4.º do artigo 46 do Livro I do RICMS sobre as aquisições interestaduais de insumos agropecuários.
 
@@ -16825,7 +16825,7 @@ Este parecer analisa consulta de uma empresa de transporte rodoviário de cargas
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=242809&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N.º 14161
+## PARECER N.º 14161
 
 Emissão e correção de CT-e.
 
@@ -16946,7 +16946,7 @@ Parecer jurídico tributário analisando a incidência de ICMS em aquisições i
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240170&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14077
+## PARECER Nº 14077
 
 ICMS – Aquisição interestadual de mercadorias por empresa optante pelo Simples Nacional.
 
@@ -16995,7 +16995,7 @@ Parecer governamental emitido pela Receita Estadual que aborda consulta de empre
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240150&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13252
+## PARECER Nº 13252
 
 Correta classificação fiscal de mercadoria que comercializa.
 
@@ -17036,7 +17036,7 @@ Parecer legal que analisa a aplicação da legislação tributária estadual (IC
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240121&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13052
+## PARECER Nº 13052
 
 ICMS - Transferência de bens promovidas por contribuinte não inscrito no CGC/TE.
 
@@ -17086,7 +17086,7 @@ O parecer analisa consulta tributária sobre a apropriação de crédito fiscal 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240134&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14235
+## PARECER Nº 14235
 
 Não estorno de crédito fiscal relativo à aquisição de mercadoria importada listada na Cesta Básica de Alimentos.
 
@@ -17135,7 +17135,7 @@ Parecer legal que aborda consulta tributária sobre a manutenção de créditos 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240096&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14230
+## PARECER Nº 14230
 
 Crédito fiscal de aquisições de insumos que são usados na fabricação de ração animal, cujas posteriores saídas internas estão isentas.
 
@@ -17186,7 +17186,7 @@ Parecer tributário que analisa a possibilidade de aplicação do diferimento do
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240152&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14189
+## PARECER Nº 14189
 
 Diferimento nas operações de industrialização efetuada sob encomenda, quando o contribuinte responsável pela execução é optante pelo Simples Nacional.
 
@@ -17235,7 +17235,7 @@ O parecer trata de consulta sobre a legislação tributária estadual relativa a
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240132&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14145
+## PARECER Nº 14145
 
 ICMS – Inclusão dos valores pagos a título de direito antidumping na base de cálculo do imposto, quando da importação de mercadorias.
 
@@ -17297,7 +17297,7 @@ O parecer trata de uma consulta tributária sobre o direito de uma empresa tomad
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240089&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14133
+## PARECER Nº 14133
 
 Direito à adjudicação de crédito fiscal pago por transportadoras não inscritas no Estado de origem das mercadorias, através de GNRE.
 
@@ -17342,7 +17342,7 @@ Parecer jurídico que analisa a incidência ou não de ICMS sobre serviços de t
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240155&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14113
+## PARECER Nº 14113
 
 ICMS - Prestação de serviço de transporte intermunicipal de mercadoria que será destinada à exportação.
 
@@ -17383,7 +17383,7 @@ Parecer legal que analisa consulta de empresa de transporte rodoviário de carga
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240163&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14111
+## PARECER Nº 14111
 
 ICMS - Isenção do imposto nas prestações de serviço de transporte de cargas.
 
@@ -17428,7 +17428,7 @@ O parecer trata de uma consulta tributária sobre a aplicação de ICMS em opera
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=273844&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14096
+## PARECER Nº 14096
 
 Tributação nas operações com dipropionato de beclometasona.
 
@@ -17484,7 +17484,7 @@ Parecer legal emitido pela Consultoria Tributária do Rio Grande do Sul analisan
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=273533&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14090
+## PARECER Nº 14090
 
 Tributação nas operações com lasanha, pão de queijo e pizza pré-pronta.
 
@@ -17550,7 +17550,7 @@ O parecer analisa consulta de empresa de transporte rodoviário de cargas, optan
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275142&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14089
+## PARECER Nº 14089
 
 Interrupção da adjudicação de crédito fiscal presumido por um mês, com objetivo de cotejar débitos com créditos, voltando posteriormente à utilização do crédito presumido.
 --------------------------------------------------------------------------------------------
@@ -17598,7 +17598,7 @@ O parecer analisa o tratamento tributário aplicável às operações de recarga
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240142&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14083
+## PARECER Nº 14083
 
 ICMS – Tratamento tributário aplicável nas operações de recarga de cartuchos para impressoras.
 
@@ -17643,7 +17643,7 @@ Parecer legal que analisa o direito de uma empresa fabricante de máquinas e aut
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240094&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14074
+## PARECER Nº 14074
 
 Adjudicação de crédito fiscal relativo a aquisições de rebolos que são consumidos em processo industrial.
 
@@ -17702,7 +17702,7 @@ O parecer analisa uma consulta tributária sobre a aplicação da **substituiç�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240183&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14065
+## PARECER Nº 14065
 
 Substituição tributária nas operações com autopeças.
 
@@ -17756,7 +17756,7 @@ O parecer analisa a consulta de uma empresa sobre o procedimento para apropriaç
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240151&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14062
+## PARECER Nº 14062
 
 Crédito de ICMS em devoluções realizadas por optantes pelo Simples Nacional.
 
@@ -17802,7 +17802,7 @@ O parecer trata de consulta tributária sobre a aplicação da legislação do *
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240130&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14053
+## PARECER Nº 14053
 
 ICMS – Base de cálculo do imposto na importação de tratores, bem como de suas partes e peças.
 
@@ -17854,7 +17854,7 @@ Parecer jurídico sobre o direito de um contribuinte gaúcho ao crédito de ICMS
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240090&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14031
+## PARECER Nº 14031
 
 Direito ao crédito fiscal referente à compra de mercadorias que não teve o correspondente registro de passagem.
 
@@ -17907,7 +17907,7 @@ Parecer jurídico que analisa a incidência tributária (ICMS ou ISS) em operaç
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240139&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14027
+## PARECER Nº 14027
 
 Incidência do ICMS em operações de lavagem e higienização de vasilhames para comercialização de produtos químicos.
 
@@ -17957,7 +17957,7 @@ Parecer tributário que aborda consulta de empresa importadora sobre o tratament
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240131&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14019
+## PARECER Nº 14019
 
 ICMS – Importação e posterior comercialização de mercadoria sujeita ao regime de substituição tributária.
 
@@ -18004,7 +18004,7 @@ Parecer legal emitido por entidade governamental que aborda consulta sobre a cla
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240159&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 14001
+## PARECER Nº 14001
 
 CFOP em prestações de serviço de transporte interestadual.
 
@@ -18051,7 +18051,7 @@ Parecer legal que analisa consulta tributária sobre a possibilidade de emissão
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240126&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13191
+## PARECER Nº 13191
 
 Emissão de Nota Fiscal Eletrônica nas vendas realizadas fora do estabelecimento, em substituição à Nota Fiscal mod. 1-A.
 
@@ -18111,7 +18111,7 @@ Parecer legal que analisa a incidência da substituição tributária do ICMS em
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275157&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13277
+## PARECER Nº 13277
 
 Incidência da substituição tributária em operações destinadas a contribuinte cadastrado como MEI.
 
@@ -18157,7 +18157,7 @@ O parecer trata de uma consulta tributária sobre a forma de informar e a possib
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240179&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13274
+## PARECER Nº 13274
 
 Crédito fiscal de operações sujeitas à substituição tributária
 
@@ -18206,7 +18206,7 @@ Parecer legal sobre a aplicação do ICMS em operações de venda à ordem, foca
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240122&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13271
+## PARECER Nº 13271
 
 ICMS - Valor a ser consignado no documento fiscal em operações de venda à ordem.
 
@@ -18247,7 +18247,7 @@ Parecer legal que analisa o tratamento tributário do ICMS aplicável à aquisi�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240147&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13268
+## PARECER Nº 13268
 
 ICMS - Tratamento tributário aplicável na aquisição de máquinas e equipamentos industriais usados através de leilões.
 
@@ -18293,7 +18293,7 @@ O parecer analisa questões tributárias relacionadas à prestação de serviço
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240157&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13258
+## PARECER Nº 13258
 
 Prestação de serviço de transporte de cargas, com o retorno de mercadorias não entregues ao destinatário.
 
@@ -18348,7 +18348,7 @@ O parecer analisa consulta de empresa de agenciamento e transporte de cargas sob
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240178&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13247
+## PARECER Nº 13247
 
 Coleta de mercadorias, cuja NF-e foi emitida há mais de 72 horas e preenchimento manual da data e hora de saída.
 
@@ -18406,7 +18406,7 @@ Este parecer analisa consulta tributária de empresa optante pelo Simples Nacion
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275197&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13238
+## PARECER Nº 13238
 
 Aplicação do § 4.º do artigo 46 do Livro I do RICMS em operações interestaduais sujeitas à alíquota de 4%.
 
@@ -18470,7 +18470,7 @@ O parecer analisa a obrigatoriedade de inscrição no Cadastro Geral de Contribu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240146&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13228
+## PARECER Nº 13228
 
 ICMS - Necessidade de inscrição no CGC/TE para empresa que tem por objeto a atividade de armazém geral.
 
@@ -18527,7 +18527,7 @@ Parecer jurídico que aborda o tratamento tributário de ICMS aplicável a impor
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240138&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13219
+## PARECER Nº 13219
 
 Aplicação da Súmula n.º 575 em importações de mercadorias cujas operações estão sujeitas à isenção ou redução de base de cálculo.
 
@@ -18588,7 +18588,7 @@ Parecer legal que aborda consulta sobre a emissão de Conhecimento de Transporte
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240161&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13202
+## PARECER Nº 13202
 
 Emissão de Conhecimento de transporte rodoviário de cargas.
 
@@ -18642,7 +18642,7 @@ Parecer legal analisando a aplicação de regras tributárias do **ICMS** em ope
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297894&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13179
+## PARECER Nº 13179
 
 ICMS – Base de cálculo e alíquota nas operações com produtos alimentícios.
 
@@ -18731,7 +18731,7 @@ Parecer legal que analisa a possibilidade de manutenção de benefícios fiscais
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240136&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13159
+## PARECER Nº 13159
 
 Benefício fiscal nas vendas de mercadorias importadas, nas quais a requerente anexa acessórios.
 
@@ -18790,7 +18790,7 @@ Parecer legal que aborda consulta de empresa optante pelo Simples Nacional sobre
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240171&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13154
+## PARECER Nº 13154
 
 Base de cálculo para determinação do valor devido em razão do disposto no § 4.º do artigo 46 do Livro I do RICMS.
 
@@ -18838,7 +18838,7 @@ Parecer legal que analisa a possibilidade de compensação de ICMS devido em ope
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240137&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13141
+## PARECER Nº 13141
 
 Compensação do ICMS devido em operações de importação, caso a mercadoria importada esteja arrolada nas Seções II e III do Apêndice II do Regulamento do ICMS (RICMS).
 
@@ -18906,7 +18906,7 @@ Parecer tributário que aborda consulta sobre a obrigatoriedade de antecipação
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240169&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13132
+## PARECER Nº 13132
 
 Antecipação do recolhimento do imposto quando a operação foi tributada a 4%.
 
@@ -18954,7 +18954,7 @@ O parecer aborda uma consulta de uma entidade filantrópica sem fins lucrativos,
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240125&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13127
+## PARECER Nº 13127
 
 Documentação fiscal para o transporte de mercadorias.
 
@@ -19003,7 +19003,7 @@ Parecer legal tributário que analisa a viabilidade de uma empresa industrial de
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240123&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13115
+## PARECER Nº 13115
 
 Remessa de mercadoria para endereço diverso do adquirente.
 
@@ -19058,7 +19058,7 @@ Parecer tributário que analisa a aplicação de redução na base de cálculo d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296850&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13041
+## PARECER Nº 13041
 
 Base de cálculo reduzida em operações de fornecimento de refeições por bares, restaurantes e estabelecimentos similares, no caso da saída final ser efetuada por filial varejista.
 
@@ -19117,7 +19117,7 @@ O parecer trata de consulta tributária sobre a viabilidade de múltiplas empres
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240143&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13023
+## PARECER Nº 13023
 
 ICMS – Possibilidade de diferentes empresas estabelecerem-se em um mesmo espaço físico.
 
@@ -19172,7 +19172,7 @@ Parecer jurídico-tributário que analisa a possibilidade de transportadores aut
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271425&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-INFORMAÇÃO Nº 13023
+## INFORMAÇÃO Nº 13023
 
 Adjudicação de crédito fiscal por transportador autônomo, em relação a aquisições de combustíveis.
 
@@ -19248,7 +19248,7 @@ Parecer jurídico tributário analisando a viabilidade de uma empresa de constru
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240129&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13016
+## PARECER Nº 13016
 
 ICMS – Emissão de nota fiscal por empresa de construção civil.
 
@@ -19295,7 +19295,7 @@ Parecer jurídico que analisa a viabilidade de leiloeiros oficiais, como pessoas
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240149&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13010
+## PARECER Nº 13010
 
 ICMS – Emissão de Nota Fiscal Eletrônica por leiloeiros.
 
@@ -19352,7 +19352,7 @@ Parecer jurídico tributário que aborda a incidência de ICMS sobre o valor do 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240177&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13005
+## PARECER Nº 13005
 
 Tributação sobre a parcela do frete destacado na Nota Fiscal em operações sujeitas à substituição tributária e rateio do seu valor por item.
 
@@ -19422,7 +19422,7 @@ Parecer legal que analisa a obrigatoriedade de inscrição estadual no cadastro 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240145&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 13002
+## PARECER Nº 13002
 
 Necessidade de inscrição estadual para empresa prestadora de serviços de mão-de-obra e limpeza em geral.
 
@@ -19468,7 +19468,7 @@ Parecer legal que analisa a possibilidade de uma empresa, como tomadora de servi
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240158&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12084
+## PARECER Nº 12084
 
 Adjudicação de ICMS relativo ao frete de mercadorias em operações sujeitas à substituição tributária.
 
@@ -19510,7 +19510,7 @@ O parecer analisa o direito de uma empresa comercial ao crédito fiscal de ICMS 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275245&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER N° 12239
+## PARECER N° 12239
 
 Direito à adjudicação de crédito fiscal relativo a compras destinadas ao ativo permanente de empresa comercial.
 
@@ -19560,7 +19560,7 @@ O parecer trata de consulta sobre critérios para enquadramento de mercadorias, 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240182&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12215
+## PARECER Nº 12215
 
 Critérios para o enquadramento de mercadorias nas regras da substituição tributária.
 
@@ -19615,7 +19615,7 @@ O parecer analisa o direito ao crédito fiscal de ICMS para um distribuidor de b
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240186&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12202
+## PARECER Nº 12202
 
 ICMS - Direito a crédito fiscal na hipótese de distribuidor de bebidas revender mercadorias para cliente localizado em outra unidade da Federação.
 
@@ -19674,7 +19674,7 @@ O parecer analisa uma consulta de uma empresa de locação de equipamentos para 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240124&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12189
+## PARECER Nº 12189
 
 Documentação fiscal necessária para promover a circulação de bens da empresa, locados para prestação de serviço.
 
@@ -19728,7 +19728,7 @@ O parecer aborda consulta de empresa sobre a viabilidade de realizar operações
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240184&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12184
+## PARECER Nº 12184
 
 Consignação mercantil em operações sujeitas à substituição tributária.
 
@@ -19786,7 +19786,7 @@ Essa descrição é otimizada para armazenamento em sistemas de RAG, focando no 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240176&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12183
+## PARECER Nº 12183
 
 Aplicação da redução de base de cálculo em operações sujeitas à substituição tributária.
 
@@ -19845,7 +19845,7 @@ Parecer jurídico que analisa a tributação em operações de **industrializaç
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275161&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12179
+## PARECER Nº 12179
 
 Incidência do imposto em operações de industrialização por encomenda.
 
@@ -19888,7 +19888,7 @@ Parecer jurídico tributário que analisa consulta de empresa de transporte de c
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240160&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12172
+## PARECER Nº 12172
 
 Crédito fiscal referente a aquisições de combustíveis efetuadas fora do Estado.
 
@@ -19946,7 +19946,7 @@ O parecer trata de consulta tributária sobre a incidência de impostos em opera
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240141&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12171
+## PARECER Nº 12171
 
 Incidência do ICMS sobre industrialização por encomenda.
 
@@ -19995,7 +19995,7 @@ Parecer legal que analisa a tributação aplicável às operações de industria
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275160&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12146
+## PARECER Nº 12146
 
 Tributação incidente sobre industrialização de embalagens.
 
@@ -20041,7 +20041,7 @@ Parecer legal que analisa a possibilidade de aplicação de isenção de ICMS pa
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=274038&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12123
+## PARECER Nº 12123
 
 Assunto: Equiparação de mercadorias importadas às de origem nacional
 Assunto: Equiparação de mercadorias importadas às de origem nacional
@@ -20085,7 +20085,7 @@ Parecer jurídico sobre o tratamento tributário do ICMS aplicável a aquisiçõ
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240127&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12119
+## PARECER Nº 12119
 
 ICMS - Tratamento tributário aplicável às aquisições de mercadorias promovidas por empresa de construção civil.
 
@@ -20128,7 +20128,7 @@ O parecer analisa os critérios para enquadramento de operações com **materiai
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240180&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12114
+## PARECER Nº 12114
 
 Critério para o enquadramento de operações com materiais elétricos no regime de substituição tributária.
 
@@ -20188,7 +20188,7 @@ Parecer tributário que analisa a aplicação da **substituição tributária** 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275154&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12113
+## PARECER Nº 12113
 
 Substituição tributária nas vendas para empresa que atua na indústria e no comércio atacadista de máquinas, aparelhos e equipamentos para uso na agropecuária.
 
@@ -20245,7 +20245,7 @@ O parecer analisa uma consulta tributária de uma empresa distribuidora de combu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275158&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12112
+## PARECER Nº 12112
 
 Substituição tributária nas vendas a consumidor final.
 
@@ -20300,7 +20300,7 @@ Consulta tributária sobre a possibilidade de apropriação (adjudicação) de c
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240095&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12094
+## PARECER Nº 12094
 
 Adjudicação de ICMS relativo ao frete de mercadorias em operações sujeitas à substituição tributária.
 
@@ -20341,7 +20341,7 @@ O parecer analisa a possibilidade de aplicação do **diferimento** do pagamento
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240153&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12093
+## PARECER Nº 12093
 
 ICMS - Diferimento do pagamento do imposto nas operações promovidas por contribuinte optante pelo Simples Nacional.
 
@@ -20383,7 +20383,7 @@ Parecer legal sobre consulta tributária relacionada ao ICMS, focando na emissã
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240162&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12054
+## PARECER Nº 12054
 
 ICMS - Conhecimento de Transporte Eletrônico – Impressão fora do local do estabelecimento.
 
@@ -20424,7 +20424,7 @@ O parecer analisa a dúvida tributária de uma empresa que presta serviços de p
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240140&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12050
+## PARECER Nº 12050
 
 Incidência do ICMS ou do ISS em prestações de serviço de pintura em objetos que serão destinados à industrialização.
 
@@ -20473,7 +20473,7 @@ Parecer jurídico-tributário que aborda consulta de empresa sobre a aplicação
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=294645&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12046
+## PARECER Nº 12046
 
 Base de cálculo reduzida em operações com café torrado.
 
@@ -20532,7 +20532,7 @@ Parecer jurídico tributário que analisa a possibilidade de apropriação de cr
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240092&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 12030
+## PARECER Nº 12030
 
 ICMS- Aquisição de combustíveis para utilização em frota própria não gera crédito fiscal.
 
@@ -20574,7 +20574,7 @@ Parecer legal que aborda o tratamento tributário do ICMS nas operações envolv
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275198&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 11291
+## PARECER Nº 11291
 
 ICMS – Tratamento tributário aplicável nas saídas de veículos usados.
 
@@ -20619,7 +20619,7 @@ Parecer jurídico sobre consulta tributária de empresa industrial e comercial d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271189&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 11248
+## PARECER Nº 11248
 
 Vendas a ordem ou para entrega futura.
 
@@ -20660,7 +20660,7 @@ Parecer legal que analisa consulta de empresa sobre a possibilidade de transfer�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=275156&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 11237
+## PARECER Nº 11237
 
 Possibilidade de transferir saldo credor acumulado por força da realização de nova substituição tributária.
 
@@ -20708,7 +20708,7 @@ O parecer analisa o tratamento tributário aplicável às operações de compra 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240148&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 11206
+## PARECER Nº 11206
 
 Tratamento tributário nas operações com veículos sucateados adquiridos em leilão.
 
@@ -20760,7 +20760,7 @@ Parecer legal que aborda a possibilidade de apropriação de crédito fiscal de 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240156&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 11171
+## PARECER Nº 11171
 
 ICMS- Apropriação de crédito fiscal pelas aquisições de combustível pelo subcontratado na prestação de serviços de transporte.
 
@@ -20801,7 +20801,7 @@ Parecer jurídico sobre o tratamento tributário do ICMS aplicável a operaçõe
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289553&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 11112
+## PARECER Nº 11112
 
 ICMS - Tratamento tributário aplicável nas operações com rações e com suínos.
 
@@ -20883,7 +20883,7 @@ Parecer jurídico tributário analisando a viabilidade de um estabelecimento com
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=240144&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 10038
+## PARECER Nº 10038
 
 ICMS – Possibilidade de funcionamento de estabelecimento comercial e depósito fechado em um mesmo endereço.
 
@@ -20925,7 +20925,7 @@ O parecer trata de procedimentos fiscais e aduaneiros em **operações triangula
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=274035&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 10295
+## PARECER Nº 10295
 
 Assunto: Procedimentos nas operações triangulares envolvendo produtos importados sob o regime de drawback
 Assunto: Parecer nº 10295 - Procedimentos nas operações triangulares envolvendo produtos importados sob o regime de drawback
@@ -20971,7 +20971,7 @@ O parecer analisa a possibilidade de manutenção de crédito fiscal de ICMS em 
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=274036&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 10230
+## PARECER Nº 10230
 
 Assunto: Manutenção do crédito fiscal de aquisições internas de mercadorias posteriormente exportadas.
 Assunto: Manutenção do crédito fiscal de aquisições internas de mercadorias posteriormente exportadas.
@@ -21016,7 +21016,7 @@ Parecer legal que analisa consulta tributária sobre operações com massas alim
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=273532&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 10221
+## PARECER Nº 10221
 
 Operações com massas alimentícias classificadas na posição 1902.20.00 da NBM/SH-NCM.
 
@@ -21070,7 +21070,7 @@ Parecer jurídico sobre operações de importação por conta e ordem de terceir
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=274037&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 10070
+## PARECER Nº 10070
 
 Assunto: Operação de importação por conta e ordem de terceiros.
 Assunto: Operação de importação por conta e ordem de terceiros.
@@ -21111,7 +21111,7 @@ Parecer legal que analisa a aplicação do regime de **substituição tributári
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296612&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 09183
+## PARECER Nº 09183
 
 ICMS - Substituição tributária nas operações com peças de uso exclusivo em máquinas e implementos agrícolas.
 
@@ -21166,7 +21166,7 @@ Parecer jurídico tributário emitido por entidade governamental do Rio Grande d
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291545&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 08210
+## PARECER Nº 08210
 
 Inclusão de diversos tipos de chás na Cesta Básica.
 
@@ -21230,7 +21230,7 @@ Parecer jurídico tributário analisando consulta de empresa sobre a possibilida
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=271229&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 07159
+## PARECER Nº 07159
 
 ICMS- Restituição ou transferência de saldo credor apurado por empresa que se encontra em inatividade.
 --------------------------------------------------------------------------------------------
@@ -21281,7 +21281,7 @@ Parecer legal emitido por entidade governamental analisando o tratamento tribut�
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297242&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 07074
+## PARECER Nº 07074
 
 ICMS – Tratamento aplicável às operações com alfajor.
 
@@ -21327,7 +21327,7 @@ Parecer legal emitido por entidade governamental analisando a tributação via I
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297893&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 07050
+## PARECER Nº 07050
 
 Tributação sobre sucos de frutas, cafés, chocolates e outras bebidas servidas junto às refeições.
 
@@ -21378,7 +21378,7 @@ Parecer legal que analisa a incidência tributária (ISS ou ICMS) em operações
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=296225&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 06237
+## PARECER Nº 06237
 
 Fabricação de portas, janelas e outras estruturas metálicas. ISS ou ICMS? Reconsideração do Parecer nº 04028.
 
@@ -21431,7 +21431,7 @@ Parecer legal que analisa a incidência tributária no serviço de coleta e tran
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=294728&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 03205
+## PARECER Nº 03205
 
 ICMS – Incidência do imposto na prestação de serviço de recolhimento de lixo, quando o seu local de destinação for em município diverso do da coleta.
 
@@ -21477,7 +21477,7 @@ Parecer tributário analisando a incidência de ICMS em uma **operação triangu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=274039&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 03027
+## PARECER Nº 03027
 
 Assunto: operação triangular com Produtor Rural, com posterior exportação
 Parecer nº 03027 - Assunto: operação triangular com Produtor Rural, com posterior exportação
@@ -21525,7 +21525,7 @@ Parecer jurídico tributário que analisa a **alíquota** de **ICMS** a ser apli
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=286943&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 01052
+## PARECER Nº 01052
 
 ICMS – alíquota a ser aplicada nas saídas de Waffer.
 
@@ -21571,7 +21571,7 @@ O parecer trata de uma consulta tributária sobre a aplicação do benefício fi
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=273534&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 00070
+## PARECER Nº 00070
 
 ICMS - Cesta Básica.
 --------------------------------------------------------------------------------------------
@@ -21963,7 +21963,7 @@ O parecer analisa a incidência do ICMS, especificamente a base de cálculo redu
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=289094&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 99028
+## PARECER Nº 99028
 
 ICMS- Base de Cálculo e Alíquota nas saídas de sucos, salgadinhos, empadas, refrigerantes, etc.
 --------------------------------------------------------------------------------------------
@@ -22019,7 +22019,7 @@ Parecer jurídico emitido por entidade governamental analisando o tratamento tri
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=291160&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 99007
+## PARECER Nº 99007
 
 Assunto : ICMS- Tratamento tributário nas saídas de comida congelada.
 
@@ -22096,7 +22096,7 @@ Parecer jurídico que analisa consulta de uma entidade de assistência médico-h
 link: http://www.legislacao.sefaz.rs.gov.br/site/DocumentView.aspx?inpKey=297895&inpCodDispositive=0&inpStToValidateDoc=&inpForceEdit=&inpDtTimeTunnel=&inpDsKeywords=&Debug=
 
 ## resposta: 
-PARECER Nº 96138
+## PARECER Nº 96138
 
 Consulta sobre tratamento tributário do ICMS em relação a exploração de bar e restaurante pela entidade.
 
