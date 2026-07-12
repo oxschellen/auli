@@ -104,10 +104,25 @@ done
 Produz, por entidade, `data/<id>/packs/<id>-servicos.json` + `<id>.manifest.json` (`strategy_version: 2`,
 kind `servicos`) — e `<id>-faqs.json` onde houver FAQs (hoje só RS). Contagens atuais: **rs** serviços
 586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148, **pe** 38, **ba** 204, **rj** 91,
-**ce** 382. `pareceres`/`notas` são autorados (sem scraper) e
-ainda **não** têm fonte struct no contrato — ficam **ausentes** até serem modelados; o server tolera
-packs ausentes (sobe com a coleção vazia). **Só precisa rodar de novo quando o conteúdo ou a estratégia
-de embedding mudar.**
+**ce** 382. `notas` é autorada (sem scraper) e ainda **não** tem fonte struct no contrato — fica
+**ausente** até ser modelada; o server tolera packs ausentes (sobe com a coleção vazia). `pareceres`
+também é autorado, mas já tem um passo de ingestão do `.txt` de referência (ver nota abaixo). **Só
+precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
+
+> **Pareceres (autorado, sem scraper) — passo de ingestão.** O contrato `<id>-pareceres.json` é
+> derivado do `.txt` de referência versionado (`data/<id>/ref/<id>-portal-pareceres.txt`) pelo
+> subcomando **`auli-collections <id> pareceres`** — que **não** faz parte do `auli-collections <id>`
+> (process) nem do scraper. Rode-o **antes** do `build-packs.sh`, para que o `auli update` encontre o
+> `raw/<id>-pareceres.json` e o vetorize (kind `pareceres`, sem bump de `STRATEGY_VERSION`). Hoje só o
+> **RS** tem esse `.txt` (**331** pareceres). Sequência:
+>
+> ```bash
+> cd auli-server
+> ./target/release/auli-collections rs pareceres && (cd .. && scripts/build-packs.sh rs)
+> ```
+>
+> Como `data/<id>/raw/` é gitignored, esse passo precisa ser refeito ao regenerar os packs num host
+> novo (o `.txt` de origem em `ref/` **é** versionado).
 
 > Regenerar **sem re-raspar** (ex.: após bump de `STRATEGY_VERSION`): com o snapshot já em disco,
 > `auli-collections <id>` re-deriva os contratos offline e `build-packs.sh` regera os packs

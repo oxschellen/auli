@@ -134,6 +134,40 @@ impl Embeddable for Servico {
     }
 }
 
+/// Um registro da tabela `pareceres`: um parecer jurídico/técnico. Os campos vêm do conteúdo autorado
+/// (o sumário dá `numero`/`assunto`/`resumo`; `corpo` é o texto integral), mais a key materializada.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Parecer {
+    /// Identificador do parecer (ex.: `"PARECER Nº 25148"`).
+    pub numero: String,
+    /// Assunto/ementa (uma linha).
+    pub assunto: String,
+    /// Resumo do parecer (descrição resumida + palavras-chave do sumário autorado). Pode ser vazio.
+    #[serde(default)]
+    pub resumo: String,
+    /// Corpo integral do parecer.
+    pub corpo: String,
+    /// URL do parecer na legislação.
+    pub link: String,
+    /// Key a embeddar — preenchida na origem (para pareceres: `assunto` + `resumo`).
+    pub text_to_embed: String,
+}
+
+impl Embeddable for Parecer {
+    fn text_to_embed(&self) -> &str {
+        &self.text_to_embed
+    }
+
+    /// Reproduz o bloco `## pergunta` / `## resposta` no mesmo formato dos demais kinds: `numero` +
+    /// `assunto` no `## pergunta`, corpo integral + link no `## resposta`.
+    fn stored_repr(&self) -> String {
+        format!(
+            "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
+            self.numero, self.assunto, self.corpo, self.link
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -184,5 +218,28 @@ mod tests {
         let block = s.stored_repr();
         assert!(block.starts_with("## pergunta\nEmpresas | ICMS\nEmitir guia"));
         assert!(block.contains("Link: https://exemplo/svc/1"));
+    }
+
+    #[test]
+    fn parecer_exposes_key_and_renders_block() {
+        let p = Parecer {
+            numero: "PARECER Nº 25148".into(),
+            assunto: "ICMS – crédito fiscal na cesta básica".into(),
+            resumo: "Análise sobre apropriação de crédito.".into(),
+            corpo: "É o parecer.".into(),
+            link: "https://exemplo/parecer/25148".into(),
+            text_to_embed: "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito.".into(),
+        };
+        assert_eq!(p.text_to_embed(), "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito.");
+        let block = p.stored_repr();
+        assert!(block.starts_with("## pergunta\nPARECER Nº 25148\nICMS – crédito fiscal na cesta básica"));
+        assert!(block.contains("## resposta\nÉ o parecer."));
+        assert!(block.contains("Link: https://exemplo/parecer/25148"));
+
+        // The serialized shape is contract; round-trips through JSON.
+        let table = Table::new("rs", "pareceres", vec![p]);
+        let json = serde_json::to_string(&table).unwrap();
+        let back: Table<Parecer> = serde_json::from_str(&json).unwrap();
+        assert_eq!(back.items[0].numero, "PARECER Nº 25148");
     }
 }

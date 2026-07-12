@@ -5,9 +5,9 @@
 # (<id>-faqs.json e <id>-servicos.json: cada um um `auli_contract::Table<P>`), embedda o campo
 # `text_to_embed` de cada registro e escreve os packs em data/<id>/packs/.
 #
-# `pareceres`/`notas` são autorados (sem scraper) e ainda não têm fonte struct — o `update` os
-# encontra ausentes e simplesmente os pula. Por isso não há mais agregação de `ref/` + `raw/`:
-# a origem é só a pasta `raw/` com os JSON do contrato.
+# `pareceres` é autorado (sem scraper): seu contrato `<id>-pareceres.json` é derivado do `.txt` de
+# referência por `auli-collections <id> pareceres` e fica em `raw/` como os demais. `notas` ainda não
+# tem fonte struct — o `update` a encontra ausente e simplesmente a pula. A origem é só a pasta `raw/`.
 #
 # Uso:   scripts/build-packs.sh rs
 #        VERSION=2 scripts/build-packs.sh sc

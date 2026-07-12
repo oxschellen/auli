@@ -8,8 +8,10 @@
 //! embedding identity, so the server can validate it at boot.
 //!
 //! `servicos` is one vocabulary end-to-end: the source contract is `<entity>-servicos.json` and the
-//! pack/kind is `<entity>-servicos` too. `pareceres`/`notas` have no
-//! struct source yet (authored, not scraped) and are simply absent until modeled as a contract.
+//! pack/kind is `<entity>-servicos` too. `pareceres` is authored, not scraped: its contract
+//! (`<entity>-pareceres.json`) is derived from the reference `.txt` by
+//! `auli-collections <entity> pareceres`, then vectorized here like any other kind. `notas` has no
+//! struct source yet and is simply absent until modeled as a contract.
 //!
 //! Does NOT use the server `Config` (no LLM vars needed for ingestion) — only the embedder
 //! settings, read directly from the environment with defaults.
@@ -46,7 +48,15 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     )? {
         entries.push(entry);
     }
-    // pareceres/notas: sem fonte struct por ora (autorados) — ausentes até serem modelados.
+    // pareceres: <entity>-pareceres.json (contract) -> pack <entity>-pareceres. Fonte ainda autorada,
+    // ingerida do `.txt` de referência por `auli-collections <entity> pareceres` (sem scraper por ora).
+    // Ausente para entidades sem esse arquivo -> pulado.
+    if let Some(entry) = ingest::<auli_contract::Parecer>(
+        &embedder, &writer, &entity, "pareceres", &format!("{}-pareceres.json", entity), &source, &out,
+    )? {
+        entries.push(entry);
+    }
+    // notas: sem fonte struct por ora (autoradas) — ausentes até serem modeladas.
 
     let manifest = Manifest {
         entity: entity.clone(),
