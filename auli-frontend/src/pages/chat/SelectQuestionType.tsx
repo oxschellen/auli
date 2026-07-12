@@ -2,10 +2,10 @@ import { Box, HStack, RadioGroup, Text, Flex } from "@chakra-ui/react";
 import type { QuestionType } from "./utils/useQuestionType";
 
 /** The two query types, in display order. Values are sent (as numbers) in the request `type` field.
- *  Pareceres is disabled until the backend handles type 2 (later refactor). */
+ *  An option can set `disabled: true` to show but block it (kept for reversibility). */
 const questionOptions: { label: string; value: QuestionType; disabled?: boolean }[] = [
   { label: "Serviços+FAQs", value: "1" },
-  { label: "Pareceres", value: "2", disabled: true },
+  { label: "Pareceres", value: "2" },
 ];
 
 interface SelectQuestionTypeProps {
