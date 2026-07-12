@@ -162,7 +162,7 @@ pub async fn exec_all_question(
             if par_docs.is_empty() {
                 return Ok("A consulta de Pareceres ainda não está disponível para esta entidade.".to_string());
             }
-            render(&par_docs, |i, doc| format!("\n## parecer\n{i}\n{doc}\n"))
+            render(&par_docs, |i, doc| format!("\n## PARECER\n{i}\n{doc}\n"))
         }
     };
 
