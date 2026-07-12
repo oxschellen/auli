@@ -34,6 +34,17 @@ const DEFAULT_SYSTEM_PROMPT: &str = r#"
 ### Se a pergunta não puder ser respondida com as informações disponíveis, responda que não é possível responder
 "#;
 
+// Fallback prompt for pareceres queries (type=2) when an entity has no `prompt_pareceres` file.
+const DEFAULT_PARECERES_PROMPT: &str = r#"
+'''
+### Instructions
+### Responda sempre no idioma português do brasil, usando exclusivamente os pareceres apresentados abaixo.
+### Cite o número do parecer (ex.: PARECER Nº 25148) e apresente o link https correspondente.
+### Cada parecer inicia com o marcador: ## parecer; o assunto vem após ## pergunta e o conteúdo após ## resposta.
+### Não responda perguntas fora do assunto relativo a tributos.
+### Se a pergunta não puder ser respondida com os pareceres disponíveis, responda que não é possível responder.
+"#;
+
 #[derive(Debug, Deserialize)]
 struct Registry {
     #[serde(default)]
@@ -47,6 +58,9 @@ struct RegistryEntity {
     name: String,
     #[serde(default)]
     prompt: String,
+    // Optional per-entity prompt for pareceres queries (type=2); empty -> DEFAULT_PARECERES_PROMPT.
+    #[serde(default)]
+    prompt_pareceres: String,
 }
 
 #[derive(Debug, Clone)]
@@ -54,6 +68,8 @@ pub struct EntityConfig {
     pub id: String,
     pub name: String,
     pub system_prompt: String,
+    // Prompt used for pareceres queries (type=2); the entity's `prompt_pareceres` or the default.
+    pub pareceres_prompt: String,
 }
 
 impl EntityConfig {
@@ -91,22 +107,29 @@ fn read_registry() -> Registry {
     })
 }
 
+/// Read a prompt file relative to the data dir, falling back to `default` when the path is empty
+/// (entity didn't configure it) or the file can't be read (missing/unreadable — logged).
+fn load_prompt(base: &std::path::Path, id: &str, rel_path: &str, kind: &str, default: &str) -> String {
+    if rel_path.is_empty() {
+        return default.to_string();
+    }
+    fs::read_to_string(base.join(rel_path)).unwrap_or_else(|_| {
+        eprintln!("⚠️  prompt de {} ausente para a entidade '{}' ({}), usando o padrão.", kind, id, rel_path);
+        default.to_string()
+    })
+}
+
 fn load_entities() -> HashMap<String, EntityConfig> {
     let mut map = HashMap::new();
     let base = data_dir();
 
     for ent in read_registry().entities {
-        let system_prompt = if ent.prompt.is_empty() {
-            DEFAULT_SYSTEM_PROMPT.to_string()
-        } else {
-            fs::read_to_string(base.join(&ent.prompt)).unwrap_or_else(|_| {
-                eprintln!("⚠️  prompt ausente para a entidade '{}' ({}), usando o padrão.", ent.id, ent.prompt);
-                DEFAULT_SYSTEM_PROMPT.to_string()
-            })
-        };
+        let system_prompt = load_prompt(&base, &ent.id, &ent.prompt, "sistema", DEFAULT_SYSTEM_PROMPT);
+        let pareceres_prompt =
+            load_prompt(&base, &ent.id, &ent.prompt_pareceres, "pareceres", DEFAULT_PARECERES_PROMPT);
         map.insert(
             ent.id.clone(),
-            EntityConfig { id: ent.id, name: ent.name, system_prompt },
+            EntityConfig { id: ent.id, name: ent.name, system_prompt, pareceres_prompt },
         );
     }
 
@@ -131,4 +154,28 @@ pub fn available_ids() -> String {
 // Force registry initialization and log the loaded entities at startup.
 pub fn init() {
     println!("🏛️  Entidades carregadas: [{}]", available_ids());
+}
+
+#[cfg(test)]
+mod tests {
+    use super::load_prompt;
+
+    #[test]
+    fn load_prompt_falls_back_when_empty_or_missing() {
+        let base = std::env::temp_dir();
+        // Unconfigured (empty path) -> default.
+        assert_eq!(load_prompt(&base, "rs", "", "pareceres", "DEF"), "DEF");
+        // Configured but the file is missing -> default (logged).
+        assert_eq!(load_prompt(&base, "rs", "prompts/does-not-exist.txt", "pareceres", "DEF"), "DEF");
+    }
+
+    #[test]
+    fn load_prompt_reads_the_file_when_present() {
+        let mut dir = std::env::temp_dir();
+        dir.push(format!("auli_prompt_test_{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("p.txt"), "conteúdo do prompt").unwrap();
+        assert_eq!(load_prompt(&dir, "rs", "p.txt", "pareceres", "DEF"), "conteúdo do prompt");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 }
