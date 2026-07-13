@@ -3,7 +3,7 @@ import { Tooltip } from "./ui/tooltip";
 import { MdCopyAll } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { utilsCopyTextToClipboard } from "./utils/utils";
-import { compactMarkdownComponents } from "../../shared/markdown";
+import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
 
 interface SystemMessageProps {
   messageText: string;
@@ -31,7 +31,7 @@ export const SystemMessage = ({ messageText, showButton }: SystemMessageProps) =
           fontFamily="body"
           className="markdown-body"
         >
-          <ReactMarkdown components={compactMarkdownComponents}>
+          <ReactMarkdown remarkPlugins={markdownPlugins} components={compactMarkdownComponents}>
             {messageText}
           </ReactMarkdown>
         </Box>

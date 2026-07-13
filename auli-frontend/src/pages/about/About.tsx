@@ -2,7 +2,7 @@ import { Box, Flex, Spinner, Stack, Text, Alert } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 import useSWR from "swr";
 import { textFetcher, SWR_OPTS, versioned } from "../../shared/fetchers";
-import { proseMarkdownComponents } from "../../shared/markdown";
+import { proseMarkdownComponents, markdownPlugins } from "../../shared/markdown";
 
 const FILE_ENDPOINT = versioned("/about.md");
 
@@ -41,7 +41,7 @@ export const About = () => {
         fontFamily="body"
         className="markdown-body"
       >
-        <ReactMarkdown components={proseMarkdownComponents}>
+        <ReactMarkdown remarkPlugins={markdownPlugins} components={proseMarkdownComponents}>
           {manifesto ?? ""}
         </ReactMarkdown>
       </Box>}

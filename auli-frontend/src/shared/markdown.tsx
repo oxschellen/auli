@@ -9,8 +9,46 @@
  */
 
 import type { Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+/** Shared remark plugins for every ReactMarkdown instance — GFM adds tables, strikethrough, and
+ *  autolinks (without it, an LLM table renders as one flowing line of pipes). */
+export const markdownPlugins = [remarkGfm];
 
 const accent = "var(--chakra-colors-accent)";
+
+/** GFM table renderers: bordered cells, scrollable wrapper (chat bubbles are narrow). Shared by the
+ *  compact and prose maps. */
+const tableComponents: Components = {
+  table: ({ children }) => (
+    <div style={{ overflowX: "auto", marginBottom: "0.5em" }}>
+      <table style={{ borderCollapse: "collapse", width: "100%", fontSize: "0.9em" }}>{children}</table>
+    </div>
+  ),
+  th: ({ children }) => (
+    <th
+      style={{
+        border: "1px solid var(--chakra-colors-border)",
+        padding: "4px 8px",
+        textAlign: "left",
+        fontWeight: 600,
+      }}
+    >
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td
+      style={{
+        border: "1px solid var(--chakra-colors-border)",
+        padding: "4px 8px",
+        verticalAlign: "top",
+      }}
+    >
+      {children}
+    </td>
+  ),
+};
 
 const MarkdownLink: Components["a"] = ({ href, children }) => (
   <a
@@ -24,6 +62,7 @@ const MarkdownLink: Components["a"] = ({ href, children }) => (
 );
 
 export const compactMarkdownComponents: Components = {
+  ...tableComponents,
   a: MarkdownLink,
   p: ({ children }) => <p style={{ marginBottom: "0.5em" }}>{children}</p>,
   ul: ({ children }) => <ul style={{ paddingLeft: "1.2em", marginBottom: "0.5em" }}>{children}</ul>,
@@ -32,6 +71,7 @@ export const compactMarkdownComponents: Components = {
 };
 
 export const proseMarkdownComponents: Components = {
+  ...tableComponents,
   h1: ({ children }) => (
     <h1 style={{ fontSize: "1.8rem", fontWeight: 700, marginBottom: "0.75em", color: "var(--chakra-colors-fg)" }}>
       {children}
