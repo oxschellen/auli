@@ -1,7 +1,10 @@
-import { Flex, Box, Text } from "@chakra-ui/react";
+import { useMemo, useRef, useState, useDeferredValue } from "react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import useSWR from "swr";
-import { editLinks } from "../../shared/linkify";
+import { PareceresAccordion } from "./PareceresAccordion";
+import { parsePareceres, searchPareceres } from "./parsePareceres";
 import { textFetcher, SWR_OPTS, entityPath } from "../../shared/fetchers";
+import { SearchInput } from "../../shared/SearchInput";
 import { AsyncContent } from "../../shared/AsyncContent";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { hasCollection } from "../../shared/entities";
@@ -16,22 +19,76 @@ export const PareceresList = () => {
     SWR_OPTS,
   );
 
+  const pareceres = useMemo(() => (content ? parsePareceres(content) : []), [content]);
+  const [searchQuery, setSearchQuery] = useState("");
+  // Input stays instant; parsing/filtering derive from the deferred value.
+  const deferredQuery = useDeferredValue(searchQuery);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const filtered = useMemo(
+    () => searchPareceres(pareceres, deferredQuery),
+    [pareceres, deferredQuery],
+  );
+
+  function clearSearch() {
+    setSearchQuery("");
+    inputRef.current?.focus();
+  }
+
+  const isSearching = deferredQuery.trim().length > 0;
+
   if (!available) return <CollectionEmpty entity={entity} label="Pareceres" />;
 
   return (
-    <Flex direction="column" flex={1} w="100%" bg="bg.canvas">
-      <Box w="100%" px={4} pt={3} pb={6}>
+    <Flex direction="column" flex={1} w="100%" bg="bg.app">
+      {/* Sticky search + count */}
+      <Box
+        position="sticky"
+        top={0}
+        zIndex={10}
+        bg="bg.app"
+        px={4}
+        pt={3}
+        pb={2}
+        borderBottom="1px solid var(--chakra-colors-border)"
+      >
+        <SearchInput
+          ref={inputRef}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onClear={clearSearch}
+          placeholder="Pesquisar pareceres..."
+        />
+        {pareceres.length > 0 && (
+          <Box pt={2}>
+            <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
+              {filtered.length} parecer{filtered.length !== 1 ? "es" : ""}
+              {isSearching ? ` de ${pareceres.length}` : ""}
+            </Text>
+          </Box>
+        )}
+      </Box>
+
+      {/* Scrollable content */}
+      <Box px={4} pt={3} pb={6}>
         <AsyncContent
           loading={isLoading}
           error={error}
           loadingText="Aguarde enquanto os Pareceres são carregados…"
+          errorTitle="Erro ao carregar pareceres"
+          errorDescription={error instanceof Error ? error.message : undefined}
         >
-          <Text fontFamily="mono" whiteSpace="pre-wrap" color="fg" fontSize="sm">
-            {editLinks(content)}
-          </Text>
+          {isSearching && filtered.length === 0 ? (
+            <Box py={10} textAlign="center">
+              <Text color="fg.muted" fontSize="0.95rem">
+                Nenhum resultado encontrado para &ldquo;{deferredQuery}&rdquo;
+              </Text>
+            </Box>
+          ) : (
+            <PareceresAccordion pareceres={filtered} />
+          )}
         </AsyncContent>
       </Box>
     </Flex>
   );
 };
-
