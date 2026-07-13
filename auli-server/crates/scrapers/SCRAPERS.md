@@ -1,13 +1,13 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, também as FAQs) de uma SEFAZ estadual e
-grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
+entidade** que raspa o catálogo de serviços (e, no RS, também FAQs e pareceres) de uma SEFAZ estadual
+e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
-> Última atualização: 2026-07-07 (frota com 27 entidades; RR = a mais recente).
+> Última atualização: 2026-07-13 (frota com 27 entidades; + coleta de **pareceres** do RS).
 
 ---
 
@@ -22,7 +22,7 @@ Todos os scrapers seguem o mesmo esqueleto:
 - Dependem de **`auli-contract`** (tipos + I/O do snapshot, shape per-público) +
   **`auli-scraper-kit`** (o cardápio comum abaixo) — **nunca** de `fastembed`/`ort`/vector-store.
   Recíproca (D-C1): nada fora de `scrapers/` depende do kit.
-- **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS também aceita `faqs`).
+- **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS também aceita `faqs` e `pareceres`).
 - **Saída:** `data/<id>/<id>-servicos-snapshot.json` (schema v3), gravado por
   `kit::snapshot::write_servicos`. Cache de páginas/respostas em `data/<id>/raw/cache/` (gitignored).
 - **Pipeline downstream:** `auli-collections <id>` (deriva `raw/*.json` + `.txt`) →
@@ -136,12 +136,20 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 ## 4. Detalhe por entidade
 
 ### rs — SEFAZ-RS (Rio Grande do Sul)
-- **Único com FAQs** além de serviços (`auli-scraper-rs [--usecache] faqs|servicos`).
+- **Único com FAQs e pareceres** além de serviços (`auli-scraper-rs [--usecache] faqs|servicos|pareceres`).
 - **Serviços:** API JSON do Tudo Fácil (`fazenda.rs.gov.br/_service/tudofacil/capaservicos`) — não
   precisa mais de headless Chrome (era o único que usava).
 - **FAQs:** `atendimento.receita.rs.gov.br/perguntas-frequentes`, via AJAX.
+- **Pareceres** (Consultas Formais Respondidas): Portal de Legislação (`legislacao.sefaz.rs.gov.br`,
+  ASP.NET WebForms/IIS, windows-1252) via **curl subprocess** (ureq recebe resposta degradada; cookie
+  de sessão obrigatório, senão o servidor pendura). O filtro "Consultas Formais Respondidas" é **estado
+  de sessão**: a paginação (`LinkToPage`) precisa reenviar o **formulário inteiro** (`collect_form_fields`)
+  — só o VIEWSTATE não basta, ou o servidor volta à busca padrão (26 pareceres em 367 docs mistos);
+  full-form → **372** (pareceres+informações). Detalhe `DocumentView.aspx?inpKey=N` (público, `#DOCContent`).
+  Grava o intermediário `data/rs/ref/rs-pareceres-temp.txt` (sem `resumo` — estágio autorado posterior).
+  Descoberta em `descobertas.md#rs-pareceres`.
 - 586 serviços, 5 públicos (Cidadãos/Empresas/Fornecedores/Agentes/Servidores). `ServicoRaw`
-  direto. 5 testes.
+  direto. 5 testes (+ testes de parse/form/charset dos pareceres).
 
 ### sc — SEF-SC (Santa Catarina)
 - **API JSON Next.js** (`www.sef.sc.gov.br`) — o portal expõe os dados de build/página em JSON.

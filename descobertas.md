@@ -1,8 +1,9 @@
 # Relatórios de Descoberta — auli
 
-> Consolidação dos 14 relatórios de descoberta por entidade (antes arquivos `descoberta-*.md` separados).
-> Cada seção documenta como o portal de cada SEFAZ foi investigado. Referenciado por `SCRAPERS.md`,
-> `auli_pendencias.md` e comentários nos crates (âncoras `descobertas.md#<uf>`).
+> Consolidação dos relatórios de descoberta: 14 de **serviços** por entidade (antes arquivos
+> `descoberta-*.md` separados) + 1 de **pareceres** (RS). Cada seção documenta como o portal foi
+> investigado. Referenciado por `SCRAPERS.md`, `auli_pendencias.md` e comentários nos crates
+> (âncoras `descobertas.md#<uf>` e `#rs-pareceres`).
 
 ## Índice
 - [AC — Carta de Serviços SEFAZ-AC (sefaz.ac.gov.br)](#ac)
@@ -19,6 +20,7 @@
 - [RR — SEFAZ-RR (Roraima)](#rr)
 - [SE — SEFAZ-SE (Sergipe)](#se)
 - [TO — Carta de Serviços SEFAZ-TO (servicos.to.gov.br)](#to)
+- [RS Pareceres — Portal de Legislação / Consultas Formais Respondidas](#rs-pareceres)
 
 
 ---
@@ -1431,4 +1433,66 @@ do snapshot é a página `servico_detalhado.aspx?cod={id}`; nunca autenticar nos
 
 Em `scratchpad/to/`: `home.html`, `lista37.html` (listagem SEFAZ), `det8017.html` (detalhe-modelo),
 `sefaz37.html`. Endpoints e o mapa de `lbl*` acima.
+
+
+---
+
+<a id="rs-pareceres"></a>
+
+# RS Pareceres — Portal de Legislação (Consultas Formais Respondidas)
+
+**Data:** 2026-07-13 · **Escopo:** scraper da coleção **pareceres** do RS (não é entidade nova; o RS já
+existe — coleta `pareceres` do `auli-scraper-rs`). · **Fonte:** `legislacao.sefaz.rs.gov.br/Site`
+(Portal de Legislação, ASP.NET WebForms / IIS 10, **windows-1252**).
+
+## Autorização / robots
+
+`robots.txt` = `Disallow: /`; a busca declara-se **"Acesso Restrito"** (título + meta
+`NOINDEX,NOFOLLOW`). A coleta destes pareceres **públicos** foi **autorizada pelo mantenedor** (a própria
+SEFAZ-RS). UA institucional `AuliBot`, cortesia 500 ms, retry (o servidor pendura de vez em quando).
+
+## Transporte — curl subprocess (como GO/DF/SE)
+
+Com `ureq` a paginação sempre volta à página 1 / entrega resposta degradada — a camada na frente do IIS
+serve conteúdo diferente ao ClientHello/headers do `ureq`. O **curl** — com os MESMOS cookie+viewstate —
+devolve a página certa. Então listagem e detalhe vão por **curl subprocess**, com um **cookie jar** que
+mantém a sessão `ASP.NET_SessionId`: **o postback pendura a conexão sem o cookie**, então o GET da página
+1 é sempre fresco para semeá-lo.
+
+## Listagem — o ponto crítico (estado de sessão + full-form)
+
+`Search.aspx?CodArea=3&CodGroup=159` **NÃO é um grupo de pareceres**: cru (busca padrão), tem **367 docs
+mistos** — 177 instruções normativas, 175 decretos, 26 pareceres, 7 leis. Os **372 pareceres** que o
+navegador mostra vêm de um **filtro guardado na sessão**: o checkbox **"Consultas Formais Respondidas"**
+(`RepeaterAreasGrupos$ctl01$cblAreasGrupos$4`) do `FormBuscaAvancada`, submetido por `BtnBuscar_Click`.
+
+A paginação é postback WebForms (`__EVENTTARGET=LinkToPage`, `__EVENTARGUMENT=<pág>`). **Só o `__VIEWSTATE`
+NÃO basta:** sem os campos do form o servidor perde o filtro e reverte à busca padrão (mistos). É preciso
+**reenviar o formulário INTEIRO** a cada página — todos os inputs/hidden, o checkbox marcado, os selects —
+como o browser faz (`collect_form_fields`). Com full-form, todas as ~19 páginas ficam em pareceres →
+**372** (367 "PARECER" + 5 "INFORMAÇÃO"; a coleção inclui os dois tipos). Diagnóstico decisivo: `curl`
+replicando o cookie+viewstate exatos do scraper devolvia a página 2 certa; a diferença estava no
+formulário não reenviado, não no transporte.
+
+Cada resultado: `<h5><a href="javascript:goDocument(<inpKey>,'')">TÍTULO</a></h5><p>ASSUNTO</p>`.
+
+## Detalhe
+
+`DocumentView.aspx?inpKey=N` — **público/anônimo** (não precisa da sessão), corpo em `#DOCContent .content`
+(número + assunto + texto integral). Entidades HTML jurídicas/latinas decodificadas localmente
+(`&ndash;`, `&ccedil;`, `&ordm;`, `&otilde;`, … — o `kit::decode_entities` só cobre um punhado).
+
+## Saída / validação
+
+Grava **só o intermediário** `data/rs/ref/rs-pareceres-temp.txt` (numero/assunto/corpo/link, **sem
+`resumo`** — o estágio de resumo autorado é posterior e preserva o resumo já existente), e para. Validação:
+**330 das 332 chaves do `.txt` autorado reproduzidas**, + ~43 pareceres novos; 1 corpo vazio (doc sem
+`#DOCContent`). Intermediário é gitignored (`data/*/ref/*-temp.txt`).
+
+## Checklist
+
+- [x] Transporte curl + cookie jar (sessão) resolvidos.
+- [x] Ponto crítico (full-form pagination preserva o filtro "Consultas Formais Respondidas"): 372.
+- [x] Detalhe público confirmado (`#DOCContent`).
+- [ ] Estágio de resumo autorado (`-temp.txt` → `rs-portal-pareceres.txt`) — próximo incremento.
 
