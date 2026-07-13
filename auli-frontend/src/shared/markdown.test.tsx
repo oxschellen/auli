@@ -37,4 +37,20 @@ describe("markdown rendering", () => {
     expect(a?.getAttribute("target")).toBe("_blank");
     expect(a?.textContent).toBe("Ver parecer");
   });
+
+  it("forces a scheme-less markdown-link target to an absolute http:// URL (so it can't resolve as relative)", () => {
+    const { container } = renderMd(
+      "[parecer](www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=299748)",
+    );
+    const a = container.querySelector("a");
+    expect(a?.getAttribute("href")).toBe(
+      "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=299748",
+    );
+  });
+
+  it("keeps an explicit http:// portal link exactly as given", () => {
+    const url = "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=299748";
+    const { container } = renderMd(`[parecer](${url})`);
+    expect(container.querySelector("a")?.getAttribute("href")).toBe(url);
+  });
 });

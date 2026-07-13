@@ -50,9 +50,19 @@ const tableComponents: Components = {
   ),
 };
 
+/** LLM/portal links sometimes arrive without a scheme (e.g. `www.legislacao…` as a markdown-link
+ *  target). A scheme-less href is resolved as relative and hangs when clicked, so force any
+ *  external-looking URL to an absolute `http://` one. In-app (`/…`) and anchor (`#…`) links pass through. */
+function toAbsoluteHref(href?: string): string | undefined {
+  if (!href) return href;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(href)) return href; // already has a scheme (http:, https:, mailto:, tel:)
+  if (href.startsWith("/") || href.startsWith("#")) return href;
+  return `http://${href.replace(/^\/+/, "")}`;
+}
+
 const MarkdownLink: Components["a"] = ({ href, children }) => (
   <a
-    href={href}
+    href={toAbsoluteHref(href)}
     target="_blank"
     rel="noopener noreferrer"
     style={{ color: accent, textDecoration: "underline", textUnderlineOffset: "2px" }}
