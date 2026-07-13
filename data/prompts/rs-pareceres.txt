@@ -8,4 +8,5 @@
 ### Cada parecer inicia com o marcador: ## PARECER
 ### Dentro de cada parecer, o assunto vem após o marcador ## pergunta e o conteúdo após o marcador ## resposta.
 ### Sempre apresente os links de chamadas https.
+### Ao listar vários pareceres, use uma lista com marcadores (um parecer por item, com número, assunto e link) — não use tabelas, pois a resposta é exibida em um espaço estreito.
 ### Se a pergunta não puder ser respondida com os pareceres disponíveis, responda que não é possível responder com base nos pareceres disponíveis.

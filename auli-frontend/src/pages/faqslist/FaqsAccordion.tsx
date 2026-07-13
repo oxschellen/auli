@@ -5,7 +5,7 @@ import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { MdExpandMore, MdExpandLess, MdOpenInNew, MdContentCopy } from 'react-icons/md'
 import ReactMarkdown from 'react-markdown'
 import { searchNodes, getEffectiveUrl, type FaqNode } from './parseFaqs'
-import { compactMarkdownComponents } from '../../shared/markdown'
+import { compactMarkdownComponents, markdownPlugins } from '../../shared/markdown'
 import { utilsCopyTextToClipboard } from '../chat/utils/utils'
 
 interface HighlightProps {
@@ -187,7 +187,7 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
                 lineHeight="1.7"
                 className="faq-answer"
               >
-                <ReactMarkdown components={compactMarkdownComponents}>
+                <ReactMarkdown remarkPlugins={markdownPlugins} components={compactMarkdownComponents}>
                   {answer ?? ''}
                 </ReactMarkdown>
               </Box>
