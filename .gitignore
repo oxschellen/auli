@@ -61,4 +61,6 @@ web_config.txt
 data/*/raw/
 data/*/raw/cache/
 data/*/packs/
+# Scraper intermediates in ref/ (regenerable output, e.g. <id>-pareceres-temp.txt) — code, not data.
+data/*/ref/*-temp.txt
 /*.patch
