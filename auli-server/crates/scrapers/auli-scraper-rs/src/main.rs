@@ -6,6 +6,7 @@
 
 mod errors;
 mod faqs;
+mod pareceres;
 mod servicos;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
@@ -20,7 +21,7 @@ pub(crate) fn scraper_info() -> auli_contract::ScraperInfo {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-rs [--usecache] faqs|servicos|all   (omitido -> all)
+    // CLI: auli-scraper-rs [--usecache] faqs|servicos|all|pareceres   (omitido -> all)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw.iter().find(|a| !a.starts_with("--")).map(String::as_str).unwrap_or("all");
@@ -37,8 +38,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             run_faqs(use_cache)?;
             servicos::run(DATA_DIR, use_cache)?;
         }
+        // Coleta os pareceres para o intermediário `ref/rs-pareceres-temp.txt` (sem snapshot ainda —
+        // o estágio de resumo autorado é posterior). Retorna sem a mensagem de snapshot abaixo.
+        "pareceres" => {
+            pareceres::run(use_cache)?;
+            return Ok(());
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: faqs | servicos | all", other).into());
+            return Err(
+                format!("coleção desconhecida: '{}'. Use: faqs | servicos | all | pareceres", other).into(),
+            );
         }
     }
 
