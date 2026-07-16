@@ -69,7 +69,7 @@ const FIXTURES: &[Fx] = &[
     Fx { id: "11", categoria: "Número de GA", classe: Classe::Estruturado, coberto: true,
         pergunta: "A GA de número 0312026000987654 foi paga com código errado. Como pedir a alteração?",
         segredos: &["0312026000987654"] },
-    Fx { id: "12", categoria: "RENAVAM", classe: Classe::Estruturado, coberto: false,
+    Fx { id: "12", categoria: "RENAVAM", classe: Classe::Estruturado, coberto: true,
         pergunta: "O veículo RENAVAM 12345678901 aparece com IPVA em aberto já quitado.",
         segredos: &["12345678901"] },
     Fx { id: "13", categoria: "Placa Mercosul", classe: Classe::Estruturado, coberto: false,
@@ -122,7 +122,7 @@ fn regressao_coberto() {
 /// Alvo da Fase 1: 100% de recall sobre todo identificador estruturado. Destravar ao concluir
 /// os reconhecedores customizados (§3 do plano).
 #[test]
-#[ignore = "alvo da Fase 1: faltam reconhecedores (RENAVAM, placa, data)"]
+#[ignore = "alvo da Fase 1: faltam reconhecedores (placa, data)"]
 fn recall_estruturado_fase1() {
     let anon = Anonimizador::novo().expect("construir anonimizador");
     let mut vazamentos = Vec::new();
