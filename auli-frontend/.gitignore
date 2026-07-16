@@ -14,3 +14,7 @@ web_config.txt
 
 /dist
 /node_modules
+
+# SC pareceres portal (~16 MB): regenerável — cópia de data/sc/ref/sc-portal-pareceres.txt
+# (que também é gitignored). Reposto no build/deploy; não versionado como o do RS.
+public/sc/sc-portal-pareceres.txt
