@@ -63,4 +63,7 @@ data/*/raw/cache/
 data/*/packs/
 # Scraper intermediates in ref/ (regenerable output, e.g. <id>-pareceres-temp.txt) — code, not data.
 data/*/ref/*-temp.txt
+# SC pareceres portal file: regenerável (cópia do temp do scraper `auli-scraper-sc pareceres`),
+# ao contrário do RS que é autorado (com resumo) e versionado. ~16 MB — reconstruído sob demanda.
+data/sc/ref/sc-portal-pareceres.txt
 /*.patch

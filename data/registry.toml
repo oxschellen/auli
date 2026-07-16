@@ -32,7 +32,8 @@ name = "SEF-SC"
 uf = "SC"
 state = "Santa Catarina"
 prompt = "prompts/sc.txt"
-collections = ["servicos"]
+prompt_pareceres = "prompts/sc-pareceres.txt"
+collections = ["servicos", "pareceres"]
 
 [[entities]]
 id = "pr"
