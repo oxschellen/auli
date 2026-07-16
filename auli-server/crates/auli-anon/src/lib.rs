@@ -68,7 +68,8 @@ impl Anonimizador {
             .recognizer(reconhecedores::ProtocoloRecognizer::novo())
             .recognizer(reconhecedores::GaRecognizer::novo())
             .recognizer(reconhecedores::RenavamRecognizer::novo())
-            // Fase 1 (a seguir): placa, data.
+            .recognizer(reconhecedores::PlacaRecognizer::novo())
+            // Fase 1 (a seguir): data.
             .build()
             .map_err(|e| AnonError::Construcao(e.to_string()))?;
         Ok(Self {
