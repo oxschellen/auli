@@ -66,7 +66,8 @@ impl Anonimizador {
             .recognizer(reconhecedores::InscricaoEstadualRecognizer::novo())
             .recognizer(reconhecedores::CepRecognizer::novo())
             .recognizer(reconhecedores::ProtocoloRecognizer::novo())
-            // Fase 1 (a seguir): GA, RENAVAM, placa, data.
+            .recognizer(reconhecedores::GaRecognizer::novo())
+            // Fase 1 (a seguir): RENAVAM, placa, data.
             .build()
             .map_err(|e| AnonError::Construcao(e.to_string()))?;
         Ok(Self {

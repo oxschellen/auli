@@ -4,12 +4,14 @@
 
 mod cep;
 mod cnpj_alfanumerico;
+mod ga;
 mod ie;
 mod protocolo;
 mod telefone;
 
 pub use cep::CepRecognizer;
 pub use cnpj_alfanumerico::CnpjAlfanumericoRecognizer;
+pub use ga::GaRecognizer;
 pub use ie::InscricaoEstadualRecognizer;
 pub use protocolo::ProtocoloRecognizer;
 pub use telefone::TelefoneBrRecognizer;
