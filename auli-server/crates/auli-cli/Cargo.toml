@@ -16,6 +16,7 @@ path = "src/lib.rs"
 [dependencies]
 auli-contract = { path = "../auli-contract" }
 auli-core = { path = "../auli-core" }
+auli-anon = { path = "../auli-anon" }
 vector-store = { path = "../vector-store" }
 
 # Web Framework & HTTP:

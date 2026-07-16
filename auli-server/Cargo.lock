@@ -185,6 +185,7 @@ dependencies = [
 name = "auli-cli"
 version = "0.3.0"
 dependencies = [
+ "auli-anon",
  "auli-contract",
  "auli-core",
  "axum",

@@ -69,9 +69,16 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
     );
     println!("🧠 Embedder fastembed (BGE-M3) carregado");
 
+    // Anonimizador de PII: compila os reconhecedores uma vez, no boot, e é compartilhado.
+    let anonimizador = Arc::new(
+        auli_anon::Anonimizador::novo().expect("Falha ao inicializar o anonimizador (auli-anon)"),
+    );
+    println!("🔒 Anonimizador de PII (auli-anon) carregado");
+
     let state = Arc::new(AppState {
         collections: Arc::new(collections),
         embedder,
+        anonimizador,
     });
 
     println!("----------------------------------------------------");
