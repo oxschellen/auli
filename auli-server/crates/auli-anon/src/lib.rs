@@ -69,7 +69,7 @@ impl Anonimizador {
             .recognizer(reconhecedores::GaRecognizer::novo())
             .recognizer(reconhecedores::RenavamRecognizer::novo())
             .recognizer(reconhecedores::PlacaRecognizer::novo())
-            // Fase 1 (a seguir): data.
+            .recognizer(reconhecedores::DataNascimentoRecognizer::novo())
             .build()
             .map_err(|e| AnonError::Construcao(e.to_string()))?;
         Ok(Self {

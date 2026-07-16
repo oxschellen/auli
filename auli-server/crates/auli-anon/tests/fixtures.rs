@@ -2,11 +2,10 @@
 //! estilo NAVI, com dados fictícios (CPF/CNPJ de DV válido, gerados para teste).
 //!
 //! Duas travas:
-//! - [`regressao_coberto`] — verde sempre: todo identificador cujo reconhecedor **já existe**
-//!   (`coberto: true`) permanece anonimizado, e a pergunta de controle não gera falso positivo.
-//!   A cada reconhecedor concluído, vira `coberto: true` a fixture correspondente.
-//! - [`recall_estruturado_fase1`] — `#[ignore]` até a Fase 1 fechar: exige 100% de recall sobre
-//!   **todos** os identificadores estruturados. Destravar quando o último reconhecedor entrar.
+//! - [`regressao_coberto`] — todo identificador cujo reconhecedor existe (`coberto: true`)
+//!   permanece anonimizado, e a pergunta de controle não gera falso positivo.
+//! - [`recall_estruturado_fase1`] — Fase 1 concluída: 100% de recall sobre **todos** os
+//!   identificadores estruturados.
 //!
 //! Nome de pessoa, razão social e endereço livre ([`Classe::NomeRazaoEndereco`]) ficam fora de
 //! ambas as travas — dependem de NER/heurística e são escopo da Fase 4.
@@ -87,7 +86,7 @@ const FIXTURES: &[Fx] = &[
     Fx { id: "17", categoria: "Endereço", classe: Classe::NomeRazaoEndereco, coberto: false,
         pergunta: "A sede fica na Av. Mauá, 1155, Centro, Porto Alegre. Como alterar o endereço do sócio?",
         segredos: &["Av. Mauá, 1155"] },
-    Fx { id: "19", categoria: "Data de nascimento", classe: Classe::Estruturado, coberto: false,
+    Fx { id: "19", categoria: "Data de nascimento", classe: Classe::Estruturado, coberto: true,
         pergunta: "O dependente nasceu em 14/03/1998 e precisa constar na declaração do ITCD.",
         segredos: &["14/03/1998"] },
     Fx { id: "20", categoria: "Sem PII (controle)", classe: Classe::Controle, coberto: false,
@@ -119,10 +118,9 @@ fn regressao_coberto() {
     }
 }
 
-/// Alvo da Fase 1: 100% de recall sobre todo identificador estruturado. Destravar ao concluir
-/// os reconhecedores customizados (§3 do plano).
+/// Fase 1 concluída: 100% de recall sobre todo identificador estruturado (todas as classes
+/// exceto nome/razão social/endereço, que são da Fase 4).
 #[test]
-#[ignore = "alvo da Fase 1: falta o reconhecedor de data de nascimento"]
 fn recall_estruturado_fase1() {
     let anon = Anonimizador::novo().expect("construir anonimizador");
     let mut vazamentos = Vec::new();

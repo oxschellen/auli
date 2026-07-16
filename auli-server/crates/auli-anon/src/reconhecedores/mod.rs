@@ -4,6 +4,7 @@
 
 mod cep;
 mod cnpj_alfanumerico;
+mod data_nascimento;
 mod ga;
 mod ie;
 mod placa;
@@ -13,6 +14,7 @@ mod telefone;
 
 pub use cep::CepRecognizer;
 pub use cnpj_alfanumerico::CnpjAlfanumericoRecognizer;
+pub use data_nascimento::DataNascimentoRecognizer;
 pub use ga::GaRecognizer;
 pub use ie::InscricaoEstadualRecognizer;
 pub use placa::PlacaRecognizer;
