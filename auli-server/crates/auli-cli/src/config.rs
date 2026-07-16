@@ -18,6 +18,10 @@ pub struct Config {
     // Local embeddings (fastembed / BGE-M3, in-process)
     pub embed_cache_dir: String,
     pub embed_threads: usize,
+
+    // Anonimizar a pergunta ANTES de enviá-la ao LLM externo (e restaurar a resposta).
+    // Default `true`: só desliga com valor explicitamente negativo. Ver `rag::exec_all_question`.
+    pub anonimizar_llm: bool,
 }
 
 static CONFIG: LazyLock<Config> = LazyLock::new(Config::from_env);
@@ -37,6 +41,8 @@ impl Config {
 
             embed_cache_dir: opt("EMBED_CACHE_DIR", "./models"),
             embed_threads: parse_opt("EMBED_THREADS", 16),
+
+            anonimizar_llm: opt_bool("AULI_ANONIMIZAR_LLM", true),
         }
     }
 
@@ -47,6 +53,7 @@ impl Config {
         println!("LLM_API_MODEL: {}", self.llm_api_model);
         println!("EMBED_CACHE_DIR: {}", self.embed_cache_dir);
         println!("EMBED_THREADS: {}", self.embed_threads);
+        println!("AULI_ANONIMIZAR_LLM: {}", self.anonimizar_llm);
     }
 }
 
@@ -61,4 +68,14 @@ fn opt(key: &str, default: &str) -> String {
 // Optional env var parsed to any `FromStr` type; falls back to `default` if unset or unparsable.
 fn parse_opt<T: std::str::FromStr>(key: &str, default: T) -> T {
     std::env::var(key).ok().and_then(|v| v.parse().ok()).unwrap_or(default)
+}
+
+// Optional boolean env var. Recognized truthy/falsy values win; anything else (unset or
+// unrecognized) falls back to `default` — so a typo can't silently flip a privacy-default-on flag.
+fn opt_bool(key: &str, default: bool) -> bool {
+    match std::env::var(key).ok().map(|v| v.trim().to_ascii_lowercase()) {
+        Some(v) if matches!(v.as_str(), "true" | "1" | "yes" | "on") => true,
+        Some(v) if matches!(v.as_str(), "false" | "0" | "no" | "off") => false,
+        _ => default,
+    }
 }

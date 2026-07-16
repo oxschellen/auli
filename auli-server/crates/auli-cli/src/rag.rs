@@ -7,11 +7,13 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::sync::Arc;
 
+use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_core::corpus::{FAQS, PARECERES, SERVICES};
 use auli_core::embed::Embedder;
 use tracing::{debug, info, trace, warn};
 use vector_store::ReadStore;
 
+use crate::config::config;
 use crate::entities::get_entity;
 use crate::error::Result;
 use crate::llm;
@@ -114,12 +116,30 @@ fn render(docs: &[String], fmt: impl Fn(usize, &str) -> String) -> String {
 pub async fn exec_all_question(
     collections: Arc<Collections>,
     embedder: Arc<Embedder>,
+    anonimizador: Arc<Anonimizador>,
     question: String,
-    question_sanitizada: String,
     entity: Option<String>,
     query_type: QueryType,
 ) -> Result<String> {
     debug!("Executando consulta: {}", question);
+
+    // Anonimiza a pergunta uma vez, fail-closed (em erro usa o placeholder fixo, nunca o texto cru).
+    // O `mapping` fica em memória, no escopo da requisição, para restaurar a resposta do LLM —
+    // NUNCA é persistido.
+    let (pergunta_anon, mapping) = match anonimizador.anonimizar(&question) {
+        Ok(a) => (a.texto, Some(a.mapping)),
+        Err(e) => {
+            warn!("anonimização falhou: {e}");
+            (TEXTO_FALLBACK_ERRO.to_string(), None)
+        }
+    };
+
+    // stdout: sem IP e com a pergunta anonimizada (stdout costuma ser capturado).
+    info!(
+        entity = entity.as_deref().unwrap_or("rs"),
+        query_type = ?query_type,
+        "Consulta: {}", pergunta_anon
+    );
 
     // Resolve the target entity. Unknown entity -> return the error text as the answer.
     let cfg = match get_entity(entity.as_deref()) {
@@ -183,12 +203,24 @@ pub async fn exec_all_question(
     let system_prompt = format!("{}{}'''", base_prompt, rag);
     trace!("System instructions with RAG: {}", system_prompt);
 
-    let answer = llm::chat(&system_prompt, &question).await?;
+    // Fronteira do LLM: com o flag ligado (default), envia a pergunta ANONIMIZADA e restaura a
+    // resposta antes de devolvê-la ao usuário; com o flag desligado, envia a original (comportamento
+    // anterior). Os documentos do RAG são conteúdo público e NÃO passam por anonimização.
+    let anonimizar = config().anonimizar_llm;
+    let entrada_llm = if anonimizar { &pergunta_anon } else { &question };
+    let resposta_llm = llm::chat(&system_prompt, entrada_llm).await?;
+
+    // Restaura os placeholders (`[CNPJ_1]` → valor original) antes de devolver — o usuário vê o valor
+    // real, mas o LLM só viu o placeholder. Sem mapping (anonimização falhou) ou flag off: sem troca.
+    let answer = match (anonimizar, &mapping) {
+        (true, Some(m)) => anonimizador.restaurar(&resposta_llm, m),
+        _ => resposta_llm,
+    };
 
     // Resposta em `debug!` (não `info!`): evita despejar a resposta crua no stdout por padrão.
     debug!("Resposta: {}", answer);
 
-    log_question(&cfg.id, query_type.label(), &question, &question_sanitizada, &answer, &rag)?;
+    log_question(&cfg.id, query_type.label(), &question, &pergunta_anon, &answer, &rag)?;
 
     Ok(answer)
 }
