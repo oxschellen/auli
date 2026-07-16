@@ -51,6 +51,14 @@ impl QueryType {
             _ => QueryType::ServicosFaqs,
         }
     }
+
+    /// Rótulo curto para o cabeçalho do log de auditoria.
+    pub fn label(self) -> &'static str {
+        match self {
+            QueryType::ServicosFaqs => "servicos+faqs",
+            QueryType::Pareceres => "pareceres",
+        }
+    }
 }
 
 /// Keep the top `floor` docs always; beyond that, keep docs within `band` of the best score.
@@ -107,6 +115,7 @@ pub async fn exec_all_question(
     collections: Arc<Collections>,
     embedder: Arc<Embedder>,
     question: String,
+    question_sanitizada: String,
     entity: Option<String>,
     query_type: QueryType,
 ) -> Result<String> {
@@ -176,20 +185,64 @@ pub async fn exec_all_question(
 
     let answer = llm::chat(&system_prompt, &question).await?;
 
-    info!("Resposta: {}", answer);
+    // Resposta em `debug!` (não `info!`): evita despejar a resposta crua no stdout por padrão.
+    debug!("Resposta: {}", answer);
 
-    log_question(format!("Pergunta: {}\n{}\nResposta:\n{}", question, rag, answer))?;
+    log_question(&cfg.id, query_type.label(), &question, &question_sanitizada, &answer, &rag)?;
 
     Ok(answer)
 }
 
-fn log_question(content: String) -> std::io::Result<()> {
+/// Monta o registro estruturado do log de auditoria: cabeçalho + seções rotuladas
+/// (pergunta original, pergunta anonimizada, resposta e, por fim, o contexto RAG).
+/// Pura (sem I/O) para ser testável.
+fn format_log_record(
+    stamp: &str,
+    entidade: &str,
+    tipo: &str,
+    original: &str,
+    sanitizada: &str,
+    answer: &str,
+    rag: &str,
+) -> String {
+    let regua = "=".repeat(64);
+    let secao = |titulo: &str| -> String {
+        let base = format!("----- {titulo} ");
+        let faltam = 64usize.saturating_sub(base.chars().count());
+        format!("{base}{}", "-".repeat(faltam))
+    };
+    format!(
+        "{regua}\n\
+         CONSULTA · {stamp} · entidade: {entidade} · tipo: {tipo}\n\
+         {regua}\n\n\
+         {}\n{original}\n\n\
+         {}\n{sanitizada}\n\n\
+         {}\n{answer}\n\n\
+         {}\n{rag}\n\
+         {regua}",
+        secao("PERGUNTA (ORIGINAL)"),
+        secao("PERGUNTA (ANONIMIZADA)"),
+        secao("RESPOSTA"),
+        secao("CONTEXTO RAG (documentos recuperados)"),
+    )
+}
+
+fn log_question(
+    entidade: &str,
+    tipo: &str,
+    original: &str,
+    sanitizada: &str,
+    answer: &str,
+    rag: &str,
+) -> std::io::Result<()> {
     // Diretório de logs configurável; default `./logs` (relativo ao CWD). O start_server.sh aponta
     // para a raiz do repo (`$ROOT/logs`) para não depender de onde o binário é lançado.
     let log_dir = std::env::var("AULI_LOG_DIR").unwrap_or_else(|_| "./logs".to_string());
     fs::create_dir_all(&log_dir)?;
-    let timestamp = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S");
-    let path = format!("{}/{}.txt", log_dir, timestamp);
+    let agora = chrono::Local::now();
+    let path = format!("{}/{}.txt", log_dir, agora.format("%Y-%m-%d_%H-%M-%S"));
+    let stamp = agora.format("%Y-%m-%d %H:%M:%S").to_string();
+    let content = format_log_record(&stamp, entidade, tipo, original, sanitizada, answer, rag);
     let mut file = OpenOptions::new().create(true).append(true).open(&path)?;
     debug!("Log da consulta gravado em {}", path);
     writeln!(file, "{}", content)
@@ -197,10 +250,44 @@ fn log_question(content: String) -> std::io::Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::{select_by_proximity, QueryType};
+    use super::{format_log_record, select_by_proximity, QueryType};
 
     fn scored(pairs: &[(&str, f32)]) -> Vec<(String, f32)> {
         pairs.iter().map(|(d, s)| (d.to_string(), *s)).collect()
+    }
+
+    #[test]
+    fn query_type_label_is_stable() {
+        assert_eq!(QueryType::ServicosFaqs.label(), "servicos+faqs");
+        assert_eq!(QueryType::Pareceres.label(), "pareceres");
+    }
+
+    #[test]
+    fn log_record_has_header_and_sections_in_order() {
+        let rec = format_log_record(
+            "2026-07-16 14:23:05",
+            "rs",
+            "pareceres",
+            "CNPJ 11.222.333/0001-81 pode aderir?",
+            "CNPJ [CNPJ_1] pode aderir?",
+            "Sim, o CNPJ 11.222.333/0001-81 atende.",
+            "## PARECER\n0\n...",
+        );
+
+        // Cabeçalho com metadados (data, entidade, tipo) — sem IP.
+        assert!(rec.contains("CONSULTA · 2026-07-16 14:23:05 · entidade: rs · tipo: pareceres"));
+
+        // As quatro seções, na ordem: original → anonimizada → resposta → contexto RAG.
+        let i_orig = rec.find("PERGUNTA (ORIGINAL)").expect("seção original");
+        let i_anon = rec.find("PERGUNTA (ANONIMIZADA)").expect("seção anonimizada");
+        let i_resp = rec.find("RESPOSTA").expect("seção resposta");
+        let i_rag = rec.find("CONTEXTO RAG").expect("seção rag");
+        assert!(i_orig < i_anon && i_anon < i_resp && i_resp < i_rag);
+
+        // A original mantém o PII; a anonimizada tem o placeholder; a resposta fica como veio.
+        assert!(rec.contains("CNPJ 11.222.333/0001-81 pode aderir?"));
+        assert!(rec.contains("CNPJ [CNPJ_1] pode aderir?"));
+        assert!(rec.contains("Sim, o CNPJ 11.222.333/0001-81 atende."));
     }
 
     #[test]
