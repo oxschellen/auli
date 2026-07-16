@@ -3,6 +3,7 @@
 // Conhece UMA entidade ("sc"); não lê o registry. Grava o snapshot de serviços (v3); a derivação dos
 // artefatos é o `auli-collections sc`.
 
+mod pareceres;
 mod sc;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
@@ -10,7 +11,7 @@ pub const ENTITY: &str = "sc";
 const DATA_DIR: &str = "../data/sc/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-sc [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-sc [--usecache] servicos|pareceres   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw.iter().find(|a| !a.starts_with("--")).map(String::as_str).unwrap_or("servicos");
@@ -22,8 +23,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        // Pareceres (Consultas da COPAT): grava o intermediário `ref/sc-pareceres-temp.txt` e
+        // retorna (sem snapshot — a ingestão dos pareceres é estágio posterior, como no RS).
+        "pareceres" => {
+            pareceres::run(use_cache)?;
+            return Ok(());
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!("coleção desconhecida: '{}'. Use: servicos | pareceres", other).into());
         }
     }
 
