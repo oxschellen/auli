@@ -5,9 +5,11 @@
 mod cep;
 mod cnpj_alfanumerico;
 mod ie;
+mod protocolo;
 mod telefone;
 
 pub use cep::CepRecognizer;
 pub use cnpj_alfanumerico::CnpjAlfanumericoRecognizer;
 pub use ie::InscricaoEstadualRecognizer;
+pub use protocolo::ProtocoloRecognizer;
 pub use telefone::TelefoneBrRecognizer;
