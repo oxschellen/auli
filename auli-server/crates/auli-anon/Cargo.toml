@@ -9,5 +9,7 @@ description = "Anonimização de PII (CPF, CNPJ, e-mail, telefone, …) nas perg
 cloakrs-core = "=0.3.0"
 cloakrs-locales = "=0.3.0"
 thiserror = "2"
-# Fase 1 adiciona: cpf_cnpj (validação de DV, inclui CNPJ alfanumérico) e regex
-# (reconhecedores customizados de telefone/IE/protocolo/GA/RENAVAM/placa/CEP/data).
+# Validação de DV (mod-11), inclusive o CNPJ alfanumérico da IN RFB nº 2.229/2024.
+cpf_cnpj = "0.3"
+# Reconhecedores customizados (candidatos por formato antes da validação/contexto).
+regex = "1"

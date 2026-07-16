@@ -23,6 +23,8 @@
 use cloakrs_core::{Locale, PromptMapping, PromptSanitizer};
 use cloakrs_locales::default_registry;
 
+mod reconhecedores;
+
 /// Placeholder gravado no lugar da pergunta quando a anonimização falha. A biblioteca nunca
 /// decide sozinha deixar o texto cru passar; o chamador aplica esta política *fail-closed*.
 pub const TEXTO_FALLBACK_ERRO: &str = "[ERRO DE ANONIMIZAÇÃO — pergunta descartada do log]";
@@ -59,7 +61,8 @@ impl Anonimizador {
         let scanner = default_registry()
             .into_scanner_builder()
             .locale(Locale::BR)
-            // Fase 1: .recognizer(TelefoneBrRecognizer::novo()) etc.
+            .recognizer(reconhecedores::CnpjAlfanumericoRecognizer::novo())
+            // Fase 1 (a seguir): telefone, IE, protocolo, GA, RENAVAM, placa, CEP, data.
             .build()
             .map_err(|e| AnonError::Construcao(e.to_string()))?;
         Ok(Self {
