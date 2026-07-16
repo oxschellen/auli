@@ -3,7 +3,9 @@
 //! nativos (locale BR) não pegam. Ver §3 do plano de implementação.
 
 mod cnpj_alfanumerico;
+mod ie;
 mod telefone;
 
 pub use cnpj_alfanumerico::CnpjAlfanumericoRecognizer;
+pub use ie::InscricaoEstadualRecognizer;
 pub use telefone::TelefoneBrRecognizer;
