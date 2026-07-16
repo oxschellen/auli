@@ -62,7 +62,8 @@ impl Anonimizador {
             .into_scanner_builder()
             .locale(Locale::BR)
             .recognizer(reconhecedores::CnpjAlfanumericoRecognizer::novo())
-            // Fase 1 (a seguir): telefone, IE, protocolo, GA, RENAVAM, placa, CEP, data.
+            .recognizer(reconhecedores::TelefoneBrRecognizer::novo())
+            // Fase 1 (a seguir): IE, protocolo, GA, RENAVAM, placa, CEP, data.
             .build()
             .map_err(|e| AnonError::Construcao(e.to_string()))?;
         Ok(Self {
