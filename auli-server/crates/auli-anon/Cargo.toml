@@ -1,0 +1,13 @@
+[package]
+name = "auli-anon"
+version = "0.1.0"
+edition = "2024"
+description = "Anonimização de PII (CPF, CNPJ, e-mail, telefone, …) nas perguntas do Chat, antes do log e do LLM externo. Determinístico, in-process."
+
+[dependencies]
+# Crates jovens (0.3.0, 2026): pinar versão exata — a API pode quebrar sem aviso.
+cloakrs-core = "=0.3.0"
+cloakrs-locales = "=0.3.0"
+thiserror = "2"
+# Fase 1 adiciona: cpf_cnpj (validação de DV, inclui CNPJ alfanumérico) e regex
+# (reconhecedores customizados de telefone/IE/protocolo/GA/RENAVAM/placa/CEP/data).
