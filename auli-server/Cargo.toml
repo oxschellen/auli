@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/auli-contract",
     "crates/vector-store",
+    "crates/auli-anon",
     "crates/auli-core",
     "crates/auli-cli",
     "crates/auli-collections",
