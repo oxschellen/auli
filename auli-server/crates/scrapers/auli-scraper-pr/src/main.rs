@@ -4,6 +4,7 @@
 // "Serviços para você!" traz o catálogo curado em 7 abas (público) × grupos (classe); um mesmo link
 // aparece sob várias abas/classes — o schema v2 (`Ocorrencia`) comporta isso nativamente.
 
+mod pareceres;
 mod scrape;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
@@ -11,7 +12,7 @@ pub const ENTITY: &str = "pr";
 const DATA_DIR: &str = "../data/pr/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-pr [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-pr [--usecache] servicos|pareceres   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw.iter().find(|a| !a.starts_with("--")).map(String::as_str).unwrap_or("servicos");
@@ -23,8 +24,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        // Consultas Tributárias (PDFs anuais): grava o intermediário `ref/pr-pareceres-temp.txt` e
+        // retorna (sem snapshot — a ingestão dos pareceres é estágio posterior, como no SC/SP).
+        "pareceres" => {
+            pareceres::run(use_cache)?;
+            return Ok(());
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!("coleção desconhecida: '{}'. Use: servicos | pareceres", other).into());
         }
     }
 
