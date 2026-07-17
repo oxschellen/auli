@@ -68,6 +68,7 @@ data/*/packs/
 data/*/*-snapshot.json
 # Intermediários em ref/ (saída regenerável, ex.: <id>-pareceres-temp.txt) — código, não dado.
 data/*/ref/*-temp.txt
-# Portal de pareceres regenerável (cópia do temp do scraper), diferente do RS que é autorado.
+# Portais de pareceres regeneráveis (cópia do temp do scraper), diferente do RS que é autorado.
 data/sc/ref/sc-portal-pareceres.txt
+data/sp/ref/sp-portal-pareceres.txt
 /*.patch
