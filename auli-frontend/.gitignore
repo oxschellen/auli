@@ -15,6 +15,7 @@ web_config.txt
 /dist
 /node_modules
 
-# SC pareceres portal (~16 MB): regenerável — cópia de data/sc/ref/sc-portal-pareceres.txt
-# (que também é gitignored). Reposto no build/deploy; não versionado como o do RS.
-public/sc/sc-portal-pareceres.txt
+# Dados por entidade em public/<id>/ são GERADOS de data/ (scraper → collections → build-frontend-public)
+# e ficam fora do git — só os assets do app na raiz de public/ (about.md, favicon, robots.txt, sitemap.xml)
+# são versionados. Repor com `scripts/build-frontend-public.sh` antes do build/deploy do frontend.
+public/*/

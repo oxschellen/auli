@@ -57,13 +57,17 @@ web_config.txt
 #    the per-user settings.local.json out of git ──
 /.claude/settings.local.json
 
-# Data integration (root data/): generated artifacts ignored; prompts/ and <id>/ref/ are versioned
+# Data integration (root data/): dados GERADOS ficam fora do git; SÓ o source-of-truth AUTORADO é
+# versionado — `registry.toml`, `prompts/`, e os autorados em `<id>/ref/` (conteudo_site_tree, notas,
+# portal-pareceres do RS). Todo o resto é reconstruído pelo pipeline: scraper → `auli-collections` →
+# `auli update` / `scripts/build-packs.sh` (packs) e `scripts/build-frontend-public.sh` (public/).
 data/*/raw/
 data/*/raw/cache/
 data/*/packs/
-# Scraper intermediates in ref/ (regenerable output, e.g. <id>-pareceres-temp.txt) — code, not data.
+# Snapshots do scraper (intermediários que alimentam o `auli-collections`).
+data/*/*-snapshot.json
+# Intermediários em ref/ (saída regenerável, ex.: <id>-pareceres-temp.txt) — código, não dado.
 data/*/ref/*-temp.txt
-# SC pareceres portal file: regenerável (cópia do temp do scraper `auli-scraper-sc pareceres`),
-# ao contrário do RS que é autorado (com resumo) e versionado. ~16 MB — reconstruído sob demanda.
+# Portal de pareceres regenerável (cópia do temp do scraper), diferente do RS que é autorado.
 data/sc/ref/sc-portal-pareceres.txt
 /*.patch
