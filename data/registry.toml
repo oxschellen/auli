@@ -41,7 +41,8 @@ name = "SEFA-PR"
 uf = "PR"
 state = "Paraná"
 prompt = "prompts/pr.txt"
-collections = ["servicos"]
+prompt_pareceres = "prompts/pr-pareceres.txt"
+collections = ["servicos", "pareceres"]
 
 [[entities]]
 id = "sp"

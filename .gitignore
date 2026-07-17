@@ -71,4 +71,5 @@ data/*/ref/*-temp.txt
 # Portais de pareceres regeneráveis (cópia do temp do scraper), diferente do RS que é autorado.
 data/sc/ref/sc-portal-pareceres.txt
 data/sp/ref/sp-portal-pareceres.txt
+data/pr/ref/pr-portal-pareceres.txt
 /*.patch
