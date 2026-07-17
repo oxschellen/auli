@@ -571,6 +571,7 @@ dependencies = [
  "anyhow",
  "auli-contract",
  "auli-scraper-kit",
+ "regex",
  "serde",
  "serde_json",
  "ureq",
