@@ -134,10 +134,16 @@ impl Embeddable for Servico {
     }
 }
 
-/// Um registro da tabela `pareceres`: um parecer jurídico/técnico. Os campos vêm do conteúdo autorado
-/// (o sumário dá `numero`/`assunto`/`resumo`; `corpo` é o texto integral), mais a key materializada.
+/// Um registro da tabela `pareceres`: uma consulta tributária respondida (parecer/resposta de
+/// consulta — termo geral entre estados: "Pareceres" no RS, "Respostas de Consultas" em SP, COPAT
+/// em SC). Os campos vêm do conteúdo autorado (o sumário dá `numero`/`assunto`/`resumo`; `corpo` é
+/// o texto integral), mais a key materializada.
+///
+/// (Antes: `Parecer`.) O **kind de domínio permanece `"pareceres"`** por compatibilidade — rota
+/// `/v1/{kind}/list`, sufixo da coleção vetorial, nomes de pack e labels não mudam; o nome da
+/// struct não aparece na serialização (serde grava só os campos).
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Parecer {
+pub struct Consulta {
     /// Identificador do parecer (ex.: `"PARECER Nº 25148"`).
     pub numero: String,
     /// Assunto/ementa (uma linha).
@@ -153,7 +159,7 @@ pub struct Parecer {
     pub text_to_embed: String,
 }
 
-impl Embeddable for Parecer {
+impl Embeddable for Consulta {
     fn text_to_embed(&self) -> &str {
         &self.text_to_embed
     }
@@ -222,7 +228,7 @@ mod tests {
 
     #[test]
     fn parecer_exposes_key_and_renders_block() {
-        let p = Parecer {
+        let p = Consulta {
             numero: "PARECER Nº 25148".into(),
             assunto: "ICMS – crédito fiscal na cesta básica".into(),
             resumo: "Análise sobre apropriação de crédito.".into(),
@@ -239,7 +245,7 @@ mod tests {
         // The serialized shape is contract; round-trips through JSON.
         let table = Table::new("rs", "pareceres", vec![p]);
         let json = serde_json::to_string(&table).unwrap();
-        let back: Table<Parecer> = serde_json::from_str(&json).unwrap();
+        let back: Table<Consulta> = serde_json::from_str(&json).unwrap();
         assert_eq!(back.items[0].numero, "PARECER Nº 25148");
     }
 }

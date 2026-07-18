@@ -1,6 +1,6 @@
 //! Ingestão dos pareceres a partir do texto autorado `<id>-portal-pareceres.txt` (em `data/<id>/ref`),
 //! **offline**. Passo incremental "de trás pra frente": ainda não há scraper de pareceres, então
-//! derivamos a `Table<Parecer>` (`data/<id>/raw/<id>-pareceres.json`, com `text_to_embed`) a partir
+//! derivamos a `Table<Consulta>` (`data/<id>/raw/<id>-pareceres.json`, com `text_to_embed`) a partir
 //! do arquivo de referência já existente. O `auli update` vetoriza esse contrato como qualquer outro.
 //!
 //! Formato do arquivo (um parecer por bloco, delimitado por `// N`):
@@ -17,12 +17,12 @@
 
 use std::path::Path;
 
-use auli_contract::{Parecer, Table};
+use auli_contract::{Consulta, Table};
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
 
-/// Lê o `.txt` de referência da entidade, parseia os pareceres e grava a `Table<Parecer>` no `raw/`.
+/// Lê o `.txt` de referência da entidade, parseia os pareceres e grava a `Table<Consulta>` no `raw/`.
 pub fn run(entity: &EntityConfig) -> Result<()> {
     let id = &entity.id;
     let data_dir = &entity.data_dir; // .../data/<id>/raw
@@ -70,8 +70,8 @@ fn strip_label<'a>(line: &'a str, label: &str) -> Option<&'a str> {
     Some(rest.strip_prefix(':')?.trim())
 }
 
-/// Quebra o texto em blocos por `// N` e converte cada um em `Parecer` (blocos vazios são descartados).
-fn parse_pareceres(content: &str) -> Vec<Parecer> {
+/// Quebra o texto em blocos por `// N` e converte cada um em `Consulta` (blocos vazios são descartados).
+fn parse_pareceres(content: &str) -> Vec<Consulta> {
     let mut records: Vec<Vec<&str>> = Vec::new();
     let mut current: Option<Vec<&str>> = None;
     for line in content.lines() {
@@ -91,9 +91,9 @@ fn parse_pareceres(content: &str) -> Vec<Parecer> {
     records.iter().filter_map(|lines| parecer_from_lines(lines)).collect()
 }
 
-/// Monta um `Parecer` das linhas de um bloco. `## pergunta:` guarda os rótulos + resumo; `## resposta:`
+/// Monta um `Consulta` das linhas de um bloco. `## pergunta:` guarda os rótulos + resumo; `## resposta:`
 /// separa o corpo integral. Devolve `None` se o bloco não tem conteúdo aproveitável.
-fn parecer_from_lines(lines: &[&str]) -> Option<Parecer> {
+fn parecer_from_lines(lines: &[&str]) -> Option<Consulta> {
     let resp_idx = lines.iter().position(|l| l.trim_start().starts_with("## resposta"))?;
 
     let mut numero = String::new();
@@ -134,7 +134,7 @@ fn parecer_from_lines(lines: &[&str]) -> Option<Parecer> {
         (true, true) => numero.clone(),
     };
 
-    Some(Parecer { numero, assunto, resumo, corpo, link, text_to_embed })
+    Some(Consulta { numero, assunto, resumo, corpo, link, text_to_embed })
 }
 
 #[cfg(test)]

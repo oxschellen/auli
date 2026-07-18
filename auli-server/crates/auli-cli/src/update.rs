@@ -51,7 +51,7 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     // pareceres: <entity>-pareceres.json (contract) -> pack <entity>-pareceres. Fonte ainda autorada,
     // ingerida do `.txt` de referência por `auli-collections <entity> pareceres` (sem scraper por ora).
     // Ausente para entidades sem esse arquivo -> pulado.
-    if let Some(entry) = ingest::<auli_contract::Parecer>(
+    if let Some(entry) = ingest::<auli_contract::Consulta>(
         &embedder, &writer, &entity, "pareceres", &format!("{}-pareceres.json", entity), &source, &out,
     )? {
         entries.push(entry);

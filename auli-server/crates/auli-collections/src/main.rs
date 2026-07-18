@@ -26,7 +26,7 @@ fn main() -> errors::Result<()> {
     match collection.as_str() {
         // OFFLINE: deriva contrato, prints, index e per-público do snapshot já gravado.
         "process" => process::run(entity)?,
-        // OFFLINE: ingere pareceres do `.txt` autorado em `ref/` -> `Table<Parecer>` no `raw/`.
+        // OFFLINE: ingere pareceres do `.txt` autorado em `ref/` -> `Table<Consulta>` no `raw/`.
         // Passo incremental até haver scraper de pareceres.
         "pareceres" => derive_pareceres::run(entity)?,
         "faqs" | "servicos" => {
