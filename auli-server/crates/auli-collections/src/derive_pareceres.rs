@@ -1,7 +1,15 @@
 //! Ingestão dos pareceres a partir do texto autorado `<id>-portal-pareceres.txt` (em `data/<id>/ref`),
 //! **offline**. Passo incremental "de trás pra frente": ainda não há scraper de pareceres, então
-//! derivamos a `Table<Consulta>` (`data/<id>/raw/<id>-pareceres.json`, com `text_to_embed`) a partir
-//! do arquivo de referência já existente. O `auli update` vetoriza esse contrato como qualquer outro.
+//! derivamos a `Table<Consulta>` a partir do arquivo de referência já existente.
+//!
+//! Produz o **snapshot bruto** `data/<id>/raw/<id>-pareceres.raw.json` — a entrada do passo
+//! `sinopse`, que gera as sinopses e promove a saída final `<id>-pareceres.json` (que o `auli update`
+//! vetoriza). Pipeline: `derive → .raw.json → sinopse → .json → update`.
+//!
+//! O derive **continua materializando** `text_to_embed` (com os fallbacks atuais): é o caminho legado
+//! para registros que já chegam com `resumo` autorado — o `sinopse` reaproveita esses e só recompõe a
+//! key dos que ele mesmo gera. O ponto único para sinopses novas é `compose_text_to_embed` no
+//! `sinopse.rs`; esta materialização legada aposenta junto com este derive quando houver scraper.
 //!
 //! Formato do arquivo (um parecer por bloco, delimitado por `// N`):
 //! ```text
@@ -22,7 +30,8 @@ use auli_contract::{Consulta, Table};
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
 
-/// Lê o `.txt` de referência da entidade, parseia os pareceres e grava a `Table<Consulta>` no `raw/`.
+/// Lê o `.txt` de referência da entidade, parseia os pareceres e grava o snapshot bruto
+/// `<id>-pareceres.raw.json` no `raw/` (entrada do passo `sinopse`).
 pub fn run(entity: &EntityConfig) -> Result<()> {
     let id = &entity.id;
     let data_dir = &entity.data_dir; // .../data/<id>/raw
@@ -47,12 +56,12 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
     }
 
     let table = Table::new(id.as_str(), "pareceres", items);
-    let out_path = format!("{data_dir}/{id}-pareceres.json");
+    let out_path = format!("{data_dir}/{id}-pareceres.raw.json");
     if let Some(parent) = Path::new(&out_path).parent() {
         std::fs::create_dir_all(parent)?;
     }
     std::fs::write(&out_path, serde_json::to_string_pretty(&table)?)?;
-    println!("Wrote {} ({} pareceres)", out_path, table.len());
+    println!("Wrote {} ({} pareceres). Rode `sinopse` em seguida.", out_path, table.len());
     Ok(())
 }
 
