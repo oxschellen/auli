@@ -1,7 +1,6 @@
-//! Subcomando `sinopse` — esqueleto offline (F3). Toda a mecânica do passo `auli-sinopse`
-//! (§6 do plano) **sem nenhuma chamada de LLM**: carga do `.raw.json`, mescla por `numero`
-//! (retomável/incremental), contagem, `--dry-run`, geração `--fake` (dev-only) e gravação atômica.
-//! A geração real (prompt, validação, env `SINOPSE_*`) chega na F4.
+//! Subcomando `sinopse` — passo `auli-sinopse` (§6/§7 do plano). Carga do `.raw.json`, mescla por
+//! `numero` (retomável/incremental), contagem, `--dry-run`, geração (LLM real via `auli-llm`, ou
+//! `--fake` dev-only) com validação de formato e gravação atômica.
 //!
 //! Fronteira = snapshot tipado `Table<Consulta>` (o `.txt` é só print legível — F5). O `resumo`
 //! vazio marca "pendente"; preenchido marca "reaproveitado" (sinopse já gerada ou sumário autorado
@@ -9,12 +8,18 @@
 
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use auli_contract::{Consulta, Table};
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
+
+/// Versão do prompt (gravada em `SinopseInfo.prompt_versao`). Bump a cada mudança do
+/// `data/prompts/sinopse.txt`. `0` é reservado ao `--fake`.
+pub const SINOPSE_PROMPT_VERSION: u32 = 1;
+/// Teto de entrada do corpo (chars). Acima disso, trunca com aviso no log (v1: sem chunking).
+const CORPO_MAX_CHARS: usize = 24_000;
 
 /// Opções do subcomando (parseadas no `main`).
 pub struct SinopseOpts {
@@ -115,9 +120,109 @@ fn merge(raw: Vec<Consulta>, prev: &HashMap<String, Consulta>, force: Option<&st
     Ok(merged)
 }
 
-/// Placeholder determinístico (dev-only) — a F4 troca por LLM real. `prompt_versao: 0` marca fake.
+/// Placeholder determinístico (dev-only). `prompt_versao: 0` marca fake, distinguível da geração real.
 fn fake_resumo(assunto: &str) -> String {
     format!("### Descrição Resumida do Assunto\n[FAKE] {assunto}\n\n### Palavras Chave do Tema\n- **fake**")
+}
+
+const SECAO_DESC: &str = "### Descrição Resumida do Assunto";
+const SECAO_KW: &str = "### Palavras Chave do Tema";
+
+/// Lê `primary` no ambiente; se ausente/vazia, cai em `fallback` (decisão D2). Erro nomeando AMBAS.
+fn sinopse_env(primary: &str, fallback: &str) -> Result<String> {
+    for k in [primary, fallback] {
+        if let Ok(v) = std::env::var(k)
+            && !v.trim().is_empty()
+        {
+            return Ok(v);
+        }
+    }
+    Err(format!("variável de ambiente ausente: defina {primary} (ou {fallback}).").into())
+}
+
+/// System prompt da sinopse. `data_dir` é `../data/<id>/raw`, logo o prompt cai em
+/// `../data/prompts/sinopse.txt` (dois níveis acima). Erro claro se ausente.
+fn load_prompt(entity: &EntityConfig) -> Result<String> {
+    let path = Path::new(&entity.data_dir)
+        .parent()
+        .and_then(Path::parent)
+        .ok_or_else(|| format!("data_dir inesperado: {}", entity.data_dir))?
+        .join("prompts/sinopse.txt");
+    std::fs::read_to_string(&path)
+        .map_err(|e| format!("prompt de sinopse ausente ({}): {e}", path.display()).into())
+}
+
+/// Trunca o corpo em `max` chars (v1: sem chunking). Devolve `(texto, truncou)`.
+fn truncar_corpo(corpo: &str, max: usize) -> (String, bool) {
+    if corpo.chars().count() <= max {
+        (corpo.to_string(), false)
+    } else {
+        (corpo.chars().take(max).collect(), true)
+    }
+}
+
+/// `true` se a resposta é a mensagem de erro-como-`Ok` do `auli-llm` (erro de API/HTTP).
+fn resposta_e_erro_de_api(answer: &str) -> bool {
+    answer.starts_with("Erro na chamada da API")
+}
+
+/// Valida o formato da sinopse (pura, testável): as duas seções na ordem certa, descrição
+/// não-vazia e ≤ 2.000 chars, e ≥ 3 linhas de palavra-chave (`- `).
+fn validar_sinopse(answer: &str) -> std::result::Result<(), String> {
+    let p1 = answer.find(SECAO_DESC).ok_or_else(|| format!("seção ausente: {SECAO_DESC}"))?;
+    let p2 = answer.find(SECAO_KW).ok_or_else(|| format!("seção ausente: {SECAO_KW}"))?;
+    if p2 <= p1 {
+        return Err("seções fora de ordem (Descrição deve vir antes de Palavras Chave)".into());
+    }
+    let descricao = answer[p1 + SECAO_DESC.len()..p2].trim();
+    if descricao.is_empty() {
+        return Err("descrição vazia".into());
+    }
+    let desc_chars = descricao.chars().count();
+    if desc_chars > 2_000 {
+        return Err(format!("descrição longa demais ({desc_chars} chars) — possível despejo do corpo"));
+    }
+    let keywords = answer[p2 + SECAO_KW.len()..]
+        .lines()
+        .filter(|l| l.trim_start().starts_with("- "))
+        .count();
+    if keywords < 3 {
+        return Err(format!("poucas palavras-chave ({keywords}; mínimo 3)"));
+    }
+    Ok(())
+}
+
+/// Gera a sinopse real de um documento: trunca o corpo, chama o LLM, detecta erro-como-`Ok`,
+/// valida (com **uma** re-tentativa). Devolve o `resumo` aparado, ou o motivo da falha (o chamador
+/// conta a falha e segue — nunca aborta o lote).
+fn gerar_sinopse(
+    rt: &tokio::runtime::Runtime,
+    params: &auli_llm::LlmParams,
+    system_prompt: &str,
+    assunto: &str,
+    corpo: &str,
+    numero: &str,
+) -> std::result::Result<String, String> {
+    let (corpo_trunc, truncou) = truncar_corpo(corpo, CORPO_MAX_CHARS);
+    if truncou {
+        eprintln!("ℹ️  {numero}: corpo truncado em {CORPO_MAX_CHARS} chars (v1 sem chunking).");
+    }
+    let user_msg = format!("Assunto: {assunto}\n\nDocumento:\n{corpo_trunc}");
+
+    for tentativa in 1..=2u32 {
+        let answer = rt
+            .block_on(auli_llm::chat(params, system_prompt, &user_msg))
+            .map_err(|e| format!("transporte: {e}"))?;
+        if resposta_e_erro_de_api(&answer) {
+            return Err(format!("API: {answer}"));
+        }
+        match validar_sinopse(&answer) {
+            Ok(()) => return Ok(answer.trim().to_string()),
+            Err(motivo) if tentativa == 2 => return Err(format!("validação: {motivo}")),
+            Err(motivo) => eprintln!("↻ {numero}: validação falhou ({motivo}); re-tentando 1×."),
+        }
+    }
+    unreachable!("o loop retorna em ambas as tentativas")
 }
 
 pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
@@ -161,39 +266,67 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
         return Ok(());
     }
 
-    // 5. Geração. Nesta fase só o modo --fake gera; sem ele, pendentes são um erro claro.
-    if pendentes > 0 && !opts.fake {
-        return Err("geração real de sinopse chega na F4 — use --dry-run ou --fake.".into());
-    }
+    // 5. Config LLM: lida UMA vez, antes do loop, e SÓ na geração real (nem dry-run nem fake nem
+    //    "sem pendentes" tocam env/rede). `--fake` continua dev-only, sem LLM.
+    let real = !opts.fake && pendentes > 0;
+    let llm = if real {
+        let params = auli_llm::LlmParams {
+            api_url: sinopse_env("SINOPSE_API_URL", "LLM_API_URL")?,
+            api_key: sinopse_env("SINOPSE_API_KEY", "LLM_API_KEY")?,
+            model: sinopse_env("SINOPSE_API_MODEL", "LLM_API_MODEL")?,
+            temperature: 0.1, // fidelidade ao documento, não diversidade (mesma racional do chat)
+            max_completion_tokens: 1024, // sinopse é curta (parágrafo + palavras-chave)
+            timeout: Duration::from_secs(60), // corpo longo na entrada; offline, sem budget de front
+        };
+        let system_prompt = load_prompt(entity)?;
+        let rt = tokio::runtime::Builder::new_current_thread().enable_all().build()?;
+        Some((params, system_prompt, rt))
+    } else {
+        None
+    };
 
-    // 6. Geração --fake com gravação atômica após cada documento.
+    // 6. Geração (respeitando --limit) com gravação atômica após cada documento. `--limit` limita os
+    //    documentos PROCESSADOS na rodada (gerados + falhas), não só os sucessos.
     let mut gerados = 0usize;
-    let falhas = 0usize; // sem LLM ainda — o campo já nasce para a F4 preencher.
-    if opts.fake {
-        let limit = opts.limit.unwrap_or(usize::MAX);
-        for i in 0..merged.len() {
-            if gerados >= limit {
-                break;
-            }
-            if !pendente(&merged[i]) {
-                continue;
-            }
-            let assunto = merged[i].assunto.clone();
-            let resumo = fake_resumo(&assunto);
-            merged[i].text_to_embed = compose_text_to_embed(&assunto, &resumo);
-            merged[i].resumo = resumo;
-            merged[i].sinopse_info = Some(auli_contract::SinopseInfo {
-                modelo: "fake".into(),
-                prompt_versao: 0,
-                gerada_em: now_iso8601(),
-            });
-            write_atomic(&out_file, &entity.id, &merged)?;
-            gerados += 1;
+    let mut falhas = 0usize;
+    let limit = opts.limit.unwrap_or(usize::MAX);
+    for i in 0..merged.len() {
+        if gerados + falhas >= limit {
+            break;
         }
+        if !pendente(&merged[i]) {
+            continue;
+        }
+        let assunto = merged[i].assunto.clone();
+        let (resumo, modelo, versao) = if let Some((params, system_prompt, rt)) = &llm {
+            let corpo = merged[i].corpo.clone();
+            let numero = merged[i].numero.clone();
+            match gerar_sinopse(rt, params, system_prompt, &assunto, &corpo, &numero) {
+                Ok(r) => (r, params.model.clone(), SINOPSE_PROMPT_VERSION),
+                Err(motivo) => {
+                    eprintln!("⚠️  {numero}: falha — {motivo}");
+                    falhas += 1;
+                    continue;
+                }
+            }
+        } else {
+            (fake_resumo(&assunto), "fake".to_string(), 0)
+        };
+
+        merged[i].text_to_embed = compose_text_to_embed(&assunto, &resumo);
+        merged[i].resumo = resumo;
+        merged[i].sinopse_info = Some(auli_contract::SinopseInfo {
+            modelo,
+            prompt_versao: versao,
+            gerada_em: now_iso8601(),
+        });
+        write_atomic(&out_file, &entity.id, &merged)?;
+        gerados += 1;
     }
 
-    // 7. Relatório final + invariante de guarda do passo.
-    let pendentes_restantes = merged.iter().filter(|c| pendente(c)).count();
+    // 7. Relatório final + invariante de guarda do passo. Pendentes-restantes = não processados
+    //    (falhas contam à parte); a soma fecha em `total`.
+    let pendentes_restantes = pendentes - gerados - falhas;
     println!(
         "✅ {}: total {total} | reaproveitados {reaproveitados} | gerados {gerados} | falhas {falhas} | pendentes-restantes {pendentes_restantes}",
         entity.id
@@ -337,5 +470,66 @@ mod tests {
         write_table(&e, ".raw.json", vec![consulta("A", ""), consulta("B", "")]);
         run(&e, SinopseOpts { dry_run: true, limit: None, force: None, fake: false }).unwrap();
         assert!(!out_path(&e).exists(), "dry-run não deve criar o .json");
+    }
+
+    // --- F4: validação/truncamento/erro-como-Ok (funções puras) ---
+
+    fn sinopse_valida(n_kw: usize) -> String {
+        let kws: String = (0..n_kw).map(|i| format!("- **termo{i}**\n")).collect();
+        format!("{SECAO_DESC}\nParágrafo denso sobre crédito fiscal e não-cumulatividade.\n\n{SECAO_KW}\n{kws}")
+    }
+
+    #[test]
+    fn validar_aprova_formato_correto() {
+        assert!(validar_sinopse(&sinopse_valida(3)).is_ok());
+        assert!(validar_sinopse(&sinopse_valida(12)).is_ok());
+    }
+
+    #[test]
+    fn validar_reprova_secao_ausente() {
+        let sem_desc = format!("{SECAO_KW}\n- **a**\n- **b**\n- **c**");
+        assert!(validar_sinopse(&sem_desc).is_err());
+        let sem_kw = format!("{SECAO_DESC}\nDescrição qualquer.");
+        assert!(validar_sinopse(&sem_kw).is_err());
+    }
+
+    #[test]
+    fn validar_reprova_ordem_invertida() {
+        let invertido = format!("{SECAO_KW}\n- **a**\n- **b**\n- **c**\n\n{SECAO_DESC}\nDescrição.");
+        assert!(validar_sinopse(&invertido).unwrap_err().contains("ordem"));
+    }
+
+    #[test]
+    fn validar_reprova_descricao_vazia() {
+        let vazia = format!("{SECAO_DESC}\n\n{SECAO_KW}\n- **a**\n- **b**\n- **c**");
+        assert!(validar_sinopse(&vazia).unwrap_err().contains("vazia"));
+    }
+
+    #[test]
+    fn validar_reprova_descricao_longa() {
+        let longa = format!("{SECAO_DESC}\n{}\n\n{SECAO_KW}\n- **a**\n- **b**\n- **c**", "x".repeat(2_001));
+        assert!(validar_sinopse(&longa).unwrap_err().contains("longa"));
+    }
+
+    #[test]
+    fn validar_reprova_poucas_keywords() {
+        assert!(validar_sinopse(&sinopse_valida(2)).unwrap_err().contains("palavras-chave"));
+        assert!(validar_sinopse(&sinopse_valida(3)).is_ok());
+    }
+
+    #[test]
+    fn trunca_corpo_no_teto() {
+        let (t, cortou) = truncar_corpo("abcde", 10);
+        assert_eq!(t, "abcde");
+        assert!(!cortou);
+        let (t, cortou) = truncar_corpo(&"x".repeat(100), 10);
+        assert_eq!(t.chars().count(), 10);
+        assert!(cortou);
+    }
+
+    #[test]
+    fn detecta_erro_como_ok() {
+        assert!(resposta_e_erro_de_api("Erro na chamada da API do modelo AI: foo!"));
+        assert!(!resposta_e_erro_de_api("### Descrição Resumida do Assunto\n..."));
     }
 }

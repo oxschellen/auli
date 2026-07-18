@@ -213,9 +213,11 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "auli-contract",
+ "auli-llm",
  "serde",
  "serde_json",
  "thiserror",
+ "tokio",
  "toml",
 ]
 
