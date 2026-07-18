@@ -23,6 +23,11 @@ pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 /// Bumped whenever what gets embedded changes (the scraper's `text_to_embed` formula / the contract
 /// `stored_repr`). A pack built under an old strategy is incompatible with a server running a new one
 /// even if the model matches. v2: source is the typed `auli-contract` (was: `portal-*.txt` parsing).
+///
+/// Regra da sinopse (F5): regenerar sinopses em massa (mudança de `SINOPSE_PROMPT_VERSION` ou do
+/// modelo da sinopse + re-geração) muda os textos embedados de `pareceres` ⇒ bump obrigatório aqui.
+/// Sinopses novas convivendo com antigas (append-only, sem re-geração) NÃO exigem bump — o embedder
+/// é o mesmo.
 pub const STRATEGY_VERSION: u32 = 2;
 
 /// The triple that must match between the packs and the running server.

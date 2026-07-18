@@ -86,6 +86,42 @@ fn write_atomic(out: &Path, id: &str, items: &[Consulta]) -> Result<()> {
     Ok(())
 }
 
+/// Print legível `ref/<id>-portal-pareceres.txt` (irmão de `raw/`). `data_dir` é `../data/<id>/raw`.
+fn print_path(entity: &EntityConfig) -> Result<PathBuf> {
+    let base = Path::new(&entity.data_dir)
+        .parent()
+        .ok_or_else(|| format!("data_dir sem pai: {}", entity.data_dir))?;
+    Ok(base.join("ref").join(format!("{}-portal-pareceres.txt", entity.id)))
+}
+
+/// Regrava o print no formato de blocos que o `parse_pareceres` entende (round-trippável até a F6):
+/// `// N` / `## pergunta:` com `descricao:`/`assunto  :`/`resumo   :` (só se não-vazio)/`link:` /
+/// `## resposta:` + corpo. `sinopse_info`/`text_to_embed` NÃO vão ao print — o `.txt` é print, a
+/// fonte tipada é o JSON. Escrita atômica (`.tmp` + rename).
+fn write_print(path: &Path, items: &[Consulta]) -> Result<()> {
+    let mut out = String::new();
+    for (i, c) in items.iter().enumerate() {
+        out.push_str(&format!("// {}\n", i + 1));
+        out.push_str("## pergunta:\n");
+        out.push_str(&format!("descricao: {}\n", c.numero));
+        out.push_str(&format!("assunto  : {}\n", c.assunto));
+        if !c.resumo.trim().is_empty() {
+            out.push_str(&format!("resumo   : {}\n", c.resumo));
+        }
+        out.push_str(&format!("link: {}\n", c.link));
+        out.push_str("## resposta:\n");
+        out.push_str(c.corpo.trim());
+        out.push_str("\n\n");
+    }
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    let tmp = PathBuf::from(format!("{}.tmp", path.display()));
+    std::fs::write(&tmp, out)?;
+    std::fs::rename(&tmp, path)?;
+    Ok(())
+}
+
 /// Mescla o `.raw.json` (ordem = fonte da verdade) com a saída anterior, por `numero`. Registros
 /// pendentes cujo anterior já tem `resumo` são reaproveitados inteiros; `--force` re-pendura o alvo.
 fn merge(raw: Vec<Consulta>, prev: &HashMap<String, Consulta>, force: Option<&str>) -> Result<Vec<Consulta>> {
@@ -324,6 +360,13 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
         gerados += 1;
     }
 
+    // 6b. Print legível regravado quando a saída mudou (algo foi gerado → o JSON foi escrito).
+    if gerados > 0 {
+        let pp = print_path(entity)?;
+        write_print(&pp, &merged)?;
+        println!("📝 print regravado: {}", pp.display());
+    }
+
     // 7. Relatório final + invariante de guarda do passo. Pendentes-restantes = não processados
     //    (falhas contam à parte); a soma fecha em `total`.
     let pendentes_restantes = pendentes - gerados - falhas;
@@ -369,16 +412,19 @@ mod tests {
         }
     }
 
-    /// EntityConfig apontando para um dir temporário exclusivo do teste (limpo no início).
+    /// EntityConfig apontando para um dir temporário exclusivo do teste (limpo no início). `data_dir`
+    /// termina em `/raw` (como o real `../data/<id>/raw`), para que `print_path` (irmão `ref/`) caia
+    /// dentro da árvore do próprio teste — senão vários testes compartilhariam `temp/ref/` e correriam.
     fn temp_entity(tag: &str) -> EntityConfig {
-        let dir = std::env::temp_dir().join(format!("auli_sinopse_test_{tag}"));
-        let _ = std::fs::remove_dir_all(&dir);
-        std::fs::create_dir_all(&dir).unwrap();
+        let base = std::env::temp_dir().join(format!("auli_sinopse_test_{tag}"));
+        let _ = std::fs::remove_dir_all(&base);
+        let raw = base.join("raw");
+        std::fs::create_dir_all(&raw).unwrap();
         EntityConfig {
             id: "xx".into(),
             name: "Teste".into(),
             system_prompt: String::new(),
-            data_dir: dir.to_string_lossy().into_owned(),
+            data_dir: raw.to_string_lossy().into_owned(),
         }
     }
 
@@ -531,5 +577,38 @@ mod tests {
     fn detecta_erro_como_ok() {
         assert!(resposta_e_erro_de_api("Erro na chamada da API do modelo AI: foo!"));
         assert!(!resposta_e_erro_de_api("### Descrição Resumida do Assunto\n..."));
+    }
+
+    #[test]
+    fn print_round_trip_via_parse_pareceres() {
+        use crate::derive_pareceres::parse_pareceres;
+        // 1 com sinopse (resumo multi-linha), 1 reaproveitada (resumo simples).
+        let mut c1 = consulta(
+            "PARECER Nº 1",
+            "### Descrição Resumida do Assunto\nParágrafo denso sobre crédito fiscal.\n\n### Palavras Chave do Tema\n- **ICMS**\n- **crédito**",
+        );
+        c1.corpo = "Corpo integral do parecer 1.\n\nCom dois parágrafos.".into();
+        c1.sinopse_info = Some(auli_contract::SinopseInfo {
+            modelo: "m".into(),
+            prompt_versao: 1,
+            gerada_em: "2026-01-01T00:00:00Z".into(),
+        });
+        let c2 = consulta("PARECER Nº 2", "resumo simples reaproveitado");
+        let items = vec![c1, c2];
+
+        let e = temp_entity("print");
+        let pp = print_path(&e).unwrap();
+        write_print(&pp, &items).unwrap();
+        let parsed = parse_pareceres(&std::fs::read_to_string(&pp).unwrap());
+
+        assert_eq!(parsed.len(), 2);
+        for (orig, got) in items.iter().zip(&parsed) {
+            assert_eq!(got.numero, orig.numero);
+            assert_eq!(got.assunto, orig.assunto);
+            assert_eq!(got.resumo, orig.resumo.trim());
+            assert_eq!(got.corpo, orig.corpo.trim());
+            assert_eq!(got.link, orig.link);
+        }
+        // sinopse_info/text_to_embed não sobrevivem ao print (esperado — o .txt é print).
     }
 }

@@ -71,7 +71,7 @@ fn strip_label<'a>(line: &'a str, label: &str) -> Option<&'a str> {
 }
 
 /// Quebra o texto em blocos por `// N` e converte cada um em `Consulta` (blocos vazios são descartados).
-fn parse_pareceres(content: &str) -> Vec<Consulta> {
+pub(crate) fn parse_pareceres(content: &str) -> Vec<Consulta> {
     let mut records: Vec<Vec<&str>> = Vec::new();
     let mut current: Option<Vec<&str>> = None;
     for line in content.lines() {
