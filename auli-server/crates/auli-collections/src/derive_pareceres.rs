@@ -134,7 +134,7 @@ fn parecer_from_lines(lines: &[&str]) -> Option<Consulta> {
         (true, true) => numero.clone(),
     };
 
-    Some(Consulta { numero, assunto, resumo, corpo, link, text_to_embed })
+    Some(Consulta { numero, assunto, resumo, corpo, link, text_to_embed, sinopse_info: None })
 }
 
 #[cfg(test)]
