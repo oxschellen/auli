@@ -30,7 +30,7 @@ pub async fn chat(system_prompt: &str, user_message: &str) -> Result<String> {
         "model": config().llm_api_model.as_str(),
         "stream": false,
         "temperature": 0.5,
-        "max_completion_tokens": 1024,
+        "max_completion_tokens": 4096,
         "top_p": 0.5,
         "stop": null,
     });
