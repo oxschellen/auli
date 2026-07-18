@@ -5,7 +5,12 @@
       "Bash(cargo test *)",
       "Bash(cargo clippy *)",
       "Bash(npm run *)",
-      "Bash(npx vitest *)"
+      "Bash(npx vitest *)",
+      "Bash(python3 -c \"import sys,json; a=json.load\\(sys.stdin\\)['answer']; print\\(a[:1100]\\)\")",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git commit -q -m ' *)",
+      "Bash(gh pr create --title 'feat\\(pr\\): scraper de Consultas Tributárias da SEFA-PR \\(PDFs anuais\\)' --body ' *)"
     ]
   }
 }
