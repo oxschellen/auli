@@ -134,6 +134,19 @@ impl Embeddable for Servico {
     }
 }
 
+/// Proveniência da sinopse gerada pelo passo `auli-sinopse` (fase posterior).
+/// `None` = registro sem sinopse gerada: pendente (resumo vazio) ou sumário autorado legado
+/// (resumo preenchido na origem, caso RS antigo).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SinopseInfo {
+    /// Modelo que gerou a sinopse (ex.: `"llama-3.3-70b-versatile"`).
+    pub modelo: String,
+    /// Versão do prompt do auli-sinopse (const `SINOPSE_PROMPT_VERSION` no gerador).
+    pub prompt_versao: u32,
+    /// Instante da geração, ISO-8601 (ex.: `"2026-07-18T14:00:00Z"`).
+    pub gerada_em: String,
+}
+
 /// Um registro da tabela `pareceres`: uma consulta tributária respondida (parecer/resposta de
 /// consulta — termo geral entre estados: "Pareceres" no RS, "Respostas de Consultas" em SP, COPAT
 /// em SC). Os campos vêm do conteúdo autorado (o sumário dá `numero`/`assunto`/`resumo`; `corpo` é
@@ -142,7 +155,7 @@ impl Embeddable for Servico {
 /// (Antes: `Parecer`.) O **kind de domínio permanece `"pareceres"`** por compatibilidade — rota
 /// `/v1/{kind}/list`, sufixo da coleção vetorial, nomes de pack e labels não mudam; o nome da
 /// struct não aparece na serialização (serde grava só os campos).
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Consulta {
     /// Identificador do parecer (ex.: `"PARECER Nº 25148"`).
     pub numero: String,
@@ -157,6 +170,10 @@ pub struct Consulta {
     pub link: String,
     /// Key a embeddar — preenchida na origem (para pareceres: `assunto` + `resumo`).
     pub text_to_embed: String,
+    /// Proveniência da sinopse (ver [`SinopseInfo`]). Ausente no JSON quando `None` —
+    /// snapshots antigos continuam válidos sem migração.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sinopse_info: Option<SinopseInfo>,
 }
 
 impl Embeddable for Consulta {
@@ -235,6 +252,7 @@ mod tests {
             corpo: "É o parecer.".into(),
             link: "https://exemplo/parecer/25148".into(),
             text_to_embed: "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito.".into(),
+            sinopse_info: None,
         };
         assert_eq!(p.text_to_embed(), "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito.");
         let block = p.stored_repr();
@@ -247,5 +265,52 @@ mod tests {
         let json = serde_json::to_string(&table).unwrap();
         let back: Table<Consulta> = serde_json::from_str(&json).unwrap();
         assert_eq!(back.items[0].numero, "PARECER Nº 25148");
+    }
+
+    fn sample_consulta() -> Consulta {
+        Consulta {
+            numero: "PARECER Nº 25148".into(),
+            assunto: "ICMS – crédito fiscal na cesta básica".into(),
+            resumo: "Análise sobre apropriação de crédito.".into(),
+            corpo: "É o parecer.".into(),
+            link: "https://exemplo/parecer/25148".into(),
+            text_to_embed: "ICMS – crédito fiscal na cesta básica".into(),
+            sinopse_info: None,
+        }
+    }
+
+    #[test]
+    fn consulta_with_sinopse_roundtrips_through_json() {
+        let mut c = sample_consulta();
+        c.sinopse_info = Some(SinopseInfo {
+            modelo: "llama-3.3-70b-versatile".into(),
+            prompt_versao: 1,
+            gerada_em: "2026-07-18T14:00:00Z".into(),
+        });
+        let json = serde_json::to_string(&c).unwrap();
+        let back: Consulta = serde_json::from_str(&json).unwrap();
+        assert_eq!(back, c);
+    }
+
+    #[test]
+    fn consulta_json_sem_sinopse_desserializa_como_none() {
+        // Forma dos snapshots atuais — sem o campo `sinopse_info`. Guarda-corpo da migração zero.
+        let json = r#"{
+            "numero": "PARECER Nº 25148",
+            "assunto": "ICMS – crédito fiscal na cesta básica",
+            "resumo": "Análise sobre apropriação de crédito.",
+            "corpo": "É o parecer.",
+            "link": "https://exemplo/parecer/25148",
+            "text_to_embed": "ICMS – crédito fiscal na cesta básica"
+        }"#;
+        let c: Consulta = serde_json::from_str(json).unwrap();
+        assert_eq!(c.sinopse_info, None);
+    }
+
+    #[test]
+    fn consulta_com_sinopse_none_omite_o_campo_no_json() {
+        // `skip_serializing_if` mantém o registro legado byte-idêntico ao snapshot antigo.
+        let json = serde_json::to_string(&sample_consulta()).unwrap();
+        assert!(!json.contains("sinopse_info"), "JSON não deve conter sinopse_info quando None: {json}");
     }
 }
