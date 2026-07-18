@@ -18,9 +18,9 @@ pub async fn chat(system_prompt: &str, user_message: &str) -> Result<String> {
     const AUTH_HEADER: &str = "Authorization";
     const CONTENT_TYPE_HEADER: &str = "Content-Type";
 
-    // Timeout kept below the frontend's 25 s budget (callServerAPI.ts): a hung LLM surfaces here as
+    // Timeout kept below the frontend's 35 s budget (callServerAPI.ts): a hung LLM surfaces here as
     // a retryable timeout instead of the client giving up while the handler keeps the paid call open.
-    let client = Client::builder().timeout(Duration::from_secs(20)).build()?;
+    let client = Client::builder().timeout(Duration::from_secs(30)).build()?;
     let auth_token = format!("Bearer {}", config().llm_api_key);
     let request_body = json!({
         "messages": [
