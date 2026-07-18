@@ -21,7 +21,7 @@ interface QuestionResponse {
 }
 
 /** Abort the request if the server hasn't responded within this window. */
-const REQUEST_TIMEOUT_MS = 25_000;
+const REQUEST_TIMEOUT_MS = 35_000;
 
 /** User-facing copy (pt-BR). Kept here so the wording lives in one place. */
 const MESSAGES = {
