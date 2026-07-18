@@ -30,7 +30,7 @@ pub async fn chat(system_prompt: &str, user_message: &str) -> Result<String> {
         "model": config().llm_api_model.as_str(),
         "stream": false,
         // Baixa de propósito: RAG tributário exige fidelidade ao contexto recuperado,
-        // não diversidade. (top_p mantido por ora — ajustar em patch separado se preciso.)
+        // não diversidade. Sampling controlado só pela temperature (top_p omitido = 1.0).
         "temperature": 0.1,
         "max_completion_tokens": 4096,
         "stop": null,
