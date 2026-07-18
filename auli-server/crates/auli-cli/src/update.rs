@@ -48,9 +48,11 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     )? {
         entries.push(entry);
     }
-    // pareceres: <entity>-pareceres.json (contract) -> pack <entity>-pareceres. Fonte ainda autorada,
+    // pareceres: <entity>-pareceres.json (contract) -> pack <entity>-pareceres. A fonte passa pelo
+    // passo `auli-collections <entity> sinopse` (gera a sinopse que vira `resumo`/`text_to_embed`);
     // ingerida do `.txt` de referência por `auli-collections <entity> pareceres` (sem scraper por ora).
-    // Ausente para entidades sem esse arquivo -> pulado.
+    // Ausente para entidades sem esse arquivo -> pulado. Recusa `resumo` vazio antes de embedar.
+    recusar_pareceres_sem_sinopse(&entity, &source)?;
     if let Some(entry) = ingest::<auli_contract::Consulta>(
         &embedder, &writer, &entity, "pareceres", &format!("{}-pareceres.json", entity), &source, &out,
     )? {
@@ -71,6 +73,36 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     manifest::write_manifest(&mpath, &manifest)?;
     println!("📝 Manifesto escrito em {:?}", mpath);
 
+    Ok(())
+}
+
+/// Recusa contrato de pareceres com `resumo` vazio: embedar sem sinopse é regressão silenciosa
+/// (o `text_to_embed` fica cego para o corpo — é o que o passo `sinopse` resolve). Arquivo ausente
+/// é ok (entidade sem pareceres — pulada como hoje). Dupla leitura do JSON (aqui e no `ingest`) é
+/// aceitável: passo offline.
+fn recusar_pareceres_sem_sinopse(entity: &str, source: &Path) -> Result<()> {
+    let path = source.join(format!("{entity}-pareceres.json"));
+    let text = match std::fs::read_to_string(&path) {
+        Ok(t) => t,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(e) => return Err(e.into()),
+    };
+    let table: Table<auli_contract::Consulta> = serde_json::from_str(&text)?;
+    let vazios: Vec<&str> = table
+        .items
+        .iter()
+        .filter(|c| c.resumo.trim().is_empty())
+        .map(|c| c.numero.as_str())
+        .collect();
+    if !vazios.is_empty() {
+        let amostra = vazios.iter().take(5).copied().collect::<Vec<_>>().join(", ");
+        let reticencias = if vazios.len() > 5 { ", ..." } else { "" };
+        return Err(format!(
+            "{} consultas sem sinopse ({amostra}{reticencias}): rode `auli-collections {entity} sinopse` antes do update.",
+            vazios.len()
+        )
+        .into());
+    }
     Ok(())
 }
 
