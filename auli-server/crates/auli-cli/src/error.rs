@@ -21,8 +21,8 @@ pub enum Error {
     #[error("Erro de serialização JSON: {0}")]
     SerdeJson(#[from] serde_json::Error),
 
-    #[error("Erro de requisição HTTP: {0}")]
-    Reqwest(#[from] reqwest::Error),
+    #[error(transparent)]
+    Llm(#[from] auli_llm::Error),
 }
 
 impl From<String> for Error {

@@ -17,6 +17,7 @@ path = "src/lib.rs"
 auli-contract = { path = "../auli-contract" }
 auli-core = { path = "../auli-core" }
 auli-anon = { path = "../auli-anon" }
+auli-llm = { path = "../auli-llm" }
 vector-store = { path = "../vector-store" }
 
 # Web Framework & HTTP:
@@ -34,7 +35,6 @@ tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 # Serialization & Data:
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.150"
-reqwest = { version = "0.13.4", features = ["json"] }
 toml = "1.1.2" # parse data/registry.toml
 
 # Utilities:
