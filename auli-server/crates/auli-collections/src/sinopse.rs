@@ -360,12 +360,14 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
         gerados += 1;
     }
 
-    // 6b. Print legível regravado quando a saída mudou (algo foi gerado → o JSON foi escrito).
-    if gerados > 0 {
-        let pp = print_path(entity)?;
-        write_print(&pp, &merged)?;
-        println!("📝 print regravado: {}", pp.display());
-    }
+    // 6b. Promoção raw→final: SEMPRE grava o JSON mesclado (dry-run já retornou antes), inclusive com
+    //     zero gerados — o caso RS legado (tudo reaproveitado) precisa promover a saída para o update
+    //     ter fonte. As gravações por documento no loop permanecem (proteção contra queda); esta é a
+    //     de promoção. Regrava também o print. Idempotente: rodar de novo dá o mesmo resultado.
+    write_atomic(&out_file, &entity.id, &merged)?;
+    let pp = print_path(entity)?;
+    write_print(&pp, &merged)?;
+    println!("📝 saída promovida: {} (+ print)", out_file.display());
 
     // 7. Relatório final + invariante de guarda do passo. Pendentes-restantes = não processados
     //    (falhas contam à parte); a soma fecha em `total`.
@@ -610,5 +612,27 @@ mod tests {
             assert_eq!(got.link, orig.link);
         }
         // sinopse_info/text_to_embed não sobrevivem ao print (esperado — o .txt é print).
+    }
+
+    #[test]
+    fn zero_pendentes_promove_sem_env_nem_rede() {
+        // RS legado: todos os registros já têm resumo. `run` sem fake e SEM env de LLM deve
+        // promover a saída (0 gerados) e regravar o print — sem tocar env/rede.
+        let e = temp_entity("promove");
+        let itens = vec![
+            consulta("PARECER Nº 1", "resumo autorado 1"),
+            consulta("PARECER Nº 2", "resumo autorado 2"),
+        ];
+        write_table(&e, ".raw.json", itens.clone());
+        // sem env de LLM no ambiente (o teste não define SINOPSE_*/LLM_*); pendentes==0 ⇒ não lê env.
+        run(&e, SinopseOpts { dry_run: false, limit: None, force: None, fake: false }).unwrap();
+
+        let out = read_out(&e);
+        assert_eq!(out.len(), 2);
+        for (orig, got) in itens.iter().zip(&out) {
+            assert_eq!(got.numero, orig.numero);
+            assert_eq!(got.resumo, orig.resumo);
+        }
+        assert!(print_path(&e).unwrap().exists(), "print deve ser regravado na promoção");
     }
 }

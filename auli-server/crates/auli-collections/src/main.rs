@@ -49,8 +49,8 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
     match collection.as_str() {
         // OFFLINE: deriva contrato, prints, index e per-público do snapshot já gravado.
         "process" => process::run(entity)?,
-        // OFFLINE: ingere pareceres do `.txt` autorado em `ref/` -> `Table<Consulta>` no `raw/`.
-        // Passo incremental até haver scraper de pareceres.
+        // OFFLINE: ingere pareceres do `.txt` autorado em `ref/` -> `Table<Consulta>` no raw
+        // (`<id>-pareceres.raw.json`); rode `sinopse` em seguida. Incremental até haver scraper.
         "pareceres" => derive_pareceres::run(entity)?,
         // OFFLINE: gera/mescla sinopses dos pareceres (esqueleto na F3; LLM real na F4).
         "sinopse" => sinopse::run(entity, parse_sinopse_flags(&flags)?)?,
