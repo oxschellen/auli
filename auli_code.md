@@ -195,8 +195,13 @@ Toda a parte de embeddings/busca vetorial é **in-process** (sem Ollama nem Chro
   anti-correlacionados. No server o store é só-leitura (`ReadStore`, carga eager, sem lock no caminho
   de consulta).
 - **LLM** (`auli-cli`): chat completions compatível com Groq. `temperature 0.5`, `top_p 0.5`,
-  `max_completion_tokens 1024`, `stream:false`. Até **3 tentativas** em erros de conexão/timeout
-  (sleep 500ms). Erro de API vira mensagem legível (não `Err`).
+  `max_completion_tokens 4096`, `stream:false`, timeout **20s**. Até **3 tentativas** em erros de
+  conexão/timeout (sleep 500ms). Erro de API vira mensagem legível (não `Err`).
+  - **Modelo de referência** (via `LLM_API_MODEL`): **openai/gpt-oss-120b** (Groq). Janela de contexto
+    **131.072** tokens; saída máx. **65.536**; ~**500 tok/s** (≈8s para os 4.096 tokens do teto).
+    Preço/1M tokens: input **$0,15** (cache **$0,075**), output **$0,60**. Suporta tool use, browser
+    search, code execution, JSON object/schema mode e reasoning. MoE 120B total / 5,1B ativos.
+    → O `max_completion_tokens` (4.096) e o contexto do RAG ficam bem abaixo dos limites do modelo.
 
 **Implicação operacional:** trocar o modelo de embedding ⇒ **re-ingestão total** de todas as
 coleções. Os vetores não carregam tag de dimensão e larguras incompatíveis pontuam como distância
