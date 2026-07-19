@@ -301,7 +301,7 @@ fn sel(s: &str) -> Selector {
 /// Busca (ou lê do cache) a página `url`. Em `--usecache` um miss é erro (sem rede). Cortesia entre
 /// fetches de rede.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)? {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)? {
         return Ok(cached);
     }
     let body = auli_scraper_kit::http::get_string(
@@ -309,7 +309,7 @@ fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<St
         url,
         &GetOpts { log_prefix: "PR", ..Default::default() },
     )?;
-    auli_scraper_kit::cache::write(data_dir, url, &body);
+    auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
     sleep(COURTESY);
     Ok(body)
 }

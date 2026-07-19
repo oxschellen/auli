@@ -281,7 +281,7 @@ fn fetch_page(
     // ServiceNow (`X-Portal`/`X-Requested-With`), retorna `Value` (parse-antes-de-cachear) e o crate
     // usa `Box<dyn Error>` — não encaixa no `kit::http::get_string` (só `accept`, devolve String).
     // Só a leitura do cache é do kit.
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, &logical, use_cache)
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)
         .map_err(|e| e.to_string())?
     {
         return Ok(serde_json::from_str(&cached)?);
@@ -303,7 +303,7 @@ fn fetch_page(
                 Ok(text) if !text.trim().is_empty() => {
                     // Só cacheia o que parseia: um JSON truncado/estranho não pode envenenar o cache.
                     let value: Value = serde_json::from_str(&text)?;
-                    auli_scraper_kit::cache::write(data_dir, &logical, &text);
+                    auli_scraper_kit::cache::write(data_dir, "servicos", &logical, &text);
                     sleep(FETCH_DELAY);
                     return Ok(value);
                 }

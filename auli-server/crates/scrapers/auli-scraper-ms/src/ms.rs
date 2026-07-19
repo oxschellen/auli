@@ -104,7 +104,7 @@ pub fn scrape(
     let ucats: HashSet<&String> = por_categoria.iter().flat_map(|(_, s)| s.iter()).collect();
     validar(&items, &uperfis, &ucats)?;
     for (logical, html) in &raw {
-        auli_scraper_kit::cache::write(data_dir, logical, html);
+        auli_scraper_kit::cache::write(data_dir, "servicos", logical, html);
     }
 
     let ocorrencias: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
@@ -143,7 +143,7 @@ fn fetch_lista(
     raw: &mut Vec<(String, String)>,
 ) -> Result<(String, Vec<(String, String)>)> {
     let logical = format!("{}?{}ordem=AZ", LISTA_URL, filtro_qs);
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, &logical, use_cache)? {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)? {
         let itens = parse_lista(&cached);
         return Ok((cached, itens));
     }

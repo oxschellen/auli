@@ -148,7 +148,7 @@ pub fn scrape(
 
     // Cache só depois dos guards (D-RJ5).
     for (logical, json) in &raw {
-        auli_scraper_kit::cache::write(data_dir, logical, json);
+        auli_scraper_kit::cache::write(data_dir, "servicos", logical, json);
     }
 
     let ocorrencias: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
@@ -168,7 +168,7 @@ fn fetch_recurso(
     raw: &mut Vec<(String, String)>,
 ) -> Result<String> {
     let logical = cache_key(recurso);
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, &logical) {
+    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, "servicos", &logical) {
         println!("Cache hit: {}", logical);
         return Ok(cached);
     }

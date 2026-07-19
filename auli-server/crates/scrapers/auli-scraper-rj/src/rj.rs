@@ -70,7 +70,7 @@ pub fn scrape(
     // Cache só DEPOIS dos guards (D-RJ5): uma página capada nunca envenena o cache. (No hit de
     // cache os guards rodam de novo de graça — se um cache antigo reprovar, o erro manda limpar.)
     if !veio_do_cache {
-        auli_scraper_kit::cache::write(data_dir, CATALOGO_URL, &html);
+        auli_scraper_kit::cache::write(data_dir, "servicos", CATALOGO_URL, &html);
     }
 
     let ocorrencias: usize = catalogo.items.iter().map(|s| s.ocorrencias.len()).sum();
@@ -90,7 +90,7 @@ pub fn scrape(
 /// NÃO grava o cache — quem grava é o [`scrape`], depois dos guards (D-RJ5). Retorna
 /// `(html, veio_do_cache)`.
 fn fetch_catalogo(data_dir: &str, use_cache: bool) -> Result<(String, bool)> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, CATALOGO_URL, use_cache)? {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", CATALOGO_URL, use_cache)? {
         return Ok((cached, true));
     }
     let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));

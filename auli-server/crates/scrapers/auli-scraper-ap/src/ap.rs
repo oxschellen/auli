@@ -69,7 +69,7 @@ pub fn scrape(
     let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
 
     // O chunk é a fonte; cache lógico. Rede = descoberta em 3 saltos (shell → runtime → chunk).
-    let (chunk, fetched) = match auli_scraper_kit::cache::read(data_dir, CHUNK_CACHE_KEY) {
+    let (chunk, fetched) = match auli_scraper_kit::cache::read(data_dir, "servicos", CHUNK_CACHE_KEY) {
         Some(c) => {
             println!("Cache hit: chunk categorias");
             (c, false)
@@ -98,7 +98,7 @@ pub fn scrape(
     validar(&items)?;
 
     if fetched {
-        auli_scraper_kit::cache::write(data_dir, CHUNK_CACHE_KEY, &chunk);
+        auli_scraper_kit::cache::write(data_dir, "servicos", CHUNK_CACHE_KEY, &chunk);
     }
 
     println!("AP: {} serviços (dedup por link)", items.len());

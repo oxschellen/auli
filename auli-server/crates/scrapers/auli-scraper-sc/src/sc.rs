@@ -364,7 +364,7 @@ fn fetch_cached(
 ) -> Result<String, Box<dyn std::error::Error>> {
     // A chave de cache é a URL lógica (sem buildId); o fetch é a `data_url`. O retry/backoff é o
     // `kit::http::get_string` (bridge map_err p/ o Box<dyn Error> deste crate).
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, logical_url, use_cache)
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", logical_url, use_cache)
         .map_err(|e| e.to_string())?
     {
         return Ok(cached);
@@ -375,7 +375,7 @@ fn fetch_cached(
         &GetOpts { log_prefix: "SC", ..Default::default() },
     )
     .map_err(|e| e.to_string())?;
-    auli_scraper_kit::cache::write(data_dir, logical_url, &body);
+    auli_scraper_kit::cache::write(data_dir, "servicos", logical_url, &body);
     Ok(body)
 }
 

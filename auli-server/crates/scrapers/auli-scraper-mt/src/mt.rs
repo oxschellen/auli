@@ -72,7 +72,7 @@ pub fn scrape(
 
     // Chave de cache = o endpoint + o órgão. O cache só grava DEPOIS dos guards (D-RJ5).
     let logical = format!("{}#dept={}", DEPARTMENT_URL, DEPARTMENT_SLUG);
-    let (json, from_cache) = match auli_scraper_kit::cache::read_or_bail(data_dir, &logical, use_cache)? {
+    let (json, from_cache) = match auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)? {
         Some(cached) => (cached, true),
         None => (fetch_department(&agent)?, false),
     };
@@ -86,7 +86,7 @@ pub fn scrape(
     // Guards (D-MT5) antes de qualquer escrita de cache.
     validar(&items, result_total)?;
     if !from_cache {
-        auli_scraper_kit::cache::write(data_dir, &logical, &json);
+        auli_scraper_kit::cache::write(data_dir, "servicos", &logical, &json);
     }
 
     let ocorrencias: usize = items.iter().map(|s| s.ocorrencias.len()).sum();

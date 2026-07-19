@@ -114,7 +114,7 @@ pub fn scrape(
         // (total entregue e cobertura das páginas dependem de ambos — ver PAGE_SIZE/SORT_KEY).
         let logical =
             format!("{}#ps={}&sort={}&page={}", GETCHILDREN_URL, PAGE_SIZE, SORT_KEY, page);
-        let (json, from_cache) = match auli_scraper_kit::cache::read(data_dir, &logical) {
+        let (json, from_cache) = match auli_scraper_kit::cache::read(data_dir, "servicos", &logical) {
             Some(cached) => {
                 println!("Cache hit (página {}): {}", page, GETCHILDREN_URL);
                 (cached, true)
@@ -172,7 +172,7 @@ pub fn scrape(
     // Cache só DEPOIS dos guards (D-RJ5): uma resposta capada nunca envenena o cache.
     if fetched_any {
         for (logical, json, _) in &raw_pages {
-            auli_scraper_kit::cache::write(data_dir, logical, json);
+            auli_scraper_kit::cache::write(data_dir, "servicos", logical, json);
         }
     }
 

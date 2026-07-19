@@ -185,7 +185,7 @@ pub fn scrape(
 
     // Cache só DEPOIS dos guards.
     for (key, raw) in &pending {
-        auli_scraper_kit::cache::write(data_dir, key, raw);
+        auli_scraper_kit::cache::write(data_dir, "servicos", key, raw);
     }
 
     let ocorr: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
@@ -222,7 +222,7 @@ fn load(
     token: &mut Option<String>,
     pending: &mut Vec<(String, String)>,
 ) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, cache_key) {
+    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, "servicos", cache_key) {
         return Ok(cached);
     }
     if use_cache {

@@ -234,7 +234,7 @@ fn fetch_all<T: for<'de> Deserialize<'de>>(
 /// Busca (ou lê do cache) uma URL do `_api` (Accept verbose). Retenta falhas transitórias; cortesia
 /// entre chamadas de rede.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)? {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)? {
         return Ok(cached);
     }
     let body = auli_scraper_kit::http::get_string(
@@ -242,7 +242,7 @@ fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<St
         url,
         &GetOpts { log_prefix: "SP", accept: Some("application/json;odata=verbose"), ..Default::default() },
     )?;
-    auli_scraper_kit::cache::write(data_dir, url, &body);
+    auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
     sleep(COURTESY);
     Ok(body)
 }
