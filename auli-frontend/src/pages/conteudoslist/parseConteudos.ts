@@ -1,3 +1,5 @@
+import { parseQuery, buildHaystack, haystackMatches } from "../../shared/textSearch";
+
 /** A single linkable item within a content category. */
 export interface ConteudoItem {
   title: string;
@@ -20,11 +22,11 @@ export function searchCategories(
   categories: ConteudoCategory[],
   query: string,
 ): ConteudoCategory[] {
-  if (!query.trim()) return categories;
-  const q = query.toLowerCase();
+  const terms = parseQuery(query);
+  if (terms.length === 0) return categories;
   const result: ConteudoCategory[] = [];
   for (const cat of categories) {
-    const items = cat.items.filter((item) => item.title.toLowerCase().includes(q));
+    const items = cat.items.filter((item) => haystackMatches(buildHaystack([item.title]), terms));
     if (items.length > 0) result.push({ ...cat, items });
   }
   return result;

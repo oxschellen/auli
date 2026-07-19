@@ -42,4 +42,25 @@ describe("searchCategories", () => {
   it("returns an empty array when nothing matches", () => {
     expect(searchCategories(categories, "zzz")).toEqual([]);
   });
+
+  it("é insensível a acento (query sem acento acha item acentuado)", () => {
+    const cats: ConteudoCategory[] = [
+      { name: "Manuais", items: [{ title: "Substituição Tributária", url: "a" }] },
+    ];
+    const r = searchCategories(cats, "substituicao");
+    expect(r).toHaveLength(1);
+    expect(r[0].items.map((i) => i.title)).toEqual(["Substituição Tributária"]);
+  });
+
+  it("multi-termo com E lógico, ordem irrelevante", () => {
+    // "Manual do ICMS" tem os dois termos; ordem não importa.
+    expect(searchCategories(categories, "manual icms")[0].items.map((i) => i.title)).toEqual([
+      "Manual do ICMS",
+    ]);
+    expect(searchCategories(categories, "icms manual")[0].items.map((i) => i.title)).toEqual([
+      "Manual do ICMS",
+    ]);
+    // termo ausente derruba
+    expect(searchCategories(categories, "manual zzz")).toEqual([]);
+  });
 });
