@@ -73,6 +73,33 @@ cargo build --release --workspace      # ou só o engine: cargo build --release 
 Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data` a partir de
 `auli-server/`). O `auli server` lê de lá: `registry.toml`, `prompts/` e os packs por entidade.
 
+**O repositório guarda código + config, não dado coletado.** Só `data/registry.toml` e
+`data/prompts/` são versionados; todo o resto de `data/<id>/**` é gitignored e reconstruído pelo
+pipeline. Um clone novo, portanto, **não traz dados** — rode o pipeline para popular.
+
+> ⚠️ **Ao sincronizar a mudança que tirou os dados do git, arquivos locais em `data/<id>/ref/`
+> somem.** Os arquivos do RS (`rs-portal-pareceres.txt`, `rs-portal-notas.txt`,
+> `rs-conteudo_site_tree.json`) eram versionados até então. O commit que os destrackeia registra
+> uma **deleção**; ao trocar de branch ou mergear, o git os trata como "rastreados e removidos" e
+> **apaga do working tree** — mesmo que `git rm --cached` os tenha preservado no momento da
+> operação. Perda observada na prática nesta migração.
+>
+> **Recuperação** (o conteúdo continua no histórico — não houve rewrite):
+>
+> ```bash
+> PRE=<commit-do-merge-que-destrackeou>^
+> mkdir -p data/rs/ref
+> for f in rs-portal-pareceres.txt rs-portal-notas.txt rs-conteudo_site_tree.json; do
+>   git show "$PRE:data/rs/ref/$f" > "data/rs/ref/$f"
+> done
+> ```
+>
+> Conferir depois: `grep -cE '^// [0-9]+' data/rs/ref/rs-portal-pareceres.txt` (372 blocos) e
+> `grep -c '### Descrição Resumida' …` (372 sinopses). **Faça backup de `data/<id>/ref/` antes de
+> sincronizar** numa máquina que tenha dados locais — é a única parte de `data/` que já esteve no
+> git e, por isso, a única sujeita a esse efeito. `raw/`, `packs/` e o cache nunca foram
+> rastreados e não são afetados.
+
 ### 4.1 Pacotes de vetores (`data/<id>/packs/`)
 
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
