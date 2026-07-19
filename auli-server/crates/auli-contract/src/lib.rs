@@ -192,6 +192,28 @@ impl Embeddable for Consulta {
     }
 }
 
+/// Payload de pack de pareceres (G3): tudo MENOS o corpo, que vive na árvore `docs/` e é lido na
+/// query. `doc_path` é relativo ao diretório da entidade (ex.: `"docs/pareceres/<slug>.md"`).
+///
+/// Ainda NÃO é o que `Consulta::stored_repr` grava — o pack segue gordo até a fiação da G3 (pack e
+/// servidor mudam em lockstep, senão o serving renderiza lixo).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ConsultaPackPayload {
+    pub numero: String,
+    pub assunto: String,
+    pub resumo: String,
+    pub link: String,
+    pub doc_path: String,
+}
+
+/// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
+///
+/// MESMO formato do `stored_repr` gordo, byte a byte — é esse o invariante da G3 (o contexto RAG
+/// montado não pode mudar). Ponto único: servidor e testes passam por aqui.
+pub fn render_consulta_block(p: &ConsultaPackPayload, corpo: &str) -> String {
+    format!("## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}", p.numero, p.assunto, corpo, p.link)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -278,6 +300,68 @@ mod tests {
             text_to_embed: "ICMS – crédito fiscal na cesta básica".into(),
             sinopse_info: None,
         }
+    }
+
+    /// Golden da G3: o `stored_repr` gordo de HOJE, reimplementado aqui de propósito. Se o formato
+    /// mudar de um lado só, este teste quebra — é ele que garante que trocar o pack gordo pelo
+    /// payload leve + leitura tardia não mexe um byte no contexto RAG.
+    fn stored_repr_gordo_golden(c: &Consulta) -> String {
+        format!(
+            "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
+            c.numero, c.assunto, c.corpo, c.link
+        )
+    }
+
+    fn payload_de(c: &Consulta, doc_path: &str) -> ConsultaPackPayload {
+        ConsultaPackPayload {
+            numero: c.numero.clone(),
+            assunto: c.assunto.clone(),
+            resumo: c.resumo.clone(),
+            link: c.link.clone(),
+            doc_path: doc_path.into(),
+        }
+    }
+
+    #[test]
+    fn render_do_payload_leve_equivale_ao_stored_repr_gordo() {
+        let c = sample_consulta();
+        let p = payload_de(&c, "docs/pareceres/parecer-no-25148.md");
+        assert_eq!(render_consulta_block(&p, &c.corpo), stored_repr_gordo_golden(&c));
+        // E ao que o pack grava hoje, de fato (não só ao golden).
+        assert_eq!(render_consulta_block(&p, &c.corpo), c.stored_repr());
+    }
+
+    #[test]
+    fn render_equivale_com_corpo_multilinha_e_ancoras_no_meio() {
+        // Corpo com as próprias âncoras no meio: é só concatenação, nada a escapar.
+        let mut c = sample_consulta();
+        c.corpo = "Preâmbulo.\n\n## resposta\nRecursivo.\nLink: falso\n## corpo\nfim".into();
+        let p = payload_de(&c, "docs/pareceres/x.md");
+        assert_eq!(render_consulta_block(&p, &c.corpo), stored_repr_gordo_golden(&c));
+    }
+
+    #[test]
+    fn render_com_corpo_vazio_nao_perde_o_link() {
+        let c = sample_consulta();
+        let p = payload_de(&c, "docs/pareceres/x.md");
+        let bloco = render_consulta_block(&p, "");
+        assert!(bloco.ends_with(&format!("\nLink: {}", c.link)), "bloco: {bloco:?}");
+    }
+
+    #[test]
+    fn payload_faz_round_trip_por_json() {
+        let p = payload_de(&sample_consulta(), "docs/pareceres/parecer-no-25148.md");
+        let json = serde_json::to_string(&p).unwrap();
+        assert_eq!(serde_json::from_str::<ConsultaPackPayload>(&json).unwrap(), p);
+    }
+
+    #[test]
+    fn payload_leve_nao_carrega_o_corpo() {
+        // O ganho da fase: o corpo não pode vazar para o pack por nenhum campo.
+        let mut c = sample_consulta();
+        c.corpo = "MARCADOR-DE-CORPO-UNICO".into();
+        let json = serde_json::to_string(&payload_de(&c, "docs/pareceres/x.md")).unwrap();
+        assert!(!json.contains("MARCADOR-DE-CORPO-UNICO"), "corpo vazou para o payload: {json}");
     }
 
     #[test]
