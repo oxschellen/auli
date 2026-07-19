@@ -57,19 +57,16 @@ web_config.txt
 #    the per-user settings.local.json out of git ──
 /.claude/settings.local.json
 
-# Data integration (root data/): dados GERADOS ficam fora do git; SÓ o source-of-truth AUTORADO é
-# versionado — `registry.toml`, `prompts/`, e os autorados em `<id>/ref/` (conteudo_site_tree, notas,
-# portal-pareceres do RS). Todo o resto é reconstruído pelo pipeline: scraper → `auli-collections` →
-# `auli update` / `scripts/build-packs.sh` (packs) e `scripts/build-frontend-public.sh` (public/).
-data/*/raw/
-data/*/raw/cache/
-data/*/packs/
-# Snapshots do scraper (intermediários que alimentam o `auli-collections`).
-data/*/*-snapshot.json
-# Intermediários em ref/ (saída regenerável, ex.: <id>-pareceres-temp.txt) — código, não dado.
-data/*/ref/*-temp.txt
-# Portais de pareceres regeneráveis (cópia do temp do scraper), diferente do RS que é autorado.
-data/sc/ref/sc-portal-pareceres.txt
-data/sp/ref/sp-portal-pareceres.txt
-data/pr/ref/pr-portal-pareceres.txt
+# Data integration (root data/): o repositório guarda CÓDIGO + CONFIG. **Todo** dado coletado ou
+# gerado (`data/<id>/**` — ref/, raw/, packs/, cache, docs/) fica FORA do controle de versão: vive no
+# disco da máquina de coleta e é reconstruído pelo pipeline (scraper → `auli-collections` →
+# `auli update` / `scripts/build-packs.sh`; a UI por `scripts/build-frontend-public.sh`).
+# Exceções versionadas — a config sem a qual o server não sobe:
+#   data/registry.toml   (registro de entidades)
+#   data/prompts/        (prompts do RAG, autorados)
+# O que já está no histórico permanece (sem rewrite); a partir daqui o repo só para de crescer.
+# Onde os dados vivem e como regenerá-los: ver `auli_operations.md` §4.
+/data/*
+!/data/registry.toml
+!/data/prompts/
 /*.patch

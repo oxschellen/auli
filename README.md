@@ -59,10 +59,17 @@ This is a **monorepo** of four cooperating components plus shared docs.
 | [`start_server.sh`](start_server.sh)                                           | **runbook script**   | Build (incremental) + run the server + Cloudflare tunnel.                                                                                                                                        | Bash                         |
 
 > **One shared `data/` tree, no manual copies.** Entities/collections live once in
-> [`data/registry.toml`](data/registry.toml); the scraper writes `data/<id>/raw/`, authored
-> reference content is versioned in `data/<id>/ref/`, and `auli update` builds `data/<id>/packs/`.
-> The frontend's `entities.ts` and `public/<id>/` are **generated** from `data/` by `scripts/`
-> (the prior hand-copying is gone). See [auli_code.md](auli_code.md) §2.
+> [`data/registry.toml`](data/registry.toml); the scraper writes `data/<id>/raw/`, reference content
+> lands in `data/<id>/ref/`, and `auli update` builds `data/<id>/packs/`. The frontend's
+> `entities.ts` and `public/<id>/` are **generated** from `data/` by `scripts/` (the prior
+> hand-copying is gone). See [auli_code.md](auli_code.md) §2.
+>
+> **The repo holds code + config, not collected data.** Only `data/registry.toml` and
+> `data/prompts/` are versioned. Everything under `data/<id>/**` (ref, raw, packs, scraper cache)
+> is **gitignored**: it lives on the collection machine and is rebuilt by the pipeline
+> (scraper → `auli-collections` → `auli update`). A fresh clone therefore has **no** state data —
+> run the pipeline to populate it. Steps per content type, including the pareceres/consultas flow
+> (scrape → sinopse → vectorize), are in [auli_operations.md](auli_operations.md) §4.
 
 ---
 
