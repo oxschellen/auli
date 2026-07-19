@@ -135,13 +135,10 @@ fn parecer_from_lines(lines: &[&str]) -> Option<Consulta> {
         return None;
     }
 
-    // Key de busca: assunto + resumo (o essencial semântico). Fallbacks para o que existir.
-    let text_to_embed = match (assunto.is_empty(), resumo.is_empty()) {
-        (false, false) => format!("{assunto}\n{resumo}"),
-        (false, true) => assunto.clone(),
-        (true, false) => resumo.clone(),
-        (true, true) => numero.clone(),
-    };
+    // Key de busca: ponto único `compose_text_to_embed` (numero + assunto + resumo). O `sinopse`
+    // recompõe com a mesma fórmula na promoção — aqui é a materialização legada (registros já com
+    // resumo autorado que dispensam sinopse).
+    let text_to_embed = crate::sinopse::compose_text_to_embed(&numero, &assunto, &resumo);
 
     Some(Consulta { numero, assunto, resumo, corpo, link, text_to_embed, sinopse_info: None })
 }
@@ -183,18 +180,19 @@ Corpo do 25091.
         assert_eq!(p.resumo, "### Descrição Resumida\nAnalisa o crédito fiscal.");
         assert_eq!(p.link, "http://legislacao/25148");
         assert_eq!(p.corpo, "PARECER Nº 25148\n\nÉ o parecer.");
-        // text_to_embed = assunto + resumo (the searchable key).
-        assert_eq!(p.text_to_embed, "ICMS – crédito fiscal na cesta básica\n### Descrição Resumida\nAnalisa o crédito fiscal.");
+        // text_to_embed = numero + assunto + resumo (a key indexa também o título).
+        assert_eq!(p.text_to_embed, "PARECER Nº 25148\nICMS – crédito fiscal na cesta básica\n### Descrição Resumida\nAnalisa o crédito fiscal.");
     }
 
     #[test]
-    fn record_without_resumo_falls_back_to_assunto_for_the_key() {
+    fn record_without_resumo_usa_numero_e_assunto_na_key() {
         let items = parse_pareceres(SAMPLE);
         let p = &items[1];
         assert_eq!(p.numero, "PARECER Nº 25091");
         assert_eq!(p.resumo, "");
         assert_eq!(p.corpo, "Corpo do 25091.");
-        assert_eq!(p.text_to_embed, "Remessa entre estabelecimentos");
+        // Sem resumo, a key ainda indexa numero + assunto.
+        assert_eq!(p.text_to_embed, "PARECER Nº 25091\nRemessa entre estabelecimentos");
     }
 
     #[test]
