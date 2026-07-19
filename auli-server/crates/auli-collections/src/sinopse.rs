@@ -197,6 +197,13 @@ fn resposta_e_erro_de_api(answer: &str) -> bool {
     answer.starts_with("Erro na chamada da API")
 }
 
+/// `true` se o motivo da falha é estouro de cota (rate limit). Diferente de uma falha de validação
+/// (transiente, específica do doc), rate limit é uma parede global: todo request seguinte também vai
+/// falhar. O lote aborta no 1º — 1 rejeição em vez de centenas queimando quota.
+fn e_rate_limit(motivo: &str) -> bool {
+    motivo.contains("rate_limit_exceeded")
+}
+
 /// Valida o formato da sinopse (pura, testável): as duas seções na ordem certa, descrição
 /// não-vazia e ≤ 2.000 chars, e ≥ 3 linhas de palavra-chave (`- `).
 fn validar_sinopse(answer: &str) -> std::result::Result<(), String> {
@@ -342,6 +349,17 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
             let numero = merged[i].numero.clone();
             match gerar_sinopse(rt, params, system_prompt, &assunto, &corpo, &numero) {
                 Ok(r) => (r, params.model.clone(), SINOPSE_PROMPT_VERSION),
+                Err(motivo) if e_rate_limit(&motivo) => {
+                    // Parede global: abortar (não contar como falha) para não queimar quota com
+                    // rejeições. Este doc e os restantes ficam em `pendentes-restantes`; o retry
+                    // reaproveita tudo. Suba o teto RPD ou aguarde o reset e rode de novo.
+                    eprintln!(
+                        "🛑 {}: cota da API esgotada (rate limit) em '{numero}'. Abortando o lote — \
+                         os pendentes ficam para a próxima rodada (idempotente).",
+                        entity.id
+                    );
+                    break;
+                }
                 Err(motivo) => {
                     eprintln!("⚠️  {numero}: falha — {motivo}");
                     falhas += 1;
@@ -594,6 +612,14 @@ mod tests {
     fn detecta_erro_como_ok() {
         assert!(resposta_e_erro_de_api("Erro na chamada da API do modelo AI: foo!"));
         assert!(!resposta_e_erro_de_api("### Descrição Resumida do Assunto\n..."));
+    }
+
+    #[test]
+    fn detecta_rate_limit_no_motivo() {
+        let motivo = r#"API: Erro na chamada da API do modelo AI: {"code":"rate_limit_exceeded","message":"...RPD..."}!"#;
+        assert!(e_rate_limit(motivo));
+        assert!(!e_rate_limit("validação: seção ausente: ### Palavras Chave do Tema"));
+        assert!(!e_rate_limit("transporte: timeout"));
     }
 
     #[test]
