@@ -20,6 +20,11 @@ use crate::errors::Result;
 pub const SINOPSE_PROMPT_VERSION: u32 = 1;
 /// Teto de entrada do corpo (chars). Acima disso, trunca com aviso no log (v1: sem chunking).
 const CORPO_MAX_CHARS: usize = 24_000;
+/// Margem de parada do RPD: quando o header `x-ratelimit-remaining-requests` cai a ≤ isto, o lote
+/// para ANTES de mandar a requisição que seria rejeitada — zero rejeição. A folga não é 0 de
+/// propósito: reserva para o chat do RAG (que compartilha a mesma quota) e absorve contagem levemente
+/// defasada. O que sobrar de pendente fica para a próxima rodada (idempotente).
+const RPD_MARGEM_PARADA: u64 = 5;
 
 /// Opções do subcomando (parseadas no `main`).
 pub struct SinopseOpts {
@@ -230,9 +235,16 @@ fn validar_sinopse(answer: &str) -> std::result::Result<(), String> {
     Ok(())
 }
 
+/// Sinopse gerada + o headroom de RPD lido no header da resposta (para o proactive-stop).
+struct Gerada {
+    resumo: String,
+    remaining_requests: Option<u64>,
+    reset_requests: Option<String>,
+}
+
 /// Gera a sinopse real de um documento: trunca o corpo, chama o LLM, detecta erro-como-`Ok`,
-/// valida (com **uma** re-tentativa). Devolve o `resumo` aparado, ou o motivo da falha (o chamador
-/// conta a falha e segue — nunca aborta o lote).
+/// valida (com **uma** re-tentativa). Devolve o `resumo` aparado + headroom, ou o motivo da falha (o
+/// chamador conta a falha e segue — nunca aborta o lote).
 fn gerar_sinopse(
     rt: &tokio::runtime::Runtime,
     params: &auli_llm::LlmParams,
@@ -240,7 +252,7 @@ fn gerar_sinopse(
     assunto: &str,
     corpo: &str,
     numero: &str,
-) -> std::result::Result<String, String> {
+) -> std::result::Result<Gerada, String> {
     let (corpo_trunc, truncou) = truncar_corpo(corpo, CORPO_MAX_CHARS);
     if truncou {
         eprintln!("ℹ️  {numero}: corpo truncado em {CORPO_MAX_CHARS} chars (v1 sem chunking).");
@@ -248,14 +260,20 @@ fn gerar_sinopse(
     let user_msg = format!("Assunto: {assunto}\n\nDocumento:\n{corpo_trunc}");
 
     for tentativa in 1..=2u32 {
-        let answer = rt
+        let resp = rt
             .block_on(auli_llm::chat(params, system_prompt, &user_msg))
             .map_err(|e| format!("transporte: {e}"))?;
-        if resposta_e_erro_de_api(&answer) {
-            return Err(format!("API: {answer}"));
+        if resposta_e_erro_de_api(&resp.text) {
+            return Err(format!("API: {}", resp.text));
         }
-        match validar_sinopse(&answer) {
-            Ok(()) => return Ok(answer.trim().to_string()),
+        match validar_sinopse(&resp.text) {
+            Ok(()) => {
+                return Ok(Gerada {
+                    resumo: resp.text.trim().to_string(),
+                    remaining_requests: resp.remaining_requests,
+                    reset_requests: resp.reset_requests,
+                });
+            }
             Err(motivo) if tentativa == 2 => return Err(format!("validação: {motivo}")),
             Err(motivo) => eprintln!("↻ {numero}: validação falhou ({motivo}); re-tentando 1×."),
         }
@@ -344,15 +362,19 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
             continue;
         }
         let assunto = merged[i].assunto.clone();
-        let (resumo, modelo, versao) = if let Some((params, system_prompt, rt)) = &llm {
+        // `headroom` = (remaining_requests, reset) da chamada bem-sucedida; None no modo fake.
+        let (resumo, modelo, versao, headroom) = if let Some((params, system_prompt, rt)) = &llm {
             let corpo = merged[i].corpo.clone();
             let numero = merged[i].numero.clone();
             match gerar_sinopse(rt, params, system_prompt, &assunto, &corpo, &numero) {
-                Ok(r) => (r, params.model.clone(), SINOPSE_PROMPT_VERSION),
+                Ok(g) => {
+                    let hr = (g.remaining_requests, g.reset_requests);
+                    (g.resumo, params.model.clone(), SINOPSE_PROMPT_VERSION, Some(hr))
+                }
                 Err(motivo) if e_rate_limit(&motivo) => {
-                    // Parede global: abortar (não contar como falha) para não queimar quota com
-                    // rejeições. Este doc e os restantes ficam em `pendentes-restantes`; o retry
-                    // reaproveita tudo. Suba o teto RPD ou aguarde o reset e rode de novo.
+                    // Rede de segurança: se o header de headroom não veio e batemos no teto, abortar
+                    // no 1º 429 (não contar como falha) em vez de queimar quota com rejeições. Este
+                    // doc e os restantes ficam em `pendentes-restantes`; o retry reaproveita tudo.
                     eprintln!(
                         "🛑 {}: cota da API esgotada (rate limit) em '{numero}'. Abortando o lote — \
                          os pendentes ficam para a próxima rodada (idempotente).",
@@ -367,7 +389,7 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
                 }
             }
         } else {
-            (fake_resumo(&assunto), "fake".to_string(), 0)
+            (fake_resumo(&assunto), "fake".to_string(), 0, None)
         };
 
         merged[i].resumo = resumo;
@@ -380,6 +402,20 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
         });
         write_atomic(&out_file, &entity.id, &merged)?;
         gerados += 1;
+
+        // Proactive-stop: este doc já foi gravado; se o RPD restante caiu à margem, parar ANTES de
+        // mandar a próxima (que seria rejeitada) — zero rejeição. Idempotente: o retry segue daqui.
+        if let Some((Some(restantes), reset)) = headroom
+            && restantes <= RPD_MARGEM_PARADA
+        {
+            let quando = reset.as_deref().unwrap_or("desconhecido");
+            println!(
+                "🧮 {}: headroom de RPD esgotando ({restantes} restantes ≤ margem {RPD_MARGEM_PARADA}). \
+                 Parando limpo (zero rejeição) — reset em {quando}. Suba o teto ou rode de novo após o reset.",
+                entity.id
+            );
+            break;
+        }
     }
 
     // 6b. Promoção raw→final: SEMPRE grava o JSON mesclado (dry-run já retornou antes), inclusive com
