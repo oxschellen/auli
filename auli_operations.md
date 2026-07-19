@@ -109,20 +109,9 @@ kind `servicos`) — e `<id>-faqs.json` onde houver FAQs (hoje só RS). Contagen
 também é autorado, mas já tem um passo de ingestão do `.txt` de referência (ver nota abaixo). **Só
 precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
 
-> **Pareceres (autorado, sem scraper) — passo de ingestão.** O contrato `<id>-pareceres.json` é
-> derivado do `.txt` de referência versionado (`data/<id>/ref/<id>-portal-pareceres.txt`) pelo
-> subcomando **`auli-collections <id> pareceres`** — que **não** faz parte do `auli-collections <id>`
-> (process) nem do scraper. Rode-o **antes** do `build-packs.sh`, para que o `auli update` encontre o
-> `raw/<id>-pareceres.json` e o vetorize (kind `pareceres`, sem bump de `STRATEGY_VERSION`). Hoje só o
-> **RS** tem esse `.txt` (**331** pareceres). Sequência:
->
-> ```bash
-> cd auli-server
-> ./target/release/auli-collections rs pareceres && (cd .. && scripts/build-packs.sh rs)
-> ```
->
-> Como `data/<id>/raw/` é gitignored, esse passo precisa ser refeito ao regenerar os packs num host
-> novo (o `.txt` de origem em `ref/` **é** versionado).
+> **Pareceres / Consultas — pipeline próprio.** Os pareceres (RS) e consultas tributárias (SC/SP/PR)
+> têm scraper dedicado **e** um passo de **sinopse por LLM** entre o derive e a vetorização. O fluxo é
+> mais longo que o de serviços e tem regras próprias de cota, cache e idempotência: **ver §4.5**.
 
 > Regenerar **sem re-raspar** (ex.: após bump de `STRATEGY_VERSION`): com o snapshot já em disco,
 > `auli-collections <id>` re-deriva os contratos offline e `build-packs.sh` regera os packs
@@ -133,6 +122,12 @@ precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
 > Para forçar o refetch (novos serviços do portal, conteúdo alterado), **apague o cache antes de
 > raspar**: `rm -rf data/<id>/raw/cache/`. No SC isso inclui a listagem paginada e o `buildId`, então
 > serviços novos do portal só aparecem depois de limpar o cache.
+>
+> **Namespace por tipo.** O cache fica em `data/<id>/raw/cache/<kind>/`, um diretório por tipo de
+> conteúdo — `servicos/`, `faqs/`, `pareceres/`. Cada caller do kit declara o seu:
+> `auli_scraper_kit::cache::{read,write,read_or_bail}(data_dir, kind, url, …)`. Assim uma entidade que
+> raspa mais de um tipo (o RS raspa os três) não mistura nem colide. Para limpar só um tipo:
+> `rm -rf data/<id>/raw/cache/pareceres/`.
 
 ### 4.2 Entidades (`data/registry.toml`)
 
@@ -162,6 +157,179 @@ para o server rodando em `auli-server/`. Variáveis:
 >
 > O server **não tem auth nem banco**: só precisa das variáveis de LLM + embedding acima. Não há
 > `DATABASE_URL`, chaves `JWT_*` nem Postgres no boot.
+
+---
+
+### 4.5 Pareceres / Consultas — pipeline completo (scrape → sinopse → vetorizar)
+
+Vale para as 4 entidades com acervo de consultas formais: **rs** (Pareceres), **sc** (Consultas
+COPAT), **sp** (Respostas a Consultas), **pr** (Consultas SEFA). É um pipeline de **5 passos**, mais
+longo que o de serviços porque inclui um estágio de **sinopse gerada por LLM**.
+
+```text
+auli-scraper-<id> pareceres      → ref/<id>-pareceres-temp.txt     (rede; sem resumo)
+        ↓ promoção (cp)
+                                   ref/<id>-portal-pareceres.txt   (fonte do derive)
+auli-collections <id> pareceres  → raw/<id>-pareceres.raw.json     (offline; contrato bruto)
+auli-collections <id> sinopse    → raw/<id>-pareceres.json         (LLM; + regrava o print .txt)
+scripts/build-packs.sh <id>      → packs/<id>-pareceres.json       (embedding)
+```
+
+#### Por que existe o passo `sinopse`
+
+A **ementa oficial** do parecer é curta e em juridiquês denso — péssima chave de busca. O `sinopse`
+faz **uma** passada de LLM por documento (o corpo é imutável, então é one-shot) gerando uma
+**descrição em linguagem natural + palavras-chave**, que passam a ser o texto vetorizado. Resultado
+medido: perguntas em linguagem natural passam a recuperar as consultas certas (ver §4.5.6).
+
+#### 4.5.1 Passo 1 — Raspar
+
+```bash
+cd auli-server
+./target/release/auli-scraper-<id> pareceres        # rede; sem --usecache = dados frescos
+```
+
+- Grava o **intermediário** `data/<id>/ref/<id>-pareceres-temp.txt` (numero/assunto/corpo/link,
+  **sem `resumo`**). Não toca contrato, snapshot nem packs.
+- Cada scraper tem uma **guarda de truncamento** (ex.: RS aborta com < 250 consultas) para não
+  substituir o acervo por uma coleta parcial.
+- Cache em `data/<id>/raw/cache/pareceres/` (namespace por tipo; ver o aviso de cache em §4.1).
+- O RS exige **`curl`** no PATH (paginação por postback ASP.NET atrás de WAF) e usa UA
+  institucional com cortesia de 500 ms entre requisições.
+
+#### 4.5.2 Passo 2 — Promoção `temp` → `portal`
+
+O derive lê `<id>-portal-pareceres.txt`, não o `-temp.txt`. A promoção é um **`cp` deliberado**, para
+que uma coleta ruim não derrube o acervo sem revisão:
+
+```bash
+cp data/<id>/ref/<id>-pareceres-temp.txt data/<id>/ref/<id>-portal-pareceres.txt
+```
+
+> **Antes de promover, confira**: contagem de blocos (`grep -cE '^// [0-9]+'`) e o diff de
+> `descricao:` contra o arquivo atual — assim você vê quantas consultas entraram/saíram.
+
+**Versionamento:** `data/*/raw/` é gitignored, mas `ref/` não. O `rs-portal-pareceres.txt` **é
+versionado** (carrega as sinopses — ver 4.5.3, então um derive futuro as reaproveita sem re-LLM); os
+de **sc/sp/pr são gitignored** (regeneráveis a partir do scraper). Os `*-temp.txt` são sempre
+gitignored.
+
+#### 4.5.3 Passo 3 — Derive (offline)
+
+```bash
+./target/release/auli-collections <id> pareceres    # → raw/<id>-pareceres.raw.json
+```
+
+Parseia o `.txt` em `Table<Consulta>`. **Não** faz parte do `auli-collections <id>` (process).
+
+#### 4.5.4 Passo 4 — Sinopse (LLM)
+
+```bash
+./target/release/auli-collections <id> sinopse [flags]
+```
+
+| Flag               | Efeito                                                                    |
+| ------------------ | ------------------------------------------------------------------------- |
+| `--dry-run`        | conta pendentes e estima tokens de entrada; **não escreve nada**          |
+| `--limit N`        | processa no máximo N documentos nesta rodada (gerados + falhas) — batches |
+| `--force <numero>` | re-gera a sinopse de um documento específico (ignora a existente)         |
+| `--fake`           | dev-only: preenche resumo sintético, sem tocar rede                       |
+
+- **Env**: `SINOPSE_API_URL` / `SINOPSE_API_KEY` / `SINOPSE_API_MODEL`, com **fallback** para os
+  `LLM_*`. Isso permite apontar o lote para um **projeto/quota dedicado**, sem competir com o chat do
+  RAG.
+- **Prompt**: `data/prompts/sinopse.txt` (versão gravada em `SinopseInfo.prompt_versao`;
+  `SINOPSE_PROMPT_VERSION = 1`). Saída validada: as duas seções
+  `### Descrição Resumida do Assunto` + `### Palavras Chave do Tema`, na ordem, descrição ≤ 2000
+  chars e ≥ 3 palavras-chave. Falha de validação → **1 re-tentativa**; persistindo, conta como falha
+  e o lote segue.
+- **Entrada truncada** em `CORPO_MAX_CHARS = 24_000` chars (v1 sem chunking; avisa no log).
+- **Idempotente**: mescla por `numero` com a saída anterior — documentos que já têm `resumo` são
+  **reaproveitados** (zero chamadas). Re-rodar é seguro e barato; é assim que se retoma um lote
+  interrompido.
+- **Grava a cada documento** (proteção contra queda) e promove `raw.json → .json` no fim, **sempre**
+  que não for dry-run. Também **regrava o print** `ref/<id>-portal-pareceres.txt` com os resumos
+  embutidos — é o round-trip: derive → sinopse → derive reaproveita.
+- **Relatório final** com invariante de guarda:
+  `reaproveitados + gerados + falhas + pendentes-restantes == total`.
+
+##### Cota / rate limit (o ponto operacional mais importante)
+
+O provedor (Groq-compat) impõe **RPD** (requisições/dia) por projeto. Duas defesas, em camadas:
+
+1. **Proactive-stop (primário, zero rejeição).** A cada resposta o cliente lê
+   `x-ratelimit-remaining-requests`. Quando o headroom cai a `≤ RPD_MARGEM_PARADA (5)`, o lote **para
+   antes** de mandar a requisição que seria rejeitada, e loga o `x-ratelimit-reset-requests` (quando a
+   cota volta). A margem não é 0 de propósito: reserva para o chat do RAG, que divide a mesma quota.
+2. **Early-abort (rede de segurança).** Se o header não vier e um `429 rate_limit_exceeded` chegar, o
+   lote aborta no **primeiro** — em vez de disparar centenas de requisições condenadas.
+
+> ⚠️ **Requisição rejeitada também consome RPD.** Antes dessas defesas, um lote que batia no teto no
+> meio seguia disparando e queimava a cota do dia inteiro em 429s — o dia rendia pouquíssimas
+> sinopses. Hoje isso não acontece: pior caso é **1** rejeição-probe.
+
+Nos dois casos o documento que parou e os restantes ficam em `pendentes-restantes` (**não** contam
+como falha) — basta **re-rodar** depois do reset (ou com o teto elevado) que o merge reaproveita tudo.
+
+Para inspecionar a cota sem rodar o lote:
+
+```bash
+set -a; . .env; set +a
+curl -sS -D - -o /dev/null -X POST "$LLM_API_URL" \
+  -H "Authorization: Bearer $LLM_API_KEY" -H "Content-Type: application/json" \
+  -d "{\"model\":\"$LLM_API_MODEL\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_completion_tokens\":1}" \
+  | grep -i x-ratelimit
+```
+
+##### Acervos grandes: batches de 1000
+
+Para entidades com milhares de consultas (SP tem **15.605**), rode em batches e audite no caminho:
+
+```bash
+./target/release/auli-collections sp sinopse --limit 1000   # repita até pendentes-restantes = 0
+```
+
+Cada rodada reaproveita as prontas e ataca as próximas 1000; o proactive-stop encerra antes se a cota
+acabar. Dá para automatizar com um driver que repete `--limit 1000`, detecta o proactive-stop no log,
+dorme até o reset e retoma — com teto de iterações e abort se um batch não progredir (evita loop
+infinito).
+
+#### 4.5.5 Passo 5 — Vetorizar
+
+```bash
+scripts/build-packs.sh <id>
+```
+
+- **Guarda de ingestão:** o `auli update` **recusa** vetorizar pareceres se **qualquer** registro
+  estiver sem sinopse, listando os números pendentes. Ou seja: só vetorize depois de fechar o lote.
+- **O que é embedado** (`text_to_embed`): `numero` + `assunto` + `resumo` (a sinopse), unidos por
+  quebra de linha, vazios pulados. O **corpo integral NÃO é embedado** — ele é armazenado e devolvido
+  no `stored_repr` (o que o RAG entrega ao LLM).
+- **`STRATEGY_VERSION`** (hoje `2`) é carimbado no manifesto e validado no boot do server: pacote com
+  versão diferente ⇒ o server **recusa subir**. Regenerar sinopses **em massa** (mudança de
+  `SINOPSE_PROMPT_VERSION` ou troca do modelo + re-geração) muda os textos embedados ⇒ **bump
+  obrigatório**. Sinopses novas convivendo com antigas (append-only, sem re-geração) **não** exigem
+  bump.
+
+#### 4.5.6 Validar o retrieval (sem LLM)
+
+```bash
+EMBED_CACHE_DIR=$PWD/models \
+  cargo run --release -p auli-cli --example retrieval_test -- data/<id>/packs/<id>-pareceres.json
+```
+
+Carrega o embedder + o pack e imprime o **top-5 por proximidade** de um conjunto de perguntas em
+linguagem natural (score = distância; **menor = mais próximo**). É o jeito rápido de confirmar que a
+key nova está funcionando, sem gastar quota de LLM.
+
+#### 4.5.7 Estado atual
+
+| Entidade | Consultas  | Sinopses | Observação                                  |
+| -------- | ---------- | -------- | ------------------------------------------- |
+| **rs**   | 372        | 372      | `.txt` versionado (carrega as sinopses)     |
+| **sc**   | 1.743      | 1.743    | —                                           |
+| **pr**   | 2.060      | 2.060    | —                                           |
+| **sp**   | 15.605     | em lote  | rodar em batches de 1000 (§4.5.4)           |
 
 ---
 
