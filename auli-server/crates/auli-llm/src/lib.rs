@@ -30,6 +30,18 @@ pub struct LlmParams {
 
 pub type Result<T> = core::result::Result<T, Error>;
 
+/// Resposta do chat + o headroom de rate-limit lido dos headers (quando o provedor os envia).
+/// `remaining_requests` = `x-ratelimit-remaining-requests` (Requests Per Day / RPD) — o consumidor
+/// usa para parar ANTES de esgotar a cota (zero rejeição). `reset_requests` = `x-ratelimit-reset-
+/// requests` bruto (ex.: `"2m59.56s"`), útil para reportar quando a cota volta. Ambos `None` se o
+/// header não veio.
+#[derive(Debug, Clone)]
+pub struct ChatResponse {
+    pub text: String,
+    pub remaining_requests: Option<u64>,
+    pub reset_requests: Option<String>,
+}
+
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("{0}")]
@@ -42,7 +54,7 @@ pub enum Error {
 /// 3 vezes em erros de conexão/timeout (no send OU na leitura do body). Um erro de nível de API —
 /// campo `error` no JSON, body não-JSON, ou requisição pendurada que estoura o timeout — volta como
 /// mensagem legível em vez de `Err`, para o chamador nunca vazar um erro cru de serde/reqwest.
-pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -> Result<String> {
+pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -> Result<ChatResponse> {
     let start = Instant::now();
 
     const AUTH_HEADER: &str = "Authorization";
@@ -61,10 +73,17 @@ pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -
         "stop": null,
     });
 
-    // (status, body) from the first round-trip that both connects and reads. Retries cover
-    // connect/timeout on send AND on body read — both transient.
-    let (status, response_text): (StatusCode, String) = {
-        let mut result: Result<(StatusCode, String)> = Err(Error::Custom("unreachable".into()));
+    // (status, body, headroom) from the first round-trip that both connects and reads. Retries cover
+    // connect/timeout on send AND on body read — both transient. Os headers de rate-limit são lidos
+    // ANTES de consumir o body (`resp.text()` move `resp`).
+    let (status, response_text, remaining_requests, reset_requests): (
+        StatusCode,
+        String,
+        Option<u64>,
+        Option<String>,
+    ) = {
+        let mut result: Result<(StatusCode, String, Option<u64>, Option<String>)> =
+            Err(Error::Custom("unreachable".into()));
         for attempt in 1u32..=3 {
             let outcome = async {
                 // Timeout POR REQUISIÇÃO, mantido pelo chamador abaixo do seu próprio budget — no
@@ -79,8 +98,12 @@ pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -
                     .send()
                     .await?;
                 let status = resp.status();
+                let remaining = header_u64(&resp, "x-ratelimit-remaining-requests");
+                let reset = header_str(&resp, "x-ratelimit-reset-requests");
                 let text = resp.text().await?;
-                Ok::<(StatusCode, String), reqwest::Error>((status, text))
+                Ok::<(StatusCode, String, Option<u64>, Option<String>), reqwest::Error>((
+                    status, text, remaining, reset,
+                ))
             }
             .await;
 
@@ -121,7 +144,17 @@ pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -
     let elapsed = start.elapsed().as_millis();
     println!("Tempo de chamada do LLM API : {:6} millisegundos", elapsed);
 
-    Ok(answer)
+    Ok(ChatResponse { text: answer, remaining_requests, reset_requests })
+}
+
+/// Lê um header como `u64` (aparado), ou `None` se ausente/não-numérico.
+fn header_u64(resp: &reqwest::Response, name: &str) -> Option<u64> {
+    resp.headers().get(name)?.to_str().ok()?.trim().parse().ok()
+}
+
+/// Lê um header como `String` (aparado), ou `None` se ausente/não-textual.
+fn header_str(resp: &reqwest::Response, name: &str) -> Option<String> {
+    Some(resp.headers().get(name)?.to_str().ok()?.trim().to_string())
 }
 
 #[cfg(test)]
