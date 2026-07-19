@@ -125,7 +125,7 @@ pub fn scrape(
     validar(&items)?;
 
     for (url, raw) in &pending {
-        auli_scraper_kit::cache::write(data_dir, url, raw);
+        auli_scraper_kit::cache::write(data_dir, "servicos", url, raw);
     }
 
     let classes: HashSet<&str> = items.iter().flat_map(|s| s.ocorrencias.iter()).map(|o| o.classe.as_str()).collect();
@@ -156,7 +156,7 @@ fn load(
     use_cache: bool,
     pending: &mut Vec<(String, String)>,
 ) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, url) {
+    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, "servicos", url) {
         return Ok(cached);
     }
     if use_cache {

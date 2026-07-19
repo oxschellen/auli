@@ -236,7 +236,7 @@ fn fetch_html(
 ) -> Result<String, Box<dyn std::error::Error>> {
     // Retry/backoff é o kit::http::get_string (headers Accept + Accept-Language via GetOpts);
     // bridge map_err p/ o Box<dyn Error> deste crate. Cache-write no wrapper.
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)
         .map_err(|e| e.to_string())?
     {
         return Ok(cached);
@@ -251,7 +251,7 @@ fn fetch_html(
         },
     )
     .map_err(|e| e.to_string())?;
-    auli_scraper_kit::cache::write(data_dir, url, &body);
+    auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
     Ok(body)
 }
 

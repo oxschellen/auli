@@ -43,7 +43,7 @@ pub fn scrape(
     validar(&items)?;
     if da_rede {
         // Cache só depois de o parse+guard passarem (D-RJ5).
-        auli_scraper_kit::cache::write(data_dir, CARTA_URL, &html);
+        auli_scraper_kit::cache::write(data_dir, "servicos", CARTA_URL, &html);
     }
 
     let classes: HashSet<&str> =
@@ -57,7 +57,7 @@ pub fn scrape(
 /// GET (HTML) com cache. Devolve `(corpo, veio_da_rede)`. Miss + `--usecache` = erro. O caller grava
 /// o cache só depois do guard (D-RJ5).
 fn load(data_dir: &str, use_cache: bool) -> Result<(String, bool), Box<dyn std::error::Error>> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, CARTA_URL) {
+    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, "servicos", CARTA_URL) {
         return Ok((cached, false));
     }
     if use_cache {

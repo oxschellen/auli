@@ -40,6 +40,11 @@ const LISTING_URL: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/Search.asp
 const DETAIL_BASE: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=";
 const UA: &str = "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 const OUT_PATH: &str = "../data/rs/ref/rs-pareceres-temp.txt";
+// Cache namespace da frota: `<CACHE_BASE>/cache/<CACHE_KIND>` = `../data/rs/raw/cache/pareceres`,
+// irmão de `cache/servicos` e `cache/faqs` (mesma estrutura dos demais estados). `CACHE_DIR` é esse
+// mesmo diretório, usado para o cookie jar e o `create_dir_all`.
+const CACHE_BASE: &str = "../data/rs/raw";
+const CACHE_KIND: &str = "pareceres";
 const CACHE_DIR: &str = "../data/rs/raw/cache/pareceres";
 const COURTESY: Duration = Duration::from_millis(500);
 const MAX_PAGES: usize = 40; // safety cap (real ≈ 17)
@@ -109,11 +114,11 @@ fn enumerate(jar: &str, use_cache: bool) -> Result<Vec<Row>> {
     // Só o `--usecache` (offline) lê a listagem do cache.
     let cache_key1 = format!("{LISTING_URL}#page1");
     let mut html = if use_cache {
-        cache::read_or_bail(CACHE_DIR, &cache_key1, true)?
+        cache::read_or_bail(CACHE_BASE, CACHE_KIND, &cache_key1, true)?
             .ok_or_else(|| Error::Custom("página 1 ausente do cache (--usecache)".into()))?
     } else {
         let html = decode_charset(&curl_get(LISTING_URL, Some(jar))?);
-        cache::write(CACHE_DIR, &cache_key1, &html);
+        cache::write(CACHE_BASE, CACHE_KIND, &cache_key1, &html);
         html
     };
     let mut page = 1usize;
@@ -150,7 +155,7 @@ fn enumerate(jar: &str, use_cache: bool) -> Result<Vec<Row>> {
 fn post_listing_page(page: usize, prev_html: &str, jar: &str, use_cache: bool) -> Result<String> {
     let cache_key = format!("{LISTING_URL}#page{page}");
     if use_cache {
-        return cache::read_or_bail(CACHE_DIR, &cache_key, true)?
+        return cache::read_or_bail(CACHE_BASE, CACHE_KIND, &cache_key, true)?
             .ok_or_else(|| Error::Custom(format!("página {page} ausente do cache (--usecache)")));
     }
     let doc = Html::parse_document(prev_html);
@@ -164,7 +169,7 @@ fn post_listing_page(page: usize, prev_html: &str, jar: &str, use_cache: bool) -
     let refs: Vec<(&str, &str)> = all.iter().map(|(k, v)| (k.as_str(), v.as_str())).collect();
     let body = form_urlencoded(&refs);
     let html = decode_charset(&curl_post_form(LISTING_URL, &body, jar)?);
-    cache::write(CACHE_DIR, &cache_key, &html);
+    cache::write(CACHE_BASE, CACHE_KIND, &cache_key, &html);
     Ok(html)
 }
 
@@ -220,11 +225,11 @@ fn collect_form_fields(doc: &Html) -> Vec<(String, String)> {
 
 /// GET de um detalhe (`DocumentView.aspx?inpKey=N`), com cache. Público — não precisa da sessão.
 fn fetch_detail(url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = cache::read_or_bail(CACHE_DIR, url, use_cache)? {
+    if let Some(cached) = cache::read_or_bail(CACHE_BASE, CACHE_KIND, url, use_cache)? {
         return Ok(cached);
     }
     let html = decode_charset(&curl_get(url, None)?);
-    cache::write(CACHE_DIR, url, &html);
+    cache::write(CACHE_BASE, CACHE_KIND, url, &html);
     Ok(html)
 }
 

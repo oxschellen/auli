@@ -100,7 +100,7 @@ pub fn scrape(
     // ES url-encoded, longo demais para virar nome de arquivo (os error 36) — não serve de chave.
     let cache_key = format!("{}#{}", SEARCH_URL, CATALOGO_ID);
     // O JSON cru vai para o cache — mas só DEPOIS dos guards (D-RJ5): resposta capada nunca envenena.
-    let (json, fetched) = match auli_scraper_kit::cache::read(data_dir, &cache_key) {
+    let (json, fetched) = match auli_scraper_kit::cache::read(data_dir, "servicos", &cache_key) {
         Some(cached) => {
             println!("Cache hit: {}", SEARCH_URL);
             (cached, false)
@@ -123,7 +123,7 @@ pub fn scrape(
     validar(&items, resp.hits.total)?;
 
     if fetched {
-        auli_scraper_kit::cache::write(data_dir, &cache_key, &json);
+        auli_scraper_kit::cache::write(data_dir, "servicos", &cache_key, &json);
     }
 
     println!("PI: {} serviços (total ES={}, dedup por _id)", items.len(), resp.hits.total);

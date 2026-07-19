@@ -360,7 +360,7 @@ fn sel(s: &str) -> Selector {
 // NB: o retry fica local (não usa `kit::http::get_string`) porque a resposta é lida como bytes e
 // passa por `decode_charset` (o ASP é latin1, não UTF-8) — trabalho real de charset por-portal.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, url, use_cache)? {
+    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)? {
         return Ok(cached);
     }
 
@@ -373,7 +373,7 @@ fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<St
                 Ok(bytes) => {
                     let body = decode_charset(&bytes, url);
                     if !body.trim().is_empty() {
-                        auli_scraper_kit::cache::write(data_dir, url, &body);
+                        auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
                         sleep(COURTESY);
                         return Ok(body);
                     }

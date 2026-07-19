@@ -39,7 +39,7 @@ pub fn scrape(
     validar(&items)?;
     if da_rede {
         // Cache só depois de o parse+guard passarem (D-RJ5).
-        auli_scraper_kit::cache::write(data_dir, SCRIPT_URL, &js);
+        auli_scraper_kit::cache::write(data_dir, "servicos", SCRIPT_URL, &js);
     }
 
     let publicos_ordem = publicos_ordem(&items);
@@ -55,7 +55,7 @@ pub fn scrape(
 
 /// GET (JS) com cache. Devolve `(corpo, veio_da_rede)`. Miss + `--usecache` = erro.
 fn load(data_dir: &str, use_cache: bool) -> Result<(String, bool), Box<dyn std::error::Error>> {
-    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, SCRIPT_URL) {
+    if let Some(cached) = auli_scraper_kit::cache::read(data_dir, "servicos", SCRIPT_URL) {
         return Ok((cached, false));
     }
     if use_cache {
