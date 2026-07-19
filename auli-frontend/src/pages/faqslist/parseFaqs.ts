@@ -1,3 +1,5 @@
+import { parseQuery, buildHaystack, haystackMatches } from "../../shared/textSearch";
+
 /** A single Q&A pair as stored in faqs-tree.json. */
 interface RawFaqItem {
   pergunta: string;
@@ -67,18 +69,24 @@ export function searchNodes(
   query: string,
   ancestors: FaqNode[] = [],
 ): FaqSearchHit[] {
-  const results: FaqSearchHit[] = [];
-  const q = query.toLowerCase();
+  // `parseQuery` uma vez no topo; a recursão carrega os termos já normalizados (não reparseia).
+  return collectMatches(nodes, parseQuery(query), ancestors);
+}
 
+function collectMatches(
+  nodes: FaqNode[],
+  terms: readonly string[],
+  ancestors: FaqNode[],
+): FaqSearchHit[] {
+  const results: FaqSearchHit[] = [];
   for (const node of nodes) {
-    if (node.text.toLowerCase().includes(q)) {
+    if (haystackMatches(buildHaystack([node.text]), terms)) {
       results.push({ node, ancestors });
     }
     if (node.children.length > 0) {
-      results.push(...searchNodes(node.children, query, [...ancestors, node]));
+      results.push(...collectMatches(node.children, terms, [...ancestors, node]));
     }
   }
-
   return results;
 }
 

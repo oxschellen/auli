@@ -95,6 +95,19 @@ describe("searchNodes", () => {
     const nodes = buildNodesFromJson(sampleJson);
     expect(searchNodes(nodes, "zzz")).toHaveLength(0);
   });
+
+  it("é insensível a acento (query sem acento acha texto acentuado)", () => {
+    // "É um imposto…" não é texto de nó, mas as perguntas têm acento em "é".
+    const nodes = buildNodesFromJson(sampleJson);
+    const hit = searchNodes(nodes, "o que e").find((h) => h.node.text === "O que é ICMS?");
+    expect(hit).toBeTruthy();
+  });
+
+  it("multi-termo com E lógico: todos os termos precisam aparecer", () => {
+    const nodes = buildNodesFromJson(sampleJson);
+    expect(searchNodes(nodes, "pagar icms").map((h) => h.node.text)).toEqual(["Como pagar ICMS?"]);
+    expect(searchNodes(nodes, "pagar zzz")).toHaveLength(0);
+  });
 });
 
 describe("getEffectiveUrl", () => {
