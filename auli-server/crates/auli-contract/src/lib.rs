@@ -11,6 +11,7 @@
 //! de embedder, HTTP ou domínio de tributação. É o único ponto onde produtor e consumidor
 //! concordam — sobre a forma E sobre o caminho/versão/leitura/escrita da fronteira.
 
+pub mod mddoc;
 pub mod snapshot;
 pub use snapshot::*;
 
