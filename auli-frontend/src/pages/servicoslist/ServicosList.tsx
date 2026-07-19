@@ -2,16 +2,19 @@ import { useMemo, useRef, useState, useDeferredValue } from "react";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import useSWR from "swr";
 import { AccordionItem } from "./ServicosAccordion";
-import { getDefaultTipoServicos, type Servico, type TipoServico } from "./utils";
+import {
+  getDefaultTipoServicos,
+  filterServicoGroups,
+  type Servico,
+  type TipoServico,
+  type ServicoGroup,
+} from "./utils";
 import { jsonFetcher, SWR_OPTS, entityPath } from "../../shared/fetchers";
 import { SearchInput } from "../../shared/SearchInput";
 import { AsyncContent } from "../../shared/AsyncContent";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { hasCollection } from "../../shared/entities";
 import { CollectionEmpty } from "../../shared/CollectionEmpty";
-
-/** A class heading paired with its (possibly filtered) services. */
-type ServicoGroup = [string, Servico[]];
 
 export function ServicosList() {
   const entity = useSelectedEntity();
@@ -76,20 +79,10 @@ export function ServicosList() {
     return Array.from(map.entries());
   }, [activeServicos]);
 
-  const filteredGroups = useMemo<ServicoGroup[]>(() => {
-    const query = deferredQuery.trim().toLowerCase();
-    if (!query) return grouped;
-    const result: ServicoGroup[] = [];
-    for (const [classe, items] of grouped) {
-      if (classe.toLowerCase().includes(query)) {
-        result.push([classe, items]);
-      } else {
-        const matching = items.filter((s) => s.titulo.toLowerCase().includes(query));
-        if (matching.length > 0) result.push([classe, matching]);
-      }
-    }
-    return result;
-  }, [grouped, deferredQuery]);
+  const filteredGroups = useMemo<ServicoGroup[]>(
+    () => filterServicoGroups(grouped, deferredQuery),
+    [grouped, deferredQuery]
+  );
 
   const isSearching = deferredQuery.trim().length > 0;
   const totalResults = isSearching ? filteredGroups.reduce((sum, [, items]) => sum + items.length, 0) : 0;
