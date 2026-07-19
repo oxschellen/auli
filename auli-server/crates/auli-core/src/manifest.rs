@@ -28,7 +28,11 @@ pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 /// modelo da sinopse + re-geração) muda os textos embedados de `pareceres` ⇒ bump obrigatório aqui.
 /// Sinopses novas convivendo com antigas (append-only, sem re-geração) NÃO exigem bump — o embedder
 /// é o mesmo.
-pub const STRATEGY_VERSION: u32 = 2;
+///
+/// v3 (G3): o pack de `pareceres` passou a guardar o payload LEVE (JSON sem corpo) no lugar do bloco
+/// pré-renderizado; um servidor G3 lendo pack v2 (bloco gordo) renderizaria lixo. O bump fecha essa
+/// porta no boot (`validate_manifest` exige igualdade) — packs pré-G3 são incompatíveis por construção.
+pub const STRATEGY_VERSION: u32 = 3;
 
 /// The triple that must match between the packs and the running server.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

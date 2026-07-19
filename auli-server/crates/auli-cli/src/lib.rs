@@ -80,6 +80,8 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
         collections: Arc::new(collections),
         embedder,
         anonimizador,
+        // Mesma raiz de onde os packs foram carregados — a árvore `docs/` é irmã deles.
+        docs_root: Arc::from(std::path::Path::new(&packs_dir)),
     });
 
     println!("----------------------------------------------------");
