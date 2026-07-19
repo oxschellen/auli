@@ -31,17 +31,12 @@ pub struct SinopseOpts {
     pub fake: bool,
 }
 
-/// Único ponto que compõe o `text_to_embed` de consultas (decisão §2.5 do plano). Reproduz
-/// **exatamente** o formato hoje gerado pelo `derive_pareceres` (`assunto` + `resumo` como key de
-/// busca, com fallbacks): ambos → `"{assunto}\n{resumo}"`; só um → esse; nenhum → vazio (o
-/// fallback para `numero` do derive não é alcançável aqui, pois a sinopse sempre preenche `resumo`).
-pub fn compose_text_to_embed(assunto: &str, resumo: &str) -> String {
-    match (assunto.is_empty(), resumo.is_empty()) {
-        (false, false) => format!("{assunto}\n{resumo}"),
-        (false, true) => assunto.to_string(),
-        (true, false) => resumo.to_string(),
-        (true, true) => String::new(),
-    }
+/// Único ponto que compõe o `text_to_embed` de consultas (decisão §2.5 do plano). Indexa o
+/// **título** (`numero`), a **ementa** (`assunto`) e a **sinopse** (`resumo`), nesta ordem, uma por
+/// linha — pulando os vazios. O `numero` entrou para que buscas que citam a consulta (ex.:
+/// "CONSULTA COPAT nº 0037/26") a alcancem. Mudança de fórmula: re-vetorizar os packs de pareceres.
+pub fn compose_text_to_embed(numero: &str, assunto: &str, resumo: &str) -> String {
+    [numero, assunto, resumo].into_iter().filter(|s| !s.is_empty()).collect::<Vec<_>>().join("\n")
 }
 
 /// Timestamp atual em ISO-8601 UTC (`YYYY-MM-DDTHH:MM:SSZ`), só com `std` (sem chrono — F3 não
@@ -283,6 +278,14 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
     };
     let mut merged = merge(raw.items, &prev, opts.force.as_deref())?;
 
+    // 2b. Recompõe a key de TODOS os registros com a fórmula vigente (numero + assunto + resumo) —
+    //     assim a fórmula se aplica uniformemente a reaproveitados e gerados, sem depender de como/
+    //     quando cada um foi produzido. Pendentes ficam com numero+assunto (resumo vazio), inofensivo
+    //     (o update recusa resumo vazio). Idempotente.
+    for c in &mut merged {
+        c.text_to_embed = compose_text_to_embed(&c.numero, &c.assunto, &c.resumo);
+    }
+
     // 3. Contagem (invariante dinâmico: reaproveitados + pendentes == total).
     let total = merged.len();
     let pendentes = merged.iter().filter(|c| pendente(c)).count();
@@ -349,8 +352,9 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
             (fake_resumo(&assunto), "fake".to_string(), 0)
         };
 
-        merged[i].text_to_embed = compose_text_to_embed(&assunto, &resumo);
         merged[i].resumo = resumo;
+        merged[i].text_to_embed =
+            compose_text_to_embed(&merged[i].numero, &merged[i].assunto, &merged[i].resumo);
         merged[i].sinopse_info = Some(auli_contract::SinopseInfo {
             modelo,
             prompt_versao: versao,
@@ -443,11 +447,22 @@ mod tests {
     }
 
     #[test]
-    fn compose_reproduz_formato_do_derive() {
-        assert_eq!(compose_text_to_embed("A", "R"), "A\nR");
-        assert_eq!(compose_text_to_embed("A", ""), "A");
-        assert_eq!(compose_text_to_embed("", "R"), "R");
-        assert_eq!(compose_text_to_embed("", ""), "");
+    fn compose_indexa_numero_assunto_resumo() {
+        assert_eq!(compose_text_to_embed("N", "A", "R"), "N\nA\nR");
+        assert_eq!(compose_text_to_embed("N", "A", ""), "N\nA");
+        assert_eq!(compose_text_to_embed("N", "", ""), "N");
+        assert_eq!(compose_text_to_embed("", "A", "R"), "A\nR"); // vazios pulados
+        assert_eq!(compose_text_to_embed("", "", ""), "");
+    }
+
+    #[test]
+    fn key_recomposta_inclui_numero_nos_reaproveitados() {
+        // Reaproveitado (resumo já preenchido) deve ganhar o numero na key na promoção.
+        let e = temp_entity("recompoe");
+        write_table(&e, ".raw.json", vec![consulta("PARECER Nº 9", "resumo autorado")]);
+        run(&e, SinopseOpts { dry_run: false, limit: None, force: None, fake: false }).unwrap();
+        let out = read_out(&e);
+        assert_eq!(out[0].text_to_embed, "PARECER Nº 9\nassunto de PARECER Nº 9\nresumo autorado");
     }
 
     #[test]
