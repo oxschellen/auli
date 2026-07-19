@@ -331,6 +331,66 @@ key nova está funcionando, sem gastar quota de LLM.
 | **pr**   | 2.060      | 2.060    | —                                           |
 | **sp**   | 15.605     | em lote  | rodar em batches de 1000 (§4.5.4)           |
 
+#### 4.5.8 Trabalhar com um lote em curso — e o que acontece se a máquina cair
+
+Um lote de sinopse roda por **horas** (o SP são ~15 mil documentos). Não é preciso ficar parado: dá
+para desenvolver e até rodar o pipeline de **outras** entidades em paralelo, desde que se respeite o
+que o lote está usando.
+
+##### O que o lote está usando
+
+| Recurso                                                 | Em uso pelo lote?                        | Consequência                                                    |
+| ------------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------- |
+| `target/release/auli-collections`                       | **sim** — o driver o invoca a cada batch | não pode ser substituído: o próximo batch rodaria outro binário |
+| `target/release/auli`                                   | só se houver `auli server` no ar         | livre para rebuild/execução quando o server está parado         |
+| `data/<id>/raw/<id>-pareceres.json` da entidade em lote | **sim**, reescrito a cada documento      | não ler nem regenerar essa entidade                             |
+| `data/<outra>/**`                                       | não                                      | **disjunto** — outras entidades são seguras                     |
+
+##### Regras para buildar sem derrubar o lote
+
+- **Escopar o build**: `cargo build --release -p <pacote>` produz **apenas** o binário daquele
+  pacote. As libs compartilhadas (`auli-contract`, `auli-core`) viram `.rlib` novos, mas um
+  executável já linkado é estático — o processo em execução e o arquivo no disco **não mudam**.
+- **Nunca** `cargo build --release` do workspace inteiro enquanto um lote roda: isso relinka
+  **todos** os binários, inclusive o que está em uso.
+- Testes/clippy em **perfil debug** (`cargo test -p <pacote>`) nunca encostam em `target/release/`.
+- Alternativa de risco zero, ao custo de um rebuild do zero (fastembed/ort/aws-lc, alguns minutos):
+  `CARGO_TARGET_DIR=/tmp/target-paralelo cargo build --release …`.
+
+##### Regra das entidades
+
+Os dados são **disjuntos por entidade** (`data/<id>/`). Rodar `auli update --entity rs` ou
+`scripts/build-packs.sh rs` **não toca em nada** do SP. A regra é simples: **mexa em qualquer
+entidade exceto a que está em lote**.
+
+##### Se a máquina cair no meio de um lote de sinopse
+
+**Nada a reconciliar — o passo foi desenhado para isso.**
+
+- O `sinopse` grava **atomicamente por documento** (`.tmp` + rename): tudo que já foi gerado está no
+  disco. Perde-se, no máximo, o documento em voo.
+- O driver de batches **não tem estado próprio**: ele deriva "quantos faltam" do próprio JSON. Não há
+  lock, arquivo de progresso nem transação pendente para limpar.
+- **Recuperação:** relançar o driver (ou rodar `auli-collections <id> sinopse --limit N` à mão). O
+  merge por `numero` reaproveita todos os prontos e ataca só os pendentes.
+
+Para ver onde parou:
+
+```bash
+python3 -c "import json;d=json.load(open('data/<id>/raw/<id>-pareceres.json'));i=next(v for v in d.values() if isinstance(v,list));c=sum(1 for r in i if (r.get('resumo') or '').strip());print(f'{c}/{len(i)} prontas, {len(i)-c} pendentes')"
+```
+
+##### Se cair durante `auli update` / `build-packs.sh`
+
+O pack pode ficar truncado — mas isso **não vira serviço quebrado**: a validação do manifesto no boot
+(identidade de embedding + hash de integridade) faz o server **recusar subir** em vez de responder a
+partir de um pacote corrompido. Recuperação: rodar `scripts/build-packs.sh <id>` de novo (idempotente).
+
+##### Se cair com trabalho de código não commitado
+
+O de sempre: só sobrevive o que está commitado (e, de preferência, pushado). Com um lote longo em
+paralelo, a tentação é acumular mudanças por horas — commite cedo e com frequência.
+
 ---
 
 ## 5. Subir o servidor + túnel Cloudflare
