@@ -5,12 +5,14 @@
 
 use std::fs::{self, OpenOptions};
 use std::io::Write;
+use std::path::Path;
 use std::sync::Arc;
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
+use auli_contract::{ConsultaPackPayload, mddoc, render_consulta_block};
 use auli_core::corpus::{FAQS, PARECERES, SERVICES};
 use auli_core::embed::Embedder;
-use tracing::{debug, info, trace, warn};
+use tracing::{debug, error, info, trace, warn};
 use vector_store::ReadStore;
 
 use crate::config::config;
@@ -113,10 +115,45 @@ fn render(docs: &[String], fmt: impl Fn(usize, &str) -> String) -> String {
     docs.iter().enumerate().map(|(i, doc)| fmt(i + 1, doc)).collect()
 }
 
+/// Remonta o bloco de um parecer a partir do payload leve gravado no pack (G3): lê o corpo da árvore
+/// `docs/` e delega ao contrato para montar o MESMO bloco de sempre.
+///
+/// Degradação graciosa (D1 do plano): se o corpo não puder ser lido/parseado, `error!` no log (com o
+/// `doc_path`) e o bloco sai com o `resumo` no lugar do corpo, precedido de `[corpo indisponível — ver
+/// link]`. Payload que não desserializa (não deveria passar pelo boot) cai no mesmo caminho seguro.
+/// Nunca derruba a query — o passo de rede do LLM domina, então a leitura síncrona dos k arquivos é
+/// irrelevante na latência.
+fn bloco_parecer(payload_json: &str, entity_dir: &Path) -> String {
+    let payload: ConsultaPackPayload = match serde_json::from_str(payload_json) {
+        Ok(p) => p,
+        Err(e) => {
+            error!("payload de parecer não desserializa ({e}) — pack incompatível passou pelo boot?");
+            return payload_json.to_string();
+        }
+    };
+    match ler_corpo(&entity_dir.join(&payload.doc_path)) {
+        Ok(corpo) => render_consulta_block(&payload, &corpo),
+        Err(e) => {
+            error!(doc_path = %payload.doc_path, "corpo indisponível ({e}) — degradando para o resumo");
+            let corpo = format!("[corpo indisponível — ver link]\n{}", payload.resumo);
+            render_consulta_block(&payload, &corpo)
+        }
+    }
+}
+
+/// Lê o `.md` da árvore e extrai a seção `## corpo` via o parser do contrato. Erro como `String`
+/// (só serve ao `error!` da degradação — `auli-cli` não depende de `anyhow`).
+fn ler_corpo(caminho: &Path) -> std::result::Result<String, String> {
+    let texto = std::fs::read_to_string(caminho).map_err(|e| e.to_string())?;
+    let (_header, _sinopse, corpo) = mddoc::parse_doc(&texto).map_err(|e| e.to_string())?;
+    Ok(corpo)
+}
+
 pub async fn exec_all_question(
     collections: Arc<Collections>,
     embedder: Arc<Embedder>,
     anonimizador: Arc<Anonimizador>,
+    docs_root: Arc<Path>,
     question: String,
     entity: Option<String>,
     query_type: QueryType,
@@ -191,7 +228,12 @@ pub async fn exec_all_question(
             if par_docs.is_empty() {
                 return Ok("A consulta de Pareceres ainda não está disponível para esta entidade.".to_string());
             }
-            render(&par_docs, |i, doc| format!("\n## PARECER\n{i}\n{doc}\n"))
+            // G3: cada doc recuperado é o payload LEVE (JSON, sem corpo). Remonta o bloco de sempre
+            // lendo o corpo da árvore `docs/` da entidade (`<docs_root>/<id>/<doc_path>`).
+            let entity_dir = docs_root.join(&cfg.id);
+            let blocos: Vec<String> =
+                par_docs.iter().map(|payload_json| bloco_parecer(payload_json, &entity_dir)).collect();
+            render(&blocos, |i, bloco| format!("\n## PARECER\n{i}\n{bloco}\n"))
         }
     };
 
@@ -282,10 +324,65 @@ fn log_question(
 
 #[cfg(test)]
 mod tests {
-    use super::{format_log_record, select_by_proximity, QueryType};
+    use super::{bloco_parecer, format_log_record, ler_corpo, select_by_proximity, QueryType};
+    use auli_contract::{mddoc, ConsultaPackPayload};
+    use std::path::Path;
 
     fn scored(pairs: &[(&str, f32)]) -> Vec<(String, f32)> {
         pairs.iter().map(|(d, s)| (d.to_string(), *s)).collect()
+    }
+
+    fn payload(doc_path: &str) -> String {
+        serde_json::to_string(&ConsultaPackPayload {
+            numero: "PARECER Nº 1".into(),
+            assunto: "ICMS – crédito".into(),
+            resumo: "Resumo do parecer.".into(),
+            link: "http://x/1".into(),
+            doc_path: doc_path.into(),
+        })
+        .unwrap()
+    }
+
+    #[test]
+    fn bloco_parecer_le_corpo_da_arvore_e_monta_o_bloco() {
+        let dir = std::env::temp_dir().join(format!("auli-rag-g3-ok-{}", std::process::id()));
+        let pdir = dir.join("docs/pareceres");
+        std::fs::create_dir_all(&pdir).unwrap();
+        let header = mddoc::DocHeader {
+            numero: "PARECER Nº 1".into(),
+            assunto: "ICMS – crédito".into(),
+            link: "http://x/1".into(),
+            sinopse_info: None,
+        };
+        std::fs::write(pdir.join("parecer-no-1.md"), mddoc::render_doc(&header, None, "É o corpo integral.")).unwrap();
+
+        let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir);
+        // Bloco de sempre, com o corpo lido da árvore.
+        assert_eq!(bloco, "## pergunta\nPARECER Nº 1\nICMS – crédito\n\n## resposta\nÉ o corpo integral.\nLink: http://x/1");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn bloco_parecer_degrada_para_o_resumo_quando_o_arquivo_falta() {
+        let dir = std::env::temp_dir().join(format!("auli-rag-g3-miss-{}", std::process::id()));
+        // Nada materializado: o doc_path aponta para arquivo inexistente.
+        let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir);
+        assert!(bloco.contains("[corpo indisponível — ver link]"), "bloco: {bloco}");
+        assert!(bloco.contains("Resumo do parecer."), "usa o resumo no lugar do corpo");
+        assert!(bloco.contains("Link: http://x/1"), "preserva o link");
+        // Nunca propaga erro — a query segue.
+    }
+
+    #[test]
+    fn bloco_parecer_com_payload_invalido_nao_derruba() {
+        // Pack incompatível que (hipoteticamente) passou pelo boot: não desserializa → serve cru.
+        let bloco = bloco_parecer("isto não é json", Path::new("/inexistente"));
+        assert_eq!(bloco, "isto não é json");
+    }
+
+    #[test]
+    fn ler_corpo_falha_em_arquivo_inexistente() {
+        assert!(ler_corpo(Path::new("/nao/existe/x.md")).is_err());
     }
 
     #[test]

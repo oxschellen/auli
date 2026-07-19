@@ -24,6 +24,7 @@ pub async fn question_handler(
         state.collections.clone(),
         state.embedder.clone(),
         state.anonimizador.clone(),
+        state.docs_root.clone(),
         question.clone(),
         entity,
         query_type,

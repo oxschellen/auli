@@ -182,13 +182,19 @@ impl Embeddable for Consulta {
         &self.text_to_embed
     }
 
-    /// Reproduz o bloco `## pergunta` / `## resposta` no mesmo formato dos demais kinds: `numero` +
-    /// `assunto` no `## pergunta`, corpo integral + link no `## resposta`.
+    /// G3: o pack de pareceres guarda o **payload leve** (JSON, sem o corpo) — o corpo vive na árvore
+    /// `docs/` e é lido na query. `doc_path` usa o MESMO `mddoc::slug` da materialização; nunca
+    /// recomputar com outra regra. O servidor remonta o bloco `## pergunta`/`## resposta` de sempre
+    /// via `render_consulta_block(payload, corpo)`. Os demais kinds seguem com o bloco pré-renderizado.
     fn stored_repr(&self) -> String {
-        format!(
-            "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
-            self.numero, self.assunto, self.corpo, self.link
-        )
+        let payload = ConsultaPackPayload {
+            numero: self.numero.clone(),
+            assunto: self.assunto.clone(),
+            resumo: self.resumo.clone(),
+            link: self.link.clone(),
+            doc_path: format!("docs/pareceres/{}.md", mddoc::slug(&self.numero)),
+        };
+        serde_json::to_string(&payload).expect("ConsultaPackPayload serializa sem falha (campos String)")
     }
 }
 
@@ -278,7 +284,13 @@ mod tests {
             sinopse_info: None,
         };
         assert_eq!(p.text_to_embed(), "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito.");
-        let block = p.stored_repr();
+        // G3: `stored_repr` agora é o payload LEVE (JSON, sem corpo), com `doc_path` derivado do slug.
+        let payload: ConsultaPackPayload = serde_json::from_str(&p.stored_repr()).unwrap();
+        assert_eq!(payload.numero, "PARECER Nº 25148");
+        assert_eq!(payload.doc_path, "docs/pareceres/parecer-no-25148.md");
+        assert!(!p.stored_repr().contains("É o parecer."), "o corpo NÃO pode ir para o pack (G3)");
+        // Remontado com o corpo, reproduz o bloco de sempre.
+        let block = render_consulta_block(&payload, &p.corpo);
         assert!(block.starts_with("## pergunta\nPARECER Nº 25148\nICMS – crédito fiscal na cesta básica"));
         assert!(block.contains("## resposta\nÉ o parecer."));
         assert!(block.contains("Link: https://exemplo/parecer/25148"));
@@ -327,8 +339,10 @@ mod tests {
         let c = sample_consulta();
         let p = payload_de(&c, "docs/pareceres/parecer-no-25148.md");
         assert_eq!(render_consulta_block(&p, &c.corpo), stored_repr_gordo_golden(&c));
-        // E ao que o pack grava hoje, de fato (não só ao golden).
-        assert_eq!(render_consulta_block(&p, &c.corpo), c.stored_repr());
+        // Invariante ponta-a-ponta da G3: o que o pack GRAVA (stored_repr → payload JSON), desserializado
+        // e remontado com o corpo, reproduz o bloco gordo byte a byte. É o coração da fase.
+        let do_pack: ConsultaPackPayload = serde_json::from_str(&c.stored_repr()).unwrap();
+        assert_eq!(render_consulta_block(&do_pack, &c.corpo), stored_repr_gordo_golden(&c));
     }
 
     #[test]
