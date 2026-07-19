@@ -42,6 +42,11 @@ pub fn load_all(packs_root: impl AsRef<Path>) -> Result<Collections> {
             for c in &manifest.collections {
                 hashes.insert(c.file.clone(), c.hash.clone());
             }
+            // A árvore `docs/` (fonte `.md` dos pareceres) é irmã de `packs/`. Divergir dela é tão
+            // grave quanto pack corrompido: o corpo servido ao LLM sai dali. Manifesto sem
+            // `docs_hash` (entidade sem árvore / pacote anterior) ⇒ nada a validar.
+            let docs_dir = packs_root.join(id).join("docs");
+            manifest::validate_docs_hash(&docs_dir, &manifest)?;
             println!("🔎 Manifesto de '{}' validado contra a identidade local.", id);
         } else {
             eprintln!(

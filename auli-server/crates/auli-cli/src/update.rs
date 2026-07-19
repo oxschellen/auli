@@ -24,6 +24,7 @@ use auli_core::manifest::{self, CollectionEntry, Manifest};
 use serde::de::DeserializeOwned;
 use vector_store::Writer;
 
+use crate::docs;
 use crate::error::Result;
 
 pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option<String>) -> Result<()> {
@@ -60,6 +61,21 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     }
     // notas: sem fonte struct por ora (autoradas) — ausentes até serem modeladas.
 
+    // Árvore `docs/pareceres/*.md` — um arquivo por consulta, DERIVADA do JSON nesta fase (G2): o
+    // pack segue gordo e o servidor, inalterado. O `docs_hash` no manifesto amarra a árvore ao
+    // pacote, e o boot recusa servir se ela divergir. `docs/` é irmão de `packs/` em `data/<id>/`.
+    let docs_dir = out
+        .parent()
+        .ok_or_else(|| format!("diretório de packs sem pai: {}", out.display()))?
+        .join("docs");
+    let docs_hash = match docs::materializar_pareceres(&entity, &source, &docs_dir)? {
+        Some(n) => {
+            println!("📄 docs: {n} pareceres materializados em {}", docs_dir.join("pareceres").display());
+            manifest::hash_docs_tree(&docs_dir)?
+        }
+        None => None, // entidade sem pareceres — sem árvore, sem hash
+    };
+
     let manifest = Manifest {
         entity: entity.clone(),
         version: version.unwrap_or_else(|| "1".to_string()),
@@ -68,6 +84,7 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
         embed_dim: EMBED_DIM,
         strategy_version: manifest::STRATEGY_VERSION,
         collections: entries,
+        docs_hash,
     };
     let mpath = manifest::manifest_path(&out, &entity);
     manifest::write_manifest(&mpath, &manifest)?;
