@@ -1,4 +1,4 @@
-# Auli — Operação (compilar, subir, cloudflared, logs)
+# Auli — Operação (compilar, subir, cloudflared, logs, publicar o frontend)
 
 Runbook prático para **compilar, gerar os dados e subir o servidor da Auli** (workspace `auli-server`,
 modo `server`) com o túnel do **Cloudflare** (cloudflared), e para saber **onde ficam os logs**. Para a descrição
@@ -608,4 +608,80 @@ Defesa em camadas: a regra do Cloudflare é a barreira de borda; o limitador int
 tail -f /tmp/auli-cloudflared.log                 # túnel: deve logar "Registered tunnel connection"
 curl -s https://api.auli.com.br/v1/health         # 200 via Cloudflare
 # dispare > limite no /v1/question e espere 429 (vinda do Cloudflare; veja em Security -> Events)
+```
+
+---
+
+## 11. Publicar o frontend
+
+O frontend é **estático e independente do servidor da API**: build Vite servido por Apache no VPS,
+com Cloudflare na frente. Não fala com nada em build time — as abas de conteúdo leem arquivos do
+próprio origin (`/<id>/<id>-<arquivo>`), e só o chat chama a API.
+
+O dado percorre três estágios até a tela:
+
+```text
+data/<id>/{raw,ref}/   →   auli-frontend/public/<id>/   →   auli-frontend/dist/   →   /var/www/html/
+      (fonte)           build-frontend-public.sh        npm run build          deploy-frontend.sh
+```
+
+**Um comando faz os três:**
+
+```bash
+scripts/deploy-frontend.sh --dry-run     # roda a parte local inteira; imprime os comandos remotos
+scripts/deploy-frontend.sh               # publica
+```
+
+Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SMOKE_BASE`); os
+padrões apontam para o VPS de produção. Ver o cabeçalho do script.
+
+### 11.1 A guarda de entidade vazia
+
+`build-frontend-public.sh` faz `rm -rf` + `mkdir` por entidade. Entidade que está no
+`data/registry.toml` mas **não tem `data/<id>/` nesta máquina** produz um `public/<id>/` **vazio** —
+e o único sinal é um `(0 arquivos)` no meio do log.
+
+Isso não é hipotético: **Roraima está assim em produção**. Ela aparece no seletor de estados
+(`src/shared/entities.ts` declara `rr` com `collections: ["servicos"]`) e a aba de Serviços falha —
+o Apache devolve o `index.html` do SPA para o JSON que não existe, e o `jsonFetcher` trata HTML como
+erro de carga.
+
+O deploy **aborta** nesse caso. As duas saídas:
+
+- recuperar/coletar o `data/<id>/` e rodar de novo; ou
+- tirar a entidade do `data/registry.toml` e rodar `node scripts/gen-frontend-entities.mjs`
+  (o `entities.ts` é **gerado** do registry — não edite à mão).
+
+`--allow-vazias` publica mesmo assim, ciente do que quebra.
+
+### 11.2 Troca atômica e rollback
+
+O upload vai para `<webroot>.novo` e a publicação é um `mv`. Motivo: esvaziar o webroot durante um
+upload de ~50 MB não só derruba o site como deixa um `index.html` em cache apontando para um bundle
+`assets/*.js` que acabou de ser apagado — app branca até o cache expirar.
+
+A versão anterior fica em `<webroot>.antigo`. Rollback:
+
+```bash
+ssh -p 22 root@<host> "rm -rf /var/www/html.novo && mv /var/www/html /var/www/html.novo && mv /var/www/html.antigo /var/www/html"
+```
+
+> ⚠️ **Dotfiles do webroot não vêm do `dist/`.** O `.htaccess` (roteamento do SPA: qualquer caminho
+> inexistente cai no `index.html`) é configuração do servidor. A sequência manual antiga o preservava
+> por acidente — `rm -rf /var/www/html/*` não casa dotfile. O script copia esses arquivos para o
+> staging **de propósito**, antes da troca. Se mexer nessa parte, confira com
+> `ssh … 'ls -la /var/www/html/'` que nada de configuração ficou para trás.
+
+### 11.3 Smoke test
+
+Roda sozinho no fim; **se falhar, reverte**. Verifica `/`, os dois índices JSON do RS e — o caso mais
+traiçoeiro — que o bundle `/assets/*.js` referenciado pelo `index.html` recém-publicado existe de
+fato. "O site responde 200" não pega dessincronia entre `index.html` e `assets/`.
+
+Manualmente, o teste que distingue arquivo servido de fallback do SPA é o **content-type**:
+
+```bash
+curl -sk -o /dev/null -w '%{http_code} %{content_type}\n' https://<host>/rs/rs-pareceres-index.json
+# 200 application/json  → ok
+# 200 text/html         → o arquivo NÃO existe; é o index.html do fallback
 ```
