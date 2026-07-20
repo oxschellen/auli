@@ -61,12 +61,28 @@ pub fn mcp_routes(state: Arc<AppState>) -> Router {
     let service = StreamableHttpService::new(
         move || Ok(crate::mcp::AuliMcp::new(engine.clone())),
         LocalSessionManager::default().into(),
-        StreamableHttpServerConfig::default(),
+        StreamableHttpServerConfig::default().with_allowed_hosts(MCP_ALLOWED_HOSTS),
     );
     Router::new()
         .nest_service("/mcp", service)
         .layer(middleware::from_fn_with_state(ratelimit::mcp_rate_limiter(), ratelimit::rate_limit))
 }
+
+/// Hosts aceitos no header `Host` do `/mcp` — guarda de **DNS rebinding** do rmcp.
+///
+/// O default do `StreamableHttpServerConfig` é só loopback (`localhost`/`127.0.0.1`/`::1`), pensado
+/// para servidores MCP rodando na máquina do usuário: qualquer outro `Host` é recusado com
+/// *"rejected request with disallowed Host header"*. Atrás do tunnel o header chega como
+/// `api.auli.com.br`, então **a lista precisa incluir o hostname público** ou o endpoint só
+/// funciona em localhost.
+///
+/// Mantém o loopback: é o que o `scripts/mcp-smoke.sh` e o `claude mcp add ... localhost:3000` usam.
+/// Entrada sem porta casa com qualquer porta (o smoke roda em portas alternativas).
+///
+/// Hardcoded como as origens do CORS logo abaixo — mesma natureza (a identidade pública do
+/// serviço) e mesmo lugar para editar ao trocar de domínio.
+const MCP_ALLOWED_HOSTS: [&str; 5] =
+    ["localhost", "127.0.0.1", "::1", "api.auli.com.br", "auli.com.br"];
 
 // Rota de listagem de dados (somente leitura), genérica por `{kind}`. Pública.
 // A ingestão NÃO é uma rota — é o `auli update`.
@@ -96,4 +112,29 @@ pub fn cors_routes() -> CorsLayer {
         .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
         .allow_headers([header::CONTENT_TYPE])
         .allow_credentials(true)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::MCP_ALLOWED_HOSTS;
+
+    /// Regressão: o `/mcp` atrás do tunnel recebe `Host: api.auli.com.br`, e o default do rmcp
+    /// (só loopback, guarda de DNS rebinding) o recusa. O smoke de protocolo NÃO pega isso —
+    /// roda em localhost, que o default já permite. Este teste é o que sobra para pegar.
+    #[test]
+    fn mcp_allowed_hosts_inclui_o_hostname_publico() {
+        assert!(
+            MCP_ALLOWED_HOSTS.contains(&"api.auli.com.br"),
+            "sem o hostname público, o /mcp só funciona em localhost: {MCP_ALLOWED_HOSTS:?}"
+        );
+    }
+
+    /// E o loopback tem que continuar valendo: é o que o `mcp-smoke.sh` e o
+    /// `claude mcp add --transport http auli-local http://localhost:3000/mcp` usam.
+    #[test]
+    fn mcp_allowed_hosts_mantem_o_loopback() {
+        for h in ["localhost", "127.0.0.1", "::1"] {
+            assert!(MCP_ALLOWED_HOSTS.contains(&h), "loopback '{h}' saiu da lista");
+        }
+    }
 }

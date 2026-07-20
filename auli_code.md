@@ -320,8 +320,18 @@ Detalhes que o código explicita:
   `new()` monta uma vez só.
 - **`Implementation::new("auli", …)`**, não `from_build_env()`: o `env!` daquele helper expande no
   build do **RMCP**, e o servidor se anunciaria como `"rmcp" 2.2.0` ao assistente.
+- **`allowed_hosts` precisa do hostname público.** O `StreamableHttpServerConfig::default()` só
+  aceita **loopback** (guarda de DNS rebinding, pensada para MCP rodando na máquina do usuário);
+  atrás do tunnel o `Host` chega como `api.auli.com.br` e é recusado com _"rejected request with
+  disallowed Host header"_. Daí a constante `MCP_ALLOWED_HOSTS` em `api/mod.rs`, que **amplia** a
+  lista sem desligar a guarda (host desconhecido segue tomando 403).
 - **Privacidade (D-MCP-5):** a pergunta é embedada localmente e nunca sai do processo; o tracing
   registra `uf`/`top_k`/`hits`, nunca o texto.
+
+> ⚠️ O smoke de protocolo roda em **localhost**, que o default do rmcp já permite — então ele
+> **não pega** uma `allowed_hosts` mal configurada. Foi assim que o problema chegou à
+> produção. O que cobre isso é o teste `mcp_allowed_hosts_inclui_o_hostname_publico` (`api/mod.rs`)
+> e, no runbook, o smoke apontado para a **URL pública** ([auli_operations.md](auli_operations.md) §12.1).
 
 Smoke de protocolo: [`scripts/mcp-smoke.sh`](scripts/mcp-smoke.sh) (initialize → initialized →
 tools/list → tools/call). Conexão de clientes: [auli_operations.md](auli_operations.md) §12.
