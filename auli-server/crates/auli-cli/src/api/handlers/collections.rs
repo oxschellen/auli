@@ -38,7 +38,7 @@ pub async fn list_handler(
     };
 
     let collection_name = cfg.collection(collection.kind);
-    let docs = match state.collections.get(&collection_name) {
+    let docs = match state.engine.store(&collection_name) {
         Some(store) => store.list(),
         None => {
             return Json(json!({ "status": "Erro", "message": format!("Coleção '{}' não carregada", collection_name) }))

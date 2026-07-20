@@ -189,6 +189,7 @@ dependencies = [
  "auli-contract",
  "auli-core",
  "auli-llm",
+ "auli-retrieval",
  "axum",
  "chrono",
  "clap",

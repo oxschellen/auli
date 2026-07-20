@@ -21,10 +21,8 @@ pub async fn question_handler(
     // A anonimização (pergunta → LLM/log) e a restauração da resposta vivem em `exec_all_question`,
     // onde o `mapping` fica no escopo da requisição. O handler devolve a pergunta ORIGINAL ao front.
     let answer = exec_all_question(
-        state.collections.clone(),
-        state.embedder.clone(),
+        state.engine.clone(),
         state.anonimizador.clone(),
-        state.docs_root.clone(),
         question.clone(),
         entity,
         query_type,

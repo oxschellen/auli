@@ -60,9 +60,17 @@ o `axum 0.8.9` que o `auli-cli` já usa. O padrão de código abaixo segue o exe
   `parecer_por_numero()`, `ler_corpo()`, `decode_parecer()`, `select_by_proximity()` — e os
   métodos do `Engine` são delegações de uma linha. Testes unitários usam as funções livres com
   vetores sintéticos e `ReadStore::from_records`, sem nunca construir um `Embedder`. Testes que
-  PRECISAM do modelo seguem a convenção JÁ existente do workspace (`embed.rs`): rodam no
-  `cargo test` normal, com `EMBED_CACHE_DIR` defaultando para `../models`. O workspace não usa
-  `#[ignore]` hoje e esta TAREFA deliberadamente não introduz essa convenção.
+  PRECISAM do modelo seguem a convenção JÁ existente do workspace: `#[ignore = "<motivo>"]` com
+  motivo explícito, rodando sob `cargo test -- --ignored` e com `EMBED_CACHE_DIR` apontando para
+  os modelos. Quatro ocorrências hoje — `auli-core/src/embed.rs:83,115`
+  ("carrega o modelo BGE-M3 (lento); rode com --ignored"),
+  `auli-cli/tests/packs_smoke.rs:22` e `auli-collections/src/servicos/mod.rs:215`.
+
+  > **Correção (revisão Claude Code, 2026-07-20).** Uma versão anterior desta decisão afirmava
+  > que "o workspace não usa `#[ignore]`". **Está errado** — a afirmação veio de um `grep` meu
+  > por `#\[ignore\]` literal, que não casa com a forma `#[ignore = "motivo"]` efetivamente usada.
+  > O rascunho original da TAREFA estava certo ao invocar essa convenção; a revisão é que a negou.
+  > Vale a convenção existente, com a única correção de que o motivo é obrigatório.
 - **D-MCP-5 — Privacidade nas faces novas.** `/v1/retrieve` e as ferramentas MCP **não chamam LLM
   externo**: a pergunta é embedada localmente e nunca sai do processo. Por isso **não** passam pelo
   anonimizador, e o log dessas rotas grava **apenas metadados** (entidade, kind, top_k, nº de hits,
@@ -793,12 +801,13 @@ Em `auli-cli/tests/retrieve_api.rs`:
 //!
 //! Os testes de contrato de erro (entidade/kind inválidos) não precisam de modelo: validação
 //! pura, antes do embedder. O teste feliz carrega o BGE-M3 e segue a convenção do workspace
-//! (`embed.rs`): roda no `cargo test` normal, com EMBED_CACHE_DIR defaultando para ../models.
+//! (D-MCP-4): `#[ignore = "carrega o modelo BGE-M3 (lento); rode com --ignored"]`, executado
+//! com `cargo test -- --ignored` e EMBED_CACHE_DIR apontando para os modelos.
 
 // 1) kind desconhecido → 400 com "Tipo de coleção desconhecido"
 //    (montar AppState de teste; ver nota abaixo sobre o embedder)
 // 2) entidade desconhecida → 404 com "Entidade desconhecida"
-// 3) fluxo feliz (carrega o modelo — convenção embed.rs): AppState real com um pack sintético mínimo gravado via
+// 3) fluxo feliz (#[ignore], carrega o modelo — convenção D-MCP-4): AppState real com um pack sintético mínimo gravado via
 //    vector_store::Writer num temp dir + EMBED_CACHE_DIR; POST question="crédito de energia",
 //    kind="pareceres" → 200, `pareceres` não-vazio, score presente, corpo AUSENTE no JSON.
 //
@@ -813,8 +822,9 @@ Em `auli-cli/tests/retrieve_api.rs`:
 Testes de serialização dos DTOs (em `dto.rs`): `RetrieveRequest` sem `kind` desserializa com
 `None`; `RetrieveResponse` serializa os DOIS vetores mesmo vazios (sem `skip_serializing_if`).
 
-**Verificação do G3:** `cargo test -p auli-cli` verde (inclui o fluxo feliz com modelo — não há
-`--ignored` neste workspace, ver D-MCP-4); e o smoke manual:
+**Verificação do G3:** `cargo test -p auli-cli` verde; na máquina com os modelos,
+`EMBED_CACHE_DIR=../../../models cargo test -p auli-cli -- --ignored` verde (fluxo feliz, D-MCP-4);
+e o smoke manual:
 
 ```bash
 curl -s localhost:3000/v1/retrieve -H 'Content-Type: application/json' \
@@ -1100,11 +1110,12 @@ Boot (`run_server`): acrescentar um print na sequência dos existentes:
 Em `mcp.rs`, `mod tests`:
 
 ```rust
-// Nota de setup: os testes 1–2 exercitam a LÓGICA via funções livres do motor (sem Engine).
-// Os testes 3–4 chamam os métodos do AuliMcp, que exige um Engine real (com Embedder): seguir a
-// convenção do workspace (embed.rs) — o modelo carrega no cargo test, EMBED_CACHE_DIR
-// defaultando para ../models — com um helper `fn engine_de_teste() -> &'static Arc<Engine>`
-// usando std::sync::OnceLock para pagar o load UMA vez no binário de teste.
+// Nota de setup: os testes 1–2 exercitam a LÓGICA via funções livres do motor (sem Engine) e
+// rodam no `cargo test` normal. O teste 4 chama métodos do AuliMcp, que exige Engine real (com
+// Embedder): `#[ignore = "carrega o modelo BGE-M3 (lento); rode com --ignored"]` (D-MCP-4), com
+// um helper `fn engine_de_teste() -> &'static Arc<Engine>` usando std::sync::OnceLock para pagar
+// o load UMA vez no binário de teste. O teste 3 NÃO precisa de modelo: a guarda roda antes do
+// embed (ver abaixo), então ele fica sem #[ignore] — é o ganho concreto de ter movido a guarda.
 //
 // 1) lógica de listar_entidades: `entidades_com` + contagem com Collections sintéticas —
 //    UFs não-vazias ordenadas; store vazio não aparece. (função livre; sem Engine)
@@ -1114,7 +1125,7 @@ Em `mcp.rs`, `mod tests`:
 //    Cobrir os DOIS casos que a guarda unifica (revisão, blocker 1): UF fora do registro E UF
 //    registrada com store de pareceres VAZIO — o segundo é o que `store().is_some()` deixaria
 //    passar. A guarda roda antes do embed, então o teste não faz busca nenhuma.
-// 4) fluxo feliz de buscar_pareceres com pack sintético (convenção embed.rs, engine_de_teste).
+// 4) fluxo feliz de buscar_pareceres com pack sintético (#[ignore], engine_de_teste; D-MCP-4).
 ```
 
 **Smoke manual do protocolo** — novo `scripts/mcp-smoke.sh` (colocar no repo):

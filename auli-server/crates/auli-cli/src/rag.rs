@@ -9,17 +9,15 @@ use std::path::Path;
 use std::sync::Arc;
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
-use auli_contract::{ConsultaPackPayload, mddoc, render_consulta_block};
+use auli_contract::{ConsultaPackPayload, render_consulta_block};
 use auli_core::corpus::{FAQS, PARECERES, SERVICES};
-use auli_core::embed::Embedder;
+use auli_retrieval::Engine;
 use tracing::{debug, error, info, trace, warn};
-use vector_store::ReadStore;
 
 use crate::config::config;
 use crate::entities::get_entity;
 use crate::error::Result;
 use crate::llm;
-use crate::packs::Collections;
 use crate::util::run_blocking;
 
 // Per-kind adaptive selection. `score` is a cosine DISTANCE — lower is closer. `floor` is the
@@ -65,54 +63,53 @@ impl QueryType {
     }
 }
 
-/// Keep the top `floor` docs always; beyond that, keep docs within `band` of the best score.
-/// Stops early once a doc falls outside the band, since everything after it is farther still.
-///
-/// CONTRACT: `scored` MUST be sorted by ascending score (best/closest first). The early `break`
-/// relies on that monotonicity — on unsorted input it silently drops in-band docs. `query_scored`
-/// guarantees the order; the `debug_assert!` catches any future caller that doesn't.
-fn select_by_proximity(scored: Vec<(String, f32)>, floor: usize, band: f32) -> Vec<String> {
-    debug_assert!(
-        scored.windows(2).all(|w| w[0].1 <= w[1].1),
-        "select_by_proximity requires input sorted by ascending score (best-first)"
-    );
-    let Some(&(_, best)) = scored.first() else {
-        return vec![];
-    };
-    let mut out = Vec::new();
-    for (i, (doc, score)) in scored.into_iter().enumerate() {
-        if i < floor || (score - best) <= band {
-            out.push(doc);
-        } else {
-            break;
-        }
-    }
-    out
-}
-
-/// Retrieve + narrow one collection. The collection may be absent (an entity that doesn't carry
-/// this kind) — then we contribute nothing. The (CPU-bound) scan runs on a blocking worker thread.
+/// Retrieve + narrow one collection, delegating to the engine. The collection may be absent (an
+/// entity not in the registry) — then we contribute nothing, preserving the chat's tolerant
+/// semantics: never fail the question over a missing collection. The (CPU-bound) scan runs on a
+/// blocking worker thread. Note the engine's score array is logged by `search_embedded` itself,
+/// keyed by collection name rather than by `label`.
 async fn retrieve(
-    store: Option<Arc<ReadStore<String>>>,
+    engine: Arc<Engine>,
+    collection: String,
     label: &'static str,
     embedding: Vec<f32>,
     n_results: usize,
     floor: usize,
     band: f32,
 ) -> Result<Vec<String>> {
-    let Some(store) = store else {
-        warn!("coleção '{label}' ausente para esta entidade — ignorando");
-        return Ok(vec![]);
-    };
-    let scored = run_blocking(move || Ok(store.query_scored(&embedding, n_results))).await?;
-    // Score array — calibrate the per-kind band against real questions.
-    debug!("{label} scores: {:?}", scored.iter().map(|(_, s)| *s).collect::<Vec<_>>());
-    Ok(select_by_proximity(scored, floor, band))
+    run_blocking(move || {
+        match engine.search_embedded(&collection, &embedding, n_results, floor, band) {
+            Ok(hits) => Ok(hits.into_iter().map(|h| h.payload).collect()),
+            Err(auli_retrieval::Error::ColecaoAusente(_)) => {
+                warn!("coleção '{label}' ausente para esta entidade — ignorando");
+                Ok(vec![])
+            }
+            Err(e) => Err(e.to_string().into()),
+        }
+    })
+    .await
 }
 
 /// Render retrieved docs into the RAG context block, one entry per doc (1-based index).
 fn render(docs: &[String], fmt: impl Fn(usize, &str) -> String) -> String {
     docs.iter().enumerate().map(|(i, doc)| fmt(i + 1, doc)).collect()
+}
+
+// Montagem do contexto RAG — funções PURAS (sem I/O, sem Engine), extraídas do
+// `exec_all_question` no G2 para que a paridade do formato tenha trava automatizada. Recebem
+// documentos JÁ PRONTOS para renderizar: para pareceres, os blocos já montados por
+// `bloco_parecer` (que é quem lê a árvore `docs/`). Ver o item 8 do G2 na TAREFA-MCP.
+
+/// Contexto do tipo `ServicosFaqs`: serviços numerados + FAQs numeradas, nesta ordem.
+fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String]) -> String {
+    let rag_service = render(svc_docs, |i, doc| format!("\n## servico\n{i}\n{doc}\n"));
+    let rag_faq = render(faq_docs, |i, doc| format!("\n// Resultado: {i}\n{doc}\n"));
+    format!("{}\n{}", rag_service, rag_faq)
+}
+
+/// Contexto do tipo `Pareceres`: um bloco numerado por parecer.
+fn montar_rag_pareceres(blocos: &[String]) -> String {
+    render(blocos, |i, bloco| format!("\n## PARECER\n{i}\n{bloco}\n"))
 }
 
 /// Remonta o bloco de um parecer a partir do payload leve gravado no pack (G3): lê o corpo da árvore
@@ -123,7 +120,10 @@ fn render(docs: &[String], fmt: impl Fn(usize, &str) -> String) -> String {
 /// link]`. Payload que não desserializa (não deveria passar pelo boot) cai no mesmo caminho seguro.
 /// Nunca derruba a query — o passo de rede do LLM domina, então a leitura síncrona dos k arquivos é
 /// irrelevante na latência.
-fn bloco_parecer(payload_json: &str, entity_dir: &Path) -> String {
+/// Lê o corpo via a função livre do motor (`auli_retrieval::ler_corpo`), e não pelo método do
+/// `Engine`, de propósito: assim esta função continua testável com um diretório temporário, sem
+/// construir um `Engine` (que carregaria o BGE-M3). O `Engine` só fornece a raiz — `docs_root()`.
+fn bloco_parecer(payload_json: &str, docs_root: &Path, entity_id: &str) -> String {
     let payload: ConsultaPackPayload = match serde_json::from_str(payload_json) {
         Ok(p) => p,
         Err(e) => {
@@ -131,7 +131,7 @@ fn bloco_parecer(payload_json: &str, entity_dir: &Path) -> String {
             return payload_json.to_string();
         }
     };
-    match ler_corpo(&entity_dir.join(&payload.doc_path)) {
+    match auli_retrieval::ler_corpo(docs_root, entity_id, &payload.doc_path) {
         Ok(corpo) => render_consulta_block(&payload, &corpo),
         Err(e) => {
             error!(doc_path = %payload.doc_path, "corpo indisponível ({e}) — degradando para o resumo");
@@ -141,19 +141,9 @@ fn bloco_parecer(payload_json: &str, entity_dir: &Path) -> String {
     }
 }
 
-/// Lê o `.md` da árvore e extrai a seção `## corpo` via o parser do contrato. Erro como `String`
-/// (só serve ao `error!` da degradação — `auli-cli` não depende de `anyhow`).
-fn ler_corpo(caminho: &Path) -> std::result::Result<String, String> {
-    let texto = std::fs::read_to_string(caminho).map_err(|e| e.to_string())?;
-    let (_header, _sinopse, corpo) = mddoc::parse_doc(&texto).map_err(|e| e.to_string())?;
-    Ok(corpo)
-}
-
 pub async fn exec_all_question(
-    collections: Arc<Collections>,
-    embedder: Arc<Embedder>,
+    engine: Arc<Engine>,
     anonimizador: Arc<Anonimizador>,
-    docs_root: Arc<Path>,
     question: String,
     entity: Option<String>,
     query_type: QueryType,
@@ -190,37 +180,50 @@ pub async fn exec_all_question(
 
     // Embed the question once (off the async worker thread), reuse for both retrievals.
     let embedding = {
-        let e = embedder.clone();
-        let q = vec![question.clone()];
-        run_blocking(move || e.embed_dense(q).map_err(Into::into))
-            .await?
-            .into_iter()
-            .next()
-            .ok_or("Não foi possível gerar embedding para a pergunta.")?
+        let e = engine.clone();
+        let q = question.clone();
+        run_blocking(move || e.embed(&q).map_err(|err| err.to_string().into())).await?
     };
 
     // Assemble the RAG context for the requested query type. The system-prompt/LLM/log tail below is
     // shared across types (the entity prompt is reused for every type).
     let rag = match query_type {
         QueryType::ServicosFaqs => {
-            // Look up this entity's servicos + faqs stores and retrieve concurrently.
-            let svc_store = collections.get(&cfg.collection(SERVICES.kind)).cloned();
-            let faq_store = collections.get(&cfg.collection(FAQS.kind)).cloned();
-
-            let svc_fut = retrieve(svc_store, "svc", embedding.clone(), SERVICES.n_results, SVC_FLOOR, SVC_BAND);
-            let faq_fut = retrieve(faq_store, "faq", embedding, FAQS.n_results, FAQ_FLOOR, FAQ_BAND);
+            // Retrieve this entity's servicos + faqs concurrently, both through the engine.
+            let svc_fut = retrieve(
+                engine.clone(),
+                cfg.collection(SERVICES.kind),
+                "svc",
+                embedding.clone(),
+                SERVICES.n_results,
+                SVC_FLOOR,
+                SVC_BAND,
+            );
+            let faq_fut = retrieve(
+                engine.clone(),
+                cfg.collection(FAQS.kind),
+                "faq",
+                embedding,
+                FAQS.n_results,
+                FAQ_FLOOR,
+                FAQ_BAND,
+            );
             let (svc_docs, faq_docs) = tokio::try_join!(svc_fut, faq_fut)?;
             info!("Foram selecionados {} serviços e {} faqs", svc_docs.len(), faq_docs.len());
 
-            // Assemble RAG context (formatting preserved from the original pipeline).
-            let rag_service = render(&svc_docs, |i, doc| format!("\n## servico\n{i}\n{doc}\n"));
-            let rag_faq = render(&faq_docs, |i, doc| format!("\n// Resultado: {i}\n{doc}\n"));
-            format!("{}\n{}", rag_service, rag_faq)
+            montar_rag_servicos_faqs(&svc_docs, &faq_docs)
         }
         QueryType::Pareceres => {
-            let par_store = collections.get(&cfg.collection(PARECERES.kind)).cloned();
-            let par_docs =
-                retrieve(par_store, "par", embedding, PARECERES.n_results, PAR_FLOOR, PAR_BAND).await?;
+            let par_docs = retrieve(
+                engine.clone(),
+                cfg.collection(PARECERES.kind),
+                "par",
+                embedding,
+                PARECERES.n_results,
+                PAR_FLOOR,
+                PAR_BAND,
+            )
+            .await?;
             info!("Foram selecionados {} pareceres", par_docs.len());
 
             // No pareceres vectorized for this entity yet — answer with a friendly notice instead of
@@ -230,10 +233,11 @@ pub async fn exec_all_question(
             }
             // G3: cada doc recuperado é o payload LEVE (JSON, sem corpo). Remonta o bloco de sempre
             // lendo o corpo da árvore `docs/` da entidade (`<docs_root>/<id>/<doc_path>`).
-            let entity_dir = docs_root.join(&cfg.id);
-            let blocos: Vec<String> =
-                par_docs.iter().map(|payload_json| bloco_parecer(payload_json, &entity_dir)).collect();
-            render(&blocos, |i, bloco| format!("\n## PARECER\n{i}\n{bloco}\n"))
+            let blocos: Vec<String> = par_docs
+                .iter()
+                .map(|payload_json| bloco_parecer(payload_json, engine.docs_root(), &cfg.id))
+                .collect();
+            montar_rag_pareceres(&blocos)
         }
     };
 
@@ -324,13 +328,11 @@ fn log_question(
 
 #[cfg(test)]
 mod tests {
-    use super::{bloco_parecer, format_log_record, ler_corpo, select_by_proximity, QueryType};
+    use super::{
+        bloco_parecer, format_log_record, montar_rag_pareceres, montar_rag_servicos_faqs, QueryType,
+    };
     use auli_contract::{mddoc, ConsultaPackPayload};
     use std::path::Path;
-
-    fn scored(pairs: &[(&str, f32)]) -> Vec<(String, f32)> {
-        pairs.iter().map(|(d, s)| (d.to_string(), *s)).collect()
-    }
 
     fn payload(doc_path: &str) -> String {
         serde_json::to_string(&ConsultaPackPayload {
@@ -345,8 +347,10 @@ mod tests {
 
     #[test]
     fn bloco_parecer_le_corpo_da_arvore_e_monta_o_bloco() {
+        // A raiz agora é `<docs_root>/<entity_id>/<doc_path>` (o motor resolve o `<id>`), então a
+        // árvore do teste ganha o nível da entidade.
         let dir = std::env::temp_dir().join(format!("auli-rag-g3-ok-{}", std::process::id()));
-        let pdir = dir.join("docs/pareceres");
+        let pdir = dir.join("sc").join("docs/pareceres");
         std::fs::create_dir_all(&pdir).unwrap();
         let header = mddoc::DocHeader {
             numero: "PARECER Nº 1".into(),
@@ -356,7 +360,7 @@ mod tests {
         };
         std::fs::write(pdir.join("parecer-no-1.md"), mddoc::render_doc(&header, None, "É o corpo integral.")).unwrap();
 
-        let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir);
+        let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir, "sc");
         // Bloco de sempre, com o corpo lido da árvore.
         assert_eq!(bloco, "## pergunta\nPARECER Nº 1\nICMS – crédito\n\n## resposta\nÉ o corpo integral.\nLink: http://x/1");
         let _ = std::fs::remove_dir_all(&dir);
@@ -366,7 +370,7 @@ mod tests {
     fn bloco_parecer_degrada_para_o_resumo_quando_o_arquivo_falta() {
         let dir = std::env::temp_dir().join(format!("auli-rag-g3-miss-{}", std::process::id()));
         // Nada materializado: o doc_path aponta para arquivo inexistente.
-        let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir);
+        let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir, "sc");
         assert!(bloco.contains("[corpo indisponível — ver link]"), "bloco: {bloco}");
         assert!(bloco.contains("Resumo do parecer."), "usa o resumo no lugar do corpo");
         assert!(bloco.contains("Link: http://x/1"), "preserva o link");
@@ -376,14 +380,14 @@ mod tests {
     #[test]
     fn bloco_parecer_com_payload_invalido_nao_derruba() {
         // Pack incompatível que (hipoteticamente) passou pelo boot: não desserializa → serve cru.
-        let bloco = bloco_parecer("isto não é json", Path::new("/inexistente"));
+        let bloco = bloco_parecer("isto não é json", Path::new("/inexistente"), "sc");
         assert_eq!(bloco, "isto não é json");
     }
 
-    #[test]
-    fn ler_corpo_falha_em_arquivo_inexistente() {
-        assert!(ler_corpo(Path::new("/nao/existe/x.md")).is_err());
-    }
+    // NOTA: `ler_corpo_falha_em_arquivo_inexistente` e a bateria de `select_by_proximity`
+    // (empty_input, default_band, finite_band, floor_overrides_band, band_zero) migraram para o
+    // `auli-retrieval` no G1, junto com o código que testam. Não foram enfraquecidos nem
+    // duplicados aqui.
 
     #[test]
     fn query_type_label_is_stable() {
@@ -428,33 +432,41 @@ mod tests {
         assert_eq!(QueryType::from_code(Some(9)), QueryType::ServicosFaqs);
     }
 
+    // ---- Trava de paridade do formato do contexto RAG (item 8 do G2) ----
+    //
+    // Estes dois testes pinam BYTE A BYTE a string que vai ao prompt do LLM e ao log de auditoria.
+    // São a razão de `montar_rag_*` existir: o G2 reescreve o caminho vivo do chat e, sem eles, a
+    // única verificação de paridade seria o diff manual de log. Se um destes asserts falhar num
+    // refactor futuro, o contexto do RAG mudou — o que muda a resposta do modelo.
+
     #[test]
-    fn empty_input_yields_nothing() {
-        assert!(select_by_proximity(vec![], 0, f32::INFINITY).is_empty());
+    fn montar_rag_servicos_faqs_pina_o_formato() {
+        let svc = vec!["SERVICO A".to_string(), "SERVICO B".to_string()];
+        let faq = vec!["FAQ X".to_string()];
+        assert_eq!(
+            montar_rag_servicos_faqs(&svc, &faq),
+            "\n## servico\n1\nSERVICO A\n\n## servico\n2\nSERVICO B\n\n\n// Resultado: 1\nFAQ X\n"
+        );
     }
 
     #[test]
-    fn default_band_keeps_everything() {
-        let docs = scored(&[("a", 0.0), ("b", 0.3), ("c", 1.7)]);
-        assert_eq!(select_by_proximity(docs, 0, f32::INFINITY), vec!["a", "b", "c"]);
+    fn montar_rag_servicos_faqs_com_listas_vazias() {
+        // Caso real: entidade sem faqs. O separador `\n` entre os dois blocos permanece — é o que
+        // o formato sempre produziu, e mudá-lo mudaria o prompt.
+        assert_eq!(montar_rag_servicos_faqs(&[], &[]), "\n");
+        assert_eq!(
+            montar_rag_servicos_faqs(&["SO SERVICO".to_string()], &[]),
+            "\n## servico\n1\nSO SERVICO\n\n"
+        );
     }
 
     #[test]
-    fn finite_band_narrows_to_proximity_of_best() {
-        let docs = scored(&[("a", 0.10), ("b", 0.12), ("c", 0.90)]);
-        assert_eq!(select_by_proximity(docs, 0, 0.05), vec!["a", "b"]);
-    }
-
-    #[test]
-    fn floor_overrides_band() {
-        let docs = scored(&[("a", 0.10), ("b", 0.12), ("c", 0.90)]);
-        assert_eq!(select_by_proximity(docs.clone(), 3, 0.05), vec!["a", "b", "c"]);
-        assert_eq!(select_by_proximity(docs, 10, 0.05).len(), 3);
-    }
-
-    #[test]
-    fn band_zero_keeps_only_ties_with_best() {
-        let docs = scored(&[("a", 0.20), ("b", 0.20), ("c", 0.21)]);
-        assert_eq!(select_by_proximity(docs, 0, 0.0), vec!["a", "b"]);
+    fn montar_rag_pareceres_pina_o_formato() {
+        let blocos = vec!["BLOCO UM".to_string(), "BLOCO DOIS".to_string()];
+        assert_eq!(
+            montar_rag_pareceres(&blocos),
+            "\n## PARECER\n1\nBLOCO UM\n\n## PARECER\n2\nBLOCO DOIS\n"
+        );
+        assert_eq!(montar_rag_pareceres(&[]), "");
     }
 }
