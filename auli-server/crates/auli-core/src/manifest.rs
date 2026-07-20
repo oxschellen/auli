@@ -32,7 +32,17 @@ pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 /// v3 (G3): o pack de `pareceres` passou a guardar o payload LEVE (JSON sem corpo) no lugar do bloco
 /// pré-renderizado; um servidor G3 lendo pack v2 (bloco gordo) renderizaria lixo. O bump fecha essa
 /// porta no boot (`validate_manifest` exige igualdade) — packs pré-G3 são incompatíveis por construção.
-pub const STRATEGY_VERSION: u32 = 3;
+///
+/// v4: correção do **vazamento de padding** no embedder. Até aqui o `update` embedava os documentos
+/// em lote e o fastembed fazia padding ao maior do lote, contaminando o vetor agrupado — o MESMO
+/// texto saía com cosseno ~0,98 conforme a companhia (ver `embed::testes_ordem`). A query nunca
+/// sofreu disso (o servidor embeda uma pergunta só), então documentos e perguntas viviam em regimes
+/// diferentes do mesmo modelo. Com `batch_size = 1` os documentos passam ao regime da query. Os
+/// vetores mudam ⇒ **todo pack anterior é incompatível** e precisa ser regerado.
+///
+/// (Bump aqui, e não em `EMBED_MODEL_ID`: o modelo e a quantização são os mesmos; o que mudou foi
+/// COMO ele é invocado. O efeito prático — re-ingestão obrigatória — é idêntico.)
+pub const STRATEGY_VERSION: u32 = 4;
 
 /// The triple that must match between the packs and the running server.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
