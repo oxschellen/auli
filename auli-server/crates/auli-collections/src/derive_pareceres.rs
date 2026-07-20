@@ -28,7 +28,7 @@
 
 use std::path::Path;
 
-use auli_contract::{Consulta, Table};
+use auli_contract::{Consulta, mddoc};
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -67,16 +67,30 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         }
     }
 
-    let table = Table::new(id.as_str(), "pareceres", items);
-    let out_path = format!("{data_dir}/{id}-pareceres.json");
-    if let Some(parent) = Path::new(&out_path).parent() {
-        std::fs::create_dir_all(parent)?;
+    // G5b: o derive emite a ÁRVORE, não JSON. Um `.md` por consulta INÉDITA (existe ⇒ pula), igual
+    // aos scrapers — este é o caminho de bootstrap a partir do `.txt` legado.
+    let base = Path::new(data_dir)
+        .parent()
+        .ok_or_else(|| format!("data_dir sem pai: {data_dir}"))?;
+    let dir = base.join("docs").join("pareceres");
+    let (mut criados, mut pulados) = (0usize, 0usize);
+    for c in &items {
+        let header = mddoc::DocHeader {
+            numero: c.numero.clone(),
+            assunto: c.assunto.clone(),
+            link: c.link.clone(),
+            sinopse_info: None, // produtor emite pendente
+        };
+        if mddoc::escrever_se_ausente(&dir, &header, &c.corpo)? {
+            criados += 1;
+        } else {
+            pulados += 1;
+        }
     }
-    std::fs::write(&out_path, serde_json::to_string_pretty(&table)?)?;
     println!(
-        "Wrote {} ({} pareceres). Rode `auli update --entity {id}` (materializa a árvore) e depois `sinopse`.",
-        out_path,
-        table.len()
+        "✅ árvore {}: {criados} novo(s), {pulados} já existente(s) (pulados). \
+         Rode `auli-collections {id} sinopse` para preencher os pendentes.",
+        dir.display()
     );
     Ok(())
 }

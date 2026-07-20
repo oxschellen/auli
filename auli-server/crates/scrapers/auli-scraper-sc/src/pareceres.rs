@@ -27,7 +27,7 @@ use std::sync::LazyLock;
 use std::thread::sleep;
 use std::time::Duration;
 
-use anyhow::{Result, anyhow, bail};
+use anyhow::{Result, bail};
 use regex::Regex;
 
 use auli_scraper_kit::{
@@ -56,7 +56,6 @@ static RE_HEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"&#[xX]([0-9A-Fa-f
 const INDEX_URL: &str = "https://legislacao.sef.sc.gov.br/Consulta/Views/Publico/Copat.aspx";
 const DETAIL_BASE: &str =
     "https://legislacao.sef.sc.gov.br/Consulta/Views/Publico/DocumentoLegalViewer.ashx?id=";
-const OUT_PATH: &str = "../data/sc/ref/sc-pareceres-temp.txt";
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
 const DOCS_DIR: &str = "../data/sc/docs/pareceres";
 const CACHE_DIR: &str = "../data/sc/raw/cache/pareceres";
@@ -119,7 +118,6 @@ pub fn run(use_cache: bool) -> Result<()> {
         }
     }
 
-    write_temp(&items)?;
     // G5: emite a árvore `.md` (um arquivo por consulta INÉDITA; existente é pulado — é o
     // incremental, e protege sinopses já geradas). O `.txt` acima segue até a G5b aposentar o JSON.
     let docs: Vec<auli_scraper_kit::docs::DocParaEmitir<'_>> = items
@@ -134,10 +132,6 @@ pub fn run(use_cache: bool) -> Result<()> {
     let dir = std::path::Path::new(DOCS_DIR);
     let (criados, pulados) = auli_scraper_kit::docs::emitir_pareceres(dir, &docs)?;
     auli_scraper_kit::docs::relatar(dir, criados, pulados);
-    println!(
-        "✅ Escrito {OUT_PATH} ({} consultas). O estágio de resumo autorado é posterior.",
-        items.len()
-    );
     Ok(())
 }
 
@@ -284,24 +278,6 @@ const NAMED: &[(&str, &str)] = &[
     ("&amp;", "&"),
 ];
 
-fn write_temp(items: &[Parecer]) -> Result<()> {
-    let mut out = String::new();
-    for (i, p) in items.iter().enumerate() {
-        out.push_str(&format!("// {}\n", i + 1));
-        out.push_str("## pergunta:\n");
-        out.push_str(&format!("descricao: {}\n", p.numero));
-        out.push_str(&format!("assunto  : {}\n", p.assunto));
-        out.push_str(&format!("link: {}\n", p.link));
-        out.push_str("## resposta:\n");
-        out.push_str(p.corpo.trim());
-        out.push_str("\n\n");
-    }
-    if let Some(parent) = std::path::Path::new(OUT_PATH).parent() {
-        std::fs::create_dir_all(parent).map_err(|e| anyhow!("criar dir de {OUT_PATH}: {e}"))?;
-    }
-    std::fs::write(OUT_PATH, out).map_err(|e| anyhow!("gravar {OUT_PATH}: {e}"))?;
-    Ok(())
-}
 
 #[cfg(test)]
 mod tests {
