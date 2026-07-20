@@ -718,8 +718,20 @@ Três ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer` (deta
 ```
 
 Faz `initialize` → `notifications/initialized` → `tools/list` → `tools/call` e imprime as três
-ferramentas com seus schemas, os resultados reais e o erro de UF sem acervo. Se isto passa, o
-problema de qualquer cliente é de rede/configuração, não do servidor.
+ferramentas com seus schemas, os resultados reais e o erro de UF sem acervo.
+
+**Depois do deploy, rode também contra a URL pública** — não só localhost:
+
+```bash
+./scripts/mcp-smoke.sh https://api.auli.com.br/mcp
+```
+
+> ⚠️ **Por que os dois.** O rmcp valida o header `Host` como guarda de DNS rebinding, e o default
+> aceita **só loopback**. O smoke em localhost passa mesmo com a lista mal configurada; atrás do
+> tunnel o `Host` chega como `api.auli.com.br` e o servidor responde **403 "Forbidden: Host header
+> is not allowed"**, com um `WARN ... rejected request with disallowed Host header` no log. A lista
+> é a constante `MCP_ALLOWED_HOSTS` em `auli-cli/src/api/mod.rs` — ao trocar de domínio, edite lá
+> (é o mesmo lugar conceitual das origens do CORS).
 
 ### 12.2 CLI — Claude Code
 
