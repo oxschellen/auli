@@ -2,8 +2,8 @@ import { useMemo, useRef, useState, useDeferredValue } from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import useSWR from "swr";
 import { PareceresAccordion } from "./PareceresAccordion";
-import { parsePareceres, searchPareceres } from "./parsePareceres";
-import { textFetcher, SWR_OPTS, entityPath } from "../../shared/fetchers";
+import { searchPareceres, type Parecer } from "./pareceres";
+import { jsonFetcher, SWR_OPTS, entityPath } from "../../shared/fetchers";
 import { SearchInput } from "../../shared/SearchInput";
 import { AsyncContent } from "../../shared/AsyncContent";
 import { useSelectedEntity } from "../../shared/EntityContext";
@@ -13,13 +13,12 @@ import { CollectionEmpty } from "../../shared/CollectionEmpty";
 export const PareceresList = () => {
   const entity = useSelectedEntity();
   const available = hasCollection(entity, "pareceres");
-  const { data: content = "", error, isLoading } = useSWR(
-    available ? entityPath(entity.id, "portal-pareceres.txt") : null,
-    textFetcher,
+  const { data: pareceres = [], error, isLoading } = useSWR<Parecer[]>(
+    available ? entityPath(entity.id, "pareceres-index.json") : null,
+    jsonFetcher,
     SWR_OPTS,
   );
 
-  const pareceres = useMemo(() => (content ? parsePareceres(content) : []), [content]);
   const [searchQuery, setSearchQuery] = useState("");
   // Input stays instant; parsing/filtering derive from the deferred value.
   const deferredQuery = useDeferredValue(searchQuery);

@@ -11,8 +11,9 @@
 #
 # O que entra em public/<id>/ (todos com o nome já prefixado por `<id>-` na origem, casando com
 # `entityPath` no frontend, que busca `/<id>/<id>-<file>`):
-#   - data/<id>/raw/*.json   (<id>-servicos-index, <id>-servicos-*, <id>-faqs-tree.json — o que a UI busca)
-#   - data/<id>/ref/*        (<id>-portal-pareceres.txt, <id>-portal-notas.txt, <id>-conteudo_site_tree.json)
+#   - data/<id>/raw/*.json   (<id>-servicos-index, <id>-servicos-*, <id>-faqs-tree.json,
+#                             <id>-pareceres-index.json — o que a UI busca)
+#   - data/<id>/ref/*        (<id>-portal-notas.txt, <id>-conteudo_site_tree.json)
 # NÃO copia os <id>-portal-servicos.txt/<id>-portal-faqs.txt de raw/ (o filtro `*.json` já os exclui;
 # são grandes, alimentam os packs, a UI não usa) nem os contratos do engine `<id>-{faqs,servicos}.json`
 # (lidos pelo `auli update`, a UI não os busca).
@@ -32,9 +33,14 @@ copy_raw() {
   cp "$1" "$2/$base"
 }
 
-# ref/: também já prefixado por "$3-" na origem (arquivos autorados/versionados). Copia como está.
+# ref/: também já prefixado por "$3-" na origem (arquivos autorados/versionados). Copia como está,
+# pulando (retorna 1) o `<id>-portal-pareceres.txt`: a tab de Pareceres migrou para o índice leve
+# `<id>-pareceres-index.json` (vem de raw/, derivado da árvore por `auli-collections <id> indice`).
+# O `.txt` continua em data/<id>/ref/ como fonte de bootstrap do `auli-collections <id> pareceres`,
+# mas não é mais servido — eram 176 MB de corpo integral em public/, 147 deles só do SP.
 copy_ref() {
   local base; base="$(basename "$1")"
+  case "$base" in "$3-portal-pareceres.txt") return 1 ;; esac
   cp "$1" "$2/$base"
 }
 

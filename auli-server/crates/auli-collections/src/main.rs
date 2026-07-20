@@ -2,6 +2,7 @@ mod derive_faqs;
 mod derive_pareceres;
 mod domain;
 mod errors;
+mod indice;
 mod process;
 mod servicos;
 mod sinopse;
@@ -15,6 +16,7 @@ fn main() -> errors::Result<()> {
     //   process    (padrão) deriva os artefatos do snapshot, offline.
     //   pareceres  bootstrap: ingere o `.txt` legado -> árvore `docs/pareceres/*.md`.
     //   sinopse    gera/mescla sinopses (aceita flags próprias; ver `sinopse::run`).
+    //   indice     deriva o índice leve dos pareceres (árvore -> raw/) para o frontend.
     // Só o `sinopse` aceita flags; os demais subcomandos continuam rejeitando (comportamento atual).
     let args: Vec<String> = std::env::args().skip(1).collect();
 
@@ -54,6 +56,8 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         "pareceres" => derive_pareceres::run(entity)?,
         // OFFLINE: preenche as sinopses pendentes na árvore `docs/pareceres/*.md` (G4).
         "sinopse" => sinopse::run(entity, parse_sinopse_flags(&flags)?)?,
+        // OFFLINE: deriva o índice leve dos pareceres para o frontend (árvore -> raw/*-pareceres-index.json).
+        "indice" => indice::run(entity)?,
         "faqs" | "servicos" => {
             return Err(
                 "a coleta agora é feita pelos binários `auli-scraper-rs` / `auli-scraper-sc`; \
@@ -63,7 +67,7 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         }
         other => {
             return Err(format!(
-                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse",
+                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice",
                 other
             )
             .into());

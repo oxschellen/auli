@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { MdExpandMore, MdExpandLess, MdOpenInNew } from "react-icons/md";
-import type { Parecer } from "./parsePareceres";
+import ReactMarkdown from "react-markdown";
+import type { Parecer } from "./pareceres";
+import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
 
-/** Uma linha de parecer: cabeçalho (número + assunto) que abre para o corpo integral + link do portal. */
+/** Uma linha de parecer: cabeçalho (número + assunto) que abre para a sinopse + link do portal. */
 function ParecerItem({ p }: { p: Parecer }) {
   const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
@@ -72,15 +74,19 @@ function ParecerItem({ p }: { p: Parecer }) {
                   <MdOpenInNew size={14} /> Abrir no portal
                 </Link>
               )}
-              <Text
-                fontFamily="mono"
-                whiteSpace="pre-wrap"
-                color="fg"
-                fontSize="0.8rem"
-                lineHeight="1.5"
-              >
-                {p.corpo}
-              </Text>
+              {p.resumo ? (
+                <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
+                  <ReactMarkdown remarkPlugins={markdownPlugins} components={compactMarkdownComponents}>
+                    {p.resumo}
+                  </ReactMarkdown>
+                </Box>
+              ) : (
+                // A árvore permite documento sem sinopse (pendente); o índice o traz assim mesmo,
+                // para não sumir da listagem. O link acima continua sendo o caminho da íntegra.
+                <Text color="fg.muted" fontSize="0.85rem" fontStyle="italic">
+                  Sinopse ainda não disponível — abra no portal para o texto integral.
+                </Text>
+              )}
             </Box>
           </m.div>
         )}
@@ -93,7 +99,7 @@ export function PareceresAccordion({ pareceres }: { pareceres: Parecer[] }) {
   return (
     <Box border="1px solid var(--chakra-colors-border)" borderRadius="6px" overflow="hidden">
       {pareceres.map((p) => (
-        <ParecerItem key={p.id} p={p} />
+        <ParecerItem key={p.numero} p={p} />
       ))}
     </Box>
   );
