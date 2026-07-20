@@ -16,13 +16,14 @@ pub mod config;
 pub mod entities;
 pub mod error;
 pub mod llm;
+pub mod mcp;
 pub mod packs;
 pub mod rag;
 pub mod state;
 pub mod update;
 mod util;
 
-use crate::api::{cors_routes, data_routes, public_routes, question_routes, retrieve_routes};
+use crate::api::{cors_routes, data_routes, mcp_routes, public_routes, question_routes, retrieve_routes};
 use crate::config::config;
 use crate::state::AppState;
 
@@ -40,7 +41,8 @@ pub fn app(state: Arc<AppState>) -> Router {
         .merge(public_routes())
         .merge(question_routes(state.clone(), embed_limiter.clone()))
         .merge(retrieve_routes(state.clone(), embed_limiter))
-        .merge(data_routes(state))
+        .merge(data_routes(state.clone()))
+        .merge(mcp_routes(state))
         .layer(cors_routes())
 }
 
@@ -80,6 +82,7 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
         auli_anon::Anonimizador::novo().expect("Falha ao inicializar o anonimizador (auli-anon)"),
     );
     println!("🔒 Anonimizador de PII (auli-anon) carregado");
+    println!("🔌 Servidor MCP em /mcp (rmcp, streamable HTTP)");
 
     // O motor (D-MCP-8): coleções + embedder + raiz da árvore `docs/` (a mesma de onde os packs
     // foram carregados — `docs/` é irmã deles). Uma fonte de verdade para as três faces.
