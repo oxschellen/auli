@@ -21,8 +21,12 @@
  * Sem índice, sem worker, sem ranking: filtro linear é suficiente na escala alvo (≤ ~20k itens).
  */
 
-/** Faixa dos diacríticos combinantes que o NFD separa (acentos, til, cedilha…). */
-const DIACRITICOS = /[\u0300-\u036f]/g;
+/**
+ * Faixa dos diacríticos combinantes que o NFD separa (acentos, til, cedilha…). Exportado porque o
+ * `highlight` precisa da **mesma** definição para normalizar caractere a caractere — duas faixas
+ * divergentes fariam a marcação cair fora do trecho que a busca casou.
+ */
+export const DIACRITICOS = /[\u0300-\u036f]/g;
 
 /**
  * Colapsa em forma canônica de busca: NFD + remove diacríticos (ç→c de graça, porque o NFD

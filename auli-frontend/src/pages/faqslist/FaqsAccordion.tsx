@@ -6,12 +6,10 @@ import { MdExpandMore, MdExpandLess, MdOpenInNew, MdContentCopy } from 'react-ic
 import ReactMarkdown from 'react-markdown'
 import { searchNodes, getEffectiveUrl, type FaqNode } from './parseFaqs'
 import { compactMarkdownComponents, markdownPlugins } from '../../shared/markdown'
+import { Highlight } from '../../shared/highlight'
+import { parseQuery } from '../../shared/textSearch'
 import { utilsCopyTextToClipboard } from '../chat/utils/utils'
 
-interface HighlightProps {
-  text: string
-  query: string
-}
 
 interface TreeNodeProps {
   node: FaqNode
@@ -24,7 +22,8 @@ interface TreeNodeProps {
 interface SearchResultProps {
   node: FaqNode
   ancestors: FaqNode[]
-  query: string
+  /** Termos já normalizados (`parseQuery`) — os MESMOS que filtraram, para marcar o que casou. */
+  terms: string[]
 }
 
 interface FaqsAccordionProps {
@@ -32,19 +31,6 @@ interface FaqsAccordionProps {
   searchQuery: string
   answerMap: Map<string, string>
   pageTypeMap: Map<string, string>
-}
-
-function Highlight({ text, query }: HighlightProps) {
-  if (!query) return text
-  const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
-  let offset = 0
-  return parts.map((part) => {
-    const key = `${offset}-${part}`
-    offset += part.length
-    return part.toLowerCase() === query.toLowerCase()
-      ? <mark key={key}>{part}</mark>
-      : part
-  })
 }
 
 const MENU_TYPES = new Set(['Menu', 'Geral'])
@@ -199,7 +185,7 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
   )
 }
 
-function SearchResult({ node, ancestors, query }: SearchResultProps) {
+function SearchResult({ node, ancestors, terms }: SearchResultProps) {
   const effectiveUrl = getEffectiveUrl(node, ancestors)
   const breadcrumb = ancestors.flatMap(a => (a.text ? [a.text] : [])).join(' › ')
 
@@ -239,7 +225,7 @@ function SearchResult({ node, ancestors, query }: SearchResultProps) {
           </Box>
         )}
         <Text fontSize="1rem" fontWeight="500" color="fg" flex={1} lineHeight="1.5">
-          <Highlight text={node.text} query={query} />
+          <Highlight text={node.text} terms={terms} />
         </Text>
       </Flex>
     </Box>
@@ -251,6 +237,9 @@ export function FaqsAccordion({ nodes, searchQuery, answerMap, pageTypeMap }: Fa
     if (!searchQuery.trim()) return []
     return searchNodes(nodes, searchQuery.trim())
   }, [nodes, searchQuery])
+
+  // Uma vez por query, não por resultado: `parseQuery` devolve array novo a cada chamada.
+  const terms = useMemo(() => parseQuery(searchQuery), [searchQuery])
 
   if (searchQuery.trim()) {
     if (results.length === 0) {
@@ -274,7 +263,7 @@ export function FaqsAccordion({ nodes, searchQuery, answerMap, pageTypeMap }: Fa
             key={`${ancestors.map(a => a.id).join('/')}/${node.id}`}
             node={node}
             ancestors={ancestors}
-            query={searchQuery.trim()}
+            terms={terms}
           />
         ))}
       </Box>

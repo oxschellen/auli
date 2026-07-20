@@ -15,6 +15,7 @@ import { AsyncContent } from "../../shared/AsyncContent";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { hasCollection } from "../../shared/entities";
 import { CollectionEmpty } from "../../shared/CollectionEmpty";
+import { parseQuery } from "../../shared/textSearch";
 
 export function ServicosList() {
   const entity = useSelectedEntity();
@@ -83,6 +84,9 @@ export function ServicosList() {
     () => filterServicoGroups(grouped, deferredQuery),
     [grouped, deferredQuery]
   );
+
+  // Uma vez por query, não por grupo: `parseQuery` devolve array novo a cada chamada.
+  const terms = useMemo(() => parseQuery(deferredQuery), [deferredQuery]);
 
   const isSearching = deferredQuery.trim().length > 0;
   const totalResults = isSearching ? filteredGroups.reduce((sum, [, items]) => sum + items.length, 0) : 0;
@@ -166,6 +170,7 @@ export function ServicosList() {
                     onToggle={() => !isSearching && toggleGroup(classe)}
                     isFirst={idx === 0}
                     isLast={idx === filteredGroups.length - 1}
+                    terms={terms}
                   />
                 ))}
               </Box>

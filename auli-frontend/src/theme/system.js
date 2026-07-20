@@ -51,6 +51,10 @@ const config = defineConfig({
           overlay: { value: { base: "rgba(0,0,0,0.06)", _dark: "rgba(255,255,255,0.1)" } },
           // fill for inert/unavailable states on the Brazil selection map
           mapInactive: { value: { base: "{colors.neutral.200}", _dark: "#9aa0a6" } },
+          // search-term highlight (<mark>). Translucent like `overlay` so it reads on any surface
+          // it lands on (canvas, app, subtle) without a per-surface variant. Amber on purpose:
+          // `accent` is the link color here, and marking matches in it would read as clickable.
+          highlight: { value: { base: "rgba(250,204,21,0.45)", _dark: "rgba(250,204,21,0.28)" } },
         },
         fg: {
           DEFAULT: { value: { base: "{colors.ink}", _dark: "#ffffff" } },
@@ -62,6 +66,9 @@ const config = defineConfig({
           // fell back to `fg`, invisible on the black header in light mode.
           inverted: { value: { base: "#ffffff", _dark: "#ffffff" } },
           invertedMuted: { value: { base: "rgba(255,255,255,0.6)", _dark: "rgba(255,255,255,0.6)" } },
+          // text inside a <mark>: the browser default forces near-black, unreadable over a dark
+          // surface. Flat 2-level leaf for the same reason as `inverted` above.
+          highlight: { value: { base: "{colors.ink}", _dark: "#ffffff" } },
         },
         border: {
           DEFAULT: { value: { base: "{colors.neutral.200}", _dark: "#2a2a2c" } },
