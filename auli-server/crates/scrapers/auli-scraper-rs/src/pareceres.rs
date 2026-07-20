@@ -39,7 +39,6 @@ use crate::errors::{Error, Result};
 const LISTING_URL: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/Search.aspx?CodArea=3&CodGroup=159";
 const DETAIL_BASE: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=";
 const UA: &str = "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
-const OUT_PATH: &str = "../data/rs/ref/rs-pareceres-temp.txt";
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
 const DOCS_DIR: &str = "../data/rs/docs/pareceres";
 // Cache namespace da frota: `<CACHE_BASE>/cache/<CACHE_KIND>` = `../data/rs/raw/cache/pareceres`,
@@ -99,7 +98,6 @@ pub fn run(use_cache: bool) -> Result<()> {
         sleep(COURTESY);
     }
 
-    write_temp(&items)?;
     // G5: emite a árvore `.md` (um arquivo por consulta INÉDITA; existente é pulado — é o
     // incremental, e protege sinopses já geradas). O `.txt` acima segue até a G5b aposentar o JSON.
     let docs: Vec<auli_scraper_kit::docs::DocParaEmitir<'_>> = items
@@ -114,7 +112,6 @@ pub fn run(use_cache: bool) -> Result<()> {
     let dir = std::path::Path::new(DOCS_DIR);
     let (criados, pulados) = auli_scraper_kit::docs::emitir_pareceres(dir, &docs)?;
     auli_scraper_kit::docs::relatar(dir, criados, pulados);
-    println!("✅ Escrito {OUT_PATH} ({} pareceres). O estágio de resumo autorado é posterior.", items.len());
     Ok(())
 }
 
@@ -478,24 +475,6 @@ fn form_urlencoded(pairs: &[(&str, &str)]) -> String {
     pairs.iter().map(|(k, v)| format!("{}={}", enc(k), enc(v))).collect::<Vec<_>>().join("&")
 }
 
-fn write_temp(items: &[Parecer]) -> Result<()> {
-    let mut out = String::new();
-    for (i, p) in items.iter().enumerate() {
-        out.push_str(&format!("// {}\n", i + 1));
-        out.push_str("## pergunta:\n");
-        out.push_str(&format!("descricao: {}\n", p.numero));
-        out.push_str(&format!("assunto  : {}\n", p.assunto));
-        out.push_str(&format!("link: {}\n", p.link));
-        out.push_str("## resposta:\n");
-        out.push_str(&p.corpo);
-        out.push_str("\n\n");
-    }
-    if let Some(parent) = std::path::Path::new(OUT_PATH).parent() {
-        std::fs::create_dir_all(parent)?;
-    }
-    std::fs::write(OUT_PATH, out)?;
-    Ok(())
-}
 
 #[cfg(test)]
 mod tests {

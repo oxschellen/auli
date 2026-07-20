@@ -13,7 +13,6 @@ use tokio::net::TcpListener;
 
 pub mod api;
 pub mod config;
-pub mod docs;
 pub mod entities;
 pub mod error;
 pub mod llm;
