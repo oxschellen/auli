@@ -5,14 +5,16 @@
 //! (`numero`/`assunto`/`link`/`corpo`) e do **rol** de quais consultas existem. Materializar é, por
 //! isso, um *merge*: regrava os campos do JSON e **preserva** a `## sinopse` do arquivo.
 //!
-//! A poda continua enquanto o rol for do JSON: consulta removida de lá tem o `.md` apagado, para o
-//! `docs_hash` refletir o que foi indexado. Na G5 o rol passa a ser a árvore e a poda sai — apagar
-//! passaria a ser destrutivo.
+//! **A poda saiu na G5a.** Enquanto o rol era só do JSON, apagar `.md` fora dele mantinha a árvore
+//! um espelho. Agora os **produtores escrevem direto na árvore** (scrapers de pareceres emitem um
+//! `.md` por consulta inédita), então documento presente na árvore e ausente do JSON é estado
+//! **legal** — é uma consulta nova esperando o derive. Podar apagaria justamente o que acabou de ser
+//! coletado, junto com a sinopse que ele já pudesse ter.
 //!
 //! O contrato do arquivo (frontmatter + `## sinopse` + `## corpo`) vive em `auli_contract::mddoc`.
 
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use auli_contract::{Consulta, Table, mddoc};
 
@@ -40,7 +42,6 @@ pub fn materializar_pareceres(entity: &str, source: &Path, docs_dir: &Path) -> R
 
     // Slug -> numero, para detectar colisão com mensagem útil (quais dois números colidiram).
     let mut vistos: HashMap<String, String> = HashMap::with_capacity(table.items.len());
-    let mut esperados: Vec<PathBuf> = Vec::with_capacity(table.items.len());
 
     for c in &table.items {
         let slug = mddoc::slug(&c.numero);
@@ -81,13 +82,8 @@ pub fn materializar_pareceres(entity: &str, source: &Path, docs_dir: &Path) -> R
         let texto = mddoc::render_doc(&header, sinopse.as_deref(), &c.corpo);
 
         escrever_atomico(&destino, texto.as_bytes())?;
-        esperados.push(destino);
     }
 
-    let podados = podar_orfaos(&dir, &esperados)?;
-    if podados > 0 {
-        println!("🧹 docs: {podados} arquivo(s) órfão(s) removido(s) (não estão mais no contrato)");
-    }
     Ok(Some(table.items.len()))
 }
 
@@ -108,21 +104,6 @@ fn ler_sinopse_existente(
     Ok(Some((sinopse, header.sinopse_info)))
 }
 
-/// Remove `.md` que não estão no conjunto esperado — mantém a árvore um espelho fiel do contrato
-/// (ver a nota de fase no topo do módulo).
-fn podar_orfaos(dir: &Path, esperados: &[PathBuf]) -> Result<usize> {
-    let manter: std::collections::HashSet<&Path> = esperados.iter().map(|p| p.as_path()).collect();
-    let mut n = 0;
-    for entry in std::fs::read_dir(dir)? {
-        let p = entry?.path();
-        if p.is_file() && p.extension().is_some_and(|e| e == "md") && !manter.contains(p.as_path()) {
-            std::fs::remove_file(&p)?;
-            n += 1;
-        }
-    }
-    Ok(n)
-}
-
 /// Escrita atômica (`.tmp` + rename), como todo o resto do pipeline: uma queda no meio nunca deixa
 /// um `.md` truncado no lugar do bom.
 fn escrever_atomico(destino: &Path, bytes: &[u8]) -> Result<()> {
@@ -136,6 +117,7 @@ fn escrever_atomico(destino: &Path, bytes: &[u8]) -> Result<()> {
 mod tests {
     use super::*;
     use auli_contract::SinopseInfo;
+    use std::path::PathBuf;
 
     fn consulta(numero: &str, resumo: &str) -> Consulta {
         Consulta {
@@ -205,7 +187,7 @@ mod tests {
     }
 
     #[test]
-    fn re_materializar_poda_orfaos_e_e_idempotente() {
+    fn re_materializar_e_idempotente_e_NAO_poda_o_que_esta_fora_do_json() {
         let (source, docs) = cenario("poda", vec![consulta("A 1", "r"), consulta("B 2", "r")]);
         materializar_pareceres("xx", &source, &docs).unwrap();
         assert!(docs.join("pareceres/a-1.md").exists() && docs.join("pareceres/b-2.md").exists());
@@ -215,12 +197,17 @@ mod tests {
         materializar_pareceres("xx", &source, &docs).unwrap();
         assert_eq!(std::fs::read_to_string(docs.join("pareceres/a-1.md")).unwrap(), antes);
 
-        // Contrato encolhe ⇒ o órfão some (a árvore espelha o contrato).
+        // G5a: contrato encolhe, mas o `.md` SOBREVIVE. Documento na árvore e fora do JSON é estado
+        // legal — é o que o produtor acabou de emitir (consulta nova, ainda sem passar pelo derive).
+        // Podar aqui apagaria a coleta recém-feita, junto com a sinopse que ela já pudesse ter.
         let t = Table::new("xx", "pareceres", vec![consulta("A 1", "r")]);
         std::fs::write(source.join("xx-pareceres.json"), serde_json::to_vec(&t).unwrap()).unwrap();
         materializar_pareceres("xx", &source, &docs).unwrap();
         assert!(docs.join("pareceres/a-1.md").exists());
-        assert!(!docs.join("pareceres/b-2.md").exists(), "órfão devia ter sido podado");
+        assert!(
+            docs.join("pareceres/b-2.md").exists(),
+            "documento fora do JSON NÃO pode ser podado (G5a) — seria apagar coleta nova"
+        );
     }
 
     #[test]

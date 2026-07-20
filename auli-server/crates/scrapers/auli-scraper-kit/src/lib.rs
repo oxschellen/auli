@@ -13,6 +13,7 @@
 //! dele, e ele nunca depende de fastembed/ort/vector-store.
 
 pub mod cache;
+pub mod docs;
 pub mod http;
 
 mod aggregate;
