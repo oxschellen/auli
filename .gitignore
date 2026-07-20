@@ -47,6 +47,7 @@ auli-server/packs/
 notas.txt
 notes.txt
 web_config.txt
+/x-docs/
 
 # ── Editor / OS ───────────────────────────────────────────────────────────────
 .DS_Store
