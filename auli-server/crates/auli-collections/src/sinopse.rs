@@ -64,7 +64,7 @@ fn now_iso8601() -> String {
 }
 
 /// Diretório da árvore de pareceres: `data/<id>/docs/pareceres` (irmão de `raw/`, que é o `data_dir`).
-fn docs_dir(entity: &EntityConfig) -> Result<PathBuf> {
+pub(crate) fn docs_dir(entity: &EntityConfig) -> Result<PathBuf> {
     let base = Path::new(&entity.data_dir)
         .parent()
         .ok_or_else(|| format!("data_dir sem pai: {}", entity.data_dir))?;

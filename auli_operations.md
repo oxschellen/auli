@@ -203,8 +203,18 @@ emite a árvore, a sinopse a preenche, o build vetoriza.
 auli-scraper-<id> pareceres      → docs/pareceres/<slug>.md   (rede; um .md por consulta INÉDITA,
                                                                nasce pendente = sem `## sinopse`)
 auli-collections <id> sinopse    → edita os .md               (LLM; preenche os pendentes)
-scripts/build-packs.sh <id>      → packs/<id>-pareceres.json  (embedding; lê a árvore)
+scripts/build-packs.sh <id>      → packs/<id>-pareceres.json     (embedding; lê a árvore)
+                                 → raw/<id>-pareceres-index.json (índice leve da tab; idem)
 ```
+
+**Um acervo, dois consumidores.** O pack serve o RAG (vetores + corpo lido tarde); o índice serve a
+tab de Pareceres do frontend (numero/assunto/resumo/link, **sem corpo**, copiado para `public/` pelo
+`build-frontend-public.sh`). O `build-packs.sh` deriva os dois da mesma leitura da árvore, de
+propósito: ele já é inevitável depois de qualquer mexida nela (o `docs_hash` muda e o boot recusa até
+ele rodar), então servidor e frontend não têm como divergir de estado.
+
+`auli-collections <id> indice` existe como subcomando avulso — derivação pura, re-rodar nunca faz
+mal — mas no fluxo normal não precisa ser chamado à mão.
 
 > **A árvore `.md` É a fonte** (G5b). Não há mais `.txt` intermediário, promoção manual, JSON de
 > contrato nem passo de materialização — o `auli update` lê `docs/pareceres/*.md` direto.
