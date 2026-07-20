@@ -514,6 +514,15 @@ curl -s -X POST localhost:3000/v1/question -H 'Content-Type: application/json' \
 # entidade desconhecida -> erro amigável, sem panic, HTTP 200:
 curl -s -X POST localhost:3000/v1/question -H 'Content-Type: application/json' \
   -d '{"entity":"zz","question":"x"}'
+
+# Retrieval PURO (sem LLM): devolve os documentos com score, sem redigir resposta.
+curl -s localhost:3000/v1/retrieve -H 'Content-Type: application/json' \
+  -d '{"question":"crédito de ICMS na aquisição de energia elétrica","entity":"sc","kind":"pareceres","top_k":5}' \
+  | python3 -m json.tool
+# kind inválido -> 400; entidade inválida -> 404; entidade sem acervo -> 200 com arrays vazios.
+
+# MCP (protocolo completo: initialize -> initialized -> tools/list -> tools/call):
+./scripts/mcp-smoke.sh http://localhost:3000/mcp
 ```
 
 ---
@@ -685,3 +694,67 @@ curl -sk -o /dev/null -w '%{http_code} %{content_type}\n' https://<host>/rs/rs-p
 # 200 application/json  → ok
 # 200 text/html         → o arquivo NÃO existe; é o index.html do fallback
 ```
+
+---
+
+## 12. Conectando clientes ao MCP
+
+O servidor expõe, no **mesmo processo e na mesma porta** do `/v1/question`, um endpoint **MCP**
+(Model Context Protocol) em `/mcp` — streamable HTTP, via `rmcp`. Isso permite que a IA de um
+auditor consulte o acervo como **ferramenta**, sem passar pelo chat.
+
+Três ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer` (detalhes em
+[auli_code.md](auli_code.md) §3.12).
+
+> **Privacidade (D-MCP-5).** Este caminho **não chama LLM externo**: a pergunta é embedada
+> localmente e nunca sai do processo. Por isso não passa pelo anonimizador, e o log registra só
+> metadados (`uf`, `top_k`, nº de hits) — nunca o texto da pergunta. O log completo com pergunta
+> segue existindo apenas no caminho do chat.
+
+### 12.1 Teste de protocolo (antes de qualquer cliente)
+
+```bash
+./scripts/mcp-smoke.sh http://localhost:3000/mcp
+```
+
+Faz `initialize` → `notifications/initialized` → `tools/list` → `tools/call` e imprime as três
+ferramentas com seus schemas, os resultados reais e o erro de UF sem acervo. Se isto passa, o
+problema de qualquer cliente é de rede/configuração, não do servidor.
+
+### 12.2 CLI — Claude Code
+
+```bash
+# local (a máquina do servidor):
+claude mcp add --transport http auli-local http://localhost:3000/mcp
+# produção:
+claude mcp add --transport http auli https://api.auli.com.br/mcp
+```
+
+Numa sessão, `/mcp` lista o servidor e as ferramentas. O Claude Code fala com **localhost direto** —
+é o único cliente Claude que testa sem expor o servidor.
+
+### 12.3 Chat — claude.ai, Desktop, celular
+
+Customize → Connectors → “+” → **Add custom connector**, com a URL `https://api.auli.com.br/mcp`.
+Disponível nos planos free/Pro/Max/Team/Enterprise (free = 1 conector; em Team/Enterprise um Owner
+precisa adicionar antes em Organization Settings).
+
+> **Atenção à rede.** O Claude conecta ao servidor a partir da **nuvem da Anthropic**, não do
+> dispositivo do usuário — vale para claude.ai, Desktop e apps móveis. Logo: (a) **não funciona
+> contra `localhost`**; (b) se houver WAF/bot-fight no Cloudflare, o caminho `/mcp` precisa liberar
+> os IPs da Anthropic.
+
+### 12.4 Dogfooding no próprio repo
+
+O repo versiona um [`.mcp.json`](.mcp.json) apontando para produção, então toda sessão de Claude
+Code dentro do repo enxerga o próprio acervo como ferramenta (`mcp__auli__buscar_pareceres` etc.) —
+útil para consultar pareceres durante o desenvolvimento, e um teste de regressão permanente do
+endpoint. Na primeira sessão o Claude Code **pede aprovação** do `.mcp.json` de projeto:
+comportamento esperado.
+
+### 12.5 Rate limit
+
+O `/mcp` tem limiter próprio: **10 req/s, burst 30** por IP, separado do limiter de
+`/v1/question`+`/v1/retrieve` (1 req/s, burst 2). A cota é mais folgada porque o handshake MCP faz
+várias requisições em sequência. Excedida, a resposta é **429** em JSON simples (não JSON-RPC) —
+correto no nível HTTP; clientes MCP tratam como falha de transporte.

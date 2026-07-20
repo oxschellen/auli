@@ -42,6 +42,27 @@ answer + official links
 Official content is **scraped** from each secretariat's portal, **transformed into structured
 text**, and **vectorized into per-state packs** (`auli update`) that the server loads read-only.
 
+### Three faces, one engine
+
+The retrieval engine (`auli-retrieval`) is shared by three interfaces in the **same process**, so
+the heavy BGE-M3 model is loaded once:
+
+```
+                        ┌──────────────────────┐
+  frontend (browser) ──▶│ HTTP  /v1/question   │──▶ chat: prompt + external LLM
+                        │ HTTP  /v1/retrieve   │──▶ pure retrieval, no LLM
+  an auditor's AI ─────▶│ MCP   /mcp (rmcp)    │──▶ pure retrieval, no LLM
+                        └──────────┬───────────┘
+                                   │  same process, same Arc<Engine>
+                        ┌──────────▼───────────┐
+                        │  auli-retrieval      │  BGE-M3 embedder + ReadStores + docs/
+                        └──────────────────────┘
+```
+
+Only the chat path talks to an external LLM. On `/v1/retrieve` and `/mcp` the question is embedded
+locally and **never leaves the process** — so those paths skip the anonymizer and log metadata
+only (entity, kind, top_k, hit count, latency), never the question text.
+
 ---
 
 ## Repository layout
@@ -78,7 +99,8 @@ This is a **monorepo** of four cooperating components plus shared docs.
 ### `auli-server/` — backend workspace (current)
 
 A single Cargo workspace with **strict layering** (`auli-contract` is the shared data shape;
-`vector-store` ← `auli-core` ← `auli-cli`) and **one binary** with two subcommands. A shared
+`vector-store` ← `auli-core` ← `auli-retrieval` ← `auli-cli`) and **one binary** with two
+subcommands. A shared
 `Cargo.lock` guarantees the `update` and `server` modes use the _same_ embedding model — the vector
 space is shared by construction.
 
@@ -87,7 +109,8 @@ space is shared by construction.
 | [`crates/auli-contract`](auli-server/crates/auli-contract/)       | The **shared data shape** (serde-only): `Table<P>`, `Faq`, `Servico`, and the `Embeddable` trait (`text_to_embed` / `stored_repr`). The single point where the scraper (producer) and the engine (consumer) agree. |
 | [`crates/vector-store`](auli-server/crates/vector-store/)         | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert.                                                                              |
 | [`crates/auli-core`](auli-server/crates/auli-core/)               | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash).                                                                 |
-| [`crates/auli-cli`](auli-server/crates/auli-cli/)                 | The `auli` binary — `server` (Axum, RAG, config) and `update` (vectorizer). Dispatch via `clap`.                                                                                                                   |
+| [`crates/auli-retrieval`](auli-server/crates/auli-retrieval/)     | The **retrieval engine**: embedder + `ReadStore`s + proximity narrowing. Read-only by construction (it only ever sees `ReadStore`, never `Writer`) and free of HTTP/LLM/anonymizer — the piece shared by all three faces (`/v1/question`, `/v1/retrieve`, `/mcp`).                    |
+| [`crates/auli-cli`](auli-server/crates/auli-cli/)                 | The `auli` binary — `server` (Axum, RAG, `/v1/retrieve`, MCP via `rmcp`, config) and `update` (vectorizer). Dispatch via `clap`.                                                                                                                   |
 | [`crates/auli-collections`](auli-server/crates/auli-collections/) | Offline **derivation** (`<id> process`): snapshot → `auli-contract` tables (`<id>-<kind>.json`) + artifacts.                                                                                                                            |
 | [`crates/scrapers/auli-scraper-<id>`](auli-server/crates/) + [`auli-scraper-kit`](auli-server/crates/scrapers/auli-scraper-kit/) | The **scrapers** — one binary per state (`rs`/`sc`/`sp`/`pr`/`mg`) writing a snapshot; `auli-scraper-kit` is their shared cache / aggregation / snapshot I/O.                                                                                                                            |
 

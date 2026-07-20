@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "auli": {
+      "type": "http",
+      "url": "https://api.auli.com.br/mcp"
+    }
+  }
+}

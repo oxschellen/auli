@@ -556,6 +556,28 @@ Portal `www.sefaz.rr.gov.br` = site custom sem catálogo server-rendered. Descob
   acumulando o outro público). O FAQ (`faq-chat.php`) é matcher, não catálogo → fora de escopo.
 - 16 serviços, 20 ocorrências (Empresa 14 / Cidadão 6), 2 públicos. 3 testes.
 
+## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
+
+A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) está no ar com três ferramentas e
+rate limit. O que ficou registrado como próximo passo:
+
+- **Auth opcional no `/mcp` (D-MCP-9).** Hoje sem autenticação: é conteúdo público e somente-leitura,
+  atrás do tunnel e com rate limit próprio (10 req/s, burst 30). Uma API key por header
+  `Authorization` é o passo natural se o acervo deixar de ser inteiramente público — ou se o custo
+  de CPU do embedder passar a incomodar.
+- **Rate limit do `/mcp` em JSON-RPC.** O 429 sai como JSON simples, não como erro JSON-RPC.
+  Correto no nível HTTP e os clientes tratam, mas um middleware próprio para `/mcp` daria uma
+  mensagem melhor ao assistente.
+- **Ferramenta `buscar_servicos_faqs` (D-MCP-7).** A v1 expõe só `pareceres`. A rota
+  `/v1/retrieve` **já** aceita os quatro kinds; falta a ferramenta MCP equivalente.
+- **`buscar_pareceres` multi-UF numa chamada.** Hoje é uma UF por chamada e o assistente itera —
+  o que funciona, mas gasta um round-trip por estado numa pergunta comparativa.
+- **Calibração das bandas.** `SVC_BAND`/`FAQ_BAND`/`PAR_BAND` seguem em `f32::INFINITY` (mantendo
+  a paridade com o comportamento antigo de "pega tudo até o teto"). Agora que o `/v1/retrieve`
+  **expõe os scores**, dá para calibrar com dados reais: rodar os ~10 testes do SC, ler os arrays
+  de distância e baixar cada banda para logo acima de onde os matches genuínos se separam do
+  enchimento. É a pendência com maior efeito sobre a qualidade da resposta.
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
