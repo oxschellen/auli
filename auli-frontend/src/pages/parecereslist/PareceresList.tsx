@@ -84,7 +84,7 @@ export const PareceresList = () => {
               </Text>
             </Box>
           ) : (
-            <PareceresAccordion pareceres={filtered} />
+            <PareceresAccordion pareceres={filtered} searchQuery={deferredQuery} />
           )}
         </AsyncContent>
       </Box>

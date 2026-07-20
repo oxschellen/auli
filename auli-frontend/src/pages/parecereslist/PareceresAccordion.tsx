@@ -1,15 +1,34 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { MdExpandMore, MdExpandLess, MdOpenInNew } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import type { Parecer } from "./pareceres";
 import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
+import { Highlight } from "../../shared/highlight";
+import { parseQuery } from "../../shared/textSearch";
+import { rehypeHighlight } from "../../shared/rehypeHighlight";
 
 /** Uma linha de parecer: cabeçalho (número + assunto) que abre para a sinopse + link do portal. */
-function ParecerItem({ p }: { p: Parecer }) {
+/** Renderiza o `<mark>` que o `rehypeHighlight` injeta, com o mesmo visual do `Highlight`. */
+const markdownComponents = {
+  ...compactMarkdownComponents,
+  mark: ({ children }: { children?: ReactNode }) => (
+    <Box as="mark" bg="bg.highlight" color="fg.highlight" px="0.1em" borderRadius="2px">
+      {children}
+    </Box>
+  ),
+};
+
+function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
   const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
+  // Sem termos o plugin é um no-op, mas evitamos até instanciá-lo no caso comum (sem busca).
+  const rehypePlugins = useMemo(
+    () => (terms.length ? [rehypeHighlight(terms)] : []),
+    [terms],
+  );
 
   return (
     <Box borderBottom="1px solid var(--chakra-colors-border)">
@@ -36,11 +55,11 @@ function ParecerItem({ p }: { p: Parecer }) {
       >
         <Box flex={1} minW={0}>
           <Text fontSize="0.95rem" fontWeight="600" color="fg" lineHeight="1.25">
-            {p.numero}
+            <Highlight text={p.numero} terms={terms} />
           </Text>
           {p.assunto && (
             <Text fontSize="0.85rem" color="fg.muted" lineHeight="1.35" mt={0.5}>
-              {p.assunto}
+              <Highlight text={p.assunto} terms={terms} />
             </Text>
           )}
         </Box>
@@ -76,7 +95,11 @@ function ParecerItem({ p }: { p: Parecer }) {
               )}
               {p.resumo ? (
                 <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
-                  <ReactMarkdown remarkPlugins={markdownPlugins} components={compactMarkdownComponents}>
+                  <ReactMarkdown
+                    remarkPlugins={markdownPlugins}
+                    rehypePlugins={rehypePlugins}
+                    components={markdownComponents}
+                  >
                     {p.resumo}
                   </ReactMarkdown>
                 </Box>
@@ -95,11 +118,20 @@ function ParecerItem({ p }: { p: Parecer }) {
   );
 }
 
-export function PareceresAccordion({ pareceres }: { pareceres: Parecer[] }) {
+export function PareceresAccordion({
+  pareceres,
+  searchQuery,
+}: {
+  pareceres: Parecer[];
+  searchQuery: string;
+}) {
+  // Uma vez por query, não por parecer: `parseQuery` devolve array novo a cada chamada.
+  const terms = useMemo(() => parseQuery(searchQuery), [searchQuery]);
+
   return (
     <Box border="1px solid var(--chakra-colors-border)" borderRadius="6px" overflow="hidden">
       {pareceres.map((p) => (
-        <ParecerItem key={p.numero} p={p} />
+        <ParecerItem key={p.numero} p={p} terms={terms} />
       ))}
     </Box>
   );
