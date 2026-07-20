@@ -207,6 +207,35 @@ pub fn render_doc(header: &DocHeader, sinopse: Option<&str>, corpo: &str) -> Str
     out
 }
 
+/// Grava `<dir>/<slug(numero)>.md` **se ainda não existir**; devolve `true` se criou, `false` se já
+/// estava lá. É o ponto único que os produtores (scrapers de pareceres e o derive) usam para emitir
+/// documentos novos.
+///
+/// **"Existe ⇒ pula" é o incremental** (G5): uma re-coleta só acrescenta o que é inédito e nunca
+/// toca o que já está na árvore — e o que já está pode carregar uma `## sinopse` que custou LLM.
+/// Por isso o pulo é incondicional: nem sequer lê o arquivo existente.
+///
+/// Corolário: **correção de conteúdo não chega por aqui.** Se o portal corrigir o corpo de uma
+/// consulta já coletada, o produtor não a atualiza — é preciso remover o `.md` (decisão humana,
+/// porque isso descarta a sinopse) e recoletar.
+pub fn escrever_se_ausente(dir: &std::path::Path, header: &DocHeader, corpo: &str) -> Result<bool> {
+    let slug = slug(&header.numero);
+    if slug.is_empty() {
+        bail!("`numero` não gera slug: {:?}", header.numero);
+    }
+    let destino = dir.join(format!("{slug}.md"));
+    if destino.exists() {
+        return Ok(false);
+    }
+    std::fs::create_dir_all(dir)?;
+    // Escrita atômica (`.tmp` + rename), como o resto do pipeline: uma queda no meio nunca deixa um
+    // `.md` truncado — que o parser rejeitaria e travaria o passo seguinte.
+    let tmp = destino.with_extension("md.tmp");
+    std::fs::write(&tmp, render_doc(header, None, corpo))?;
+    std::fs::rename(&tmp, &destino)?;
+    Ok(true)
+}
+
 /// Slug do `numero` para nome de arquivo: minúsculas, sem acento, `[^a-z0-9]+` → `-`, aparado.
 ///
 /// Ex.: `CONSULTA COPAT nº 0037/26` → `consulta-copat-no-0037-26`. Colisão de slug dentro da
@@ -386,6 +415,55 @@ mod tests {
         // E o que volta do parse é a forma colapsada (round-trip estável a partir daí).
         let (h2, _, _) = parse_doc(&texto).unwrap();
         assert_eq!(h2.assunto, "ICMS. REGIME DE ST");
+    }
+
+    #[test]
+    fn escrever_se_ausente_cria_e_depois_pula() {
+        let dir = std::env::temp_dir().join(format!("auli-mddoc-emit-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let mut h = header_completo();
+        h.sinopse_info = None; // produtor emite pendente
+
+        // 1ª vez: cria.
+        assert!(escrever_se_ausente(&dir, &h, "Corpo coletado.").unwrap());
+        let destino = dir.join("consulta-copat-no-0037-26.md");
+        assert!(destino.exists());
+        let (h2, sin, corpo) = parse_doc(&std::fs::read_to_string(&destino).unwrap()).unwrap();
+        assert_eq!(h2.numero, h.numero);
+        assert_eq!(sin, None, "produtor emite SEM sinopse (pendente)");
+        assert_eq!(corpo, "Corpo coletado.");
+
+        // 2ª vez: pula e NÃO sobrescreve — nem com corpo diferente.
+        assert!(!escrever_se_ausente(&dir, &h, "CORPO NOVO QUE NAO DEVE ENTRAR").unwrap());
+        let (_, _, corpo2) = parse_doc(&std::fs::read_to_string(&destino).unwrap()).unwrap();
+        assert_eq!(corpo2, "Corpo coletado.", "existente é intocável");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn escrever_se_ausente_nao_apaga_sinopse_de_documento_ja_sinopsado() {
+        // O cenário que a regra protege: re-coleta encontrando um doc que já custou LLM.
+        let dir = std::env::temp_dir().join(format!("auli-mddoc-emit2-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let h = header_completo(); // com sinopse_info
+        std::fs::create_dir_all(&dir).unwrap();
+        let destino = dir.join("consulta-copat-no-0037-26.md");
+        std::fs::write(&destino, render_doc(&h, Some("SINOPSE CARA"), "corpo")).unwrap();
+
+        let mut h_novo = header_completo();
+        h_novo.sinopse_info = None;
+        assert!(!escrever_se_ausente(&dir, &h_novo, "corpo recoletado").unwrap());
+        let (_, sin, _) = parse_doc(&std::fs::read_to_string(&destino).unwrap()).unwrap();
+        assert_eq!(sin.as_deref(), Some("SINOPSE CARA"), "sinopse preservada");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn escrever_se_ausente_recusa_numero_sem_slug() {
+        let dir = std::env::temp_dir().join(format!("auli-mddoc-emit3-{}", std::process::id()));
+        let mut h = header_completo();
+        h.numero = "///".into();
+        assert!(escrever_se_ausente(&dir, &h, "c").is_err());
     }
 
     #[test]

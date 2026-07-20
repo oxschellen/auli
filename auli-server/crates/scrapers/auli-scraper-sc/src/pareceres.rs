@@ -57,6 +57,8 @@ const INDEX_URL: &str = "https://legislacao.sef.sc.gov.br/Consulta/Views/Publico
 const DETAIL_BASE: &str =
     "https://legislacao.sef.sc.gov.br/Consulta/Views/Publico/DocumentoLegalViewer.ashx?id=";
 const OUT_PATH: &str = "../data/sc/ref/sc-pareceres-temp.txt";
+/// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
+const DOCS_DIR: &str = "../data/sc/docs/pareceres";
 const CACHE_DIR: &str = "../data/sc/raw/cache/pareceres";
 const UA: &str = "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 const COURTESY: Duration = Duration::from_millis(1000);
@@ -118,6 +120,20 @@ pub fn run(use_cache: bool) -> Result<()> {
     }
 
     write_temp(&items)?;
+    // G5: emite a árvore `.md` (um arquivo por consulta INÉDITA; existente é pulado — é o
+    // incremental, e protege sinopses já geradas). O `.txt` acima segue até a G5b aposentar o JSON.
+    let docs: Vec<auli_scraper_kit::docs::DocParaEmitir<'_>> = items
+        .iter()
+        .map(|p| auli_scraper_kit::docs::DocParaEmitir {
+            numero: &p.numero,
+            assunto: &p.assunto,
+            link: &p.link,
+            corpo: &p.corpo,
+        })
+        .collect();
+    let dir = std::path::Path::new(DOCS_DIR);
+    let (criados, pulados) = auli_scraper_kit::docs::emitir_pareceres(dir, &docs)?;
+    auli_scraper_kit::docs::relatar(dir, criados, pulados);
     println!(
         "✅ Escrito {OUT_PATH} ({} consultas). O estágio de resumo autorado é posterior.",
         items.len()

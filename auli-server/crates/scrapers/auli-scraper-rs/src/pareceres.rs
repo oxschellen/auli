@@ -40,6 +40,8 @@ const LISTING_URL: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/Search.asp
 const DETAIL_BASE: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=";
 const UA: &str = "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 const OUT_PATH: &str = "../data/rs/ref/rs-pareceres-temp.txt";
+/// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
+const DOCS_DIR: &str = "../data/rs/docs/pareceres";
 // Cache namespace da frota: `<CACHE_BASE>/cache/<CACHE_KIND>` = `../data/rs/raw/cache/pareceres`,
 // irmão de `cache/servicos` e `cache/faqs` (mesma estrutura dos demais estados). `CACHE_DIR` é esse
 // mesmo diretório, usado para o cookie jar e o `create_dir_all`.
@@ -98,6 +100,20 @@ pub fn run(use_cache: bool) -> Result<()> {
     }
 
     write_temp(&items)?;
+    // G5: emite a árvore `.md` (um arquivo por consulta INÉDITA; existente é pulado — é o
+    // incremental, e protege sinopses já geradas). O `.txt` acima segue até a G5b aposentar o JSON.
+    let docs: Vec<auli_scraper_kit::docs::DocParaEmitir<'_>> = items
+        .iter()
+        .map(|p| auli_scraper_kit::docs::DocParaEmitir {
+            numero: &p.numero,
+            assunto: &p.assunto,
+            link: &p.link,
+            corpo: &p.corpo,
+        })
+        .collect();
+    let dir = std::path::Path::new(DOCS_DIR);
+    let (criados, pulados) = auli_scraper_kit::docs::emitir_pareceres(dir, &docs)?;
+    auli_scraper_kit::docs::relatar(dir, criados, pulados);
     println!("✅ Escrito {OUT_PATH} ({} pareceres). O estágio de resumo autorado é posterior.", items.len());
     Ok(())
 }
