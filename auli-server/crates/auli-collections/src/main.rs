@@ -13,7 +13,7 @@ fn main() -> errors::Result<()> {
     // CLI: `auli-collections <entity> [<subcomando>] [flags]`
     //   <entity>   entity id (ex.: `rs`); vazio/omitido -> entidade padrão.
     //   process    (padrão) deriva os artefatos do snapshot, offline.
-    //   pareceres  ingere o `.txt` de referência -> Table<Consulta>.
+    //   pareceres  bootstrap: ingere o `.txt` legado -> árvore `docs/pareceres/*.md`.
     //   sinopse    gera/mescla sinopses (aceita flags próprias; ver `sinopse::run`).
     // Só o `sinopse` aceita flags; os demais subcomandos continuam rejeitando (comportamento atual).
     let args: Vec<String> = std::env::args().skip(1).collect();
@@ -49,8 +49,8 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
     match collection.as_str() {
         // OFFLINE: deriva contrato, prints, index e per-público do snapshot já gravado.
         "process" => process::run(entity)?,
-        // OFFLINE: ingere pareceres do `.txt` autorado em `ref/` -> `Table<Consulta>` no raw
-        // (`<id>-pareceres.json`); rode `auli update` (materializa a árvore) e depois `sinopse`.
+        // OFFLINE (bootstrap): ingere o `.txt` legado de `ref/` -> árvore `docs/pareceres/*.md`;
+        // rode `sinopse` em seguida. Os scrapers já emitem `.md` direto (G5).
         "pareceres" => derive_pareceres::run(entity)?,
         // OFFLINE: preenche as sinopses pendentes na árvore `docs/pareceres/*.md` (G4).
         "sinopse" => sinopse::run(entity, parse_sinopse_flags(&flags)?)?,

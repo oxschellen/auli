@@ -236,6 +236,37 @@ pub fn escrever_se_ausente(dir: &std::path::Path, header: &DocHeader, corpo: &st
     Ok(true)
 }
 
+/// Emite um LOTE de documentos inéditos em `dir`; devolve `(criados, pulados)`.
+///
+/// É o ponto de entrada dos produtores (scrapers e derive) — e o único lugar onde a **colisão de
+/// slug** é detectável. `escrever_se_ausente`, sozinha, não distingue "já coletei este documento"
+/// de "outro `numero` gera o mesmo arquivo": nos dois casos o arquivo existe. Só quem vê o lote
+/// inteiro percebe que dois números diferentes disputam o mesmo `.md` — e isso é violação de
+/// identidade, não um pulo legítimo. Sem esta checagem o segundo documento sumiria em silêncio.
+pub fn escrever_lote_se_ausente(
+    dir: &std::path::Path,
+    docs: &[(DocHeader, String)],
+) -> Result<(usize, usize)> {
+    let mut vistos: std::collections::HashMap<String, &str> = std::collections::HashMap::new();
+    for (header, _) in docs {
+        let s = slug(&header.numero);
+        if let Some(anterior) = vistos.insert(s.clone(), &header.numero)
+            && anterior != header.numero
+        {
+            bail!("colisão de slug: {anterior:?} e {:?} geram o mesmo arquivo `{s}.md`", header.numero);
+        }
+    }
+    let (mut criados, mut pulados) = (0usize, 0usize);
+    for (header, corpo) in docs {
+        if escrever_se_ausente(dir, header, corpo)? {
+            criados += 1;
+        } else {
+            pulados += 1;
+        }
+    }
+    Ok((criados, pulados))
+}
+
 /// Slug do `numero` para nome de arquivo: minúsculas, sem acento, `[^a-z0-9]+` → `-`, aparado.
 ///
 /// Ex.: `CONSULTA COPAT nº 0037/26` → `consulta-copat-no-0037-26`. Colisão de slug dentro da
@@ -456,6 +487,43 @@ mod tests {
         let (_, sin, _) = parse_doc(&std::fs::read_to_string(&destino).unwrap()).unwrap();
         assert_eq!(sin.as_deref(), Some("SINOPSE CARA"), "sinopse preservada");
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn lote_recusa_colisao_de_slug_nomeando_os_dois() {
+        // A regressão que isto guarda: sem a checagem, o segundo documento seria "pulado" como se
+        // já existisse — e sumiria em silêncio.
+        let dir = std::env::temp_dir().join(format!("auli-mddoc-colisao-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let mk = |n: &str| mddoc_header(n);
+        let docs = vec![(mk("CONSULTA 1/26"), "a".to_string()), (mk("CONSULTA 1-26"), "b".to_string())];
+        let e = escrever_lote_se_ausente(&dir, &docs).unwrap_err().to_string();
+        assert!(e.contains("colisão de slug"), "erro: {e}");
+        assert!(e.contains("CONSULTA 1/26") && e.contains("CONSULTA 1-26"), "deve nomear os dois: {e}");
+        // E não escreveu nada: a checagem roda ANTES de tocar o disco.
+        assert!(!dir.exists() || std::fs::read_dir(&dir).unwrap().count() == 0);
+    }
+
+    #[test]
+    fn lote_conta_criados_e_pulados_e_o_mesmo_numero_repetido_nao_e_colisao() {
+        let dir = std::env::temp_dir().join(format!("auli-mddoc-lote-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        // O MESMO numero duas vezes no lote não é colisão de identidade — é duplicata; o 2º é pulado.
+        let docs = vec![(mddoc_header("A 1"), "x".to_string()), (mddoc_header("A 1"), "x".to_string())];
+        assert_eq!(escrever_lote_se_ausente(&dir, &docs).unwrap(), (1, 1));
+        // Re-rodar o lote inteiro: tudo pulado (incremental).
+        assert_eq!(escrever_lote_se_ausente(&dir, &docs).unwrap(), (0, 2));
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// Header mínimo para os testes de lote.
+    fn mddoc_header(numero: &str) -> DocHeader {
+        DocHeader {
+            numero: numero.into(),
+            assunto: format!("assunto de {numero}"),
+            link: format!("http://x/{numero}"),
+            sinopse_info: None,
+        }
     }
 
     #[test]
