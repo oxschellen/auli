@@ -75,13 +75,15 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
     );
     println!("🔒 Anonimizador de PII (auli-anon) carregado");
 
-    let state = Arc::new(AppState {
-        collections: Arc::new(collections),
+    // O motor (D-MCP-8): coleções + embedder + raiz da árvore `docs/` (a mesma de onde os packs
+    // foram carregados — `docs/` é irmã deles). Uma fonte de verdade para as três faces.
+    let engine = Arc::new(auli_retrieval::Engine::new(
+        collections,
         embedder,
-        anonimizador,
-        // Mesma raiz de onde os packs foram carregados — a árvore `docs/` é irmã deles.
-        docs_root: Arc::from(std::path::Path::new(&packs_dir)),
-    });
+        std::path::PathBuf::from(&packs_dir),
+    ));
+
+    let state = Arc::new(AppState { engine, anonimizador });
 
     println!("----------------------------------------------------");
     println!("Auli Server v{} - Read-only packs + in-process embeddings", env!("CARGO_PKG_VERSION"));

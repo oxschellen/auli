@@ -17,8 +17,10 @@ use vector_store::ReadStore;
 use crate::entities;
 use crate::error::Result;
 
-/// All loaded collections, keyed by `<entity>-<kind>`.
-pub type Collections = HashMap<String, Arc<ReadStore<String>>>;
+/// All loaded collections, keyed by `<entity>-<kind>`. The type lives in the engine crate
+/// (`auli-retrieval`) — the *loading* stays here, since it depends on the registry and the
+/// manifest, which are application concerns, not engine concerns.
+pub use auli_retrieval::Collections;
 
 /// Eager-load and validate every entity's packs. Returns the in-memory, immutable collection map.
 ///

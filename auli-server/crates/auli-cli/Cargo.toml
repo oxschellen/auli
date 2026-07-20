@@ -18,6 +18,7 @@ auli-contract = { path = "../auli-contract" }
 auli-core = { path = "../auli-core" }
 auli-anon = { path = "../auli-anon" }
 auli-llm = { path = "../auli-llm" }
+auli-retrieval = { path = "../auli-retrieval" }
 vector-store = { path = "../vector-store" }
 
 # Web Framework & HTTP:
