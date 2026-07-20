@@ -2,7 +2,7 @@ import { useMemo, useRef, useState, useDeferredValue } from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import useSWR from "swr";
 import { PareceresAccordion } from "./PareceresAccordion";
-import { searchPareceres, type Parecer } from "./pareceres";
+import { buildPareceresIndex, searchPareceres, type Parecer } from "./pareceres";
 import { jsonFetcher, SWR_OPTS, entityPath } from "../../shared/fetchers";
 import { SearchInput } from "../../shared/SearchInput";
 import { AsyncContent } from "../../shared/AsyncContent";
@@ -24,17 +24,25 @@ export const PareceresList = () => {
   const deferredQuery = useDeferredValue(searchQuery);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const isSearching = deferredQuery.trim().length > 0;
+
+  // Índice de busca pré-normalizado, construído na PRIMEIRA busca e reusado nas teclas seguintes.
+  // Preguiçoso de propósito: quem só folheia a lista nunca paga os ~400 ms do acervo do SP, e quem
+  // busca paga uma vez em vez de a cada letra.
+  const searchIndex = useMemo(
+    () => (isSearching ? buildPareceresIndex(pareceres) : undefined),
+    [pareceres, isSearching],
+  );
+
   const filtered = useMemo(
-    () => searchPareceres(pareceres, deferredQuery),
-    [pareceres, deferredQuery],
+    () => searchPareceres(pareceres, deferredQuery, searchIndex),
+    [pareceres, deferredQuery, searchIndex],
   );
 
   function clearSearch() {
     setSearchQuery("");
     inputRef.current?.focus();
   }
-
-  const isSearching = deferredQuery.trim().length > 0;
 
   if (!available) return <CollectionEmpty entity={entity} label="Pareceres" />;
 

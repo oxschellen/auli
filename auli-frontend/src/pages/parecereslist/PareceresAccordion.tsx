@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -10,7 +10,6 @@ import { Highlight } from "../../shared/highlight";
 import { parseQuery } from "../../shared/textSearch";
 import { rehypeHighlight } from "../../shared/rehypeHighlight";
 
-/** Uma linha de parecer: cabeçalho (número + assunto) que abre para a sinopse + link do portal. */
 /** Renderiza o `<mark>` que o `rehypeHighlight` injeta, com o mesmo visual do `Highlight`. */
 const markdownComponents = {
   ...compactMarkdownComponents,
@@ -21,6 +20,7 @@ const markdownComponents = {
   ),
 };
 
+/** Uma linha de parecer: cabeçalho (número + assunto) que abre para a sinopse + link do portal. */
 function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
   const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
@@ -118,6 +118,14 @@ function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
   );
 }
 
+/**
+ * Quantas linhas entram por vez. Cada linha custa ~9 elementos de DOM, então o acervo do SP (15,6
+ * mil) montava ~140 mil elementos num render síncrono — segundos de thread principal travada, com a
+ * barra de busca sem aceitar foco. Renderizamos um lote e crescemos conforme o scroll chega perto do
+ * fim: o que o usuário vê é idêntico, o custo inicial vira uma fração.
+ */
+const LOTE = 100;
+
 export function PareceresAccordion({
   pareceres,
   searchQuery,
@@ -128,11 +136,44 @@ export function PareceresAccordion({
   // Uma vez por query, não por parecer: `parseQuery` devolve array novo a cada chamada.
   const terms = useMemo(() => parseQuery(searchQuery), [searchQuery]);
 
+  const [limite, setLimite] = useState(LOTE);
+  const sentinela = useRef<HTMLDivElement>(null);
+
+  // Lista nova (a busca mudou) volta ao primeiro lote — senão uma busca larga herdaria o limite alto
+  // que o scroll anterior acumulou. Ajuste durante o render, não em effect: um `setState` em effect
+  // provoca render em cascata (e a regra `react-hooks/set-state-in-effect` reclama, com razão).
+  const [listaAnterior, setListaAnterior] = useState(pareceres);
+  if (listaAnterior !== pareceres) {
+    setListaAnterior(pareceres);
+    setLimite(LOTE);
+  }
+
+  // Sem IntersectionObserver (jsdom, navegador antigo) degrada para renderizar tudo: melhor lento
+  // que truncado — parecer fora do DOM E fora do alcance do scroll seria documento inacessível.
+  // Derivado, não sincronizado por effect, pelo mesmo motivo acima.
+  const suportaIO = typeof IntersectionObserver !== "undefined";
+  const visiveis = suportaIO ? Math.min(limite, pareceres.length) : pareceres.length;
+
+  useEffect(() => {
+    if (!suportaIO || visiveis >= pareceres.length) return;
+    const alvo = sentinela.current;
+    if (!alvo) return;
+    const obs = new IntersectionObserver(
+      ([entrada]) => {
+        if (entrada.isIntersecting) setLimite((l) => Math.min(l + LOTE, pareceres.length));
+      },
+      { rootMargin: "600px" }, // carrega antes de o usuário chegar ao fim
+    );
+    obs.observe(alvo);
+    return () => obs.disconnect();
+  }, [suportaIO, visiveis, pareceres.length]);
+
   return (
     <Box border="1px solid var(--chakra-colors-border)" borderRadius="6px" overflow="hidden">
-      {pareceres.map((p) => (
+      {pareceres.slice(0, visiveis).map((p) => (
         <ParecerItem key={p.numero} p={p} terms={terms} />
       ))}
+      {visiveis < pareceres.length && <Box ref={sentinela} h="1px" />}
     </Box>
   );
 }
