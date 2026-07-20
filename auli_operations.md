@@ -71,7 +71,13 @@ cargo build --release --workspace      # ou só o engine: cargo build --release 
 ## 4. Dados necessários para servir
 
 Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data` a partir de
-`auli-server/`). O `auli server` lê de lá: `registry.toml`, `prompts/` e os packs por entidade.
+`auli-server/`). O `auli server` lê de lá: `registry.toml`, `prompts/`, os packs por entidade e —
+desde a G3 — a **árvore `data/<id>/docs/pareceres/*.md`**, de onde o corpo das consultas é lido
+**na hora da query** (o pack não carrega mais o corpo).
+
+> ⚠️ **A árvore `docs/` é requisito de serving, não artefato intermediário.** O manifesto carimba um
+> `docs_hash` e o boot **recusa subir** se a árvore divergir dele. Ao copiar dados entre máquinas,
+> leve `packs/` **e** `docs/` juntos — pack sem árvore não serve.
 
 **O repositório guarda código + config, não dado coletado.** Só `data/registry.toml` e
 `data/prompts/` são versionados; todo o resto de `data/<id>/**` é gitignored e reconstruído pelo
@@ -190,24 +196,38 @@ para o server rodando em `auli-server/`. Variáveis:
 ### 4.5 Pareceres / Consultas — pipeline completo (scrape → sinopse → vetorizar)
 
 Vale para as 4 entidades com acervo de consultas formais: **rs** (Pareceres), **sc** (Consultas
-COPAT), **sp** (Respostas a Consultas), **pr** (Consultas SEFA). É um pipeline de **5 passos**, mais
-longo que o de serviços porque inclui um estágio de **sinopse gerada por LLM**.
+COPAT), **sp** (Respostas a Consultas), **pr** (Consultas SEFA). É um pipeline de **6 passos**, mais
+longo que o de serviços porque inclui um estágio de **sinopse gerada por LLM** — e porque a fonte do
+documento é a **árvore `.md`**, que precisa existir antes de a sinopse rodar.
 
 ```text
 auli-scraper-<id> pareceres      → ref/<id>-pareceres-temp.txt     (rede; sem resumo)
         ↓ promoção (cp)
                                    ref/<id>-portal-pareceres.txt   (fonte do derive)
-auli-collections <id> pareceres  → raw/<id>-pareceres.raw.json     (offline; contrato bruto)
-auli-collections <id> sinopse    → raw/<id>-pareceres.json         (LLM; + regrava o print .txt)
-scripts/build-packs.sh <id>      → packs/<id>-pareceres.json       (embedding)
+auli-collections <id> pareceres  → raw/<id>-pareceres.json         (offline; estrutura + corpo)
+scripts/build-packs.sh <id>      → docs/pareceres/<slug>.md        (materializa a árvore;
+                                                                    RECUSA vetorizar se houver
+                                                                    pendente — isso é esperado)
+auli-collections <id> sinopse    → edita os .md (LLM)              (pendente = sem `## sinopse`)
+scripts/build-packs.sh <id>      → packs/<id>-pareceres.json       (embedding; agora passa)
 ```
+
+> **Por que o `build-packs.sh` aparece duas vezes.** Ele materializa a árvore *e* vetoriza. Na 1ª
+> passada a árvore nasce (com buracos) e a **guarda recusa a vetorização** — comportamento correto,
+> não erro: pendência é estado legal da árvore, e é dela que a sinopse parte. Na 2ª, com os `.md`
+> preenchidos, ele vetoriza. Para uma entidade já sinopsada, uma passada só basta.
+
+**Quem é dono de quê** (a regra que evita perder trabalho): a **árvore** é dona da `## sinopse`; o
+**JSON** é dono de `numero`/`assunto`/`link`/`corpo` e do rol de quais consultas existem. Por isso
+re-rodar o derive e re-materializar é seguro — o merge preserva as sinopses e só atualiza os campos
+do JSON.
 
 #### Por que existe o passo `sinopse`
 
 A **ementa oficial** do parecer é curta e em juridiquês denso — péssima chave de busca. O `sinopse`
 faz **uma** passada de LLM por documento (o corpo é imutável, então é one-shot) gerando uma
 **descrição em linguagem natural + palavras-chave**, que passam a ser o texto vetorizado. Resultado
-medido: perguntas em linguagem natural passam a recuperar as consultas certas (ver §4.5.6).
+medido: perguntas em linguagem natural passam a recuperar as consultas certas (ver §4.5.7).
 
 #### 4.5.1 Passo 1 — Raspar
 
@@ -236,20 +256,44 @@ cp data/<id>/ref/<id>-pareceres-temp.txt data/<id>/ref/<id>-portal-pareceres.txt
 > **Antes de promover, confira**: contagem de blocos (`grep -cE '^// [0-9]+'`) e o diff de
 > `descricao:` contra o arquivo atual — assim você vê quantas consultas entraram/saíram.
 
-**Versionamento:** `data/*/raw/` é gitignored, mas `ref/` não. O `rs-portal-pareceres.txt` **é
-versionado** (carrega as sinopses — ver 4.5.3, então um derive futuro as reaproveita sem re-LLM); os
-de **sc/sp/pr são gitignored** (regeneráveis a partir do scraper). Os `*-temp.txt` são sempre
-gitignored.
+**Versionamento:** desde a G0, **todo `data/<id>/**` é gitignored** (só `registry.toml` e `prompts/`
+ficam no git) — inclusive `ref/`. Os `.txt` de referência são regeneráveis pelo scraper.
+
+> ⚠️ **O print `.txt` não carrega mais as sinopses.** Até a G3 o passo `sinopse` regravava o
+> `ref/<id>-portal-pareceres.txt` com os resumos embutidos, e o derive os reaproveitava. Na **G4 as
+> sinopses passaram a viver na árvore `.md`** e o print deixou de ser reescrito. Consequência
+> prática: **o que preserva o trabalho de LLM é `data/<id>/docs/`, não o `.txt`.** Faça backup da
+> árvore, não do print.
 
 #### 4.5.3 Passo 3 — Derive (offline)
 
 ```bash
-./target/release/auli-collections <id> pareceres    # → raw/<id>-pareceres.raw.json
+./target/release/auli-collections <id> pareceres    # → raw/<id>-pareceres.json
 ```
 
 Parseia o `.txt` em `Table<Consulta>`. **Não** faz parte do `auli-collections <id>` (process).
+Recusa `numero` duplicado (identidade da listagem).
 
-#### 4.5.4 Passo 4 — Sinopse (LLM)
+> O `.raw.json` **foi aposentado na G4**. Ele existia só para dar ao passo `sinopse` um "antes" e um
+> "depois" na mesma família de arquivos; com as sinopses na árvore, perdeu função. Se houver
+> `*-pareceres.raw.json` sobrando de antes, é resíduo — pode apagar.
+
+#### 4.5.4 Passo 4 — Materializar a árvore
+
+```bash
+scripts/build-packs.sh <id>     # 1ª passada: cria os .md; recusa vetorizar se houver pendente
+```
+
+Cria `data/<id>/docs/pareceres/<slug>.md` (um por consulta: frontmatter + `## sinopse` opcional +
+`## corpo`), a partir do JSON. **Se a entidade já estiver sinopsada, este passo e o 6 são o mesmo
+comando** — a guarda passa e ele vetoriza direto.
+
+- **Merge, não sobrescrita:** um `.md` que já existe tem a `## sinopse` preservada; só os campos do
+  JSON são regravados. `.md` ilegível é **erro** (não sobrescreve trabalho de LLM às cegas).
+- **Poda:** consulta removida do JSON tem o `.md` apagado — a árvore espelha o rol.
+- O `docs_hash` do manifesto é recalculado aqui.
+
+#### 4.5.5 Passo 5 — Sinopse (LLM)
 
 ```bash
 ./target/release/auli-collections <id> sinopse [flags]
@@ -262,6 +306,11 @@ Parseia o `.txt` em `Table<Consulta>`. **Não** faz parte do `auli-collections <
 | `--force <numero>` | re-gera a sinopse de um documento específico (ignora a existente)         |
 | `--fake`           | dev-only: preenche resumo sintético, sem tocar rede                       |
 
+**Fonte e destino são os `.md`** (G4): pendente = arquivo **sem a seção `## sinopse`**. O passo lê
+cada documento, gera o que falta e **regrava o próprio `.md`** (frontmatter `sinopse_*` + seção),
+atomicamente. Não toca o JSON nem o print. Exige a árvore materializada (passo 4) — sem ela, erro
+que manda rodar o `auli update` antes.
+
 - **Env**: `SINOPSE_API_URL` / `SINOPSE_API_KEY` / `SINOPSE_API_MODEL`, com **fallback** para os
   `LLM_*`. Isso permite apontar o lote para um **projeto/quota dedicado**, sem competir com o chat do
   RAG.
@@ -271,12 +320,12 @@ Parseia o `.txt` em `Table<Consulta>`. **Não** faz parte do `auli-collections <
   chars e ≥ 3 palavras-chave. Falha de validação → **1 re-tentativa**; persistindo, conta como falha
   e o lote segue.
 - **Entrada truncada** em `CORPO_MAX_CHARS = 24_000` chars (v1 sem chunking; avisa no log).
-- **Idempotente**: mescla por `numero` com a saída anterior — documentos que já têm `resumo` são
-  **reaproveitados** (zero chamadas). Re-rodar é seguro e barato; é assim que se retoma um lote
-  interrompido.
-- **Grava a cada documento** (proteção contra queda) e promove `raw.json → .json` no fim, **sempre**
-  que não for dry-run. Também **regrava o print** `ref/<id>-portal-pareceres.txt` com os resumos
-  embutidos — é o round-trip: derive → sinopse → derive reaproveita.
+- **Idempotente**: documento que já tem `## sinopse` é **pulado** (zero chamadas). Re-rodar é seguro
+  e barato; é assim que se retoma um lote interrompido — a retomada é implícita, sem estado externo.
+- **Grava documento a documento** (proteção contra queda): escrita atômica (`.tmp` + rename) no
+  próprio `.md`. Uma queda perde no máximo o documento em voo.
+- **Memória constante**: processa um a um (lê → gera → grava), nunca carrega a árvore inteira — SP
+  tem 15,6 mil arquivos.
 - **Relatório final** com invariante de guarda:
   `reaproveitados + gerados + falhas + pendentes-restantes == total`.
 
@@ -321,24 +370,34 @@ acabar. Dá para automatizar com um driver que repete `--limit 1000`, detecta o 
 dorme até o reset e retoma — com teto de iterações e abort se um batch não progredir (evita loop
 infinito).
 
-#### 4.5.5 Passo 5 — Vetorizar
+#### 4.5.6 Passo 6 — Vetorizar
 
 ```bash
-scripts/build-packs.sh <id>
+scripts/build-packs.sh <id>     # mesma linha do passo 4; agora a guarda passa
 ```
 
-- **Guarda de ingestão:** o `auli update` **recusa** vetorizar pareceres se **qualquer** registro
-  estiver sem sinopse, listando os números pendentes. Ou seja: só vetorize depois de fechar o lote.
+- **Guarda de ingestão:** o `auli update` **recusa** vetorizar pareceres se **qualquer** documento da
+  árvore estiver sem `## sinopse`, listando os números. A árvore **é materializada mesmo assim** (a
+  recusa é só da vetorização) — é o que permite o passo 5 rodar.
+- **De onde vem a sinopse:** do `.md`, não do JSON (G4). O `update` hidrata `resumo`/`sinopse_info` da
+  árvore e recompõe o `text_to_embed`.
 - **O que é embedado** (`text_to_embed`): `numero` + `assunto` + `resumo` (a sinopse), unidos por
-  quebra de linha, vazios pulados. O **corpo integral NÃO é embedado** — ele é armazenado e devolvido
-  no `stored_repr` (o que o RAG entrega ao LLM).
-- **`STRATEGY_VERSION`** (hoje `2`) é carimbado no manifesto e validado no boot do server: pacote com
-  versão diferente ⇒ o server **recusa subir**. Regenerar sinopses **em massa** (mudança de
+  quebra de linha, vazios pulados. O **corpo integral NÃO é embedado**.
+- **O que o pack guarda** (mudou na G3): não é mais o bloco pronto com o corpo, e sim um **payload
+  leve** — `numero`/`assunto`/`resumo`/`link`/`doc_path`. O corpo é lido da árvore **na query**, só
+  para os documentos selecionados. Se um `.md` sumir, o servidor **degrada** (serve a sinopse com o
+  aviso `[corpo indisponível — ver link]` e loga `ERROR`) em vez de derrubar a consulta.
+- **`STRATEGY_VERSION`** (hoje `3`) é carimbado no manifesto e validado no boot: pacote com versão
+  diferente ⇒ o server **recusa subir**. Regenerar sinopses **em massa** (mudança de
   `SINOPSE_PROMPT_VERSION` ou troca do modelo + re-geração) muda os textos embedados ⇒ **bump
-  obrigatório**. Sinopses novas convivendo com antigas (append-only, sem re-geração) **não** exigem
-  bump.
+  obrigatório**. Sinopses novas convivendo com antigas (append-only) **não** exigem bump.
 
-#### 4.5.6 Validar o retrieval (sem LLM)
+  > ⚠️ **O bump é global e o boot é fatal para o servidor inteiro.** `packs::load_all` valida
+  > **todas** as entidades; a primeira com versão antiga derruba o boot. Ao bumpar, re-rode
+  > `build-packs.sh` em **todas** as entidades antes de subir o servidor — não dá para migrar uma de
+  > cada vez com o serviço no ar.
+
+#### 4.5.7 Validar o retrieval (sem LLM)
 
 ```bash
 EMBED_CACHE_DIR=$PWD/models \
@@ -349,16 +408,16 @@ Carrega o embedder + o pack e imprime o **top-5 por proximidade** de um conjunto
 linguagem natural (score = distância; **menor = mais próximo**). É o jeito rápido de confirmar que a
 key nova está funcionando, sem gastar quota de LLM.
 
-#### 4.5.7 Estado atual
+#### 4.5.8 Estado atual
 
 | Entidade | Consultas  | Sinopses | Observação                                  |
 | -------- | ---------- | -------- | ------------------------------------------- |
 | **rs**   | 372        | 372      | `.txt` versionado (carrega as sinopses)     |
 | **sc**   | 1.743      | 1.743    | —                                           |
 | **pr**   | 2.060      | 2.060    | —                                           |
-| **sp**   | 15.605     | em lote  | rodar em batches de 1000 (§4.5.4)           |
+| **sp**   | 15.605     | em lote  | rodar em batches de 1000 (§4.5.5)           |
 
-#### 4.5.8 Trabalhar com um lote em curso — e o que acontece se a máquina cair
+#### 4.5.9 Trabalhar com um lote em curso — e o que acontece se a máquina cair
 
 Um lote de sinopse roda por **horas** (o SP são ~15 mil documentos). Não é preciso ficar parado: dá
 para desenvolver e até rodar o pipeline de **outras** entidades em paralelo, desde que se respeite o

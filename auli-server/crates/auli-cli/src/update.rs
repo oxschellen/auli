@@ -61,11 +61,11 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
         .parent()
         .ok_or_else(|| format!("diretório de packs sem pai: {}", out.display()))?
         .join("docs");
-    let docs_hash = preparar_pareceres(&entity, &source, &docs_dir)?;
-    if let Some(entry) = ingest::<auli_contract::Consulta>(
-        &embedder, &writer, &entity, "pareceres", &format!("{}-pareceres.json", entity), &source, &out,
-    )? {
-        entries.push(entry);
+    let mut docs_hash = None;
+    if let Some((hash, consultas)) = preparar_pareceres(&entity, &source, &docs_dir)? {
+        docs_hash = hash;
+        println!("🔢 pareceres: {} registros → vetorizando...", consultas.len());
+        entries.push(ingest_items(&embedder, &writer, &entity, "pareceres", &consultas, &out)?);
     }
     // notas: sem fonte struct por ora (autoradas) — ausentes até serem modeladas.
 
@@ -86,41 +86,58 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     Ok(())
 }
 
-/// Materializa a árvore `docs/pareceres/*.md` e só então aplica a guarda de sinopse; devolve o
-/// `docs_hash` da árvore (ou `None` para entidade sem pareceres).
+/// Materializa a árvore, **hidrata as sinopses dela** e só então aplica a guarda; devolve
+/// `(docs_hash, consultas prontas para vetorizar)` — ou `None` para entidade sem pareceres.
 ///
-/// A ordem é o ponto (G3.5). A árvore é DERIVADA do JSON nesta fase (G2): o pack segue gordo e o
-/// servidor, inalterado; o `docs_hash` no manifesto amarra a árvore ao pacote e o boot recusa servir
-/// se ela divergir. `docs/` é irmão de `packs/` em `data/<id>/`.
+/// G4 — propriedade dividida: a ÁRVORE é dona da sinopse (o passo `auli-collections <id> sinopse`
+/// escreve nos `.md`); o JSON é dono de `numero`/`assunto`/`link`/`corpo` e do rol. Por isso o
+/// `resumo` que vai ao índice vem do `.md`, não do JSON — e o `text_to_embed` é recomposto aqui pelo
+/// ponto único (`compose_text_to_embed`), para reaproveitados e recém-gerados seguirem a mesma
+/// fórmula.
 ///
-/// Materializar ANTES da guarda porque pendência é estado **legal** da árvore — o contrato `mddoc`
-/// modela consulta sem `## sinopse`, e é dela que o passo `sinopse` parte. Recusar a materialização
-/// por pendência deixaria a entidade sem substrato onde retomar. A guarda protege o que sempre quis
-/// proteger: a vetorização.
-fn preparar_pareceres(entity: &str, source: &Path, docs_dir: &Path) -> Result<Option<String>> {
+/// A ordem vem da G3.5: materializar ANTES da guarda, porque pendência é estado **legal** da árvore
+/// e é dela que o passo `sinopse` parte. A guarda protege só a vetorização.
+fn preparar_pareceres(
+    entity: &str,
+    source: &Path,
+    docs_dir: &Path,
+) -> Result<Option<(Option<String>, Vec<auli_contract::Consulta>)>> {
     let Some(n) = docs::materializar_pareceres(entity, source, docs_dir)? else {
         return Ok(None); // entidade sem pareceres — sem árvore, sem hash
     };
     println!("📄 docs: {n} pareceres materializados em {}", docs_dir.join("pareceres").display());
     let hash = manifest::hash_docs_tree(docs_dir)?;
-    recusar_pareceres_sem_sinopse(entity, source)?;
-    Ok(hash)
+
+    let text = std::fs::read_to_string(source.join(format!("{entity}-pareceres.json")))?;
+    let table: Table<auli_contract::Consulta> = serde_json::from_str(&text)?;
+    let mut consultas = table.items;
+    hidratar_da_arvore(&mut consultas, docs_dir)?;
+    recusar_pareceres_sem_sinopse(entity, &consultas)?;
+    Ok(Some((hash, consultas)))
 }
 
-/// Recusa contrato de pareceres com `resumo` vazio: embedar sem sinopse é regressão silenciosa
-/// (o `text_to_embed` fica cego para o corpo — é o que o passo `sinopse` resolve). Arquivo ausente
-/// é ok (entidade sem pareceres — pulada como hoje). Dupla leitura do JSON (aqui e no `ingest`) é
-/// aceitável: passo offline.
-fn recusar_pareceres_sem_sinopse(entity: &str, source: &Path) -> Result<()> {
-    let path = source.join(format!("{entity}-pareceres.json"));
-    let text = match std::fs::read_to_string(&path) {
-        Ok(t) => t,
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(()),
-        Err(e) => return Err(e.into()),
-    };
-    let table: Table<auli_contract::Consulta> = serde_json::from_str(&text)?;
-    let vazios: Vec<&str> = table
-        .items
+/// Preenche `resumo`/`sinopse_info` de cada consulta a partir do seu `.md` (fonte da sinopse na G4)
+/// e recompõe o `text_to_embed`. Arquivo ausente/ilegível é erro: a materialização acabou de rodar,
+/// então isso só acontece se algo o removeu no meio — melhor falhar alto que indexar às cegas.
+fn hidratar_da_arvore(consultas: &mut [auli_contract::Consulta], docs_dir: &Path) -> Result<()> {
+    let dir = docs_dir.join("pareceres");
+    for c in consultas.iter_mut() {
+        let caminho = dir.join(format!("{}.md", auli_contract::mddoc::slug(&c.numero)));
+        let texto = std::fs::read_to_string(&caminho)
+            .map_err(|e| format!("`{}` ilegível ({e}) — re-materialize a árvore", caminho.display()))?;
+        let (header, sinopse, _corpo) = auli_contract::mddoc::parse_doc(&texto)
+            .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
+        c.resumo = sinopse.unwrap_or_default();
+        c.sinopse_info = header.sinopse_info;
+        c.text_to_embed = auli_contract::compose_text_to_embed(&c.numero, &c.assunto, &c.resumo);
+    }
+    Ok(())
+}
+
+/// Recusa vetorizar consulta sem sinopse **na árvore**: embedar sem ela é regressão silenciosa (o
+/// `text_to_embed` fica cego para o corpo — é o que o passo `sinopse` resolve).
+fn recusar_pareceres_sem_sinopse(entity: &str, consultas: &[auli_contract::Consulta]) -> Result<()> {
+    let vazios: Vec<&str> = consultas
         .iter()
         .filter(|c| c.resumo.trim().is_empty())
         .map(|c| c.numero.as_str())
@@ -132,10 +149,11 @@ fn recusar_pareceres_sem_sinopse(entity: &str, source: &Path) -> Result<()> {
         // fluxo antes de `write_manifest`). Daí o aviso de reinício: para entidade já vetorizada, a
         // árvore no disco fica À FRENTE do manifesto antigo e o boot recusaria por `docs_hash`.
         return Err(format!(
-            "{} consultas sem sinopse ({amostra}{reticencias}).\n\
+            "{} consultas sem seção `## sinopse` na árvore ({amostra}{reticencias}).\n\
              A árvore docs/ foi materializada (com pendências — estado válido); a VETORIZAÇÃO foi \
              recusada para não indexar às cegas.\n\
-             Remédio: rode `auli-collections {entity} sinopse` e depois `auli update` de novo.\n\
+             Remédio: rode `auli-collections {entity} sinopse` (ele preenche os `.md`) e depois \
+             `auli update` de novo.\n\
              Atenção: se esta entidade já estava vetorizada, NÃO reinicie o servidor antes do novo \
              `auli update` — a árvore no disco ficou à frente do manifesto e o boot recusaria.",
             vazios.len()
@@ -170,9 +188,26 @@ where
 
     let bytes = std::fs::read(&src)?;
     let table: Table<P> = serde_json::from_slice(&bytes)?;
-    let to_embed: Vec<String> = table.items.iter().map(|it| it.text_to_embed().to_string()).collect();
-    let stored: Vec<String> = table.items.iter().map(|it| it.stored_repr()).collect();
-    println!("🔢 {}: {} registros → vetorizando...", kind, stored.len());
+    println!("🔢 {}: {} registros → vetorizando...", kind, table.items.len());
+    Ok(Some(ingest_items(embedder, writer, entity, kind, &table.items, out)?))
+}
+
+/// Núcleo do ingest: embeda `text_to_embed`, guarda `stored_repr` e devolve a entrada de manifesto.
+/// Separado de [`ingest`] porque pareceres não vêm mais direto do arquivo — passam pela hidratação
+/// da árvore (G4) e chegam aqui em memória.
+fn ingest_items<P>(
+    embedder: &Embedder,
+    writer: &Writer,
+    entity: &str,
+    kind: &str,
+    items: &[P],
+    out: &Path,
+) -> Result<CollectionEntry>
+where
+    P: Embeddable,
+{
+    let to_embed: Vec<String> = items.iter().map(|it| it.text_to_embed().to_string()).collect();
+    let stored: Vec<String> = items.iter().map(|it| it.stored_repr()).collect();
 
     let name = format!("{}-{}", entity, kind);
     let embeddings = embedder.embed_dense(to_embed)?;
@@ -198,14 +233,14 @@ where
     let file_name = format!("{}.json", name);
     let written = std::fs::read(out.join(&file_name))?;
     println!("✅ {} → {} registros", name, total);
-    Ok(Some(CollectionEntry {
+    Ok(CollectionEntry {
         kind: kind.to_string(),
         count: total as usize,
         dim: EMBED_DIM,
         file: file_name,
         bytes: written.len() as u64,
         hash: manifest::hash_hex(&written),
-    }))
+    })
 }
 
 #[cfg(test)]
@@ -252,7 +287,7 @@ mod tests {
         let err = preparar_pareceres("xx", &source, &docs).unwrap_err();
 
         // A guarda recusou...
-        assert!(err.to_string().contains("1 consultas sem sinopse"), "erro inesperado: {err}");
+        assert!(err.to_string().contains("1 consultas sem seção"), "erro inesperado: {err}");
         // ...mas a árvore existe, com o pendente inclusive.
         let pronto = docs.join("pareceres/consulta-no-1-26.md");
         let pendente = docs.join("pareceres/consulta-no-2-26.md");
@@ -274,9 +309,39 @@ mod tests {
             "ok",
             vec![consulta("CONSULTA Nº 1/26", "### Descrição Resumida do Assunto\nx")],
         );
-        let hash = preparar_pareceres("xx", &source, &docs).unwrap();
+        let (hash, consultas) = preparar_pareceres("xx", &source, &docs).unwrap().unwrap();
         assert!(hash.is_some(), "árvore materializada deve produzir docs_hash");
         assert_eq!(hash, manifest::hash_docs_tree(&docs).unwrap(), "hash deve ser o da árvore no disco");
+        assert_eq!(consultas.len(), 1);
+    }
+
+    #[test]
+    fn a_sinopse_indexada_vem_da_arvore_e_nao_do_json() {
+        // O CORAÇÃO DA G4: o passo `sinopse` escreve no `.md`; o JSON fica sem `resumo`. O que vai ao
+        // índice tem de vir da árvore — senão a vetorização sai cega.
+        let (source, docs) = cenario("g4hidrata", vec![consulta("CONSULTA Nº 1/26", "")]);
+        // 1ª passada: materializa pendente e a guarda recusa (sem sinopse em lugar nenhum).
+        assert!(preparar_pareceres("xx", &source, &docs).is_err());
+
+        // O passo `sinopse` (simulado) preenche a ÁRVORE — o JSON continua sem resumo.
+        let p = docs.join("pareceres/consulta-no-1-26.md");
+        let (mut h, _s, corpo) = auli_contract::mddoc::parse_doc(&std::fs::read_to_string(&p).unwrap()).unwrap();
+        h.sinopse_info = Some(auli_contract::SinopseInfo {
+            modelo: "m".into(),
+            prompt_versao: 1,
+            gerada_em: "2026-07-20T00:00:00Z".into(),
+        });
+        std::fs::write(&p, auli_contract::mddoc::render_doc(&h, Some("SINOPSE SO NA ARVORE"), &corpo)).unwrap();
+
+        // 2ª passada: guarda passa e o registro sai hidratado da árvore.
+        let (_hash, consultas) = preparar_pareceres("xx", &source, &docs).unwrap().unwrap();
+        assert_eq!(consultas[0].resumo, "SINOPSE SO NA ARVORE", "resumo tem de vir do .md");
+        assert_eq!(consultas[0].sinopse_info.as_ref().unwrap().modelo, "m", "proveniência vem do .md");
+        assert!(
+            consultas[0].text_to_embed.contains("SINOPSE SO NA ARVORE"),
+            "text_to_embed recomposto com a sinopse da árvore: {:?}",
+            consultas[0].text_to_embed
+        );
     }
 
     #[test]

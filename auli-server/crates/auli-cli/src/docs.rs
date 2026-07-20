@@ -1,9 +1,13 @@
 //! Materialização da árvore `docs/pareceres/*.md` — um arquivo por consulta.
 //!
-//! **Fase G2 (A-via-B): a árvore é DERIVADA do JSON**, que segue sendo a fonte. Por isso ela é um
-//! *espelho fiel*: consultas removidas do JSON têm o `.md` correspondente apagado, para o
-//! `docs_hash` refletir exatamente o conteúdo indexado. Quando a árvore virar a fonte (G5), essa
-//! poda sai — apagar passaria a ser destrutivo.
+//! **Fase G4 (A-via-B): propriedade dividida.** A ÁRVORE é dona da **sinopse** (o passo
+//! `auli-collections <id> sinopse` escreve nos `.md`, não mais no JSON); o JSON segue dono do resto
+//! (`numero`/`assunto`/`link`/`corpo`) e do **rol** de quais consultas existem. Materializar é, por
+//! isso, um *merge*: regrava os campos do JSON e **preserva** a `## sinopse` do arquivo.
+//!
+//! A poda continua enquanto o rol for do JSON: consulta removida de lá tem o `.md` apagado, para o
+//! `docs_hash` refletir o que foi indexado. Na G5 o rol passa a ser a árvore e a poda sai — apagar
+//! passaria a ser destrutivo.
 //!
 //! O contrato do arquivo (frontmatter + `## sinopse` + `## corpo`) vive em `auli_contract::mddoc`.
 
@@ -55,16 +59,27 @@ pub fn materializar_pareceres(entity: &str, source: &Path, docs_dir: &Path) -> R
             .into());
         }
 
+        let destino = dir.join(format!("{slug}.md"));
+        // G4 — regra de propriedade: a ÁRVORE é dona da sinopse; o JSON é dono do resto
+        // (numero/assunto/link/corpo). Num `.md` que já existe, a seção `## sinopse` e as chaves
+        // `sinopse_*` vêm do arquivo (o passo `sinopse` escreve lá, não no JSON); os demais campos
+        // são regravados do JSON, para correções de re-scrape propagarem. Arquivo novo nasce com o
+        // que o JSON tiver (ponte: os dados de hoje ainda carregam `resumo` no JSON).
+        let (sinopse, sinopse_info) = match ler_sinopse_existente(&destino)? {
+            Some(par) => par,
+            None => {
+                let r = c.resumo.trim();
+                ((!r.is_empty()).then(|| r.to_string()), c.sinopse_info.clone())
+            }
+        };
         let header = mddoc::DocHeader {
             numero: c.numero.clone(),
             assunto: c.assunto.clone(),
             link: c.link.clone(),
-            sinopse_info: c.sinopse_info.clone(),
+            sinopse_info,
         };
-        let resumo = c.resumo.trim();
-        let texto = mddoc::render_doc(&header, (!resumo.is_empty()).then_some(resumo), &c.corpo);
+        let texto = mddoc::render_doc(&header, sinopse.as_deref(), &c.corpo);
 
-        let destino = dir.join(format!("{slug}.md"));
         escrever_atomico(&destino, texto.as_bytes())?;
         esperados.push(destino);
     }
@@ -74,6 +89,23 @@ pub fn materializar_pareceres(entity: &str, source: &Path, docs_dir: &Path) -> R
         println!("🧹 docs: {podados} arquivo(s) órfão(s) removido(s) (não estão mais no contrato)");
     }
     Ok(Some(table.items.len()))
+}
+
+/// Lê a sinopse de um `.md` já existente: `(seção ## sinopse, sinopse_info)`. `None` se o arquivo
+/// não existe. Arquivo ilegível é **erro** — sobrescrever cegamente um `.md` corrompido apagaria
+/// uma sinopse que custou LLM; melhor falhar alto e deixar o operador decidir.
+fn ler_sinopse_existente(
+    destino: &Path,
+) -> Result<Option<(Option<String>, Option<auli_contract::SinopseInfo>)>> {
+    let texto = match std::fs::read_to_string(destino) {
+        Ok(t) => t,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(e) => return Err(e.into()),
+    };
+    let (header, sinopse, _corpo) = mddoc::parse_doc(&texto).map_err(|e| {
+        format!("`{}` existe mas não parseia ({e}) — corrija ou remova antes de re-materializar", destino.display())
+    })?;
+    Ok(Some((sinopse, header.sinopse_info)))
 }
 
 /// Remove `.md` que não estão no conjunto esperado — mantém a árvore um espelho fiel do contrato
@@ -189,6 +221,49 @@ mod tests {
         materializar_pareceres("xx", &source, &docs).unwrap();
         assert!(docs.join("pareceres/a-1.md").exists());
         assert!(!docs.join("pareceres/b-2.md").exists(), "órfão devia ter sido podado");
+    }
+
+    #[test]
+    fn re_materializar_preserva_a_sinopse_da_arvore_e_atualiza_o_resto() {
+        // G4: o passo `sinopse` escreve na árvore; o JSON NÃO tem o resumo. Re-materializar não pode
+        // apagar a sinopse — e deve trazer as correções de assunto/corpo vindas do JSON.
+        let (source, docs) = cenario("g4merge", vec![consulta("A 1", "")]);
+        materializar_pareceres("xx", &source, &docs).unwrap();
+        let p = docs.join("pareceres/a-1.md");
+
+        // Simula o passo sinopse editando o .md (árvore dona da sinopse).
+        let (h, sin, corpo) = mddoc::parse_doc(&std::fs::read_to_string(&p).unwrap()).unwrap();
+        assert_eq!(sin, None, "nasce pendente (JSON sem resumo)");
+        let mut h2 = h.clone();
+        h2.sinopse_info = Some(SinopseInfo {
+            modelo: "m-da-arvore".into(),
+            prompt_versao: 1,
+            gerada_em: "2026-07-20T00:00:00Z".into(),
+        });
+        std::fs::write(&p, mddoc::render_doc(&h2, Some("SINOPSE DA ARVORE"), &corpo)).unwrap();
+
+        // JSON muda assunto e corpo (re-scrape corrigiu), e segue SEM resumo.
+        let mut c = consulta("A 1", "");
+        c.assunto = "ASSUNTO CORRIGIDO".into();
+        c.corpo = "Corpo corrigido.".into();
+        let t = Table::new("xx", "pareceres", vec![c]);
+        std::fs::write(source.join("xx-pareceres.json"), serde_json::to_vec(&t).unwrap()).unwrap();
+        materializar_pareceres("xx", &source, &docs).unwrap();
+
+        let (h3, sin3, corpo3) = mddoc::parse_doc(&std::fs::read_to_string(&p).unwrap()).unwrap();
+        assert_eq!(sin3.as_deref(), Some("SINOPSE DA ARVORE"), "sinopse da árvore PRESERVADA");
+        assert_eq!(h3.sinopse_info.unwrap().modelo, "m-da-arvore", "proveniência preservada");
+        assert_eq!(h3.assunto, "ASSUNTO CORRIGIDO", "campo do JSON atualizado");
+        assert_eq!(corpo3, "Corpo corrigido.", "corpo do JSON atualizado");
+    }
+
+    #[test]
+    fn md_existente_ilegivel_e_erro_em_vez_de_sobrescrever() {
+        let (source, docs) = cenario("g4ruim", vec![consulta("A 1", "r")]);
+        materializar_pareceres("xx", &source, &docs).unwrap();
+        std::fs::write(docs.join("pareceres/a-1.md"), "lixo sem frontmatter").unwrap();
+        let e = materializar_pareceres("xx", &source, &docs).unwrap_err().to_string();
+        assert!(e.contains("não parseia"), "erro: {e}");
     }
 
     #[test]

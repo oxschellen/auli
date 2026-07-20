@@ -50,9 +50,9 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         // OFFLINE: deriva contrato, prints, index e per-público do snapshot já gravado.
         "process" => process::run(entity)?,
         // OFFLINE: ingere pareceres do `.txt` autorado em `ref/` -> `Table<Consulta>` no raw
-        // (`<id>-pareceres.raw.json`); rode `sinopse` em seguida. Incremental até haver scraper.
+        // (`<id>-pareceres.json`); rode `auli update` (materializa a árvore) e depois `sinopse`.
         "pareceres" => derive_pareceres::run(entity)?,
-        // OFFLINE: gera/mescla sinopses dos pareceres (esqueleto na F3; LLM real na F4).
+        // OFFLINE: preenche as sinopses pendentes na árvore `docs/pareceres/*.md` (G4).
         "sinopse" => sinopse::run(entity, parse_sinopse_flags(&flags)?)?,
         "faqs" | "servicos" => {
             return Err(

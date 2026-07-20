@@ -212,6 +212,17 @@ pub struct ConsultaPackPayload {
     pub doc_path: String,
 }
 
+/// Único ponto que compõe o `text_to_embed` de consultas (decisão §2.5 do plano). Indexa o
+/// **título** (`numero`), a **ementa** (`assunto`) e a **sinopse** (`resumo`), nesta ordem, uma por
+/// linha — pulando os vazios. O `numero` entrou para que buscas que citam a consulta (ex.:
+/// "CONSULTA COPAT nº 0037/26") a alcancem. Mudança de fórmula: re-vetorizar os packs de pareceres.
+///
+/// Vive no contrato (e não no `auli-collections`) porque os DOIS lados precisam dela: o produtor
+/// (sinopse/derive) ao gravar, e o `auli update` ao hidratar o `resumo` da árvore (G4).
+pub fn compose_text_to_embed(numero: &str, assunto: &str, resumo: &str) -> String {
+    [numero, assunto, resumo].into_iter().filter(|s| !s.is_empty()).collect::<Vec<_>>().join("\n")
+}
+
 /// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
 ///
 /// MESMO formato do `stored_repr` gordo, byte a byte — é esse o invariante da G3 (o contexto RAG
