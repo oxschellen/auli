@@ -28,8 +28,16 @@ use serde_json::json;
 /// (hundreds of organization IPs) memory is negligible, so we don't background-GC the map.
 pub type IpRateLimiter = RateLimiter<IpAddr, DefaultKeyedStateStore<IpAddr>, DefaultClock>;
 
+/// Um limiter compartilhável entre rotas. Cada chamada de construtor cria um limiter NOVO (com sua
+/// própria cota por IP), então rotas que protegem o MESMO recurso precisam receber o mesmo `Arc` —
+/// construir um por rota dobraria a cota efetiva. Ver D-MCP-6.
+pub type SharedLimiter = Arc<IpRateLimiter>;
+
 /// Build the limiter for `/v1/question`: 1 req/s sustained, burst capacity 2.
-pub fn question_rate_limiter() -> Arc<IpRateLimiter> {
+///
+/// Compartilhado com `/v1/retrieve` (D-MCP-6): o recurso caro e disputado é o embedder, e as duas
+/// rotas o tocam. O `app()` constrói UM e injeta nas duas.
+pub fn question_rate_limiter() -> SharedLimiter {
     let quota = Quota::per_second(NonZeroU32::new(1).unwrap()).allow_burst(NonZeroU32::new(2).unwrap());
     Arc::new(RateLimiter::keyed(quota))
 }

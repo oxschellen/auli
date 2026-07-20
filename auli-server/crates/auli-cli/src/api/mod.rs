@@ -14,7 +14,8 @@ pub mod ratelimit;
 
 use crate::state::AppState;
 
-use handlers::{health_handler, list_handler, question_handler};
+use handlers::{health_handler, list_handler, question_handler, retrieve_handler};
+use ratelimit::SharedLimiter;
 
 // Rota pública sem estado: health-check.
 pub fn public_routes() -> Router {
@@ -23,10 +24,22 @@ pub fn public_routes() -> Router {
 
 // Rota pública de perguntas (caminho RAG ativo). Precisa do estado compartilhado.
 // Protegida por um limitador de taxa por IP (1 req/s, burst 2) — é o único caminho que chama o LLM.
-pub fn question_routes(state: Arc<AppState>) -> Router {
-    let limiter = ratelimit::question_rate_limiter();
+// O limiter vem de FORA (D-MCP-6): é o mesmo objeto usado por `/v1/retrieve`, porque o recurso
+// disputado é o embedder, comum às duas rotas.
+pub fn question_routes(state: Arc<AppState>, limiter: SharedLimiter) -> Router {
     Router::new()
         .route("/v1/question", post(question_handler))
+        .layer(middleware::from_fn_with_state(limiter, ratelimit::rate_limit))
+        .with_state(state)
+}
+
+// Rota pública de retrieval puro (sem LLM): embeda a pergunta localmente, varre a coleção e
+// devolve os documentos com score. CPU-bound no embedder ⇒ divide o MESMO limiter do question
+// (D-MCP-6) — `question_rate_limiter()` constrói um limiter novo a cada chamada, então instanciar
+// um por rota dobraria a cota efetiva por IP sobre o mesmo recurso.
+pub fn retrieve_routes(state: Arc<AppState>, limiter: SharedLimiter) -> Router {
+    Router::new()
+        .route("/v1/retrieve", post(retrieve_handler))
         .layer(middleware::from_fn_with_state(limiter, ratelimit::rate_limit))
         .with_state(state)
 }

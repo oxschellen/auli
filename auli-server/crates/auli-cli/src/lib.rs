@@ -22,7 +22,7 @@ pub mod state;
 pub mod update;
 mod util;
 
-use crate::api::{cors_routes, data_routes, public_routes, question_routes};
+use crate::api::{cors_routes, data_routes, public_routes, question_routes, retrieve_routes};
 use crate::config::config;
 use crate::state::AppState;
 
@@ -31,9 +31,15 @@ pub use update::run_update;
 /// Assemble the full application router. Kept separate from `run_server` so tests can build the
 /// router and exercise handlers without binding a socket.
 pub fn app(state: Arc<AppState>) -> Router {
+    // UM limiter para `/v1/question` + `/v1/retrieve`: é o mesmo recurso disputado (o embedder),
+    // e o construtor cria um limiter novo a cada chamada — instanciar por rota dobraria a cota
+    // efetiva por IP. Ver D-MCP-6.
+    let embed_limiter = api::ratelimit::question_rate_limiter();
+
     Router::new()
         .merge(public_routes())
-        .merge(question_routes(state.clone()))
+        .merge(question_routes(state.clone(), embed_limiter.clone()))
+        .merge(retrieve_routes(state.clone(), embed_limiter))
         .merge(data_routes(state))
         .layer(cors_routes())
 }
