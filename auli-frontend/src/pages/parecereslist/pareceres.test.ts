@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { searchPareceres, type Parecer } from "./pareceres";
+import { buildPareceresIndex, searchPareceres, type Parecer } from "./pareceres";
 
 /** Duas entradas no formato do `<id>-pareceres-index.json` (derivado da árvore `.md`). */
 const PS: Parecer[] = [
@@ -59,6 +59,15 @@ describe("searchPareceres", () => {
     const pendente: Parecer[] = [{ ...PS[0], resumo: "" }];
     expect(searchPareceres(pendente, "recarga")).toHaveLength(1);
     expect(searchPareceres(pendente, "eletroposto")).toHaveLength(0);
+  });
+
+  it("o índice pré-computado não muda NENHUM resultado (invariante da otimização)", () => {
+    // O índice existe só por custo: normalizar o resumo a cada tecla custava ~400 ms no acervo do
+    // SP. Se ele mudasse algum resultado, seria bug — então as duas formas têm de coincidir sempre.
+    const index = buildPareceresIndex(PS);
+    for (const q of ["", "  ", "icms", "eletroposto", "credito basica", "26164 recarga", "xyz"]) {
+      expect(searchPareceres(PS, q, index)).toEqual(searchPareceres(PS, q));
+    }
   });
 
   it("termos de 1–2 letras casam largo (característica do substring-AND)", () => {
