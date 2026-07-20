@@ -1,18 +1,12 @@
 //! Ingestão dos pareceres a partir do texto autorado `<id>-portal-pareceres.txt` (em `data/<id>/ref`),
-//! **offline**. Passo incremental "de trás pra frente": ainda não há scraper de pareceres, então
-//! derivamos a `Table<Consulta>` a partir do arquivo de referência já existente.
+//! **offline**. Caminho de **bootstrap**: reconstrói a árvore `.md` a partir do `.txt` legado, para
+//! acervos coletados antes de os scrapers emitirem `.md` (G5).
 //!
-//! Produz `data/<id>/raw/<id>-pareceres.json` — a origem **estrutural** que o `auli update` usa para
-//! materializar a árvore. Pipeline (G4): `derive → .json → update (materializa a árvore) → sinopse
-//! (preenche os .md) → update (vetoriza)`.
+//! Emite `data/<id>/docs/pareceres/<slug>.md` — um por consulta INÉDITA (existe ⇒ pula), igual aos
+//! scrapers. O documento nasce pendente; quem preenche a `## sinopse` é
+//! `auli-collections <id> sinopse`. Pipeline: `derive/scraper → .md → sinopse → build-packs`.
 //!
-//! O `.raw.json` foi aposentado na G4: ele existia só para dar ao `sinopse` um "antes" e um "depois"
-//! na mesma família de arquivos, e as sinopses agora vivem na árvore. Re-rodar este derive é seguro —
-//! a materialização preserva a `## sinopse` de cada `.md` (ver `auli-cli/src/docs.rs`).
-//!
-//! O derive **continua materializando** `text_to_embed` (com os fallbacks atuais): é o caminho legado
-//! para registros que já chegam com `resumo` autorado. Para a key final quem manda é o `auli update`,
-//! que a recompõe pelo ponto único (`compose_text_to_embed`) com a sinopse lida da árvore.
+//! Não produz mais JSON: desde a G5b a árvore É a fonte, e o `auli update` lê dela direto.
 //!
 //! Formato do arquivo (um parecer por bloco, delimitado por `// N`):
 //! ```text
@@ -67,26 +61,28 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         }
     }
 
-    // G5b: o derive emite a ÁRVORE, não JSON. Um `.md` por consulta INÉDITA (existe ⇒ pula), igual
-    // aos scrapers — este é o caminho de bootstrap a partir do `.txt` legado.
+    // Emite a árvore. A checagem de colisão de slug vive no contrato (`escrever_lote_se_ausente`):
+    // dois `numero` distintos disputando o mesmo arquivo é violação de identidade, e sem isso o
+    // segundo sumiria em silêncio (o `escrever_se_ausente` o veria como "já existe").
     let base = Path::new(data_dir)
         .parent()
         .ok_or_else(|| format!("data_dir sem pai: {data_dir}"))?;
     let dir = base.join("docs").join("pareceres");
-    let (mut criados, mut pulados) = (0usize, 0usize);
-    for c in &items {
-        let header = mddoc::DocHeader {
-            numero: c.numero.clone(),
-            assunto: c.assunto.clone(),
-            link: c.link.clone(),
-            sinopse_info: None, // produtor emite pendente
-        };
-        if mddoc::escrever_se_ausente(&dir, &header, &c.corpo)? {
-            criados += 1;
-        } else {
-            pulados += 1;
-        }
-    }
+    let lote: Vec<(mddoc::DocHeader, String)> = items
+        .iter()
+        .map(|c| {
+            (
+                mddoc::DocHeader {
+                    numero: c.numero.clone(),
+                    assunto: c.assunto.clone(),
+                    link: c.link.clone(),
+                    sinopse_info: None,
+                },
+                c.corpo.clone(),
+            )
+        })
+        .collect();
+    let (criados, pulados) = mddoc::escrever_lote_se_ausente(&dir, &lote)?;
     println!(
         "✅ árvore {}: {criados} novo(s), {pulados} já existente(s) (pulados). \
          Rode `auli-collections {id} sinopse` para preencher os pendentes.",

@@ -23,25 +23,26 @@ pub struct DocParaEmitir<'a> {
 
 /// Emite os documentos inéditos em `dir`; devolve `(criados, pulados)`.
 ///
-/// Não remove nada: a árvore só cresce por aqui. Documento com `numero` que não gera slug é erro
-/// (violação de identidade) — melhor abortar a coleta que gravar um arquivo sem nome estável.
+/// Não remove nada: a árvore só cresce por aqui. `numero` que não gera slug, ou dois `numero`
+/// distintos disputando o mesmo arquivo, são **erro** — violação de identidade. A checagem mora no
+/// contrato (`escrever_lote_se_ausente`), que é quem enxerga o lote inteiro; aqui só adaptamos a
+/// forma do scraper.
 pub fn emitir_pareceres(dir: &Path, docs: &[DocParaEmitir<'_>]) -> Result<(usize, usize)> {
-    let mut criados = 0usize;
-    let mut pulados = 0usize;
-    for d in docs {
-        let header = mddoc::DocHeader {
-            numero: d.numero.to_string(),
-            assunto: d.assunto.to_string(),
-            link: d.link.to_string(),
-            sinopse_info: None, // produtor emite pendente; a sinopse vem depois
-        };
-        if mddoc::escrever_se_ausente(dir, &header, d.corpo)? {
-            criados += 1;
-        } else {
-            pulados += 1;
-        }
-    }
-    Ok((criados, pulados))
+    let lote: Vec<(mddoc::DocHeader, String)> = docs
+        .iter()
+        .map(|d| {
+            (
+                mddoc::DocHeader {
+                    numero: d.numero.to_string(),
+                    assunto: d.assunto.to_string(),
+                    link: d.link.to_string(),
+                    sinopse_info: None, // produtor emite pendente; a sinopse vem depois
+                },
+                d.corpo.to_string(),
+            )
+        })
+        .collect();
+    mddoc::escrever_lote_se_ausente(dir, &lote)
 }
 
 /// Relatório padrão dos produtores, para as 4 entidades falarem a mesma língua.

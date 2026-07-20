@@ -180,7 +180,7 @@ pub fn validate_docs_hash(docs_dir: impl AsRef<Path>, manifest: &Manifest) -> Re
         Some(h) if &h == esperado => Ok(()),
         Some(h) => Err(Error::from(format!(
             "Árvore de documentos divergente para '{}': manifesto tem docs_hash={esperado}, disco tem {h}. \
-             Re-gere os pacotes com `auli update` (a árvore é materializada junto).",
+             Re-gere os pacotes com `auli update` (ele relê a árvore e recarimba o hash).",
             manifest.entity
         ))),
         None => Err(Error::from(format!(
