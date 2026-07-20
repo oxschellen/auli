@@ -101,7 +101,21 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
 - Tipos de conteúdo descritos de forma **uniforme** (um único caminho de processamento por
   tipo), o que facilita acrescentar novos tipos.
 
-### 3.6 Coleta de conteúdo (scrapers por estado)
+### 3.6 Acervo como serviço (retrieve + MCP) — v1
+
+- Além do chat, o acervo pode ser consultado **como serviço**: uma rota HTTP de **recuperação pura**
+  (`/v1/retrieve`) devolve os documentos com a distância de proximidade, **sem** redigir resposta e
+  **sem** chamar LLM externo.
+- A mesma busca é exposta por **MCP** (Model Context Protocol) em `/mcp`, o que permite que a IA de
+  um auditor use o acervo como **ferramenta**: listar as UFs com pareceres, buscar por tema e ler o
+  parecer integral pelo número.
+- Como não há LLM nesses caminhos, a pergunta **não sai do processo** — e o registro guarda só
+  metadados (UF, tipo, nº de resultados), nunca o texto perguntado.
+- **É v1 e tem limites conhecidos:** só pareceres (serviços/FAQs ficam para depois), uma UF por
+  chamada, e sem autenticação — o conteúdo é público e somente-leitura, protegido por limite de
+  requisições.
+
+### 3.7 Coleta de conteúdo (scrapers por estado)
 
 - Um **scraper por secretaria** (um binário por estado), sobre um **kit compartilhado** (cache,
   agente HTTP, agregação), gravando todos a mesma fronteira: o **snapshot** tipado que o passo de

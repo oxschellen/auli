@@ -98,7 +98,8 @@ auli-server/                       # workspace único, Cargo.lock compartilhado
 └── crates/
     ├── vector-store/      # BAIXO — store plano por cosseno, agnóstico (sabe só id+vetor+payload P)
     ├── auli-core/         # MEIO  — domínio auli: embed (BGE-M3), corpus, manifest
-    ├── auli-cli/          # TOPO  — o binário `auli`: server (RAG) + update (ingestão)
+    ├── auli-retrieval/    # MEIO  — o MOTOR: embedder + ReadStores + estreitamento (§3.11)
+    ├── auli-cli/          # TOPO  — o binário `auli`: server (RAG + retrieve + MCP) + update
     ├── auli-contract/     # forma + I/O do snapshot (D-C1) — a fronteira, compartilhada scraper↔engine
     ├── auli-collections/  # DERIVA os artefatos do snapshot (offline) — ver §5
     └── scrapers/          # a frota (compila leve; nunca importa o engine) — ver §5 / SCRAPERS.md
@@ -113,15 +114,16 @@ auli-server/                       # workspace único, Cargo.lock compartilhado
 > prints + index + per-público. As citações a `auli-collections/src/{faqs,servicos}/…` na §5 vivem
 > hoje em `auli-scraper-rs/src/…` (ver §5 reescrita).
 
-`vector-store` ← `auli-core` ← `auli-cli`. O `Cargo.lock` único garante que os modos `update`
+`vector-store` ← `auli-core` ← `auli-retrieval` ← `auli-cli`. O `Cargo.lock` único garante que os modos `update`
 (embeda documentos) e `server` (embeda a pergunta) usem o **mesmo** `fastembed`/modelo — o espaço
 vetorial é compartilhado por construção, não por convenção.
 
-| Crate          | Conteúdo                                                                                                                                                                                                                                                                                                                                                  |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vector-store` | `Record<P>`/`CollectionData<P>` (payload genérico; chave JSON em disco continua `document`), `cosine_distance` (fallback `2.0`), IO de arquivo, e a **separação leitura/escrita por tipo**: `ReadStore` (`query_scored`/`list`, imutável) vs `Writer` (`reset`/`upsert`/persistência). Enforcement de dimensão no 1º insert (`Error::DimensionMismatch`). |
-| `auli-core`    | `embed` (`Embedder` BGE-M3, `EMBED_DIM=1024`), `corpus` (`EmbedStrategy`, tabela `Collection`, `parse_blocks*`, `prepare_documents`, `extract_question`, `clean_servico`, `extract_servico_description`), `manifest` (identidade do embedding + schema/validação).                                                                                        |
-| `auli-cli`     | `server` (axum, RAG, config, packs) + `update` (vetorizador). Despacho por `clap`.                                                                                                                                                                                                                                                                        |
+| Crate            | Conteúdo                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vector-store`   | `Record<P>`/`CollectionData<P>` (payload genérico; chave JSON em disco continua `document`), `cosine_distance` (fallback `2.0`), IO de arquivo, e a **separação leitura/escrita por tipo**: `ReadStore` (`query_scored`/`list`, imutável) vs `Writer` (`reset`/`upsert`/persistência). Enforcement de dimensão no 1º insert (`Error::DimensionMismatch`). |
+| `auli-core`      | `embed` (`Embedder` BGE-M3, `EMBED_DIM=1024`), `corpus` (`EmbedStrategy`, tabela `Collection`, `parse_blocks*`, `prepare_documents`, `extract_question`, `clean_servico`, `extract_servico_description`), `manifest` (identidade do embedding + schema/validação).                                                                                        |
+| `auli-retrieval` | O **motor de recuperação** (§3.11): `Engine` (embedder + `Collections` + raiz `docs/`) e o núcleo em funções livres — `search_embedded`, `entidades_com`, `parecer_por_numero`, `ler_corpo`, `decode_parecer`, `select_by_proximity`. Depende só de `auli-core`/`vector-store`/`auli-contract`: **sem HTTP, sem LLM, sem anonimizador**, e só enxerga `ReadStore`. |
+| `auli-cli`       | `server` (axum, RAG, `/v1/retrieve`, MCP, config, packs) + `update` (vetorizador). Despacho por `clap`.                                                                                                                                                                                                                                                                        |
 
 ### 3.2 Os dois modos (subcomandos)
 
@@ -146,12 +148,23 @@ O server expõe apenas rotas **públicas** (não há mais auth/JWT, rotas proteg
 | Método | Caminho           | Observação                                                                             |
 | ------ | ----------------- | -------------------------------------------------------------------------------------- |
 | GET    | `/v1/health`      | health check                                                                           |
-| POST   | `/v1/question`    | caminho RAG ativo                                                                      |
+| POST   | `/v1/question`    | caminho RAG ativo (o único que chama LLM externo)                                      |
+| POST   | `/v1/retrieve`    | recuperação **pura** (§3.11): embeda local, devolve documentos + score, sem LLM        |
 | GET    | `/v1/{kind}/list` | listagem de uma coleção (leitura); `{kind}` ∈ `servicos \| faqs \| pareceres \| notas` |
+| —      | `/mcp`            | servidor **MCP** (rmcp, streamable HTTP) aninhado por `nest_service` (§3.12)           |
 
 A ingestão deixou de ser rota HTTP (antes `load_from_file`/`load_from_web`) — virou o `auli update`.
 CORS: origens **hardcoded** (auli.com.br, www, e portas locais 3000/5173/8080), métodos
-GET/POST/OPTIONS.
+GET/POST/OPTIONS. O layer de CORS envolve `/mcp` também, e é inócuo ali: clientes MCP não são
+browsers (o Claude conecta a partir da nuvem da Anthropic, sem header `Origin`).
+
+**Rate limit por IP** (`api/ratelimit.rs`, GCRA via `governor`, chaveado pelo IP real do
+`CF-Connecting-IP`): `/v1/question` e `/v1/retrieve` **compartilham um único limiter** (1 req/s,
+burst 2) construído uma vez no `app()` — o recurso disputado é o embedder, e como
+`question_rate_limiter()` cria um limiter novo a cada chamada, instanciar um por rota dobraria a
+cota efetiva. O `/mcp` tem limiter **próprio e mais folgado** (10 req/s, burst 30): o handshake MCP
+faz várias requisições em sequência e quebraria sob 1 req/s — mas quota diferente não é o mesmo
+que ausência de quota.
 
 ### 3.4 Caminho RAG ativo (`exec_all_question`)
 
@@ -253,6 +266,65 @@ N cópias coexistem sem coordenação.
 - **Domínio como fonte única no backend.** `corpus`/`vector-store` são fonte única para `server` e
   `update`. O `auli-frontend` segue com seu próprio espelho **gerado** do registro (ver §6).
 - **Auth e banco removidos.** O server não tem mais auth/JWT nem PostgreSQL — é público.
+
+### 3.11 O motor: crate `auli-retrieval`
+
+O que uma consulta semântica precisa — embedder, `ReadStore`s por `<entidade>-<kind>` e
+estreitamento por proximidade — vive num crate próprio, extraído do `auli-cli/src/rag.rs`. É a peça
+compartilhada pelas **três faces** do servidor: chat (`/v1/question`), retrieval HTTP
+(`/v1/retrieve`) e MCP (`/mcp`).
+
+**Fronteira (D-MCP-2).** Depende só de `auli-core` (Embedder), `vector-store` (ReadStore) e
+`auli-contract` (payload/mddoc) — **nunca** de axum, rmcp, `auli-llm` ou `auli-anon`. Enxerga só
+`ReadStore`, jamais `Writer`: é somente-leitura por construção, como o servidor. A garantia
+verificável é `cargo tree -p auli-retrieval` sem `axum`/`rmcp`/`reqwest`/`auli-llm`/`auli-anon` —
+`fastembed`/`ort` **estão** lá, via `auli-core`, e devem estar; a fronteira é sobre HTTP/LLM/PII,
+não sobre leveza de build.
+
+**Forma: funções livres + `Engine` delegando (D-MCP-4).** O núcleo são funções sobre
+`&Collections`/`&Path` — `search_embedded`, `entidades_com`, `parecer_por_numero`, `ler_corpo`,
+`decode_parecer`, `select_by_proximity` — e os métodos do `Engine` são delegações de uma linha. O
+motivo é testabilidade: `Engine` guarda `Arc<Embedder>`, e construir um carregaria o BGE-M3; com as
+funções livres os testes cobrem o motor inteiro sem tocar o modelo.
+
+**Sincronia (D-MCP-3).** Tudo blocking (o embed é CPU-bound); quem é async envelopa em
+`spawn_blocking`, como o `rag.rs` já fazia.
+
+**Semântica de erro — importa mais do que parece.** Com o `packs::load_all` atual, **toda entidade
+registrada tem os quatro kinds no mapa**: arquivo ausente vira store **vazio**, não ausência. Logo
+`Error::ColecaoAusente` só dispara para coleção realmente fora do mapa (entidade não registrada), e
+store vazio é **sucesso com zero hits**. Quem precisa distinguir "tem acervo de verdade" usa
+`entidades_com`, que exige store não-vazio — é a guarda correta das ferramentas MCP (§3.12), onde
+um teste por `store().is_some()` aceitaria uma UF registrada e vazia.
+
+### 3.12 A face MCP (`auli-cli/src/mcp.rs`)
+
+Servidor **Model Context Protocol** sobre o mesmo motor, via **`rmcp` 2.2** (SDK oficial). O
+`StreamableHttpService` é um serviço tower aninhado em `/mcp` por `nest_service` no mesmo `Router`
+axum — mesmo processo, mesma porta, mesmo `Arc<Engine>`. É a razão de não ser um binário separado:
+o BGE-M3 carrega **uma vez**.
+
+Três ferramentas em pt-BR (D-MCP-7) — o consumidor é a IA de um auditor brasileiro:
+
+| Ferramenta         | Argumentos                | Devolve                                                    |
+| ------------------ | ------------------------- | ---------------------------------------------------------- |
+| `listar_entidades` | —                         | UFs com acervo **não-vazio**, nome da secretaria e total   |
+| `buscar_pareceres` | `uf`, `pergunta`, `top_k` | metadados + sinopse + link + score; **sem** o corpo        |
+| `obter_parecer`    | `uf`, `numero`            | o parecer com o **corpo integral**, lido da árvore `docs/` |
+
+Detalhes que o código explicita:
+
+- **A guarda da UF roda antes do embed** e usa `entidades_com` (§3.11), não `store().is_some()`.
+- **`#[tool_handler(router = self.tool_router)]`** — o default do macro é `Self::tool_router()`,
+  que **reconstrói** o roteador a cada `list_tools`/`call_tool`; apontar para o campo montado no
+  `new()` monta uma vez só.
+- **`Implementation::new("auli", …)`**, não `from_build_env()`: o `env!` daquele helper expande no
+  build do **RMCP**, e o servidor se anunciaria como `"rmcp" 2.2.0` ao assistente.
+- **Privacidade (D-MCP-5):** a pergunta é embedada localmente e nunca sai do processo; o tracing
+  registra `uf`/`top_k`/`hits`, nunca o texto.
+
+Smoke de protocolo: [`scripts/mcp-smoke.sh`](scripts/mcp-smoke.sh) (initialize → initialized →
+tools/list → tools/call). Conexão de clientes: [auli_operations.md](auli_operations.md) §12.
 
 ---
 
