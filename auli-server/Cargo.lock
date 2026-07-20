@@ -255,6 +255,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "auli-retrieval"
+version = "0.1.0"
+dependencies = [
+ "auli-contract",
+ "auli-core",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tracing",
+ "vector-store",
+]
+
+[[package]]
 name = "auli-scraper-ac"
 version = "0.1.0"
 dependencies = [

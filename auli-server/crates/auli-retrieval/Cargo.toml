@@ -1,0 +1,15 @@
+[package]
+name = "auli-retrieval"
+version = "0.1.0"
+edition = "2024"
+description = "Motor de recuperação do Auli: embedder + ReadStores + estreitamento por proximidade. Somente leitura, sem LLM, sem HTTP."
+
+[dependencies]
+auli-contract = { path = "../auli-contract" }
+auli-core = { path = "../auli-core" }
+vector-store = { path = "../vector-store" }
+
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+thiserror = "2.0.18"
+tracing = "0.1.44"

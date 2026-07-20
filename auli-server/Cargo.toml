@@ -6,6 +6,7 @@ members = [
     "crates/auli-anon",
     "crates/auli-core",
     "crates/auli-llm",
+    "crates/auli-retrieval",
     "crates/auli-cli",
     "crates/auli-collections",
     # Toda a frota de scrapers (kit + entidades). Glob: entidade nova não toca este arquivo.
