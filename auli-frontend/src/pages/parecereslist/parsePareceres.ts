@@ -1,3 +1,5 @@
+import { parseQuery, buildHaystack, haystackMatches } from "../../shared/textSearch";
+
 /** Um parecer parseado do `<id>-portal-pareceres.txt` (formato em blocos `// N`). */
 export interface Parecer {
   id: number;
@@ -50,11 +52,17 @@ export function parsePareceres(text: string): Parecer[] {
   return out;
 }
 
-/** Filtra pareceres por número ou assunto (case-insensitive). Query vazia devolve a lista inteira. */
+/**
+ * Filtra pareceres por número ou assunto via `textSearch` (acentos + multi-termo, E entre termos).
+ * Query vazia devolve a lista inteira (mesma referência).
+ *
+ * Os campos são `[numero, assunto]` — os mesmos de sempre. O `corpo` fica **de fora** de propósito:
+ * é o texto integral, e buscá-lo transformaria quase toda query num acerto. Quando a tab migrar para
+ * o JSON leve dos pareceres (numero/assunto/resumo/link), a **sinopse** entra aqui — é ela a chave de
+ * busca boa, não o corpo.
+ */
 export function searchPareceres(pareceres: Parecer[], query: string): Parecer[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return pareceres;
-  return pareceres.filter(
-    (p) => p.numero.toLowerCase().includes(q) || p.assunto.toLowerCase().includes(q),
-  );
+  const terms = parseQuery(query);
+  if (terms.length === 0) return pareceres;
+  return pareceres.filter((p) => haystackMatches(buildHaystack([p.numero, p.assunto]), terms));
 }
