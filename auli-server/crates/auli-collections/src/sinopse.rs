@@ -1,16 +1,21 @@
-//! Subcomando `sinopse` — passo `auli-sinopse` (§6/§7 do plano). Carga do `.raw.json`, mescla por
-//! `numero` (retomável/incremental), contagem, `--dry-run`, geração (LLM real via `auli-llm`, ou
-//! `--fake` dev-only) com validação de formato e gravação atômica.
+//! Subcomando `sinopse` — passo `auli-sinopse`, agora **editor da árvore** (G4).
 //!
-//! Fronteira = snapshot tipado `Table<Consulta>` (o `.txt` é só print legível — F5). O `resumo`
-//! vazio marca "pendente"; preenchido marca "reaproveitado" (sinopse já gerada ou sumário autorado
-//! legado). Invariante do passo: `reaproveitados + gerados + falhas + pendentes_restantes == total`.
+//! Fonte e destino são os `.md` de `data/<id>/docs/pareceres/`: **pendente = arquivo sem a seção
+//! `## sinopse`**. O passo lê cada arquivo, gera a sinopse do que falta (LLM real via `auli-llm`, ou
+//! `--fake` dev-only) e regrava o próprio `.md` — frontmatter `sinopse_*` + seção — atomicamente.
+//! O JSON não é mais tocado aqui; ele é só a origem estrutural da materialização (`auli update`).
+//!
+//! Retomada é implícita: o que já tem `## sinopse` é pulado, então re-rodar continua de onde parou.
+//! `--force <numero>` re-pendura um documento específico. Invariante do passo:
+//! `reaproveitados + gerados + falhas + pendentes_restantes == total`.
+//!
+//! Memória: os documentos são processados **um a um** (lê → gera → grava), nunca todos na RAM — a
+//! árvore de SP tem 15,6 mil arquivos.
 
-use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-use auli_contract::{Consulta, Table};
+use auli_contract::mddoc;
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -36,13 +41,8 @@ pub struct SinopseOpts {
     pub fake: bool,
 }
 
-/// Único ponto que compõe o `text_to_embed` de consultas (decisão §2.5 do plano). Indexa o
-/// **título** (`numero`), a **ementa** (`assunto`) e a **sinopse** (`resumo`), nesta ordem, uma por
-/// linha — pulando os vazios. O `numero` entrou para que buscas que citam a consulta (ex.:
-/// "CONSULTA COPAT nº 0037/26") a alcancem. Mudança de fórmula: re-vetorizar os packs de pareceres.
-pub fn compose_text_to_embed(numero: &str, assunto: &str, resumo: &str) -> String {
-    [numero, assunto, resumo].into_iter().filter(|s| !s.is_empty()).collect::<Vec<_>>().join("\n")
-}
+/// Re-export: a fórmula mora no contrato (ponto único visível ao produtor E ao `auli update`).
+pub use auli_contract::compose_text_to_embed;
 
 /// Timestamp atual em ISO-8601 UTC (`YYYY-MM-DDTHH:MM:SSZ`), só com `std` (sem chrono — F3 não
 /// acrescenta dependências). Algoritmo civil-from-days de Howard Hinnant.
@@ -63,97 +63,69 @@ fn now_iso8601() -> String {
     format!("{y:04}-{m:02}-{d:02}T{h:02}:{mi:02}:{s:02}Z")
 }
 
-/// Caminho do snapshot bruto (entrada) e da saída (`.raw.json` → `.json`).
-fn raw_path(entity: &EntityConfig) -> PathBuf {
-    PathBuf::from(&entity.data_dir).join(format!("{}-pareceres.raw.json", entity.id))
-}
-fn out_path(entity: &EntityConfig) -> PathBuf {
-    PathBuf::from(&entity.data_dir).join(format!("{}-pareceres.json", entity.id))
-}
-
-/// `true` se o registro precisa de sinopse (resumo vazio, ignorando espaços).
-fn pendente(c: &Consulta) -> bool {
-    c.resumo.trim().is_empty()
-}
-
-/// Serializa a `Table` inteira para `<out>.tmp` e faz `rename` atômico sobre `<out>` (mesmo dir).
-/// Queda em qualquer ponto perde no máximo o documento em voo.
-fn write_atomic(out: &Path, id: &str, items: &[Consulta]) -> Result<()> {
-    let table = Table::new(id, "pareceres", items.to_vec());
-    let tmp = PathBuf::from(format!("{}.tmp", out.display()));
-    std::fs::write(&tmp, serde_json::to_string_pretty(&table)?)?;
-    std::fs::rename(&tmp, out)?;
-    Ok(())
-}
-
-/// Print legível `ref/<id>-portal-pareceres.txt` (irmão de `raw/`). `data_dir` é `../data/<id>/raw`.
-fn print_path(entity: &EntityConfig) -> Result<PathBuf> {
+/// Diretório da árvore de pareceres: `data/<id>/docs/pareceres` (irmão de `raw/`, que é o `data_dir`).
+fn docs_dir(entity: &EntityConfig) -> Result<PathBuf> {
     let base = Path::new(&entity.data_dir)
         .parent()
         .ok_or_else(|| format!("data_dir sem pai: {}", entity.data_dir))?;
-    Ok(base.join("ref").join(format!("{}-portal-pareceres.txt", entity.id)))
+    Ok(base.join("docs").join("pareceres"))
 }
 
-/// Regrava o print no formato de blocos que o `parse_pareceres` entende (round-trippável até a F6):
-/// `// N` / `## pergunta:` com `descricao:`/`assunto  :`/`resumo   :` (só se não-vazio)/`link:` /
-/// `## resposta:` + corpo. `sinopse_info`/`text_to_embed` NÃO vão ao print — o `.txt` é print, a
-/// fonte tipada é o JSON. Escrita atômica (`.tmp` + rename).
-fn write_print(path: &Path, items: &[Consulta]) -> Result<()> {
-    let mut out = String::new();
-    for (i, c) in items.iter().enumerate() {
-        out.push_str(&format!("// {}\n", i + 1));
-        out.push_str("## pergunta:\n");
-        out.push_str(&format!("descricao: {}\n", c.numero));
-        out.push_str(&format!("assunto  : {}\n", c.assunto));
-        if !c.resumo.trim().is_empty() {
-            out.push_str(&format!("resumo   : {}\n", c.resumo));
-        }
-        out.push_str(&format!("link: {}\n", c.link));
-        out.push_str("## resposta:\n");
-        out.push_str(c.corpo.trim());
-        out.push_str("\n\n");
+/// Um documento da árvore no índice leve: caminho + identidade + se falta sinopse. NÃO carrega o
+/// corpo — ele é relido só na hora de gerar (a árvore de SP tem 15,6 mil arquivos).
+struct DocIndex {
+    caminho: PathBuf,
+    numero: String,
+    pendente: bool,
+}
+
+/// Varre a árvore e monta o índice leve, em ordem estável (nome do arquivo). Arquivo que não parseia
+/// é **erro**: melhor falhar alto do que pular silenciosamente um documento que precisava de sinopse.
+fn indexar(dir: &Path, force: Option<&str>) -> Result<Vec<DocIndex>> {
+    let mut caminhos: Vec<PathBuf> = std::fs::read_dir(dir)?
+        .filter_map(|e| e.ok().map(|e| e.path()))
+        .filter(|p| p.is_file() && p.extension().is_some_and(|e| e == "md"))
+        .collect();
+    caminhos.sort();
+
+    let mut out = Vec::with_capacity(caminhos.len());
+    for caminho in caminhos {
+        let texto = std::fs::read_to_string(&caminho)?;
+        let (header, sinopse, _corpo) = mddoc::parse_doc(&texto)
+            .map_err(|e| format!("`{}` não parseia ({e}) — corrija antes de rodar o sinopse", caminho.display()))?;
+        // `--force` re-pendura exatamente o `numero` alvo, mesmo que já tenha seção.
+        let forcado = force.is_some_and(|f| f == header.numero);
+        out.push(DocIndex {
+            caminho,
+            pendente: sinopse.is_none() || forcado,
+            numero: header.numero,
+        });
     }
-    if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
-    let tmp = PathBuf::from(format!("{}.tmp", path.display()));
-    std::fs::write(&tmp, out)?;
-    std::fs::rename(&tmp, path)?;
+    Ok(out)
+}
+
+/// Grava a sinopse no `.md`, preservando header e corpo. Escrita atômica (`.tmp` + rename): uma
+/// queda no meio nunca deixa um documento truncado no lugar do bom.
+fn escrever_sinopse(
+    caminho: &Path,
+    resumo: &str,
+    modelo: &str,
+    prompt_versao: u32,
+    gerada_em: &str,
+) -> Result<()> {
+    let texto = std::fs::read_to_string(caminho)?;
+    let (mut header, _sinopse_antiga, corpo) = mddoc::parse_doc(&texto)
+        .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
+    header.sinopse_info = Some(auli_contract::SinopseInfo {
+        modelo: modelo.to_string(),
+        prompt_versao,
+        gerada_em: gerada_em.to_string(),
+    });
+    let novo = mddoc::render_doc(&header, Some(resumo), &corpo);
+    let tmp = PathBuf::from(format!("{}.tmp", caminho.display()));
+    std::fs::write(&tmp, novo)?;
+    std::fs::rename(&tmp, caminho)?;
     Ok(())
-}
-
-/// Mescla o `.raw.json` (ordem = fonte da verdade) com a saída anterior, por `numero`. Registros
-/// pendentes cujo anterior já tem `resumo` são reaproveitados inteiros; `--force` re-pendura o alvo.
-fn merge(raw: Vec<Consulta>, prev: &HashMap<String, Consulta>, force: Option<&str>) -> Result<Vec<Consulta>> {
-    let mut seen = HashSet::new();
-    let mut merged = Vec::with_capacity(raw.len());
-    let mut force_hit = false;
-    for rc in raw {
-        if !seen.insert(rc.numero.clone()) {
-            return Err(format!("numero duplicado no raw: {:?} — viola a identidade da listagem.", rc.numero).into());
-        }
-        if force == Some(rc.numero.as_str()) {
-            // Re-pendura: zera resumo/sinopse/key para forçar regeneração.
-            force_hit = true;
-            merged.push(Consulta { resumo: String::new(), text_to_embed: String::new(), sinopse_info: None, ..rc });
-            continue;
-        }
-        // Reaproveita a saída anterior só quando o bruto está pendente e o anterior já tem resumo.
-        if pendente(&rc)
-            && let Some(prev_c) = prev.get(&rc.numero)
-            && !pendente(prev_c)
-        {
-            merged.push(prev_c.clone());
-            continue;
-        }
-        merged.push(rc);
-    }
-    if let Some(n) = force
-        && !force_hit
-    {
-        return Err(format!("--force: numero inexistente no raw: {n:?}").into());
-    }
-    Ok(merged)
 }
 
 /// Placeholder determinístico (dev-only). `prompt_versao: 0` marca fake, distinguível da geração real.
@@ -282,56 +254,44 @@ fn gerar_sinopse(
 }
 
 pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
-    // 1. Carga do snapshot bruto.
-    let raw_file = raw_path(entity);
-    if !raw_file.exists() {
+    // 1. A árvore é a fonte. Sem ela não há o que fazer — o `auli update` é quem a materializa.
+    let dir = docs_dir(entity)?;
+    if !dir.exists() {
         return Err(format!(
-            "snapshot bruto ausente: {} — rode o scraper (ou derive) antes.",
-            raw_file.display()
+            "árvore ausente: {} — rode `auli update --entity {}` antes (ela materializa os `.md`).",
+            dir.display(),
+            entity.id
         )
         .into());
     }
-    let raw: Table<Consulta> = serde_json::from_str(&std::fs::read_to_string(&raw_file)?)?;
 
-    // 2. Mescla por numero com a saída anterior (se houver).
-    let out_file = out_path(entity);
-    let prev: HashMap<String, Consulta> = if out_file.exists() {
-        let t: Table<Consulta> = serde_json::from_str(&std::fs::read_to_string(&out_file)?)?;
-        t.items.into_iter().map(|c| (c.numero.clone(), c)).collect()
-    } else {
-        HashMap::new()
-    };
-    let mut merged = merge(raw.items, &prev, opts.force.as_deref())?;
-
-    // 2b. Recompõe a key de TODOS os registros com a fórmula vigente (numero + assunto + resumo) —
-    //     assim a fórmula se aplica uniformemente a reaproveitados e gerados, sem depender de como/
-    //     quando cada um foi produzido. Pendentes ficam com numero+assunto (resumo vazio), inofensivo
-    //     (o update recusa resumo vazio). Idempotente.
-    for c in &mut merged {
-        c.text_to_embed = compose_text_to_embed(&c.numero, &c.assunto, &c.resumo);
+    // 2. Índice leve (sem corpos): total, quem já tem sinopse, quem falta.
+    let docs = indexar(&dir, opts.force.as_deref())?;
+    if let Some(alvo) = opts.force.as_deref()
+        && !docs.iter().any(|d| d.numero == alvo)
+    {
+        return Err(format!("--force {alvo:?}: nenhum documento com esse `numero` na árvore.").into());
     }
-
-    // 3. Contagem (invariante dinâmico: reaproveitados + pendentes == total).
-    let total = merged.len();
-    let pendentes = merged.iter().filter(|c| pendente(c)).count();
+    let total = docs.len();
+    let pendentes = docs.iter().filter(|d| d.pendente).count();
     let reaproveitados = total - pendentes;
-    debug_assert_eq!(reaproveitados + pendentes, total);
     println!("📊 {}: total {total} | reaproveitados {reaproveitados} | pendentes {pendentes}", entity.id);
 
-    // 4. Dry-run: estimativa de tokens dos pendentes e retorna SEM escrever.
+    // 3. Dry-run: estimativa de tokens dos pendentes, sem escrever nada.
     if opts.dry_run {
-        let chars: usize = merged
-            .iter()
-            .filter(|c| pendente(c))
-            .map(|c| c.assunto.chars().count() + c.corpo.chars().count())
-            .sum();
-        let tokens_est = chars / 4;
-        println!("🔎 dry-run: ~{} tokens de entrada nos {pendentes} pendentes (nada foi escrito).", milhar(tokens_est));
+        let mut chars = 0usize;
+        for d in docs.iter().filter(|d| d.pendente) {
+            let texto = std::fs::read_to_string(&d.caminho)?;
+            if let Ok((h, _s, corpo)) = mddoc::parse_doc(&texto) {
+                chars += h.assunto.chars().count() + corpo.chars().count();
+            }
+        }
+        println!("🔎 dry-run: ~{} tokens de entrada nos {pendentes} pendentes (nada foi escrito).", milhar(chars / 4));
         return Ok(());
     }
 
-    // 5. Config LLM: lida UMA vez, antes do loop, e SÓ na geração real (nem dry-run nem fake nem
-    //    "sem pendentes" tocam env/rede). `--fake` continua dev-only, sem LLM.
+    // 4. Config LLM: lida UMA vez, e SÓ na geração real (nem dry-run nem fake nem "sem pendentes"
+    //    tocam env/rede). `--fake` continua dev-only, sem LLM.
     let real = !opts.fake && pendentes > 0;
     let llm = if real {
         let params = auli_llm::LlmParams {
@@ -349,58 +309,46 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
         None
     };
 
-    // 6. Geração (respeitando --limit) com gravação atômica após cada documento. `--limit` limita os
-    //    documentos PROCESSADOS na rodada (gerados + falhas), não só os sucessos.
+    // 5. Geração documento a documento: lê → gera → grava o próprio `.md`. `--limit` limita os
+    //    PROCESSADOS (gerados + falhas). Cada gravação é atômica, então a retomada é grátis.
     let mut gerados = 0usize;
     let mut falhas = 0usize;
     let limit = opts.limit.unwrap_or(usize::MAX);
-    for i in 0..merged.len() {
+    for d in docs.iter().filter(|d| d.pendente) {
         if gerados + falhas >= limit {
             break;
         }
-        if !pendente(&merged[i]) {
-            continue;
-        }
-        let assunto = merged[i].assunto.clone();
-        // `headroom` = (remaining_requests, reset) da chamada bem-sucedida; None no modo fake.
+        let texto = std::fs::read_to_string(&d.caminho)?;
+        let (header, _sin, corpo) = mddoc::parse_doc(&texto)
+            .map_err(|e| format!("`{}` não parseia ({e})", d.caminho.display()))?;
+
         let (resumo, modelo, versao, headroom) = if let Some((params, system_prompt, rt)) = &llm {
-            let corpo = merged[i].corpo.clone();
-            let numero = merged[i].numero.clone();
-            match gerar_sinopse(rt, params, system_prompt, &assunto, &corpo, &numero) {
+            match gerar_sinopse(rt, params, system_prompt, &header.assunto, &corpo, &header.numero) {
                 Ok(g) => {
                     let hr = (g.remaining_requests, g.reset_requests);
                     (g.resumo, params.model.clone(), SINOPSE_PROMPT_VERSION, Some(hr))
                 }
                 Err(motivo) if e_rate_limit(&motivo) => {
-                    // Rede de segurança: se o header de headroom não veio e batemos no teto, abortar
-                    // no 1º 429 (não contar como falha) em vez de queimar quota com rejeições. Este
-                    // doc e os restantes ficam em `pendentes-restantes`; o retry reaproveita tudo.
+                    // Rede de segurança: aborta no 1º 429 (não conta como falha) em vez de queimar
+                    // quota com rejeições. Os restantes ficam para a próxima rodada (idempotente).
                     eprintln!(
-                        "🛑 {}: cota da API esgotada (rate limit) em '{numero}'. Abortando o lote — \
+                        "🛑 {}: cota da API esgotada (rate limit) em '{}'. Abortando o lote — \
                          os pendentes ficam para a próxima rodada (idempotente).",
-                        entity.id
+                        entity.id, header.numero
                     );
                     break;
                 }
                 Err(motivo) => {
-                    eprintln!("⚠️  {numero}: falha — {motivo}");
+                    eprintln!("⚠️  {}: falha — {motivo}", header.numero);
                     falhas += 1;
                     continue;
                 }
             }
         } else {
-            (fake_resumo(&assunto), "fake".to_string(), 0, None)
+            (fake_resumo(&header.assunto), "fake".to_string(), 0, None)
         };
 
-        merged[i].resumo = resumo;
-        merged[i].text_to_embed =
-            compose_text_to_embed(&merged[i].numero, &merged[i].assunto, &merged[i].resumo);
-        merged[i].sinopse_info = Some(auli_contract::SinopseInfo {
-            modelo,
-            prompt_versao: versao,
-            gerada_em: now_iso8601(),
-        });
-        write_atomic(&out_file, &entity.id, &merged)?;
+        escrever_sinopse(&d.caminho, &resumo, &modelo, versao, &now_iso8601())?;
         gerados += 1;
 
         // Proactive-stop: este doc já foi gravado; se o RPD restante caiu à margem, parar ANTES de
@@ -418,22 +366,14 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
         }
     }
 
-    // 6b. Promoção raw→final: SEMPRE grava o JSON mesclado (dry-run já retornou antes), inclusive com
-    //     zero gerados — o caso RS legado (tudo reaproveitado) precisa promover a saída para o update
-    //     ter fonte. As gravações por documento no loop permanecem (proteção contra queda); esta é a
-    //     de promoção. Regrava também o print. Idempotente: rodar de novo dá o mesmo resultado.
-    write_atomic(&out_file, &entity.id, &merged)?;
-    let pp = print_path(entity)?;
-    write_print(&pp, &merged)?;
-    println!("📝 saída promovida: {} (+ print)", out_file.display());
-
-    // 7. Relatório final + invariante de guarda do passo. Pendentes-restantes = não processados
+    // 6. Relatório final + invariante de guarda do passo. Pendentes-restantes = não processados
     //    (falhas contam à parte); a soma fecha em `total`.
     let pendentes_restantes = pendentes - gerados - falhas;
     println!(
         "✅ {}: total {total} | reaproveitados {reaproveitados} | gerados {gerados} | falhas {falhas} | pendentes-restantes {pendentes_restantes}",
         entity.id
     );
+    println!("📝 árvore atualizada: {} (rode `auli update --entity {}` para vetorizar)", dir.display(), entity.id);
     assert_eq!(
         reaproveitados + gerados + falhas + pendentes_restantes,
         total,
@@ -460,256 +400,161 @@ fn milhar(n: usize) -> String {
 mod tests {
     use super::*;
 
-    fn consulta(numero: &str, resumo: &str) -> Consulta {
-        Consulta {
-            numero: numero.into(),
-            assunto: format!("assunto de {numero}"),
-            resumo: resumo.into(),
-            corpo: format!("corpo integral de {numero}"),
-            link: format!("https://exemplo/{numero}"),
-            text_to_embed: String::new(),
-            sinopse_info: None,
-        }
-    }
-
-    /// EntityConfig apontando para um dir temporário exclusivo do teste (limpo no início). `data_dir`
-    /// termina em `/raw` (como o real `../data/<id>/raw`), para que `print_path` (irmão `ref/`) caia
-    /// dentro da árvore do próprio teste — senão vários testes compartilhariam `temp/ref/` e correriam.
+    /// EntityConfig apontando para um dir temporário exclusivo do teste (limpo no início).
+    /// `data_dir` termina em `/raw` (como o real `../data/<id>/raw`), então a árvore do teste cai em
+    /// `<base>/docs/pareceres` — irmã do `raw/`, igual à produção.
     fn temp_entity(tag: &str) -> EntityConfig {
-        let base = std::env::temp_dir().join(format!("auli_sinopse_test_{tag}"));
+        let base = std::env::temp_dir().join(format!("auli_sinopse_g4_{tag}_{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
-        let raw = base.join("raw");
-        std::fs::create_dir_all(&raw).unwrap();
+        std::fs::create_dir_all(base.join("raw")).unwrap();
+        std::fs::create_dir_all(base.join("docs").join("pareceres")).unwrap();
         EntityConfig {
             id: "xx".into(),
             name: "Teste".into(),
             system_prompt: String::new(),
-            data_dir: raw.to_string_lossy().into_owned(),
+            data_dir: base.join("raw").to_string_lossy().into_owned(),
         }
     }
 
-    fn write_table(entity: &EntityConfig, suffix: &str, items: Vec<Consulta>) {
-        let path = PathBuf::from(&entity.data_dir).join(format!("{}-pareceres{suffix}", entity.id));
-        let table = Table::new(&entity.id, "pareceres", items);
-        std::fs::write(&path, serde_json::to_string_pretty(&table).unwrap()).unwrap();
+    /// Escreve um `.md` na árvore do teste. `sinopse: None` = documento pendente.
+    fn escrever_doc(entity: &EntityConfig, slug: &str, numero: &str, sinopse: Option<&str>) {
+        let header = mddoc::DocHeader {
+            numero: numero.into(),
+            assunto: format!("assunto de {numero}"),
+            link: format!("https://exemplo/{numero}"),
+            sinopse_info: sinopse.map(|_| auli_contract::SinopseInfo {
+                modelo: "previa".into(),
+                prompt_versao: 1,
+                gerada_em: "2026-01-01T00:00:00Z".into(),
+            }),
+        };
+        let corpo = format!("corpo integral de {numero}");
+        let dir = docs_dir(entity).unwrap();
+        std::fs::write(dir.join(format!("{slug}.md")), mddoc::render_doc(&header, sinopse, &corpo)).unwrap();
     }
 
-    fn read_out(entity: &EntityConfig) -> Vec<Consulta> {
-        let t: Table<Consulta> =
-            serde_json::from_str(&std::fs::read_to_string(out_path(entity)).unwrap()).unwrap();
-        t.items
+    /// Lê `(sinopse, corpo, modelo)` de um `.md` da árvore.
+    fn ler_doc(entity: &EntityConfig, slug: &str) -> (Option<String>, String, Option<String>) {
+        let dir = docs_dir(entity).unwrap();
+        let texto = std::fs::read_to_string(dir.join(format!("{slug}.md"))).unwrap();
+        let (h, sin, corpo) = mddoc::parse_doc(&texto).unwrap();
+        (sin, corpo, h.sinopse_info.map(|i| i.modelo))
+    }
+
+    fn opts(fake: bool, limit: Option<usize>, force: Option<&str>, dry_run: bool) -> SinopseOpts {
+        SinopseOpts { dry_run, limit, force: force.map(String::from), fake }
     }
 
     #[test]
     fn compose_indexa_numero_assunto_resumo() {
         assert_eq!(compose_text_to_embed("N", "A", "R"), "N\nA\nR");
+        // Vazios são pulados (pendente indexa só numero+assunto).
         assert_eq!(compose_text_to_embed("N", "A", ""), "N\nA");
-        assert_eq!(compose_text_to_embed("N", "", ""), "N");
-        assert_eq!(compose_text_to_embed("", "A", "R"), "A\nR"); // vazios pulados
-        assert_eq!(compose_text_to_embed("", "", ""), "");
     }
 
     #[test]
-    fn key_recomposta_inclui_numero_nos_reaproveitados() {
-        // Reaproveitado (resumo já preenchido) deve ganhar o numero na key na promoção.
-        let e = temp_entity("recompoe");
-        write_table(&e, ".raw.json", vec![consulta("PARECER Nº 9", "resumo autorado")]);
-        run(&e, SinopseOpts { dry_run: false, limit: None, force: None, fake: false }).unwrap();
-        let out = read_out(&e);
-        assert_eq!(out[0].text_to_embed, "PARECER Nº 9\nassunto de PARECER Nº 9\nresumo autorado");
+    fn arvore_ausente_e_erro_que_ensina_o_remedio() {
+        let e = temp_entity("semarvore");
+        std::fs::remove_dir_all(docs_dir(&e).unwrap()).unwrap();
+        let err = run(&e, opts(true, None, None, false)).unwrap_err().to_string();
+        assert!(err.contains("árvore ausente"), "erro: {err}");
+        assert!(err.contains("auli update"), "deve mandar materializar antes: {err}");
     }
 
     #[test]
-    fn mescla_reaproveita_registro_com_resumo() {
-        let e = temp_entity("mescla");
-        write_table(&e, ".raw.json", vec![consulta("A", ""), consulta("B", ""), consulta("C", "")]);
-        // Saída anterior: B já tem resumo (e sinopse_info) — deve ser reaproveitado.
-        let mut b = consulta("B", "### Descrição\nresumo de B\n\n### Palavras Chave\n- **x**");
-        b.sinopse_info = Some(auli_contract::SinopseInfo { modelo: "m".into(), prompt_versao: 1, gerada_em: "2026-01-01T00:00:00Z".into() });
-        b.text_to_embed = "assunto de B\n...".into();
-        write_table(&e, ".json", vec![b.clone()]);
-
-        run(&e, SinopseOpts { dry_run: false, limit: None, force: None, fake: true }).unwrap();
-        let out = read_out(&e);
-        assert_eq!(out.len(), 3);
-        // B preservado byte a byte na mescla (resumo/sinopse_info/text_to_embed do anterior).
-        let out_b = out.iter().find(|c| c.numero == "B").unwrap();
-        assert_eq!(out_b.resumo, b.resumo);
-        assert_eq!(out_b.sinopse_info, b.sinopse_info);
-        // A e C eram os 2 pendentes → gerados como fake.
-        for n in ["A", "C"] {
-            let c = out.iter().find(|c| c.numero == n).unwrap();
-            assert!(c.resumo.contains("[FAKE]"));
-            assert_eq!(c.sinopse_info.as_ref().unwrap().prompt_versao, 0);
-        }
+    fn pendente_e_quem_nao_tem_secao_sinopse() {
+        let e = temp_entity("indexa");
+        escrever_doc(&e, "a-1", "A 1", None);
+        escrever_doc(&e, "b-2", "B 2", Some("### Descrição Resumida do Assunto\nja tem"));
+        let docs = indexar(&docs_dir(&e).unwrap(), None).unwrap();
+        assert_eq!(docs.len(), 2);
+        assert!(docs.iter().find(|d| d.numero == "A 1").unwrap().pendente);
+        assert!(!docs.iter().find(|d| d.numero == "B 2").unwrap().pendente);
     }
 
     #[test]
-    fn force_rependuza_registro_reaproveitavel() {
+    fn fake_preenche_a_arvore_respeita_limit_e_retoma() {
+        let e = temp_entity("fakelimit");
+        escrever_doc(&e, "a-1", "A 1", None);
+        escrever_doc(&e, "b-2", "B 2", None);
+
+        // 1ª rodada com limit=1: só o primeiro (ordem estável por nome de arquivo).
+        run(&e, opts(true, Some(1), None, false)).unwrap();
+        assert!(ler_doc(&e, "a-1").0.is_some(), "a-1 devia ter sinopse");
+        assert!(ler_doc(&e, "b-2").0.is_none(), "b-2 ainda pendente");
+
+        // 2ª rodada: retoma o que faltou, sem re-gerar o que já tinha.
+        run(&e, opts(true, None, None, false)).unwrap();
+        let (sin_b, corpo_b, modelo_b) = ler_doc(&e, "b-2");
+        assert!(sin_b.unwrap().contains("[FAKE]"));
+        assert_eq!(corpo_b, "corpo integral de B 2", "corpo preservado na regravação");
+        assert_eq!(modelo_b.as_deref(), Some("fake"), "proveniência do fake gravada");
+    }
+
+    #[test]
+    fn force_repende_documento_que_ja_tem_sinopse() {
         let e = temp_entity("force");
-        write_table(&e, ".raw.json", vec![consulta("A", ""), consulta("B", ""), consulta("C", "")]);
-        let b = consulta("B", "resumo pronto de B");
-        write_table(&e, ".json", vec![b]);
-        // --force B: mesmo com resumo no anterior, B volta a pendente → 3 pendentes.
-        run(&e, SinopseOpts { dry_run: false, limit: None, force: Some("B".into()), fake: true }).unwrap();
-        let out = read_out(&e);
-        // Todos foram (re)gerados como fake.
-        assert!(out.iter().all(|c| c.resumo.contains("[FAKE]")));
+        escrever_doc(&e, "a-1", "A 1", Some("### Descrição Resumida do Assunto\nantiga"));
+        // Sem --force: nada a fazer.
+        run(&e, opts(true, None, None, false)).unwrap();
+        assert!(ler_doc(&e, "a-1").0.unwrap().contains("antiga"), "sem force não regenera");
+        // Com --force: regenera a seção.
+        run(&e, opts(true, None, Some("A 1"), false)).unwrap();
+        assert!(ler_doc(&e, "a-1").0.unwrap().contains("[FAKE]"), "force devia regenerar");
     }
 
     #[test]
-    fn duplicata_de_numero_no_raw_e_erro() {
-        let e = temp_entity("dup");
-        write_table(&e, ".raw.json", vec![consulta("A", ""), consulta("A", "")]);
-        let err = run(&e, SinopseOpts { dry_run: false, limit: None, force: None, fake: true }).unwrap_err();
-        assert!(format!("{err}").contains("duplicado"));
+    fn force_com_numero_inexistente_e_erro() {
+        let e = temp_entity("forceruim");
+        escrever_doc(&e, "a-1", "A 1", None);
+        let err = run(&e, opts(true, None, Some("NAO EXISTE"), false)).unwrap_err().to_string();
+        assert!(err.contains("nenhum documento"), "erro: {err}");
     }
 
     #[test]
-    fn fake_com_limit_e_retomada() {
-        let e = temp_entity("retomada");
-        write_table(&e, ".raw.json", vec![consulta("A", ""), consulta("B", ""), consulta("C", "")]);
-        // 1ª rodada: fake + limit 1 → 1 gerado, 2 pendentes restantes.
-        run(&e, SinopseOpts { dry_run: false, limit: Some(1), force: None, fake: true }).unwrap();
-        let out1 = read_out(&e);
-        assert_eq!(out1.iter().filter(|c| c.resumo.contains("[FAKE]")).count(), 1);
-        assert_eq!(out1.iter().filter(|c| pendente(c)).count(), 2);
-        // 2ª rodada: fake sem limit → o gerado é reaproveitado; os 2 restantes geram.
-        run(&e, SinopseOpts { dry_run: false, limit: None, force: None, fake: true }).unwrap();
-        let out2 = read_out(&e);
-        assert_eq!(out2.len(), 3);
-        assert!(out2.iter().all(|c| c.resumo.contains("[FAKE]")));
+    fn dry_run_nao_escreve_nada() {
+        let e = temp_entity("dry");
+        escrever_doc(&e, "a-1", "A 1", None);
+        run(&e, opts(true, None, None, true)).unwrap();
+        assert!(ler_doc(&e, "a-1").0.is_none(), "dry-run não pode escrever");
     }
 
     #[test]
-    fn dry_run_nao_escreve() {
-        let e = temp_entity("dryrun");
-        write_table(&e, ".raw.json", vec![consulta("A", ""), consulta("B", "")]);
-        run(&e, SinopseOpts { dry_run: true, limit: None, force: None, fake: false }).unwrap();
-        assert!(!out_path(&e).exists(), "dry-run não deve criar o .json");
-    }
+    fn escrever_sinopse_preserva_corpo_e_campos_do_header() {
+        let e = temp_entity("preserva");
+        escrever_doc(&e, "a-1", "A 1", None);
+        let dir = docs_dir(&e).unwrap();
+        escrever_sinopse(&dir.join("a-1.md"), "NOVA SINOPSE", "modelo-x", 7, "2026-07-20T00:00:00Z").unwrap();
 
-    // --- F4: validação/truncamento/erro-como-Ok (funções puras) ---
-
-    fn sinopse_valida(n_kw: usize) -> String {
-        let kws: String = (0..n_kw).map(|i| format!("- **termo{i}**\n")).collect();
-        format!("{SECAO_DESC}\nParágrafo denso sobre crédito fiscal e não-cumulatividade.\n\n{SECAO_KW}\n{kws}")
-    }
-
-    #[test]
-    fn validar_aprova_formato_correto() {
-        assert!(validar_sinopse(&sinopse_valida(3)).is_ok());
-        assert!(validar_sinopse(&sinopse_valida(12)).is_ok());
+        let texto = std::fs::read_to_string(dir.join("a-1.md")).unwrap();
+        let (h, sin, corpo) = mddoc::parse_doc(&texto).unwrap();
+        assert_eq!(sin.as_deref(), Some("NOVA SINOPSE"));
+        assert_eq!(corpo, "corpo integral de A 1", "corpo intocado");
+        assert_eq!(h.numero, "A 1");
+        assert_eq!(h.link, "https://exemplo/A 1", "link intocado");
+        let info = h.sinopse_info.unwrap();
+        assert_eq!(info.modelo, "modelo-x");
+        assert_eq!(info.prompt_versao, 7);
     }
 
     #[test]
-    fn validar_reprova_secao_ausente() {
-        let sem_desc = format!("{SECAO_KW}\n- **a**\n- **b**\n- **c**");
-        assert!(validar_sinopse(&sem_desc).is_err());
-        let sem_kw = format!("{SECAO_DESC}\nDescrição qualquer.");
-        assert!(validar_sinopse(&sem_kw).is_err());
+    fn documento_ilegivel_na_arvore_e_erro_alto() {
+        let e = temp_entity("ilegivel");
+        std::fs::write(docs_dir(&e).unwrap().join("ruim.md"), "sem frontmatter").unwrap();
+        let err = run(&e, opts(true, None, None, false)).unwrap_err().to_string();
+        assert!(err.contains("não parseia"), "erro: {err}");
     }
 
     #[test]
-    fn validar_reprova_ordem_invertida() {
-        let invertido = format!("{SECAO_KW}\n- **a**\n- **b**\n- **c**\n\n{SECAO_DESC}\nDescrição.");
-        assert!(validar_sinopse(&invertido).unwrap_err().contains("ordem"));
-    }
-
-    #[test]
-    fn validar_reprova_descricao_vazia() {
-        let vazia = format!("{SECAO_DESC}\n\n{SECAO_KW}\n- **a**\n- **b**\n- **c**");
-        assert!(validar_sinopse(&vazia).unwrap_err().contains("vazia"));
-    }
-
-    #[test]
-    fn validar_reprova_descricao_longa() {
-        let longa = format!("{SECAO_DESC}\n{}\n\n{SECAO_KW}\n- **a**\n- **b**\n- **c**", "x".repeat(2_001));
-        assert!(validar_sinopse(&longa).unwrap_err().contains("longa"));
-    }
-
-    #[test]
-    fn validar_reprova_poucas_keywords() {
-        assert!(validar_sinopse(&sinopse_valida(2)).unwrap_err().contains("palavras-chave"));
-        assert!(validar_sinopse(&sinopse_valida(3)).is_ok());
-    }
-
-    #[test]
-    fn trunca_corpo_no_teto() {
-        let (t, cortou) = truncar_corpo("abcde", 10);
-        assert_eq!(t, "abcde");
-        assert!(!cortou);
-        let (t, cortou) = truncar_corpo(&"x".repeat(100), 10);
-        assert_eq!(t.chars().count(), 10);
-        assert!(cortou);
-    }
-
-    #[test]
-    fn detecta_erro_como_ok() {
-        assert!(resposta_e_erro_de_api("Erro na chamada da API do modelo AI: foo!"));
-        assert!(!resposta_e_erro_de_api("### Descrição Resumida do Assunto\n..."));
-    }
-
-    #[test]
-    fn detecta_rate_limit_no_motivo() {
-        let motivo = r#"API: Erro na chamada da API do modelo AI: {"code":"rate_limit_exceeded","message":"...RPD..."}!"#;
-        assert!(e_rate_limit(motivo));
-        assert!(!e_rate_limit("validação: seção ausente: ### Palavras Chave do Tema"));
-        assert!(!e_rate_limit("transporte: timeout"));
-    }
-
-    #[test]
-    fn print_round_trip_via_parse_pareceres() {
-        use crate::derive_pareceres::parse_pareceres;
-        // 1 com sinopse (resumo multi-linha), 1 reaproveitada (resumo simples).
-        let mut c1 = consulta(
-            "PARECER Nº 1",
-            "### Descrição Resumida do Assunto\nParágrafo denso sobre crédito fiscal.\n\n### Palavras Chave do Tema\n- **ICMS**\n- **crédito**",
-        );
-        c1.corpo = "Corpo integral do parecer 1.\n\nCom dois parágrafos.".into();
-        c1.sinopse_info = Some(auli_contract::SinopseInfo {
-            modelo: "m".into(),
-            prompt_versao: 1,
-            gerada_em: "2026-01-01T00:00:00Z".into(),
-        });
-        let c2 = consulta("PARECER Nº 2", "resumo simples reaproveitado");
-        let items = vec![c1, c2];
-
-        let e = temp_entity("print");
-        let pp = print_path(&e).unwrap();
-        write_print(&pp, &items).unwrap();
-        let parsed = parse_pareceres(&std::fs::read_to_string(&pp).unwrap());
-
-        assert_eq!(parsed.len(), 2);
-        for (orig, got) in items.iter().zip(&parsed) {
-            assert_eq!(got.numero, orig.numero);
-            assert_eq!(got.assunto, orig.assunto);
-            assert_eq!(got.resumo, orig.resumo.trim());
-            assert_eq!(got.corpo, orig.corpo.trim());
-            assert_eq!(got.link, orig.link);
-        }
-        // sinopse_info/text_to_embed não sobrevivem ao print (esperado — o .txt é print).
-    }
-
-    #[test]
-    fn zero_pendentes_promove_sem_env_nem_rede() {
-        // RS legado: todos os registros já têm resumo. `run` sem fake e SEM env de LLM deve
-        // promover a saída (0 gerados) e regravar o print — sem tocar env/rede.
-        let e = temp_entity("promove");
-        let itens = vec![
-            consulta("PARECER Nº 1", "resumo autorado 1"),
-            consulta("PARECER Nº 2", "resumo autorado 2"),
-        ];
-        write_table(&e, ".raw.json", itens.clone());
-        // sem env de LLM no ambiente (o teste não define SINOPSE_*/LLM_*); pendentes==0 ⇒ não lê env.
-        run(&e, SinopseOpts { dry_run: false, limit: None, force: None, fake: false }).unwrap();
-
-        let out = read_out(&e);
-        assert_eq!(out.len(), 2);
-        for (orig, got) in itens.iter().zip(&out) {
-            assert_eq!(got.numero, orig.numero);
-            assert_eq!(got.resumo, orig.resumo);
-        }
-        assert!(print_path(&e).unwrap().exists(), "print deve ser regravado na promoção");
+    fn nao_deixa_tmp_para_tras() {
+        let e = temp_entity("tmp");
+        escrever_doc(&e, "a-1", "A 1", None);
+        run(&e, opts(true, None, None, false)).unwrap();
+        let sobras: Vec<_> = std::fs::read_dir(docs_dir(&e).unwrap())
+            .unwrap()
+            .filter_map(|x| x.ok())
+            .filter(|x| x.path().to_string_lossy().ends_with(".tmp"))
+            .collect();
+        assert!(sobras.is_empty(), "escrita atômica não pode deixar .tmp");
     }
 }

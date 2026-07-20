@@ -2,14 +2,17 @@
 //! **offline**. Passo incremental "de trás pra frente": ainda não há scraper de pareceres, então
 //! derivamos a `Table<Consulta>` a partir do arquivo de referência já existente.
 //!
-//! Produz o **snapshot bruto** `data/<id>/raw/<id>-pareceres.raw.json` — a entrada do passo
-//! `sinopse`, que gera as sinopses e promove a saída final `<id>-pareceres.json` (que o `auli update`
-//! vetoriza). Pipeline: `derive → .raw.json → sinopse → .json → update`.
+//! Produz `data/<id>/raw/<id>-pareceres.json` — a origem **estrutural** que o `auli update` usa para
+//! materializar a árvore. Pipeline (G4): `derive → .json → update (materializa a árvore) → sinopse
+//! (preenche os .md) → update (vetoriza)`.
+//!
+//! O `.raw.json` foi aposentado na G4: ele existia só para dar ao `sinopse` um "antes" e um "depois"
+//! na mesma família de arquivos, e as sinopses agora vivem na árvore. Re-rodar este derive é seguro —
+//! a materialização preserva a `## sinopse` de cada `.md` (ver `auli-cli/src/docs.rs`).
 //!
 //! O derive **continua materializando** `text_to_embed` (com os fallbacks atuais): é o caminho legado
-//! para registros que já chegam com `resumo` autorado — o `sinopse` reaproveita esses e só recompõe a
-//! key dos que ele mesmo gera. O ponto único para sinopses novas é `compose_text_to_embed` no
-//! `sinopse.rs`; esta materialização legada aposenta junto com este derive quando houver scraper.
+//! para registros que já chegam com `resumo` autorado. Para a key final quem manda é o `auli update`,
+//! que a recompõe pelo ponto único (`compose_text_to_embed`) com a sinopse lida da árvore.
 //!
 //! Formato do arquivo (um parecer por bloco, delimitado por `// N`):
 //! ```text
@@ -30,8 +33,8 @@ use auli_contract::{Consulta, Table};
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
 
-/// Lê o `.txt` de referência da entidade, parseia os pareceres e grava o snapshot bruto
-/// `<id>-pareceres.raw.json` no `raw/` (entrada do passo `sinopse`).
+/// Lê o `.txt` de referência da entidade, parseia os pareceres e grava `<id>-pareceres.json` no
+/// `raw/` — a origem estrutural da materialização da árvore.
 pub fn run(entity: &EntityConfig) -> Result<()> {
     let id = &entity.id;
     let data_dir = &entity.data_dir; // .../data/<id>/raw
@@ -55,13 +58,26 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         return Err(format!("nenhum parecer parseado de {}", ref_path.display()).into());
     }
 
+    // Identidade da listagem: `numero` duplicado é erro (a checagem morava no `merge` do sinopse,
+    // que a G4 aposentou — mas a regra é do produtor, e este é o produtor).
+    let mut vistos = std::collections::HashSet::with_capacity(items.len());
+    for c in &items {
+        if !vistos.insert(c.numero.as_str()) {
+            return Err(format!("numero duplicado em {}: {:?} — viola a identidade da listagem.", ref_path.display(), c.numero).into());
+        }
+    }
+
     let table = Table::new(id.as_str(), "pareceres", items);
-    let out_path = format!("{data_dir}/{id}-pareceres.raw.json");
+    let out_path = format!("{data_dir}/{id}-pareceres.json");
     if let Some(parent) = Path::new(&out_path).parent() {
         std::fs::create_dir_all(parent)?;
     }
     std::fs::write(&out_path, serde_json::to_string_pretty(&table)?)?;
-    println!("Wrote {} ({} pareceres). Rode `sinopse` em seguida.", out_path, table.len());
+    println!(
+        "Wrote {} ({} pareceres). Rode `auli update --entity {id}` (materializa a árvore) e depois `sinopse`.",
+        out_path,
+        table.len()
+    );
     Ok(())
 }
 
