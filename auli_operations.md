@@ -196,21 +196,25 @@ para o server rodando em `auli-server/`. Variáveis:
 ### 4.5 Pareceres / Consultas — pipeline completo (scrape → sinopse → vetorizar)
 
 Vale para as 4 entidades com acervo de consultas formais: **rs** (Pareceres), **sc** (Consultas
-COPAT), **sp** (Respostas a Consultas), **pr** (Consultas SEFA). São **4 passos**: o scraper já
-emite a árvore, a sinopse a preenche, o build vetoriza e o índice abastece o frontend.
+COPAT), **sp** (Respostas a Consultas), **pr** (Consultas SEFA). São **3 passos**: o scraper já
+emite a árvore, a sinopse a preenche, o build vetoriza.
 
 ```text
 auli-scraper-<id> pareceres      → docs/pareceres/<slug>.md   (rede; um .md por consulta INÉDITA,
                                                                nasce pendente = sem `## sinopse`)
 auli-collections <id> sinopse    → edita os .md               (LLM; preenche os pendentes)
-scripts/build-packs.sh <id>      → packs/<id>-pareceres.json  (embedding; lê a árvore)
-auli-collections <id> indice     → raw/<id>-pareceres-index.json  (índice leve da tab; lê a árvore)
+scripts/build-packs.sh <id>      → packs/<id>-pareceres.json     (embedding; lê a árvore)
+                                 → raw/<id>-pareceres-index.json (índice leve da tab; idem)
 ```
 
-Os dois últimos são irmãos: **o mesmo acervo, dois consumidores**. O `build-packs.sh` serve o RAG
-(vetores + corpo lido tarde); o `indice` serve a tab de Pareceres do frontend (numero/assunto/
-resumo/link, **sem corpo**, copiado para `public/` pelo `build-frontend-public.sh`). Rode o `indice`
-depois de qualquer passo que mexa na árvore — é derivação pura, então re-rodar nunca faz mal.
+**Um acervo, dois consumidores.** O pack serve o RAG (vetores + corpo lido tarde); o índice serve a
+tab de Pareceres do frontend (numero/assunto/resumo/link, **sem corpo**, copiado para `public/` pelo
+`build-frontend-public.sh`). O `build-packs.sh` deriva os dois da mesma leitura da árvore, de
+propósito: ele já é inevitável depois de qualquer mexida nela (o `docs_hash` muda e o boot recusa até
+ele rodar), então servidor e frontend não têm como divergir de estado.
+
+`auli-collections <id> indice` existe como subcomando avulso — derivação pura, re-rodar nunca faz
+mal — mas no fluxo normal não precisa ser chamado à mão.
 
 > **A árvore `.md` É a fonte** (G5b). Não há mais `.txt` intermediário, promoção manual, JSON de
 > contrato nem passo de materialização — o `auli update` lê `docs/pareceres/*.md` direto.
