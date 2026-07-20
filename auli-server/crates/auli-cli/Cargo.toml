@@ -46,8 +46,14 @@ chrono = { version = "0.4.44", features = ["serde"] }
 # Error Handling:
 thiserror = "2.0.18"
 
-# Rate limiting (per-IP GCRA limiter for the public question route):
+# Rate limiting (per-IP GCRA limiter for the public question/retrieve/mcp routes):
 governor = "0.10.4"
+
+# MCP (Model Context Protocol) — face para assistentes de IA (Claude, etc). Streamable HTTP
+# aninhado no mesmo Router axum; ver src/mcp.rs. A feature `tower` (implícita via
+# `server-side-http`) é o que permite o `nest_service`.
+rmcp = { version = "2.2", features = ["server", "macros", "transport-streamable-http-server", "schemars"] }
+schemars = "1.0"
 
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }

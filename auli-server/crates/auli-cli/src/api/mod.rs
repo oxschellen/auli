@@ -6,6 +6,9 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use rmcp::transport::streamable_http_server::{
+    StreamableHttpServerConfig, StreamableHttpService, session::local::LocalSessionManager,
+};
 use tower_http::cors::CorsLayer;
 
 pub mod dto;
@@ -42,6 +45,27 @@ pub fn retrieve_routes(state: Arc<AppState>, limiter: SharedLimiter) -> Router {
         .route("/v1/retrieve", post(retrieve_handler))
         .layer(middleware::from_fn_with_state(limiter, ratelimit::rate_limit))
         .with_state(state)
+}
+
+// Face MCP: um serviço tower aninhado em /mcp, servido pelo MESMO processo/porta — os dois
+// protocolos compartilham o `Arc<Engine>` (e portanto o embedder já carregado). O factory roda
+// por sessão e só clona Arcs: barato.
+//
+// Limiter PRÓPRIO e mais folgado (D-MCP-6, já na v1): o handshake MCP faz várias requisições em
+// sequência e quebraria sob a cota do question — mas quota diferente ≠ sem quota.
+//
+// O layer de CORS do `app()` envolve /mcp também; é inócuo para clientes MCP, que não são
+// browsers (o Claude conecta a partir da nuvem da Anthropic, sem header Origin).
+pub fn mcp_routes(state: Arc<AppState>) -> Router {
+    let engine = state.engine.clone();
+    let service = StreamableHttpService::new(
+        move || Ok(crate::mcp::AuliMcp::new(engine.clone())),
+        LocalSessionManager::default().into(),
+        StreamableHttpServerConfig::default(),
+    );
+    Router::new()
+        .nest_service("/mcp", service)
+        .layer(middleware::from_fn_with_state(ratelimit::mcp_rate_limiter(), ratelimit::rate_limit))
 }
 
 // Rota de listagem de dados (somente leitura), genérica por `{kind}`. Pública.

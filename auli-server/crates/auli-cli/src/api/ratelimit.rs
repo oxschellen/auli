@@ -42,6 +42,21 @@ pub fn question_rate_limiter() -> SharedLimiter {
     Arc::new(RateLimiter::keyed(quota))
 }
 
+/// Limiter do `/mcp` (D-MCP-6): 10 req/s, burst 30.
+///
+/// Folgado o bastante para o handshake MCP, que faz várias requisições em sequência
+/// (`initialize` → `notifications/initialized` → `tools/list` → `tools/call`) e quebraria sob a
+/// cota de 1 req/s do question. Apertado o bastante para não deixar um endpoint público e
+/// CPU-bound (cada `buscar_pareceres` embeda no BGE-M3) sem teto nenhum — quota diferente não é
+/// o mesmo que ausência de quota.
+///
+/// Nota: o 429 sai como JSON simples, não como erro JSON-RPC. É correto no nível HTTP e clientes
+/// MCP tratam falha de transporte; formatar o 429 em JSON-RPC exigiria um middleware próprio.
+pub fn mcp_rate_limiter() -> SharedLimiter {
+    let quota = Quota::per_second(NonZeroU32::new(10).unwrap()).allow_burst(NonZeroU32::new(30).unwrap());
+    Arc::new(RateLimiter::keyed(quota))
+}
+
 /// Middleware: admit or reject by the caller's IP. Runs **before** the handler, so a rejected
 /// request never reaches the LLM. Returns `429` with a friendly pt-BR body when the bucket is empty.
 pub async fn rate_limit(
