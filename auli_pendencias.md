@@ -576,7 +576,39 @@ rate limit. O que ficou registrado como próximo passo:
   a paridade com o comportamento antigo de "pega tudo até o teto"). Agora que o `/v1/retrieve`
   **expõe os scores**, dá para calibrar com dados reais: rodar os ~10 testes do SC, ler os arrays
   de distância e baixar cada banda para logo acima de onde os matches genuínos se separam do
-  enchimento. É a pendência com maior efeito sobre a qualidade da resposta.
+  enchimento. É a pendência com maior efeito sobre a qualidade da resposta. (Ao mexer nelas, rodar
+  `scripts/parity-replay.py` — ver `auli_operations.md` §6.1 — para ver EXATAMENTE quais documentos
+  mudam de contexto.)
+
+### Latência percebida no chat via MCP (medido 2026-07-21)
+
+Primeiro uso real (degrau 2): o assistente encadeou `listar_entidades` → `buscar_pareceres` →
+`obter_parecer` corretamente, mas a resposta veio **lenta**. Diagnóstico medido — **o servidor NÃO
+é o gargalo**:
+
+| Etapa | Custo | Nosso? |
+| ----- | ----- | ------ |
+| 3 tool calls sequenciais = ~4 turnos de LLM | dominante | não — é como tool-chaining funciona |
+| Modelo ingerir o texto devolvido (10–24 KB numa pergunta com `obter_parecer`) | relevante | em parte (tamanho do payload) |
+| Embed + varredura vetorial (até SP, 15.605 docs) | 17–49 ms | já rápido |
+| Round-trip pelo tunnel Cloudflare | ~140 ms | não |
+
+Tamanhos medidos: `buscar_pareceres` top_k=5 ≈ **10 KB** (5 hits, cada um com a sinopse inteira);
+`obter_parecer` = **13,6 KB** (SC) e até **54 KB** no pior caso do SP. O modelo lê tudo isso antes
+de responder — é daí que vem a lentidão, não do nosso compute (~50 ms).
+
+Alavancas reais, se a lentidão incomodar no uso contínuo (nenhuma urgente):
+
+- **Sem código, do lado do usuário:** pedir menos quando precisa de menos — "só títulos e links,
+  não o texto integral" pula o `obter_parecer` (o payload de 14–54 KB) e o modelo responde direto
+  dos hits da busca.
+- **Enxugar a sinopse no `buscar_pareceres`.** O grosso dos 10 KB é o campo `resumo` inteiro dos 5
+  hits, com blocos de palavras-chave. Um preview mais curto por hit corta o payload do turno do
+  meio — MAS a sinopse é justamente o que deixa o modelo julgar relevância; é troca real, não ganho
+  de graça. Medir antes/depois com o tamanho do `buscar_pareceres`, não com o `parity-replay.py`
+  (que é ordem de recuperação, não payload).
+- **Handshake só na 1ª chamada.** `initialize`/`tools/list` rodam uma vez por sessão; as chamadas
+  seguintes reaproveitam. Não é recorrente.
 
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
