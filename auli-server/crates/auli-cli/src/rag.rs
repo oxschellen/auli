@@ -7,6 +7,7 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
 use std::sync::Arc;
+use std::time::Instant;
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_contract::{ConsultaPackPayload, render_consulta_block};
@@ -33,6 +34,32 @@ const FAQ_FLOOR: usize = 0;
 const FAQ_BAND: f32 = f32::INFINITY;
 const PAR_FLOOR: usize = 0;
 const PAR_BAND: f32 = f32::INFINITY;
+
+/// Tempos por fase de uma consulta RAG, em milissegundos de relógio de parede — precisão
+/// suficiente para a pergunta que este medidor responde ("onde foi o tempo?").
+/// `retrieve_ms` inclui a montagem do contexto (nos pareceres: a leitura dos corpos no disco) —
+/// é o custo total de "ter o RAG pronto" depois do embed.
+///
+/// As fases NÃO somam `total_ms`: `total` cobre também o que não é cronometrado (anonimização,
+/// resolução de entidade, montagem do prompt, restauração da resposta). A diferença é essa cola.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct TemposConsulta {
+    pub embed_ms: u64,
+    pub retrieve_ms: u64,
+    pub llm_ms: u64,
+    pub total_ms: u64,
+}
+
+impl TemposConsulta {
+    /// Linha humana única, usada no log de auditoria. Formato estável de propósito:
+    /// `grep -h "TEMPOS" logs/*.txt` vira uma série temporal de graça.
+    pub fn linha(&self) -> String {
+        format!(
+            "embed: {} ms · retrieve+montagem: {} ms · llm: {} ms · total: {} ms",
+            self.embed_ms, self.retrieve_ms, self.llm_ms, self.total_ms
+        )
+    }
+}
 
 /// Which corpus a question targets. Sent by the UI as an integer `type` (see `dto::Question`).
 /// The default (and any missing/unknown code) is `ServicosFaqs`, preserving the original behavior.
@@ -150,6 +177,9 @@ pub async fn exec_all_question(
 ) -> Result<String> {
     debug!("Executando consulta: {}", question);
 
+    let t_total = Instant::now();
+    let mut tempos = TemposConsulta::default();
+
     // Anonimiza a pergunta uma vez, fail-closed (em erro usa o placeholder fixo, nunca o texto cru).
     // O `mapping` fica em memória, no escopo da requisição, para restaurar a resposta do LLM —
     // NUNCA é persistido.
@@ -179,14 +209,19 @@ pub async fn exec_all_question(
     info!("Entidade: {} ({})", cfg.id, cfg.name);
 
     // Embed the question once (off the async worker thread), reuse for both retrievals.
+    let t = Instant::now();
     let embedding = {
         let e = engine.clone();
         let q = question.clone();
         run_blocking(move || e.embed(&q).map_err(|err| err.to_string().into())).await?
     };
+    tempos.embed_ms = t.elapsed().as_millis() as u64;
 
     // Assemble the RAG context for the requested query type. The system-prompt/LLM/log tail below is
     // shared across types (the entity prompt is reused for every type).
+    // NOTA: o early-return de pareceres vazios está DENTRO do `match` e sai antes daqui — hoje sem
+    // registro de auditoria, e continua assim (não instrumentado).
+    let t = Instant::now();
     let rag = match query_type {
         QueryType::ServicosFaqs => {
             // Retrieve this entity's servicos + faqs concurrently, both through the engine.
@@ -240,6 +275,7 @@ pub async fn exec_all_question(
             montar_rag_pareceres(&blocos)
         }
     };
+    tempos.retrieve_ms = t.elapsed().as_millis() as u64;
 
     // System prompt = base prompt (per query type) + RAG context, closed with the original delimiter.
     let base_prompt = match query_type {
@@ -254,7 +290,9 @@ pub async fn exec_all_question(
     // anterior). Os documentos do RAG são conteúdo público e NÃO passam por anonimização.
     let anonimizar = config().anonimizar_llm;
     let entrada_llm = if anonimizar { &pergunta_anon } else { &question };
+    let t = Instant::now();
     let resposta_llm = llm::chat(&system_prompt, entrada_llm).await?;
+    tempos.llm_ms = t.elapsed().as_millis() as u64;
 
     // Restaura os placeholders (`[CNPJ_1]` → valor original) antes de devolver — o usuário vê o valor
     // real, mas o LLM só viu o placeholder. Sem mapping (anonimização falhou) ou flag off: sem troca.
@@ -266,7 +304,19 @@ pub async fn exec_all_question(
     // Resposta em `debug!` (não `info!`): evita despejar a resposta crua no stdout por padrão.
     debug!("Resposta: {}", answer);
 
-    log_question(&cfg.id, query_type.label(), &question, &pergunta_anon, &answer, &rag)?;
+    tempos.total_ms = t_total.elapsed().as_millis() as u64;
+    // Linha estruturada no tracing: campos separados para filtrar/agregar no journal.
+    info!(
+        entity = %cfg.id,
+        tipo = query_type.label(),
+        embed_ms = tempos.embed_ms,
+        retrieve_ms = tempos.retrieve_ms,
+        llm_ms = tempos.llm_ms,
+        total_ms = tempos.total_ms,
+        "tempos da consulta"
+    );
+
+    log_question(&cfg.id, query_type.label(), &question, &pergunta_anon, &answer, &rag, tempos)?;
 
     Ok(answer)
 }
@@ -278,6 +328,7 @@ fn format_log_record(
     stamp: &str,
     entidade: &str,
     tipo: &str,
+    tempos: &str,
     original: &str,
     sanitizada: &str,
     answer: &str,
@@ -292,6 +343,7 @@ fn format_log_record(
     format!(
         "{regua}\n\
          CONSULTA · {stamp} · entidade: {entidade} · tipo: {tipo}\n\
+         TEMPOS · {tempos}\n\
          {regua}\n\n\
          {}\n{original}\n\n\
          {}\n{sanitizada}\n\n\
@@ -312,6 +364,7 @@ fn log_question(
     sanitizada: &str,
     answer: &str,
     rag: &str,
+    tempos: TemposConsulta,
 ) -> std::io::Result<()> {
     // Diretório de logs configurável; default `./logs` (relativo ao CWD). O start_server.sh aponta
     // para a raiz do repo (`$ROOT/logs`) para não depender de onde o binário é lançado.
@@ -320,7 +373,8 @@ fn log_question(
     let agora = chrono::Local::now();
     let path = format!("{}/{}.txt", log_dir, agora.format("%Y-%m-%d_%H-%M-%S"));
     let stamp = agora.format("%Y-%m-%d %H:%M:%S").to_string();
-    let content = format_log_record(&stamp, entidade, tipo, original, sanitizada, answer, rag);
+    let content =
+        format_log_record(&stamp, entidade, tipo, &tempos.linha(), original, sanitizada, answer, rag);
     let mut file = OpenOptions::new().create(true).append(true).open(&path)?;
     debug!("Log da consulta gravado em {}", path);
     writeln!(file, "{}", content)
@@ -330,6 +384,7 @@ fn log_question(
 mod tests {
     use super::{
         bloco_parecer, format_log_record, montar_rag_pareceres, montar_rag_servicos_faqs, QueryType,
+        TemposConsulta,
     };
     use auli_contract::{mddoc, ConsultaPackPayload};
     use std::path::Path;
@@ -396,11 +451,19 @@ mod tests {
     }
 
     #[test]
+    fn tempos_linha_pina_o_formato() {
+        // Contrato de grep, não estética: `grep -h TEMPOS logs/*.txt` depende deste formato.
+        let t = TemposConsulta { embed_ms: 1, retrieve_ms: 2, llm_ms: 3, total_ms: 6 };
+        assert_eq!(t.linha(), "embed: 1 ms · retrieve+montagem: 2 ms · llm: 3 ms · total: 6 ms");
+    }
+
+    #[test]
     fn log_record_has_header_and_sections_in_order() {
         let rec = format_log_record(
             "2026-07-16 14:23:05",
             "rs",
             "pareceres",
+            "embed: 12 ms · retrieve+montagem: 3 ms · llm: 950 ms · total: 970 ms",
             "CNPJ 11.222.333/0001-81 pode aderir?",
             "CNPJ [CNPJ_1] pode aderir?",
             "Sim, o CNPJ 11.222.333/0001-81 atende.",
@@ -409,6 +472,12 @@ mod tests {
 
         // Cabeçalho com metadados (data, entidade, tipo) — sem IP.
         assert!(rec.contains("CONSULTA · 2026-07-16 14:23:05 · entidade: rs · tipo: pareceres"));
+
+        // A linha TEMPOS entra ENTRE o cabeçalho CONSULTA e a régua — posição, não só presença.
+        let i_consulta = rec.find("CONSULTA · 2026-07-16").expect("linha CONSULTA");
+        let i_tempos = rec.find("TEMPOS · embed: 12 ms").expect("linha TEMPOS");
+        let i_regua = rec[i_consulta..].find("====").map(|d| i_consulta + d).expect("régua após CONSULTA");
+        assert!(i_consulta < i_tempos && i_tempos < i_regua, "TEMPOS deve ficar entre CONSULTA e a régua");
 
         // As quatro seções, na ordem: original → anonimizada → resposta → contexto RAG.
         let i_orig = rec.find("PERGUNTA (ORIGINAL)").expect("seção original");

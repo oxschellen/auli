@@ -576,6 +576,26 @@ RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG c
 
 > Para gravar também o console em arquivo: `./start_server.sh --no-tunnel 2>&1 | tee logs/console.log`.
 
+### 7.1 Latência por fase (linha `TEMPOS`)
+
+Cada Q&A do chat grava, no cabeçalho do log, os quatro tempos da consulta — `embed` (vetorizar a
+pergunta, CPU), `retrieve+montagem` (varredura + leitura dos corpos + montagem do contexto), `llm`
+(a chamada externa) e `total`:
+
+```bash
+grep -h "^TEMPOS" logs/*.txt        # a série temporal, uma linha por consulta
+```
+
+Exemplo real (pareceres, RS): `embed: 18 ms · retrieve+montagem: 0 ms · llm: 3487 ms · total: 3508
+ms` — a chamada externa domina (~99%), como esperado. **As fases não somam o total**: `total`
+cobre também a cola não cronometrada (anonimização, resolução de entidade, montagem do prompt,
+restauração). O `embed_ms` medido aqui, em produção, é o número que decide o `--device cuda` do
+server (ver TAREFA-GPU): 18 ms de CPU sobre 3,5 s de resposta torna o ganho de GPU imperceptível.
+
+A mesma medição em campo estruturado sai no console (`tracing`): `info` "tempos da consulta" com
+`embed_ms`/`retrieve_ms`/`llm_ms`/`total_ms` separados, para filtrar/agregar no journal. As faces
+`/v1/retrieve` e `/mcp` logam um `ms` único (só o embed+scan; não chamam LLM).
+
 ---
 
 ## 8. Parar / reiniciar

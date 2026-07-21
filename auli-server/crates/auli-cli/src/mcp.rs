@@ -9,6 +9,7 @@
 //! externo é chamado neste caminho; o tracing registra só metadados.
 
 use std::sync::Arc;
+use std::time::Instant;
 
 use rmcp::{
     ErrorData as McpError, ServerHandler,
@@ -96,6 +97,7 @@ impl AuliMcp {
         let uf2 = uf.clone();
 
         // Embed + scan são CPU-bound: fora do runtime async (mesma disciplina das outras faces).
+        let t = Instant::now();
         let hits = tokio::task::spawn_blocking(move || {
             engine.search_pareceres(&uf2, &pergunta, top_k, 0, f32::INFINITY)
         })
@@ -105,7 +107,8 @@ impl AuliMcp {
         .map_err(|e| McpError::internal_error(e.to_string(), None))?;
 
         // D-MCP-5: só metadados no log — nunca o texto da pergunta.
-        tracing::info!(uf = %uf, top_k, hits = hits.len(), "mcp buscar_pareceres");
+        tracing::info!(uf = %uf, top_k, hits = hits.len(), ms = t.elapsed().as_millis() as u64,
+            "mcp buscar_pareceres");
 
         // JSON estruturado no content de texto: é o formato que assistentes consomem melhor.
         let json = serde_json::to_string_pretty(&hits)
@@ -134,12 +137,14 @@ impl AuliMcp {
         let uf2 = uf.clone();
 
         // I/O de disco + varredura da lista: também fora do runtime.
+        let t = Instant::now();
         let achado = tokio::task::spawn_blocking(move || engine.parecer_por_numero(&uf2, &numero))
             .await
             .map_err(|e| McpError::internal_error(e.to_string(), None))?
             .map_err(|e| McpError::internal_error(e.to_string(), None))?;
 
-        tracing::info!(uf = %uf, achou = achado.is_some(), "mcp obter_parecer");
+        tracing::info!(uf = %uf, achou = achado.is_some(), ms = t.elapsed().as_millis() as u64,
+            "mcp obter_parecer");
 
         match achado {
             Some(p) => {
