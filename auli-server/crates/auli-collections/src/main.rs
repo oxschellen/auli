@@ -2,12 +2,14 @@ mod derive_faqs;
 mod derive_pareceres;
 mod domain;
 mod errors;
+mod extracao;
 mod indice;
 mod process;
 mod servicos;
 mod sinopse;
 
 use domain::entities::get_entity;
+use extracao::ExtracaoOpts;
 use sinopse::SinopseOpts;
 
 fn main() -> errors::Result<()> {
@@ -17,7 +19,8 @@ fn main() -> errors::Result<()> {
     //   pareceres  bootstrap: ingere o `.txt` legado -> árvore `docs/pareceres/*.md`.
     //   sinopse    gera/mescla sinopses (aceita flags próprias; ver `sinopse::run`).
     //   indice     deriva o índice leve dos pareceres (árvore -> raw/) para o frontend.
-    // Só o `sinopse` aceita flags; os demais subcomandos continuam rejeitando (comportamento atual).
+    //   extrair    extrai metadados de grafo da árvore -> data/<id>/extracao/*.jsonl (TAREFA-EXTRACAO).
+    // Só `sinopse` e `extrair` aceitam flags; os demais subcomandos continuam rejeitando.
     let args: Vec<String> = std::env::args().skip(1).collect();
 
     // Posicionais vêm antes de qualquer flag (`<entity> <subcomando> [--flags]`).
@@ -36,16 +39,24 @@ fn main() -> errors::Result<()> {
 
 fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
     let entity_arg = positional.first().cloned();
-    let collection = positional.get(1).cloned().unwrap_or_else(|| "process".to_string());
+    let collection = positional
+        .get(1)
+        .cloned()
+        .unwrap_or_else(|| "process".to_string());
 
     let entity = get_entity(entity_arg.as_deref())?;
     println!("🏛️  Entidade: {} ({})", entity.id, entity.name);
 
     // Flags só são aceitas pelo `sinopse`; para os demais, o erro atual permanece.
     if collection != "sinopse"
+        && collection != "extrair"
         && let Some(flag) = flags.first()
     {
-        return Err(format!("flag desconhecida: '{}'. O auli-collections não aceita flags.", flag).into());
+        return Err(format!(
+            "flag desconhecida: '{}'. O auli-collections não aceita flags.",
+            flag
+        )
+        .into());
     }
 
     match collection.as_str() {
@@ -58,6 +69,8 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         "sinopse" => sinopse::run(entity, parse_sinopse_flags(&flags)?)?,
         // OFFLINE: deriva o índice leve dos pareceres para o frontend (árvore -> raw/*-pareceres-index.json).
         "indice" => indice::run(entity)?,
+        // OFFLINE (+LLM): extrai metadados de grafo da árvore `.md` -> JSONL (não toca nos `.md`).
+        "extrair" => extracao::run(entity, parse_extracao_flags(&flags)?)?,
         "faqs" | "servicos" => {
             return Err(
                 "a coleta agora é feita pelos binários `auli-scraper-rs` / `auli-scraper-sc`; \
@@ -67,7 +80,7 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         }
         other => {
             return Err(format!(
-                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice",
+                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice | extrair",
                 other
             )
             .into());
@@ -80,7 +93,12 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
 /// Parsing manual das flags do `sinopse` (estilo da casa — a collections não usa clap).
 /// `--fake` é dev-only: reconhecida, mas não listada na mensagem de uso.
 fn parse_sinopse_flags(flags: &[String]) -> errors::Result<SinopseOpts> {
-    let mut opts = SinopseOpts { dry_run: false, limit: None, force: None, fake: false };
+    let mut opts = SinopseOpts {
+        dry_run: false,
+        limit: None,
+        force: None,
+        fake: false,
+    };
     let mut it = flags.iter();
     while let Some(f) = it.next() {
         match f.as_str() {
@@ -88,7 +106,50 @@ fn parse_sinopse_flags(flags: &[String]) -> errors::Result<SinopseOpts> {
             "--fake" => opts.fake = true,
             "--limit" => {
                 let v = it.next().ok_or("--limit exige um valor inteiro > 0")?;
-                let n: usize = v.parse().map_err(|_| format!("--limit inválido: {v:?} (inteiro > 0)"))?;
+                let n: usize = v
+                    .parse()
+                    .map_err(|_| format!("--limit inválido: {v:?} (inteiro > 0)"))?;
+                if n == 0 {
+                    return Err("--limit deve ser > 0".into());
+                }
+                opts.limit = Some(n);
+            }
+            "--force" => {
+                let v = it
+                    .next()
+                    .ok_or("--force exige o <numero> exato (ex.: \"PARECER Nº 25148\")")?;
+                opts.force = Some(v.clone());
+            }
+            other => {
+                return Err(format!(
+                    "flag desconhecida: {other:?}. Válidas: --dry-run, --limit N, --force <numero>"
+                )
+                .into());
+            }
+        }
+    }
+    Ok(opts)
+}
+
+/// Parsing manual das flags do `extrair` (mesmas do `sinopse`; duplicação deliberada — os dois
+/// conjuntos podem divergir no futuro e o estilo da casa evita abstração prematura).
+fn parse_extracao_flags(flags: &[String]) -> errors::Result<ExtracaoOpts> {
+    let mut opts = ExtracaoOpts {
+        dry_run: false,
+        limit: None,
+        force: None,
+        fake: false,
+    };
+    let mut it = flags.iter();
+    while let Some(f) = it.next() {
+        match f.as_str() {
+            "--dry-run" => opts.dry_run = true,
+            "--fake" => opts.fake = true,
+            "--limit" => {
+                let v = it.next().ok_or("--limit exige um valor inteiro > 0")?;
+                let n: usize = v
+                    .parse()
+                    .map_err(|_| format!("--limit inválido: {v:?} (inteiro > 0)"))?;
                 if n == 0 {
                     return Err("--limit deve ser > 0".into());
                 }
