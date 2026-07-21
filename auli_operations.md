@@ -525,6 +525,35 @@ curl -s localhost:3000/v1/retrieve -H 'Content-Type: application/json' \
 ./scripts/mcp-smoke.sh http://localhost:3000/mcp
 ```
 
+### 6.1 Paridade do contexto RAG (após mexer na recuperação)
+
+Depois de qualquer mudança no caminho de recuperação — o motor, os knobs `*_FLOOR`/`*_BAND`, a
+montagem do contexto — vale conferir que **os documentos recuperados e a ordem deles** não
+mudaram. Nenhum teste unitário cobre isso: os de `montar_rag_*` pinam o formato e os de
+`bloco_parecer` pinam a leitura do corpo, mas o conjunto/ordem só aparece em consulta real.
+
+O `scripts/parity-replay.py` reenvia as perguntas dos logs de auditoria já existentes e compara o
+`CONTEXTO RAG` que o próprio servidor grava:
+
+```bash
+# 1. servidor local com os logs num diretório À PARTE (não misture com ./logs, que é o baseline)
+AULI_DATA_DIR=./data EMBED_CACHE_DIR=./models AULI_LOG_DIR=/tmp/parity-logs \
+  ./auli-server/target/release/auli server --port 3111 --bind 127.0.0.1
+
+# 2. compara (o -u mostra progresso ao vivo; sem ele o Python bufferiza e parece travado)
+python3 -u scripts/parity-replay.py logs /tmp/parity-logs http://localhost:3111
+```
+
+O 2º argumento **tem que ser o mesmo `AULI_LOG_DIR`** do servidor — é lá que o script procura o
+log recém-gravado. Exit 0 = tudo idêntico; 1 = divergência, com o primeiro diff impresso.
+
+> **Custo:** uma chamada de LLM por log (o log de auditoria só é gravado depois que o modelo
+> responde). Rode contra um servidor **local**, nunca o de produção. A resposta do modelo é
+> descartada — ela varia com a temperatura; o contexto, não.
+
+Usado no G2 (extração do motor `auli-retrieval`) sobre **40 consultas reais** — 16 `pareceres` +
+24 `servicos+faqs`, entidades rs/sp/sc, contextos de 2,8 KB a 100 KB: **40 idênticos, 0 divergentes**.
+
 ---
 
 ## 7. Logs — onde ficam
