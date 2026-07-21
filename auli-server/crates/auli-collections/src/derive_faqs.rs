@@ -77,7 +77,10 @@ mod tests {
             origin: origin.into(),
             url: "u".into(),
         };
-        assert_eq!(faq_from_raw(&raw("Inicial | A")).text_to_embed, "Inicial | A q1");
+        assert_eq!(
+            faq_from_raw(&raw("Inicial | A")).text_to_embed,
+            "Inicial | A q1"
+        );
         assert_eq!(faq_from_raw(&raw("")).text_to_embed, "q1");
     }
 

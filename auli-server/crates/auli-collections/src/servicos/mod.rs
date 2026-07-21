@@ -21,11 +21,7 @@ fn raw_out(data_dir: &str, id: &str, name: &str) -> String {
 
 /// Deriva os artefatos de serviços da coleta do snapshot (offline): contrato `Table<Servico>`,
 /// `portal-servicos.txt`, `servicos-index.json` e os JSONs per-público. Não lê rede — só o snapshot.
-pub fn process(
-    id: &str,
-    data_dir: &str,
-    coleta: &auli_contract::ColetaServicos,
-) -> Result<()> {
+pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos) -> Result<()> {
     let ordem = &coleta.publicos_ordem;
 
     // 1. Contrato: id sequencial (1..), tipo = público primário, text_to_embed materializado; a
@@ -77,7 +73,11 @@ pub fn process(
     }
     let portal_out = raw_out(data_dir, id, "portal-servicos.txt");
     std::fs::write(&portal_out, &portal)?;
-    println!("Wrote {} ({} serviços únicos)", portal_out, coleta.items.len());
+    println!(
+        "Wrote {} ({} serviços únicos)",
+        portal_out,
+        coleta.items.len()
+    );
 
     // 3. <id>-servicos-index.json: { tipo: nome, filename: slug } na ordem de `publicos_ordem`.
     write_servicos_index(data_dir, id, ordem)?;
@@ -126,7 +126,9 @@ fn primary_ocorrencia<'a>(
 /// item; re-vectorization is expected (the goal is retrieval equivalence, not bit-parity).
 fn servico_text_to_embed(tipo: &str, classe: &str, titulo: &str, body: &str) -> String {
     let snippet: String = body.chars().take(300).collect();
-    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim()).trim().to_string()
+    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim())
+        .trim()
+        .to_string()
 }
 
 /// One entry of `servicos-index.json` — drives the frontend's audience tabs.
@@ -141,14 +143,13 @@ struct ServicoIndexEntry {
 ///
 /// `filename` stays the **bare** slug (no `<id>-` prefix): it's a public/-facing logical name that the
 /// frontend resolves via `entityPath` (which prepends `<id>-`). Only the index *file* is prefixed.
-fn write_servicos_index(
-    data_dir: &str,
-    id: &str,
-    ordem: &[auli_contract::Publico],
-) -> Result<()> {
+fn write_servicos_index(data_dir: &str, id: &str, ordem: &[auli_contract::Publico]) -> Result<()> {
     let entries: Vec<ServicoIndexEntry> = ordem
         .iter()
-        .map(|p| ServicoIndexEntry { tipo: p.nome.clone(), filename: p.slug.clone() })
+        .map(|p| ServicoIndexEntry {
+            tipo: p.nome.clone(),
+            filename: p.slug.clone(),
+        })
         .collect();
 
     let json = serde_json::to_string_pretty(&entries)?;
@@ -172,8 +173,14 @@ mod tests {
     #[test]
     fn primary_ocorrencia_follows_publicos_ordem() {
         let ordem = vec![
-            auli_contract::Publico { nome: "Cidadãos".into(), slug: "rs-c".into() },
-            auli_contract::Publico { nome: "Empresas".into(), slug: "rs-e".into() },
+            auli_contract::Publico {
+                nome: "Cidadãos".into(),
+                slug: "rs-c".into(),
+            },
+            auli_contract::Publico {
+                nome: "Empresas".into(),
+                slug: "rs-e".into(),
+            },
         ];
         // ocorrências fora de ordem: o primário deve seguir publicos_ordem (Cidadãos), não a lista.
         let s = auli_contract::ServicoRaw {
@@ -182,8 +189,14 @@ mod tests {
             link: "l".into(),
             orgao: "O".into(),
             ocorrencias: vec![
-                auli_contract::Ocorrencia { publico: "Empresas".into(), classe: "X".into() },
-                auli_contract::Ocorrencia { publico: "Cidadãos".into(), classe: "Y".into() },
+                auli_contract::Ocorrencia {
+                    publico: "Empresas".into(),
+                    classe: "X".into(),
+                },
+                auli_contract::Ocorrencia {
+                    publico: "Cidadãos".into(),
+                    classe: "Y".into(),
+                },
             ],
         };
         let oc = primary_ocorrencia(&s, &ordem).unwrap();
@@ -214,15 +227,19 @@ mod tests {
     #[test]
     #[ignore = "gated por AULI_GOLDEN_DATA"]
     fn golden_rs_equivalence() {
-        let Ok(root) = std::env::var("AULI_GOLDEN_DATA") else { return };
+        let Ok(root) = std::env::var("AULI_GOLDEN_DATA") else {
+            return;
+        };
         let rs_raw = format!("{}/rs/raw", root);
 
-        let faqs = auli_contract::snapshot::load::<auli_contract::ColetaFaqs>("rs", &rs_raw, "faqs")
-            .unwrap();
-        let servicos =
-            auli_contract::snapshot::load::<auli_contract::ColetaServicos>("rs", &rs_raw, "servicos")
-                .unwrap()
-                .expect("snapshot de serviços rs ausente — rode o scraper primeiro");
+        let faqs =
+            auli_contract::snapshot::load::<auli_contract::ColetaFaqs>("rs", &rs_raw, "faqs")
+                .unwrap();
+        let servicos = auli_contract::snapshot::load::<auli_contract::ColetaServicos>(
+            "rs", &rs_raw, "servicos",
+        )
+        .unwrap()
+        .expect("snapshot de serviços rs ausente — rode o scraper primeiro");
 
         let out = std::env::temp_dir().join(format!("auli_golden_{}", std::process::id()));
         let out = out.to_str().unwrap();
@@ -241,7 +258,13 @@ mod tests {
             v[..e].to_vec()
         };
         let mut checked = 0;
-        for f in ["rs-faqs.json", "rs-servicos.json", "rs-portal-faqs.txt", "rs-portal-servicos.txt", "rs-servicos-index.json"] {
+        for f in [
+            "rs-faqs.json",
+            "rs-servicos.json",
+            "rs-portal-faqs.txt",
+            "rs-portal-servicos.txt",
+            "rs-servicos-index.json",
+        ] {
             let golden = format!("{}/{}", rs_raw, f);
             if !std::path::Path::new(&golden).exists() {
                 eprintln!("⏭️  golden ausente, pulando: {}", f);
@@ -256,7 +279,8 @@ mod tests {
         // Per-público: multiset (link, classe, titulo, orgao) idêntico ao golden (multi-classe incl.).
         for pubx in &servicos.coleta.publicos_ordem {
             let key = |bytes: &[u8]| {
-                let v: Vec<auli_contract::ServicoPerPublico> = serde_json::from_slice(bytes).unwrap();
+                let v: Vec<auli_contract::ServicoPerPublico> =
+                    serde_json::from_slice(bytes).unwrap();
                 let mut k: Vec<_> = v
                     .iter()
                     .map(|s| format!("{}|{}|{}|{}", s.link, s.classe, s.titulo, s.orgao))
@@ -270,10 +294,17 @@ mod tests {
             }
             let got = key(&std::fs::read(format!("{}/rs-{}.json", out, pubx.slug)).unwrap());
             let want = key(&std::fs::read(&g).unwrap());
-            assert!(got == want, "per-público diverge (link,classe): {}", pubx.slug);
+            assert!(
+                got == want,
+                "per-público diverge (link,classe): {}",
+                pubx.slug
+            );
         }
 
-        eprintln!("✅ golden RS: {} agregados + per-público conferidos", checked);
+        eprintln!(
+            "✅ golden RS: {} agregados + per-público conferidos",
+            checked
+        );
         let _ = std::fs::remove_dir_all(out);
     }
 }

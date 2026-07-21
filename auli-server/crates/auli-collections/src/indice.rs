@@ -34,7 +34,11 @@ struct Entrada {
 pub fn run(entity: &EntityConfig) -> Result<()> {
     let dir = docs_dir(entity)?;
     if !dir.exists() {
-        println!("ℹ️  {} não tem árvore de pareceres ({}); nada a derivar.", entity.id, dir.display());
+        println!(
+            "ℹ️  {} não tem árvore de pareceres ({}); nada a derivar.",
+            entity.id,
+            dir.display()
+        );
         return Ok(());
     }
 
@@ -44,9 +48,16 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
     let destino = format!("{}/{}-pareceres-index.json", entity.data_dir, entity.id);
     std::fs::write(&destino, serde_json::to_string_pretty(&entradas)?)?;
 
-    println!("✅ {} ({} pareceres, {pendentes} sem sinopse)", destino, entradas.len());
+    println!(
+        "✅ {} ({} pareceres, {pendentes} sem sinopse)",
+        destino,
+        entradas.len()
+    );
     if pendentes > 0 {
-        println!("⚠️  rode `auli-collections {} sinopse` e derive de novo.", entity.id);
+        println!(
+            "⚠️  rode `auli-collections {} sinopse` e derive de novo.",
+            entity.id
+        );
     }
     Ok(())
 }
@@ -64,7 +75,10 @@ fn ler_arvore(dir: &Path) -> Result<Vec<Entrada>> {
     for caminho in caminhos {
         let texto = std::fs::read_to_string(&caminho)?;
         let (header, sinopse, _corpo) = mddoc::parse_doc(&texto).map_err(|e| {
-            format!("`{}` não parseia ({e}) — corrija antes de derivar o índice", caminho.display())
+            format!(
+                "`{}` não parseia ({e}) — corrija antes de derivar o índice",
+                caminho.display()
+            )
         })?;
         out.push(Entrada {
             numero: header.numero,
