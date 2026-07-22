@@ -4,6 +4,7 @@ mod derive_pareceres;
 mod domain;
 mod errors;
 mod extracao;
+mod grafo;
 mod indice;
 mod process;
 mod servicos;
@@ -22,6 +23,7 @@ fn main() -> errors::Result<()> {
     //   indice     deriva o índice leve dos pareceres (árvore -> raw/) para o frontend.
     //   extrair    extrai metadados de grafo da árvore -> data/<id>/extracao/*.jsonl (TAREFA-EXTRACAO).
     //   canonizar  canoniza os dispositivos de extracao.jsonl -> dispositivos{.jsonl,-index.json} (TAREFA-CANONIZADOR).
+    //   grafo      monta o grafo (dispositivos + temas, co-citação) -> data/<id>/extracao/grafo.json.
     // Só `sinopse` e `extrair` aceitam flags; os demais subcomandos continuam rejeitando.
     let args: Vec<String> = std::env::args().skip(1).collect();
 
@@ -75,6 +77,8 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         "extrair" => extracao::run(entity, parse_extracao_flags(&flags)?)?,
         // OFFLINE (determinístico, sem LLM): canoniza os dispositivos de `extracao.jsonl` -> grafo.
         "canonizar" => canonizar::run(entity)?,
+        // OFFLINE (determinístico, sem LLM): monta o grafo (nós + arestas + layout) -> grafo.json.
+        "grafo" => grafo::run(entity)?,
         "faqs" | "servicos" => {
             return Err(
                 "a coleta agora é feita pelos binários `auli-scraper-rs` / `auli-scraper-sc`; \
@@ -84,7 +88,7 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         }
         other => {
             return Err(format!(
-                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice | extrair | canonizar",
+                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice | extrair | canonizar | grafo",
                 other
             )
             .into());
