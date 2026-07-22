@@ -35,6 +35,13 @@ const FAQ_BAND: f32 = f32::INFINITY;
 const PAR_FLOOR: usize = 0;
 const PAR_BAND: f32 = f32::INFINITY;
 
+// Expansão por grafo (só no tipo Pareceres): quantos pareceres relacionados por co-citação de
+// dispositivos anexar ao contexto, e o mínimo de dispositivos em comum para um parecer contar como
+// relacionado. Opt-in por entidade — sem `dispositivos-index.json` (do `canonizar`), nada é
+// anexado e o contexto fica idêntico ao de hoje.
+const MAX_RELACIONADOS: usize = 3;
+const MIN_DISPOSITIVOS_COMUNS: usize = 2;
+
 /// Tempos por fase de uma consulta RAG, em milissegundos de relógio de parede — precisão
 /// suficiente para a pergunta que este medidor responde ("onde foi o tempo?").
 /// `retrieve_ms` inclui a montagem do contexto (nos pareceres: a leitura dos corpos no disco) —
@@ -134,9 +141,16 @@ fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String]) -> String 
     format!("{}\n{}", rag_service, rag_faq)
 }
 
-/// Contexto do tipo `Pareceres`: um bloco numerado por parecer.
-fn montar_rag_pareceres(blocos: &[String]) -> String {
-    render(blocos, |i, bloco| format!("\n## PARECER\n{i}\n{bloco}\n"))
+/// Contexto do tipo `Pareceres`: um bloco numerado por parecer recuperado, e — quando a expansão
+/// por grafo devolve algo — uma seção `## PARECER RELACIONADO` com os pareceres que citam os mesmos
+/// dispositivos. Com `relacionados` vazio (default/sem grafo), a saída é BYTE-A-BYTE a de antes.
+fn montar_rag_pareceres(blocos: &[String], relacionados: &[String]) -> String {
+    let principal = render(blocos, |i, bloco| format!("\n## PARECER\n{i}\n{bloco}\n"));
+    if relacionados.is_empty() {
+        return principal;
+    }
+    let rel = render(relacionados, |i, bloco| format!("\n## PARECER RELACIONADO\n{i}\n{bloco}\n"));
+    format!("{principal}{rel}")
 }
 
 /// Remonta o bloco de um parecer a partir do payload leve gravado no pack (G3): lê o corpo da árvore
@@ -259,20 +273,50 @@ pub async fn exec_all_question(
                 PAR_BAND,
             )
             .await?;
-            info!("Foram selecionados {} pareceres", par_docs.len());
 
             // No pareceres vectorized for this entity yet — answer with a friendly notice instead of
             // prompting the LLM on empty context (which would invite a hallucinated answer).
             if par_docs.is_empty() {
                 return Ok("A consulta de Pareceres ainda não está disponível para esta entidade.".to_string());
             }
+
+            // Expansão por grafo: pareceres que citam os MESMOS dispositivos dos recuperados — sinal
+            // complementar ao do vetor (acha conexão jurídica que a similaridade textual erra).
+            // Opt-in por entidade: sem `dispositivos-index.json`, `relacionados` fica vazio e o
+            // contexto é idêntico ao de antes. Bloqueante (lê o índice + varre o pack + lê corpos).
+            let relacionados = {
+                let engine = engine.clone();
+                let id = cfg.id.clone();
+                let seeds: Vec<String> = par_docs
+                    .iter()
+                    .filter_map(|pj| {
+                        serde_json::from_str::<ConsultaPackPayload>(pj).ok().map(|p| p.numero)
+                    })
+                    .collect();
+                run_blocking(move || {
+                    let nums =
+                        engine.pareceres_relacionados(&id, &seeds, MAX_RELACIONADOS, MIN_DISPOSITIVOS_COMUNS);
+                    let blocos = nums
+                        .iter()
+                        .filter_map(|n| engine.bloco_por_numero(&id, n).ok().flatten())
+                        .collect::<Vec<String>>();
+                    Ok::<Vec<String>, crate::error::Error>(blocos)
+                })
+                .await?
+            };
+
             // G3: cada doc recuperado é o payload LEVE (JSON, sem corpo). Remonta o bloco de sempre
             // lendo o corpo da árvore `docs/` da entidade (`<docs_root>/<id>/<doc_path>`).
             let blocos: Vec<String> = par_docs
                 .iter()
                 .map(|payload_json| bloco_parecer(payload_json, engine.docs_root(), &cfg.id))
                 .collect();
-            montar_rag_pareceres(&blocos)
+            info!(
+                "Foram selecionados {} pareceres (+{} relacionados por grafo)",
+                blocos.len(),
+                relacionados.len()
+            );
+            montar_rag_pareceres(&blocos, &relacionados)
         }
     };
     tempos.retrieve_ms = t.elapsed().as_millis() as u64;
@@ -531,11 +575,24 @@ mod tests {
 
     #[test]
     fn montar_rag_pareceres_pina_o_formato() {
+        // Sem relacionados: BYTE-A-BYTE o formato de sempre (a expansão por grafo não pode mudar o
+        // contexto quando não há grafo/entidade sem índice).
         let blocos = vec!["BLOCO UM".to_string(), "BLOCO DOIS".to_string()];
         assert_eq!(
-            montar_rag_pareceres(&blocos),
+            montar_rag_pareceres(&blocos, &[]),
             "\n## PARECER\n1\nBLOCO UM\n\n## PARECER\n2\nBLOCO DOIS\n"
         );
-        assert_eq!(montar_rag_pareceres(&[]), "");
+        assert_eq!(montar_rag_pareceres(&[], &[]), "");
+    }
+
+    #[test]
+    fn montar_rag_pareceres_anexa_secao_relacionados() {
+        // Com relacionados: seção `## PARECER RELACIONADO` numerada à parte, DEPOIS dos recuperados.
+        let blocos = vec!["BLOCO UM".to_string()];
+        let rel = vec!["BLOCO REL".to_string()];
+        assert_eq!(
+            montar_rag_pareceres(&blocos, &rel),
+            "\n## PARECER\n1\nBLOCO UM\n\n## PARECER RELACIONADO\n1\nBLOCO REL\n"
+        );
     }
 }
