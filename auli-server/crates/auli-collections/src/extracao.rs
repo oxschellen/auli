@@ -81,7 +81,8 @@ struct LinhaErro<'a> {
 }
 
 /// Diretório de saída: `data/<id>/extracao` (irmão de `raw/` e `docs/`), criado sob demanda.
-fn extracao_dir(entity: &EntityConfig) -> Result<PathBuf> {
+/// Compartilhado com o `canonizar`, que lê o `extracao.jsonl` e escreve ao lado.
+pub(crate) fn extracao_dir(entity: &EntityConfig) -> Result<PathBuf> {
     let base = Path::new(&entity.data_dir)
         .parent()
         .ok_or_else(|| format!("data_dir sem pai: {}", entity.data_dir))?;

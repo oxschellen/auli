@@ -1,3 +1,4 @@
+mod canonizar;
 mod derive_faqs;
 mod derive_pareceres;
 mod domain;
@@ -20,6 +21,7 @@ fn main() -> errors::Result<()> {
     //   sinopse    gera/mescla sinopses (aceita flags próprias; ver `sinopse::run`).
     //   indice     deriva o índice leve dos pareceres (árvore -> raw/) para o frontend.
     //   extrair    extrai metadados de grafo da árvore -> data/<id>/extracao/*.jsonl (TAREFA-EXTRACAO).
+    //   canonizar  canoniza os dispositivos de extracao.jsonl -> dispositivos{.jsonl,-index.json} (TAREFA-CANONIZADOR).
     // Só `sinopse` e `extrair` aceitam flags; os demais subcomandos continuam rejeitando.
     let args: Vec<String> = std::env::args().skip(1).collect();
 
@@ -71,6 +73,8 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         "indice" => indice::run(entity)?,
         // OFFLINE (+LLM): extrai metadados de grafo da árvore `.md` -> JSONL (não toca nos `.md`).
         "extrair" => extracao::run(entity, parse_extracao_flags(&flags)?)?,
+        // OFFLINE (determinístico, sem LLM): canoniza os dispositivos de `extracao.jsonl` -> grafo.
+        "canonizar" => canonizar::run(entity)?,
         "faqs" | "servicos" => {
             return Err(
                 "a coleta agora é feita pelos binários `auli-scraper-rs` / `auli-scraper-sc`; \
@@ -80,7 +84,7 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         }
         other => {
             return Err(format!(
-                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice | extrair",
+                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice | extrair | canonizar",
                 other
             )
             .into());
