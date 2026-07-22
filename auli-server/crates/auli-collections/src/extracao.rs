@@ -254,8 +254,17 @@ fn gerar_extracao(
     let user_msg = format!("Assunto: {assunto}\n\nDocumento:\n{corpo_trunc}");
 
     for tentativa in 1..=2u32 {
+        // Resgate dirigido: a re-tentativa baixa o reasoning para `low` SÓ neste doc já-falho. Isso
+        // quebra o runaway de reasoning (doc patológico que consome todo o teto raciocinando e
+        // devolve vazio — nenhum teto resolve) e ainda recupera empties transitórios. A 1ª tentativa
+        // mantém o reasoning cheio, então o caminho feliz nunca perde precisão.
+        let rescue = (tentativa == 2).then(|| auli_llm::LlmParams {
+            reasoning_effort: Some(auli_llm::ReasoningEffort::Low),
+            ..params.clone()
+        });
+        let call = rescue.as_ref().unwrap_or(params);
         let resp = rt
-            .block_on(auli_llm::chat(params, system_prompt, &user_msg))
+            .block_on(auli_llm::chat(call, system_prompt, &user_msg))
             .map_err(|e| format!("transporte: {e}"))?;
         if resposta_e_erro_de_api(&resp.text) {
             return Err(format!("API: {}", resp.text));
@@ -269,7 +278,11 @@ fn gerar_extracao(
                 });
             }
             Err(motivo) if tentativa == 2 => return Err(format!("validação: {motivo}")),
-            Err(motivo) => eprintln!("↻ {numero}: validação falhou ({motivo}); re-tentando 1×."),
+            Err(motivo) => {
+                eprintln!(
+                    "↻ {numero}: validação falhou ({motivo}); re-tentando 1× com reasoning_effort=low."
+                )
+            }
         }
     }
     unreachable!("o loop retorna em ambas as tentativas")
@@ -352,8 +365,15 @@ pub fn run(entity: &EntityConfig, opts: ExtracaoOpts) -> Result<()> {
             api_key: env_com_fallback("EXTRACAO_API_KEY", "LLM_API_KEY")?,
             model: env_com_fallback("EXTRACAO_API_MODEL", "LLM_API_MODEL")?,
             temperature: 0.1, // extração literal: fidelidade, não diversidade
-            max_completion_tokens: 2048, // pareceres longos citam MUITOS dispositivos (D7)
+            // 16384 = teto de saída folgado (5,5× o pior caso medido no RS: ~2,9k tokens). O
+            // gpt-oss é modelo de RACIOCÍNIO: reasoning + JSON dividem este orçamento, e o reasoning
+            // sozinho chega a ~2,5k nos pareceres longos — 2048 clipava o reasoning antes do JSON,
+            // devolvendo resposta vazia. O teto alto é quase grátis (cobra-se o gerado, não o teto).
+            // Revisão do D7 pós-análise do RS.
+            max_completion_tokens: 16384,
             timeout: Duration::from_secs(60),
+            // 1ª tentativa com reasoning cheio (precisão intacta no caminho feliz); a re-tentativa
+            // baixa para `low` — ver `gerar_extracao`.
             reasoning_effort: None,
         };
         let system_prompt = load_prompt(entity)?;
