@@ -326,6 +326,7 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
             temperature: 0.1, // fidelidade ao documento, não diversidade (mesma racional do chat)
             max_completion_tokens: 1024, // sinopse é curta (parágrafo + palavras-chave)
             timeout: Duration::from_secs(60), // corpo longo na entrada; offline, sem budget de front
+            reasoning_effort: None,           // default do provedor (sinopse não sofre runaway)
         };
         let system_prompt = load_prompt(entity)?;
         let rt = tokio::runtime::Builder::new_current_thread()

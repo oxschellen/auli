@@ -354,6 +354,7 @@ pub fn run(entity: &EntityConfig, opts: ExtracaoOpts) -> Result<()> {
             temperature: 0.1, // extração literal: fidelidade, não diversidade
             max_completion_tokens: 2048, // pareceres longos citam MUITOS dispositivos (D7)
             timeout: Duration::from_secs(60),
+            reasoning_effort: None,
         };
         let system_prompt = load_prompt(entity)?;
         let rt = tokio::runtime::Builder::new_current_thread()
