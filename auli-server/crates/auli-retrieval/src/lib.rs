@@ -17,11 +17,11 @@
 //! delegações de uma linha. Assim os testes exercitam o motor inteiro sem nunca construir um
 //! `Embedder` (que carregaria o BGE-M3).
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
-use auli_contract::{ConsultaPackPayload, mddoc};
+use auli_contract::{ConsultaPackPayload, mddoc, render_consulta_block};
 use auli_core::embed::Embedder;
 use tracing::debug;
 use vector_store::ReadStore;
@@ -156,6 +156,22 @@ impl Engine {
     pub fn entidades_com(&self, kind: &str) -> Vec<String> {
         entidades_com(&self.collections, kind)
     }
+
+    /// Delegação: pareceres relacionados por co-citação de dispositivos (expansão por grafo do RAG).
+    pub fn pareceres_relacionados(
+        &self,
+        entity_id: &str,
+        seeds: &[String],
+        max: usize,
+        min_shared: usize,
+    ) -> Vec<String> {
+        pareceres_relacionados(&self.docs_root, entity_id, seeds, max, min_shared)
+    }
+
+    /// Delegação: bloco de contexto RAG de um parecer pelo número (mesma renderização do chat).
+    pub fn bloco_por_numero(&self, entity_id: &str, numero: &str) -> Result<Option<String>> {
+        bloco_por_numero(&self.collections, &self.docs_root, entity_id, numero)
+    }
 }
 
 // ============================ NÚCLEO PURO (funções livres) ============================
@@ -230,6 +246,95 @@ pub fn parecer_por_numero(
         }
     }
     Ok(None)
+}
+
+/// Bloco de contexto RAG de UM parecer pelo `numero` exato — a MESMA renderização do chat
+/// (`render_consulta_block`), lendo o corpo da árvore `docs/`. `None` se o número não está na
+/// coleção (ex.: parecer citado no grafo mas ainda não vetorizado). Usado pela expansão por grafo
+/// para incluir pareceres relacionados no mesmo formato dos recuperados por vetor.
+pub fn bloco_por_numero(
+    collections: &Collections,
+    docs_root: &Path,
+    entity_id: &str,
+    numero: &str,
+) -> Result<Option<String>> {
+    let collection = format!("{entity_id}-pareceres");
+    let store = collections.get(&collection).ok_or(Error::ColecaoAusente(collection))?;
+    let alvo = numero.trim().to_lowercase();
+    for payload_json in store.list() {
+        let Ok(payload) = serde_json::from_str::<ConsultaPackPayload>(&payload_json) else {
+            continue;
+        };
+        if payload.numero.trim().to_lowercase() == alvo {
+            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path)
+                .unwrap_or_else(|e| format!("[corpo indisponível — ver link] ({e})\n{}", payload.resumo));
+            return Ok(Some(render_consulta_block(&payload, &corpo)));
+        }
+    }
+    Ok(None)
+}
+
+/// Uma entrada do `dispositivos-index.json` (do `canonizar`) — só a lista de pareceres interessa.
+#[derive(serde::Deserialize)]
+struct IdxEntry {
+    pareceres: Vec<String>,
+}
+
+/// Pareceres relacionados aos `seeds` por **co-citação de dispositivos**: dado o conjunto de
+/// pareceres já recuperados (por vetor), devolve outros que citam os MESMOS dispositivos legais,
+/// ranqueados por quantos compartilham com a base dos seeds. Sinal complementar ao da similaridade
+/// textual — acha pareceres juridicamente conexos que a busca semântica erra.
+///
+/// Lê `<docs_root>/<id>/extracao/dispositivos-index.json` (saída do `canonizar`). **Ausente ou
+/// ilegível → vazio**: a expansão é opcional, então entidade sem grafo se comporta como hoje.
+/// Determinístico (empate por número). Exclui os próprios seeds.
+pub fn pareceres_relacionados(
+    docs_root: &Path,
+    entity_id: &str,
+    seeds: &[String],
+    max: usize,
+    min_shared: usize,
+) -> Vec<String> {
+    if max == 0 || seeds.is_empty() {
+        return Vec::new();
+    }
+    let path = docs_root.join(entity_id).join("extracao").join("dispositivos-index.json");
+    let Ok(texto) = std::fs::read_to_string(&path) else {
+        return Vec::new();
+    };
+    let Ok(idx) = serde_json::from_str::<BTreeMap<String, IdxEntry>>(&texto) else {
+        return Vec::new();
+    };
+
+    // parecer -> dispositivos (invertendo o índice canon_key -> pareceres).
+    let mut par2disp: HashMap<&str, HashSet<&str>> = HashMap::new();
+    for (k, e) in &idx {
+        for p in &e.pareceres {
+            par2disp.entry(p.as_str()).or_default().insert(k.as_str());
+        }
+    }
+
+    let seed_set: HashSet<&str> = seeds.iter().map(String::as_str).collect();
+    // União dos dispositivos da base recuperada.
+    let mut seed_disp: HashSet<&str> = HashSet::new();
+    for s in seeds {
+        if let Some(ds) = par2disp.get(s.as_str()) {
+            seed_disp.extend(ds.iter().copied());
+        }
+    }
+    if seed_disp.is_empty() {
+        return Vec::new();
+    }
+
+    // Pontua candidatos (não-seed) por dispositivos compartilhados com a base; ordena e corta.
+    let mut scored: Vec<(&str, usize)> = par2disp
+        .iter()
+        .filter(|(p, _)| !seed_set.contains(**p))
+        .map(|(p, ds)| (*p, ds.iter().filter(|d| seed_disp.contains(**d)).count()))
+        .filter(|(_, n)| *n >= min_shared)
+        .collect();
+    scored.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(b.0)));
+    scored.into_iter().take(max).map(|(p, _)| p.to_string()).collect()
 }
 
 /// Lê o `.md` da árvore da entidade e extrai a seção `## corpo` (parser do contrato).
@@ -448,6 +553,42 @@ mod tests {
     #[test]
     fn ler_corpo_falha_em_arquivo_inexistente() {
         assert!(ler_corpo(Path::new("/nao/existe"), "sc", "docs/pareceres/x.md").is_err());
+    }
+
+    #[test]
+    fn relacionados_ranqueia_por_dispositivos_compartilhados_e_exclui_seeds() {
+        let root = temp_dir("relac");
+        let exdir = root.join("rs").join("extracao");
+        std::fs::create_dir_all(&exdir).unwrap();
+        // d1: P1,P2,P3 | d2: P1,P2 | d3: P3,P4 (campos extras devem ser ignorados).
+        let idx = r#"{
+          "d1": {"display":"art. 1","ocorrencias":3,"variantes":[],"pareceres":["P1","P2","P3"]},
+          "d2": {"display":"art. 2","ocorrencias":2,"variantes":[],"pareceres":["P1","P2"]},
+          "d3": {"display":"art. 3","ocorrencias":2,"variantes":[],"pareceres":["P3","P4"]}
+        }"#;
+        std::fs::write(exdir.join("dispositivos-index.json"), idx).unwrap();
+
+        // seed P1 (dispositivos d1,d2). P2 compartilha 2 (d1,d2); P3 compartilha 1 (d1); P4 zero.
+        let seeds = vec!["P1".to_string()];
+        let r = pareceres_relacionados(&root, "rs", &seeds, 5, 1);
+        assert_eq!(r, vec!["P2", "P3"], "ranqueado por nº compartilhado, seed P1 excluído");
+        // min_shared=2 corta P3.
+        assert_eq!(pareceres_relacionados(&root, "rs", &seeds, 5, 2), vec!["P2"]);
+        // max limita.
+        assert_eq!(pareceres_relacionados(&root, "rs", &seeds, 1, 1), vec!["P2"]);
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn relacionados_sem_indice_ou_sem_seeds_e_vazio() {
+        // Sem arquivo de índice: expansão é opt-in, comporta-se como hoje (vazio).
+        assert!(pareceres_relacionados(Path::new("/nao/existe"), "rs", &["P1".into()], 5, 1).is_empty());
+        // Sem seeds: nada a expandir.
+        let root = temp_dir("relac-vazio");
+        std::fs::create_dir_all(root.join("rs").join("extracao")).unwrap();
+        std::fs::write(root.join("rs").join("extracao").join("dispositivos-index.json"), "{}").unwrap();
+        assert!(pareceres_relacionados(&root, "rs", &[], 5, 1).is_empty());
+        let _ = std::fs::remove_dir_all(&root);
     }
 
     #[test]
