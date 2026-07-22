@@ -16,6 +16,28 @@ use serde_json::{Value, json};
 /// timeout é por requisição (`params.timeout`), com a mesma semântica de antes (cobre send+body).
 static CLIENT: LazyLock<reqwest::Client> = LazyLock::new(reqwest::Client::new);
 
+/// Esforço de raciocínio dos modelos "reasoning" (ex.: gpt-oss da Groq). Enviado como
+/// `reasoning_effort` só quando o chamador o define; ausente = default do provedor. `Low` quebra
+/// loops de reasoning em documentos patológicos (o modelo consome todo o `max_completion_tokens`
+/// raciocinando e devolve conteúdo vazio) sem sacrificar a qualidade de tarefas literais.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReasoningEffort {
+    Low,
+    Medium,
+    High,
+}
+
+impl ReasoningEffort {
+    /// Valor exato esperado pela API (`reasoning_effort`).
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Low => "low",
+            Self::Medium => "medium",
+            Self::High => "high",
+        }
+    }
+}
+
 /// Parâmetros de uma chamada. O chamador monta a partir da SUA config — este crate não lê env.
 #[derive(Debug, Clone)]
 pub struct LlmParams {
@@ -26,6 +48,9 @@ pub struct LlmParams {
     pub max_completion_tokens: u32,
     /// Timeout por tentativa (o retry continua sendo 3 tentativas — comportamento herdado).
     pub timeout: Duration,
+    /// Esforço de raciocínio. `None` = não envia o campo (default do provedor). Só afeta modelos
+    /// "reasoning"; ignorado pelos demais.
+    pub reasoning_effort: Option<ReasoningEffort>,
 }
 
 pub type Result<T> = core::result::Result<T, Error>;
@@ -61,7 +86,7 @@ pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -
     const CONTENT_TYPE_HEADER: &str = "Content-Type";
 
     let auth_token = format!("Bearer {}", params.api_key);
-    let request_body = json!({
+    let mut request_body = json!({
         "messages": [
             { "role": "system", "content": system_prompt },
             { "role": "user", "content": user_message }
@@ -72,6 +97,10 @@ pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -
         "max_completion_tokens": params.max_completion_tokens,
         "stop": null,
     });
+    // Só inclui `reasoning_effort` quando o chamador o define — ausente preserva o default do provedor.
+    if let Some(effort) = params.reasoning_effort {
+        request_body["reasoning_effort"] = json!(effort.as_str());
+    }
 
     // (status, body, headroom) from the first round-trip that both connects and reads. Retries cover
     // connect/timeout on send AND on body read — both transient. Os headers de rate-limit são lidos
@@ -173,6 +202,7 @@ mod tests {
             temperature: 0.1,
             max_completion_tokens: 4096,
             timeout: Duration::from_secs(30),
+            reasoning_effort: None,
         };
         let p2 = p.clone();
         assert_eq!(format!("{p:?}"), format!("{p2:?}"));

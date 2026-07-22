@@ -11,6 +11,8 @@
 //!
 //! Memória: os documentos são processados **um a um** (lê → gera → grava), nunca todos na RAM — a
 //! árvore de SP tem 15,6 mil arquivos.
+//!
+//! Os helpers `pub(crate)` deste módulo são compartilhados com o `extracao.rs` (TAREFA-EXTRACAO).
 
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
@@ -24,12 +26,12 @@ use crate::errors::Result;
 /// `data/prompts/sinopse.txt`. `0` é reservado ao `--fake`.
 pub const SINOPSE_PROMPT_VERSION: u32 = 1;
 /// Teto de entrada do corpo (chars). Acima disso, trunca com aviso no log (v1: sem chunking).
-const CORPO_MAX_CHARS: usize = 24_000;
+pub(crate) const CORPO_MAX_CHARS: usize = 24_000;
 /// Margem de parada do RPD: quando o header `x-ratelimit-remaining-requests` cai a ≤ isto, o lote
 /// para ANTES de mandar a requisição que seria rejeitada — zero rejeição. A folga não é 0 de
 /// propósito: reserva para o chat do RAG (que compartilha a mesma quota) e absorve contagem levemente
 /// defasada. O que sobrar de pendente fica para a próxima rodada (idempotente).
-const RPD_MARGEM_PARADA: u64 = 5;
+pub(crate) const RPD_MARGEM_PARADA: u64 = 5;
 
 /// Opções do subcomando (parseadas no `main`).
 pub struct SinopseOpts {
@@ -46,8 +48,11 @@ pub use auli_contract::compose_text_to_embed;
 
 /// Timestamp atual em ISO-8601 UTC (`YYYY-MM-DDTHH:MM:SSZ`), só com `std` (sem chrono — F3 não
 /// acrescenta dependências). Algoritmo civil-from-days de Howard Hinnant.
-fn now_iso8601() -> String {
-    let secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs() as i64;
+pub(crate) fn now_iso8601() -> String {
+    let secs = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs() as i64;
     let (days, rem) = (secs.div_euclid(86_400), secs.rem_euclid(86_400));
     let (h, mi, s) = (rem / 3600, (rem % 3600) / 60, rem % 60);
     // civil_from_days: dias desde 1970-01-01 -> (ano, mês, dia).
@@ -91,8 +96,12 @@ fn indexar(dir: &Path, force: Option<&str>) -> Result<Vec<DocIndex>> {
     let mut out = Vec::with_capacity(caminhos.len());
     for caminho in caminhos {
         let texto = std::fs::read_to_string(&caminho)?;
-        let (header, sinopse, _corpo) = mddoc::parse_doc(&texto)
-            .map_err(|e| format!("`{}` não parseia ({e}) — corrija antes de rodar o sinopse", caminho.display()))?;
+        let (header, sinopse, _corpo) = mddoc::parse_doc(&texto).map_err(|e| {
+            format!(
+                "`{}` não parseia ({e}) — corrija antes de rodar o sinopse",
+                caminho.display()
+            )
+        })?;
         // `--force` re-pendura exatamente o `numero` alvo, mesmo que já tenha seção.
         let forcado = force.is_some_and(|f| f == header.numero);
         out.push(DocIndex {
@@ -130,14 +139,16 @@ fn escrever_sinopse(
 
 /// Placeholder determinístico (dev-only). `prompt_versao: 0` marca fake, distinguível da geração real.
 fn fake_resumo(assunto: &str) -> String {
-    format!("### Descrição Resumida do Assunto\n[FAKE] {assunto}\n\n### Palavras Chave do Tema\n- **fake**")
+    format!(
+        "### Descrição Resumida do Assunto\n[FAKE] {assunto}\n\n### Palavras Chave do Tema\n- **fake**"
+    )
 }
 
 const SECAO_DESC: &str = "### Descrição Resumida do Assunto";
 const SECAO_KW: &str = "### Palavras Chave do Tema";
 
 /// Lê `primary` no ambiente; se ausente/vazia, cai em `fallback` (decisão D2). Erro nomeando AMBAS.
-fn sinopse_env(primary: &str, fallback: &str) -> Result<String> {
+pub(crate) fn env_com_fallback(primary: &str, fallback: &str) -> Result<String> {
     for k in [primary, fallback] {
         if let Ok(v) = std::env::var(k)
             && !v.trim().is_empty()
@@ -161,7 +172,7 @@ fn load_prompt(entity: &EntityConfig) -> Result<String> {
 }
 
 /// Trunca o corpo em `max` chars (v1: sem chunking). Devolve `(texto, truncou)`.
-fn truncar_corpo(corpo: &str, max: usize) -> (String, bool) {
+pub(crate) fn truncar_corpo(corpo: &str, max: usize) -> (String, bool) {
     if corpo.chars().count() <= max {
         (corpo.to_string(), false)
     } else {
@@ -170,22 +181,26 @@ fn truncar_corpo(corpo: &str, max: usize) -> (String, bool) {
 }
 
 /// `true` se a resposta é a mensagem de erro-como-`Ok` do `auli-llm` (erro de API/HTTP).
-fn resposta_e_erro_de_api(answer: &str) -> bool {
+pub(crate) fn resposta_e_erro_de_api(answer: &str) -> bool {
     answer.starts_with("Erro na chamada da API")
 }
 
 /// `true` se o motivo da falha é estouro de cota (rate limit). Diferente de uma falha de validação
 /// (transiente, específica do doc), rate limit é uma parede global: todo request seguinte também vai
 /// falhar. O lote aborta no 1º — 1 rejeição em vez de centenas queimando quota.
-fn e_rate_limit(motivo: &str) -> bool {
+pub(crate) fn e_rate_limit(motivo: &str) -> bool {
     motivo.contains("rate_limit_exceeded")
 }
 
 /// Valida o formato da sinopse (pura, testável): as duas seções na ordem certa, descrição
 /// não-vazia e ≤ 2.000 chars, e ≥ 3 linhas de palavra-chave (`- `).
 fn validar_sinopse(answer: &str) -> std::result::Result<(), String> {
-    let p1 = answer.find(SECAO_DESC).ok_or_else(|| format!("seção ausente: {SECAO_DESC}"))?;
-    let p2 = answer.find(SECAO_KW).ok_or_else(|| format!("seção ausente: {SECAO_KW}"))?;
+    let p1 = answer
+        .find(SECAO_DESC)
+        .ok_or_else(|| format!("seção ausente: {SECAO_DESC}"))?;
+    let p2 = answer
+        .find(SECAO_KW)
+        .ok_or_else(|| format!("seção ausente: {SECAO_KW}"))?;
     if p2 <= p1 {
         return Err("seções fora de ordem (Descrição deve vir antes de Palavras Chave)".into());
     }
@@ -195,7 +210,9 @@ fn validar_sinopse(answer: &str) -> std::result::Result<(), String> {
     }
     let desc_chars = descricao.chars().count();
     if desc_chars > 2_000 {
-        return Err(format!("descrição longa demais ({desc_chars} chars) — possível despejo do corpo"));
+        return Err(format!(
+            "descrição longa demais ({desc_chars} chars) — possível despejo do corpo"
+        ));
     }
     let keywords = answer[p2 + SECAO_KW.len()..]
         .lines()
@@ -270,12 +287,17 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
     if let Some(alvo) = opts.force.as_deref()
         && !docs.iter().any(|d| d.numero == alvo)
     {
-        return Err(format!("--force {alvo:?}: nenhum documento com esse `numero` na árvore.").into());
+        return Err(
+            format!("--force {alvo:?}: nenhum documento com esse `numero` na árvore.").into(),
+        );
     }
     let total = docs.len();
     let pendentes = docs.iter().filter(|d| d.pendente).count();
     let reaproveitados = total - pendentes;
-    println!("📊 {}: total {total} | reaproveitados {reaproveitados} | pendentes {pendentes}", entity.id);
+    println!(
+        "📊 {}: total {total} | reaproveitados {reaproveitados} | pendentes {pendentes}",
+        entity.id
+    );
 
     // 3. Dry-run: estimativa de tokens dos pendentes, sem escrever nada.
     if opts.dry_run {
@@ -286,7 +308,10 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
                 chars += h.assunto.chars().count() + corpo.chars().count();
             }
         }
-        println!("🔎 dry-run: ~{} tokens de entrada nos {pendentes} pendentes (nada foi escrito).", milhar(chars / 4));
+        println!(
+            "🔎 dry-run: ~{} tokens de entrada nos {pendentes} pendentes (nada foi escrito).",
+            milhar(chars / 4)
+        );
         return Ok(());
     }
 
@@ -295,15 +320,18 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
     let real = !opts.fake && pendentes > 0;
     let llm = if real {
         let params = auli_llm::LlmParams {
-            api_url: sinopse_env("SINOPSE_API_URL", "LLM_API_URL")?,
-            api_key: sinopse_env("SINOPSE_API_KEY", "LLM_API_KEY")?,
-            model: sinopse_env("SINOPSE_API_MODEL", "LLM_API_MODEL")?,
+            api_url: env_com_fallback("SINOPSE_API_URL", "LLM_API_URL")?,
+            api_key: env_com_fallback("SINOPSE_API_KEY", "LLM_API_KEY")?,
+            model: env_com_fallback("SINOPSE_API_MODEL", "LLM_API_MODEL")?,
             temperature: 0.1, // fidelidade ao documento, não diversidade (mesma racional do chat)
             max_completion_tokens: 1024, // sinopse é curta (parágrafo + palavras-chave)
             timeout: Duration::from_secs(60), // corpo longo na entrada; offline, sem budget de front
+            reasoning_effort: None,           // default do provedor (sinopse não sofre runaway)
         };
         let system_prompt = load_prompt(entity)?;
-        let rt = tokio::runtime::Builder::new_current_thread().enable_all().build()?;
+        let rt = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()?;
         Some((params, system_prompt, rt))
     } else {
         None
@@ -323,10 +351,22 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
             .map_err(|e| format!("`{}` não parseia ({e})", d.caminho.display()))?;
 
         let (resumo, modelo, versao, headroom) = if let Some((params, system_prompt, rt)) = &llm {
-            match gerar_sinopse(rt, params, system_prompt, &header.assunto, &corpo, &header.numero) {
+            match gerar_sinopse(
+                rt,
+                params,
+                system_prompt,
+                &header.assunto,
+                &corpo,
+                &header.numero,
+            ) {
                 Ok(g) => {
                     let hr = (g.remaining_requests, g.reset_requests);
-                    (g.resumo, params.model.clone(), SINOPSE_PROMPT_VERSION, Some(hr))
+                    (
+                        g.resumo,
+                        params.model.clone(),
+                        SINOPSE_PROMPT_VERSION,
+                        Some(hr),
+                    )
                 }
                 Err(motivo) if e_rate_limit(&motivo) => {
                     // Rede de segurança: aborta no 1º 429 (não conta como falha) em vez de queimar
@@ -373,7 +413,11 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
         "✅ {}: total {total} | reaproveitados {reaproveitados} | gerados {gerados} | falhas {falhas} | pendentes-restantes {pendentes_restantes}",
         entity.id
     );
-    println!("📝 árvore atualizada: {} (rode `auli update --entity {}` para vetorizar)", dir.display(), entity.id);
+    println!(
+        "📝 árvore atualizada: {} (rode `auli update --entity {}` para vetorizar)",
+        dir.display(),
+        entity.id
+    );
     assert_eq!(
         reaproveitados + gerados + falhas + pendentes_restantes,
         total,
@@ -383,7 +427,7 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
 }
 
 /// Formata um inteiro com separador de milhar (`1234567` → `1.234.567`).
-fn milhar(n: usize) -> String {
+pub(crate) fn milhar(n: usize) -> String {
     let s = n.to_string();
     let bytes = s.as_bytes();
     let mut out = String::new();
@@ -404,7 +448,8 @@ mod tests {
     /// `data_dir` termina em `/raw` (como o real `../data/<id>/raw`), então a árvore do teste cai em
     /// `<base>/docs/pareceres` — irmã do `raw/`, igual à produção.
     fn temp_entity(tag: &str) -> EntityConfig {
-        let base = std::env::temp_dir().join(format!("auli_sinopse_g4_{tag}_{}", std::process::id()));
+        let base =
+            std::env::temp_dir().join(format!("auli_sinopse_g4_{tag}_{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         std::fs::create_dir_all(base.join("raw")).unwrap();
         std::fs::create_dir_all(base.join("docs").join("pareceres")).unwrap();
@@ -430,7 +475,11 @@ mod tests {
         };
         let corpo = format!("corpo integral de {numero}");
         let dir = docs_dir(entity).unwrap();
-        std::fs::write(dir.join(format!("{slug}.md")), mddoc::render_doc(&header, sinopse, &corpo)).unwrap();
+        std::fs::write(
+            dir.join(format!("{slug}.md")),
+            mddoc::render_doc(&header, sinopse, &corpo),
+        )
+        .unwrap();
     }
 
     /// Lê `(sinopse, corpo, modelo)` de um `.md` da árvore.
@@ -442,7 +491,12 @@ mod tests {
     }
 
     fn opts(fake: bool, limit: Option<usize>, force: Option<&str>, dry_run: bool) -> SinopseOpts {
-        SinopseOpts { dry_run, limit, force: force.map(String::from), fake }
+        SinopseOpts {
+            dry_run,
+            limit,
+            force: force.map(String::from),
+            fake,
+        }
     }
 
     #[test]
@@ -456,16 +510,26 @@ mod tests {
     fn arvore_ausente_e_erro_que_ensina_o_remedio() {
         let e = temp_entity("semarvore");
         std::fs::remove_dir_all(docs_dir(&e).unwrap()).unwrap();
-        let err = run(&e, opts(true, None, None, false)).unwrap_err().to_string();
+        let err = run(&e, opts(true, None, None, false))
+            .unwrap_err()
+            .to_string();
         assert!(err.contains("árvore ausente"), "erro: {err}");
-        assert!(err.contains("auli update"), "deve mandar materializar antes: {err}");
+        assert!(
+            err.contains("auli update"),
+            "deve mandar materializar antes: {err}"
+        );
     }
 
     #[test]
     fn pendente_e_quem_nao_tem_secao_sinopse() {
         let e = temp_entity("indexa");
         escrever_doc(&e, "a-1", "A 1", None);
-        escrever_doc(&e, "b-2", "B 2", Some("### Descrição Resumida do Assunto\nja tem"));
+        escrever_doc(
+            &e,
+            "b-2",
+            "B 2",
+            Some("### Descrição Resumida do Assunto\nja tem"),
+        );
         let docs = indexar(&docs_dir(&e).unwrap(), None).unwrap();
         assert_eq!(docs.len(), 2);
         assert!(docs.iter().find(|d| d.numero == "A 1").unwrap().pendente);
@@ -487,27 +551,47 @@ mod tests {
         run(&e, opts(true, None, None, false)).unwrap();
         let (sin_b, corpo_b, modelo_b) = ler_doc(&e, "b-2");
         assert!(sin_b.unwrap().contains("[FAKE]"));
-        assert_eq!(corpo_b, "corpo integral de B 2", "corpo preservado na regravação");
-        assert_eq!(modelo_b.as_deref(), Some("fake"), "proveniência do fake gravada");
+        assert_eq!(
+            corpo_b, "corpo integral de B 2",
+            "corpo preservado na regravação"
+        );
+        assert_eq!(
+            modelo_b.as_deref(),
+            Some("fake"),
+            "proveniência do fake gravada"
+        );
     }
 
     #[test]
     fn force_repende_documento_que_ja_tem_sinopse() {
         let e = temp_entity("force");
-        escrever_doc(&e, "a-1", "A 1", Some("### Descrição Resumida do Assunto\nantiga"));
+        escrever_doc(
+            &e,
+            "a-1",
+            "A 1",
+            Some("### Descrição Resumida do Assunto\nantiga"),
+        );
         // Sem --force: nada a fazer.
         run(&e, opts(true, None, None, false)).unwrap();
-        assert!(ler_doc(&e, "a-1").0.unwrap().contains("antiga"), "sem force não regenera");
+        assert!(
+            ler_doc(&e, "a-1").0.unwrap().contains("antiga"),
+            "sem force não regenera"
+        );
         // Com --force: regenera a seção.
         run(&e, opts(true, None, Some("A 1"), false)).unwrap();
-        assert!(ler_doc(&e, "a-1").0.unwrap().contains("[FAKE]"), "force devia regenerar");
+        assert!(
+            ler_doc(&e, "a-1").0.unwrap().contains("[FAKE]"),
+            "force devia regenerar"
+        );
     }
 
     #[test]
     fn force_com_numero_inexistente_e_erro() {
         let e = temp_entity("forceruim");
         escrever_doc(&e, "a-1", "A 1", None);
-        let err = run(&e, opts(true, None, Some("NAO EXISTE"), false)).unwrap_err().to_string();
+        let err = run(&e, opts(true, None, Some("NAO EXISTE"), false))
+            .unwrap_err()
+            .to_string();
         assert!(err.contains("nenhum documento"), "erro: {err}");
     }
 
@@ -524,7 +608,14 @@ mod tests {
         let e = temp_entity("preserva");
         escrever_doc(&e, "a-1", "A 1", None);
         let dir = docs_dir(&e).unwrap();
-        escrever_sinopse(&dir.join("a-1.md"), "NOVA SINOPSE", "modelo-x", 7, "2026-07-20T00:00:00Z").unwrap();
+        escrever_sinopse(
+            &dir.join("a-1.md"),
+            "NOVA SINOPSE",
+            "modelo-x",
+            7,
+            "2026-07-20T00:00:00Z",
+        )
+        .unwrap();
 
         let texto = std::fs::read_to_string(dir.join("a-1.md")).unwrap();
         let (h, sin, corpo) = mddoc::parse_doc(&texto).unwrap();
@@ -541,7 +632,9 @@ mod tests {
     fn documento_ilegivel_na_arvore_e_erro_alto() {
         let e = temp_entity("ilegivel");
         std::fs::write(docs_dir(&e).unwrap().join("ruim.md"), "sem frontmatter").unwrap();
-        let err = run(&e, opts(true, None, None, false)).unwrap_err().to_string();
+        let err = run(&e, opts(true, None, None, false))
+            .unwrap_err()
+            .to_string();
         assert!(err.contains("não parseia"), "erro: {err}");
     }
 

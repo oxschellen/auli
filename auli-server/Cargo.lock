@@ -228,6 +228,7 @@ dependencies = [
  "anyhow",
  "auli-contract",
  "auli-llm",
+ "regex",
  "serde",
  "serde_json",
  "thiserror",

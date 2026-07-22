@@ -19,7 +19,12 @@ use serde::Deserialize;
 /// `auli-cli` use, so reordering `registry.toml` moves every default together. Falls back to `"rs"`
 /// if the registry is unreadable/empty.
 pub static DEFAULT_ENTITY: LazyLock<String> = LazyLock::new(|| {
-    read_registry().entities.into_iter().next().map(|e| e.id).unwrap_or_else(|| "rs".to_string())
+    read_registry()
+        .entities
+        .into_iter()
+        .next()
+        .map(|e| e.id)
+        .unwrap_or_else(|| "rs".to_string())
 });
 
 // Repo-root data/ (relativo ao CWD do collections).
@@ -82,13 +87,20 @@ fn read_registry() -> Registry {
     let text = match fs::read_to_string(&registry_path) {
         Ok(t) => t,
         Err(e) => {
-            eprintln!("⚠️  Não foi possível ler o registro de entidades '{}': {}", registry_path, e);
-            return Registry { entities: Vec::new() };
+            eprintln!(
+                "⚠️  Não foi possível ler o registro de entidades '{}': {}",
+                registry_path, e
+            );
+            return Registry {
+                entities: Vec::new(),
+            };
         }
     };
     toml::from_str(&text).unwrap_or_else(|e| {
         eprintln!("⚠️  registry.toml inválido ('{}'): {}", registry_path, e);
-        Registry { entities: Vec::new() }
+        Registry {
+            entities: Vec::new(),
+        }
     })
 }
 
@@ -100,14 +112,22 @@ fn load_entities() -> HashMap<String, EntityConfig> {
             DEFAULT_SYSTEM_PROMPT.to_string()
         } else {
             fs::read_to_string(format!("{}/{}", DATA_DIR, ent.prompt)).unwrap_or_else(|_| {
-                eprintln!("⚠️  prompt ausente para '{}' ({}), usando o padrão.", ent.id, ent.prompt);
+                eprintln!(
+                    "⚠️  prompt ausente para '{}' ({}), usando o padrão.",
+                    ent.id, ent.prompt
+                );
                 DEFAULT_SYSTEM_PROMPT.to_string()
             })
         };
         let data_dir = format!("{}/{}/raw", DATA_DIR, ent.id);
         map.insert(
             ent.id.clone(),
-            EntityConfig { id: ent.id, name: ent.name, system_prompt, data_dir },
+            EntityConfig {
+                id: ent.id,
+                name: ent.name,
+                system_prompt,
+                data_dir,
+            },
         );
     }
 

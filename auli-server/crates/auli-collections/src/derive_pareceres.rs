@@ -57,7 +57,12 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
     let mut vistos = std::collections::HashSet::with_capacity(items.len());
     for c in &items {
         if !vistos.insert(c.numero.as_str()) {
-            return Err(format!("numero duplicado em {}: {:?} — viola a identidade da listagem.", ref_path.display(), c.numero).into());
+            return Err(format!(
+                "numero duplicado em {}: {:?} — viola a identidade da listagem.",
+                ref_path.display(),
+                c.numero
+            )
+            .into());
         }
     }
 
@@ -123,13 +128,18 @@ pub(crate) fn parse_pareceres(content: &str) -> Vec<Consulta> {
     if let Some(rec) = current.take() {
         records.push(rec);
     }
-    records.iter().filter_map(|lines| parecer_from_lines(lines)).collect()
+    records
+        .iter()
+        .filter_map(|lines| parecer_from_lines(lines))
+        .collect()
 }
 
 /// Monta um `Consulta` das linhas de um bloco. `## pergunta:` guarda os rótulos + resumo; `## resposta:`
 /// separa o corpo integral. Devolve `None` se o bloco não tem conteúdo aproveitável.
 fn parecer_from_lines(lines: &[&str]) -> Option<Consulta> {
-    let resp_idx = lines.iter().position(|l| l.trim_start().starts_with("## resposta"))?;
+    let resp_idx = lines
+        .iter()
+        .position(|l| l.trim_start().starts_with("## resposta"))?;
 
     let mut numero = String::new();
     let mut assunto = String::new();
@@ -166,7 +176,15 @@ fn parecer_from_lines(lines: &[&str]) -> Option<Consulta> {
     // resumo autorado que dispensam sinopse).
     let text_to_embed = crate::sinopse::compose_text_to_embed(&numero, &assunto, &resumo);
 
-    Some(Consulta { numero, assunto, resumo, corpo, link, text_to_embed, sinopse_info: None })
+    Some(Consulta {
+        numero,
+        assunto,
+        resumo,
+        corpo,
+        link,
+        text_to_embed,
+        sinopse_info: None,
+    })
 }
 
 #[cfg(test)]
@@ -203,11 +221,17 @@ Corpo do 25091.
         let p = &items[0];
         assert_eq!(p.numero, "PARECER Nº 25148");
         assert_eq!(p.assunto, "ICMS – crédito fiscal na cesta básica");
-        assert_eq!(p.resumo, "### Descrição Resumida\nAnalisa o crédito fiscal.");
+        assert_eq!(
+            p.resumo,
+            "### Descrição Resumida\nAnalisa o crédito fiscal."
+        );
         assert_eq!(p.link, "http://legislacao/25148");
         assert_eq!(p.corpo, "PARECER Nº 25148\n\nÉ o parecer.");
         // text_to_embed = numero + assunto + resumo (a key indexa também o título).
-        assert_eq!(p.text_to_embed, "PARECER Nº 25148\nICMS – crédito fiscal na cesta básica\n### Descrição Resumida\nAnalisa o crédito fiscal.");
+        assert_eq!(
+            p.text_to_embed,
+            "PARECER Nº 25148\nICMS – crédito fiscal na cesta básica\n### Descrição Resumida\nAnalisa o crédito fiscal."
+        );
     }
 
     #[test]
@@ -218,7 +242,10 @@ Corpo do 25091.
         assert_eq!(p.resumo, "");
         assert_eq!(p.corpo, "Corpo do 25091.");
         // Sem resumo, a key ainda indexa numero + assunto.
-        assert_eq!(p.text_to_embed, "PARECER Nº 25091\nRemessa entre estabelecimentos");
+        assert_eq!(
+            p.text_to_embed,
+            "PARECER Nº 25091\nRemessa entre estabelecimentos"
+        );
     }
 
     #[test]

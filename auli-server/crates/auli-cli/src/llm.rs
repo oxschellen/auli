@@ -18,6 +18,7 @@ pub async fn chat(system_prompt: &str, user_message: &str) -> Result<String> {
         temperature: 0.1,
         max_completion_tokens: 4096,
         timeout: Duration::from_secs(30),
+        reasoning_effort: None,
     };
     // O chat do RAG não usa o headroom de rate-limit (isso é do lote de sinopses offline).
     Ok(auli_llm::chat(&params, system_prompt, user_message).await?.text)
