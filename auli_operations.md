@@ -134,13 +134,21 @@ for id in sc sp pr mg pe ba rj ce; do
 done
 ```
 
-Produz, por entidade, `data/<id>/packs/<id>-servicos.json` + `<id>.manifest.json` (`strategy_version: 2`,
+Produz, por entidade, `data/<id>/packs/<id>-servicos.json` + `<id>.manifest.json` (`strategy_version: 1`,
 kind `servicos`) — e `<id>-faqs.json` onde houver FAQs (hoje só RS). Contagens atuais: **rs** serviços
 586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148, **pe** 38, **ba** 204, **rj** 91,
 **ce** 382. `notas` é autorada (sem scraper) e ainda **não** tem fonte struct no contrato — fica
 **ausente** até ser modelada; o server tolera packs ausentes (sobe com a coleção vazia). `pareceres`
 também é autorado, mas já tem um passo de ingestão do `.txt` de referência (ver nota abaixo). **Só
 precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
+
+> **O que é embedado numa FAQ** (mudou na TAREFA-FAQ-PR, jul/2026): breadcrumb (`origin`) + `P:`
+> pergunta + `R:` **resposta**, um por linha, linha de campo vazio omitida. Antes era só breadcrumb +
+> pergunta — cego para a resposta, que é onde mora o vocabulário pelo qual o contribuinte pergunta. O
+> que o pack **guarda** não mudou (o bloco `## pergunta` / `## resposta`), então o contexto do RAG é o
+> mesmo. Na mesma mudança o `max_length` do encoder subiu de **512 para 8192** (o teto do BGE-M3):
+> com 512 a resposta seria cortada em silêncio. Texto acima do teto é truncado **com aviso** no
+> `auli update`, nomeando os `.md` afetados — no acervo do RS nenhum item chega lá.
 
 > **Pareceres / Consultas — pipeline próprio.** Os pareceres (RS) e consultas tributárias (SC/SP/PR)
 > têm scraper dedicado **e** um passo de **sinopse por LLM** entre o derive e a vetorização. O fluxo é
@@ -352,9 +360,10 @@ scripts/build-packs.sh <id>
   leve** — `numero`/`assunto`/`resumo`/`link`/`doc_path`. O corpo é lido da árvore **na query**, só
   para os documentos selecionados. Se um `.md` sumir, o servidor **degrada** (serve a sinopse com o
   aviso `[corpo indisponível — ver link]` e loga `ERROR`) em vez de derrubar a consulta.
-- **`STRATEGY_VERSION`** (hoje `4`) é carimbado no manifesto e validado no boot: pacote com versão
-  diferente ⇒ o server **recusa subir**. Regenerar sinopses **em massa** (mudança de
-  `SINOPSE_PROMPT_VERSION` ou troca do modelo + re-geração) muda os textos embedados ⇒ **bump
+- **`STRATEGY_VERSION`** (hoje `1`, numeração **reiniciada** na TAREFA-FAQ-PR — a série anterior foi
+  até `4` e virou nota histórica no doc-comment da constante) é carimbado no manifesto e validado no
+  boot: pacote com versão diferente ⇒ o server **recusa subir**. Regenerar sinopses **em massa**
+  (mudança de `SINOPSE_PROMPT_VERSION` ou troca do modelo + re-geração) muda os textos embedados ⇒ **bump
   obrigatório**. Sinopses novas convivendo com antigas (append-only) **não** exigem bump.
 
   > ⚠️ **O bump é global e o boot é fatal para o servidor inteiro.** `packs::load_all` valida
