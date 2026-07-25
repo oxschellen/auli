@@ -12,6 +12,7 @@
 //! concordam — sobre a forma E sobre o caminho/versão/leitura/escrita da fronteira.
 
 pub mod mddoc;
+pub mod mddoc_faq;
 pub mod mddoc_servico;
 pub mod snapshot;
 pub use snapshot::*;
@@ -238,6 +239,17 @@ pub fn compose_servico_text_to_embed(
     format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim()).trim().to_string()
 }
 
+/// Key de embedding de uma FAQ: breadcrumb `origin` + a pergunta (só a pergunta
+/// quando não há breadcrumb) — a mesma key do antigo `EmbedStrategy::QuestionKey`.
+/// Vive no contrato porque os DOIS lados precisam dela: o produtor
+/// (`derive_faqs`) e o `auli update` ao rematerializar da árvore `docs/faqs/*.md`.
+///
+/// NOTA: existe decisão de evoluir para pergunta+resposta — é tarefa FUTURA
+/// separada (mudança de vetor isolada, atribuível só a ela). Não antecipar aqui.
+pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str) -> String {
+    if origin.is_empty() { pergunta.to_string() } else { format!("{} {}", origin, pergunta) }
+}
+
 /// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
 ///
 /// MESMO formato do `stored_repr` gordo, byte a byte — é esse o invariante da G3 (o contexto RAG
@@ -310,6 +322,17 @@ mod tests {
         let descricao = "á".repeat(400);
         let key = compose_servico_text_to_embed("Cidadãos", "IPVA", "Guia", &descricao);
         assert_eq!(key, format!("Cidadãos | IPVA\nGuia\n{}", "á".repeat(300)));
+    }
+
+    #[test]
+    fn compose_faq_congela_os_dois_ramos() {
+        // Literais esperados, não recomputados: a fórmula é a do `faq_from_raw`
+        // histórico, byte a byte — mudá-la exige re-vetorizar os packs de faqs.
+        assert_eq!(
+            compose_faq_text_to_embed("Inicial | Perguntas Frequentes", "Como emitir a guia?"),
+            "Inicial | Perguntas Frequentes Como emitir a guia?"
+        );
+        assert_eq!(compose_faq_text_to_embed("", "Como emitir a guia?"), "Como emitir a guia?");
     }
 
     #[test]

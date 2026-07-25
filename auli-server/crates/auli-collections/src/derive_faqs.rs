@@ -21,24 +21,42 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaFaqs) -> 
     let portal = render_portal_faqs(&coleta.items);
     std::fs::write(&portal_path, &portal)?;
     println!("Wrote {} ({} bytes)", portal_path, portal.len());
+
+    // Árvore `.md` — a FONTE do `auli update` para faqs (TAREFA-FAQS-MD). Regenerada do zero a cada
+    // process (D1). Os artefatos de `raw/` acima seguem intactos.
+    let base = Path::new(data_dir).parent().ok_or_else(|| format!("data_dir sem pai: {data_dir}"))?;
+    let docs_dir = base.join("docs").join("faqs");
+    let docs: Vec<(auli_contract::mddoc_faq::FaqHeader, String)> = table
+        .items
+        .iter()
+        .map(|f| {
+            (
+                auli_contract::mddoc_faq::FaqHeader {
+                    pergunta: f.pergunta.clone(),
+                    origin: f.origin.clone(),
+                    url: f.url.clone(),
+                },
+                f.resposta.clone(),
+            )
+        })
+        .collect();
+    let gravados = auli_contract::mddoc_faq::materializar_arvore(&docs_dir, &docs)
+        .map_err(|e| format!("materialização da árvore de faqs: {e}"))?;
+    println!("📄 docs: {gravados} faqs materializadas em {}", docs_dir.display());
+
     Ok(())
 }
 
-/// Um `Faq` (contrato) a partir de um `FaqRaw`: materializa `text_to_embed` = breadcrumb `origin` +
-/// a pergunta (só a pergunta quando não há breadcrumb) — a mesma key do antigo
-/// `EmbedStrategy::QuestionKey`. Demais campos copiados 1:1.
+/// Um `Faq` (contrato) a partir de um `FaqRaw`: materializa `text_to_embed` pelo ponto único do
+/// contrato ([`auli_contract::compose_faq_text_to_embed`]) — o mesmo que o `auli update` usa ao
+/// rematerializar da árvore `docs/faqs/*.md`. Demais campos copiados 1:1.
 fn faq_from_raw(raw: &auli_contract::FaqRaw) -> auli_contract::Faq {
-    let text_to_embed = if raw.origin.is_empty() {
-        raw.pergunta.clone()
-    } else {
-        format!("{} {}", raw.origin, raw.pergunta)
-    };
     auli_contract::Faq {
         pergunta: raw.pergunta.clone(),
         resposta: raw.resposta.clone(),
         origin: raw.origin.clone(),
         url: raw.url.clone(),
-        text_to_embed,
+        text_to_embed: auli_contract::compose_faq_text_to_embed(&raw.origin, &raw.pergunta),
     }
 }
 
