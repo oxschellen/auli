@@ -151,11 +151,17 @@ precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
 > `auli update`, nomeando os `.md` afetados — no acervo do RS nenhum item chega lá.
 
 > **Migrar uma entidade para a árvore `docs/servicos/*.md`** (a fonte do `update` desde a
-> TAREFA-SERVICOS-MD). O `process` só deriva do **snapshot**, e as entidades materializadas antes
-> dessa fronteira não têm um — então migrar exige **re-raspar** (`auli-scraper-<id> servicos`), não é
-> derivação offline. Depois do `process`, `build-packs.sh <id>` é **obrigatório**: criar `docs/` muda
-> o `docs_hash` e o boot recusa até os packs baterem. Enquanto a árvore não existe, o `update` cai no
-> `<id>-servicos.json` legado com aviso — fallback de transição, não erro.
+> TAREFA-SERVICOS-MD): **`scripts/migrar-arvore-servicos.sh <id>...`**, que faz o ciclo inteiro
+> (backup → scrape → process → diff de `raw/` → build-packs) e para na primeira entidade que falhar.
+>
+> O `process` só deriva do **snapshot**, e as entidades materializadas antes dessa fronteira não têm
+> um — então migrar exige **re-raspar**, não é derivação offline. Depois do `process`,
+> `build-packs.sh <id>` é **obrigatório**: criar `docs/` muda o `docs_hash` e o boot recusa até os
+> packs baterem. Enquanto a árvore não existe, o `update` cai no `<id>-servicos.json` legado com
+> aviso — fallback de transição, não erro.
+>
+> Estado (jul/2026): **25 das 26 entidades com dado já migraram**. Falta a `ap` — o portal
+> (`web-pro01.sefaz.ap.gov.br`) estava fora do ar; é rodar o script quando voltar.
 >
 > Vale comparar os artefatos de `raw/` com os de antes: se mudarem, o **portal** mudou (e não a
 > migração). Nas oito primeiras entidades migradas apareceram serviço novo (MG, CE), serviço
