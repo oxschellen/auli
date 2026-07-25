@@ -564,6 +564,11 @@ Esta seção guarda **só o que não está no código**: o que ficou em aberto, 
 divergia da implementação final. Onde houver divergência, **o código é a verdade** — a spec ficou
 congelada no plano.
 
+> **Se você chegou aqui vindo de um doc-comment:** o código cita as TAREFAs pelo nome
+> (`TAREFA-SERVICOS-MD`, `TAREFA-FAQS-MD`, `TAREFA-FAQ-PR`, `TAREFA-EXTRACAO`, `TAREFA-CANONIZADOR`)
+> em ~20 lugares. Os arquivos não existem mais — **é esta seção que os substitui**. As citações são
+> linhagem deliberada, não links quebrados.
+
 ### TAREFA-SERVICOS-MD (PR #107) e TAREFA-FAQS-MD (PR #108) — ✅ entregues
 
 Serviços e FAQs viraram árvores `.md` (`data/<id>/docs/{servicos,faqs}/*.md`), a FONTE do

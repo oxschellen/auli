@@ -80,7 +80,9 @@ pub struct Faq {
     pub origin: String,
     /// URL canônica da página de origem.
     pub url: String,
-    /// Key a embeddar — materializada pelo scraper (para faqs: breadcrumb `origin` + a pergunta).
+    /// Key a embeddar. A fórmula é ÚNICA e vive em [`compose_faq_text_to_embed`] — não repetir
+    /// aqui (foi assim que esta linha ficou descrevendo a fórmula anterior à TAREFA-FAQ-PR). O
+    /// produtor (`derive_faqs`) grava, e o `auli update` rematerializa ao ler `docs/faqs/*.md`.
     pub text_to_embed: String,
 }
 
@@ -208,8 +210,10 @@ impl Embeddable for Consulta {
 /// Payload de pack de pareceres (G3): tudo MENOS o corpo, que vive na árvore `docs/` e é lido na
 /// query. `doc_path` é relativo ao diretório da entidade (ex.: `"docs/pareceres/<slug>.md"`).
 ///
-/// Ainda NÃO é o que `Consulta::stored_repr` grava — o pack segue gordo até a fiação da G3 (pack e
-/// servidor mudam em lockstep, senão o serving renderiza lixo).
+/// É exatamente o que `Consulta::stored_repr` grava — a fiação da G3 está feita. O servidor lê o
+/// corpo da árvore por `doc_path` e remonta o bloco `## pergunta`/`## resposta` via
+/// [`render_consulta_block`]. Pack e servidor mudam em lockstep: alterar os campos daqui sem
+/// re-gerar os packs faz o serving renderizar lixo.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ConsultaPackPayload {
     pub numero: String,
@@ -283,8 +287,9 @@ pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str, resposta: &str) -
 
 /// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
 ///
-/// MESMO formato do `stored_repr` gordo, byte a byte — é esse o invariante da G3 (o contexto RAG
-/// montado não pode mudar). Ponto único: servidor e testes passam por aqui.
+/// MESMO formato do `stored_repr` gordo de ANTES da G3 (que não existe mais: hoje ele grava o
+/// payload leve), byte a byte — é esse o invariante da G3, o contexto RAG montado não pode mudar.
+/// Ponto único: servidor e testes passam por aqui.
 pub fn render_consulta_block(p: &ConsultaPackPayload, corpo: &str) -> String {
     format!(
         "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
