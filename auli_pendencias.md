@@ -280,6 +280,7 @@ navegador (a descoberta provou zero-XHR: todo o conteúdo é server-rendered no 
 | `visibleSections[]` | quais seções existem | enum (ex.: id 63 não tem `PERGUNTAS_FREQUENTES`) |
 
 **Trabalho técnico da v2 (o que a v1 evitou):**
+
 1. **Resolver refs de chunk do flight:** `"$a"/"$b"/"$c"` apontam para chunks-texto no MESMO payload,
    no formato `a:T<hexlen>,<html>` — **alguns colados ao chunk anterior sem `\n`** (o parser tem de
    varrer por `<ref>:T<hexlen>,` e ler `hexlen` bytes, não confiar em quebra de linha).

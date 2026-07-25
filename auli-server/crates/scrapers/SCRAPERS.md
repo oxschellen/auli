@@ -108,26 +108,31 @@ Contagens de serviços = snapshot atual em `main`. Total de testes da frota: **1
 ## 3. Padrões transversais (gotchas)
 
 ### TLS — cipher-check antes de assumir
+
 `ureq` usa **rustls** por padrão, que **só suporta ciphers AEAD (GCM/ChaCha20)**. Servidores gov
 antigos podem oferecer só **TLS 1.2 CBC** — aí o handshake do rustls é resetado (`Connection
 reset by peer`) enquanto curl/OpenSSL conectam. **Só o BA** caiu nisso (IIS antigo, CBC-only) e usa
 **native-tls (OpenSSL)**. Diagnóstico de um novo portal:
-```
+
+```bash
 curl -sS URL              # se 200 → não é rede/robots
 openssl s_client -connect host:443 -cipher ECDHE-RSA-AES128-GCM-SHA256   # NONE → CBC-only → precisa native-tls
 ```
 
 ### Guards que falham alto (princípio D-RJ5)
+
 Scrapers mais novos (rj, ce) validam contagens mínimas e **falham alto** se a página vier capada,
 em vez de gravar um snapshot degradado. O **cache só grava depois dos guards** — uma resposta
 capada nunca envenena o cache.
 
 ### Cache
+
 `kit::cache` grava 1 arquivo por URL lógica em `data/<id>/raw/cache/`. `--usecache` lê só do cache
 (sem rede). Para APIs paginadas (CE), a chave inclui o `pageSize` (respostas de pageSize diferente
 não são reaproveitadas).
 
 ### Robots / etiqueta
+
 Portais com robots restritivo (PE, BA, CE) usam **User-Agent de navegador** e coleta de baixíssima
 frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 
@@ -136,6 +141,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 ## 4. Detalhe por entidade
 
 ### rs — SEFAZ-RS (Rio Grande do Sul)
+
 - **Único com FAQs e pareceres** além de serviços (`auli-scraper-rs [--usecache] faqs|servicos|pareceres`).
 - **Serviços:** API JSON do Tudo Fácil (`fazenda.rs.gov.br/_service/tudofacil/capaservicos`) — não
   precisa mais de headless Chrome (era o único que usava).
@@ -152,11 +158,13 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   direto. 5 testes (+ testes de parse/form/charset dos pareceres).
 
 ### sc — SEF-SC (Santa Catarina)
+
 - **API JSON Next.js** (`www.sef.sc.gov.br`) — o portal expõe os dados de build/página em JSON.
 - 208 serviços, 5 públicos (Cidadão/Empresa/Servidor Público/Estudante/Prefeitura). Agregada.
 - 6 testes (normalize_links, parse_build_id, StringOrNum, parse listagem/detalhe, build_descricao).
 
 ### sp — SEFAZ-SP (São Paulo)
+
 - **SharePoint REST `_api` anônimo** (`portal.fazenda.sp.gov.br/servicos/_api/web/lists`) — duas
   listas ('Serviços' e 'Homes 360') em JSON. Sem HTML parse.
 - Um serviço pertence a várias **facetas** (Cidadão/Empresa/Servidor/Tributo) → múltiplas
@@ -166,6 +174,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   (clean, canonical, parse verbose/facet, build_corpo, build_servico — ocorrência por faceta).
 
 ### pr — SEFA-PR (Paraná)
+
 - **Drupal server-side** (`fazenda.pr.gov.br/Pagina/Carta-de-servicos`), HTML pronto (padrão de
   referência dos scrapers HTML mais novos).
 - Mega-menu **"Serviços para você!"** em 7 abas (público) × grupos (classe); um mesmo link aparece
@@ -175,11 +184,13 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   normalize_body_links, html_block_to_text, decode_entities).
 
 ### mg — SEF-MG (Minas Gerais)
+
 - **ServiceNow CSM** (`atendimento2.fazenda.mg.gov.br`), API JSON da Service Portal page.
 - 148 serviços, 3 públicos (Cidadão/Empresas/Produtor Rural). Agregada. **Descrições mais ricas da
   frota** (~3625 chars). 3 testes.
 
 ### pe — SEFAZ-PE (Pernambuco)
+
 - **SharePoint 2013 on-prem**, server-side. Fase 1 raspa **só o menu global `#menu_servicos`**
   (1 GET) — **D-PE1**.
 - **Descrições vazias** (menu-only); fase 2 (corpo das páginas `/Servicos/...`) ficou para depois.
@@ -188,6 +199,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **D-PE4:** UA de navegador, robots restritivo, 1 GET + cache.
 
 ### ba — SEFAZ-BA (Bahia)
+
 - **ASP clássico server-rendered** (`portal.sefaz.ba.gov.br/scripts/cartadeservicos/`). Padrão PR
   completo: **listagem única + fichas de detalhe** (204 serviços; 206 hrefs, 2 comentados).
 - **native-tls (OpenSSL)** — o servidor só oferece ciphers TLS 1.2 CBC, incompatíveis com rustls.
@@ -197,6 +209,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   latin-1). 1 público (Cidadãos — o portal não tem split), descrições ricas (~1649). 5 testes.
 
 ### rj — SEFAZ-RJ (Rio de Janeiro)
+
 - **WordPress server-rendered** (`portal2.fazenda.rj.gov.br/nossos-servicos/`), **UMA página, 1 GET**.
 - **Parser agnóstico de CSS do tema:** menu = maior grupo de âncoras internas sob o mesmo contêiner;
   seção = alvo da âncora (3 formatos cobertos por teste).
@@ -207,6 +220,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - 91 serviços (14 categorias). **8 testes** (o maior da frota).
 
 ### ce — SEFAZ-CE (Ceará)
+
 - **SPA pura (Sydle ONE)** — sem HTML server-rendered. A listagem vem da **API JSON `getChildren`
   (POST)** no catálogo `servico-geral` (`portalservicos.sefaz.ce.gov.br/api/1/...`).
 - **Auth:** Bearer token **anônimo e público** embutido no shell HTML (`useCookieAuthentication:

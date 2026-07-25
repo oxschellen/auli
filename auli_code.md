@@ -24,7 +24,7 @@ para várias entidades = secretarias estaduais), open-source, com ênfase em pri
 
 Pipeline de resposta (caminho realmente executado):
 
-```
+```text
 pergunta  →  embedding local (fastembed/BGE-M3, in-process)  →  busca vetorial (vector store in-process)  →  LLM externo gera a resposta
 ```
 
@@ -93,7 +93,7 @@ hoje é **público, sem banco**, e expõe apenas rotas de leitura.
 
 ### 3.1 Estrutura (camadas estritas, acoplamento só para baixo)
 
-```
+```text
 auli-server/                       # workspace único, Cargo.lock compartilhado
 └── crates/
     ├── vector-store/      # BAIXO — store plano por cosseno, agnóstico (sabe só id+vetor+payload P)
@@ -127,7 +127,7 @@ vetorial é compartilhado por construção, não por convenção.
 
 ### 3.2 Os dois modos (subcomandos)
 
-```
+```text
 auli update  --entity <id> --source <dir_com_contrato_json> --out <dir> [--version <v>]
 auli server  [--port <p>] [--bind <addr>] [--packs-dir <dir>]   # --bind default 0.0.0.0; --packs-dir default = $AULI_DATA_DIR (./data)
 ```

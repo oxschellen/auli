@@ -1,0 +1,25 @@
+{
+  "$comment": "Regras desligadas = as que brigam com o estilo destes documentos. As demais ficam LIGADAS de propósito: MD022/MD031/MD032/MD058 pegam falta de linha em branco antes de heading/cerca/lista/tabela, que em parser estrito chega a quebrar a renderização. Espelha auli-frontend/.markdownlint.json, que já desligava MD013.",
+  "default": true,
+
+  "$comment-MD013": "Linha longa: os docs são escritos em ~100 colunas, não 80. Era 84% dos avisos.",
+  "MD013": false,
+
+  "$comment-MD060": "Estilo de pipe em tabela: puramente cosmético.",
+  "MD060": false,
+
+  "$comment-MD024": "Heading repetido: as seções longas reusam de propósito ('Aberto:', 'Fases').",
+  "MD024": false,
+
+  "$comment-MD025": "Múltiplos H1: alguns docs são compilados de partes com título próprio.",
+  "MD025": false,
+
+  "$comment-MD033": "HTML inline: usado deliberadamente (<br>, detalhes em tabela).",
+  "MD033": false,
+
+  "$comment-MD028": "Linha em branco dentro de blockquote: usado para separar parágrafos citados.",
+  "MD028": false,
+
+  "$comment-MD034": "URL nua: os docs citam HOSTS sem esquema (www.sefaz.ap.gov.br). O --fix envolve em <>, mas sem esquema isso NÃO é autolink válido em CommonMark — renderiza com os sinais visíveis, e ainda diverge do índice, onde o mesmo host aparece dentro de um label de link e não é tocado. Pior que o original.",
+  "MD034": false
+}

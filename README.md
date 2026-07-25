@@ -23,7 +23,7 @@ one codebase serves many secretariats from isolated data.
 
 ## How it works
 
-```
+```text
 question
    │
    ▼
@@ -47,7 +47,7 @@ text**, and **vectorized into per-state packs** (`auli update`) that the server 
 The retrieval engine (`auli-retrieval`) is shared by three interfaces in the **same process**, so
 the heavy BGE-M3 model is loaded once:
 
-```
+```text
                         ┌──────────────────────┐
   frontend (browser) ──▶│ HTTP  /v1/question   │──▶ chat: prompt + external LLM
                         │ HTTP  /v1/retrieve   │──▶ pure retrieval, no LLM

@@ -6,6 +6,7 @@
 > (âncoras `descobertas.md#<uf>` e `#rs-pareceres`).
 
 ## Índice
+
 - [AC — Carta de Serviços SEFAZ-AC (sefaz.ac.gov.br)](#ac)
 - [AL — SEFAZ-AL / Portal Alagoas Digital](#al)
 - [AM — Portfólio de Serviços da SEFAZ-AM](#am)
@@ -21,7 +22,6 @@
 - [SE — SEFAZ-SE (Sergipe)](#se)
 - [TO — Carta de Serviços SEFAZ-TO (servicos.to.gov.br)](#to)
 - [RS Pareceres — Portal de Legislação / Consultas Formais Respondidas](#rs-pareceres)
-
 
 ---
 
@@ -103,7 +103,6 @@ destinados à condução de passageiros…"*.
 Em `scratchpad/ac/`: `page.html` (a Carta), `post.html` (um serviço), `r36.pem` (intermediário Sectigo),
 `chain.txt` (a cadeia quebrada). wp-json = 404.
 
-
 ---
 
 <a id="al"></a>
@@ -161,6 +160,7 @@ A própria página `/api/` documenta o contrato com a linha textual **"Autentica
 **Nunca hardcodar 60.** Os 60 são o valor observado hoje, não um contrato.
 
 Sequência de guarda:
+
 1. Resolver `organ_id` da SEFAZ via `organs.json` (procurar `acronym == "SEFAZ"` e `nature == "Estadual"`) — não hardcodar o UUID tampouco; derivar.
 2. Buscar a lista filtrada; **ler o comprimento do array em runtime**.
 3. Bail se o array vier vazio (miss). Array vazio = fonte quebrada ou UUID mudou, não "SEFAZ sem serviços".
@@ -212,7 +212,7 @@ Cobertura: onde a SEFAZ preenche, preenche bem (steps com canais tipados, estima
 
 ## 8. Estratégia de coleta
 
-```
+```text
 1. GET organs.json → derivar UUID da SEFAZ (acronym=SEFAZ, nature=Estadual)
 2. GET services.json?organ_id={UUID} → N stubs (N=60 hoje)
 3. guardas §4 (bail se vazio ou incoerente)
@@ -241,7 +241,6 @@ Cobertura: onde a SEFAZ preenche, preenche bem (steps com canais tipados, estima
 - [ ] Varrer os 60 detalhes uma vez para enumerar o enum completo de `providing_channels[].type` (§6.5).
 - [ ] Confirmar comportamento de `applicants[].requirements` quando preenchido (só vimos string vazia) — pode ser string ou array em outros serviços.
 
-
 ---
 
 <a id="am"></a>
@@ -257,7 +256,7 @@ Cobertura: onde a SEFAZ preenche, preenche bem (steps com canais tipados, estima
 > **`RSC: 1`** na própria URL da página (`text/x-component`) — ou inline no HTML via `self.__next_f.push`.
 > **A listagem inteira e o conteúdo COMPLETO de cada detalhe (todos os accordions) vêm server-rendered
 > numa única resposta cada — ZERO XHR lazy.** Rota de menor atrito confirmada: `ureq` GET + parse do
-> flight RSC. Sem headless no scraper (headless foi usado só aqui, para _verificar_ que não há XHR).
+> flight RSC. Sem headless no scraper (headless foi usado só aqui, para *verificar* que não há XHR).
 
 ---
 
@@ -272,6 +271,7 @@ Cobertura: onde a SEFAZ preenche, preenche bem (steps com canais tipados, estima
 - Cookie de sessão sticky (`OLSESSIONID=sticky.sefazN`) — irrelevante para GETs anônimos.
 
 **Como obter o JSON (as duas vias, equivalentes):**
+
 ```bash
 # via A (recomendada): flight RSC puro
 curl -s -H 'RSC: 1' 'https://www.sefaz.am.gov.br/portfolio-servicos/todos' -o todos.rsc      # text/x-component
@@ -291,6 +291,7 @@ balanceamento de colchetes.
   hardcodar; ler sempre da árvore/contador — lição CE respeitada).
 
 **Nó-folha (serviço) — mapa de campos → snapshot:**
+
 ```json
 { "id": 882,
   "name": "Pedir Inscrição Estadual: Comércio, Indústria Não incentivada e Transportes",
@@ -301,6 +302,7 @@ balanceamento de colchetes.
                {"label":"Agendar Serviço","url":"https://online.sefaz.am.gov.br/agendamento/novo/882…"} ],
   "fontAwesomeIconClassName": null, "children": [] }
 ```
+
 | campo do nó | → snapshot | observação |
 |-------------|-----------|-----------|
 | `id` | identidade | inteiro; = id da página de detalhe |
@@ -314,6 +316,7 @@ balanceamento de colchetes.
 
 Página `/portfolio-servicos/detalhes/{id}?profile=todos`, também RSC. O objeto `serviceDetails` vem
 embutido no flight:
+
 ```json
 { "id":882, "name":"…", "url":"https://sistemas.sefaz.am.gov.br/…",  // destino "Iniciar"
   "resumo":"…",                         // = "O que é" / RESUMO (texto plano)
@@ -328,6 +331,7 @@ embutido no flight:
 ```
 
 **De onde vem o conteúdo dos accordions (a pergunta crítica):**
+
 - **Tudo na resposta única do detalhe.** As seções longas usam **referências de chunk do flight**
   (`"$a"/"$b"/"$c"`), que resolvem para chunks-texto **no mesmo payload** no formato `a:T<hexlen>,<html>`
   (ex.: `comoProcederHtml → $a → a:Td68,<p>As solicita&ccedil;&otilde;es …`). `documentacaoHtml → $b`,
@@ -443,7 +447,6 @@ embutidos acima (Fases 1–2). Nenhuma evidência depende de estado autenticado.
 - [x] Contagens batem: árvore RSC = 278 = contador dinâmico; soma dos tipos de link = 278.
 - [x] Nenhuma linha de scraper implementada.
 
-
 ---
 
 <a id="ap"></a>
@@ -498,6 +501,7 @@ O NOME do chunk é estável; só o hash muda por deploy → sempre re-descobrir 
 | `mockVeiculo` | `veiculos` | Veículos | 17 |
 
 **Total: 49 serviços.** Cada item:
+
 ```js
 { route: 'mei',                          // (mockCadastro usa chaves JS; os outros usam "route" JSON)
   introducao: [{
@@ -511,6 +515,7 @@ O NOME do chunk é estável; só o hash muda por deploy → sempre re-descobrir 
 
 **Parser:** por categoria (fatia entre `const mock<X> =` e o próximo), casar por serviço
 `route → introducao.titulo → introducao.descricao`:
+
 - chaves com/sem aspas: `["']?route["']?\s*:` etc.;
 - `descricao` é template literal — capturar entre backticks (0 backticks escapados no dado; alguns
   `${}` aparecem literais, cosmético). O HTML da `descricao` → `html_to_text` (html5ever, lição GO/TO).
@@ -540,7 +545,6 @@ O NOME do chunk é estável; só o hash muda por deploy → sempre re-descobrir 
 Em `scratchpad/ap/`: `home.html`, `main.*.js`, `runtime.js` (mapa de chunks), `cat.js` (o chunk
 `categorias_routes` com os `mock*`), `cap*.mjs` (capturas headless que provaram o zero-XHR do detalhe).
 
-
 ---
 
 <a id="df"></a>
@@ -548,6 +552,7 @@ Em `scratchpad/ap/`: `home.html`, `main.*.js`, `runtime.js` (mapa de chunks), `c
 # Descoberta — SEFAZ-DF (Distrito Federal), 22ª entidade
 
 ## Fonte
+
 - Portal institucional: `https://www.economia.df.gov.br` (Secretaria de Economia / Subsecretaria da Receita — a Fazenda do DF fica sob a SEEC).
 - **Carta de Serviços** (fonte real): `https://www.receita.fazenda.df.gov.br/aplicacoes/CartaServicos/`
   - App **ColdFusion** (`.cfm`), HTML server-rendered.
@@ -556,10 +561,11 @@ Em `scratchpad/ap/`: `home.html`, `main.*.js`, `runtime.js` (mapa de chunks), `c
     - `servico.cfm?codServico=Z&codTipoPessoa=Y&codSubCategoria=W` → **detalhe do serviço**
 
 ## Achado central — a listagem já é o catálogo inteiro
+
 Qualquer `listaSubCategorias.cfm?...` (independente de `X`/`Y`) devolve **a mesma árvore completa**
 de serviços embutida como **objeto JS** na página (~228 KB). Estrutura:
 
-```
+```text
 'TEMA DE TOPO': { 'item': [
     'Subcategoria - Nome': { 'item': [
         {'url':'/aplicacoes/CartaServicos/servico.cfm?codTipoPessoa=6&codServico=298&codSubCategoria=272',
@@ -577,39 +583,45 @@ de serviços embutida como **objeto JS** na página (~228 KB). Estrutura:
 - ⇒ **1 único fetch** enumera todo o catálogo. Sem paginação, sem headless.
 
 ## Detalhe do serviço (`servico.cfm`) — descrição rica
+
 Cada detalhe (~70 KB) tem um **accordion** (`div.panel-group#accordion` → `div.panel-body`) com ~5 painéis:
 **Descrição**, prazo, requisitos/documentação, canais/como acessar, legislação, arquivos p/ download.
 Concatenar os `panel-body` (strip de tags/entidades via html5ever) dá descrição limpa de ~400–1.300 chars.
 (Há também um `var states=[...]` de autocomplete com os 472 títulos — ignorar; é ruído.)
 
 ## Público (`codTipoPessoa`)
+
 Frequência nos 472: **7**=287, **6**=145, **22**=26, **8**=21. Semântica observada:
+
 - `6` = Pessoa Física / Cidadão (ex. tema "IPTU/TLP")
 - `7` = Pessoa Jurídica (títulos com sufixo "- PJ"; tema "IPTU/TLP - PJ")
 - `8` = pessoa jurídica/negócios (REDESIM, Junta Comercial, SEBRAE, TERRACAP, TARF)
 - `22` = nichos (NOTA FISCAL AVULSA, PRODUTOR RURAL, FEIRANTE AMBULANTE, REFORMA TRIBUTÁRIA)
 
 ## TLS / rede — ⚠️ WAF por fingerprint (JA3)
+
 - O host **reseta a conexão do `ureq`** (rustls e native-tls: `Connection reset by peer`), mas responde
   **200 ao `curl`** (OpenSSL) com o mesmo UA/URL → allowlist por **fingerprint TLS (JA3)**, exatamente
   como o GO. Solução: toda a coleta via `kit::http::get_via_curl` (subprocess curl; requer curl no PATH).
 - A cadeia de certificados em si fecha (curl `ssl_verify_result=0`); o bloqueio é do ClientHello do ureq.
 
 ## Identidade / chaves
+
 - Identidade estável do serviço = `codServico`.
 - Link = `https://www.receita.fazenda.df.gov.br/aplicacoes/CartaServicos/servico.cfm?codServico={cs}&codTipoPessoa={tp}&codSubCategoria={sc}`.
 - Órgão = "SEFAZ-DF" (Subsecretaria da Receita / SEEC-DF).
 
 ## Molde de referência
+
 Novo molde "ColdFusion CartaServicos": listagem = árvore JS única (parse por regex dos tuplos
 `{'url':...,'desc':...}` + chave-pai = classe), detalhe = accordion `panel-body`. Extração de texto
 = mesmo `html_to_text` (strip + html5ever) de GO/ES/TO/MA/AP/AC.
 
 ## Decisões pendentes (levar ao usuário)
+
 1. **Riqueza**: rico (472 fetches de detalhe, ~5 min, cacheado) vs listagem-só (472 títulos + classe, instantâneo).
 2. **Público**: split Cidadão/Empresa (via `codTipoPessoa`) vs público único "Serviços".
 3. **classe**: subcategoria imediata (parse confiável, 163) — default proposto.
-
 
 ---
 
@@ -753,7 +765,6 @@ embutidos acima.
 - [x] Contagem dinâmica documentada: **`resultTotal` = 45** (invariante).
 - [x] Nenhuma linha de scraper; nenhuma autenticação (Acesso Cidadão intocado).
 
-
 ---
 
 <a id="ma"></a>
@@ -843,7 +854,6 @@ Para os 27 com `idConteudo`: → `{titulo, descricao (HTML), introducao, …}`. 
 Em `scratchpad/ma/`: `main.*.js` (bundle Angular, creds + apiUrl + interceptor), `all.json` (38
 serviços), conteudo 3171, `inter.pem` (intermediário GlobalSign), `cap.mjs` (captura do XHR real).
 
-
 ---
 
 <a id="pa"></a>
@@ -891,7 +901,7 @@ inutilizável.
 `www.paradigital.pa.gov.br` é uma **SPA Quasar/Vue** (`#q-app`, `app.270248a1.js`). O bundle revela o
 interceptor axios que monta toda URL como:
 
-```
+```text
 BASE = https://para-digital.sistemas.pa.gov.br/para-digital-service/portal
 ```
 
@@ -1005,7 +1015,6 @@ Angular do site novo), `wptypes-*.json` (WP 401). Endpoints e exemplos embutidos
 - [x] Recomendação de fonte canônica fundamentada (cobertura + profundidade + frescor + disponibilidade).
 - [x] Nenhuma linha de scraper; nenhuma tentativa de autenticação.
 
-
 ---
 
 <a id="pb"></a>
@@ -1013,11 +1022,13 @@ Angular do site novo), `wptypes-*.json` (WP 401). Endpoints e exemplos embutidos
 # Descoberta — SEFAZ-PB (Paraíba), 24ª entidade
 
 ## Fonte
+
 - Portal institucional: `https://www.sefaz.pb.gov.br/` = **Joomla** (generator "Envolute", `com_content`).
 - **Carta de Serviços** (fonte real): `https://cartaservico.sefaz.pb.gov.br/` — app **PHP** server-rendered
   (Apache, PHP/7.4). `servicos.php` = listagem; `saibamais.php?id=N` = ficha do serviço.
 
 ## Listagem (`servicos.php`)
+
 - Accordion aninhado: **categoria de topo → público ("Para Empresa"/"Para o Cidadão") → subcategoria →
   serviço** (`<li><a href="saibamais.php?id=N">Título</a></li>`).
 - **101 serviços** (id 1..101). Cada id aparece **2×** na listagem (uma árvore por público) → dedup por id.
@@ -1025,14 +1036,17 @@ Angular do site novo), `wptypes-*.json` (WP 401). Endpoints e exemplos embutidos
   rótulo de público. ~51 classes distintas (fino mas fiel, como DF/142).
 
 ## Ficha (`saibamais.php?id=N`) — rica
+
 Ficha estruturada com pares `<h3>Rótulo:</h3><h6 class="h6">Valor</h6>`:
 **O que é o serviço**, **Público-alvo**, Forma de prestação, Taxa, Agendamento, Exigências, Quanto
 tempo leva, Etapas do serviço, Documentação necessária, Unidades Físicas, Horário de Atendimento,
 Contato, Informações adicionais. Além disso:
+
 - **título** em `<div class="inputbutton01" title="…">` (nome completo do serviço);
 - **link real** do serviço em `onclick="redireciona('id','URL')"` (o botão ACESSAR SERVIÇO).
 
 ## Modelagem (molde TO/DF, rico)
+
 - `titulo` e `descricao` vêm do detalhe; descrição = os pares (menos o Público-alvo) + "Acessar o
   serviço: {URL}"; campos vazios ("-") descartados.
 - **público** = campo "Público-alvo" da ficha (lista por vírgula → Cidadão/Empresa, per-serviço).
@@ -1040,13 +1054,14 @@ Contato, Informações adicionais. Além disso:
 - `ocorrencias` = público-alvo × classe (1–2 por serviço).
 
 ## Rede / TLS
+
 - `cartaservico.sefaz.pb.gov.br` responde 200 em HTTPS padrão (Apache); UA AuliBot aceito. Sem gotcha
   de fingerprint (ureq funciona, diferente de GO/DF).
 
 ## Decisão
+
 Sem fork relevante: catálogo genuinamente rico (101 fichas estruturadas) → **buscar os 101 detalhes**
 (molde TO/DF), público vindo do próprio dado. Sem headless.
-
 
 ---
 
@@ -1055,12 +1070,14 @@ Sem fork relevante: catálogo genuinamente rico (101 fichas estruturadas) → **
 # Descoberta — SEFAZ-RN (Rio Grande do Norte)
 
 ## Fonte
+
 - Portal: `https://www.sefaz.rn.gov.br/` = **WordPress** (tema `govrn_adi`) hospedando um **SPA React**
   (create-react-app: `static/js/main.chunk.js`). Conteúdo renderizado client-side; o mesmo shell de
   8,6 KB é servido para qualquer rota (`/servicos/...` etc.).
 - **WP REST API pública** (`/wp-json/`, 200). O React consome custom post types via `wp/v2`.
 
 ## O que existe de "serviço"
+
 - CPT **`servicos`** (`/wp-json/wp/v2/servicos`, **X-WP-Total = 15**): são **cards de atalho** da home,
   não uma Carta. Cada item = `title` + `acf.categories` (taxonomia WP) + `acf.link` (destino) +
   `acf.local_exibicao` (DESTAQUE / MAIS ACESSADOS). **Sem `content`/`excerpt`** (ambos vazios).
@@ -1073,24 +1090,26 @@ Sem fork relevante: catálogo genuinamente rico (101 fichas estruturadas) → **
   notícia/informação, **não** um catálogo de serviços estruturado.
 
 ## UVT (o "catálogo transacional")
+
 - `uvt.sefaz.rn.gov.br` = app **AngularJS / IIS** (Microsoft-IIS/10.0; `js/core.js`+`components.js`
   hand-built, rotas `#/services/...` com `templateUrl` hardcoded) sobre `usuarios-api.sefaz.rn.gov.br`.
 - É **transacional** (login, emitir certidão, consultar contribuinte, agendamento) — **não** expõe uma
   lista/catálogo público de serviços com descrições. `usuarios-api` sem swagger; `/api/servicos` = 404.
 
 ## Conclusão
+
 RN **não tem uma Carta de Serviços descritiva** (como DF/CE/BA/TO). O único catálogo estruturado é o
 CPT `servicos` = **15 cards menu-only** (título + categoria + link, sem descrição própria). Isso é o
 molde **"vazia (menu-only)"** da frota (RJ/PE) — só que via API JSON limpa (WP REST), não HTML.
 
 ## Decisões (levar ao usuário)
+
 1. **A — Menu-only (15 cards, descrição vazia):** molde RJ/PE. Título + categoria + link via WP REST.
    Rápido, consistente, mas 15 itens e a maioria são só links externos.
 2. **B — Menu-only + enriquecer os 5 que apontam para `/postagem/`** (buscar `acf['Matéria']`): 5 ricos,
    10 só link. Aproveita o conteúdo disponível, mas fica inconsistente (descrição só em 1/3).
 3. **C — Não integrar RN agora:** não há Carta descritiva; o catálogo real (UVT) é transacional e fora
    do escopo. Reavaliar se/quando o RN publicar uma Carta.
-
 
 ---
 
@@ -1126,7 +1145,7 @@ seja necessário.
 
 O shell de `agenciavirtual.sefin.ro.gov.br/` traz `window.SYDLE.config` (Sydle ONE, como CE/PI):
 
-```
+```text
 BASE_API_URL          = https://sydleone.sefin.ro.gov.br/api/1/
 APPLICATION_IDENTIFIER = servicedesk-embedded   (+ servicedesk-embedded-guest p/ /one-form-guest)
 activityIdentifier    = conecta-360
@@ -1250,7 +1269,6 @@ serviços do catálogo Serviços), `s3.json`/`full.json` (amostras de detalhe), 
 - [x] Contagens dinâmicas por catálogo documentadas (via `hits.total` do `_search`).
 - [x] Nenhuma linha de scraper; nenhum refactor do CE; nenhuma autenticação.
 
-
 ---
 
 <a id="rr"></a>
@@ -1258,6 +1276,7 @@ serviços do catálogo Serviços), `s3.json`/`full.json` (amostras de detalhe), 
 # Descoberta — SEFAZ-RR (Roraima), 27ª entidade
 
 ## Fonte
+
 - Portal: `https://www.sefaz.rr.gov.br/` = site **custom/estático** ("Portal de Aplicações"; JS puro
   `/script.js`, sem CMS/framework). O nav institucional só tem Ouvidoria / Transparência / Downloads —
   **nenhuma seção "Serviços" server-rendered**, nenhuma rota `/servicos` (404).
@@ -1265,8 +1284,10 @@ serviços do catálogo Serviços), `s3.json`/`full.json` (amostras de detalhe), 
   Sintegra, CIPE, GIM…) — sem página "Central de Serviços" (tudo 404) e sem catálogo descritivo próprio.
 
 ## Achado central — catálogo embutido no `script.js`
+
 O `script.js` da home traz um **array `const apps = [{category, title, description, href}, …]`** — um
 catálogo **estruturado com descrição** (molde AP, mas array limpo, chaves não-minificadas):
+
 ```js
 const apps = [
   { category: "cidadao", title: "Certidão Negativa",
@@ -1275,28 +1296,32 @@ const apps = [
   …
 ];
 ```
+
 - **20 entradas** → **16 hrefs distintos** (4 serviços aparecem em `cidadao` E `empresa`: Certidão
   Negativa, Consultar Pagamento DARE, Emissão CIPE, Validação CIPE → 2 ocorrências cada).
 - `category`: empresa (14) / cidadao (6). `description`: 1 linha real (~71–108 chars, "curta").
   `href`: o app real (portalweb GeneXus, ou externo: Detran-RR, IBGE CNAE).
 
 ## Modelagem (molde AP/RN, parse do array JS)
+
 - `titulo` = `title`; `descricao` = `description` (curta); **público** = `category` (Cidadão/Empresa);
   `classe` = "Serviços" (não há eixo de tema); `link` = `href` (identidade, dedup); `ocorrencias` =
   público × classe (o serviço em 2 categorias vira 2 ocorrências).
 - 16 serviços, 20 ocorrências, 2 públicos.
 
 ## FAQ (não usado)
+
 Há um chatbot `faq-chat.php?q=` com Q&A, mas é um **matcher** (retorna a melhor resposta), não um
 catálogo listável — fora de escopo por ora.
 
 ## Rede
+
 - Apache/HTTP2, UA AuliBot aceito. `script.js` é pequeno; sem gotcha aparente.
 
 ## Decisão
+
 Fonte única e limpa (o `apps[]`) → parse direto, sem headless. Descrições curtas (o teto da fonte; os
 apps GeneXus são transacionais, sem detalhe rico). Público = categoria.
-
 
 ---
 
@@ -1305,6 +1330,7 @@ apps GeneXus são transacionais, sem detalhe rico). Público = categoria.
 # Descoberta — SEFAZ-SE (Sergipe), 26ª entidade
 
 ## Fonte
+
 - Portal: `https://www.sefaz.se.gov.br/` = **SharePoint 2013** on-prem (MicrosoftSharePointTeamServices
   15.0; molde do PE). O REST `_api` é anônimo (parcial), mas o catálogo real é uma **página HTML**.
 - Menu **SERVIÇOS → CARTAS DE SERVIÇOS** (`manuais_servicos.aspx`) aponta para o catálogo do cidadão:
@@ -1313,7 +1339,9 @@ apps GeneXus são transacionais, sem detalhe rico). Público = categoria.
   de PDFs/ZIPs por tema — arquivos, não texto; `servicos_empresa.aspx` = 404. Tudo isso NÃO é a Carta.)
 
 ## `servicos_cidadao.aspx` — a Carta rica
+
 Página única, **Bootstrap accordion**. **91 serviços**, cada um um painel:
+
 - **Título** no heading: `<a href="#{id}">▾ Título</a>` (o `id` é a âncora/identidade do serviço).
 - **Corpo** em `<div class="panel-collapse collapse" id="{id}"><div class="panel-body">` com campos
   `<p><strong>Rótulo:</strong> valor</p>`: Descrição do serviço, Legislação vinculada, Área responsável,
@@ -1321,6 +1349,7 @@ Página única, **Bootstrap accordion**. **91 serviços**, cada um um painel:
   relacionamento, etc. Corpo típico ~900 chars (mediana), rico.
 
 ## Classe (tema)
+
 Os serviços estão agrupados em 7 accordions-tema (`id="accordion_<tema>"`): DFe, ICMS, ITCMD, IPVA,
 Simples Nacional, Contencioso, Cadastro de Contribuinte. Os 9 serviços "standalone" (Plantão Fiscal,
 Consultas Tributárias, …) vêm ANTES do 1º tema → `classe = tema imediatamente anterior; senão "Serviços
@@ -1328,18 +1357,20 @@ Gerais"`. Distribuição: Cadastro 33, ICMS 17, IPVA 10, Serviços Gerais 9, Con
 DFe 4, ITCMD 4 (= 91).
 
 ## Modelagem (molde PB/AC, rico, 1 GET)
+
 - `titulo` = texto do heading (sem o "▾"); `descricao` = texto do `panel-body` (corte no próximo
   `panel-heading` p/ evitar vazamento; cap ~2500 chars — 1 painel do ITCMD tem ~22 KB de formulário).
 - **público único "Serviços"** (a Carta é geral, cobre PF e PJ dentro dos requisitos — não há eixo de
   audiência por serviço); `classe` = tema; `link` = `servicos_cidadao.aspx#{id}` (identidade, único).
 
 ## Rede / TLS
+
 - Apache/SharePoint, HTTPS padrão, UA AuliBot aceito. Sem gotcha de fingerprint (ureq funciona).
 
 ## Decisão
+
 Catálogo genuinamente rico (91 fichas, 1 página) → parse HTML direto, sem headless, sem detalhe por
 serviço. Público único; classe por tema.
-
 
 ---
 
@@ -1434,7 +1465,6 @@ do snapshot é a página `servico_detalhado.aspx?cod={id}`; nunca autenticar nos
 Em `scratchpad/to/`: `home.html`, `lista37.html` (listagem SEFAZ), `det8017.html` (detalhe-modelo),
 `sefaz37.html`. Endpoints e o mapa de `lbl*` acima.
 
-
 ---
 
 <a id="rs-pareceres"></a>
@@ -1495,4 +1525,3 @@ Grava **só o intermediário** `data/rs/ref/rs-pareceres-temp.txt` (numero/assun
 - [x] Ponto crítico (full-form pagination preserva o filtro "Consultas Formais Respondidas"): 372.
 - [x] Detalhe público confirmado (`#DOCContent`).
 - [ ] Estágio de resumo autorado (`-temp.txt` → `rs-portal-pareceres.txt`) — próximo incremento.
-

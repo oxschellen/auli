@@ -11,7 +11,7 @@ num tema para acender as normas que a jurisprudência invoca ao seu redor.
 
 Os dados vêm do pipeline offline do knowledge graph, sobre o acervo do RS:
 
-```
+```bash
 auli-collections rs extrair    # LLM: {dispositivos, ncm, temas} por parecer
 auli-collections rs canonizar  # determinístico: chave canônica dos dispositivos
 auli-collections rs grafo      # determinístico: nós + arestas + layout -> grafo.json

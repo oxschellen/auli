@@ -5,7 +5,7 @@ Single Cargo workspace for the Auli RAG assistant. One binary, two modes; three 
 > **Operations runbook** (compile, build packs, start with ngrok, log locations):
 > [`../auli_operations.md`](../auli_operations.md).
 
-```
+```text
 auli/
 ├── crates/
 │   ├── vector-store/   # bottom — agnostic flat cosine store (Record<P>, ReadStore/Writer split)
