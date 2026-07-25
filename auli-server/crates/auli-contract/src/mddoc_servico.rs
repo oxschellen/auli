@@ -38,7 +38,7 @@ use std::path::Path;
 use anyhow::{Result, bail};
 use serde::{Deserialize, Serialize};
 
-use crate::mddoc::{ANCORA_CORPO, CERCA, colapsa_linha, separa_frontmatter, slug};
+use crate::mddoc::{ANCORA_CORPO, CERCA, colapsa_linha, separa_frontmatter, slug, slug_truncado};
 
 /// Cabeçalho tipado do documento de serviço — a ocorrência primária achatada.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -152,12 +152,22 @@ pub(crate) fn fnv1a64(bytes: &[u8]) -> u64 {
     h
 }
 
-/// Nome de arquivo do serviço: `slug(titulo)-<hash8(link)>`. O hash curto (8 hex
-/// do FNV-1a 64 truncado) desambigua títulos repetidos e sobrevive a renomeações
-/// de título só até o próximo rebuild — a identidade real é o `link`. Título sem
-/// slug (só símbolos) fica só com o hash.
+/// Teto do slug no nome de arquivo do serviço. Existe por causa do **filesystem**, não de
+/// legibilidade: 200 + `-hash8` + `.md` = 212 bytes, dentro do limite de 255 de ext4/APFS com folga.
+/// (A FAQ corta em 60 por outro motivo — a pergunta é uma frase inteira.)
+///
+/// O número foi escolhido para **não renomear nada do que já está materializado**: o maior slug de
+/// serviço nas entidades vivas é 144 (SP). Quem estourava era a BA, com dois títulos de 285 — daí a
+/// truncagem ter chegado só quando ela foi migrar.
+const MAX_SLUG: usize = 200;
+
+/// Nome de arquivo do serviço: `slug(titulo)` (truncado em [`MAX_SLUG`], na última fronteira de
+/// hífen) + `-` + `hash8(link)`. O hash curto (8 hex do FNV-1a 64 truncado) desambigua títulos
+/// repetidos e sobrevive a renomeações de título só até o próximo rebuild — a identidade real é o
+/// `link`. Título sem slug (só símbolos) fica só com o hash.
 pub fn slug_servico(titulo: &str, link: &str) -> String {
     let s = slug(titulo);
+    let s = slug_truncado(&s, MAX_SLUG);
     let h = format!("{:08x}", fnv1a64(link.as_bytes()) as u32);
     if s.is_empty() { h } else { format!("{s}-{h}") }
 }
@@ -303,6 +313,31 @@ mod tests {
         let so_hash = slug_servico("§§§", "https://x/3");
         assert_eq!(so_hash.len(), 8);
         assert!(so_hash.chars().all(|c| c.is_ascii_hexdigit()));
+    }
+
+    /// O caso da BA: dois títulos com slug de 285 chars estouravam o limite de 255 bytes do
+    /// filesystem (`File name too long`, os error 36) na materialização.
+    #[test]
+    fn slug_servico_trunca_titulo_gigante_sem_renomear_os_normais() {
+        // Um título real da BA (encurtado aqui, mas com slug bem acima do teto).
+        let gigante = "Credenciamento - Redução da base de cálculo para uma carga tributária de 4% ao \
+             contribuinte que exerça as atividades de padaria e lojas de delicatessen em relação às \
+             saídas internas de produtos que industrialize, bem como nas saídas de mercadorias \
+             adquiridas para revenda no próprio estabelecimento";
+        let nome = slug_servico(gigante, "https://x/1");
+        assert!(nome.len() <= MAX_SLUG + 9, "nome com {} bytes: {nome}", nome.len());
+        assert!(slug(gigante).len() > MAX_SLUG, "o caso precisa realmente estourar");
+        let trecho = &nome[..nome.len() - 9]; // tira o `-hash8`
+        assert!(!trecho.ends_with('-'), "hífen pendurado no corte: {nome}");
+        assert!(slug(gigante).starts_with(trecho), "o corte é prefixo do slug");
+        // Links diferentes seguem distinguindo, mesmo com o título truncado igual.
+        assert_ne!(nome, slug_servico(gigante, "https://x/2"));
+
+        // A GUARDA CONTRA CHURN: o maior slug em produção é 144 (SP). Nada nessa faixa muda de nome.
+        let de_144 = "a".repeat(144);
+        let nome_144 = slug_servico(&de_144, "https://x/3");
+        assert!(nome_144.starts_with(&de_144), "144 chars não pode truncar: nada em produção renomeia");
+        assert_eq!(nome_144.len(), 144 + 9, "só o sufixo `-hash8` entra");
     }
 
     #[test]

@@ -289,6 +289,22 @@ pub fn slug(numero: &str) -> String {
     out
 }
 
+/// Trunca um slug (ASCII puro: `[a-z0-9-]`, então fatiar por byte é seguro) na última fronteira de
+/// hífen dentro de `max`; sem hífen no trecho, corte seco. Nunca devolve hífen pendurado no fim.
+///
+/// Serve os dois nomeadores de árvore ([`crate::mddoc_faq::slug_faq`] e
+/// [`crate::mddoc_servico::slug_servico`]), com limites diferentes: a FAQ corta curto por legibilidade
+/// (a pergunta é uma frase), o serviço corta só onde o filesystem exige.
+pub(crate) fn slug_truncado(s: &str, max: usize) -> &str {
+    if s.len() <= max {
+        return s;
+    }
+    match s[..max].rfind('-') {
+        Some(i) => &s[..i],
+        None => &s[..max],
+    }
+}
+
 /// Dobra um caractere acentuado para ASCII. Cobre o pt-BR e os ordinais (`º`/`ª`) que aparecem nos
 /// números de parecer (`nº` → `no`). Devolve iterador porque `ß`/`æ` viram dois caracteres.
 fn sem_acento(c: char) -> impl Iterator<Item = char> {

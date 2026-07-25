@@ -30,7 +30,7 @@ use std::path::Path;
 use anyhow::{Result, bail};
 use serde::{Deserialize, Serialize};
 
-use crate::mddoc::{ANCORA_CORPO, CERCA, colapsa_linha, separa_frontmatter, slug};
+use crate::mddoc::{ANCORA_CORPO, CERCA, colapsa_linha, separa_frontmatter, slug, slug_truncado};
 use crate::mddoc_servico::fnv1a64;
 
 /// Cabeçalho tipado do documento de FAQ.
@@ -142,18 +142,6 @@ pub fn slug_faq(pergunta: &str, url: &str) -> String {
     let s = slug_truncado(&s, 60);
     let h = format!("{:08x}", fnv1a64(format!("{url}\n{pergunta}").as_bytes()) as u32);
     if s.is_empty() { h } else { format!("{s}-{h}") }
-}
-
-/// Trunca um slug (ASCII puro: `[a-z0-9-]`, então fatiar por byte é seguro) na
-/// última fronteira de hífen dentro de `max`; sem hífen no trecho, corte seco.
-fn slug_truncado(s: &str, max: usize) -> &str {
-    if s.len() <= max {
-        return s;
-    }
-    match s[..max].rfind('-') {
-        Some(i) => &s[..i],
-        None => &s[..max],
-    }
 }
 
 /// **Regenera a árvore inteira**: apaga `dir` (se existir), recria e grava um
