@@ -556,6 +556,82 @@ Portal `www.sefaz.rr.gov.br` = site custom sem catálogo server-rendered. Descob
   acumulando o outro público). O FAQ (`faq-chat.php`) é matcher, não catálogo → fora de escopo.
 - 16 serviços, 20 ocorrências (Empresa 14 / Cidadão 6), 2 públicos. 3 testes.
 
+## 27. Resíduos das TAREFAs concluídas — os `TAREFA-*.md` foram apagados (2026-07-25)
+
+As cinco especificações abaixo foram entregues e mergeadas, e os arquivos saíram da raiz do repo.
+Esta seção guarda **só o que não está no código**: o que ficou em aberto, e os pontos em que a spec
+divergia da implementação final. Onde houver divergência, **o código é a verdade** — a spec ficou
+congelada no plano.
+
+### TAREFA-SERVICOS-MD (PR #107) e TAREFA-FAQS-MD (PR #108) — ✅ entregues
+
+Serviços e FAQs viraram árvores `.md` (`data/<id>/docs/{servicos,faqs}/*.md`), a FONTE do
+`auli update`, irmãs da de pareceres. As 27 entidades migraram na campanha de jul/2026 — cada
+migração exigiu **re-raspar**, porque a árvore deriva do snapshot e as entidades materializadas antes
+dessa fronteira não tinham um (daí [scripts/migrar-arvore-servicos.sh](scripts/migrar-arvore-servicos.sh)).
+A campanha rendeu um efeito colateral: 13 das 25 entidades voltaram com o catálogo corrigido, porque
+os portais tinham mudado desde a coleta anterior.
+
+**Aberto — os dois fallbacks de transição (D9) em [update.rs](auli-server/crates/auli-cli/src/update.rs):**
+
+1. **`servicos` (≈ linha 81)** — só o **`ap`** ainda cai nele. O portal `www.sefaz.ap.gov.br` está fora
+   do ar: o subdomínio `sefaz.ap.gov.br` dá **SERVFAIL** no DNS autoritativo (o `ap.gov.br` responde
+   normal, e `www.portal.ap.gov.br` está de pé — é específico da SEFAZ) e o IP em cache
+   `189.80.120.26` não responde a ping nem TCP/443. Quando voltar:
+   `scripts/migrar-arvore-servicos.sh ap` e então o fallback pode sair.
+2. **`faqs` (≈ linha 61)** — **o ramo já é inalcançável e o aviso é enganoso.** Só o RS tem FAQs, e o
+   RS já tem a árvore; as outras 26 entidades não têm nem árvore nem `<id>-faqs.json`, então o
+   `ingest` do fallback nunca acha arquivo — mas o `⚠️ <id>: sem árvore docs/faqs — rode process para
+   migrar` é impresso em toda rodada de `update`, recomendando algo que não existe para fazer. **Este
+   pode ser removido agora**, sem esperar o `ap`.
+
+### TAREFA-FAQ-PR (PR #109) — ✅ entregue
+
+A key de embedding das FAQs passou de `breadcrumb + pergunta` para `assunto + P: pergunta + R: resposta`
+(`compose_faq_text_to_embed`). `STRATEGY_VERSION` **resetado 4 → 1** (D-FAQPR-7), todas as entidades
+re-vetorizadas, smoke aprovado em 2026-07-25: o top-1 de _"quero emitir certidão de regularidade
+fiscal"_ é uma FAQ cujo breadcrumb diz `2. IPVA ou Veículos` — pela fórmula antiga o contexto
+indexado apontava para o lado errado. É o caso exato que a TAREFA existia para resolver.
+
+**Duas decisões da spec foram superadas na execução:**
+
+- **D-FAQPR-5 revogada.** A spec proibia truncamento silencioso e mandava erro alto agregado. Decisão
+  do Carlos: **truncar em 8192 tokens + avisar**, nomeando os `.md` afetados (`avisar_faqs_truncadas`).
+  Hoje nenhuma FAQ chega perto do teto.
+- **D-FAQPR-4 superada.** O estimador `chars/4` deu lugar ao **tokenizer real** do fastembed
+  (`Embedder::conta_tokens`), e `EMBED_MAX_TOKENS` subiu para **8192** (o `max_length` era 512).
+
+**Aberto:** `data/eval/faq_pr_consultas.txt` — 32 consultas reais colhidas dos `logs/`, 22 delas
+rotuladas com fragmentos aceitáveis. É o insumo dos harnesses
+`crates/auli-cli/tests/{ab_faq_pr,ab_pool}.rs`, e mora **só em disco**: `data/*` é gitignored. O
+conjunto rotulado custou trabalho manual (pooling estilo TREC) e não sobrevive à perda da máquina.
+Já **encerrado:** não existe mais nenhum manifesto `strategy_version: 4` — a janela de rollback do
+P6.3 fechou.
+
+### TAREFA-EXTRACAO + TAREFA-CANONIZADOR (PRs #104–#106) — ✅ entregues, **só no RS**
+
+Pipeline do knowledge graph em três subcomandos do `auli-collections`: **`extrair`** (LLM, one-shot)
+→ **`canonizar`** (determinístico) → **`grafo`** (determinístico). Números reais do RS:
+372/372 pareceres extraídos com **zero falhas** (`erros.jsonl` nem chegou a existir); **1.894
+ocorrências** de dispositivo colapsadas em **719 chaves canônicas**; `grafo.json` com 113 nós
+(97 dispositivos + 16 temas).
+
+**Spec desatualizada:** o D7 da EXTRACAO fixava `max_completion_tokens = 2048`. O valor real é
+**16384**, com resgate `reasoning_effort: low` no retry — com 2048 o gpt-oss entrava em runaway de
+reasoning e estourava o teto sem emitir o JSON.
+
+**Aberto:**
+
+- **Cauda dura: 431 das 1.894 ocorrências (22,7%)** ficaram `canonizavel: false`, dentro da previsão
+  de ~25% da spec. O grosso é **anáfora** (`§ 4º do referido artigo 31`), que por construção não se
+  resolve sem o corpo do parecer — a v2 das regras precisaria de contexto, não de mais regex.
+- **Vocabulário controlado de temas** — declarado fora de escopo nas duas TAREFAs e nunca feito. É o
+  que falta para os temas virarem faceta confiável no grafo, em vez de texto livre do LLM.
+- **Outros estados** — a tabela de aliases de norma (K5) é hardcoded em `ricms-rs`. Rodar SC/PR/SP
+  exige a tabela do regulamento de cada um; o resto do pipeline generaliza.
+
+---
+
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) está no ar com três ferramentas e
