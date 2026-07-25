@@ -12,6 +12,7 @@
 //! concordam — sobre a forma E sobre o caminho/versão/leitura/escrita da fronteira.
 
 pub mod mddoc;
+pub mod mddoc_servico;
 pub mod snapshot;
 pub use snapshot::*;
 
