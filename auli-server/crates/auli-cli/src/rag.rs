@@ -399,6 +399,19 @@ pub async fn exec_all_question(
 
 /// Monta o registro estruturado do log de auditoria: cabeçalho + seções rotuladas
 /// (pergunta original, pergunta anonimizada, resposta e, por fim, o contexto RAG).
+///
+/// **O log em disco é DELIBERADAMENTE ÍNTEGRO: ele contém PII.** `PERGUNTA (ORIGINAL)` guarda o
+/// texto cru do usuário, e `RESPOSTA` guarda a resposta já RESTAURADA (placeholders trocados de
+/// volta pelos valores reais). É intencional: sem o par original/anonimizada lado a lado não há
+/// como auditar o próprio anonimizador — o que ele pegou e, principalmente, o que deixou passar.
+///
+/// Isso **revisa** o §4 (Fase 2, "obrigatório") do plano do `auli-anon`, que mandava persistir só
+/// o texto anonimizado. A contrapartida é que a proteção do log passa a ser de **acesso e
+/// retenção**, não de conteúdo: `log_question` grava com 0700/0600, `logs/` está fora do git, e a
+/// retenção é operada (`auli_operations.md` §7). O que o `auli-anon` garante segue intacto e é
+/// outra coisa: o LLM externo só vê placeholders (Fase 3) e o stdout em nível `info` só mostra a
+/// pergunta anonimizada. **Quem tem leitura deste diretório tem leitura de PII** — tratar como tal
+/// ao copiar, versionar ou compartilhar.
 /// Pura (sem I/O) para ser testável.
 fn format_log_record(
     stamp: &str,
@@ -446,6 +459,15 @@ fn log_question(
     // para a raiz do repo (`$ROOT/logs`) para não depender de onde o binário é lançado.
     let log_dir = std::env::var("AULI_LOG_DIR").unwrap_or_else(|_| "./logs".to_string());
     fs::create_dir_all(&log_dir)?;
+    // O conteúdo é DELIBERADAMENTE íntegro (ver `format_log_record`), então a proteção é de
+    // ACESSO: diretório 0700, arquivos 0600. `create_dir_all` não reaplica modo num diretório que
+    // já existe, daí o `set_permissions` explícito a cada gravação — barato e idempotente, e
+    // conserta sozinho um `logs/` herdado com modo frouxo.
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(&log_dir, fs::Permissions::from_mode(0o700))?;
+    }
     let agora = chrono::Local::now();
     let path = format!("{}/{}.txt", log_dir, agora.format("%Y-%m-%d_%H-%M-%S"));
     let stamp = agora.format("%Y-%m-%d %H:%M:%S").to_string();
@@ -459,7 +481,14 @@ fn log_question(
         answer,
         rag,
     );
-    let mut file = OpenOptions::new().create(true).append(true).open(&path)?;
+    let mut opts = OpenOptions::new();
+    opts.create(true).append(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        opts.mode(0o600); // só vale na CRIAÇÃO; o nome tem timestamp, então todo arquivo é novo
+    }
+    let mut file = opts.open(&path)?;
     debug!("Log da consulta gravado em {}", path);
     writeln!(file, "{}", content)
 }

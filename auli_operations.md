@@ -603,7 +603,7 @@ Há **três** destinos distintos:
 
 | Tipo                    | Onde                                                                   | Conteúdo                                                                                                                                                                                                                |
 | ----------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Q&A do RAG**          | `logs/<AAAA-MM-DD_HH-MM-SS>.txt` na raiz do repo (um arquivo por pergunta) | `Pergunta:` + contexto RAG recuperado + `Resposta:`. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `$AULI_LOG_DIR` (default `./logs` do CWD). O `start_server.sh` exporta `AULI_LOG_DIR=<raiz>/logs` (absoluto), então caem na **raiz do repo**, não em `auli-server/`. |
+| **Q&A do RAG** ⚠️ PII    | `logs/<AAAA-MM-DD_HH-MM-SS>.txt` na raiz do repo (um arquivo por pergunta) | Quatro seções: `PERGUNTA (ORIGINAL)` — **texto cru, com PII** —, `PERGUNTA (ANONIMIZADA)`, `RESPOSTA` (**restaurada**, PII de volta) e `CONTEXTO RAG`. Ver **§7.0**. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `$AULI_LOG_DIR` (default `./logs` do CWD). O `start_server.sh` exporta `AULI_LOG_DIR=<raiz>/logs` (absoluto), então caem na **raiz do repo**, não em `auli-server/`. |
 | **cloudflared**         | `/tmp/auli-cloudflared.log`                                            | saída do túnel Cloudflare (redirecionada pelo `start_server.sh`).                                                                                                                                                       |
 | **Console (`tracing`)** | **stdout/stderr** do terminal (não vai a arquivo)                      | boot, scores, `info/debug/warn`. Controlado por `RUST_LOG`.                                                                                                                                                             |
 
@@ -616,6 +616,41 @@ RUST_LOG=auli_cli=debug ./start_server.sh   # ver arrays de score + prompt RAG c
 ```
 
 > Para gravar também o console em arquivo: `./start_server.sh --no-tunnel 2>&1 | tee logs/console.log`.
+
+### 7.0 ⚠️ `logs/` contém PII — trate como dado pessoal
+
+O log de Q&A é **deliberadamente íntegro**: a seção `PERGUNTA (ORIGINAL)` guarda o texto cru do
+usuário e a `RESPOSTA` guarda a resposta já **restaurada** (os placeholders `[CNPJ_1]` trocados de
+volta pelos valores reais). Isso é escolha, não descuido — sem o par original/anonimizada lado a
+lado não há como auditar o que o `auli-anon` deixou passar. A doutrina está em `format_log_record`
+([rag.rs](auli-server/crates/auli-cli/src/rag.rs)); ela **revisa** o §4 do plano do `auli-anon`, que
+mandava persistir só o texto anonimizado.
+
+O que o `auli-anon` protege é outra fronteira, e segue valendo: o **LLM externo** só vê placeholders
+e o **stdout em nível `info`** só mostra a pergunta anonimizada. O disco não.
+
+Controles compensatórios:
+
+| Controle | Estado |
+| --- | --- |
+| Permissão | `logs/` **0700**, arquivos **0600** — reaplicado a cada gravação pelo `log_question`, então um diretório herdado com modo frouxo se conserta sozinho. |
+| Versionamento | `**/logs/` está no `.gitignore` — nunca vai ao GitHub. Confira com `git check-ignore -v logs/`. |
+| Retenção | **manual** (ver abaixo). Não há expurgo automático. |
+| Cópia/compartilhamento | Quem lê o diretório lê PII. Não colar trecho de log em issue, PR ou chat sem revisar. |
+
+Retenção — o expurgo é seu, e não roda sozinho:
+
+```bash
+find logs -name '*.txt' -mtime +90 -print          # o que sairia (confira ANTES)
+find logs -name '*.txt' -mtime +90 -delete         # expurga o que passou de 90 dias
+```
+
+Para medir a exposição sem imprimir nada (útil antes de compartilhar a pasta):
+
+```bash
+grep -lE '[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}' logs/*.txt | wc -l   # arquivos com CPF
+grep -lE '\[(CPF|CNPJ)_[0-9]+\]' logs/*.txt | wc -l                   # arquivos onde o anon atuou
+```
 
 ### 7.1 Latência por fase (linha `TEMPOS`)
 

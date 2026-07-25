@@ -9,7 +9,16 @@ Estado atual do crate `auli-anon` e do que falta. Complementa o plano em
   Cobertos **14 identificadores estruturados**: CPF, CNPJ numérico, e-mail (nativos do
   cloakrs) + CNPJ alfanumérico, telefone, IE (RS), protocolo, GA/GNRE, RENAVAM, placa, CEP,
   data de nascimento. Recall 100% sobre os estruturados, 0 falsos positivos no controle.
-- **Fase 2** (PR #55): anonimização no log de auditoria (`./logs`) e no stdout, sem IP.
+- **Fase 2** (PR #55): anonimização no **stdout** (o `info!` publica só a pergunta anonimizada) e
+  omissão de IP. **⚠️ Corrigido em 2026-07-25:** esta linha dizia "anonimização no log de auditoria
+  (`./logs`) e no stdout" — o log em disco **nunca foi anonimizado**. Ele grava a pergunta crua em
+  `PERGUNTA (ORIGINAL)` e a resposta já restaurada em `RESPOSTA`, divergindo do §4 do plano, que
+  marcava a persistência anonimizada como *obrigatória*. Auditoria de 118 arquivos: 3 com PII do
+  usuário na pergunta, 1 na resposta (os 26 do `CONTEXTO RAG` são dado institucional de documento
+  público, outra categoria). **Requisito revisto, não corrigido:** o log é deliberadamente íntegro,
+  porque sem o par original/anonimizada lado a lado não há como auditar o que o anonimizador
+  deixou passar. A proteção passou a ser de acesso e retenção — ver `format_log_record` em
+  [rag.rs](auli-server/crates/auli-cli/src/rag.rs) e `auli_operations.md` §7.
 - **Fase 3** (PR #56): anonimização na fronteira do LLM (sanitize→restore), atrás do flag
   `AULI_ANONIMIZAR_LLM` (default on).
 
