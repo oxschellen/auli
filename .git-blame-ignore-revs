@@ -1,0 +1,6 @@
+# Revisões que só mexem em formatação — o `git blame` deve atravessá-las.
+# O GitHub honra este arquivo automaticamente. Localmente, uma vez por clone:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: formata o workspace inteiro com os defaults do rustfmt (114 arquivos)
+95938f5545eec423998828f12699093b77fc18d8
