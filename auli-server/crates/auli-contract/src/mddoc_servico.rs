@@ -23,6 +23,15 @@
 //!
 //! Mesma forma canônica estrita do `mddoc`: somos o único escritor e o único
 //! leitor; um arquivo "quase certo" falha ruidosamente.
+//!
+//! **Normalização deliberada:** os valores do frontmatter passam por
+//! [`crate::mddoc::colapsa_linha`] — corridas de espaço viram um espaço só, porque
+//! um valor de frontmatter tem que caber em UMA linha. O round-trip pela árvore é
+//! portanto lossy para espaço redundante: no acervo do RS, 2 dos 586 títulos
+//! perdem um espaço duplo digitado errado no portal (`"DIRE  - Emissão"` →
+//! `"DIRE - Emissão"`). É o preço da forma canônica, e o efeito no retrieval é
+//! nulo — mas por isso o título servido pode diferir, num espaço, do que o
+//! `<id>-servicos.json` legado carrega enquanto o fallback de transição existir.
 
 use std::path::Path;
 
@@ -225,6 +234,18 @@ mod tests {
         let (h2, corpo) = parse_doc_servico(&render_doc_servico(&h, "")).unwrap();
         assert_eq!(h2, h);
         assert_eq!(corpo, "");
+    }
+
+    #[test]
+    fn frontmatter_colapsa_espaco_redundante_do_titulo() {
+        // Comportamento CONHECIDO e aceito, não acidente: o valor tem que caber em uma linha, então
+        // `colapsa_linha` normaliza. O caso real do RS é este — 2 de 586 títulos com espaço duplo.
+        let h = header("DIRE  - Emissão de DI-RE", "https://x/dire");
+        let (h2, _) = parse_doc_servico(&render_doc_servico(&h, "c")).unwrap();
+        assert_eq!(h2.titulo, "DIRE - Emissão de DI-RE");
+        // E a partir daí é estável: o segundo round-trip não muda mais nada.
+        let (h3, _) = parse_doc_servico(&render_doc_servico(&h2, "c")).unwrap();
+        assert_eq!(h3, h2);
     }
 
     #[test]
