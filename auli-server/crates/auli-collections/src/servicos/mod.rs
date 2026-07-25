@@ -155,6 +155,16 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
 /// agregado e no print, a entrada duplicada some (o que é o objetivo: uma por serviço). Se as
 /// descrições divergirem entre os itens fundidos, a do primeiro vence e o caso é impresso — é
 /// perda real de texto, então não pode acontecer em silêncio.
+///
+/// **Por que "o primeiro vence" e não "a mais longa"** (avaliado e descartado em 2026-07-25).
+/// Medido na frota inteira: só o SP funde (19 itens), e só 3 têm descrição divergente. Nos 3 o
+/// primeiro JÁ É o mais longo — trocar a regra seria no-op sobre o dado real. E o critério é
+/// errado no princípio: as variantes não são truncamentos uma da outra, são textos que o portal
+/// escreve POR CLASSE, então comprimento mede especificidade, não completude. No "PFE - Posto
+/// Fiscal Eletrônico" a mais longa (125) fala de um sub-serviço ("Sistema de Classificação dos
+/// Contribuintes") enquanto a curta (97) é a porta de entrada genérica ("Serviços Eletrônicos
+/// ICMS") — preferir a longa escolheria a descrição mais ESTREITA. "O primeiro" ao menos herda uma
+/// ordem com significado: a da coleta, que segue a listagem do próprio portal.
 fn fundir_duplicatas(items: &[auli_contract::ServicoRaw]) -> Vec<auli_contract::ServicoRaw> {
     let mut out: Vec<auli_contract::ServicoRaw> = Vec::with_capacity(items.len());
     let mut onde: std::collections::HashMap<String, usize> =

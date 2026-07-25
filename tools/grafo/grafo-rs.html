@@ -443,7 +443,7 @@
       const disp=nbSorted(i).filter(([j])=>!isTema(N[j])).slice(0,6);
       const temas=n.nb.filter(([j])=>isTema(N[j])).sort((a,b)=>b[1]-a[1]);
       detail.className='detail';
-      detail.innerHTML=`<div class="d-fam"><span class="dot" style="background:${famColor(n.fam)}"></span>${n.fam}</div>`+
+      detail.innerHTML=`<div class="d-fam"><span class="dot" style="background:${famColor(n.fam)}"></span>${esc(n.fam)}</div>`+
         `<div class="d-disp">${esc(n.label)}</div><div class="d-key">${esc(n.id)}</div>`+
         `<div class="d-nums"><div><div class="n">${n.val}</div><div class="l">pareceres</div></div>`+
         `<div><div class="n">${disp.length}</div><div class="l">co-citados</div></div></div>`+
@@ -468,7 +468,7 @@
     if(!famCount[f])return;
     const row=document.createElement('div'); row.className='leg-row'; row.tabIndex=0;
     row.setAttribute('role','button'); row.setAttribute('aria-pressed','true');
-    row.innerHTML=`<span class="dot" style="background:${famColor(f)}"></span><span>${f}</span><span class="cnt">${famCount[f]}</span>`;
+    row.innerHTML=`<span class="dot" style="background:${famColor(f)}"></span><span>${esc(f)}</span><span class="cnt">${famCount[f]}</span>`;
     const toggle=()=>{ if(dimFam.has(f)){dimFam.delete(f);row.classList.remove('dim');row.setAttribute('aria-pressed','true');}
       else{dimFam.add(f);row.classList.add('dim');row.setAttribute('aria-pressed','false');} draw(); };
     row.onclick=toggle; row.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}};

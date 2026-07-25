@@ -132,6 +132,14 @@ pub fn manifest_path(packs_dir: impl AsRef<Path>, entity: &str) -> std::path::Pa
 /// Agrega FNV-1a sobre a lista **ordenada** de `caminho_relativo` + bytes de cada arquivo — assim o
 /// hash muda se um arquivo mudar, for adicionado, removido ou renomeado. Um único agregado (D2):
 /// barato e detecta qualquer alteração; não diz *qual* arquivo mudou — para isso, re-materializar.
+///
+/// **Sem delimitador entre caminho e conteúdo — aceito, não esquecido.** O fluxo é
+/// `caminho‖conteúdo‖caminho‖conteúdo…`, então em tese dois layouts distintos poderiam produzir a
+/// mesma sequência de bytes (mover um sufixo do nome para o início do corpo). Irrelevante aqui: é
+/// guarda de INTEGRIDADE contra deriva acidental — pack e árvore fora de sincronia —, não hash
+/// resistente a colisão adversarial; e a árvore é escrita só por nós, com nomes gerados por
+/// `slug*`. Se algum dia virar defesa contra adversário, este é o primeiro ponto a consertar (um
+/// `\0` entre os campos resolve) — mas aí o FNV-1a inteiro teria de sair junto.
 pub fn hash_docs_tree(docs_dir: impl AsRef<Path>) -> Result<Option<String>> {
     let dir = docs_dir.as_ref();
     if !dir.exists() {
