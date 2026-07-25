@@ -23,11 +23,11 @@ fn raw_out(data_dir: &str, id: &str, name: &str) -> String {
 /// `portal-servicos.txt`, `servicos-index.json` e os JSONs per-público. Não lê rede — só o snapshot.
 pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos) -> Result<()> {
     let ordem = &coleta.publicos_ordem;
+    let coletados = fundir_duplicatas(&coleta.items);
 
     // 1. Contrato: id sequencial (1..), tipo = público primário, text_to_embed materializado; a
     //    descricao já é o corpo limpo no snapshot.
-    let items: Vec<auli_contract::Servico> = coleta
-        .items
+    let items: Vec<auli_contract::Servico> = coletados
         .iter()
         .enumerate()
         .map(|(i, s)| {
@@ -57,7 +57,7 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
 
     // 2. portal-servicos.txt: um bloco por serviço, breadcrumb `tipo | classe` (tipo = primário).
     let mut portal = String::new();
-    for (i, s) in coleta.items.iter().enumerate() {
+    for (i, s) in coletados.iter().enumerate() {
         let (tipo, classe) = primary_ocorrencia(s, ordem)
             .map(|o| (o.publico.as_str(), o.classe.as_str()))
             .unwrap_or_default();
@@ -76,7 +76,7 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
     println!(
         "Wrote {} ({} serviços únicos)",
         portal_out,
-        coleta.items.len()
+        coletados.len()
     );
 
     // 3. <id>-servicos-index.json: { tipo: nome, filename: slug } na ordem de `publicos_ordem`.
@@ -87,7 +87,7 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
     //    ordem dos items do snapshot; descricao = corpo limpo do snapshot (D-S5).
     for pubx in ordem {
         let mut local: Vec<types::Servico> = Vec::new();
-        for s in &coleta.items {
+        for s in &coletados {
             for oc in s.ocorrencias.iter().filter(|o| o.publico == pubx.nome) {
                 local.push(types::Servico {
                     id: local.len() + 1,
@@ -133,6 +133,72 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
     println!("📄 docs: {} serviços materializados em {}", gravados, docs_dir.display());
 
     Ok(())
+}
+
+/// Funde itens que a árvore veria como o MESMO documento — o mesmo serviço catalogado sob mais de
+/// uma classe —, unindo as ocorrências (sem repetir pares `(publico, classe)` iguais). Ordem
+/// preservada: o primeiro item de cada grupo vence a posição e os campos escalares.
+///
+/// **A chave é o nome de arquivo** (`slug_servico` = `slug(titulo) + hash(link)`), não o par
+/// `(titulo, link)` cru: o slug dobra caixa, acento e pontuação, então "…não Inscritos" e
+/// "…Não Inscritos" no mesmo link são o mesmo `.md`. Fundir por uma chave mais fina deixaria passar
+/// exatamente os casos que a árvore rejeita — o SP tem os dois tipos.
+///
+/// **Por que aqui e não no scraper:** o `link` é a chave natural do snapshot, mas nem todo scraper
+/// dedupa por ele (o SP monta os `ServicoRaw` direto, e lá 43 serviços chegam a compartilhar a URL
+/// de login). Este é o ponto único por onde todos passam. Sem a fusão, o par colide na
+/// materialização da árvore — cujo nome de arquivo é `slug(titulo) + hash(link)` —, e a colisão é
+/// erro alto, não pulo silencioso.
+///
+/// **O que se perde:** nada nos JSONs per-público, que continuam emitindo uma entrada por
+/// `(link, classe)` — as classes secundárias sobrevivem nas ocorrências fundidas. No contrato
+/// agregado e no print, a entrada duplicada some (o que é o objetivo: uma por serviço). Se as
+/// descrições divergirem entre os itens fundidos, a do primeiro vence e o caso é impresso — é
+/// perda real de texto, então não pode acontecer em silêncio.
+fn fundir_duplicatas(items: &[auli_contract::ServicoRaw]) -> Vec<auli_contract::ServicoRaw> {
+    let mut out: Vec<auli_contract::ServicoRaw> = Vec::with_capacity(items.len());
+    let mut onde: std::collections::HashMap<String, usize> =
+        std::collections::HashMap::with_capacity(items.len());
+    let mut divergentes: Vec<&str> = Vec::new();
+
+    for s in items {
+        let chave = auli_contract::mddoc_servico::slug_servico(&s.titulo, &s.link);
+        match onde.get(&chave) {
+            Some(&i) => {
+                let alvo = &mut out[i];
+                if alvo.descricao != s.descricao {
+                    divergentes.push(&s.titulo);
+                }
+                for oc in &s.ocorrencias {
+                    if !alvo
+                        .ocorrencias
+                        .iter()
+                        .any(|o| o.publico == oc.publico && o.classe == oc.classe)
+                    {
+                        alvo.ocorrencias.push(oc.clone());
+                    }
+                }
+            }
+            None => {
+                onde.insert(chave, out.len());
+                out.push(s.clone());
+            }
+        }
+    }
+
+    let fundidos = items.len() - out.len();
+    if fundidos > 0 {
+        println!(
+            "🔗 {fundidos} item(ns) fundido(s) por identidade de arquivo — mesmo serviço em mais de uma classe"
+        );
+    }
+    if !divergentes.is_empty() {
+        println!(
+            "⚠️  descrição divergente entre itens fundidos (vale a do primeiro): {}",
+            divergentes.join("; ")
+        );
+    }
+    out
 }
 
 /// Ocorrência primária de um serviço: a primeira encontrada iterando os públicos na ordem de
@@ -226,6 +292,59 @@ mod tests {
         };
         let oc = primary_ocorrencia(&s, &ordem).unwrap();
         assert_eq!((oc.publico.as_str(), oc.classe.as_str()), ("Cidadãos", "Y"));
+    }
+
+    /// O caso real do SP: o mesmo serviço (mesmo título, mesmo link) listado sob duas classes chega
+    /// como DOIS itens. Sem fundir, os dois disputam o mesmo `.md` e a materialização da árvore erra.
+    #[test]
+    fn fundir_duplicatas_une_ocorrencias_e_preserva_ordem() {
+        let raw = |titulo: &str, link: &str, classe: &str, descricao: &str| {
+            auli_contract::ServicoRaw {
+                titulo: titulo.into(),
+                descricao: descricao.into(),
+                link: link.into(),
+                orgao: "SEFAZ".into(),
+                ocorrencias: vec![auli_contract::Ocorrencia {
+                    publico: "Cidadão".into(),
+                    classe: classe.into(),
+                }],
+            }
+        };
+        let items = vec![
+            raw("SIVEI", "https://x/sivei", "IPVA", "corpo"),
+            raw("Outro", "https://x/outro", "ICMS", "corpo"),
+            raw("SIVEI", "https://x/sivei", "ISENÇÕES", "corpo"),
+            // Mesmo título em link diferente NÃO funde — são serviços distintos.
+            raw("SIVEI", "https://x/sivei-2", "IPVA", "corpo"),
+        ];
+        let out = fundir_duplicatas(&items);
+        assert_eq!(out.len(), 3, "só o par (SIVEI, /sivei) funde");
+        // Ordem preservada: o primeiro de cada par vence a posição.
+        let titulos: Vec<&str> = out.iter().map(|s| s.titulo.as_str()).collect();
+        assert_eq!(titulos, vec!["SIVEI", "Outro", "SIVEI"]);
+        let classes: Vec<&str> = out[0].ocorrencias.iter().map(|o| o.classe.as_str()).collect();
+        assert_eq!(classes, vec!["IPVA", "ISENÇÕES"], "as duas classes sobrevivem");
+
+        // Ocorrência idêntica repetida não duplica.
+        let repetido = vec![
+            raw("A", "https://x/a", "ICMS", "corpo"),
+            raw("A", "https://x/a", "ICMS", "corpo"),
+        ];
+        assert_eq!(fundir_duplicatas(&repetido)[0].ocorrencias.len(), 1);
+
+        // Caixa/acento diferentes no MESMO link também fundem: o slug dobra os dois, então a árvore
+        // os veria como o mesmo `.md` — é o segundo caso real do SP ("não" vs "Não").
+        let caixa = vec![
+            raw("eCND - Débitos não Inscritos", "https://x/ecnd", "ICMS", "corpo"),
+            raw("eCND - Débitos Não Inscritos", "https://x/ecnd", "CERTIDÕES", "corpo"),
+        ];
+        let out = fundir_duplicatas(&caixa);
+        assert_eq!(out.len(), 1, "diferença só de caixa colidiria na árvore");
+        assert_eq!(out[0].ocorrencias.len(), 2);
+
+        // Sem duplicatas, a lista sai intacta (o caso do RS — 586 itens, 0 pares).
+        let intacto = vec![raw("A", "https://x/a", "ICMS", "corpo"), raw("B", "https://x/b", "IPVA", "corpo")];
+        assert_eq!(fundir_duplicatas(&intacto).len(), 2);
     }
 
     #[test]
