@@ -141,8 +141,9 @@ pub fn render_doc_servico(header: &ServicoHeader, corpo: &str) -> String {
 /// FNV-1a 64 bits. Gêmeo do `auli_core::manifest::fnv1a64` — duplicado de
 /// propósito: este crate é "leve" (só serde/serde_json + anyhow/time) e não pode
 /// depender do `auli-core`. Se as constantes mudarem lá, NÃO precisam mudar aqui:
-/// este hash só nomeia arquivos desta árvore.
-fn fnv1a64(bytes: &[u8]) -> u64 {
+/// este hash só nomeia arquivos das árvores deste crate — a de serviços e a de
+/// faqs ([`crate::mddoc_faq`], que reusa esta função).
+pub(crate) fn fnv1a64(bytes: &[u8]) -> u64 {
     let mut h: u64 = 0xcbf29ce484222325;
     for &b in bytes {
         h ^= b as u64;

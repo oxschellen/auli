@@ -42,18 +42,31 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     let writer = Writer::new(&out);
     let mut entries: Vec<CollectionEntry> = Vec::new();
 
-    // faqs: contract Table<Faq> in <source>/<entity>-faqs.json -> pack <entity>-faqs.
-    if let Some(entry) = ingest::<auli_contract::Faq>(
-        &embedder, &writer, &entity, "faqs", &format!("{}-faqs.json", entity), &source, &out,
-    )? {
-        entries.push(entry);
-    }
-    // A árvore `docs/` é a fonte de DUAS coleções — serviços (TAREFA-SERVICOS-MD) e pareceres
-    // (G5b) —, por isso o caminho é montado antes dos dois blocos.
+    // A árvore `docs/` é a fonte de TRÊS coleções — faqs (TAREFA-FAQS-MD), serviços
+    // (TAREFA-SERVICOS-MD) e pareceres (G5b) —, por isso o caminho é montado antes dos blocos.
     let docs_dir = out
         .parent()
         .ok_or_else(|| format!("diretório de packs sem pai: {}", out.display()))?
         .join("docs");
+    // faqs: a FONTE é a árvore `docs/faqs/*.md` (TAREFA-FAQS-MD), regenerada do zero a cada
+    // `process` — faqs mudam no portal. Mesmo fallback de TRANSIÇÃO dos serviços.
+    match preparar_faqs(&docs_dir)? {
+        Some(faqs) => {
+            println!("🔢 faqs: {} registros → vetorizando...", faqs.len());
+            entries.push(ingest_items(&embedder, &writer, &entity, "faqs", &faqs, &out)?);
+        }
+        None => {
+            println!(
+                "⚠️  {entity}: sem árvore docs/faqs — lendo o JSON legado \
+                 (rode `auli-collections {entity} process` para migrar)."
+            );
+            if let Some(entry) = ingest::<auli_contract::Faq>(
+                &embedder, &writer, &entity, "faqs", &format!("{}-faqs.json", entity), &source, &out,
+            )? {
+                entries.push(entry);
+            }
+        }
+    }
     // servicos: a FONTE é a árvore `docs/servicos/*.md` (TAREFA-SERVICOS-MD), regenerada do zero a
     // cada `process` — serviços mudam no portal. Fallback de TRANSIÇÃO: entidade sem árvore ainda lê
     // o `<entity>-servicos.json` com aviso; remover quando todas tiverem sido re-processadas.
@@ -106,6 +119,44 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     println!("📝 Manifesto escrito em {:?}", mpath);
 
     Ok(())
+}
+
+/// Lê a árvore `docs/faqs/*.md` — **a FONTE** (TAREFA-FAQS-MD) — e devolve as faqs prontas para
+/// vetorizar, ou `None` se a entidade não tem árvore (fallback de transição: o chamador cai no JSON
+/// legado com aviso).
+///
+/// `Faq` não tem `id`: a rematerialização é só a struct + o `text_to_embed`, recomposto aqui pelo
+/// ponto único do contrato. Ordem = nome de arquivo, para o pack ser reproduzível.
+fn preparar_faqs(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Faq>>> {
+    let dir = docs_dir.join("faqs");
+    if !dir.exists() {
+        return Ok(None);
+    }
+    let mut caminhos: Vec<std::path::PathBuf> = std::fs::read_dir(&dir)?
+        .filter_map(|e| e.ok().map(|e| e.path()))
+        .filter(|p| p.is_file() && p.extension().is_some_and(|e| e == "md"))
+        .collect();
+    caminhos.sort();
+    if caminhos.is_empty() {
+        return Ok(None);
+    }
+
+    let mut faqs = Vec::with_capacity(caminhos.len());
+    for caminho in &caminhos {
+        let texto = std::fs::read_to_string(caminho)?;
+        let (header, corpo) = auli_contract::mddoc_faq::parse_doc_faq(&texto)
+            .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
+        faqs.push(auli_contract::Faq {
+            text_to_embed: auli_contract::compose_faq_text_to_embed(&header.origin, &header.pergunta),
+            pergunta: header.pergunta,
+            resposta: corpo,
+            origin: header.origin,
+            url: header.url,
+        });
+    }
+
+    println!("📄 docs: {} faqs lidas de {}", faqs.len(), dir.display());
+    Ok(Some(faqs))
 }
 
 /// Lê a árvore `docs/servicos/*.md` — **a FONTE** (TAREFA-SERVICOS-MD) — e devolve os serviços
@@ -393,6 +444,64 @@ mod tests {
         let consultas = preparar_pareceres("xx", &docs).unwrap().unwrap();
         let numeros: Vec<&str> = consultas.iter().map(|c| c.numero.as_str()).collect();
         assert_eq!(numeros, vec!["A 1", "B 2", "C 3"], "ordem deve ser a dos slugs, ordenados");
+    }
+
+    /// Monta uma árvore de FAQS de teste e devolve `docs_dir` (o pai de `faqs/`). Os nomes dos
+    /// arquivos são dados de fora para o teste de ordem poder escolhê-los.
+    fn arvore_faqs(tag: &str, docs: &[(&str, &str, &str)]) -> PathBuf {
+        let base = std::env::temp_dir().join(format!("auli-update-faq-{}-{tag}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        let dir = base.join("docs").join("faqs");
+        std::fs::create_dir_all(&dir).unwrap();
+        for (nome_arquivo, pergunta, origin) in docs {
+            let header = auli_contract::mddoc_faq::FaqHeader {
+                pergunta: (*pergunta).into(),
+                origin: (*origin).into(),
+                url: format!("https://x/{pergunta}"),
+            };
+            let corpo = format!("resposta de {pergunta}");
+            std::fs::write(
+                dir.join(format!("{nome_arquivo}.md")),
+                auli_contract::mddoc_faq::render_doc_faq(&header, &corpo),
+            )
+            .unwrap();
+        }
+        base.join("docs")
+    }
+
+    #[test]
+    fn preparar_faqs_le_arvore_em_ordem() {
+        // Gravadas fora de ordem alfabética: a leitura reordena, para o pack ser reproduzível.
+        let docs = arvore_faqs(
+            "ordem",
+            &[("b-faq", "Segunda", ""), ("a-faq", "Primeira", "Inicial | FAQ")],
+        );
+        let faqs = preparar_faqs(&docs).unwrap().unwrap();
+        assert_eq!(faqs.len(), 2);
+        let perguntas: Vec<&str> = faqs.iter().map(|f| f.pergunta.as_str()).collect();
+        assert_eq!(perguntas, vec!["Primeira", "Segunda"], "ordem = nome de arquivo");
+        let f = &faqs[0];
+        assert_eq!(f.origin, "Inicial | FAQ");
+        assert_eq!(f.url, "https://x/Primeira");
+        assert_eq!(f.resposta, "resposta de Primeira", "resposta == corpo do `.md`");
+        // `text_to_embed` recomposto pelo ponto único do contrato, nos dois ramos.
+        assert_eq!(f.text_to_embed, "Inicial | FAQ Primeira");
+        assert_eq!(faqs[1].origin, "", "origin vazio sobrevive ao round-trip pela árvore");
+        assert_eq!(faqs[1].text_to_embed, "Segunda");
+        let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+    }
+
+    #[test]
+    fn preparar_faqs_none_sem_arvore() {
+        // O gatilho do fallback de transição: sem árvore, o chamador cai no JSON legado.
+        let base = std::env::temp_dir().join(format!("auli-update-faq-vazio-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        std::fs::create_dir_all(&base).unwrap();
+        assert!(preparar_faqs(&base.join("docs")).unwrap().is_none());
+        // Árvore existente porém vazia também é `None` — melhor que gerar um pack vazio.
+        let docs = arvore_faqs("semdocs", &[]);
+        assert!(preparar_faqs(&docs).unwrap().is_none());
+        let _ = std::fs::remove_dir_all(&base);
     }
 
     /// Monta uma árvore de SERVIÇOS de teste e devolve `docs_dir` (o pai de `servicos/`). Os nomes
