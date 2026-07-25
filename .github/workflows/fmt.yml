@@ -1,0 +1,28 @@
+name: fmt
+
+# Guarda da formatação: `cargo fmt --check` no workspace inteiro. Existe porque o repo passou
+# meses sem esse guarda e acumulou 723 divergências — cada crate tocado colhia um pedaço da
+# dívida e virava ruído no diff (ver auli_pendencias.md §28).
+#
+# Barato pelo mesmo critério do scraper-boundary: o rustfmt PARSEIA, não compila — nada de
+# fastembed/ort. O build/test continua rodando localmente.
+#
+# O workspace é `auli-server/`, não a raiz do repo, daí o `--manifest-path`.
+on:
+  pull_request:
+    paths:
+      - "auli-server/**/*.rs"
+      - "auli-server/**/Cargo.toml"
+      - ".github/workflows/fmt.yml"
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: rustfmt disponível
+        run: rustup component add rustfmt && cargo fmt --version
+      - name: cargo fmt --check
+        run: cargo fmt --all --manifest-path auli-server/Cargo.toml -- --check

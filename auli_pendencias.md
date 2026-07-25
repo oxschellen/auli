@@ -632,6 +632,39 @@ reasoning e estourava o teto sem emitir o JSON.
 
 ---
 
+## 28. Dívida de formatação zerada + guarda no CI — ✅ resolvida (2026-07-25)
+
+**O sintoma:** rodar `cargo fmt` num crate qualquer reformatava código alheio e enchia o diff de
+ruído. **A causa não era config:** os 36 crates são edition 2024 na mesma toolchain, e o único
+`rustfmt.toml` do repo (em `auli-collections`) continha apenas os defaults escritos por extenso — mas,
+por ser a única config, fazia aquele crate divergir dos outros 35. O código simplesmente **nunca
+tinha sido formatado**: `cargo fmt --all -- --check` acusava **723 divergências / ~10 mil linhas**.
+
+Foi testado se dava para evitar a reformatação alinhando a config ao estilo já escrito:
+`use_small_heuristics = "Max"` derrubava para 438 hunks, mas as divergências restantes **invertiam de
+direção** (o rustfmt passava a querer colapsar cadeias que o código quebrou). O código era
+inconsistente consigo mesmo ⇒ não havia config que zerasse; qualquer saída passava por uma
+reformatação em massa.
+
+**Decisão: defaults do rustfmt, sem `rustfmt.toml` nenhum** — o padrão do ecossistema, que qualquer
+editor com format-on-save reproduz sem configurar nada. Commit `95938f5` (114 arquivos,
+`+4088/-1136`, só formatação; 430 testes verdes antes e depois, e os 6 warnings do clippy conferidos
+como preexistentes contra o HEAD anterior). O `.git-blame-ignore-revs` (`79048f9`) faz o `git blame`
+atravessá-lo — o GitHub honra sozinho; localmente, uma vez por clone:
+`git config blame.ignoreRevsFile .git-blame-ignore-revs`.
+
+**Guarda:** [.github/workflows/fmt.yml](.github/workflows/fmt.yml) roda `cargo fmt --check` em PR e
+push. Barato pelo mesmo critério do `scraper-boundary`: o rustfmt parseia, não compila (nada de
+fastembed/ort).
+
+**⏳ Risco em aberto — deriva de versão do rustfmt.** Não existe `rust-toolchain.toml`: a máquina do
+Carlos usa 1.96.0 stable e o runner do GitHub usa a stable que estiver instalada nele. O rustfmt é
+estável entre versões, mas se algum dia o CI acusar divergência que não reproduz local, a causa é
+essa — e o remédio é pinar a toolchain (o que também tornaria o build reprodutível, decisão maior que
+afeta todo mundo, por isso não foi feita agora).
+
+---
+
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) está no ar com três ferramentas e
