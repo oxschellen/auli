@@ -105,6 +105,33 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
         println!("Wrote {} ({} serviços)", out, local.len());
     }
 
+    // 5. Árvore `.md` — a FONTE do `auli update` para serviços (TAREFA-SERVICOS-MD). Regenerada do
+    //    zero a cada process: serviços mudam no portal, então não há incremental (D1). Os artefatos
+    //    de `raw/` acima seguem intactos — o frontend consome os per-público, o update lê a árvore.
+    let base = std::path::Path::new(data_dir)
+        .parent()
+        .ok_or_else(|| format!("data_dir sem pai: {data_dir}"))?;
+    let docs_dir = base.join("docs").join("servicos");
+    let docs: Vec<(auli_contract::mddoc_servico::ServicoHeader, String)> = table
+        .items
+        .iter()
+        .map(|s| {
+            (
+                auli_contract::mddoc_servico::ServicoHeader {
+                    titulo: s.titulo.clone(),
+                    tipo: s.tipo.clone(),
+                    classe: s.classe.clone(),
+                    orgao: s.orgao.clone(),
+                    link: s.link.clone(),
+                },
+                s.descricao.clone(),
+            )
+        })
+        .collect();
+    let gravados = auli_contract::mddoc_servico::materializar_arvore(&docs_dir, &docs)
+        .map_err(|e| format!("materialização da árvore de serviços: {e}"))?;
+    println!("📄 docs: {} serviços materializados em {}", gravados, docs_dir.display());
+
     Ok(())
 }
 
@@ -122,13 +149,11 @@ fn primary_ocorrencia<'a>(
 }
 
 /// `text_to_embed` for a service (D2): the breadcrumb `tipo | classe`, the title, and the start of
-/// the description body. Provisional formula — the PLANO leaves the exact `servicos` key as a pending
-/// item; re-vectorization is expected (the goal is retrieval equivalence, not bit-parity).
+/// the description body. A fórmula mora no CONTRATO (`compose_servico_text_to_embed`) porque os dois
+/// lados precisam dela — este produtor e o `auli update`, que a rematerializa ao ler a árvore
+/// `docs/servicos/*.md` (TAREFA-SERVICOS-MD). Aqui fica só a delegação.
 fn servico_text_to_embed(tipo: &str, classe: &str, titulo: &str, body: &str) -> String {
-    let snippet: String = body.chars().take(300).collect();
-    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim())
-        .trim()
-        .to_string()
+    auli_contract::compose_servico_text_to_embed(tipo, classe, titulo, body)
 }
 
 /// One entry of `servicos-index.json` — drives the frontend's audience tabs.
@@ -241,9 +266,12 @@ mod tests {
         .unwrap()
         .expect("snapshot de serviços rs ausente — rode o scraper primeiro");
 
-        let out = std::env::temp_dir().join(format!("auli_golden_{}", std::process::id()));
-        let out = out.to_str().unwrap();
-        std::fs::create_dir_all(out).unwrap();
+        // O temporário imita a forma real `<base>/raw`: o `process` materializa a árvore
+        // `docs/servicos/` no PAI do `data_dir`, e ela precisa cair dentro do temporário.
+        let base = std::env::temp_dir().join(format!("auli_golden_{}", std::process::id()));
+        let out_dir = base.join("raw");
+        std::fs::create_dir_all(&out_dir).unwrap();
+        let out = out_dir.to_str().unwrap();
         if let Some(snap) = &faqs {
             crate::derive_faqs::process("rs", out, &snap.coleta).unwrap();
         }
@@ -305,6 +333,6 @@ mod tests {
             "✅ golden RS: {} agregados + per-público conferidos",
             checked
         );
-        let _ = std::fs::remove_dir_all(out);
+        let _ = std::fs::remove_dir_all(&base);
     }
 }

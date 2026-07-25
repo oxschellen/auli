@@ -12,6 +12,7 @@
 //! concordam — sobre a forma E sobre o caminho/versão/leitura/escrita da fronteira.
 
 pub mod mddoc;
+pub mod mddoc_servico;
 pub mod snapshot;
 pub use snapshot::*;
 
@@ -223,6 +224,20 @@ pub fn compose_text_to_embed(numero: &str, assunto: &str, resumo: &str) -> Strin
     [numero, assunto, resumo].into_iter().filter(|s| !s.is_empty()).collect::<Vec<_>>().join("\n")
 }
 
+/// Key de embedding de um serviço: breadcrumb `tipo | classe` + título + snippet
+/// da descrição (300 chars). Vive no contrato porque os DOIS lados precisam dela:
+/// o produtor (`servicos::process`) ao materializar, e o `auli update` ao
+/// rematerializar na leitura da árvore `docs/servicos/*.md`.
+pub fn compose_servico_text_to_embed(
+    tipo: &str,
+    classe: &str,
+    titulo: &str,
+    descricao: &str,
+) -> String {
+    let snippet: String = descricao.chars().take(300).collect();
+    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim()).trim().to_string()
+}
+
 /// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
 ///
 /// MESMO formato do `stored_repr` gordo, byte a byte — é esse o invariante da G3 (o contexto RAG
@@ -281,6 +296,20 @@ mod tests {
         let block = s.stored_repr();
         assert!(block.starts_with("## pergunta\nEmpresas | ICMS\nEmitir guia"));
         assert!(block.contains("Link: https://exemplo/svc/1"));
+    }
+
+    #[test]
+    fn compose_servico_congela_a_formula_e_corta_em_300_chars() {
+        // Literal esperado, não recomputado: mudar a fórmula exige re-vetorizar os
+        // packs de serviços, então a mudança tem que doer aqui primeiro.
+        assert_eq!(
+            compose_servico_text_to_embed("Empresas", "ICMS", "Emitir guia", "Passos para emitir."),
+            "Empresas | ICMS\nEmitir guia\nPassos para emitir."
+        );
+        // Snippet: 300 chars da descrição, contados em CHARS (não bytes — há acentos).
+        let descricao = "á".repeat(400);
+        let key = compose_servico_text_to_embed("Cidadãos", "IPVA", "Guia", &descricao);
+        assert_eq!(key, format!("Cidadãos | IPVA\nGuia\n{}", "á".repeat(300)));
     }
 
     #[test]

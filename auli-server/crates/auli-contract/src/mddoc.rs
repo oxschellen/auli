@@ -36,9 +36,9 @@ use serde::{Deserialize, Serialize};
 use crate::SinopseInfo;
 
 /// Delimitador do frontmatter e âncoras das seções (início de linha).
-const CERCA: &str = "---";
+pub(crate) const CERCA: &str = "---";
 const ANCORA_SINOPSE: &str = "## sinopse";
-const ANCORA_CORPO: &str = "## corpo";
+pub(crate) const ANCORA_CORPO: &str = "## corpo";
 
 /// Cabeçalho tipado do documento — o que vive no frontmatter.
 ///
@@ -55,7 +55,7 @@ pub struct DocHeader {
 
 /// Colapsa o valor em **linha única**: qualquer corrida de espaços/quebras vira um espaço só.
 /// Os valores do frontmatter são escalares de uma linha; as ementas já vivem assim no `.txt`.
-fn colapsa_linha(s: &str) -> String {
+pub(crate) fn colapsa_linha(s: &str) -> String {
     s.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
@@ -72,7 +72,7 @@ pub fn parse_doc(texto: &str) -> Result<(DocHeader, Option<String>, String)> {
 }
 
 /// Fatia o bloco entre as duas cercas `---`. Devolve `(frontmatter, resto_do_arquivo)`.
-fn separa_frontmatter(texto: &str) -> Result<(&str, &str)> {
+pub(crate) fn separa_frontmatter(texto: &str) -> Result<(&str, &str)> {
     let t = texto.strip_prefix('\u{feff}').unwrap_or(texto); // tolera BOM
     let Some(apos_abertura) = t.strip_prefix(CERCA).and_then(|r| r.strip_prefix('\n')) else {
         bail!("documento não começa com a cerca de frontmatter `---` em linha própria");
