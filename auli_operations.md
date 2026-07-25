@@ -206,6 +206,14 @@ A lista de entidades e o caminho do prompt de cada uma vêm do **registro único
 Cache do BGE-M3. Os lançadores definem `EMBED_CACHE_DIR=<raiz>/models` (caminho **absoluto**,
 CWD-independente — fonte única). Baixa do Hugging Face no 1º uso; depois é reaproveitado (sem rede).
 
+> **⚠️ Execução manual: exporte `EMBED_CACHE_DIR` absoluto.** O default do código é `./models`,
+> **relativo ao CWD**. Um `cargo run` avulso disparado de dentro de `auli-server/` (ou de
+> `auli-server/crates/`) não acha o cache, re-baixa os 560 MB e os deixa num `models/` órfão ali —
+> em silêncio, sem erro. Em 2026-07-25 a faxina encontrou **duas** cópias assim (1,1 GB), criadas em
+> 05/07 e 20/07. O mesmo vale para `AULI_DATA_DIR` (default `./data`), que cria árvores `data/`
+> vazias fora do lugar. Se for rodar um binário na mão, use os lançadores ou exporte os dois
+> caminhos absolutos.
+
 ### 4.4 `.env` (raiz do repo `auli/`)
 
 Carregado via `dotenv` a partir do CWD para cima — por isso um `.env` na raiz do repo (`auli/`) serve
