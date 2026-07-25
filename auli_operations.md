@@ -150,6 +150,24 @@ precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
 > com 512 a resposta seria cortada em silêncio. Texto acima do teto é truncado **com aviso** no
 > `auli update`, nomeando os `.md` afetados — no acervo do RS nenhum item chega lá.
 
+> **Migrar uma entidade para a árvore `docs/servicos/*.md`** (a fonte do `update` desde a
+> TAREFA-SERVICOS-MD). O `process` só deriva do **snapshot**, e as entidades materializadas antes
+> dessa fronteira não têm um — então migrar exige **re-raspar** (`auli-scraper-<id> servicos`), não é
+> derivação offline. Depois do `process`, `build-packs.sh <id>` é **obrigatório**: criar `docs/` muda
+> o `docs_hash` e o boot recusa até os packs baterem. Enquanto a árvore não existe, o `update` cai no
+> `<id>-servicos.json` legado com aviso — fallback de transição, não erro.
+>
+> Vale comparar os artefatos de `raw/` com os de antes: se mudarem, o **portal** mudou (e não a
+> migração). Nas oito primeiras entidades migradas apareceram serviço novo (MG, CE), serviço
+> removido (PE) e mudança de disponibilidade embutida na descrição (PR — o texto do portal carrega
+> "Serviço indisponível no momento" do instante da coleta, então o Auli repete esse status até a
+> próxima).
+>
+> ⚠️ **MG gera churn de nome de arquivo.** O ServiceNow do MG reemite o `sys_id` da URL sem que o
+> serviço mude; como o `link` é a identidade (o hash do nome do `.md` vem dele), cada reemissão
+> renomeia o documento. Não quebra nada (a árvore é delete + rebuild), mas o MG "troca" documentos a
+> cada coleta em que isso acontecer — e links salvos por usuários apodrecem rápido lá.
+
 > **Pareceres / Consultas — pipeline próprio.** Os pareceres (RS) e consultas tributárias (SC/SP/PR)
 > têm scraper dedicado **e** um passo de **sinopse por LLM** entre o derive e a vetorização. O fluxo é
 > mais longo que o de serviços e tem regras próprias de cota, cache e idempotência: **ver §4.5**.
