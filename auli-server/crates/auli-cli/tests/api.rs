@@ -8,7 +8,12 @@ use tower::ServiceExt; // for `oneshot`
 async fn health_returns_200() {
     let app = public_routes();
     let response = app
-        .oneshot(Request::builder().uri("/v1/health").body(Body::empty()).unwrap())
+        .oneshot(
+            Request::builder()
+                .uri("/v1/health")
+                .body(Body::empty())
+                .unwrap(),
+        )
         .await
         .unwrap();
     assert_eq!(response.status(), StatusCode::OK);

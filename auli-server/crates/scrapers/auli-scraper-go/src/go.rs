@@ -115,17 +115,22 @@ pub fn scrape(
     let mut raw: Vec<(String, String)> = Vec::new();
     let mut token: Option<String> = None;
 
-    let servicos_json =
-        fetch_recurso(data_dir, use_cache, &format!("servicosOrgaos/{}", ORGAO_ID), &mut token, &mut raw)?;
+    let servicos_json = fetch_recurso(
+        data_dir,
+        use_cache,
+        &format!("servicosOrgaos/{}", ORGAO_ID),
+        &mut token,
+        &mut raw,
+    )?;
     let orgaos_json = fetch_recurso(data_dir, use_cache, "orgaos", &mut token, &mut raw)?;
     let cats_json = fetch_recurso(data_dir, use_cache, "categorias", &mut token, &mut raw)?;
 
-    let servicos: Vec<Servico> =
-        serde_json::from_str(&servicos_json).map_err(|e| anyhow!("JSON de servicosOrgaos inválido: {e}"))?;
+    let servicos: Vec<Servico> = serde_json::from_str(&servicos_json)
+        .map_err(|e| anyhow!("JSON de servicosOrgaos inválido: {e}"))?;
     let orgaos: Vec<Orgao> =
         serde_json::from_str(&orgaos_json).map_err(|e| anyhow!("JSON de orgaos inválido: {e}"))?;
-    let cats: Vec<CategoriaDef> =
-        serde_json::from_str(&cats_json).map_err(|e| anyhow!("JSON de categorias inválido: {e}"))?;
+    let cats: Vec<CategoriaDef> = serde_json::from_str(&cats_json)
+        .map_err(|e| anyhow!("JSON de categorias inválido: {e}"))?;
 
     let cat_map: HashMap<i64, String> = cats
         .into_iter()
@@ -141,7 +146,10 @@ pub fn scrape(
 
     let (items, orfaos) = build_servicos(&servicos, &cat_map);
     if orfaos > 0 {
-        eprintln!("⚠️  GO: {} serviço(s) sem categoria -> classe '{}'.", orfaos, CLASSE_GERAL);
+        eprintln!(
+            "⚠️  GO: {} serviço(s) sem categoria -> classe '{}'.",
+            orfaos, CLASSE_GERAL
+        );
     }
 
     validar(&items, total_orgao)?;
@@ -152,9 +160,17 @@ pub fn scrape(
     }
 
     let ocorrencias: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
-    println!("GO: {} serviços ({} ocorrências); portal anuncia {}", items.len(), ocorrencias, total_orgao);
+    println!(
+        "GO: {} serviços ({} ocorrências); portal anuncia {}",
+        items.len(),
+        ocorrencias,
+        total_orgao
+    );
 
-    let publicos_ordem = vec![Publico { nome: PUBLICO_NOME.into(), slug: PUBLICO_SLUG.into() }];
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.into(),
+        slug: PUBLICO_SLUG.into(),
+    }];
     Ok((items, publicos_ordem))
 }
 
@@ -204,7 +220,8 @@ fn fetch_recurso(
 /// Obtém o token client_credentials anônimo. Via **ureq** (o host de SSO não tem WAF): é um POST
 /// `x-www-form-urlencoded` (não JSON), então não usa `kit::http::post_json`; monta o agent do kit.
 fn fetch_token() -> Result<String> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
     let basic = basic_auth(CLIENT_SECRET, CLIENT_PASS);
 
     println!("POST token (SSO, sem WAF)");
@@ -220,8 +237,8 @@ fn fetch_token() -> Result<String> {
         match sent {
             Ok(mut resp) => match resp.body_mut().read_to_string() {
                 Ok(s) if !s.trim().is_empty() => {
-                    let t: TokenResp =
-                        serde_json::from_str(&s).map_err(|e| anyhow!("JSON do token inválido: {e}"))?;
+                    let t: TokenResp = serde_json::from_str(&s)
+                        .map_err(|e| anyhow!("JSON do token inválido: {e}"))?;
                     if t.access_token.is_empty() {
                         bail!("token vazio na resposta do SSO");
                     }
@@ -233,7 +250,10 @@ fn fetch_token() -> Result<String> {
             Err(e) => last = anyhow!(e.to_string()),
         }
         if attempt < 3 {
-            eprintln!("⚠️  GO: token tentativa {} falhou ({}); retentando…", attempt, last);
+            eprintln!(
+                "⚠️  GO: token tentativa {} falhou ({}); retentando…",
+                attempt, last
+            );
             std::thread::sleep(delay);
             delay *= 2;
         }
@@ -252,12 +272,24 @@ fn b64(input: &[u8]) -> String {
     const T: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     let mut out = String::with_capacity(input.len().div_ceil(3) * 4);
     for chunk in input.chunks(3) {
-        let b = [chunk[0], *chunk.get(1).unwrap_or(&0), *chunk.get(2).unwrap_or(&0)];
+        let b = [
+            chunk[0],
+            *chunk.get(1).unwrap_or(&0),
+            *chunk.get(2).unwrap_or(&0),
+        ];
         let n = ((b[0] as u32) << 16) | ((b[1] as u32) << 8) | (b[2] as u32);
         out.push(T[((n >> 18) & 63) as usize] as char);
         out.push(T[((n >> 12) & 63) as usize] as char);
-        out.push(if chunk.len() > 1 { T[((n >> 6) & 63) as usize] as char } else { '=' });
-        out.push(if chunk.len() > 2 { T[(n & 63) as usize] as char } else { '=' });
+        out.push(if chunk.len() > 1 {
+            T[((n >> 6) & 63) as usize] as char
+        } else {
+            '='
+        });
+        out.push(if chunk.len() > 2 {
+            T[(n & 63) as usize] as char
+        } else {
+            '='
+        });
     }
     out
 }
@@ -265,7 +297,10 @@ fn b64(input: &[u8]) -> String {
 /// Monta os `ServicoRaw` a partir do array da API, deduplicando por `idServico`. `classe` = nome da
 /// categoria (do `cat_map`, pelo `idCategoriaServico`); `ocorrencias` = uma por categoria (todas sob
 /// o público único "Serviços"); sem categoria conhecida -> "Geral". Retorna `(items, nº de órfãos)`.
-fn build_servicos(servicos: &[Servico], cat_map: &HashMap<i64, String>) -> (Vec<ServicoRaw>, usize) {
+fn build_servicos(
+    servicos: &[Servico],
+    cat_map: &HashMap<i64, String>,
+) -> (Vec<ServicoRaw>, usize) {
     let mut vistos: HashSet<i64> = HashSet::new();
     let mut out: Vec<ServicoRaw> = Vec::new();
     let mut orfaos = 0usize;
@@ -278,8 +313,11 @@ fn build_servicos(servicos: &[Servico], cat_map: &HashMap<i64, String>) -> (Vec<
         if titulo.is_empty() {
             continue;
         }
-        let mut classes: Vec<String> =
-            s.categoria_servico.iter().filter_map(|c| cat_map.get(&c.id).cloned()).collect();
+        let mut classes: Vec<String> = s
+            .categoria_servico
+            .iter()
+            .filter_map(|c| cat_map.get(&c.id).cloned())
+            .collect();
         classes.dedup();
         if classes.is_empty() {
             classes.push(CLASSE_GERAL.to_string());
@@ -287,7 +325,10 @@ fn build_servicos(servicos: &[Servico], cat_map: &HashMap<i64, String>) -> (Vec<
         }
         let ocorrencias = classes
             .into_iter()
-            .map(|classe| Ocorrencia { publico: PUBLICO_NOME.into(), classe })
+            .map(|classe| Ocorrencia {
+                publico: PUBLICO_NOME.into(),
+                classe,
+            })
             .collect();
 
         out.push(ServicoRaw {
@@ -318,7 +359,10 @@ fn html_to_text(html: &str) -> String {
             _ => {}
         }
     }
-    let decoded: String = Html::parse_fragment(&spaced).root_element().text().collect();
+    let decoded: String = Html::parse_fragment(&spaced)
+        .root_element()
+        .text()
+        .collect();
     auli_scraper_kit::clean(&decoded)
 }
 
@@ -335,7 +379,11 @@ fn validar(items: &[ServicoRaw], total_orgao: usize) -> Result<()> {
         );
     }
     if unicos < MIN_SERVICOS {
-        bail!("catálogo capado? só {} serviço(s) (mínimo {}).", unicos, MIN_SERVICOS);
+        bail!(
+            "catálogo capado? só {} serviço(s) (mínimo {}).",
+            unicos,
+            MIN_SERVICOS
+        );
     }
     Ok(())
 }
@@ -354,9 +402,12 @@ mod tests {
     ]"#;
 
     fn cat_map() -> HashMap<i64, String> {
-        [(21i64, "Finanças e Impostos".to_string()), (30i64, "Veículos".to_string())]
-            .into_iter()
-            .collect()
+        [
+            (21i64, "Finanças e Impostos".to_string()),
+            (30i64, "Veículos".to_string()),
+        ]
+        .into_iter()
+        .collect()
     }
 
     #[test]
@@ -381,7 +432,10 @@ mod tests {
     fn fallback_geral_para_sem_categoria() {
         let v: Vec<Servico> = serde_json::from_str(JSON).unwrap();
         let (items, _) = build_servicos(&v, &cat_map());
-        let s102 = items.iter().find(|s| s.link.ends_with("consultar-debitos")).unwrap();
+        let s102 = items
+            .iter()
+            .find(|s| s.link.ends_with("consultar-debitos"))
+            .unwrap();
         assert_eq!(s102.ocorrencias.len(), 1);
         assert_eq!(s102.ocorrencias[0].classe, "Geral");
     }
@@ -400,7 +454,10 @@ mod tests {
     fn link_preserva_slug_cru_com_braille() {
         let v: Vec<Servico> = serde_json::from_str(JSON).unwrap();
         let (items, _) = build_servicos(&v, &cat_map());
-        assert_eq!(items[0].link, "https://www.go.gov.br/servicos/servico/emitir-dare-⠳-difal");
+        assert_eq!(
+            items[0].link,
+            "https://www.go.gov.br/servicos/servico/emitir-dare-⠳-difal"
+        );
     }
 
     #[test]
@@ -410,7 +467,10 @@ mod tests {
             html_to_text("<p>Emitir <b>DARE</b>&nbsp;online. Servi&ccedil;o r&aacute;pido.</p>"),
             "Emitir DARE online. Serviço rápido."
         );
-        assert_eq!(html_to_text("Sem tags &amp; com entidade"), "Sem tags & com entidade");
+        assert_eq!(
+            html_to_text("Sem tags &amp; com entidade"),
+            "Sem tags & com entidade"
+        );
     }
 
     #[test]
@@ -423,11 +483,23 @@ mod tests {
     #[test]
     fn validar_invariante_e_piso() {
         let svc = |id: &str| ServicoRaw {
-            titulo: "t".into(), descricao: String::new(), link: id.into(),
-            orgao: ORGAO.into(), ocorrencias: vec![],
+            titulo: "t".into(),
+            descricao: String::new(),
+            link: id.into(),
+            orgao: ORGAO.into(),
+            ocorrencias: vec![],
         };
         let dois = vec![svc("a"), svc("b")];
-        assert!(validar(&dois, 5).unwrap_err().to_string().contains('5'), "divergência do total");
-        assert!(validar(&dois, 2).unwrap_err().to_string().contains("capado"), "piso estático");
+        assert!(
+            validar(&dois, 5).unwrap_err().to_string().contains('5'),
+            "divergência do total"
+        );
+        assert!(
+            validar(&dois, 2)
+                .unwrap_err()
+                .to_string()
+                .contains("capado"),
+            "piso estático"
+        );
     }
 }

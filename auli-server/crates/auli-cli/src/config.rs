@@ -67,13 +67,19 @@ fn opt(key: &str, default: &str) -> String {
 
 // Optional env var parsed to any `FromStr` type; falls back to `default` if unset or unparsable.
 fn parse_opt<T: std::str::FromStr>(key: &str, default: T) -> T {
-    std::env::var(key).ok().and_then(|v| v.parse().ok()).unwrap_or(default)
+    std::env::var(key)
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(default)
 }
 
 // Optional boolean env var. Recognized truthy/falsy values win; anything else (unset or
 // unrecognized) falls back to `default` — so a typo can't silently flip a privacy-default-on flag.
 fn opt_bool(key: &str, default: bool) -> bool {
-    match std::env::var(key).ok().map(|v| v.trim().to_ascii_lowercase()) {
+    match std::env::var(key)
+        .ok()
+        .map(|v| v.trim().to_ascii_lowercase())
+    {
         Some(v) if matches!(v.as_str(), "true" | "1" | "yes" | "on") => true,
         Some(v) if matches!(v.as_str(), "false" | "0" | "no" | "off") => false,
         _ => default,

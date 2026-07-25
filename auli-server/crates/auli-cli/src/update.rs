@@ -32,10 +32,18 @@ use vector_store::Writer;
 
 use crate::error::Result;
 
-pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option<String>) -> Result<()> {
+pub fn run_update(
+    entity: String,
+    source: PathBuf,
+    out: PathBuf,
+    version: Option<String>,
+) -> Result<()> {
     dotenvy::dotenv().ok();
     let cache_dir = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "./models".to_string());
-    let threads: usize = std::env::var("EMBED_THREADS").ok().and_then(|v| v.parse().ok()).unwrap_or(16);
+    let threads: usize = std::env::var("EMBED_THREADS")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(16);
 
     println!("🧠 Carregando embedder (BGE-M3) de '{}'...", cache_dir);
     let embedder = Embedder::new(cache_dir.into(), threads)?;
@@ -54,7 +62,9 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
         Some(faqs) => {
             avisar_faqs_truncadas(&embedder, &faqs)?;
             println!("🔢 faqs: {} registros → vetorizando...", faqs.len());
-            entries.push(ingest_items(&embedder, &writer, &entity, "faqs", &faqs, &out)?);
+            entries.push(ingest_items(
+                &embedder, &writer, &entity, "faqs", &faqs, &out,
+            )?);
         }
         None => {
             println!(
@@ -62,7 +72,13 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
                  (rode `auli-collections {entity} process` para migrar)."
             );
             if let Some(entry) = ingest::<auli_contract::Faq>(
-                &embedder, &writer, &entity, "faqs", &format!("{}-faqs.json", entity), &source, &out,
+                &embedder,
+                &writer,
+                &entity,
+                "faqs",
+                &format!("{}-faqs.json", entity),
+                &source,
+                &out,
             )? {
                 entries.push(entry);
             }
@@ -74,7 +90,9 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     match preparar_servicos(&docs_dir)? {
         Some(servicos) => {
             println!("🔢 servicos: {} registros → vetorizando...", servicos.len());
-            entries.push(ingest_items(&embedder, &writer, &entity, "servicos", &servicos, &out)?);
+            entries.push(ingest_items(
+                &embedder, &writer, &entity, "servicos", &servicos, &out,
+            )?);
         }
         None => {
             println!(
@@ -82,7 +100,13 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
                  (rode `auli-collections {entity} process` para migrar)."
             );
             if let Some(entry) = ingest::<auli_contract::Servico>(
-                &embedder, &writer, &entity, "servicos", &format!("{}-servicos.json", entity), &source, &out,
+                &embedder,
+                &writer,
+                &entity,
+                "servicos",
+                &format!("{}-servicos.json", entity),
+                &source,
+                &out,
             )? {
                 entries.push(entry);
             }
@@ -93,8 +117,18 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     // `auli-collections <entity> sinopse` preenche a `## sinopse`; aqui só lemos e vetorizamos.
     // Entidade sem árvore -> pulada.
     if let Some(consultas) = preparar_pareceres(&entity, &docs_dir)? {
-        println!("🔢 pareceres: {} registros → vetorizando...", consultas.len());
-        entries.push(ingest_items(&embedder, &writer, &entity, "pareceres", &consultas, &out)?);
+        println!(
+            "🔢 pareceres: {} registros → vetorizando...",
+            consultas.len()
+        );
+        entries.push(ingest_items(
+            &embedder,
+            &writer,
+            &entity,
+            "pareceres",
+            &consultas,
+            &out,
+        )?);
     }
     // notas: sem fonte struct por ora (autoradas) — ausentes até serem modeladas.
 
@@ -139,7 +173,12 @@ fn avisar_faqs_truncadas(embedder: &Embedder, faqs: &[auli_contract::Faq]) -> Re
         }
     }
     if !truncadas.is_empty() {
-        let amostra = truncadas.iter().take(5).cloned().collect::<Vec<_>>().join(", ");
+        let amostra = truncadas
+            .iter()
+            .take(5)
+            .cloned()
+            .collect::<Vec<_>>()
+            .join(", ");
         let reticencias = if truncadas.len() > 5 { ", …" } else { "" };
         println!(
             "⚠️  {} faq(s) acima de {EMBED_MAX_TOKENS} tokens — o excedente NÃO entra no vetor: {amostra}{reticencias}",
@@ -235,7 +274,11 @@ fn preparar_servicos(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Servic
         });
     }
 
-    println!("📄 docs: {} serviços lidos de {}", servicos.len(), dir.display());
+    println!(
+        "📄 docs: {} serviços lidos de {}",
+        servicos.len(),
+        dir.display()
+    );
     Ok(Some(servicos))
 }
 
@@ -249,7 +292,10 @@ fn preparar_servicos(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Servic
 ///
 /// Ordem estável: os arquivos são lidos em ordem de nome, para o pack ser reproduzível — os `id-N`
 /// da coleção não podem dançar entre rodadas.
-fn preparar_pareceres(entity: &str, docs_dir: &Path) -> Result<Option<Vec<auli_contract::Consulta>>> {
+fn preparar_pareceres(
+    entity: &str,
+    docs_dir: &Path,
+) -> Result<Option<Vec<auli_contract::Consulta>>> {
     let dir = docs_dir.join("pareceres");
     if !dir.exists() {
         return Ok(None); // entidade sem pareceres
@@ -274,7 +320,11 @@ fn preparar_pareceres(entity: &str, docs_dir: &Path) -> Result<Option<Vec<auli_c
             pendentes.push(header.numero.clone());
         }
         consultas.push(auli_contract::Consulta {
-            text_to_embed: auli_contract::compose_text_to_embed(&header.numero, &header.assunto, &resumo),
+            text_to_embed: auli_contract::compose_text_to_embed(
+                &header.numero,
+                &header.assunto,
+                &resumo,
+            ),
             numero: header.numero,
             assunto: header.assunto,
             link: header.link,
@@ -284,7 +334,11 @@ fn preparar_pareceres(entity: &str, docs_dir: &Path) -> Result<Option<Vec<auli_c
         });
     }
 
-    println!("📄 docs: {} pareceres lidos de {}", consultas.len(), dir.display());
+    println!(
+        "📄 docs: {} pareceres lidos de {}",
+        consultas.len(),
+        dir.display()
+    );
     recusar_pareceres_sem_sinopse(entity, &pendentes)?;
     Ok(Some(consultas))
 }
@@ -296,7 +350,12 @@ fn recusar_pareceres_sem_sinopse(entity: &str, pendentes: &[String]) -> Result<(
     if pendentes.is_empty() {
         return Ok(());
     }
-    let amostra = pendentes.iter().take(5).cloned().collect::<Vec<_>>().join(", ");
+    let amostra = pendentes
+        .iter()
+        .take(5)
+        .cloned()
+        .collect::<Vec<_>>()
+        .join(", ");
     let reticencias = if pendentes.len() > 5 { ", ..." } else { "" };
     // O manifesto NÃO é gravado nesta recusa (o `Err` corta antes do `write_manifest`). Para uma
     // entidade já vetorizada, a árvore no disco fica À FRENTE do manifesto antigo — e o boot
@@ -339,8 +398,19 @@ where
 
     let bytes = std::fs::read(&src)?;
     let table: Table<P> = serde_json::from_slice(&bytes)?;
-    println!("🔢 {}: {} registros → vetorizando...", kind, table.items.len());
-    Ok(Some(ingest_items(embedder, writer, entity, kind, &table.items, out)?))
+    println!(
+        "🔢 {}: {} registros → vetorizando...",
+        kind,
+        table.items.len()
+    );
+    Ok(Some(ingest_items(
+        embedder,
+        writer,
+        entity,
+        kind,
+        &table.items,
+        out,
+    )?))
 }
 
 /// Núcleo do ingest: embeda `text_to_embed`, guarda `stored_repr` e devolve a entrada de manifesto.
@@ -357,7 +427,10 @@ fn ingest_items<P>(
 where
     P: Embeddable,
 {
-    let to_embed: Vec<String> = items.iter().map(|it| it.text_to_embed().to_string()).collect();
+    let to_embed: Vec<String> = items
+        .iter()
+        .map(|it| it.text_to_embed().to_string())
+        .collect();
     let stored: Vec<String> = items.iter().map(|it| it.stored_repr()).collect();
 
     let name = format!("{}-{}", entity, kind);
@@ -401,7 +474,8 @@ mod tests {
 
     /// Monta uma árvore de teste e devolve `docs_dir` (o pai de `pareceres/`).
     fn arvore(tag: &str, docs: &[(&str, Option<&str>)]) -> PathBuf {
-        let base = std::env::temp_dir().join(format!("auli-update-g5b-{}-{tag}", std::process::id()));
+        let base =
+            std::env::temp_dir().join(format!("auli-update-g5b-{}-{tag}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         let dir = base.join("docs").join("pareceres");
         std::fs::create_dir_all(&dir).unwrap();
@@ -452,16 +526,27 @@ mod tests {
         let err = preparar_pareceres("xx", &docs).unwrap_err().to_string();
         assert!(err.contains("1 documento(s)"), "erro: {err}");
         assert!(err.contains("B 2"), "deve nomear o pendente: {err}");
-        assert!(err.contains("auli-collections xx sinopse"), "deve dar o remédio: {err}");
-        assert!(err.contains("NÃO reinicie o servidor"), "deve avisar da janela: {err}");
+        assert!(
+            err.contains("auli-collections xx sinopse"),
+            "deve dar o remédio: {err}"
+        );
+        assert!(
+            err.contains("NÃO reinicie o servidor"),
+            "deve avisar da janela: {err}"
+        );
     }
 
     #[test]
     fn entidade_sem_arvore_e_pulada() {
-        let base = std::env::temp_dir().join(format!("auli-update-g5b-vazio-{}", std::process::id()));
+        let base =
+            std::env::temp_dir().join(format!("auli-update-g5b-vazio-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         std::fs::create_dir_all(&base).unwrap();
-        assert!(preparar_pareceres("xx", &base.join("docs")).unwrap().is_none());
+        assert!(
+            preparar_pareceres("xx", &base.join("docs"))
+                .unwrap()
+                .is_none()
+        );
     }
 
     #[test]
@@ -473,16 +558,24 @@ mod tests {
     #[test]
     fn ordem_e_estavel_por_nome_de_arquivo() {
         // Os `id-N` do pack derivam da ordem; ela não pode depender do read_dir do SO.
-        let docs = arvore("ordem", &[("C 3", Some("s")), ("A 1", Some("s")), ("B 2", Some("s"))]);
+        let docs = arvore(
+            "ordem",
+            &[("C 3", Some("s")), ("A 1", Some("s")), ("B 2", Some("s"))],
+        );
         let consultas = preparar_pareceres("xx", &docs).unwrap().unwrap();
         let numeros: Vec<&str> = consultas.iter().map(|c| c.numero.as_str()).collect();
-        assert_eq!(numeros, vec!["A 1", "B 2", "C 3"], "ordem deve ser a dos slugs, ordenados");
+        assert_eq!(
+            numeros,
+            vec!["A 1", "B 2", "C 3"],
+            "ordem deve ser a dos slugs, ordenados"
+        );
     }
 
     /// Monta uma árvore de FAQS de teste e devolve `docs_dir` (o pai de `faqs/`). Os nomes dos
     /// arquivos são dados de fora para o teste de ordem poder escolhê-los.
     fn arvore_faqs(tag: &str, docs: &[(&str, &str, &str)]) -> PathBuf {
-        let base = std::env::temp_dir().join(format!("auli-update-faq-{}-{tag}", std::process::id()));
+        let base =
+            std::env::temp_dir().join(format!("auli-update-faq-{}-{tag}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         let dir = base.join("docs").join("faqs");
         std::fs::create_dir_all(&dir).unwrap();
@@ -507,19 +600,35 @@ mod tests {
         // Gravadas fora de ordem alfabética: a leitura reordena, para o pack ser reproduzível.
         let docs = arvore_faqs(
             "ordem",
-            &[("b-faq", "Segunda", ""), ("a-faq", "Primeira", "Inicial | FAQ")],
+            &[
+                ("b-faq", "Segunda", ""),
+                ("a-faq", "Primeira", "Inicial | FAQ"),
+            ],
         );
         let faqs = preparar_faqs(&docs).unwrap().unwrap();
         assert_eq!(faqs.len(), 2);
         let perguntas: Vec<&str> = faqs.iter().map(|f| f.pergunta.as_str()).collect();
-        assert_eq!(perguntas, vec!["Primeira", "Segunda"], "ordem = nome de arquivo");
+        assert_eq!(
+            perguntas,
+            vec!["Primeira", "Segunda"],
+            "ordem = nome de arquivo"
+        );
         let f = &faqs[0];
         assert_eq!(f.origin, "Inicial | FAQ");
         assert_eq!(f.url, "https://x/Primeira");
-        assert_eq!(f.resposta, "resposta de Primeira", "resposta == corpo do `.md`");
+        assert_eq!(
+            f.resposta, "resposta de Primeira",
+            "resposta == corpo do `.md`"
+        );
         // `text_to_embed` recomposto pelo ponto único do contrato — com a RESPOSTA (D-FAQPR-1).
-        assert_eq!(f.text_to_embed, "Inicial | FAQ\nP: Primeira\nR: resposta de Primeira");
-        assert_eq!(faqs[1].origin, "", "origin vazio sobrevive ao round-trip pela árvore");
+        assert_eq!(
+            f.text_to_embed,
+            "Inicial | FAQ\nP: Primeira\nR: resposta de Primeira"
+        );
+        assert_eq!(
+            faqs[1].origin, "",
+            "origin vazio sobrevive ao round-trip pela árvore"
+        );
         assert_eq!(faqs[1].text_to_embed, "P: Segunda\nR: resposta de Segunda");
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
     }
@@ -527,7 +636,8 @@ mod tests {
     #[test]
     fn preparar_faqs_none_sem_arvore() {
         // O gatilho do fallback de transição: sem árvore, o chamador cai no JSON legado.
-        let base = std::env::temp_dir().join(format!("auli-update-faq-vazio-{}", std::process::id()));
+        let base =
+            std::env::temp_dir().join(format!("auli-update-faq-vazio-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         std::fs::create_dir_all(&base).unwrap();
         assert!(preparar_faqs(&base.join("docs")).unwrap().is_none());
@@ -540,7 +650,8 @@ mod tests {
     /// Monta uma árvore de SERVIÇOS de teste e devolve `docs_dir` (o pai de `servicos/`). Os nomes
     /// dos arquivos são dados de fora para o teste de ordem poder escolhê-los.
     fn arvore_servicos(tag: &str, docs: &[(&str, &str)]) -> PathBuf {
-        let base = std::env::temp_dir().join(format!("auli-update-svc-{}-{tag}", std::process::id()));
+        let base =
+            std::env::temp_dir().join(format!("auli-update-svc-{}-{tag}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         let dir = base.join("docs").join("servicos");
         std::fs::create_dir_all(&dir).unwrap();
@@ -570,19 +681,34 @@ mod tests {
         let servicos = preparar_servicos(&docs).unwrap().unwrap();
         assert_eq!(servicos.len(), 2);
         let titulos: Vec<&str> = servicos.iter().map(|s| s.titulo.as_str()).collect();
-        assert_eq!(titulos, vec!["Primeiro", "Segundo"], "ordem = nome de arquivo");
+        assert_eq!(
+            titulos,
+            vec!["Primeiro", "Segundo"],
+            "ordem = nome de arquivo"
+        );
         // `id` rematerializado 1..N na ordem da árvore.
-        assert_eq!(servicos.iter().map(|s| s.id).collect::<Vec<_>>(), vec![1, 2]);
+        assert_eq!(
+            servicos.iter().map(|s| s.id).collect::<Vec<_>>(),
+            vec![1, 2]
+        );
         let s = &servicos[0];
         assert_eq!(s.tipo, "Cidadãos");
         assert_eq!(s.classe, "IPVA");
         assert_eq!(s.orgao, "Receita Estadual");
         assert_eq!(s.link, "https://x/Primeiro");
-        assert_eq!(s.descricao, "descrição de Primeiro", "descricao == corpo do `.md`");
+        assert_eq!(
+            s.descricao, "descrição de Primeiro",
+            "descricao == corpo do `.md`"
+        );
         // `text_to_embed` recomposto pelo ponto único do contrato.
         assert_eq!(
             s.text_to_embed,
-            auli_contract::compose_servico_text_to_embed(&s.tipo, &s.classe, &s.titulo, &s.descricao)
+            auli_contract::compose_servico_text_to_embed(
+                &s.tipo,
+                &s.classe,
+                &s.titulo,
+                &s.descricao
+            )
         );
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
     }
@@ -590,7 +716,8 @@ mod tests {
     #[test]
     fn preparar_servicos_none_sem_arvore() {
         // O gatilho do fallback de transição: sem árvore, o chamador cai no JSON legado.
-        let base = std::env::temp_dir().join(format!("auli-update-svc-vazio-{}", std::process::id()));
+        let base =
+            std::env::temp_dir().join(format!("auli-update-svc-vazio-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         std::fs::create_dir_all(&base).unwrap();
         assert!(preparar_servicos(&base.join("docs")).unwrap().is_none());
@@ -605,8 +732,14 @@ mod tests {
         // D11: entidade que só tem serviços também ganha `docs_hash` — antes ele só existia se
         // houvesse pareceres, e a árvore de serviços ficaria fora da guarda de boot.
         let docs = arvore_servicos("hash", &[("a-svc", "Um")]);
-        assert!(preparar_pareceres("xx", &docs).unwrap().is_none(), "sem pareceres");
-        assert!(manifest::hash_docs_tree(&docs).unwrap().is_some(), "mas com hash");
+        assert!(
+            preparar_pareceres("xx", &docs).unwrap().is_none(),
+            "sem pareceres"
+        );
+        assert!(
+            manifest::hash_docs_tree(&docs).unwrap().is_some(),
+            "mas com hash"
+        );
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
     }
 

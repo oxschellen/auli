@@ -279,7 +279,10 @@ mod tests {
             children: Vec::new(),
             faq_items: items
                 .iter()
-                .map(|(p, r)| FaqItem { pergunta: p.to_string(), resposta: r.to_string() })
+                .map(|(p, r)| FaqItem {
+                    pergunta: p.to_string(),
+                    resposta: r.to_string(),
+                })
                 .collect(),
         }
     }
@@ -308,7 +311,10 @@ mod tests {
 
         let raw = flatten_faqs_raw(&root);
         // Depth-first from the root's children: q1, q2, q3 (a derivação em collections mantém a ordem).
-        assert_eq!(raw.iter().map(|f| f.pergunta.as_str()).collect::<Vec<_>>(), ["q1", "q2", "q3"]);
+        assert_eq!(
+            raw.iter().map(|f| f.pergunta.as_str()).collect::<Vec<_>>(),
+            ["q1", "q2", "q3"]
+        );
         assert_eq!(raw[0].url, "ua");
         assert_eq!(raw[0].origin, "Inicial | A");
         assert_eq!(raw[2].origin, "");

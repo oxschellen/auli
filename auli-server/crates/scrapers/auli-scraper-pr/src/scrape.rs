@@ -12,10 +12,10 @@ use scraper::{Html, Selector};
 use ureq::Agent;
 
 use auli_contract::Publico;
+use auli_contract::ServicoPerPublico as Servico;
 use auli_scraper_kit::PerPublicoServicos;
 use auli_scraper_kit::http::GetOpts;
 use auli_scraper_kit::{clean_decoded, decode_entities};
-use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://www.fazenda.pr.gov.br";
 // Página interna estável com o mega-menu completo (a raiz pode cair numa splash de campanha).
@@ -29,11 +29,27 @@ fn publicos() -> Vec<(&'static str, &'static str, &'static str)> {
     vec![
         ("servicos-tema-cidado", "Cidadão", "servicos-ao-cidadao"),
         ("servicos-tema-empresa", "Empresa", "servicos-a-empresas"),
-        ("servicos-tema-municpio", "Município", "servicos-a-municipios"),
-        ("servicos-tema-produtor-rural", "Produtor rural", "servicos-a-produtores-rurais"),
-        ("servicos-tema-receitapr", "Receita/PR", "servicos-receita-pr"),
+        (
+            "servicos-tema-municpio",
+            "Município",
+            "servicos-a-municipios",
+        ),
+        (
+            "servicos-tema-produtor-rural",
+            "Produtor rural",
+            "servicos-a-produtores-rurais",
+        ),
+        (
+            "servicos-tema-receitapr",
+            "Receita/PR",
+            "servicos-receita-pr",
+        ),
         ("servicos-tema-programas", "Programas", "servicos-programas"),
-        ("servicos-tema-legislao", "Legislação", "servicos-legislacao"),
+        (
+            "servicos-tema-legislao",
+            "Legislação",
+            "servicos-legislacao",
+        ),
     ]
 }
 
@@ -46,13 +62,21 @@ struct MenuItem {
 
 /// Raspa os serviços do PR e devolve os per-público (na ordem do menu) + a ordem dos públicos.
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Vec<Publico>)> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // 1. Seed com o mega-menu.
     let seed = fetch(&agent, data_dir, SEED_URL, use_cache)?;
     let doc = Html::parse_document(&seed);
-    if doc.select(&sel("#block-governodigitalmenuservicosagrupamento")).next().is_none() {
-        bail!("mega-menu 'Serviços para você' ausente no seed {} — layout mudou?", SEED_URL);
+    if doc
+        .select(&sel("#block-governodigitalmenuservicosagrupamento"))
+        .next()
+        .is_none()
+    {
+        bail!(
+            "mega-menu 'Serviços para você' ausente no seed {} — layout mudou?",
+            SEED_URL
+        );
     }
 
     // 2. Parse do menu: 7 públicos -> itens (titulo, link, classe).
@@ -64,7 +88,10 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Ve
         // Uma aba vazia geralmente significa `panel_id` errado (os ids do portal têm typos, ex.
         // `-cidado`/`-municpio`/`-legislao`): sem itens ela some silenciosamente do catálogo.
         if items.is_empty() {
-            eprintln!("⚠️  PR: aba '{}' (painel '{}') veio vazia — id do painel mudou no portal?", nome, panel_id);
+            eprintln!(
+                "⚠️  PR: aba '{}' (painel '{}') veio vazia — id do painel mudou no portal?",
+                nome, panel_id
+            );
         }
         per_pub.push((nome.to_string(), items));
     }
@@ -121,7 +148,10 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Ve
 
     let publicos_ordem = pubs
         .iter()
-        .map(|(_, nome, slug)| Publico { nome: nome.to_string(), slug: slug.to_string() })
+        .map(|(_, nome, slug)| Publico {
+            nome: nome.to_string(),
+            slug: slug.to_string(),
+        })
         .collect();
     Ok((inputs, publicos_ordem))
 }
@@ -140,9 +170,17 @@ fn parse_panel(doc: &Html, panel_id: &str) -> Vec<MenuItem> {
             .map(|a| text(&a))
             .unwrap_or_default();
         for a in grupo.select(&item_sel) {
-            let Some(href) = a.value().attr("href") else { continue };
-            let Some(link) = canonical(href) else { continue };
-            out.push(MenuItem { titulo: text(&a), link, classe: classe.clone() });
+            let Some(href) = a.value().attr("href") else {
+                continue;
+            };
+            let Some(link) = canonical(href) else {
+                continue;
+            };
+            out.push(MenuItem {
+                titulo: text(&a),
+                link,
+                classe: classe.clone(),
+            });
         }
     }
     out
@@ -150,8 +188,10 @@ fn parse_panel(doc: &Html, panel_id: &str) -> Vec<MenuItem> {
 
 /// D-PR3: avisa (sem falhar) se algum link só existe em "Mais buscados" — sumiria do catálogo.
 fn orphan_check(doc: &Html, per_pub: &[(String, Vec<MenuItem>)]) {
-    let coletados: std::collections::HashSet<&str> =
-        per_pub.iter().flat_map(|(_, its)| its.iter().map(|i| i.link.as_str())).collect();
+    let coletados: std::collections::HashSet<&str> = per_pub
+        .iter()
+        .flat_map(|(_, its)| its.iter().map(|i| i.link.as_str()))
+        .collect();
     let mut orfaos = Vec::new();
     for it in parse_panel(doc, "servicos-tema-mais-buscados") {
         if !coletados.contains(it.link.as_str()) && !orfaos.contains(&it.link) {
@@ -161,7 +201,10 @@ fn orphan_check(doc: &Html, per_pub: &[(String, Vec<MenuItem>)]) {
     if orfaos.is_empty() {
         println!("✅ PR: nenhum serviço exclusivo de 'Mais buscados' (D-PR3 ok).");
     } else {
-        eprintln!("⚠️  PR: {} link(s) só em 'Mais buscados' (decisão manual):", orfaos.len());
+        eprintln!(
+            "⚠️  PR: {} link(s) só em 'Mais buscados' (decisão manual):",
+            orfaos.len()
+        );
         for l in &orfaos {
             eprintln!("  - {}", l);
         }
@@ -204,9 +247,7 @@ fn fetch_detail(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Re
     let lateral: String = doc
         .select(&sel("div.col-md-4.col-lg-3 div.servico-info-quadro"))
         .map(|el| clean_text(&strip_tags(&normalize_body_links(&el.inner_html()))))
-        .filter(|t| {
-            t.contains("Forma de atendimento") || t.contains("Quanto custa")
-        })
+        .filter(|t| t.contains("Forma de atendimento") || t.contains("Quanto custa"))
         .collect::<Vec<_>>()
         .join("\n");
     if !lateral.trim().is_empty() {
@@ -301,13 +342,18 @@ fn sel(s: &str) -> Selector {
 /// Busca (ou lê do cache) a página `url`. Em `--usecache` um miss é erro (sem rede). Cortesia entre
 /// fetches de rede.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)? {
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)?
+    {
         return Ok(cached);
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "PR", ..Default::default() },
+        &GetOpts {
+            log_prefix: "PR",
+            ..Default::default()
+        },
     )?;
     auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
     sleep(COURTESY);
@@ -322,7 +368,10 @@ mod tests {
     fn canonical_so_aceita_links_de_servico() {
         assert_eq!(
             canonical("/servicos/Cidadao/Agendamento/Agendar-ybrz"),
-            Some(format!("{}/servicos/Cidadao/Agendamento/Agendar-ybrz", BASE))
+            Some(format!(
+                "{}/servicos/Cidadao/Agendamento/Agendar-ybrz",
+                BASE
+            ))
         );
         // fragmento é descartado
         assert_eq!(
@@ -341,7 +390,10 @@ mod tests {
 
     #[test]
     fn canonical_any_absolutiza_o_corpo() {
-        assert_eq!(canonical_any("https://x.pr.gov.br/a"), "https://x.pr.gov.br/a");
+        assert_eq!(
+            canonical_any("https://x.pr.gov.br/a"),
+            "https://x.pr.gov.br/a"
+        );
         assert_eq!(canonical_any("/Pagina/x"), format!("{}/Pagina/x", BASE));
         assert_eq!(canonical_any("relativo"), "relativo");
     }
@@ -353,15 +405,27 @@ mod tests {
             format!("Clique \"{}/x\"", BASE)
         );
         // âncora vazia -> só a url
-        assert_eq!(normalize_body_links(r#"<a href="/y"></a>"#), format!("\"{}/y\"", BASE));
+        assert_eq!(
+            normalize_body_links(r#"<a href="/y"></a>"#),
+            format!("\"{}/y\"", BASE)
+        );
         // # e javascript: viram só o texto (sem url)
-        assert_eq!(normalize_body_links(r##"<a href="#topo">Ir ao topo</a>"##), "Ir ao topo");
-        assert_eq!(normalize_body_links(r#"<a href="javascript:void(0)">X</a>"#), "X");
+        assert_eq!(
+            normalize_body_links(r##"<a href="#topo">Ir ao topo</a>"##),
+            "Ir ao topo"
+        );
+        assert_eq!(
+            normalize_body_links(r#"<a href="javascript:void(0)">X</a>"#),
+            "X"
+        );
     }
 
     #[test]
     fn decode_entities_e_clean_text() {
-        assert_eq!(decode_entities("&aacute;gua &amp; sal &#39;x&#39;"), "água & sal 'x'");
+        assert_eq!(
+            decode_entities("&aacute;gua &amp; sal &#39;x&#39;"),
+            "água & sal 'x'"
+        );
         assert_eq!(clean_text("  a   linha  \n\n   b  "), "a linha\nb");
     }
 
@@ -401,9 +465,18 @@ mod tests {
         assert_eq!(items.len(), 2);
         assert_eq!(items[0].titulo, "Agendar atendimento na Receita");
         assert_eq!(items[0].classe, "Agendamento");
-        assert_eq!(items[0].link, format!("{}/servicos/Cidadao/Agendamento/Agendar-atendimento-ybrz", BASE));
+        assert_eq!(
+            items[0].link,
+            format!(
+                "{}/servicos/Cidadao/Agendamento/Agendar-atendimento-ybrz",
+                BASE
+            )
+        );
         assert_eq!(items[1].titulo, "Acompanhar as sessões do CCRF");
-        assert_eq!(items[1].classe, "CCRF", "a classe vem do header <a> do agrupador");
+        assert_eq!(
+            items[1].classe, "CCRF",
+            "a classe vem do header <a> do agrupador"
+        );
     }
 
     #[test]

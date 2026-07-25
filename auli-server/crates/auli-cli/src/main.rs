@@ -9,7 +9,11 @@ use std::path::PathBuf;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "auli", version, about = "Auli — assistente RAG tributário (server + update)")]
+#[command(
+    name = "auli",
+    version,
+    about = "Auli — assistente RAG tributário (server + update)"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Command,
@@ -46,10 +50,19 @@ enum Command {
 async fn main() {
     let cli = Cli::parse();
     match cli.command {
-        Command::Server { port, bind, packs_dir } => {
+        Command::Server {
+            port,
+            bind,
+            packs_dir,
+        } => {
             auli_cli::run_server(packs_dir, port, bind).await;
         }
-        Command::Update { entity, source, out, version } => {
+        Command::Update {
+            entity,
+            source,
+            out,
+            version,
+        } => {
             // Synchronous, CPU-bound work — runs to completion on the async entrypoint thread.
             if let Err(e) = auli_cli::run_update(entity, source, out, version) {
                 eprintln!("Erro no update: {e}");

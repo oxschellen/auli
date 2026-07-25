@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use axum::{
-    http::{header, HeaderValue, Method},
+    Router,
+    http::{HeaderValue, Method, header},
     middleware,
     routing::{get, post},
-    Router,
 };
 use rmcp::transport::streamable_http_server::{
     StreamableHttpServerConfig, StreamableHttpService, session::local::LocalSessionManager,
@@ -32,7 +32,10 @@ pub fn public_routes() -> Router {
 pub fn question_routes(state: Arc<AppState>, limiter: SharedLimiter) -> Router {
     Router::new()
         .route("/v1/question", post(question_handler))
-        .layer(middleware::from_fn_with_state(limiter, ratelimit::rate_limit))
+        .layer(middleware::from_fn_with_state(
+            limiter,
+            ratelimit::rate_limit,
+        ))
         .with_state(state)
 }
 
@@ -43,7 +46,10 @@ pub fn question_routes(state: Arc<AppState>, limiter: SharedLimiter) -> Router {
 pub fn retrieve_routes(state: Arc<AppState>, limiter: SharedLimiter) -> Router {
     Router::new()
         .route("/v1/retrieve", post(retrieve_handler))
-        .layer(middleware::from_fn_with_state(limiter, ratelimit::rate_limit))
+        .layer(middleware::from_fn_with_state(
+            limiter,
+            ratelimit::rate_limit,
+        ))
         .with_state(state)
 }
 
@@ -65,7 +71,10 @@ pub fn mcp_routes(state: Arc<AppState>) -> Router {
     );
     Router::new()
         .nest_service("/mcp", service)
-        .layer(middleware::from_fn_with_state(ratelimit::mcp_rate_limiter(), ratelimit::rate_limit))
+        .layer(middleware::from_fn_with_state(
+            ratelimit::mcp_rate_limiter(),
+            ratelimit::rate_limit,
+        ))
 }
 
 /// Hosts aceitos no header `Host` do `/mcp` — guarda de **DNS rebinding** do rmcp.
@@ -81,8 +90,13 @@ pub fn mcp_routes(state: Arc<AppState>) -> Router {
 ///
 /// Hardcoded como as origens do CORS logo abaixo — mesma natureza (a identidade pública do
 /// serviço) e mesmo lugar para editar ao trocar de domínio.
-const MCP_ALLOWED_HOSTS: [&str; 5] =
-    ["localhost", "127.0.0.1", "::1", "api.auli.com.br", "auli.com.br"];
+const MCP_ALLOWED_HOSTS: [&str; 5] = [
+    "localhost",
+    "127.0.0.1",
+    "::1",
+    "api.auli.com.br",
+    "auli.com.br",
+];
 
 // Rota de listagem de dados (somente leitura), genérica por `{kind}`. Pública.
 // A ingestão NÃO é uma rota — é o `auli update`.
@@ -134,7 +148,10 @@ mod tests {
     #[test]
     fn mcp_allowed_hosts_mantem_o_loopback() {
         for h in ["localhost", "127.0.0.1", "::1"] {
-            assert!(MCP_ALLOWED_HOSTS.contains(&h), "loopback '{h}' saiu da lista");
+            assert!(
+                MCP_ALLOWED_HOSTS.contains(&h),
+                "loopback '{h}' saiu da lista"
+            );
         }
     }
 }

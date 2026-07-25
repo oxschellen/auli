@@ -94,7 +94,10 @@ pub fn scrape(
     for (rota, nome, _slug) in PERFIS {
         let url = format!("{}/portfolio-servicos/{}", BASE, rota);
         let raw = load_flight(&agent, data_dir, &url, use_cache, &mut pending)?;
-        let set: HashSet<i64> = leaves(&parse_items(&raw)?).into_iter().map(|l| l.id).collect();
+        let set: HashSet<i64> = leaves(&parse_items(&raw)?)
+            .into_iter()
+            .map(|l| l.id)
+            .collect();
         perfil_sets.push((nome, set));
     }
 
@@ -108,10 +111,17 @@ pub fn scrape(
     }
 
     let ocorr: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
-    println!("AM: {} serviços ({} ocorrências, dedup por id)", items.len(), ocorr);
+    println!(
+        "AM: {} serviços ({} ocorrências, dedup por id)",
+        items.len(),
+        ocorr
+    );
     let publicos_ordem = PERFIS
         .iter()
-        .map(|(_, nome, slug)| Publico { nome: nome.to_string(), slug: slug.to_string() })
+        .map(|(_, nome, slug)| Publico {
+            nome: nome.to_string(),
+            slug: slug.to_string(),
+        })
         .collect();
     Ok((items, publicos_ordem))
 }
@@ -130,7 +140,10 @@ fn load_flight(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", url);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            url
+        );
     }
     let body = fetch_flight(agent, url)?;
     pending.push((url.to_string(), body.clone()));
@@ -144,12 +157,19 @@ fn fetch_flight(agent: &ureq::Agent, url: &str) -> Result<String> {
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "AM", headers: &[("RSC", "1")], ..Default::default() },
+        &GetOpts {
+            log_prefix: "AM",
+            headers: &[("RSC", "1")],
+            ..Default::default()
+        },
     )?;
     // Defesa: o flight bom carrega a âncora da listagem. Sem ela = página de erro/markup mudou.
     if !body.contains("\"items\":[") {
-        bail!("flight sem a âncora \"items\" ({}) — erro/HTML? primeiros bytes: {:?}",
-            url, body.chars().take(60).collect::<String>());
+        bail!(
+            "flight sem a âncora \"items\" ({}) — erro/HTML? primeiros bytes: {:?}",
+            url,
+            body.chars().take(60).collect::<String>()
+        );
     }
     Ok(body)
 }
@@ -237,8 +257,10 @@ fn build_servicos(todos: &[Leaf], perfil_sets: &[(&str, HashSet<i64>)]) -> Vec<S
             .collect();
         if ocorrencias.is_empty() {
             // Não observado (todo serviço de `todos` está em ≥1 perfil); avisa se o portal mudar.
-            eprintln!("⚠️  AM: serviço {} ({}) sem público em nenhuma rota de perfil — pulando.",
-                leaf.id, titulo);
+            eprintln!(
+                "⚠️  AM: serviço {} ({}) sem público em nenhuma rota de perfil — pulando.",
+                leaf.id, titulo
+            );
             continue;
         }
         out.push(ServicoRaw {
@@ -294,7 +316,10 @@ mod tests {
     ]}]...trailing"#;
 
     fn ids(json: &str) -> HashSet<i64> {
-        leaves(&parse_items(json).unwrap()).into_iter().map(|l| l.id).collect()
+        leaves(&parse_items(json).unwrap())
+            .into_iter()
+            .map(|l| l.id)
+            .collect()
     }
 
     #[test]
@@ -310,7 +335,10 @@ mod tests {
         // categoria de topo propagada mesmo através de subcategoria.
         let busca = lv.iter().find(|l| l.id == 900).unwrap();
         assert_eq!(busca.categoria, "Consulta Pública");
-        assert_eq!(lv.iter().find(|l| l.id == 63).unwrap().categoria, "IPVA e Veículos");
+        assert_eq!(
+            lv.iter().find(|l| l.id == 63).unwrap().categoria,
+            "IPVA e Veículos"
+        );
     }
 
     #[test]
@@ -326,8 +354,15 @@ mod tests {
         assert_eq!(items.len(), 3);
         let s63 = items.iter().find(|s| s.titulo.contains("Isentar")).unwrap();
         assert_eq!(s63.ocorrencias.len(), 2, "63 serve PF e PJ");
-        assert!(s63.ocorrencias.iter().all(|o| o.classe == "IPVA e Veículos"));
-        let s882 = items.iter().find(|s| s.titulo.contains("Inscrição")).unwrap();
+        assert!(
+            s63.ocorrencias
+                .iter()
+                .all(|o| o.classe == "IPVA e Veículos")
+        );
+        let s882 = items
+            .iter()
+            .find(|s| s.titulo.contains("Inscrição"))
+            .unwrap();
         assert_eq!(s882.ocorrencias.len(), 1);
         assert_eq!(s882.ocorrencias[0].publico, "Pessoa Jurídica");
         // clean() comprime os espaços do título.
@@ -337,8 +372,7 @@ mod tests {
     #[test]
     fn build_pula_servico_sem_publico() {
         let todos = leaves(&parse_items(FLIGHT_TODOS).unwrap());
-        let perfis: Vec<(&str, HashSet<i64>)> =
-            vec![("Pessoa Física", HashSet::from([63]))]; // 882 e 900 sem público
+        let perfis: Vec<(&str, HashSet<i64>)> = vec![("Pessoa Física", HashSet::from([63]))]; // 882 e 900 sem público
         let items = build_servicos(&todos, &perfis);
         assert_eq!(items.len(), 1, "só o 63 tem público");
         assert_eq!(items[0].ocorrencias.len(), 1);
@@ -348,8 +382,20 @@ mod tests {
     fn dedup_por_id() {
         // O mesmo id repetido na árvore vira um único serviço.
         let todos = vec![
-            Leaf { id: 5, name: "A".into(), description: "d".into(), url: "/x".into(), categoria: "C".into() },
-            Leaf { id: 5, name: "A dup".into(), description: "d".into(), url: "/x".into(), categoria: "C".into() },
+            Leaf {
+                id: 5,
+                name: "A".into(),
+                description: "d".into(),
+                url: "/x".into(),
+                categoria: "C".into(),
+            },
+            Leaf {
+                id: 5,
+                name: "A dup".into(),
+                description: "d".into(),
+                url: "/x".into(),
+                categoria: "C".into(),
+            },
         ];
         let perfis: Vec<(&str, HashSet<i64>)> = vec![("Pessoa Física", HashSet::from([5]))];
         assert_eq!(build_servicos(&todos, &perfis).len(), 1);
@@ -362,9 +408,15 @@ mod tests {
             "https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/882"
         );
         // externo fica como está.
-        assert_eq!(link("https://buscapreco.sefaz.am.gov.br/home"), "https://buscapreco.sefaz.am.gov.br/home");
+        assert_eq!(
+            link("https://buscapreco.sefaz.am.gov.br/home"),
+            "https://buscapreco.sefaz.am.gov.br/home"
+        );
         // submenu relativo é absolutizado.
-        assert_eq!(link("/submenu/554"), "https://www.sefaz.am.gov.br/submenu/554");
+        assert_eq!(
+            link("/submenu/554"),
+            "https://www.sefaz.am.gov.br/submenu/554"
+        );
     }
 
     #[test]

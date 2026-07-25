@@ -114,7 +114,10 @@ fn separa_corpo(resto: &str) -> Result<String> {
             return Ok(resto[offset + linha.len()..].trim().to_string());
         }
         if !linha.trim().is_empty() {
-            bail!("conteúdo inesperado antes de `{ANCORA_CORPO}`: {:?}", linha.trim_end());
+            bail!(
+                "conteúdo inesperado antes de `{ANCORA_CORPO}`: {:?}",
+                linha.trim_end()
+            );
         }
         offset += linha.len();
     }
@@ -199,7 +202,10 @@ pub fn materializar_arvore(dir: &Path, docs: &[(ServicoHeader, String)]) -> Resu
     std::fs::create_dir_all(dir)?;
     for (header, corpo) in docs {
         let nome = slug_servico(&header.titulo, &header.link);
-        std::fs::write(dir.join(format!("{nome}.md")), render_doc_servico(header, corpo))?;
+        std::fs::write(
+            dir.join(format!("{nome}.md")),
+            render_doc_servico(header, corpo),
+        )?;
     }
     Ok(docs.len())
 }
@@ -219,8 +225,8 @@ mod tests {
     }
 
     fn tempdir(tag: &str) -> std::path::PathBuf {
-        let d = std::env::temp_dir()
-            .join(format!("auli-mddoc-servico-{}-{tag}", std::process::id()));
+        let d =
+            std::env::temp_dir().join(format!("auli-mddoc-servico-{}-{tag}", std::process::id()));
         let _ = std::fs::remove_dir_all(&d);
         d
     }
@@ -263,7 +269,10 @@ mod tests {
     fn recusa_chave_desconhecida() {
         let texto = "---\ntitulo: T\ntipo: C\nclasse: K\norgao: O\nlink: L\nresumo: nao vai aqui\n---\n\n## corpo\nc\n";
         let e = parse_doc_servico(texto).unwrap_err().to_string();
-        assert!(e.contains("desconhecida") && e.contains("resumo"), "erro: {e}");
+        assert!(
+            e.contains("desconhecida") && e.contains("resumo"),
+            "erro: {e}"
+        );
     }
 
     #[test]
@@ -293,7 +302,10 @@ mod tests {
         // não conteúdo engolido em silêncio.
         let texto = "---\ntitulo: T\ntipo: C\nclasse: K\norgao: O\nlink: L\n---\n\n## sinopse\nx\n\n## corpo\nc\n";
         let e = parse_doc_servico(texto).unwrap_err().to_string();
-        assert!(e.contains("inesperado") && e.contains("sinopse"), "erro: {e}");
+        assert!(
+            e.contains("inesperado") && e.contains("sinopse"),
+            "erro: {e}"
+        );
     }
 
     #[test]
@@ -325,18 +337,31 @@ mod tests {
              saídas internas de produtos que industrialize, bem como nas saídas de mercadorias \
              adquiridas para revenda no próprio estabelecimento";
         let nome = slug_servico(gigante, "https://x/1");
-        assert!(nome.len() <= MAX_SLUG + 9, "nome com {} bytes: {nome}", nome.len());
-        assert!(slug(gigante).len() > MAX_SLUG, "o caso precisa realmente estourar");
+        assert!(
+            nome.len() <= MAX_SLUG + 9,
+            "nome com {} bytes: {nome}",
+            nome.len()
+        );
+        assert!(
+            slug(gigante).len() > MAX_SLUG,
+            "o caso precisa realmente estourar"
+        );
         let trecho = &nome[..nome.len() - 9]; // tira o `-hash8`
         assert!(!trecho.ends_with('-'), "hífen pendurado no corte: {nome}");
-        assert!(slug(gigante).starts_with(trecho), "o corte é prefixo do slug");
+        assert!(
+            slug(gigante).starts_with(trecho),
+            "o corte é prefixo do slug"
+        );
         // Links diferentes seguem distinguindo, mesmo com o título truncado igual.
         assert_ne!(nome, slug_servico(gigante, "https://x/2"));
 
         // A GUARDA CONTRA CHURN: o maior slug em produção é 144 (SP). Nada nessa faixa muda de nome.
         let de_144 = "a".repeat(144);
         let nome_144 = slug_servico(&de_144, "https://x/3");
-        assert!(nome_144.starts_with(&de_144), "144 chars não pode truncar: nada em produção renomeia");
+        assert!(
+            nome_144.starts_with(&de_144),
+            "144 chars não pode truncar: nada em produção renomeia"
+        );
         assert_eq!(nome_144.len(), 144 + 9, "só o sufixo `-hash8` entra");
     }
 
@@ -346,11 +371,17 @@ mod tests {
         let dir = tempdir("orfaos");
         let a = (header("Serviço A", "https://x/a"), "corpo a".to_string());
         let b = (header("Serviço B", "https://x/b"), "corpo b".to_string());
-        assert_eq!(materializar_arvore(&dir, &[a.clone(), b.clone()]).unwrap(), 2);
+        assert_eq!(
+            materializar_arvore(&dir, &[a.clone(), b.clone()]).unwrap(),
+            2
+        );
         let arquivo_b = dir.join(format!("{}.md", slug_servico(&b.0.titulo, &b.0.link)));
         assert!(arquivo_b.exists());
 
-        assert_eq!(materializar_arvore(&dir, std::slice::from_ref(&a)).unwrap(), 1);
+        assert_eq!(
+            materializar_arvore(&dir, std::slice::from_ref(&a)).unwrap(),
+            1
+        );
         assert!(!arquivo_b.exists(), "órfão deve sumir no rebuild");
         assert_eq!(std::fs::read_dir(&dir).unwrap().count(), 1);
         let _ = std::fs::remove_dir_all(&dir);

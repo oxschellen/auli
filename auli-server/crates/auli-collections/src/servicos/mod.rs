@@ -73,11 +73,7 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
     }
     let portal_out = raw_out(data_dir, id, "portal-servicos.txt");
     std::fs::write(&portal_out, &portal)?;
-    println!(
-        "Wrote {} ({} serviços únicos)",
-        portal_out,
-        coletados.len()
-    );
+    println!("Wrote {} ({} serviços únicos)", portal_out, coletados.len());
 
     // 3. <id>-servicos-index.json: { tipo: nome, filename: slug } na ordem de `publicos_ordem`.
     write_servicos_index(data_dir, id, ordem)?;
@@ -130,7 +126,11 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
         .collect();
     let gravados = auli_contract::mddoc_servico::materializar_arvore(&docs_dir, &docs)
         .map_err(|e| format!("materialização da árvore de serviços: {e}"))?;
-    println!("📄 docs: {} serviços materializados em {}", gravados, docs_dir.display());
+    println!(
+        "📄 docs: {} serviços materializados em {}",
+        gravados,
+        docs_dir.display()
+    );
 
     Ok(())
 }
@@ -298,8 +298,8 @@ mod tests {
     /// como DOIS itens. Sem fundir, os dois disputam o mesmo `.md` e a materialização da árvore erra.
     #[test]
     fn fundir_duplicatas_une_ocorrencias_e_preserva_ordem() {
-        let raw = |titulo: &str, link: &str, classe: &str, descricao: &str| {
-            auli_contract::ServicoRaw {
+        let raw =
+            |titulo: &str, link: &str, classe: &str, descricao: &str| auli_contract::ServicoRaw {
                 titulo: titulo.into(),
                 descricao: descricao.into(),
                 link: link.into(),
@@ -308,8 +308,7 @@ mod tests {
                     publico: "Cidadão".into(),
                     classe: classe.into(),
                 }],
-            }
-        };
+            };
         let items = vec![
             raw("SIVEI", "https://x/sivei", "IPVA", "corpo"),
             raw("Outro", "https://x/outro", "ICMS", "corpo"),
@@ -322,8 +321,16 @@ mod tests {
         // Ordem preservada: o primeiro de cada par vence a posição.
         let titulos: Vec<&str> = out.iter().map(|s| s.titulo.as_str()).collect();
         assert_eq!(titulos, vec!["SIVEI", "Outro", "SIVEI"]);
-        let classes: Vec<&str> = out[0].ocorrencias.iter().map(|o| o.classe.as_str()).collect();
-        assert_eq!(classes, vec!["IPVA", "ISENÇÕES"], "as duas classes sobrevivem");
+        let classes: Vec<&str> = out[0]
+            .ocorrencias
+            .iter()
+            .map(|o| o.classe.as_str())
+            .collect();
+        assert_eq!(
+            classes,
+            vec!["IPVA", "ISENÇÕES"],
+            "as duas classes sobrevivem"
+        );
 
         // Ocorrência idêntica repetida não duplica.
         let repetido = vec![
@@ -335,15 +342,28 @@ mod tests {
         // Caixa/acento diferentes no MESMO link também fundem: o slug dobra os dois, então a árvore
         // os veria como o mesmo `.md` — é o segundo caso real do SP ("não" vs "Não").
         let caixa = vec![
-            raw("eCND - Débitos não Inscritos", "https://x/ecnd", "ICMS", "corpo"),
-            raw("eCND - Débitos Não Inscritos", "https://x/ecnd", "CERTIDÕES", "corpo"),
+            raw(
+                "eCND - Débitos não Inscritos",
+                "https://x/ecnd",
+                "ICMS",
+                "corpo",
+            ),
+            raw(
+                "eCND - Débitos Não Inscritos",
+                "https://x/ecnd",
+                "CERTIDÕES",
+                "corpo",
+            ),
         ];
         let out = fundir_duplicatas(&caixa);
         assert_eq!(out.len(), 1, "diferença só de caixa colidiria na árvore");
         assert_eq!(out[0].ocorrencias.len(), 2);
 
         // Sem duplicatas, a lista sai intacta (o caso do RS — 586 itens, 0 pares).
-        let intacto = vec![raw("A", "https://x/a", "ICMS", "corpo"), raw("B", "https://x/b", "IPVA", "corpo")];
+        let intacto = vec![
+            raw("A", "https://x/a", "ICMS", "corpo"),
+            raw("B", "https://x/b", "IPVA", "corpo"),
+        ];
         assert_eq!(fundir_duplicatas(&intacto).len(), 2);
     }
 

@@ -107,7 +107,10 @@ fn separa_corpo(resto: &str) -> Result<String> {
             return Ok(resto[offset + linha.len()..].trim().to_string());
         }
         if !linha.trim().is_empty() {
-            bail!("conteúdo inesperado antes de `{ANCORA_CORPO}`: {:?}", linha.trim_end());
+            bail!(
+                "conteúdo inesperado antes de `{ANCORA_CORPO}`: {:?}",
+                linha.trim_end()
+            );
         }
         offset += linha.len();
     }
@@ -140,7 +143,10 @@ pub fn render_doc_faq(header: &FaqHeader, corpo: &str) -> String {
 pub fn slug_faq(pergunta: &str, url: &str) -> String {
     let s = slug(pergunta);
     let s = slug_truncado(&s, 60);
-    let h = format!("{:08x}", fnv1a64(format!("{url}\n{pergunta}").as_bytes()) as u32);
+    let h = format!(
+        "{:08x}",
+        fnv1a64(format!("{url}\n{pergunta}").as_bytes()) as u32
+    );
     if s.is_empty() { h } else { format!("{s}-{h}") }
 }
 
@@ -172,7 +178,10 @@ pub fn materializar_arvore(dir: &Path, docs: &[(FaqHeader, String)]) -> Result<u
     std::fs::create_dir_all(dir)?;
     for (header, corpo) in docs {
         let nome = slug_faq(&header.pergunta, &header.url);
-        std::fs::write(dir.join(format!("{nome}.md")), render_doc_faq(header, corpo))?;
+        std::fs::write(
+            dir.join(format!("{nome}.md")),
+            render_doc_faq(header, corpo),
+        )?;
     }
     Ok(docs.len())
 }
@@ -197,7 +206,10 @@ mod tests {
 
     #[test]
     fn round_trip() {
-        let h = header("Como faço para emitir a guia de IPVA?", "https://x/faq-ipva");
+        let h = header(
+            "Como faço para emitir a guia de IPVA?",
+            "https://x/faq-ipva",
+        );
         // Pegadinhas DENTRO do corpo: cerca e âncora não podem quebrar o parse.
         let corpo = "Acesse o portal.\n---\n## corpo\npergunta: falsa\nFim.";
         let texto = render_doc_faq(&h, corpo);
@@ -215,7 +227,10 @@ mod tests {
         let mut h = header("Onde consulto meu débito?", "https://x/faq-1");
         h.origin = String::new();
         let texto = render_doc_faq(&h, "No portal.");
-        assert!(texto.contains("\norigin:"), "a chave `origin` é sempre escrita:\n{texto}");
+        assert!(
+            texto.contains("\norigin:"),
+            "a chave `origin` é sempre escrita:\n{texto}"
+        );
         let (h2, corpo) = parse_doc_faq(&texto).unwrap();
         assert_eq!(h2.origin, "");
         assert_eq!(h2, h);
@@ -232,9 +247,13 @@ mod tests {
 
     #[test]
     fn recusa_chave_desconhecida() {
-        let texto = "---\npergunta: P\norigin: O\nurl: U\nresposta: nao vai aqui\n---\n\n## corpo\nc\n";
+        let texto =
+            "---\npergunta: P\norigin: O\nurl: U\nresposta: nao vai aqui\n---\n\n## corpo\nc\n";
         let e = parse_doc_faq(texto).unwrap_err().to_string();
-        assert!(e.contains("desconhecida") && e.contains("resposta"), "erro: {e}");
+        assert!(
+            e.contains("desconhecida") && e.contains("resposta"),
+            "erro: {e}"
+        );
     }
 
     #[test]
@@ -270,27 +289,50 @@ mod tests {
         // não conteúdo engolido em silêncio.
         let texto = "---\npergunta: P\norigin: O\nurl: U\n---\n\n## sinopse\nx\n\n## corpo\nc\n";
         let e = parse_doc_faq(texto).unwrap_err().to_string();
-        assert!(e.contains("inesperado") && e.contains("sinopse"), "erro: {e}");
+        assert!(
+            e.contains("inesperado") && e.contains("sinopse"),
+            "erro: {e}"
+        );
     }
 
     #[test]
     fn slug_faq_identidade_e_truncamento() {
         // Determinístico.
-        assert_eq!(slug_faq("Como emitir?", "https://x/1"), slug_faq("Como emitir?", "https://x/1"));
+        assert_eq!(
+            slug_faq("Como emitir?", "https://x/1"),
+            slug_faq("Como emitir?", "https://x/1")
+        );
         // (a) mesma pergunta em urls diferentes ⇒ nomes diferentes.
-        assert_ne!(slug_faq("Como emitir?", "https://x/1"), slug_faq("Como emitir?", "https://x/2"));
+        assert_ne!(
+            slug_faq("Como emitir?", "https://x/1"),
+            slug_faq("Como emitir?", "https://x/2")
+        );
         // (b) perguntas diferentes na MESMA url ⇒ nomes diferentes. É o caso que a
         // identidade `(url, pergunta)` existe para cobrir.
-        assert_ne!(slug_faq("Como emitir?", "https://x/1"), slug_faq("Onde pagar?", "https://x/1"));
+        assert_ne!(
+            slug_faq("Como emitir?", "https://x/1"),
+            slug_faq("Onde pagar?", "https://x/1")
+        );
         assert!(slug_faq("Como emitir?", "https://x/1").starts_with("como-emitir-"));
 
         // (c) pergunta longa: nome ≤ 60 + 1 + 8, cortado em fronteira de hífen.
-        let longa = "Como faço para emitir a guia de recolhimento do IPVA atrasado de anos anteriores?";
+        let longa =
+            "Como faço para emitir a guia de recolhimento do IPVA atrasado de anos anteriores?";
         let nome = slug_faq(longa, "https://x/3");
-        assert!(nome.len() <= 69, "nome longo demais ({}): {nome}", nome.len());
+        assert!(
+            nome.len() <= 69,
+            "nome longo demais ({}): {nome}",
+            nome.len()
+        );
         let trecho = &nome[..nome.len() - 9]; // tira o `-hash8`
-        assert!(!trecho.ends_with('-'), "hífen pendurado no truncamento: {nome}");
-        assert!(slug(longa).starts_with(trecho), "truncamento deve ser prefixo do slug: {nome}");
+        assert!(
+            !trecho.ends_with('-'),
+            "hífen pendurado no truncamento: {nome}"
+        );
+        assert!(
+            slug(longa).starts_with(trecho),
+            "truncamento deve ser prefixo do slug: {nome}"
+        );
         // Truncou mesmo (o slug inteiro passa de 60).
         assert!(slug(longa).len() > 60);
 
@@ -304,13 +346,25 @@ mod tests {
     fn materializar_apaga_orfaos() {
         // A doutrina do delete+rebuild: pergunta removida do portal some da árvore.
         let dir = tempdir("orfaos");
-        let a = (header("Pergunta A", "https://x/a"), "resposta a".to_string());
-        let b = (header("Pergunta B", "https://x/a"), "resposta b".to_string());
-        assert_eq!(materializar_arvore(&dir, &[a.clone(), b.clone()]).unwrap(), 2);
+        let a = (
+            header("Pergunta A", "https://x/a"),
+            "resposta a".to_string(),
+        );
+        let b = (
+            header("Pergunta B", "https://x/a"),
+            "resposta b".to_string(),
+        );
+        assert_eq!(
+            materializar_arvore(&dir, &[a.clone(), b.clone()]).unwrap(),
+            2
+        );
         let arquivo_b = dir.join(format!("{}.md", slug_faq(&b.0.pergunta, &b.0.url)));
         assert!(arquivo_b.exists());
 
-        assert_eq!(materializar_arvore(&dir, std::slice::from_ref(&a)).unwrap(), 1);
+        assert_eq!(
+            materializar_arvore(&dir, std::slice::from_ref(&a)).unwrap(),
+            1
+        );
         assert!(!arquivo_b.exists(), "órfão deve sumir no rebuild");
         assert_eq!(std::fs::read_dir(&dir).unwrap().count(), 1);
         let _ = std::fs::remove_dir_all(&dir);
@@ -325,7 +379,10 @@ mod tests {
         ];
         let e = materializar_arvore(&dir, &docs).unwrap_err().to_string();
         assert!(e.contains("colisão de nome de arquivo"), "erro: {e}");
-        assert!(e.matches("Mesma pergunta").count() >= 2, "deve nomear as duas: {e}");
+        assert!(
+            e.matches("Mesma pergunta").count() >= 2,
+            "deve nomear as duas: {e}"
+        );
         // Pré-cheque roda ANTES do delete: o diretório não foi tocado.
         assert!(!dir.exists());
     }

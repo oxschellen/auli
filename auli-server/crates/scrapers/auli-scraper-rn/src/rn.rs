@@ -48,8 +48,8 @@ pub fn scrape(
 
     // 1) Os 15 cards do CPT `servicos`.
     let json = load(&agent, data_dir, SERVICOS_URL, use_cache, &mut pending)?;
-    let cards: Vec<Value> = serde_json::from_str(&json)
-        .map_err(|e| format!("JSON de wp/v2/servicos inválido: {e}"))?;
+    let cards: Vec<Value> =
+        serde_json::from_str(&json).map_err(|e| format!("JSON de wp/v2/servicos inválido: {e}"))?;
     println!("RN: {} cards no CPT servicos", cards.len());
 
     let post_slug_re = Regex::new(r"/postagem/([^/]+)/?$").unwrap();
@@ -91,10 +91,19 @@ pub fn scrape(
         let classes = classes_do_card(card);
         let ocorrencias = classes
             .into_iter()
-            .map(|classe| Ocorrencia { publico: PUBLICO_NOME.to_string(), classe })
+            .map(|classe| Ocorrencia {
+                publico: PUBLICO_NOME.to_string(),
+                classe,
+            })
             .collect();
 
-        items.push(ServicoRaw { titulo, descricao, link, orgao: ORGAO.to_string(), ocorrencias });
+        items.push(ServicoRaw {
+            titulo,
+            descricao,
+            link,
+            orgao: ORGAO.to_string(),
+            ocorrencias,
+        });
     }
 
     validar(&items)?;
@@ -104,9 +113,15 @@ pub fn scrape(
     }
 
     let com_desc = items.iter().filter(|s| !s.descricao.is_empty()).count();
-    println!("RN: {} serviços ({} com descrição rica de post)", items.len(), com_desc);
-    let publicos_ordem =
-        vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
+    println!(
+        "RN: {} serviços ({} com descrição rica de post)",
+        items.len(),
+        com_desc
+    );
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.to_string(),
+        slug: PUBLICO_SLUG.to_string(),
+    }];
     Ok((items, publicos_ordem))
 }
 
@@ -122,12 +137,19 @@ fn load(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", url);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            url
+        );
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "RN", accept: Some("application/json"), ..Default::default() },
+        &GetOpts {
+            log_prefix: "RN",
+            accept: Some("application/json"),
+            ..Default::default()
+        },
     )?;
     pending.push((url.to_string(), body.clone()));
     sleep(COURTESY);
@@ -195,7 +217,10 @@ fn html_to_text(html: &str) -> String {
             _ => {}
         }
     }
-    let decoded: String = Html::parse_fragment(&spaced).root_element().text().collect();
+    let decoded: String = Html::parse_fragment(&spaced)
+        .root_element()
+        .text()
+        .collect();
     clean(&decoded)
 }
 
@@ -256,7 +281,10 @@ mod tests {
     #[test]
     fn classes_e_titulo_decodificam_entidades() {
         let cards: Vec<Value> = serde_json::from_str(SERVICOS).unwrap();
-        assert_eq!(html_to_text(str_at(&cards[0], &["title", "rendered"])), "Calendário IPVA 2025");
+        assert_eq!(
+            html_to_text(str_at(&cards[0], &["title", "rendered"])),
+            "Calendário IPVA 2025"
+        );
         assert_eq!(classes_do_card(&cards[0]), vec!["Finanças e Impostos"]);
         // card "Carta de Serviços" sem categorias -> fallback "Geral"
         assert_eq!(classes_do_card(&cards[2]), vec!["Geral"]);
@@ -266,9 +294,15 @@ mod tests {
     fn link_usa_permalink_quando_acf_link_e_false() {
         let cards: Vec<Value> = serde_json::from_str(SERVICOS).unwrap();
         // acf.link = false -> identidade = permalink do card
-        let link_ext = cards[2].pointer("/acf/link").and_then(Value::as_str).filter(|s| !s.is_empty());
+        let link_ext = cards[2]
+            .pointer("/acf/link")
+            .and_then(Value::as_str)
+            .filter(|s| !s.is_empty());
         assert!(link_ext.is_none());
-        assert_eq!(str_at(&cards[2], &["link"]), "https://www.sefaz.rn.gov.br/servicos/carta-de-servicos/");
+        assert_eq!(
+            str_at(&cards[2], &["link"]),
+            "https://www.sefaz.rn.gov.br/servicos/carta-de-servicos/"
+        );
     }
 
     #[test]

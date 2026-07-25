@@ -60,7 +60,8 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
     // Páginas cruas na ordem (url_lógica, html) — o cache só grava depois dos guards (D-RJ5).
     let mut raw: Vec<(String, String)> = Vec::new();
 
@@ -78,18 +79,31 @@ pub fn scrape(
     // 2. Um GET por perfil e por categoria: pertencimento por conjunto de links.
     let mut por_perfil: Vec<(String, HashSet<String>)> = Vec::new();
     for (slug, nome) in &perfis {
-        let (_, itens) =
-            fetch_lista(&agent, data_dir, use_cache, &format!("usuario={}&", slug), &mut raw)?;
+        let (_, itens) = fetch_lista(
+            &agent,
+            data_dir,
+            use_cache,
+            &format!("usuario={}&", slug),
+            &mut raw,
+        )?;
         println!("MS: perfil {} -> {} itens", nome, itens.len());
         if itens.is_empty() {
-            eprintln!("⚠️  MS: perfil '{}' sem itens — suspeito (markup/filtro mudou?).", nome);
+            eprintln!(
+                "⚠️  MS: perfil '{}' sem itens — suspeito (markup/filtro mudou?).",
+                nome
+            );
         }
         por_perfil.push((nome.clone(), itens.into_iter().map(|(_, l)| l).collect()));
     }
     let mut por_categoria: Vec<(String, HashSet<String>)> = Vec::new();
     for (slug, nome) in &categorias {
-        let (_, itens) =
-            fetch_lista(&agent, data_dir, use_cache, &format!("categoria={}&", slug), &mut raw)?;
+        let (_, itens) = fetch_lista(
+            &agent,
+            data_dir,
+            use_cache,
+            &format!("categoria={}&", slug),
+            &mut raw,
+        )?;
         if itens.is_empty() {
             println!("MS: categoria {} -> 0 itens", nome);
         }
@@ -116,10 +130,18 @@ pub fn scrape(
         categorias.len()
     );
 
-    let mut publicos_ordem: Vec<Publico> =
-        perfis.iter().map(|(slug, nome)| Publico { nome: nome.clone(), slug: slug_publico(slug) }).collect();
+    let mut publicos_ordem: Vec<Publico> = perfis
+        .iter()
+        .map(|(slug, nome)| Publico {
+            nome: nome.clone(),
+            slug: slug_publico(slug),
+        })
+        .collect();
     if usou_geral {
-        publicos_ordem.push(Publico { nome: GERAL.into(), slug: "servicos-gerais".into() });
+        publicos_ordem.push(Publico {
+            nome: GERAL.into(),
+            slug: "servicos-gerais".into(),
+        });
     }
     Ok((items, publicos_ordem))
 }
@@ -143,7 +165,9 @@ fn fetch_lista(
     raw: &mut Vec<(String, String)>,
 ) -> Result<(String, Vec<(String, String)>)> {
     let logical = format!("{}?{}ordem=AZ", LISTA_URL, filtro_qs);
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)? {
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)?
+    {
         let itens = parse_lista(&cached);
         return Ok((cached, itens));
     }
@@ -151,7 +175,14 @@ fn fetch_lista(
     let mut pp = PP_INICIAL;
     for tentativa in 0..2 {
         let url = format!("{}?{}ordem=AZ&pp={}", LISTA_URL, filtro_qs, pp);
-        let html = auli_scraper_kit::http::get_string(agent, &url, &GetOpts { log_prefix: "MS", ..Default::default() })?;
+        let html = auli_scraper_kit::http::get_string(
+            agent,
+            &url,
+            &GetOpts {
+                log_prefix: "MS",
+                ..Default::default()
+            },
+        )?;
         sleep(COURTESY);
         let itens = parse_lista(&html);
         // Página não-cheia (< pp): o `pp` cobriu tudo — resultado confiável.
@@ -192,7 +223,9 @@ fn parse_lista(html: &str) -> Vec<(String, String)> {
     let mut itens: Vec<(String, String)> = Vec::new();
     let mut vistos: HashSet<String> = HashSet::new();
     for a in doc.select(&sel_a) {
-        let Some(href) = a.value().attr("href") else { continue };
+        let Some(href) = a.value().attr("href") else {
+            continue;
+        };
         let href = href.trim();
         if !eh_link_de_servico(href) {
             continue;
@@ -209,7 +242,9 @@ fn parse_lista(html: &str) -> Vec<(String, String)> {
 /// Assinatura do link canônico de serviço no Portal Único: host `www.ms.gov.br`, path com ≥ 2
 /// segmentos e o último terminando em dígito (o id numérico colado ao slug).
 fn eh_link_de_servico(href: &str) -> bool {
-    let Some(path) = href.strip_prefix("https://www.ms.gov.br/") else { return false };
+    let Some(path) = href.strip_prefix("https://www.ms.gov.br/") else {
+        return false;
+    };
     if path.contains('?') || path.contains('#') {
         return false;
     }
@@ -217,7 +252,11 @@ fn eh_link_de_servico(href: &str) -> bool {
     if segs.len() < 2 {
         return false;
     }
-    segs.last().unwrap().chars().last().is_some_and(|c| c.is_ascii_digit())
+    segs.last()
+        .unwrap()
+        .chars()
+        .last()
+        .is_some_and(|c| c.is_ascii_digit())
 }
 
 /// Fold: para cada serviço do "Todos" (ordem AZ do portal), P(s) e C(s) por pertencimento aos
@@ -235,8 +274,11 @@ fn montar_servicos(
     let items: Vec<ServicoRaw> = todos
         .iter()
         .map(|(titulo, link)| {
-            let mut ps: Vec<&str> =
-                por_perfil.iter().filter(|(_, set)| set.contains(link)).map(|(n, _)| n.as_str()).collect();
+            let mut ps: Vec<&str> = por_perfil
+                .iter()
+                .filter(|(_, set)| set.contains(link))
+                .map(|(n, _)| n.as_str())
+                .collect();
             let mut cs: Vec<&str> = por_categoria
                 .iter()
                 .filter(|(_, set)| set.contains(link))
@@ -254,7 +296,10 @@ fn montar_servicos(
             let ocorrencias = ps
                 .iter()
                 .flat_map(|p| {
-                    cs.iter().map(move |c| Ocorrencia { publico: (*p).into(), classe: (*c).into() })
+                    cs.iter().map(move |c| Ocorrencia {
+                        publico: (*p).into(),
+                        classe: (*c).into(),
+                    })
                 })
                 .collect();
             ServicoRaw {
@@ -284,8 +329,12 @@ fn extrair_filtros(html: &str, param: &str) -> Result<Vec<Filtro>> {
     let mut out: Vec<Filtro> = Vec::new();
     let mut vistos: HashSet<String> = HashSet::new();
     for a in doc.select(&sel_a) {
-        let Some(href) = a.value().attr("href") else { continue };
-        let Some(pos) = href.find(param) else { continue };
+        let Some(href) = a.value().attr("href") else {
+            continue;
+        };
+        let Some(pos) = href.find(param) else {
+            continue;
+        };
         let valor = href[pos + param.len()..]
             .split(['&', '#'])
             .next()
@@ -298,7 +347,10 @@ fn extrair_filtros(html: &str, param: &str) -> Result<Vec<Filtro>> {
         out.push((valor.to_string(), nome));
     }
     if out.is_empty() {
-        bail!("nenhum filtro '{}' encontrado na página — markup mudou?", param);
+        bail!(
+            "nenhum filtro '{}' encontrado na página — markup mudou?",
+            param
+        );
     }
     Ok(out)
 }
@@ -339,7 +391,10 @@ mod tests {
     use super::*;
 
     fn itens(pares: &[(&str, &str)]) -> Vec<(String, String)> {
-        pares.iter().map(|(t, l)| (t.to_string(), l.to_string())).collect()
+        pares
+            .iter()
+            .map(|(t, l)| (t.to_string(), l.to_string()))
+            .collect()
     }
 
     fn set(links: &[&str]) -> HashSet<String> {
@@ -376,42 +431,75 @@ mod tests {
     #[test]
     fn parse_lista_extrai_servicos_e_dedup_por_link() {
         let l = parse_lista(PAGINA);
-        assert_eq!(l.len(), 2, "dedup por link; navegação (/orgao/…) excluída pela assinatura");
+        assert_eq!(
+            l.len(),
+            2,
+            "dedup por link; navegação (/orgao/…) excluída pela assinatura"
+        );
         assert_eq!(l[0].0, "Emitir guia de IPVA");
         assert_eq!(l[1].0, "Inscrição estadual");
     }
 
     #[test]
     fn assinatura_do_link_exclui_navegacao() {
-        assert!(eh_link_de_servico("https://www.ms.gov.br/financas-e-impostos/emitir-guia-ipva1234/"));
+        assert!(eh_link_de_servico(
+            "https://www.ms.gov.br/financas-e-impostos/emitir-guia-ipva1234/"
+        ));
         assert!(eh_link_de_servico("https://www.ms.gov.br/tema/slug99")); // sem barra final
-        assert!(!eh_link_de_servico("https://www.ms.gov.br/orgao/sefaz-ms87/servicos"), "não termina em dígito");
-        assert!(!eh_link_de_servico("https://www.ms.gov.br/somente-um-seg9/"), "path com 1 segmento");
-        assert!(!eh_link_de_servico("https://www.sefaz.ms.gov.br/servicos/?pp=30"), "host errado");
-        assert!(!eh_link_de_servico("https://www.ms.gov.br/a/b1/?x=1"), "querystring não é detalhe");
+        assert!(
+            !eh_link_de_servico("https://www.ms.gov.br/orgao/sefaz-ms87/servicos"),
+            "não termina em dígito"
+        );
+        assert!(
+            !eh_link_de_servico("https://www.ms.gov.br/somente-um-seg9/"),
+            "path com 1 segmento"
+        );
+        assert!(
+            !eh_link_de_servico("https://www.sefaz.ms.gov.br/servicos/?pp=30"),
+            "host errado"
+        );
+        assert!(
+            !eh_link_de_servico("https://www.ms.gov.br/a/b1/?x=1"),
+            "querystring não é detalhe"
+        );
     }
 
     #[test]
     fn extrai_filtros_na_ordem_com_rotulo_do_portal() {
         let perfis = extrair_filtros(PAGINA, "usuario=").unwrap();
-        assert_eq!(perfis, vec![
-            ("cidadao".to_string(), "Cidadão".to_string()),
-            ("produtor-rural".to_string(), "Produtor Rural".to_string()),
-        ]);
+        assert_eq!(
+            perfis,
+            vec![
+                ("cidadao".to_string(), "Cidadão".to_string()),
+                ("produtor-rural".to_string(), "Produtor Rural".to_string()),
+            ]
+        );
         let cats = extrair_filtros(PAGINA, "categoria=").unwrap();
-        assert_eq!(cats[1].1, "comunicacao-e-transparencia", "fidelidade ao rótulo publicado (D-MS6)");
+        assert_eq!(
+            cats[1].1, "comunicacao-e-transparencia",
+            "fidelidade ao rótulo publicado (D-MS6)"
+        );
     }
 
     #[test]
     fn fold_faz_produto_perfis_x_categorias_na_ordem() {
-        let todos = itens(&[("A", "https://www.ms.gov.br/t/a1/"), ("B", "https://www.ms.gov.br/t/b2/")]);
+        let todos = itens(&[
+            ("A", "https://www.ms.gov.br/t/a1/"),
+            ("B", "https://www.ms.gov.br/t/b2/"),
+        ]);
         let por_perfil = vec![
-            ("Cidadão".to_string(), set(&["https://www.ms.gov.br/t/a1/", "https://www.ms.gov.br/t/b2/"])),
+            (
+                "Cidadão".to_string(),
+                set(&["https://www.ms.gov.br/t/a1/", "https://www.ms.gov.br/t/b2/"]),
+            ),
             ("Empresa".to_string(), set(&["https://www.ms.gov.br/t/a1/"])),
         ];
         let por_categoria = vec![
             ("IPVA".to_string(), set(&["https://www.ms.gov.br/t/a1/"])),
-            ("Certidões".to_string(), set(&["https://www.ms.gov.br/t/a1/"])),
+            (
+                "Certidões".to_string(),
+                set(&["https://www.ms.gov.br/t/a1/"]),
+            ),
         ];
         let (items, usou_geral) = montar_servicos(&todos, &por_perfil, &por_categoria);
         // A: 2 perfis × 2 categorias = 4 ocorrências, na ordem (Cidadão,IPVA), (Cidadão,Certidões)…
@@ -424,7 +512,10 @@ mod tests {
         assert_eq!(items[1].ocorrencias.len(), 1);
         assert_eq!(items[1].ocorrencias[0].publico, "Cidadão");
         assert_eq!(items[1].ocorrencias[0].classe, GERAL);
-        assert!(!usou_geral, "fallback de PÚBLICO não foi usado (só o de categoria)");
+        assert!(
+            !usou_geral,
+            "fallback de PÚBLICO não foi usado (só o de categoria)"
+        );
     }
 
     #[test]
@@ -442,8 +533,13 @@ mod tests {
         let items = vec![svc("https://www.ms.gov.br/t/a1/")];
         let b2 = "https://www.ms.gov.br/t/b2/".to_string();
         let uperfis: HashSet<&String> = [&b2].into_iter().collect();
-        let err = validar(&items, &uperfis, &HashSet::new()).unwrap_err().to_string();
-        assert!(err.contains("incompleto") || err.contains("capado"), "esperava erro de completude: {err}");
+        let err = validar(&items, &uperfis, &HashSet::new())
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("incompleto") || err.contains("capado"),
+            "esperava erro de completude: {err}"
+        );
     }
 
     #[test]
@@ -452,7 +548,12 @@ mod tests {
         let a1 = "https://www.ms.gov.br/t/a1/".to_string();
         let items = vec![svc(&a1)];
         let uperfis: HashSet<&String> = [&a1].into_iter().collect();
-        let err = validar(&items, &uperfis, &HashSet::new()).unwrap_err().to_string();
-        assert!(err.contains("mínimo") || err.contains("capado"), "esperava erro de piso: {err}");
+        let err = validar(&items, &uperfis, &HashSet::new())
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("mínimo") || err.contains("capado"),
+            "esperava erro de piso: {err}"
+        );
     }
 }

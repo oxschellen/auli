@@ -218,8 +218,12 @@ pub fn validate_manifest(path: impl AsRef<Path>, expected: &EmbedIdentity) -> Re
     if &got != expected {
         return Err(Error::from(format!(
             "Manifest incompatível: pacote tem (modelo={}, dim={}, strategy={}), servidor espera (modelo={}, dim={}, strategy={}). Re-gere os pacotes com `auli update`.",
-            got.embed_model_id, got.embed_dim, got.strategy_version,
-            expected.embed_model_id, expected.embed_dim, expected.strategy_version,
+            got.embed_model_id,
+            got.embed_dim,
+            got.strategy_version,
+            expected.embed_model_id,
+            expected.embed_dim,
+            expected.strategy_version,
         )));
     }
     Ok(manifest)
@@ -279,7 +283,8 @@ mod tests {
 
     #[test]
     fn docs_hash_ausente_quando_nao_ha_arvore() {
-        let inexistente = std::env::temp_dir().join(format!("auli-sem-arvore-{}", std::process::id()));
+        let inexistente =
+            std::env::temp_dir().join(format!("auli-sem-arvore-{}", std::process::id()));
         assert_eq!(hash_docs_tree(&inexistente).unwrap(), None);
     }
 
@@ -306,7 +311,11 @@ mod tests {
         let h4 = hash_docs_tree(&d).unwrap().unwrap();
         assert_ne!(h3, h4);
         std::fs::remove_file(d.join("pareceres/c.md")).unwrap();
-        assert_eq!(hash_docs_tree(&d).unwrap().unwrap(), h3, "hash é determinístico");
+        assert_eq!(
+            hash_docs_tree(&d).unwrap().unwrap(),
+            h3,
+            "hash é determinístico"
+        );
 
         let _ = std::fs::remove_dir_all(&d);
     }

@@ -81,8 +81,10 @@ pub fn scrape(
         catalogo.categorias.len()
     );
 
-    let publicos_ordem =
-        vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.to_string(),
+        slug: PUBLICO_SLUG.to_string(),
+    }];
     Ok((catalogo.items, publicos_ordem))
 }
 
@@ -90,14 +92,20 @@ pub fn scrape(
 /// NÃO grava o cache — quem grava é o [`scrape`], depois dos guards (D-RJ5). Retorna
 /// `(html, veio_do_cache)`.
 fn fetch_catalogo(data_dir: &str, use_cache: bool) -> Result<(String, bool)> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", CATALOGO_URL, use_cache)? {
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", CATALOGO_URL, use_cache)?
+    {
         return Ok((cached, true));
     }
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
     let body = auli_scraper_kit::http::get_string(
         &agent,
         CATALOGO_URL,
-        &GetOpts { log_prefix: "RJ", ..Default::default() },
+        &GetOpts {
+            log_prefix: "RJ",
+            ..Default::default()
+        },
     )?;
     Ok((body, false))
 }
@@ -160,13 +168,20 @@ fn parse_catalogo(html: &str) -> Result<Catalogo> {
             });
             let oc = &mut items[idx].ocorrencias;
             if !oc.iter().any(|o| o.classe == *nome) {
-                oc.push(Ocorrencia { publico: PUBLICO_NOME.to_string(), classe: nome.clone() });
+                oc.push(Ocorrencia {
+                    publico: PUBLICO_NOME.to_string(),
+                    classe: nome.clone(),
+                });
             }
         }
         categorias.push((nome.clone(), n_itens));
     }
 
-    Ok(Catalogo { items, categorias, excluidos })
+    Ok(Catalogo {
+        items,
+        categorias,
+        excluidos,
+    })
 }
 
 /// Extrai do documento a lista ordenada `(id_da_âncora, nome_em_caixa_mista)` das categorias.
@@ -182,7 +197,9 @@ fn extrair_menu(doc: &Html, por_id: &HashMap<String, ElementRef>) -> Result<Vec<
     let mut chaves: HashMap<_, usize> = HashMap::new();
 
     for a in doc.select(&sel_ancora) {
-        let Some(href) = a.value().attr("href") else { continue };
+        let Some(href) = a.value().attr("href") else {
+            continue;
+        };
         let alvo = href.trim_start_matches('#');
         if alvo.is_empty() || !por_id.contains_key(alvo) {
             continue;
@@ -286,11 +303,20 @@ fn colher_ate_proxima_secao(
     let sel_com_id = Selector::parse("[id]").unwrap();
     let mut out = Vec::new();
     for irmao in inicio.next_siblings() {
-        let Some(el) = ElementRef::wrap(irmao) else { continue };
-        let proprio = el.value().attr("id").map(|id| ids_menu.contains(id)).unwrap_or(false);
-        let contem = el
-            .select(&sel_com_id)
-            .any(|d| d.value().attr("id").map(|id| ids_menu.contains(id)).unwrap_or(false));
+        let Some(el) = ElementRef::wrap(irmao) else {
+            continue;
+        };
+        let proprio = el
+            .value()
+            .attr("id")
+            .map(|id| ids_menu.contains(id))
+            .unwrap_or(false);
+        let contem = el.select(&sel_com_id).any(|d| {
+            d.value()
+                .attr("id")
+                .map(|id| ids_menu.contains(id))
+                .unwrap_or(false)
+        });
         if proprio || contem {
             break;
         }
@@ -393,7 +419,10 @@ mod tests {
             <ul><li><a href="https://b.rj.gov.br/3">Três</a></li></ul>"##,
         );
         let c = parse_catalogo(&html).unwrap();
-        assert_eq!(c.categorias, vec![("Atendimento".into(), 2), ("Cadastro".into(), 1)]);
+        assert_eq!(
+            c.categorias,
+            vec![("Atendimento".into(), 2), ("Cadastro".into(), 1)]
+        );
         assert!(c.items.iter().all(|s| s.ocorrencias.len() == 1));
     }
 
@@ -408,8 +437,16 @@ mod tests {
         );
         let c = parse_catalogo(&html).unwrap();
         assert_eq!(c.items.len(), 1);
-        assert_eq!(c.items[0].link, format!("{}/scdi", BASE), "relativo absolutizado");
-        let classes: Vec<_> = c.items[0].ocorrencias.iter().map(|o| o.classe.as_str()).collect();
+        assert_eq!(
+            c.items[0].link,
+            format!("{}/scdi", BASE),
+            "relativo absolutizado"
+        );
+        let classes: Vec<_> = c.items[0]
+            .ocorrencias
+            .iter()
+            .map(|o| o.classe.as_str())
+            .collect();
         assert_eq!(classes, vec!["Atendimento", "Cadastro"]);
     }
 
@@ -473,14 +510,23 @@ mod tests {
         );
         let c = parse_catalogo(&html).unwrap();
         let err = validar(&c).unwrap_err().to_string();
-        assert!(err.contains("categoria"), "esperava reprovação por categorias, veio: {err}");
+        assert!(
+            err.contains("categoria"),
+            "esperava reprovação por categorias, veio: {err}"
+        );
     }
 
     #[test]
     fn canonical_cobre_os_formatos() {
-        assert_eq!(canonical(" https://x.gov.br/a "), Some("https://x.gov.br/a".into()));
+        assert_eq!(
+            canonical(" https://x.gov.br/a "),
+            Some("https://x.gov.br/a".into())
+        );
         assert_eq!(canonical("/darj"), Some(format!("{}/darj", BASE)));
-        assert_eq!(canonical("//gnre.pe.gov.br/x"), Some("https://gnre.pe.gov.br/x".into()));
+        assert_eq!(
+            canonical("//gnre.pe.gov.br/x"),
+            Some("https://gnre.pe.gov.br/x".into())
+        );
         assert_eq!(canonical("#Cadastros"), None);
         assert_eq!(canonical("javascript:void(0)"), None);
         assert_eq!(canonical("mailto:x@y.br"), None);

@@ -100,8 +100,14 @@ mod tests {
 
     #[test]
     fn casa_mascarado_bare_e_minusculo() {
-        assert_eq!(achados("O CNPJ 12.ABC.345/01DE-35 é novo."), ["12.ABC.345/01DE-35"]);
-        assert_eq!(achados("Empresa 12ABC34501DE35 aderiu."), ["12ABC34501DE35"]);
+        assert_eq!(
+            achados("O CNPJ 12.ABC.345/01DE-35 é novo."),
+            ["12.ABC.345/01DE-35"]
+        );
+        assert_eq!(
+            achados("Empresa 12ABC34501DE35 aderiu."),
+            ["12ABC34501DE35"]
+        );
         assert_eq!(achados("cnpj 12abc34501de35 ok"), ["12abc34501de35"]);
     }
 

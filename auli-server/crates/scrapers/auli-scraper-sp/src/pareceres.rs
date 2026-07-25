@@ -45,7 +45,8 @@ const LIST_ID: &str = "F286D0D1-5624-47DA-A856-A8571296EB7F";
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
 const DOCS_DIR: &str = "../data/sp/docs/pareceres";
 const CACHE_DIR: &str = "../data/sp/raw/cache/pareceres";
-const UA: &str = "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
+const UA: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 const COURTESY: Duration = Duration::from_millis(1000);
 const PAGE_SIZE: usize = 200;
 const MIN_YEAR: i32 = 2012;
@@ -54,9 +55,12 @@ const MIN_PARECERES: usize = 10000; // guarda contra coleta truncada (esperado ~
 static RE_RC: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^RC(\d+)_(\d{4})\.aspx$").expect("regex RC inválida"));
 static RE_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?s)<[^>]+>").unwrap());
-static RE_HEAD: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<head[^>]*>.*?</head>").unwrap());
-static RE_SCRIPT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<script[^>]*>.*?</script>").unwrap());
-static RE_STYLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<style[^>]*>.*?</style>").unwrap());
+static RE_HEAD: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?is)<head[^>]*>.*?</head>").unwrap());
+static RE_SCRIPT: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?is)<script[^>]*>.*?</script>").unwrap());
+static RE_STYLE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?is)<style[^>]*>.*?</style>").unwrap());
 static RE_COMMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?s)<!--.*?-->").unwrap());
 static RE_BLOCK: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?is)</(p|div|tr|h[1-6]|li)>|<br\s*/?>").unwrap());
@@ -109,7 +113,9 @@ pub fn run(use_cache: bool) -> Result<()> {
 
         for it in page.value {
             let Some(file) = it.file else { continue };
-            let Some(caps) = RE_RC.captures(&file) else { continue }; // só RC{n}_{ano}.aspx
+            let Some(caps) = RE_RC.captures(&file) else {
+                continue;
+            }; // só RC{n}_{ano}.aspx
             let ano: i32 = caps[2].parse().unwrap_or(0);
             if ano < MIN_YEAR {
                 continue;
@@ -121,7 +127,9 @@ pub fn run(use_cache: bool) -> Result<()> {
             if corpo.is_empty() {
                 continue;
             }
-            let assunto = clean(&decode_html(&strip_tags(it.ementa.as_deref().unwrap_or(""))));
+            let assunto = clean(&decode_html(&strip_tags(
+                it.ementa.as_deref().unwrap_or(""),
+            )));
             items.push(Parecer {
                 numero: format!("RESPOSTA À CONSULTA TRIBUTÁRIA {}/{}", &caps[1], ano),
                 assunto,
@@ -136,7 +144,11 @@ pub fn run(use_cache: bool) -> Result<()> {
         }
         match page.next {
             Some(n) if !n.is_empty() => {
-                url = if n.starts_with("http") { n } else { format!("{HOST}/{}", n.trim_start_matches('/')) };
+                url = if n.starts_with("http") {
+                    n
+                } else {
+                    format!("{HOST}/{}", n.trim_start_matches('/'))
+                };
             }
             _ => break,
         }
@@ -145,7 +157,11 @@ pub fn run(use_cache: bool) -> Result<()> {
         }
     }
 
-    println!("📇 {} RCs de {}+ ({pagina} páginas da REST).", items.len(), MIN_YEAR);
+    println!(
+        "📇 {} RCs de {}+ ({pagina} páginas da REST).",
+        items.len(),
+        MIN_YEAR
+    );
     if items.len() < MIN_PARECERES {
         bail!(
             "coleta devolveu {} RCs (< MIN {MIN_PARECERES}); abortando para não truncar.",
@@ -239,10 +255,18 @@ fn normalize_lines(s: &str) -> String {
 /// Decodifica entidades HTML (nomeadas comuns pt-BR + numéricas decimais e hexadecimais).
 fn decode_html(s: &str) -> String {
     let s = RE_DEC.replace_all(s, |c: &regex::Captures| {
-        c[1].parse::<u32>().ok().and_then(char::from_u32).map(String::from).unwrap_or_default()
+        c[1].parse::<u32>()
+            .ok()
+            .and_then(char::from_u32)
+            .map(String::from)
+            .unwrap_or_default()
     });
     let s = RE_HEX.replace_all(&s, |c: &regex::Captures| {
-        u32::from_str_radix(&c[1], 16).ok().and_then(char::from_u32).map(String::from).unwrap_or_default()
+        u32::from_str_radix(&c[1], 16)
+            .ok()
+            .and_then(char::from_u32)
+            .map(String::from)
+            .unwrap_or_default()
     });
     let mut s = s.into_owned();
     for (ent, ch) in NAMED {
@@ -255,20 +279,61 @@ fn decode_html(s: &str) -> String {
 
 /// Entidades nomeadas relevantes (Latin-1/pt-BR + pontuação). `&amp;` por último.
 const NAMED: &[(&str, &str)] = &[
-    ("&nbsp;", " "), ("&aacute;", "á"), ("&Aacute;", "Á"), ("&agrave;", "à"), ("&Agrave;", "À"),
-    ("&acirc;", "â"), ("&Acirc;", "Â"), ("&atilde;", "ã"), ("&Atilde;", "Ã"), ("&auml;", "ä"),
-    ("&eacute;", "é"), ("&Eacute;", "É"), ("&ecirc;", "ê"), ("&Ecirc;", "Ê"), ("&egrave;", "è"),
-    ("&iacute;", "í"), ("&Iacute;", "Í"), ("&icirc;", "î"), ("&oacute;", "ó"), ("&Oacute;", "Ó"),
-    ("&ocirc;", "ô"), ("&Ocirc;", "Ô"), ("&otilde;", "õ"), ("&Otilde;", "Õ"), ("&ouml;", "ö"),
-    ("&uacute;", "ú"), ("&Uacute;", "Ú"), ("&ucirc;", "û"), ("&uuml;", "ü"), ("&Uuml;", "Ü"),
-    ("&ccedil;", "ç"), ("&Ccedil;", "Ç"), ("&ntilde;", "ñ"), ("&Ntilde;", "Ñ"),
-    ("&ordf;", "ª"), ("&ordm;", "º"), ("&deg;", "°"), ("&sect;", "§"), ("&middot;", "·"),
-    ("&hellip;", "…"), ("&ndash;", "–"), ("&mdash;", "—"), ("&laquo;", "«"), ("&raquo;", "»"),
-    ("&lsquo;", "‘"), ("&rsquo;", "’"), ("&ldquo;", "“"), ("&rdquo;", "”"),
-    ("&quot;", "\""), ("&apos;", "'"), ("&#39;", "'"), ("&lt;", "<"), ("&gt;", ">"),
+    ("&nbsp;", " "),
+    ("&aacute;", "á"),
+    ("&Aacute;", "Á"),
+    ("&agrave;", "à"),
+    ("&Agrave;", "À"),
+    ("&acirc;", "â"),
+    ("&Acirc;", "Â"),
+    ("&atilde;", "ã"),
+    ("&Atilde;", "Ã"),
+    ("&auml;", "ä"),
+    ("&eacute;", "é"),
+    ("&Eacute;", "É"),
+    ("&ecirc;", "ê"),
+    ("&Ecirc;", "Ê"),
+    ("&egrave;", "è"),
+    ("&iacute;", "í"),
+    ("&Iacute;", "Í"),
+    ("&icirc;", "î"),
+    ("&oacute;", "ó"),
+    ("&Oacute;", "Ó"),
+    ("&ocirc;", "ô"),
+    ("&Ocirc;", "Ô"),
+    ("&otilde;", "õ"),
+    ("&Otilde;", "Õ"),
+    ("&ouml;", "ö"),
+    ("&uacute;", "ú"),
+    ("&Uacute;", "Ú"),
+    ("&ucirc;", "û"),
+    ("&uuml;", "ü"),
+    ("&Uuml;", "Ü"),
+    ("&ccedil;", "ç"),
+    ("&Ccedil;", "Ç"),
+    ("&ntilde;", "ñ"),
+    ("&Ntilde;", "Ñ"),
+    ("&ordf;", "ª"),
+    ("&ordm;", "º"),
+    ("&deg;", "°"),
+    ("&sect;", "§"),
+    ("&middot;", "·"),
+    ("&hellip;", "…"),
+    ("&ndash;", "–"),
+    ("&mdash;", "—"),
+    ("&laquo;", "«"),
+    ("&raquo;", "»"),
+    ("&lsquo;", "‘"),
+    ("&rsquo;", "’"),
+    ("&ldquo;", "“"),
+    ("&rdquo;", "”"),
+    ("&quot;", "\""),
+    ("&apos;", "'"),
+    ("&#39;", "'"),
+    ("&lt;", "<"),
+    ("&gt;", ">"),
     ("&amp;", "&"),
 ];
-
 
 #[cfg(test)]
 mod tests {
@@ -287,7 +352,10 @@ mod tests {
     #[test]
     fn ementa_strips_div_and_decodes() {
         let raw = "<div class='sefazElement-EmentaRC'><p>ICMS &#8211; substitui&ccedil;&atilde;o.</p></div>";
-        assert_eq!(clean(&decode_html(&strip_tags(raw))), "ICMS – substituição.");
+        assert_eq!(
+            clean(&decode_html(&strip_tags(raw))),
+            "ICMS – substituição."
+        );
     }
 
     #[test]

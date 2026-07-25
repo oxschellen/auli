@@ -25,10 +25,15 @@ const KIND_PADRAO: &str = "pareceres";
 /// vocabulário estático. Separado de propósito: é o que torna estes contratos testáveis sem
 /// `data/registry.toml` (que não existe no ambiente de teste) e sem `Engine` (que carregaria o
 /// BGE-M3).
-fn validar_kind_top_k(req: &RetrieveRequest) -> Result<(&'static str, usize), (StatusCode, String)> {
+fn validar_kind_top_k(
+    req: &RetrieveRequest,
+) -> Result<(&'static str, usize), (StatusCode, String)> {
     let kind = req.kind.as_deref().unwrap_or(KIND_PADRAO);
     let collection = corpus::from_kind(kind).map_err(|e| (StatusCode::BAD_REQUEST, e))?;
-    let top_k = req.top_k.unwrap_or(collection.n_results).clamp(1, MAX_TOP_K);
+    let top_k = req
+        .top_k
+        .unwrap_or(collection.n_results)
+        .clamp(1, MAX_TOP_K);
     Ok((collection.kind, top_k))
 }
 
@@ -60,7 +65,9 @@ pub async fn retrieve_handler(
 
     // Blocking: embed + scan são CPU-bound (mesma disciplina do chat).
     let resultado = run_blocking(move || {
-        engine.search(&collection, &question, top_k, 0, f32::INFINITY).map_err(|e| e.to_string().into())
+        engine
+            .search(&collection, &question, top_k, 0, f32::INFINITY)
+            .map_err(|e| e.to_string().into())
     })
     .await;
 
@@ -100,7 +107,13 @@ pub async fn retrieve_handler(
         RetrieveResponse {
             entity: cfg.id.clone(),
             kind: kind.into(),
-            hits: hits.into_iter().map(|h| RetrieveHit { score: h.score, texto: h.payload }).collect(),
+            hits: hits
+                .into_iter()
+                .map(|h| RetrieveHit {
+                    score: h.score,
+                    texto: h.payload,
+                })
+                .collect(),
             pareceres: vec![],
         }
     };
@@ -108,7 +121,11 @@ pub async fn retrieve_handler(
 }
 
 fn erro(status: StatusCode, message: String) -> axum::response::Response {
-    (status, Json(serde_json::json!({ "status": "Erro", "message": message }))).into_response()
+    (
+        status,
+        Json(serde_json::json!({ "status": "Erro", "message": message })),
+    )
+        .into_response()
 }
 
 #[cfg(test)]
@@ -149,7 +166,8 @@ mod tests {
         // Com kind válido, a falha restante é de entidade. (No ambiente de teste o registry está
         // vazio, então QUALQUER id cai aqui — o que este teste fixa é o status, não a distinção
         // entre "id inexistente" e "registry ausente".)
-        let (status, msg) = validar_retrieve(&req(Some("zz"), Some("pareceres"), None)).unwrap_err();
+        let (status, msg) =
+            validar_retrieve(&req(Some("zz"), Some("pareceres"), None)).unwrap_err();
         assert_eq!(status, StatusCode::NOT_FOUND);
         assert!(msg.contains("Entidade desconhecida"), "msg: {msg}");
     }

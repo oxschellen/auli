@@ -79,7 +79,11 @@ pub enum Error {
 /// 3 vezes em erros de conexão/timeout (no send OU na leitura do body). Um erro de nível de API —
 /// campo `error` no JSON, body não-JSON, ou requisição pendurada que estoura o timeout — volta como
 /// mensagem legível em vez de `Err`, para o chamador nunca vazar um erro cru de serde/reqwest.
-pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -> Result<ChatResponse> {
+pub async fn chat(
+    params: &LlmParams,
+    system_prompt: &str,
+    user_message: &str,
+) -> Result<ChatResponse> {
     let start = Instant::now();
 
     const AUTH_HEADER: &str = "Authorization";
@@ -142,7 +146,10 @@ pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -
                     break;
                 }
                 Err(e) if (e.is_connect() || e.is_timeout()) && attempt < 3 => {
-                    println!("Erro de conexão (tentativa {}/3): {e}. Tentando novamente...", attempt);
+                    println!(
+                        "Erro de conexão (tentativa {}/3): {e}. Tentando novamente...",
+                        attempt
+                    );
                     tokio::time::sleep(Duration::from_millis(500)).await;
                     result = Err(e.into());
                 }
@@ -160,7 +167,10 @@ pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -
             if let Some(err) = data.get("error") {
                 format!("Erro na chamada da API do modelo AI: {}!", err)
             } else {
-                data["choices"][0]["message"]["content"].as_str().unwrap_or_default().to_string()
+                data["choices"][0]["message"]["content"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .to_string()
             }
         }
         // Non-JSON body (e.g. an HTML 5xx from a proxy) — surface the status, not a raw serde error.
@@ -173,7 +183,11 @@ pub async fn chat(params: &LlmParams, system_prompt: &str, user_message: &str) -
     let elapsed = start.elapsed().as_millis();
     println!("Tempo de chamada do LLM API : {:6} millisegundos", elapsed);
 
-    Ok(ChatResponse { text: answer, remaining_requests, reset_requests })
+    Ok(ChatResponse {
+        text: answer,
+        remaining_requests,
+        reset_requests,
+    })
 }
 
 /// Lê um header como `u64` (aparado), ou `None` se ausente/não-numérico.

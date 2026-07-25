@@ -99,7 +99,8 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // Páginas na ordem: (url_lógica, json_cru, parseada). O json cru fica para o cache — que só
     // grava DEPOIS dos guards (D-RJ5); a parseada evita re-parse na montagem.
@@ -112,9 +113,12 @@ pub fn scrape(
     loop {
         // `pageSize` e o sorter na chave: cache gravado com outros parâmetros NÃO é reaproveitado
         // (total entregue e cobertura das páginas dependem de ambos — ver PAGE_SIZE/SORT_KEY).
-        let logical =
-            format!("{}#ps={}&sort={}&page={}", GETCHILDREN_URL, PAGE_SIZE, SORT_KEY, page);
-        let (json, from_cache) = match auli_scraper_kit::cache::read(data_dir, "servicos", &logical) {
+        let logical = format!(
+            "{}#ps={}&sort={}&page={}",
+            GETCHILDREN_URL, PAGE_SIZE, SORT_KEY, page
+        );
+        let (json, from_cache) = match auli_scraper_kit::cache::read(data_dir, "servicos", &logical)
+        {
             Some(cached) => {
                 println!("Cache hit (página {}): {}", page, GETCHILDREN_URL);
                 (cached, true)
@@ -157,7 +161,10 @@ pub fn scrape(
 
         page += 1;
         if page > MAX_PAGES {
-            eprintln!("⚠️  CE: atingiu MAX_PAGES ({}); parando a paginação.", MAX_PAGES);
+            eprintln!(
+                "⚠️  CE: atingiu MAX_PAGES ({}); parando a paginação.",
+                MAX_PAGES
+            );
             break;
         }
         if !from_cache {
@@ -176,9 +183,15 @@ pub fn scrape(
         }
     }
 
-    println!("CE: {} serviços (hits={}, dedup por _id)", items.len(), hits_max);
-    let publicos_ordem =
-        vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
+    println!(
+        "CE: {} serviços (hits={}, dedup por _id)",
+        items.len(),
+        hits_max
+    );
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.to_string(),
+        slug: PUBLICO_SLUG.to_string(),
+    }];
     Ok((items, publicos_ordem))
 }
 
@@ -188,7 +201,10 @@ fn fetch_token(agent: &ureq::Agent) -> Result<String> {
     let shell = auli_scraper_kit::http::get_string(
         agent,
         SHELL_URL,
-        &GetOpts { log_prefix: "CE", ..Default::default() },
+        &GetOpts {
+            log_prefix: "CE",
+            ..Default::default()
+        },
     )?;
     parse_token(&shell)
 }
@@ -199,9 +215,16 @@ fn fetch_page(agent: &ureq::Agent, token: &str, page: u32) -> Result<String> {
     auli_scraper_kit::http::post_json(
         agent,
         GETCHILDREN_URL,
-        &[("Authorization", token), ("X-Explorer-Account-Token", ORG_HEADER)],
+        &[
+            ("Authorization", token),
+            ("X-Explorer-Account-Token", ORG_HEADER),
+        ],
         &build_body(page),
-        &GetOpts { log_prefix: "CE", accept: Some("application/json"), ..Default::default() },
+        &GetOpts {
+            log_prefix: "CE",
+            accept: Some("application/json"),
+            ..Default::default()
+        },
     )
 }
 
@@ -228,10 +251,14 @@ fn build_body(page: u32) -> serde_json::Value {
 /// Extrai `Bearer …` do primeiro `"Authorization":"…"` do shell. Sem regex (evita a dependência).
 fn parse_token(shell: &str) -> Result<String> {
     const KEY: &str = "\"Authorization\":\"";
-    let start = shell.find(KEY).ok_or_else(|| anyhow!("token não encontrado no shell (markup mudou?)"))?
+    let start = shell
+        .find(KEY)
+        .ok_or_else(|| anyhow!("token não encontrado no shell (markup mudou?)"))?
         + KEY.len();
     let rest = &shell[start..];
-    let end = rest.find('"').ok_or_else(|| anyhow!("token malformado no shell"))?;
+    let end = rest
+        .find('"')
+        .ok_or_else(|| anyhow!("token malformado no shell"))?;
     let tok = rest[..end].trim();
     if !tok.starts_with("Bearer ") || tok.len() < 20 {
         bail!("valor de Authorization inesperado no shell");
@@ -332,7 +359,10 @@ mod tests {
         let p = parse_page(PAGE_JSON).unwrap();
         assert_eq!(p.hits, 392);
         assert_eq!(p.items.len(), 2);
-        assert_eq!(p.items[0].identifier, "homologar-di-declaracao-de-importacao");
+        assert_eq!(
+            p.items[0].identifier,
+            "homologar-di-declaracao-de-importacao"
+        );
     }
 
     #[test]
@@ -341,7 +371,10 @@ mod tests {
         let items = build_servicos(ps.iter());
         assert_eq!(items.len(), 2);
         assert_eq!(items[0].titulo, "Homologar DI - Declaração de Importação");
-        assert_eq!(items[0].descricao, "rEQUISIÇÃO DE AÇÃO FISCAL DE D I AINDA NÃO HOMOLOGADA NO SITRAM");
+        assert_eq!(
+            items[0].descricao,
+            "rEQUISIÇÃO DE AÇÃO FISCAL DE D I AINDA NÃO HOMOLOGADA NO SITRAM"
+        );
         assert_eq!(
             items[0].link,
             "https://portalservicos.sefaz.ce.gov.br/servico-geral+homologar-di-declaracao-de-importacao+69459012f6e0ff51fef22a9d"
@@ -359,7 +392,11 @@ mod tests {
         // O mesmo `_id` em duas páginas vira um único serviço.
         let ps = pages(&[PAGE_JSON, PAGE_JSON]);
         let items = build_servicos(ps.iter());
-        assert_eq!(items.len(), 2, "dois _id distintos, mesmo repetidos entre páginas");
+        assert_eq!(
+            items.len(),
+            2,
+            "dois _id distintos, mesmo repetidos entre páginas"
+        );
     }
 
     #[test]
@@ -391,7 +428,10 @@ mod tests {
     #[test]
     fn parse_token_extrai_bearer() {
         let shell = r#"...<script>window.SYDLE.config = {"ui-api":{"REQUEST_PARAMS":{"headers":{"Authorization":"Bearer eyJabc.def.ghi_LONG_TOKEN_VALUE"}}}}</script>..."#;
-        assert_eq!(parse_token(shell).unwrap(), "Bearer eyJabc.def.ghi_LONG_TOKEN_VALUE");
+        assert_eq!(
+            parse_token(shell).unwrap(),
+            "Bearer eyJabc.def.ghi_LONG_TOKEN_VALUE"
+        );
     }
 
     #[test]
@@ -403,7 +443,10 @@ mod tests {
             body["params"]["sorters"]["sort"]["name._current.keyword"], "asc",
             "sorters.sort deve carregar um campo válido e estável"
         );
-        assert!(body["params"].get("sort").is_none(), "a chave inválida 'sort' não deve voltar");
+        assert!(
+            body["params"].get("sort").is_none(),
+            "a chave inválida 'sort' não deve voltar"
+        );
     }
 
     #[test]
@@ -435,6 +478,9 @@ mod tests {
             ocorrencias: vec![],
         }];
         let err = validar(&poucos, 1).unwrap_err().to_string();
-        assert!(err.contains("capado"), "esperava guard de mínimo, veio: {err}");
+        assert!(
+            err.contains("capado"),
+            "esperava guard de mínimo, veio: {err}"
+        );
     }
 }

@@ -102,7 +102,8 @@ impl SvcRow {
 
 /// Raspa o catálogo da SEFAZ-SP e devolve os `ServicoRaw` (um por serviço) + a ordem dos públicos.
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(Vec<ServicoRaw>, Vec<Publico>)> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // 1. Homes 360: ID -> Assunto (classe).
     let homes_url = format!(
@@ -140,16 +141,29 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(Vec<ServicoRaw>, Vec<P
         }
     }
     if sem_publico > 0 {
-        eprintln!("⚠️  SP: {} serviço(s) sem nenhuma faceta de público — fora do catálogo.", sem_publico);
+        eprintln!(
+            "⚠️  SP: {} serviço(s) sem nenhuma faceta de público — fora do catálogo.",
+            sem_publico
+        );
     }
     if sem_link > 0 {
-        eprintln!("⚠️  SP: {} serviço(s) sem URL — link vazio no contrato (a linha ainda é a identidade).", sem_link);
+        eprintln!(
+            "⚠️  SP: {} serviço(s) sem URL — link vazio no contrato (a linha ainda é a identidade).",
+            sem_link
+        );
     }
-    println!("SP: {} serviços com público (de {} no catálogo)", items.len(), svcs.len());
+    println!(
+        "SP: {} serviços com público (de {} no catálogo)",
+        items.len(),
+        svcs.len()
+    );
 
     let publicos_ordem = pubs
         .iter()
-        .map(|(_, nome, slug)| Publico { nome: nome.to_string(), slug: slug.to_string() })
+        .map(|(_, nome, slug)| Publico {
+            nome: nome.to_string(),
+            slug: slug.to_string(),
+        })
         .collect();
     Ok((items, publicos_ordem))
 }
@@ -171,7 +185,10 @@ fn build_servico(
     let ocorrencias: Vec<Ocorrencia> = pubs
         .iter()
         .filter(|(campo, ..)| !s.facet(campo).is_empty())
-        .map(|(_, nome, _)| Ocorrencia { publico: nome.to_string(), classe: classe.clone() })
+        .map(|(_, nome, _)| Ocorrencia {
+            publico: nome.to_string(),
+            classe: classe.clone(),
+        })
         .collect();
     if ocorrencias.is_empty() {
         return None;
@@ -188,7 +205,13 @@ fn build_servico(
 /// Corpo do card: descrição (limpa) + "Formas de acesso: ...". Sem o conteúdo dos subsites (D-SP4).
 fn build_corpo(s: &SvcRow) -> String {
     let mut corpo = clean(s.descricao.as_deref().unwrap_or_default());
-    let acesso: Vec<String> = s.acesso.results.iter().map(|a| clean(a)).filter(|a| !a.is_empty()).collect();
+    let acesso: Vec<String> = s
+        .acesso
+        .results
+        .iter()
+        .map(|a| clean(a))
+        .filter(|a| !a.is_empty())
+        .collect();
     if !acesso.is_empty() {
         if !corpo.is_empty() {
             corpo.push('\n');
@@ -223,8 +246,8 @@ fn fetch_all<T: for<'de> Deserialize<'de>>(
     let mut url = Some(first_url.to_string());
     while let Some(u) = url {
         let body = fetch(agent, data_dir, &u, use_cache)?;
-        let parsed: Resp<T> = serde_json::from_str(&body)
-            .map_err(|e| anyhow!("JSON inválido de {}: {}", u, e))?;
+        let parsed: Resp<T> =
+            serde_json::from_str(&body).map_err(|e| anyhow!("JSON inválido de {}: {}", u, e))?;
         out.extend(parsed.d.results);
         url = parsed.d.next;
     }
@@ -234,13 +257,19 @@ fn fetch_all<T: for<'de> Deserialize<'de>>(
 /// Busca (ou lê do cache) uma URL do `_api` (Accept verbose). Retenta falhas transitórias; cortesia
 /// entre chamadas de rede.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)? {
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)?
+    {
         return Ok(cached);
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "SP", accept: Some("application/json;odata=verbose"), ..Default::default() },
+        &GetOpts {
+            log_prefix: "SP",
+            accept: Some("application/json;odata=verbose"),
+            ..Default::default()
+        },
     )?;
     auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
     sleep(COURTESY);
@@ -262,7 +291,10 @@ mod tests {
     fn canonical_cobre_os_formatos() {
         assert_eq!(canonical("https://x.sp.gov.br/a"), "https://x.sp.gov.br/a");
         assert_eq!(canonical(" https://y.sp.gov.br "), "https://y.sp.gov.br"); // trim
-        assert_eq!(canonical("/Pages/Consulta.aspx"), format!("{}/Pages/Consulta.aspx", BASE));
+        assert_eq!(
+            canonical("/Pages/Consulta.aspx"),
+            format!("{}/Pages/Consulta.aspx", BASE)
+        );
         assert_eq!(canonical("relativo-sem-barra"), "relativo-sem-barra"); // fica como está
         assert_eq!(canonical(""), "");
     }
@@ -294,7 +326,10 @@ mod tests {
 
     #[test]
     fn parse_resp_segue_results_e_next() {
-        let json = format!(r#"{{"d":{{"results":[{}],"__next":"https://x/next"}}}}"#, SVC_JSON);
+        let json = format!(
+            r#"{{"d":{{"results":[{}],"__next":"https://x/next"}}}}"#,
+            SVC_JSON
+        );
         let r: Resp<SvcRow> = serde_json::from_str(&json).unwrap();
         assert_eq!(r.d.results.len(), 1);
         assert_eq!(r.d.next.as_deref(), Some("https://x/next"));
@@ -307,13 +342,19 @@ mod tests {
     #[test]
     fn build_corpo_junta_descricao_e_formas_de_acesso() {
         let s: SvcRow = serde_json::from_str(SVC_JSON).unwrap();
-        assert_eq!(build_corpo(&s), "Permite ver a ficha cadastral.\nFormas de acesso: Público");
+        assert_eq!(
+            build_corpo(&s),
+            "Permite ver a ficha cadastral.\nFormas de acesso: Público"
+        );
 
         // Descrição vazia -> só as formas de acesso.
         let sem_desc: SvcRow =
             serde_json::from_str(r#"{"Descricao":"","Acesso":{"results":["Público","Restrito"]}}"#)
                 .unwrap();
-        assert_eq!(build_corpo(&sem_desc), "Formas de acesso: Público, Restrito");
+        assert_eq!(
+            build_corpo(&sem_desc),
+            "Formas de acesso: Público, Restrito"
+        );
     }
 
     #[test]
@@ -323,11 +364,18 @@ mod tests {
         let pubs = publicos();
         let sr = build_servico(&s, &assunto, &pubs).unwrap();
         // Cidadão vazio é pulado; Empresa/Servidor/Tributo preenchidos -> 3 ocorrências.
-        let ocs: Vec<(&str, &str)> =
-            sr.ocorrencias.iter().map(|o| (o.publico.as_str(), o.classe.as_str())).collect();
+        let ocs: Vec<(&str, &str)> = sr
+            .ocorrencias
+            .iter()
+            .map(|o| (o.publico.as_str(), o.classe.as_str()))
+            .collect();
         assert_eq!(
             ocs,
-            vec![("Empresa", "Cadastro"), ("Servidor Público", "Cadastro"), ("Tributos", "Cadastro")]
+            vec![
+                ("Empresa", "Cadastro"),
+                ("Servidor Público", "Cadastro"),
+                ("Tributos", "Cadastro")
+            ]
         );
         assert_eq!(sr.titulo, "Consulta Pública de Cadastro");
         assert_eq!(sr.orgao, "SEFAZ-SP");
@@ -352,6 +400,9 @@ mod tests {
         let sr = build_servico(&s, &HashMap::new(), &pubs).unwrap();
         assert_eq!(sr.ocorrencias[0].publico, "Cidadão");
         assert_eq!(sr.ocorrencias[0].classe, "", "sem Home360 -> classe vazia");
-        assert_eq!(sr.link, "", "sem URL -> link vazio (a linha ainda é a identidade)");
+        assert_eq!(
+            sr.link, "",
+            "sem URL -> link vazio (a linha ainda é a identidade)"
+        );
     }
 }

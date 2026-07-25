@@ -66,7 +66,10 @@ impl ScraperInfo {
     /// que o `env!` avalia no **crate chamador** (por isso um construtor com args, não uma função no
     /// kit). Substitui o `fn scraper_info()` boilerplate repetido em cada `main.rs`.
     pub fn new(nome: &str, versao: &str) -> Self {
-        Self { nome: nome.to_string(), versao: versao.to_string() }
+        Self {
+            nome: nome.to_string(),
+            versao: versao.to_string(),
+        }
     }
 }
 
@@ -181,7 +184,9 @@ pub struct ServicoPerPublico {
 /// Caminho do snapshot de uma coleção: `../data/<id>/<id>-<kind>-snapshot.json`, irmão de `raw/`. O
 /// `data_dir` aponta para `.../<id>/raw`, então subimos um nível.
 fn snapshot_path(id: &str, data_dir: &str, kind: &str) -> PathBuf {
-    let base = Path::new(data_dir).parent().unwrap_or_else(|| Path::new(data_dir));
+    let base = Path::new(data_dir)
+        .parent()
+        .unwrap_or_else(|| Path::new(data_dir));
     base.join(format!("{}-{}-snapshot.json", id, kind))
 }
 
@@ -189,12 +194,22 @@ fn snapshot_path(id: &str, data_dir: &str, kind: &str) -> PathBuf {
 fn now_rfc3339() -> String {
     use time::OffsetDateTime;
     use time::format_description::well_known::Rfc3339;
-    OffsetDateTime::now_utc().format(&Rfc3339).unwrap_or_default()
+    OffsetDateTime::now_utc()
+        .format(&Rfc3339)
+        .unwrap_or_default()
 }
 
 /// Grava a coleta de faqs no arquivo `<id>-faqs-snapshot.json`. `scraper` identifica quem gravou.
-pub fn write_faqs(id: &str, data_dir: &str, scraper: &ScraperInfo, items: Vec<FaqRaw>) -> Result<()> {
-    let coleta = ColetaFaqs { coletado_em: now_rfc3339(), items };
+pub fn write_faqs(
+    id: &str,
+    data_dir: &str,
+    scraper: &ScraperInfo,
+    items: Vec<FaqRaw>,
+) -> Result<()> {
+    let coleta = ColetaFaqs {
+        coletado_em: now_rfc3339(),
+        items,
+    };
     save(id, data_dir, "faqs", scraper, coleta)
 }
 
@@ -206,7 +221,11 @@ pub fn write_servicos(
     publicos_ordem: Vec<Publico>,
     items: Vec<ServicoRaw>,
 ) -> Result<()> {
-    let coleta = ColetaServicos { coletado_em: now_rfc3339(), publicos_ordem, items };
+    let coleta = ColetaServicos {
+        coletado_em: now_rfc3339(),
+        publicos_ordem,
+        items,
+    };
     save(id, data_dir, "servicos", scraper, coleta)
 }
 
@@ -257,7 +276,11 @@ fn check_header(bytes: &[u8], id: &str) -> Result<()> {
         );
     }
     if header.entidade != id {
-        anyhow::bail!("entidade do snapshot ('{}') não bate com a pedida ('{}').", header.entidade, id);
+        anyhow::bail!(
+            "entidade do snapshot ('{}') não bate com a pedida ('{}').",
+            header.entidade,
+            id
+        );
     }
     Ok(())
 }
@@ -287,12 +310,21 @@ mod tests {
         CollectionSnapshot {
             schema_version: SNAPSHOT_SCHEMA_VERSION,
             entidade: "rs".into(),
-            scraper: ScraperInfo { nome: "auli-collections".into(), versao: "0.1.0".into() },
+            scraper: ScraperInfo {
+                nome: "auli-collections".into(),
+                versao: "0.1.0".into(),
+            },
             coleta: ColetaServicos {
                 coletado_em: "2026-07-01T10:02:00-03:00".into(),
                 publicos_ordem: vec![
-                    Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() },
-                    Publico { nome: "Empresas".into(), slug: "servicos-a-empresas".into() },
+                    Publico {
+                        nome: "Cidadãos".into(),
+                        slug: "servicos-ao-cidadao".into(),
+                    },
+                    Publico {
+                        nome: "Empresas".into(),
+                        slug: "servicos-a-empresas".into(),
+                    },
                 ],
                 items: vec![ServicoRaw {
                     titulo: "Emitir guia".into(),
@@ -300,8 +332,14 @@ mod tests {
                     link: "https://exemplo/svc/1".into(),
                     orgao: "SEFAZ".into(),
                     ocorrencias: vec![
-                        Ocorrencia { publico: "Empresas".into(), classe: "ICMS".into() },
-                        Ocorrencia { publico: "Cidadãos".into(), classe: "ICMS".into() },
+                        Ocorrencia {
+                            publico: "Empresas".into(),
+                            classe: "ICMS".into(),
+                        },
+                        Ocorrencia {
+                            publico: "Cidadãos".into(),
+                            classe: "ICMS".into(),
+                        },
                     ],
                 }],
             },
@@ -328,7 +366,10 @@ mod tests {
         let snap = CollectionSnapshot {
             schema_version: SNAPSHOT_SCHEMA_VERSION,
             entidade: "rs".into(),
-            scraper: ScraperInfo { nome: "auli-collections".into(), versao: "0.1.0".into() },
+            scraper: ScraperInfo {
+                nome: "auli-collections".into(),
+                versao: "0.1.0".into(),
+            },
             coleta: ColetaFaqs {
                 coletado_em: "2026-07-01T09:14:00-03:00".into(),
                 items: vec![FaqRaw {
@@ -356,11 +397,19 @@ mod tests {
     }
 
     fn scraper() -> ScraperInfo {
-        ScraperInfo { nome: "test".into(), versao: "0".into() }
+        ScraperInfo {
+            nome: "test".into(),
+            versao: "0".into(),
+        }
     }
 
     fn faq(pergunta: &str) -> FaqRaw {
-        FaqRaw { pergunta: pergunta.into(), resposta: "r".into(), origin: String::new(), url: "u".into() }
+        FaqRaw {
+            pergunta: pergunta.into(),
+            resposta: "r".into(),
+            origin: String::new(),
+            url: "u".into(),
+        }
     }
 
     fn svc(link: &str) -> ServicoRaw {
@@ -369,7 +418,10 @@ mod tests {
             descricao: "d".into(),
             link: link.into(),
             orgao: "o".into(),
-            ocorrencias: vec![Ocorrencia { publico: "Cidadãos".into(), classe: "c".into() }],
+            ocorrencias: vec![Ocorrencia {
+                publico: "Cidadãos".into(),
+                classe: "c".into(),
+            }],
         }
     }
 
@@ -384,7 +436,10 @@ mod tests {
             "rs",
             dd,
             &sc,
-            vec![Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() }],
+            vec![Publico {
+                nome: "Cidadãos".into(),
+                slug: "servicos-ao-cidadao".into(),
+            }],
             vec![svc("l1")],
         )
         .unwrap();
@@ -400,7 +455,10 @@ mod tests {
             "rs",
             dd,
             &sc,
-            vec![Publico { nome: "Cidadãos".into(), slug: "servicos-ao-cidadao".into() }],
+            vec![Publico {
+                nome: "Cidadãos".into(),
+                slug: "servicos-ao-cidadao".into(),
+            }],
             vec![svc("l2")],
         )
         .unwrap();
@@ -413,7 +471,8 @@ mod tests {
         // Each loads back as its own typed coleta.
         let faqs: CollectionSnapshot<ColetaFaqs> = load("rs", dd, "faqs").unwrap().unwrap();
         assert_eq!(faqs.coleta.items[0].pergunta, "q1");
-        let servicos: CollectionSnapshot<ColetaServicos> = load("rs", dd, "servicos").unwrap().unwrap();
+        let servicos: CollectionSnapshot<ColetaServicos> =
+            load("rs", dd, "servicos").unwrap().unwrap();
         assert_eq!(servicos.coleta.items[0].link, "l2");
 
         let _ = std::fs::remove_dir_all(data_dir.parent().unwrap());
@@ -435,10 +494,19 @@ mod tests {
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         // An old v2 (merged `colecoes`) file at the new path: the header check must fire on the
         // version before the typed body — with the "re-raspe" message, not a raw serde error.
-        std::fs::write(&path, r#"{"schema_version":2,"entidade":"rs","colecoes":{}}"#).unwrap();
+        std::fs::write(
+            &path,
+            r#"{"schema_version":2,"entidade":"rs","colecoes":{}}"#,
+        )
+        .unwrap();
 
-        let err = load::<ColetaServicos>("rs", dd, "servicos").unwrap_err().to_string();
-        assert!(err.contains("Re-raspe"), "esperava mensagem amigável, veio: {err}");
+        let err = load::<ColetaServicos>("rs", dd, "servicos")
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("Re-raspe"),
+            "esperava mensagem amigável, veio: {err}"
+        );
 
         let _ = std::fs::remove_dir_all(data_dir.parent().unwrap());
     }
@@ -459,8 +527,19 @@ mod tests {
         let json = serde_json::to_string(&s).unwrap();
         // O rename do tipo (kit::Servico -> ServicoPerPublico) NÃO pode mudar o JSON: os arquivos
         // per-público existentes têm que continuar byte a byte (o golden do collections é o juiz).
-        for campo in ["\"id\":1", "\"tipo\":", "\"classe\":", "\"orgao\":", "\"link\":", "\"titulo\":", "\"descricao\":"] {
-            assert!(json.contains(campo), "campo esperado ausente no JSON: {campo} em {json}");
+        for campo in [
+            "\"id\":1",
+            "\"tipo\":",
+            "\"classe\":",
+            "\"orgao\":",
+            "\"link\":",
+            "\"titulo\":",
+            "\"descricao\":",
+        ] {
+            assert!(
+                json.contains(campo),
+                "campo esperado ausente no JSON: {campo} em {json}"
+            );
         }
     }
 }

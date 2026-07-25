@@ -15,10 +15,22 @@ pub struct Collection {
     pub n_results: usize, // how many documents to retrieve for RAG
 }
 
-pub const SERVICES: Collection = Collection { kind: "servicos", n_results: 10 };
-pub const FAQS: Collection = Collection { kind: "faqs", n_results: 20 };
-pub const PARECERES: Collection = Collection { kind: "pareceres", n_results: 10 };
-pub const NOTAS: Collection = Collection { kind: "notas", n_results: 1 };
+pub const SERVICES: Collection = Collection {
+    kind: "servicos",
+    n_results: 10,
+};
+pub const FAQS: Collection = Collection {
+    kind: "faqs",
+    n_results: 20,
+};
+pub const PARECERES: Collection = Collection {
+    kind: "pareceres",
+    n_results: 10,
+};
+pub const NOTAS: Collection = Collection {
+    kind: "notas",
+    n_results: 1,
+};
 
 // All four kinds, for callers that iterate (boot-time pack loading in `packs::load_all`).
 pub const ALL: [&Collection; 4] = [&SERVICES, &FAQS, &PARECERES, &NOTAS];

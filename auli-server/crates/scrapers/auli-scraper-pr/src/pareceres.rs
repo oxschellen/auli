@@ -35,17 +35,16 @@ const INDEX_URL: &str = "https://www.arinternet.pr.gov.br/portalsefa/_l_Download
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
 const DOCS_DIR: &str = "../data/pr/docs/pareceres";
 const CACHE_DIR: &str = "../data/pr/raw/cache/pareceres";
-const UA: &str = "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
+const UA: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 const COURTESY: Duration = Duration::from_millis(1000);
 const MIN_PARECERES: usize = 1500; // guarda contra coleta truncada (20 anos × ~130)
 
 /// Link para um PDF anual: `.pdf` (grupo 1). Extraímos da página; não construímos.
-static RE_PDF: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r#"href="([^"]+\.pdf)""#).unwrap());
+static RE_PDF: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"href="([^"]+\.pdf)""#).unwrap());
 /// Marcador de consulta no texto do PDF: `CONSULTA Nº: NN, de <data>` (âncora de linha + `, de`).
-static RE_MARK: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?m)^\s*CONSULTA\s+N[ºo°]\s*:?\s*(\d+)\s*,\s*de\b").unwrap()
-});
+static RE_MARK: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?m)^\s*CONSULTA\s+N[ºo°]\s*:?\s*(\d+)\s*,\s*de\b").unwrap());
 static RE_WS: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"[ \t]+").unwrap());
 
 /// Uma consulta coletada (intermediário; sem `resumo`).
@@ -61,7 +60,10 @@ pub fn run(use_cache: bool) -> Result<()> {
 
     // 1) Índice: 1 GET da página ASP → (ano, url do PDF).
     let index_html = {
-        let opts = GetOpts { log_prefix: "PR-par", ..GetOpts::default() };
+        let opts = GetOpts {
+            log_prefix: "PR-par",
+            ..GetOpts::default()
+        };
         get_string(&agent, INDEX_URL, &opts)?
     };
     let anos = parse_index(&index_html);
@@ -83,7 +85,11 @@ pub fn run(use_cache: bool) -> Result<()> {
                 items.push(p.parecer);
             }
         }
-        println!("  {ano}: +{} consultas ({} no total)", items.len() - antes, items.len());
+        println!(
+            "  {ano}: +{} consultas ({} no total)",
+            items.len() - antes,
+            items.len()
+        );
         if !use_cache {
             sleep(COURTESY);
         }
@@ -161,8 +167,15 @@ fn fetch_year_text(url: &str, ano: i32, use_cache: bool) -> Result<String> {
     println!("Baixando PDF {ano}: {url}");
     let dl = Command::new("curl")
         .args([
-            "-sSL", "--fail", "--max-time", "180", "-A", UA, "-o",
-            pdf_path.to_str().unwrap(), url,
+            "-sSL",
+            "--fail",
+            "--max-time",
+            "180",
+            "-A",
+            UA,
+            "-o",
+            pdf_path.to_str().unwrap(),
+            url,
         ])
         .status()
         .map_err(|e| anyhow!("curl falhou ({ano}): {e}"))?;
@@ -176,7 +189,10 @@ fn fetch_year_text(url: &str, ano: i32, use_cache: bool) -> Result<String> {
         .output()
         .map_err(|e| anyhow!("pdftotext falhou ({ano}) — poppler instalado? {e}"))?;
     if !out.status.success() {
-        bail!("pdftotext erro ({ano}): {}", String::from_utf8_lossy(&out.stderr));
+        bail!(
+            "pdftotext erro ({ano}): {}",
+            String::from_utf8_lossy(&out.stderr)
+        );
     }
     let text = String::from_utf8_lossy(&out.stdout).into_owned();
     std::fs::write(&txt_path, &text).ok();
@@ -259,7 +275,11 @@ fn is_metadata_label(l: &str) -> bool {
 /// enquanto as linhas forem predominantemente maiúsculas; para na primeira linha de prosa (corpo).
 /// Consultas antigas republicadas / canceladas não têm rótulo — nesse caso, cai na 1ª frase da narrativa.
 fn extract_sumula(block: &str) -> String {
-    let lines: Vec<&str> = block.lines().map(str::trim).filter(|l| !l.is_empty()).collect();
+    let lines: Vec<&str> = block
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .collect();
     if let Some(s) = lines.iter().position(|l| is_ementa_label(l)) {
         let mut parts: Vec<String> = Vec::new();
         if let Some((_, rest)) = lines[s].split_once(':')
@@ -320,10 +340,19 @@ fn fallback_first_sentence(lines: &[&str]) -> String {
         }
     }
     let buf = clean(&buf);
-    let cut = buf.char_indices().find(|(_, c)| *c == '.').map(|(i, _)| i + 1).unwrap_or(buf.len());
+    let cut = buf
+        .char_indices()
+        .find(|(_, c)| *c == '.')
+        .map(|(i, _)| i + 1)
+        .unwrap_or(buf.len());
     let mut s = buf[..cut].trim().to_string();
     if s.chars().count() > 240 {
-        s = s.chars().take(240).collect::<String>().trim_end().to_string();
+        s = s
+            .chars()
+            .take(240)
+            .collect::<String>()
+            .trim_end()
+            .to_string();
     }
     s
 }
@@ -366,7 +395,6 @@ struct ParecerN {
     parecer: Parecer,
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -405,7 +433,11 @@ O Consulente questiona o diferimento.";
             v[0].parecer.assunto,
             "ICMS. CRÉDITO. PRESTAÇÃO DE SERVIÇO DE TRANSPORTE. IMPOSSIBILIDADE DE CREDITAMENTO."
         );
-        assert!(v[0].parecer.corpo.contains("Consulente informa que tem atividade"));
+        assert!(
+            v[0].parecer
+                .corpo
+                .contains("Consulente informa que tem atividade")
+        );
         assert!(!v[0].parecer.corpo.contains("SECRETARIA DE ESTADO")); // mobília fora
         assert_eq!(v[1].parecer.numero, "CONSULTA Nº 2/2007");
         assert_eq!(v[1].parecer.assunto, "ICMS. DIFERIMENTO. ENCERRAMENTO.");
@@ -421,7 +453,10 @@ VEGETAL.
 A consulente informa que importa carvão do Paraguai.";
         let v = split_consultas(text, 2007, "https://x/2007.pdf");
         assert_eq!(v.len(), 1);
-        assert_eq!(v[0].parecer.assunto, "ICMS. PRAZO DE RECOLHIMENTO. CARVÃO VEGETAL.");
+        assert_eq!(
+            v[0].parecer.assunto,
+            "ICMS. PRAZO DE RECOLHIMENTO. CARVÃO VEGETAL."
+        );
     }
 
     #[test]
@@ -434,7 +469,10 @@ RELATORA: MAYSA CRISTINA DO PRADO
 A consulente informa que importa mercadorias.";
         let v = split_consultas(text, 2007, "https://x/2007.pdf");
         assert_eq!(v.len(), 1);
-        assert_eq!(v[0].parecer.assunto, "ICMS. IMPORTAÇÃO. CÁLCULO DO CRÉDITO PRESUMIDO.");
+        assert_eq!(
+            v[0].parecer.assunto,
+            "ICMS. IMPORTAÇÃO. CÁLCULO DO CRÉDITO PRESUMIDO."
+        );
     }
 
     #[test]

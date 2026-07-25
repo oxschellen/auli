@@ -60,12 +60,20 @@ pub fn get_string(agent: &ureq::Agent, url: &str, opts: &GetOpts) -> Result<Stri
             Err(e) => last = anyhow!(e.to_string()),
         }
         if attempt < opts.attempts {
-            eprintln!("⚠️  {}: tentativa {} falhou ({}); retentando…", opts.log_prefix, attempt, last);
+            eprintln!(
+                "⚠️  {}: tentativa {} falhou ({}); retentando…",
+                opts.log_prefix, attempt, last
+            );
             sleep(delay);
             delay *= 2;
         }
     }
-    Err(anyhow!("falha ao buscar {} após {} tentativas: {}", url, opts.attempts, last))
+    Err(anyhow!(
+        "falha ao buscar {} após {} tentativas: {}",
+        url,
+        opts.attempts,
+        last
+    ))
 }
 
 /// POST com corpo JSON e headers extra (ex.: `Authorization`, tenant, `Origin`), com retry/backoff.
@@ -96,12 +104,20 @@ pub fn post_json(
             Err(e) => last = anyhow!(e.to_string()),
         }
         if attempt < opts.attempts {
-            eprintln!("⚠️  {}: tentativa {} falhou ({}); retentando…", opts.log_prefix, attempt, last);
+            eprintln!(
+                "⚠️  {}: tentativa {} falhou ({}); retentando…",
+                opts.log_prefix, attempt, last
+            );
             sleep(delay);
             delay *= 2;
         }
     }
-    Err(anyhow!("falha no POST {} após {} tentativas: {}", url, opts.attempts, last))
+    Err(anyhow!(
+        "falha no POST {} após {} tentativas: {}",
+        url,
+        opts.attempts,
+        last
+    ))
 }
 
 /// GET via **subprocess `curl`**, para hosts atrás de WAF que faz *allowlist por fingerprint TLS
@@ -132,12 +148,20 @@ pub fn get_via_curl(url: &str, opts: &GetOpts) -> Result<String> {
             Err(e) => last = e,
         }
         if attempt < opts.attempts {
-            eprintln!("⚠️  {}: tentativa {} (curl) falhou ({}); retentando…", opts.log_prefix, attempt, last);
+            eprintln!(
+                "⚠️  {}: tentativa {} (curl) falhou ({}); retentando…",
+                opts.log_prefix, attempt, last
+            );
             sleep(delay);
             delay *= 2;
         }
     }
-    Err(anyhow!("falha ao buscar {} via curl após {} tentativas: {}", url, opts.attempts, last))
+    Err(anyhow!(
+        "falha ao buscar {} via curl após {} tentativas: {}",
+        url,
+        opts.attempts,
+        last
+    ))
 }
 
 /// Uma execução do curl. `-sS` (silencioso, mas mostra erro); `--fail-with-body` (status ≠ 0 em
@@ -155,12 +179,26 @@ fn run_curl_once(url: &str, opts: &GetOpts) -> Result<String> {
     }
     cmd.arg("--").arg(url); // `--` encerra as flags: a URL nunca é confundida com opção.
 
-    let out = cmd.output().map_err(|e| anyhow!("falha ao executar curl: {}", e))?;
+    let out = cmd
+        .output()
+        .map_err(|e| anyhow!("falha ao executar curl: {}", e))?;
     if !out.status.success() {
-        let code = out.status.code().map(|c| c.to_string()).unwrap_or_else(|| "sinal".into());
+        let code = out
+            .status
+            .code()
+            .map(|c| c.to_string())
+            .unwrap_or_else(|| "sinal".into());
         let stderr = String::from_utf8_lossy(&out.stderr);
-        let body_head: String = String::from_utf8_lossy(&out.stdout).chars().take(200).collect();
-        return Err(anyhow!("curl exit {} ({}); corpo[..200]: {}", code, stderr.trim(), body_head));
+        let body_head: String = String::from_utf8_lossy(&out.stdout)
+            .chars()
+            .take(200)
+            .collect();
+        return Err(anyhow!(
+            "curl exit {} ({}); corpo[..200]: {}",
+            code,
+            stderr.trim(),
+            body_head
+        ));
     }
     Ok(String::from_utf8_lossy(&out.stdout).into_owned())
 }
@@ -170,7 +208,9 @@ fn run_curl_once(url: &str, opts: &GetOpts) -> Result<String> {
 fn ensure_curl_available() -> Result<()> {
     match Command::new("curl").arg("--version").output() {
         Ok(o) if o.status.success() => Ok(()),
-        Ok(_) => Err(anyhow!("`curl` respondeu com erro ao --version; verifique a instalação")),
+        Ok(_) => Err(anyhow!(
+            "`curl` respondeu com erro ao --version; verifique a instalação"
+        )),
         Err(_) => Err(anyhow!(
             "este scraper requer o binário `curl` no PATH (o host da API está atrás de WAF que \
              só aceita o fingerprint TLS do curl — ver nota de WAF no scraper). Instale curl."

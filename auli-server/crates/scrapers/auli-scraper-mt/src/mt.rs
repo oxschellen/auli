@@ -68,18 +68,24 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // Chave de cache = o endpoint + o órgão. O cache só grava DEPOIS dos guards (D-RJ5).
     let logical = format!("{}#dept={}", DEPARTMENT_URL, DEPARTMENT_SLUG);
-    let (json, from_cache) = match auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)? {
-        Some(cached) => (cached, true),
-        None => (fetch_department(&agent)?, false),
-    };
+    let (json, from_cache) =
+        match auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)? {
+            Some(cached) => (cached, true),
+            None => (fetch_department(&agent)?, false),
+        };
 
     let raw: Vec<Item> = parse(&json)?;
     let result_total = raw.iter().map(|i| i.result_total).max().unwrap_or(0);
-    println!("MT: recebidos {} itens (API anuncia resultTotal={})", raw.len(), result_total);
+    println!(
+        "MT: recebidos {} itens (API anuncia resultTotal={})",
+        raw.len(),
+        result_total
+    );
 
     let (items, publicos_ordem) = build_servicos(&raw);
 
@@ -110,7 +116,11 @@ fn fetch_department(agent: &ureq::Agent) -> Result<String> {
         DEPARTMENT_URL,
         &[("Origin", "https://portal.mt.gov.br")],
         &body,
-        &GetOpts { log_prefix: "MT", accept: Some("application/json"), ..Default::default() },
+        &GetOpts {
+            log_prefix: "MT",
+            accept: Some("application/json"),
+            ..Default::default()
+        },
     )
 }
 
@@ -148,8 +158,12 @@ fn build_servicos(raw: &[Item]) -> (Vec<ServicoRaw>, Vec<Publico>) {
             }
         };
 
-        let mut publicos: Vec<String> =
-            it.targets.iter().map(|t| clean(t)).filter(|t| !t.is_empty()).collect();
+        let mut publicos: Vec<String> = it
+            .targets
+            .iter()
+            .map(|t| clean(t))
+            .filter(|t| !t.is_empty())
+            .collect();
         if publicos.is_empty() {
             publicos.push(GERAL.to_string());
             orfaos_publico += 1;
@@ -160,7 +174,10 @@ fn build_servicos(raw: &[Item]) -> (Vec<ServicoRaw>, Vec<Publico>) {
             if !publicos_ordem.contains(p) {
                 publicos_ordem.push(p.clone());
             }
-            ocorrencias.push(Ocorrencia { publico: p.clone(), classe: classe.clone() });
+            ocorrencias.push(Ocorrencia {
+                publico: p.clone(),
+                classe: classe.clone(),
+            });
         }
 
         out.push(ServicoRaw {
@@ -181,7 +198,10 @@ fn build_servicos(raw: &[Item]) -> (Vec<ServicoRaw>, Vec<Publico>) {
 
     let publicos = publicos_ordem
         .into_iter()
-        .map(|nome| Publico { slug: slug_publico(&nome), nome })
+        .map(|nome| Publico {
+            slug: slug_publico(&nome),
+            nome,
+        })
         .collect();
     (out, publicos)
 }
@@ -212,9 +232,11 @@ fn slugify(s: &str) -> String {
         };
         buf.push(m);
     }
-    buf.split('-').filter(|p| !p.is_empty()).collect::<Vec<_>>().join("-")
+    buf.split('-')
+        .filter(|p| !p.is_empty())
+        .collect::<Vec<_>>()
+        .join("-")
 }
-
 
 /// Guard D-MT5: invariante dinâmico `únicos == resultTotal` (a API dá o próprio total), depois o
 /// piso estático de folga. Uma resposta capada (menos itens que o total anunciado) reprova alto.
@@ -273,7 +295,10 @@ mod tests {
         let (items, publicos) = build_servicos(&parsed());
         assert_eq!(items.len(), 3);
         assert_eq!(items[0].titulo, "Abrir Inscrição Estadual MEI");
-        assert_eq!(items[0].descricao, "Abertura de IE do MEI.", "clean() comprime espaços");
+        assert_eq!(
+            items[0].descricao, "Abertura de IE do MEI.",
+            "clean() comprime espaços"
+        );
         assert_eq!(items[0].orgao, "SEFAZ-MT");
         assert_eq!(
             items[0].link,
@@ -285,7 +310,10 @@ mod tests {
         assert_eq!(items[0].ocorrencias[0].classe, "Finanças e Tributação");
         assert_eq!(items[0].ocorrencias[1].publico, "Empresa");
         // públicos na ordem de descoberta (1o item: Cidadão, Empresa); slug ascii-fold.
-        assert_eq!(publicos.iter().map(|p| p.nome.as_str()).collect::<Vec<_>>(), vec!["Cidadão", "Empresa"]);
+        assert_eq!(
+            publicos.iter().map(|p| p.nome.as_str()).collect::<Vec<_>>(),
+            vec!["Cidadão", "Empresa"]
+        );
         assert_eq!(publicos[0].slug, "servicos-cidadao");
         assert_eq!(publicos[1].slug, "servicos-empresa");
     }
@@ -318,21 +346,30 @@ mod tests {
     fn validar_reprova_divergencia_do_result_total() {
         let items = vec![svc("a"), svc("b")];
         let err = validar(&items, 5).unwrap_err().to_string();
-        assert!(err.contains("incompleto") || err.contains("divergente"), "veio: {err}");
+        assert!(
+            err.contains("incompleto") || err.contains("divergente"),
+            "veio: {err}"
+        );
     }
 
     #[test]
     fn validar_reprova_abaixo_do_minimo() {
         let items = vec![svc("a")]; // 1 == resultTotal 1, mas < MIN_SERVICOS
         let err = validar(&items, 1).unwrap_err().to_string();
-        assert!(err.contains("capado") || err.contains("vazio"), "veio: {err}");
+        assert!(
+            err.contains("capado") || err.contains("vazio"),
+            "veio: {err}"
+        );
     }
 
     #[test]
     fn slugify_ascii_fold() {
         assert_eq!(slugify("Cidadão"), "cidadao");
         assert_eq!(slugify("Poder Público"), "poder-publico");
-        assert_eq!(slugify("Comunicação e Transparência"), "comunicacao-e-transparencia");
+        assert_eq!(
+            slugify("Comunicação e Transparência"),
+            "comunicacao-e-transparencia"
+        );
     }
 
     fn svc(slug: &str) -> ServicoRaw {

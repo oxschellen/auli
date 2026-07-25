@@ -69,7 +69,11 @@ pub fn scrape(
     let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
 
     // O chunk é a fonte; cache lógico. Rede = descoberta em 3 saltos (shell → runtime → chunk).
-    let (chunk, fetched) = match auli_scraper_kit::cache::read(data_dir, "servicos", CHUNK_CACHE_KEY) {
+    let (chunk, fetched) = match auli_scraper_kit::cache::read(
+        data_dir,
+        "servicos",
+        CHUNK_CACHE_KEY,
+    ) {
         Some(c) => {
             println!("Cache hit: chunk categorias");
             (c, false)
@@ -85,9 +89,11 @@ pub fn scrape(
             let chunk_url = descobrir_chunk_url(&agent)?;
             let c = fetch(&agent, &chunk_url)?;
             if !c.contains("mockCadastro") {
-                return Err(
-                    format!("chunk sem 'mockCadastro' — estrutura mudou? ({})", chunk_url).into()
-                );
+                return Err(format!(
+                    "chunk sem 'mockCadastro' — estrutura mudou? ({})",
+                    chunk_url
+                )
+                .into());
             }
             (c, true)
         }
@@ -102,8 +108,10 @@ pub fn scrape(
     }
 
     println!("AP: {} serviços (dedup por link)", items.len());
-    let publicos_ordem =
-        vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.to_string(),
+        slug: PUBLICO_SLUG.to_string(),
+    }];
     Ok((items, publicos_ordem))
 }
 
@@ -118,20 +126,30 @@ fn descobrir_chunk_url(agent: &ureq::Agent) -> Result<String> {
         .to_string();
 
     let runtime = fetch(agent, &format!("{}/{}", BASE, runtime_name))?;
-    let hash = Regex::new(&format!(r#""{}"\s*:\s*"([a-f0-9]+)""#, regex::escape(CHUNK_NAME)))
-        .unwrap()
-        .captures(&runtime)
-        .and_then(|c| c.get(1))
-        .ok_or_else(|| anyhow!("hash do chunk '{}' não encontrado no runtime", CHUNK_NAME))?
-        .as_str()
-        .to_string();
+    let hash = Regex::new(&format!(
+        r#""{}"\s*:\s*"([a-f0-9]+)""#,
+        regex::escape(CHUNK_NAME)
+    ))
+    .unwrap()
+    .captures(&runtime)
+    .and_then(|c| c.get(1))
+    .ok_or_else(|| anyhow!("hash do chunk '{}' não encontrado no runtime", CHUNK_NAME))?
+    .as_str()
+    .to_string();
 
     Ok(format!("{}/{}.{}.js", BASE, CHUNK_NAME, hash))
 }
 
 /// GET simples (texto), com retry/backoff via kit.
 fn fetch(agent: &ureq::Agent, url: &str) -> Result<String> {
-    auli_scraper_kit::http::get_string(agent, url, &GetOpts { log_prefix: "AP", ..Default::default() })
+    auli_scraper_kit::http::get_string(
+        agent,
+        url,
+        &GetOpts {
+            log_prefix: "AP",
+            ..Default::default()
+        },
+    )
 }
 
 /// Parseia os arrays `mock*`: por categoria, casa `route → introducao.titulo → introducao.descricao`.
@@ -157,7 +175,11 @@ fn parse_servicos(chunk: &str) -> Vec<Servico<'static>> {
         let (_, slug, classe) = CATEGORIAS[cat_idx];
         for cap in re.captures_iter(&chunk[start..end]) {
             let route = cap.get(1).map(|m| m.as_str()).unwrap_or_default();
-            let titulo = cap.get(2).or_else(|| cap.get(3)).map(|m| m.as_str()).unwrap_or_default();
+            let titulo = cap
+                .get(2)
+                .or_else(|| cap.get(3))
+                .map(|m| m.as_str())
+                .unwrap_or_default();
             let descricao_html = cap.get(4).map(|m| m.as_str()).unwrap_or_default();
             out.push(Servico {
                 slug,
@@ -216,7 +238,10 @@ fn html_to_text(html: &str) -> String {
             _ => {}
         }
     }
-    let decoded: String = Html::parse_fragment(&spaced).root_element().text().collect();
+    let decoded: String = Html::parse_fragment(&spaced)
+        .root_element()
+        .text()
+        .collect();
     clean(&decoded)
 }
 
@@ -272,7 +297,10 @@ mod tests {
         let items = build_servicos(&parse_servicos(CHUNK));
         assert_eq!(items.len(), 3);
         let mei = items.iter().find(|s| s.titulo == "Inscrição MEI").unwrap();
-        assert_eq!(mei.link, "https://www.sefaz.ap.gov.br/#/categorias/cadastro/mei");
+        assert_eq!(
+            mei.link,
+            "https://www.sefaz.ap.gov.br/#/categorias/cadastro/mei"
+        );
         assert_eq!(mei.orgao, "SEFAZ-AP");
         assert_eq!(mei.ocorrencias[0].publico, "Serviços");
         assert_eq!(mei.ocorrencias[0].classe, "Cadastro");

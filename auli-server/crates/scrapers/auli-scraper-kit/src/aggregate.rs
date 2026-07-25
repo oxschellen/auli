@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use auli_contract::{Ocorrencia, ServicoRaw};
 use auli_contract::ServicoPerPublico as Servico;
+use auli_contract::{Ocorrencia, ServicoRaw};
 
 /// Serviços agrupados por público (rótulo do público, serviços daquele público), na ordem de
 /// exibição — a entrada de [`aggregate_servicos`].
@@ -17,7 +17,10 @@ pub fn aggregate_servicos(inputs: &PerPublicoServicos) -> Vec<ServicoRaw> {
 
     for (publico, servicos) in inputs {
         for s in servicos {
-            let ocorrencia = Ocorrencia { publico: publico.clone(), classe: s.classe.clone() };
+            let ocorrencia = Ocorrencia {
+                publico: publico.clone(),
+                classe: s.classe.clone(),
+            };
             if let Some(&i) = pos.get(&s.link) {
                 items[i].ocorrencias.push(ocorrencia);
                 continue;
@@ -65,25 +68,41 @@ mod tests {
         };
         let inputs = vec![
             // l2 aparece sob 2 classes no MESMO público (multi-classe) e depois em outro público.
-            ("Cidadãos".to_string(), vec![svc("l1", "A"), svc("l2", "A"), svc("l2", "B")]),
+            (
+                "Cidadãos".to_string(),
+                vec![svc("l1", "A"), svc("l2", "A"), svc("l2", "B")],
+            ),
             ("Empresas".to_string(), vec![svc("l2", "A"), svc("l3", "A")]),
         ];
 
         let out = aggregate_servicos(&inputs);
 
         // Um registro por link, na ordem de primeira ocorrência (l1, l2, l3).
-        assert_eq!(out.iter().map(|s| s.link.as_str()).collect::<Vec<_>>(), ["l1", "l2", "l3"]);
+        assert_eq!(
+            out.iter().map(|s| s.link.as_str()).collect::<Vec<_>>(),
+            ["l1", "l2", "l3"]
+        );
         // l2: uma ocorrência por listagem, na ordem de descoberta.
         let l2 = out.iter().find(|s| s.link == "l2").unwrap();
-        let ocs: Vec<_> = l2.ocorrencias.iter().map(|o| (o.publico.as_str(), o.classe.as_str())).collect();
-        assert_eq!(ocs, [("Cidadãos", "A"), ("Cidadãos", "B"), ("Empresas", "A")]);
+        let ocs: Vec<_> = l2
+            .ocorrencias
+            .iter()
+            .map(|o| (o.publico.as_str(), o.classe.as_str()))
+            .collect();
+        assert_eq!(
+            ocs,
+            [("Cidadãos", "A"), ("Cidadãos", "B"), ("Empresas", "A")]
+        );
         // descricao = corpo limpo, sem as 3 linhas de header.
         assert_eq!(out[0].descricao, "corpo");
     }
 
     #[test]
     fn descricao_body_drops_three_header_lines() {
-        assert_eq!(descricao_body("tipo\nclasse\ntitulo\ncorpo\nmais"), "corpo\nmais");
+        assert_eq!(
+            descricao_body("tipo\nclasse\ntitulo\ncorpo\nmais"),
+            "corpo\nmais"
+        );
         assert_eq!(descricao_body("so\nduas"), "");
     }
 }

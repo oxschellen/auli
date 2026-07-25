@@ -23,7 +23,8 @@ pub fn extrair_descricoes_json(
     use_cache: bool,
 ) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     // Initialize the HTTP agent (ureq). Accept headers are set per request in fetch_html.
-    let http_client = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let http_client =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // Initializa o Vetor de Tipos de Serviços
     let vec_tipo_servicos = get_tipo_servicos();
@@ -43,8 +44,7 @@ pub fn extrair_descricoes_json(
 
         let filename_json = scrape_recovery_path(data_dir, file_s);
 
-        let servicos =
-            extrair_servicos_da_api(data_dir, &http_client, tipo_servicos, use_cache)?;
+        let servicos = extrair_servicos_da_api(data_dir, &http_client, tipo_servicos, use_cache)?;
 
         let mut new_vec_servicos_com_descricao: Vec<Servico> = Vec::new();
 
@@ -236,8 +236,9 @@ fn fetch_html(
 ) -> Result<String, Box<dyn std::error::Error>> {
     // Retry/backoff é o kit::http::get_string (headers Accept + Accept-Language via GetOpts);
     // bridge map_err p/ o Box<dyn Error> deste crate. Cache-write no wrapper.
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)
-        .map_err(|e| e.to_string())?
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)
+            .map_err(|e| e.to_string())?
     {
         return Ok(cached);
     }
@@ -402,7 +403,10 @@ mod tests {
     fn orgao_do_card_replica_o_getorgao_do_js() {
         assert_eq!(orgao_do_card("SECRETARIA DA FAZENDA"), "FAZENDA");
         assert_eq!(orgao_do_card("SEFAZ/RS"), "FAZENDA");
-        assert_eq!(orgao_do_card("RECEITA ESTADUAL  - ICMS, IPVA E ITDC"), "RECEITA");
+        assert_eq!(
+            orgao_do_card("RECEITA ESTADUAL  - ICMS, IPVA E ITDC"),
+            "RECEITA"
+        );
         assert_eq!(orgao_do_card("CAGE - Contadoria e Auditoria-Geral"), "CAGE");
         assert_eq!(orgao_do_card("TESOURO DO ESTADO"), "TESOURO");
         // Fallback genérico "te" do JS (peculiar, mas replicado fielmente).
@@ -438,8 +442,10 @@ mod tests {
         let servicos = montar_servicos(&tipo, vec![page]);
 
         // Ordem: categorias alfabéticas, "Outros" por último; ids sequenciais na ordem de render.
-        let vistos: Vec<(&str, &str)> =
-            servicos.iter().map(|s| (s.classe.as_str(), s.titulo.as_str())).collect();
+        let vistos: Vec<(&str, &str)> = servicos
+            .iter()
+            .map(|s| (s.classe.as_str(), s.titulo.as_str()))
+            .collect();
         assert_eq!(
             vistos,
             vec![
@@ -449,7 +455,10 @@ mod tests {
                 ("Outros", "Zeta"),
             ]
         );
-        assert_eq!(servicos.iter().map(|s| s.id).collect::<Vec<_>>(), vec![1, 2, 3, 4]);
+        assert_eq!(
+            servicos.iter().map(|s| s.id).collect::<Vec<_>>(),
+            vec![1, 2, 3, 4]
+        );
 
         // Órgão vem do 1º serviço da categoria e vale para todos: Cadastro -> RECEITA (não SEFAZ).
         assert_eq!(servicos[1].orgao, "RECEITA");

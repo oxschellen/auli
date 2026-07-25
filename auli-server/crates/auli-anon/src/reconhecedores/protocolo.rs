@@ -85,7 +85,11 @@ impl Recognizer for ProtocoloRecognizer {
             if !Self::limites_ok(text, m.start(), m.end()) {
                 continue;
             }
-            let boost = if self.tem_contexto(text, m.start()) { 0.15 } else { 0.0 };
+            let boost = if self.tem_contexto(text, m.start()) {
+                0.15
+            } else {
+                0.0
+            };
             achados.push(PiiEntity {
                 entity_type: self.entity_type(),
                 span: Span::new(m.start(), m.end()),
@@ -148,13 +152,19 @@ mod tests {
 
     #[test]
     fn formatado_dispensa_contexto() {
-        assert_eq!(achados("Veja o 2026/000123456 no sistema."), ["2026/000123456"]);
+        assert_eq!(
+            achados("Veja o 2026/000123456 no sistema."),
+            ["2026/000123456"]
+        );
     }
 
     #[test]
     fn corrido_exige_contexto() {
         assert!(achados("O número 123456789012 consta no lote.").is_empty());
-        assert_eq!(achados("O protocolo 123456789012 foi aberto."), ["123456789012"]);
+        assert_eq!(
+            achados("O protocolo 123456789012 foi aberto."),
+            ["123456789012"]
+        );
     }
 
     #[test]

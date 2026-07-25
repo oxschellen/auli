@@ -43,7 +43,9 @@ impl Embedder {
             .with_intra_threads(threads)
             .with_cache_dir(cache_dir);
         let model = Bgem3Embedding::try_new(opts)?; // anyhow::Error -> crate::Error via #[from]
-        Ok(Self { inner: Mutex::new(model) })
+        Ok(Self {
+            inner: Mutex::new(model),
+        })
     }
 
     /// Dense vectors for a batch of texts (Phase 1). Blocking — call via `spawn_blocking`.
@@ -62,7 +64,10 @@ impl Embedder {
     /// qualquer ordem ou composição. E sai **~2,9× mais rápido** na prática, porque o padding ao maior
     /// do lote desperdiçava compute com textos de comprimento muito desigual.
     pub fn embed_dense(&self, texts: Vec<String>) -> Result<Vec<Vec<f32>>> {
-        let mut model = self.inner.lock().map_err(|_| Error::from("embedder mutex poisoned"))?;
+        let mut model = self
+            .inner
+            .lock()
+            .map_err(|_| Error::from("embedder mutex poisoned"))?;
         let out = model.embed(&texts, Some(1))?;
         Ok(out.dense)
     }
@@ -74,7 +79,10 @@ impl Embedder {
     /// É o que permite ao `update` avisar quais itens foram cortados sem estimar por chars — a
     /// razão chars/token varia demais entre idiomas para servir de guarda.
     pub fn conta_tokens(&self, texto: &str) -> Result<usize> {
-        let model = self.inner.lock().map_err(|_| Error::from("embedder mutex poisoned"))?;
+        let model = self
+            .inner
+            .lock()
+            .map_err(|_| Error::from("embedder mutex poisoned"))?;
         let enc = model
             .tokenizer
             .encode(texto, true)

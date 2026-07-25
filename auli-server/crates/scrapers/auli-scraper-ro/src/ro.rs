@@ -35,8 +35,7 @@ const LINK_BASE: &str = "https://agenciavirtual.sefin.ro.gov.br/catalogo-servico
 /// Shell público de onde extraímos o Bearer anônimo (efêmero).
 const SHELL_URL: &str = "https://agenciavirtual.sefin.ro.gov.br/";
 /// Endpoint do `_search` (GET) sobre a classe de conteúdo (API em `sydleone.…`, app `servicedesk-embedded`).
-const SEARCH_URL: &str =
-    "https://sydleone.sefin.ro.gov.br/api/1/servicedesk-embedded/_classId/5cd32901df14eb3d461160f0/_search";
+const SEARCH_URL: &str = "https://sydleone.sefin.ro.gov.br/api/1/servicedesk-embedded/_classId/5cd32901df14eb3d461160f0/_search";
 /// `_id` do catálogo "Serviços" (o `parent._id` dos serviços). "Temas"/"Conteúdos" NÃO entram.
 const CATALOGO_ID: &str = "662c1875ee982159b7b199c9";
 /// `size` do `_search`: teto de itens numa GET (headroom sobre os ~194 atuais). Se o catálogo crescer
@@ -127,9 +126,15 @@ pub fn scrape(
         auli_scraper_kit::cache::write(data_dir, "servicos", &cache_key, &json);
     }
 
-    println!("RO: {} serviços (total ES={}, dedup por _id)", items.len(), resp.hits.total);
-    let publicos_ordem =
-        vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
+    println!(
+        "RO: {} serviços (total ES={}, dedup por _id)",
+        items.len(),
+        resp.hits.total
+    );
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.to_string(),
+        slug: PUBLICO_SLUG.to_string(),
+    }];
     Ok((items, publicos_ordem))
 }
 
@@ -139,7 +144,10 @@ fn fetch_token(agent: &ureq::Agent) -> Result<String> {
     let shell = auli_scraper_kit::http::get_string(
         agent,
         SHELL_URL,
-        &GetOpts { log_prefix: "RO", ..Default::default() },
+        &GetOpts {
+            log_prefix: "RO",
+            ..Default::default()
+        },
     )?;
     parse_token(&shell)
 }
@@ -159,8 +167,10 @@ fn fetch_services(agent: &ureq::Agent, token: &str, url: &str) -> Result<String>
     )?;
     // Defesa: um erro/negação vem como HTML ou `{generalMessages:[…]}`; o corpo bom é o envelope ES.
     if !body.trim_start().starts_with('{') {
-        bail!("resposta inesperada do _search (não-JSON) — erro? primeiros bytes: {:?}",
-            &body.chars().take(60).collect::<String>());
+        bail!(
+            "resposta inesperada do _search (não-JSON) — erro? primeiros bytes: {:?}",
+            &body.chars().take(60).collect::<String>()
+        );
     }
     Ok(body)
 }
@@ -208,7 +218,9 @@ fn parse_token(shell: &str) -> Result<String> {
         .ok_or_else(|| anyhow!("token não encontrado no shell (markup mudou?)"))?
         + KEY.len();
     let rest = &shell[start..];
-    let end = rest.find('"').ok_or_else(|| anyhow!("token malformado no shell"))?;
+    let end = rest
+        .find('"')
+        .ok_or_else(|| anyhow!("token malformado no shell"))?;
     let tok = rest[..end].trim();
     if !tok.starts_with("Bearer ") || tok.len() < 20 {
         bail!("valor de Authorization inesperado no shell");
@@ -306,7 +318,10 @@ mod tests {
         let r = parse(RESP_JSON).unwrap();
         assert_eq!(r.hits.total, 3);
         assert_eq!(r.hits.hits.len(), 3);
-        assert_eq!(r.hits.hits[0].source.identifier.as_deref(), Some("requisitar-csc"));
+        assert_eq!(
+            r.hits.hits[0].source.identifier.as_deref(),
+            Some("requisitar-csc")
+        );
     }
 
     #[test]
@@ -326,7 +341,10 @@ mod tests {
         // clean() comprime os espaços do título do segundo item.
         assert_eq!(items[1].titulo, "Emissão de DUA");
         // identifier vazio (null) -> forma curta do link; description null -> vazia.
-        assert_eq!(items[2].link, "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+bbb222");
+        assert_eq!(
+            items[2].link,
+            "https://agenciavirtual.sefin.ro.gov.br/catalogo-servicos+bbb222"
+        );
         assert_eq!(items[2].descricao, "");
     }
 
@@ -342,7 +360,10 @@ mod tests {
 
     #[test]
     fn pct_encode_escapa_json() {
-        assert_eq!(pct_encode(r#"{"a":["b"]}"#), "%7B%22a%22%3A%5B%22b%22%5D%7D");
+        assert_eq!(
+            pct_encode(r#"{"a":["b"]}"#),
+            "%7B%22a%22%3A%5B%22b%22%5D%7D"
+        );
         assert_eq!(pct_encode("Az9-_.~"), "Az9-_.~");
     }
 
@@ -350,13 +371,19 @@ mod tests {
     fn search_url_carrega_catalogo_e_size() {
         let u = search_url();
         assert!(u.starts_with(SEARCH_URL));
-        assert!(u.contains(CATALOGO_ID), "url deve filtrar pelo catálogo Serviços");
+        assert!(
+            u.contains(CATALOGO_ID),
+            "url deve filtrar pelo catálogo Serviços"
+        );
     }
 
     #[test]
     fn parse_token_extrai_bearer() {
         let shell = r#"...window.SYDLE.config = {"ui-api":{"REQUEST_PARAMS":{"headers":{"Authorization":"Bearer eyJabc.def.ghi_LONG_TOKEN"}}}}..."#;
-        assert_eq!(parse_token(shell).unwrap(), "Bearer eyJabc.def.ghi_LONG_TOKEN");
+        assert_eq!(
+            parse_token(shell).unwrap(),
+            "Bearer eyJabc.def.ghi_LONG_TOKEN"
+        );
     }
 
     #[test]
@@ -370,8 +397,13 @@ mod tests {
                 ocorrencias: vec![],
             })
             .collect();
-        let err = validar(&items, MIN_SERVICOS as i64 + 1).unwrap_err().to_string();
-        assert!(err.contains("não cobre"), "esperava guard de subcobertura, veio: {err}");
+        let err = validar(&items, MIN_SERVICOS as i64 + 1)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("não cobre"),
+            "esperava guard de subcobertura, veio: {err}"
+        );
     }
 
     #[test]
@@ -384,6 +416,9 @@ mod tests {
             ocorrencias: vec![],
         }];
         let err = validar(&poucos, 1).unwrap_err().to_string();
-        assert!(err.contains("capado"), "esperava guard de mínimo, veio: {err}");
+        assert!(
+            err.contains("capado"),
+            "esperava guard de mínimo, veio: {err}"
+        );
     }
 }

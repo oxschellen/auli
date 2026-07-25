@@ -92,12 +92,25 @@ pub fn scrape(
         auli_scraper_kit::cache::write(data_dir, "servicos", url, raw);
     }
 
-    let classes: HashSet<&str> =
-        items.iter().flat_map(|s| s.ocorrencias.iter()).map(|o| o.classe.as_str()).collect();
-    println!("DF: {} serviços em {} classe(s)", items.len(), classes.len());
+    let classes: HashSet<&str> = items
+        .iter()
+        .flat_map(|s| s.ocorrencias.iter())
+        .map(|o| o.classe.as_str())
+        .collect();
+    println!(
+        "DF: {} serviços em {} classe(s)",
+        items.len(),
+        classes.len()
+    );
     let publicos_ordem = vec![
-        Publico { nome: PUB_CIDADAO.to_string(), slug: "servicos-ao-cidadao".to_string() },
-        Publico { nome: PUB_EMPRESA.to_string(), slug: "servicos-a-empresa".to_string() },
+        Publico {
+            nome: PUB_CIDADAO.to_string(),
+            slug: "servicos-ao-cidadao".to_string(),
+        },
+        Publico {
+            nome: PUB_EMPRESA.to_string(),
+            slug: "servicos-a-empresa".to_string(),
+        },
     ];
     Ok((items, publicos_ordem))
 }
@@ -114,11 +127,17 @@ fn load(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", url);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            url
+        );
     }
     let body = auli_scraper_kit::http::get_via_curl(
         url,
-        &GetOpts { log_prefix: "DF", ..Default::default() },
+        &GetOpts {
+            log_prefix: "DF",
+            ..Default::default()
+        },
     )?;
     if body.contains("Error Occurred While Processing Request") {
         bail!("erro ColdFusion em {} (params inválidos / app mudou?)", url);
@@ -153,7 +172,10 @@ fn parse_arvore(html: &str) -> Vec<Row> {
         if titulo.len() < 3 {
             continue;
         }
-        let tp = tp_re.captures(url).map(|c| c[1].to_string()).unwrap_or_default();
+        let tp = tp_re
+            .captures(url)
+            .map(|c| c[1].to_string())
+            .unwrap_or_default();
         let classe = keys
             .iter()
             .rev()
@@ -199,7 +221,10 @@ fn html_to_text(html: &str) -> String {
             _ => {}
         }
     }
-    let decoded: String = Html::parse_fragment(&spaced).root_element().text().collect();
+    let decoded: String = Html::parse_fragment(&spaced)
+        .root_element()
+        .text()
+        .collect();
     clean(&decoded)
 }
 
@@ -262,13 +287,23 @@ mod tests {
     fn parse_arvore_extrai_link_titulo_classe_publico() {
         let rows = parse_arvore(ARVORE);
         assert_eq!(rows.len(), 3);
-        let ficha = rows.iter().find(|r| r.link.contains("codServico=437")).unwrap();
+        let ficha = rows
+            .iter()
+            .find(|r| r.link.contains("codServico=437"))
+            .unwrap();
         assert_eq!(ficha.titulo, "Ficha Cadastral de Imóvel - Consultar"); // entidades decodificadas
         assert_eq!(ficha.classe, "Cadastro de Imóveis - Consulta"); // chave-pai imediata
         assert_eq!(ficha.publico, PUB_CIDADAO); // codTipoPessoa=6
-        assert!(ficha.link.starts_with("https://www.receita.fazenda.df.gov.br/aplicacoes/"));
+        assert!(
+            ficha
+                .link
+                .starts_with("https://www.receita.fazenda.df.gov.br/aplicacoes/")
+        );
 
-        let rec = rows.iter().find(|r| r.link.contains("codServico=511")).unwrap();
+        let rec = rows
+            .iter()
+            .find(|r| r.link.contains("codServico=511"))
+            .unwrap();
         assert_eq!(rec.publico, PUB_EMPRESA); // codTipoPessoa=7
         assert_eq!(rec.classe, "Impugnação - PJ");
     }
@@ -277,8 +312,14 @@ mod tests {
     fn extract_descricao_junta_paineis_sem_css_nem_rodape() {
         let d = extract_descricao(DETALHE);
         assert!(d.starts_with("Solicitar inclusão de imóvel"), "veio: {d}");
-        assert!(d.contains("Observar lista de documentos"), "deve juntar os 2 painéis: {d}");
-        assert!(!d.contains("transition"), "não deve pegar o CSS do <style>: {d}");
+        assert!(
+            d.contains("Observar lista de documentos"),
+            "deve juntar os 2 painéis: {d}"
+        );
+        assert!(
+            !d.contains("transition"),
+            "não deve pegar o CSS do <style>: {d}"
+        );
         assert!(!d.contains("CNPJ"), "não deve pegar o rodapé");
         assert!(!d.contains('<') && !d.contains("&atilde;"));
     }

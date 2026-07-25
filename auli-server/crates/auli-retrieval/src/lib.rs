@@ -73,7 +73,11 @@ pub struct Engine {
 
 impl Engine {
     pub fn new(collections: Collections, embedder: Arc<Embedder>, docs_root: PathBuf) -> Self {
-        Self { collections, embedder, docs_root }
+        Self {
+            collections,
+            embedder,
+            docs_root,
+        }
     }
 
     /// Acesso direto a um store (usado pelo `list_handler` do server). `None` = coleção fora do
@@ -101,7 +105,14 @@ impl Engine {
         floor: usize,
         band: f32,
     ) -> Result<Vec<Hit>> {
-        search_embedded(&self.collections, collection, embedding, ceiling, floor, band)
+        search_embedded(
+            &self.collections,
+            collection,
+            embedding,
+            ceiling,
+            floor,
+            band,
+        )
     }
 
     /// Embeda a pergunta e busca. Conveniência para as faces que fazem UMA busca (retrieve/MCP);
@@ -143,7 +154,11 @@ impl Engine {
     }
 
     /// Delegação (D-MCP-4).
-    pub fn ler_corpo(&self, entity_id: &str, doc_path: &str) -> std::result::Result<String, String> {
+    pub fn ler_corpo(
+        &self,
+        entity_id: &str,
+        doc_path: &str,
+    ) -> std::result::Result<String, String> {
         ler_corpo(&self.docs_root, entity_id, doc_path)
     }
 
@@ -196,7 +211,10 @@ pub fn search_embedded(
         .get(collection)
         .ok_or_else(|| Error::ColecaoAusente(collection.to_string()))?;
     let scored = store.query_scored(embedding, ceiling);
-    debug!("{collection} scores: {:?}", scored.iter().map(|(_, s)| *s).collect::<Vec<_>>());
+    debug!(
+        "{collection} scores: {:?}",
+        scored.iter().map(|(_, s)| *s).collect::<Vec<_>>()
+    );
     Ok(select_by_proximity(scored, floor, band)
         .into_iter()
         .map(|(payload, score)| Hit { payload, score })
@@ -226,15 +244,18 @@ pub fn parecer_por_numero(
     numero: &str,
 ) -> Result<Option<ParecerHit>> {
     let collection = format!("{entity_id}-pareceres");
-    let store = collections.get(&collection).ok_or(Error::ColecaoAusente(collection))?;
+    let store = collections
+        .get(&collection)
+        .ok_or(Error::ColecaoAusente(collection))?;
     let alvo = numero.trim().to_lowercase();
     for payload_json in store.list() {
         let Ok(payload) = serde_json::from_str::<ConsultaPackPayload>(&payload_json) else {
             continue; // pack incompatível: pula, não derruba
         };
         if payload.numero.trim().to_lowercase() == alvo {
-            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path)
-                .unwrap_or_else(|e| format!("[corpo indisponível — ver link] ({e})\n{}", payload.resumo));
+            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path).unwrap_or_else(|e| {
+                format!("[corpo indisponível — ver link] ({e})\n{}", payload.resumo)
+            });
             return Ok(Some(ParecerHit {
                 numero: payload.numero,
                 assunto: payload.assunto,
@@ -259,15 +280,18 @@ pub fn bloco_por_numero(
     numero: &str,
 ) -> Result<Option<String>> {
     let collection = format!("{entity_id}-pareceres");
-    let store = collections.get(&collection).ok_or(Error::ColecaoAusente(collection))?;
+    let store = collections
+        .get(&collection)
+        .ok_or(Error::ColecaoAusente(collection))?;
     let alvo = numero.trim().to_lowercase();
     for payload_json in store.list() {
         let Ok(payload) = serde_json::from_str::<ConsultaPackPayload>(&payload_json) else {
             continue;
         };
         if payload.numero.trim().to_lowercase() == alvo {
-            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path)
-                .unwrap_or_else(|e| format!("[corpo indisponível — ver link] ({e})\n{}", payload.resumo));
+            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path).unwrap_or_else(|e| {
+                format!("[corpo indisponível — ver link] ({e})\n{}", payload.resumo)
+            });
             return Ok(Some(render_consulta_block(&payload, &corpo)));
         }
     }
@@ -298,7 +322,10 @@ pub fn pareceres_relacionados(
     if max == 0 || seeds.is_empty() {
         return Vec::new();
     }
-    let path = docs_root.join(entity_id).join("extracao").join("dispositivos-index.json");
+    let path = docs_root
+        .join(entity_id)
+        .join("extracao")
+        .join("dispositivos-index.json");
     let Ok(texto) = std::fs::read_to_string(&path) else {
         return Vec::new();
     };
@@ -334,11 +361,19 @@ pub fn pareceres_relacionados(
         .filter(|(_, n)| *n >= min_shared)
         .collect();
     scored.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(b.0)));
-    scored.into_iter().take(max).map(|(p, _)| p.to_string()).collect()
+    scored
+        .into_iter()
+        .take(max)
+        .map(|(p, _)| p.to_string())
+        .collect()
 }
 
 /// Lê o `.md` da árvore da entidade e extrai a seção `## corpo` (parser do contrato).
-pub fn ler_corpo(docs_root: &Path, entity_id: &str, doc_path: &str) -> std::result::Result<String, String> {
+pub fn ler_corpo(
+    docs_root: &Path,
+    entity_id: &str,
+    doc_path: &str,
+) -> std::result::Result<String, String> {
     let caminho = docs_root.join(entity_id).join(doc_path);
     let texto = std::fs::read_to_string(&caminho).map_err(|e| e.to_string())?;
     let (_header, _sinopse, corpo) = mddoc::parse_doc(&texto).map_err(|e| e.to_string())?;
@@ -375,7 +410,11 @@ pub fn decode_parecer(payload_json: &str, score: Option<f32>) -> ParecerHit {
 /// `break` depende dessa monotonicidade — em entrada desordenada ele descarta silenciosamente docs
 /// dentro da banda. `query_scored` garante a ordem; o `debug_assert!` pega qualquer chamador futuro
 /// que não garanta.
-pub fn select_by_proximity(scored: Vec<(String, f32)>, floor: usize, band: f32) -> Vec<(String, f32)> {
+pub fn select_by_proximity(
+    scored: Vec<(String, f32)>,
+    floor: usize,
+    band: f32,
+) -> Vec<(String, f32)> {
     debug_assert!(
         scored.windows(2).all(|w| w[0].1 <= w[1].1),
         "select_by_proximity requires input sorted by ascending score (best-first)"
@@ -425,7 +464,8 @@ mod tests {
 
     /// Diretório temporário exclusivo deste teste (nome + pid), removido no fim.
     fn temp_dir(nome: &str) -> PathBuf {
-        let dir = std::env::temp_dir().join(format!("auli-retrieval-{nome}-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("auli-retrieval-{nome}-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         dir
     }
@@ -471,14 +511,20 @@ mod tests {
         // A distinção que a semântica do motor promete: fora do mapa = erro; no mapa e vazio = Ok
         // com zero hits. É o caso REAL do `load_all` (arquivo ausente vira store vazio).
         let mut cols: Collections = Collections::new();
-        cols.insert("mg-pareceres".into(), Arc::new(ReadStore::from_records(vec![])));
+        cols.insert(
+            "mg-pareceres".into(),
+            Arc::new(ReadStore::from_records(vec![])),
+        );
         let hits = search_embedded(&cols, "mg-pareceres", &[1.0], 10, 0, f32::INFINITY).unwrap();
         assert!(hits.is_empty());
     }
 
     #[test]
     fn decode_parecer_json_valido_e_invalido() {
-        let ok = decode_parecer(&payload_json("PARECER Nº 1", "docs/pareceres/p1.md"), Some(0.1));
+        let ok = decode_parecer(
+            &payload_json("PARECER Nº 1", "docs/pareceres/p1.md"),
+            Some(0.1),
+        );
         assert_eq!(ok.numero, "PARECER Nº 1");
         assert_eq!(ok.assunto, "ICMS – crédito");
         assert_eq!(ok.score, Some(0.1));
@@ -511,18 +557,27 @@ mod tests {
         let mut cols: Collections = Collections::new();
         cols.insert(
             "sc-pareceres".into(),
-            store_de(vec![(payload_json("PARECER Nº 1", "docs/pareceres/parecer-no-1.md").as_str(), vec![1.0])]),
+            store_de(vec![(
+                payload_json("PARECER Nº 1", "docs/pareceres/parecer-no-1.md").as_str(),
+                vec![1.0],
+            )]),
         );
 
         // Caixa DIFERENTE da gravada: a busca é insensível a caixa e a espaços nas bordas.
-        let achado = parecer_por_numero(&cols, &root, "sc", "  parecer nº 1  ").unwrap().unwrap();
+        let achado = parecer_por_numero(&cols, &root, "sc", "  parecer nº 1  ")
+            .unwrap()
+            .unwrap();
         assert_eq!(achado.numero, "PARECER Nº 1");
         assert_eq!(achado.corpo.as_deref(), Some("É o corpo integral."));
         assert_eq!(achado.link, "http://x/1");
         assert!(achado.score.is_none(), "obtido por número, não por busca");
 
         // Miss: número que não existe na coleção.
-        assert!(parecer_por_numero(&cols, &root, "sc", "PARECER Nº 999").unwrap().is_none());
+        assert!(
+            parecer_por_numero(&cols, &root, "sc", "PARECER Nº 999")
+                .unwrap()
+                .is_none()
+        );
 
         let _ = std::fs::remove_dir_all(&root);
     }
@@ -534,19 +589,31 @@ mod tests {
         let mut cols: Collections = Collections::new();
         cols.insert(
             "sc-pareceres".into(),
-            store_de(vec![(payload_json("PARECER Nº 1", "docs/pareceres/sumiu.md").as_str(), vec![1.0])]),
+            store_de(vec![(
+                payload_json("PARECER Nº 1", "docs/pareceres/sumiu.md").as_str(),
+                vec![1.0],
+            )]),
         );
 
-        let achado = parecer_por_numero(&cols, &root, "sc", "PARECER Nº 1").unwrap().unwrap();
+        let achado = parecer_por_numero(&cols, &root, "sc", "PARECER Nº 1")
+            .unwrap()
+            .unwrap();
         let corpo = achado.corpo.unwrap();
-        assert!(corpo.contains("[corpo indisponível — ver link]"), "corpo: {corpo}");
-        assert!(corpo.contains("Resumo do parecer."), "usa o resumo no lugar do corpo");
+        assert!(
+            corpo.contains("[corpo indisponível — ver link]"),
+            "corpo: {corpo}"
+        );
+        assert!(
+            corpo.contains("Resumo do parecer."),
+            "usa o resumo no lugar do corpo"
+        );
     }
 
     #[test]
     fn parecer_por_numero_em_colecao_fora_do_mapa_e_erro_tipado() {
         let cols = Collections::new();
-        let e = parecer_por_numero(&cols, Path::new("/inexistente"), "xx", "PARECER Nº 1").unwrap_err();
+        let e =
+            parecer_por_numero(&cols, Path::new("/inexistente"), "xx", "PARECER Nº 1").unwrap_err();
         assert!(matches!(e, Error::ColecaoAusente(_)));
     }
 
@@ -571,22 +638,40 @@ mod tests {
         // seed P1 (dispositivos d1,d2). P2 compartilha 2 (d1,d2); P3 compartilha 1 (d1); P4 zero.
         let seeds = vec!["P1".to_string()];
         let r = pareceres_relacionados(&root, "rs", &seeds, 5, 1);
-        assert_eq!(r, vec!["P2", "P3"], "ranqueado por nº compartilhado, seed P1 excluído");
+        assert_eq!(
+            r,
+            vec!["P2", "P3"],
+            "ranqueado por nº compartilhado, seed P1 excluído"
+        );
         // min_shared=2 corta P3.
-        assert_eq!(pareceres_relacionados(&root, "rs", &seeds, 5, 2), vec!["P2"]);
+        assert_eq!(
+            pareceres_relacionados(&root, "rs", &seeds, 5, 2),
+            vec!["P2"]
+        );
         // max limita.
-        assert_eq!(pareceres_relacionados(&root, "rs", &seeds, 1, 1), vec!["P2"]);
+        assert_eq!(
+            pareceres_relacionados(&root, "rs", &seeds, 1, 1),
+            vec!["P2"]
+        );
         let _ = std::fs::remove_dir_all(&root);
     }
 
     #[test]
     fn relacionados_sem_indice_ou_sem_seeds_e_vazio() {
         // Sem arquivo de índice: expansão é opt-in, comporta-se como hoje (vazio).
-        assert!(pareceres_relacionados(Path::new("/nao/existe"), "rs", &["P1".into()], 5, 1).is_empty());
+        assert!(
+            pareceres_relacionados(Path::new("/nao/existe"), "rs", &["P1".into()], 5, 1).is_empty()
+        );
         // Sem seeds: nada a expandir.
         let root = temp_dir("relac-vazio");
         std::fs::create_dir_all(root.join("rs").join("extracao")).unwrap();
-        std::fs::write(root.join("rs").join("extracao").join("dispositivos-index.json"), "{}").unwrap();
+        std::fs::write(
+            root.join("rs")
+                .join("extracao")
+                .join("dispositivos-index.json"),
+            "{}",
+        )
+        .unwrap();
         assert!(pareceres_relacionados(&root, "rs", &[], 5, 1).is_empty());
         let _ = std::fs::remove_dir_all(&root);
     }
@@ -596,7 +681,10 @@ mod tests {
         let mut cols = Collections::new();
         cols.insert("sp-pareceres".into(), store_de(vec![("x", vec![1.0])]));
         cols.insert("rs-pareceres".into(), store_de(vec![("y", vec![1.0])]));
-        cols.insert("mg-pareceres".into(), Arc::new(ReadStore::from_records(vec![]))); // vazio
+        cols.insert(
+            "mg-pareceres".into(),
+            Arc::new(ReadStore::from_records(vec![])),
+        ); // vazio
         cols.insert("rs-servicos".into(), store_de(vec![("z", vec![1.0])])); // outro kind
         assert_eq!(entidades_com(&cols, "pareceres"), vec!["rs", "sp"]);
         assert_eq!(entidades_com(&cols, "servicos"), vec!["rs"]);
@@ -613,7 +701,10 @@ mod tests {
     #[test]
     fn default_band_keeps_everything() {
         let d = scored(&[("a", 0.0), ("b", 0.3), ("c", 1.7)]);
-        assert_eq!(docs(select_by_proximity(d, 0, f32::INFINITY)), vec!["a", "b", "c"]);
+        assert_eq!(
+            docs(select_by_proximity(d, 0, f32::INFINITY)),
+            vec!["a", "b", "c"]
+        );
     }
 
     #[test]
@@ -625,7 +716,10 @@ mod tests {
     #[test]
     fn floor_overrides_band() {
         let d = scored(&[("a", 0.10), ("b", 0.12), ("c", 0.90)]);
-        assert_eq!(docs(select_by_proximity(d.clone(), 3, 0.05)), vec!["a", "b", "c"]);
+        assert_eq!(
+            docs(select_by_proximity(d.clone(), 3, 0.05)),
+            vec!["a", "b", "c"]
+        );
         assert_eq!(select_by_proximity(d, 10, 0.05).len(), 3);
     }
 

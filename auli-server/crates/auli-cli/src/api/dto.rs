@@ -97,7 +97,10 @@ mod tests {
         let r = RetrieveResponse {
             entity: "rs".into(),
             kind: "servicos".into(),
-            hits: vec![RetrieveHit { score: 0.25, texto: "SERVICO".into() }],
+            hits: vec![RetrieveHit {
+                score: 0.25,
+                texto: "SERVICO".into(),
+            }],
             pareceres: vec![],
         };
         let json = serde_json::to_value(&r).unwrap();
@@ -128,7 +131,10 @@ mod tests {
         let json = serde_json::to_value(&r).unwrap();
         assert_eq!(json["pareceres"][0]["numero"], "PARECER Nº 1");
         assert_eq!(json["pareceres"][0]["score"], 0.25);
-        assert!(json["pareceres"][0].get("corpo").is_none(), "corpo nunca vai na busca");
+        assert!(
+            json["pareceres"][0].get("corpo").is_none(),
+            "corpo nunca vai na busca"
+        );
     }
 
     #[test]

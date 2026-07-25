@@ -82,7 +82,11 @@ impl Recognizer for CepRecognizer {
             if !Self::limites_ok(text, m.start(), m.end()) {
                 continue;
             }
-            let boost = if self.tem_contexto(text, m.start()) { 0.15 } else { 0.0 };
+            let boost = if self.tem_contexto(text, m.start()) {
+                0.15
+            } else {
+                0.0
+            };
             achados.push(PiiEntity {
                 entity_type: self.entity_type(),
                 span: Span::new(m.start(), m.end()),
@@ -138,7 +142,10 @@ mod tests {
 
     #[test]
     fn com_hifen_dispensa_contexto() {
-        assert_eq!(achados("A sede mudou para 90010-150 recentemente."), ["90010-150"]);
+        assert_eq!(
+            achados("A sede mudou para 90010-150 recentemente."),
+            ["90010-150"]
+        );
     }
 
     #[test]
@@ -146,7 +153,10 @@ mod tests {
         // 8 dígitos corridos sem palavra de contexto → não dispara.
         assert!(achados("O lote 90010150 foi arrematado.").is_empty());
         // Com "endereço" por perto → dispara.
-        assert_eq!(achados("O endereço tem CEP 90010150 atualizado."), ["90010150"]);
+        assert_eq!(
+            achados("O endereço tem CEP 90010150 atualizado."),
+            ["90010150"]
+        );
     }
 
     #[test]

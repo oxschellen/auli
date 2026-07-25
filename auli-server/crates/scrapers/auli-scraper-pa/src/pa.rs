@@ -41,8 +41,11 @@ const ORGAO: &str = "SEFA-PA";
 /// Classe de fallback quando o serviço não traz `tema`.
 const CLASSE_FALLBACK: &str = "Geral";
 /// Públicos (nome, slug), na ordem de `publicos_ordem`. Mapeiam as flags do detalhe.
-const PUBLICOS: [(&str, &str); 3] =
-    [("Cidadão", "cidadao"), ("Empresa", "empresa"), ("Estado", "estado")];
+const PUBLICOS: [(&str, &str); 3] = [
+    ("Cidadão", "cidadao"),
+    ("Empresa", "empresa"),
+    ("Estado", "estado"),
+];
 /// Cortesia entre GETs (mitigação D-PA-ROBOTS: ≥1s, sem paralelismo).
 const COURTESY: Duration = Duration::from_millis(1100);
 /// Guard (princípio D-RJ5): mínimo de serviços. Folga sob os 34 observados; rejeita catálogo capado.
@@ -112,7 +115,11 @@ pub fn scrape(
     let lista_raw = load(&agent, data_dir, &lista_url, use_cache, &mut pending)?;
     let lista: Vec<OrgaoItem> = serde_json::from_str(&lista_raw)
         .map_err(|e| anyhow!("JSON da listagem /orgao/{} inválido: {}", ORGAO_ID, e))?;
-    println!("PA: {} serviços na listagem do órgão {}", lista.len(), ORGAO_ID);
+    println!(
+        "PA: {} serviços na listagem do órgão {}",
+        lista.len(),
+        ORGAO_ID
+    );
 
     // 2) Detalhe rico de cada serviço.
     let mut items: Vec<ServicoRaw> = Vec::new();
@@ -138,8 +145,13 @@ pub fn scrape(
 
     let ocorr: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
     println!("PA: {} serviços ({} ocorrências)", items.len(), ocorr);
-    let publicos_ordem =
-        PUBLICOS.iter().map(|(n, s)| Publico { nome: n.to_string(), slug: s.to_string() }).collect();
+    let publicos_ordem = PUBLICOS
+        .iter()
+        .map(|(n, s)| Publico {
+            nome: n.to_string(),
+            slug: s.to_string(),
+        })
+        .collect();
     Ok((items, publicos_ordem))
 }
 
@@ -157,16 +169,26 @@ fn load(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", url);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            url
+        );
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "PA", accept: Some("application/json"), ..Default::default() },
+        &GetOpts {
+            log_prefix: "PA",
+            accept: Some("application/json"),
+            ..Default::default()
+        },
     )?;
     if !body.trim_start().starts_with(['[', '{']) {
-        bail!("resposta não-JSON de {} — erro/HTML? primeiros bytes: {:?}",
-            url, body.chars().take(60).collect::<String>());
+        bail!(
+            "resposta não-JSON de {} — erro/HTML? primeiros bytes: {:?}",
+            url,
+            body.chars().take(60).collect::<String>()
+        );
     }
     pending.push((url.to_string(), body.clone()));
     sleep(COURTESY);
@@ -199,16 +221,25 @@ fn build_servico(id: &str, d: &Detail) -> Option<ServicoRaw> {
             "Estado" => d.estado,
             _ => false,
         })
-        .map(|(nome, _)| Ocorrencia { publico: (*nome).to_string(), classe: classe.clone() })
+        .map(|(nome, _)| Ocorrencia {
+            publico: (*nome).to_string(),
+            classe: classe.clone(),
+        })
         .collect();
     if ocorrencias.is_empty() {
         // Sem flag de público -> ainda é um serviço público; entra como "Cidadão" (não perde o item).
-        eprintln!("ℹ️  PA: serviço {} ({}) sem flag de público; assumindo Cidadão.", id, titulo);
+        eprintln!(
+            "ℹ️  PA: serviço {} ({}) sem flag de público; assumindo Cidadão.",
+            id, titulo
+        );
         return Some(ServicoRaw {
             descricao: montar_descricao(d),
             link: format!("{}/{}", LINK_BASE, id),
             orgao: ORGAO.to_string(),
-            ocorrencias: vec![Ocorrencia { publico: "Cidadão".to_string(), classe }],
+            ocorrencias: vec![Ocorrencia {
+                publico: "Cidadão".to_string(),
+                classe,
+            }],
             titulo,
         });
     }
@@ -300,7 +331,11 @@ mod tests {
         assert_eq!(s.ocorrencias.len(), 2);
         assert_eq!(s.ocorrencias[0].publico, "Cidadão");
         assert_eq!(s.ocorrencias[1].publico, "Empresa");
-        assert!(s.ocorrencias.iter().all(|o| o.classe == "Tributos e empresas"));
+        assert!(
+            s.ocorrencias
+                .iter()
+                .all(|o| o.classe == "Tributos e empresas")
+        );
     }
 
     #[test]

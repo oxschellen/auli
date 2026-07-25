@@ -19,7 +19,12 @@ use serde::Deserialize;
 /// defaults together instead of silently diverging. Falls back to `"rs"` if the registry is
 /// unreadable/empty.
 pub static DEFAULT_ENTITY: LazyLock<String> = LazyLock::new(|| {
-    read_registry().entities.into_iter().next().map(|e| e.id).unwrap_or_else(|| "rs".to_string())
+    read_registry()
+        .entities
+        .into_iter()
+        .next()
+        .map(|e| e.id)
+        .unwrap_or_else(|| "rs".to_string())
 });
 
 // Fallback system prompt used when an entity has no prompt file.
@@ -85,7 +90,9 @@ impl EntityConfig {
 /// when it's omitted the server falls back to this same dir (see `run_server`), so the two never
 /// silently look in different places.
 pub fn data_dir() -> PathBuf {
-    std::env::var("AULI_DATA_DIR").unwrap_or_else(|_| "./data".to_string()).into()
+    std::env::var("AULI_DATA_DIR")
+        .unwrap_or_else(|_| "./data".to_string())
+        .into()
 }
 
 pub static ENTITIES: LazyLock<HashMap<String, EntityConfig>> = LazyLock::new(load_entities);
@@ -97,24 +104,40 @@ fn read_registry() -> Registry {
     let text = match fs::read_to_string(&registry_path) {
         Ok(t) => t,
         Err(e) => {
-            eprintln!("⚠️  Não foi possível ler o registro de entidades {:?}: {}", registry_path, e);
-            return Registry { entities: Vec::new() };
+            eprintln!(
+                "⚠️  Não foi possível ler o registro de entidades {:?}: {}",
+                registry_path, e
+            );
+            return Registry {
+                entities: Vec::new(),
+            };
         }
     };
     toml::from_str(&text).unwrap_or_else(|e| {
         eprintln!("⚠️  registry.toml inválido ({:?}): {}", registry_path, e);
-        Registry { entities: Vec::new() }
+        Registry {
+            entities: Vec::new(),
+        }
     })
 }
 
 /// Read a prompt file relative to the data dir, falling back to `default` when the path is empty
 /// (entity didn't configure it) or the file can't be read (missing/unreadable — logged).
-fn load_prompt(base: &std::path::Path, id: &str, rel_path: &str, kind: &str, default: &str) -> String {
+fn load_prompt(
+    base: &std::path::Path,
+    id: &str,
+    rel_path: &str,
+    kind: &str,
+    default: &str,
+) -> String {
     if rel_path.is_empty() {
         return default.to_string();
     }
     fs::read_to_string(base.join(rel_path)).unwrap_or_else(|_| {
-        eprintln!("⚠️  prompt de {} ausente para a entidade '{}' ({}), usando o padrão.", kind, id, rel_path);
+        eprintln!(
+            "⚠️  prompt de {} ausente para a entidade '{}' ({}), usando o padrão.",
+            kind, id, rel_path
+        );
         default.to_string()
     })
 }
@@ -124,12 +147,28 @@ fn load_entities() -> HashMap<String, EntityConfig> {
     let base = data_dir();
 
     for ent in read_registry().entities {
-        let system_prompt = load_prompt(&base, &ent.id, &ent.prompt, "sistema", DEFAULT_SYSTEM_PROMPT);
-        let pareceres_prompt =
-            load_prompt(&base, &ent.id, &ent.prompt_pareceres, "pareceres", DEFAULT_PARECERES_PROMPT);
+        let system_prompt = load_prompt(
+            &base,
+            &ent.id,
+            &ent.prompt,
+            "sistema",
+            DEFAULT_SYSTEM_PROMPT,
+        );
+        let pareceres_prompt = load_prompt(
+            &base,
+            &ent.id,
+            &ent.prompt_pareceres,
+            "pareceres",
+            DEFAULT_PARECERES_PROMPT,
+        );
         map.insert(
             ent.id.clone(),
-            EntityConfig { id: ent.id, name: ent.name, system_prompt, pareceres_prompt },
+            EntityConfig {
+                id: ent.id,
+                name: ent.name,
+                system_prompt,
+                pareceres_prompt,
+            },
         );
     }
 
@@ -138,11 +177,18 @@ fn load_entities() -> HashMap<String, EntityConfig> {
 
 // Resolve an entity id. None / empty -> DEFAULT_ENTITY. Unknown id -> Err with a message.
 pub fn get_entity(id: Option<&str>) -> Result<&'static EntityConfig, String> {
-    let id = id.map(str::trim).filter(|s| !s.is_empty()).unwrap_or_else(|| DEFAULT_ENTITY.as_str());
+    let id = id
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| DEFAULT_ENTITY.as_str());
 
-    ENTITIES
-        .get(id)
-        .ok_or_else(|| format!("Entidade desconhecida: '{}'. Entidades disponíveis: [{}]", id, available_ids()))
+    ENTITIES.get(id).ok_or_else(|| {
+        format!(
+            "Entidade desconhecida: '{}'. Entidades disponíveis: [{}]",
+            id,
+            available_ids()
+        )
+    })
 }
 
 pub fn available_ids() -> String {
@@ -166,7 +212,16 @@ mod tests {
         // Unconfigured (empty path) -> default.
         assert_eq!(load_prompt(&base, "rs", "", "pareceres", "DEF"), "DEF");
         // Configured but the file is missing -> default (logged).
-        assert_eq!(load_prompt(&base, "rs", "prompts/does-not-exist.txt", "pareceres", "DEF"), "DEF");
+        assert_eq!(
+            load_prompt(
+                &base,
+                "rs",
+                "prompts/does-not-exist.txt",
+                "pareceres",
+                "DEF"
+            ),
+            "DEF"
+        );
     }
 
     #[test]
@@ -175,7 +230,10 @@ mod tests {
         dir.push(format!("auli_prompt_test_{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
         std::fs::write(dir.join("p.txt"), "conteúdo do prompt").unwrap();
-        assert_eq!(load_prompt(&dir, "rs", "p.txt", "pareceres", "DEF"), "conteúdo do prompt");
+        assert_eq!(
+            load_prompt(&dir, "rs", "p.txt", "pareceres", "DEF"),
+            "conteúdo do prompt"
+        );
         let _ = std::fs::remove_dir_all(&dir);
     }
 }

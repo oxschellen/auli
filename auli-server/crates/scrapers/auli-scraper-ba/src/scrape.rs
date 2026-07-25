@@ -13,9 +13,9 @@ use ureq::Agent;
 use ureq::tls::{TlsConfig, TlsProvider};
 
 use auli_contract::Publico;
+use auli_contract::ServicoPerPublico as Servico;
 use auli_scraper_kit::PerPublicoServicos;
 use auli_scraper_kit::{clean_decoded, decode_entities};
-use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://portal.sefaz.ba.gov.br";
 const SEED_URL: &str = "https://portal.sefaz.ba.gov.br/scripts/cartadeservicos/index.asp";
@@ -60,7 +60,11 @@ fn build_agent_native_tls(user_agent: &str, timeout: Duration) -> Agent {
     Agent::config_builder()
         .user_agent(user_agent)
         .timeout_global(Some(timeout))
-        .tls_config(TlsConfig::builder().provider(TlsProvider::NativeTls).build())
+        .tls_config(
+            TlsConfig::builder()
+                .provider(TlsProvider::NativeTls)
+                .build(),
+        )
         .build()
         .into()
 }
@@ -141,24 +145,32 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Ve
     for (nome, servicos) in &per_pub {
         println!("BA: público '{}' -> {} serviços", nome, servicos.len());
     }
-    let publicos_ordem =
-        ordem.into_iter().map(|(nome, slug)| Publico { nome, slug }).collect();
+    let publicos_ordem = ordem
+        .into_iter()
+        .map(|(nome, slug)| Publico { nome, slug })
+        .collect();
     Ok((per_pub, publicos_ordem))
 }
 
 /// Extrai a listagem: `ul#search_list li.list-group-item > a[href="index.asp?id=..."]`. Os
 /// separadores de letra (`li.list-group-title`) têm `<a name=...>` sem href e se filtram sozinhos.
 fn parse_listagem(doc: &Html) -> Result<Vec<ListItem>> {
-    let ul = doc
-        .select(&sel("ul#search_list"))
-        .next()
-        .ok_or_else(|| anyhow!("listagem 'ul#search_list' ausente em {} — layout mudou?", SEED_URL))?;
+    let ul = doc.select(&sel("ul#search_list")).next().ok_or_else(|| {
+        anyhow!(
+            "listagem 'ul#search_list' ausente em {} — layout mudou?",
+            SEED_URL
+        )
+    })?;
 
     let mut out = Vec::new();
     let mut vistos: std::collections::HashSet<String> = std::collections::HashSet::new();
     for a in ul.select(&sel("li.list-group-item a[href]")) {
-        let Some(href) = a.value().attr("href") else { continue };
-        let Some(link) = canonical(href) else { continue };
+        let Some(href) = a.value().attr("href") else {
+            continue;
+        };
+        let Some(link) = canonical(href) else {
+            continue;
+        };
         // Só fichas da própria Carta entram na listagem (padrão único observado: index.asp?id=).
         if !link.contains("index.asp?id=") {
             continue;
@@ -213,8 +225,11 @@ fn parse_ficha(doc: &Html) -> Result<Ficha> {
 
     // Seções: h4.media-heading + div.media-content.
     for bloco in content.select(&sel("div.media-service")) {
-        let heading =
-            bloco.select(&sel("h4.media-heading")).next().map(|el| text(&el)).unwrap_or_default();
+        let heading = bloco
+            .select(&sel("h4.media-heading"))
+            .next()
+            .map(|el| text(&el))
+            .unwrap_or_default();
         let corpo = bloco
             .select(&sel("div.media-content"))
             .next()
@@ -226,7 +241,11 @@ fn parse_ficha(doc: &Html) -> Result<Ficha> {
         partes.push(format!("{}:\n{}", heading, corpo));
     }
 
-    Ok(Ficha { publico_rotulo, classe, corpo: partes.join("\n") })
+    Ok(Ficha {
+        publico_rotulo,
+        classe,
+        corpo: partes.join("\n"),
+    })
 }
 
 /// `true` se algum ancestral-elemento de `el` tem a classe `class`.
@@ -324,7 +343,12 @@ fn slugify(s: &str) -> String {
 fn canonical(href: &str) -> Option<String> {
     // Alguns slugs `id=` da listagem trazem espaço literal (ex.: `..._ mensal_...`) — inválido numa
     // URI. Encoda para `%20` (o ureq recusa o caractere cru; navegador/curl encodam por conta).
-    let h = href.split('#').next().unwrap_or(href).trim().replace(' ', "%20");
+    let h = href
+        .split('#')
+        .next()
+        .unwrap_or(href)
+        .trim()
+        .replace(' ', "%20");
     let h = h.as_str();
     if h.is_empty() || h.starts_with("javascript:") || h.starts_with("mailto:") {
         return None;
@@ -360,7 +384,9 @@ fn sel(s: &str) -> Selector {
 // NB: o retry fica local (não usa `kit::http::get_string`) porque a resposta é lida como bytes e
 // passa por `decode_charset` (o ASP é latin1, não UTF-8) — trabalho real de charset por-portal.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)? {
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)?
+    {
         return Ok(cached);
     }
 
@@ -384,7 +410,10 @@ fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<St
             Err(e) => last = anyhow!(e.to_string()),
         }
         if attempt < max_attempts {
-            eprintln!("BA: falha em {} (tentativa {}/{}): {}. Retentando...", url, attempt, max_attempts, last);
+            eprintln!(
+                "BA: falha em {} (tentativa {}/{}): {}. Retentando...",
+                url, attempt, max_attempts, last
+            );
             sleep(delay);
             delay = delay.saturating_mul(2);
         }
@@ -398,7 +427,10 @@ fn decode_charset(bytes: &[u8], url: &str) -> String {
     match std::str::from_utf8(bytes) {
         Ok(s) => s.to_string(),
         Err(_) => {
-            eprintln!("⚠️  BA: {} não é UTF-8 válido — decodificando como latin-1", url);
+            eprintln!(
+                "⚠️  BA: {} não é UTF-8 válido — decodificando como latin-1",
+                url
+            );
             bytes.iter().map(|&b| b as char).collect()
         }
     }
@@ -423,9 +455,11 @@ mod tests {
         let links: std::collections::HashSet<&str> =
             itens.iter().map(|i| i.link.as_str()).collect();
         assert_eq!(links.len(), 204, "links devem ser únicos");
-        assert!(itens.iter().all(|i| i
-            .link
-            .starts_with("https://portal.sefaz.ba.gov.br/scripts/cartadeservicos/index.asp?id=")));
+        assert!(
+            itens.iter().all(|i| i.link.starts_with(
+                "https://portal.sefaz.ba.gov.br/scripts/cartadeservicos/index.asp?id="
+            ))
+        );
         assert_eq!(
             itens[0].titulo,
             "AIDF - Cancelamento de Autorização para Impressão de Documentos Fiscais"
@@ -446,9 +480,13 @@ mod tests {
         // Introdução presente.
         assert!(f.corpo.starts_with("Este serviço permite ao contribuinte"));
         // As 5 seções como `Heading:`.
-        for h in
-            ["Documentos Necessários:", "Como Fazer:", "Canal:", "Tempo Médio:", "Base Legal:"]
-        {
+        for h in [
+            "Documentos Necessários:",
+            "Como Fazer:",
+            "Canal:",
+            "Tempo Médio:",
+            "Base Legal:",
+        ] {
             assert!(f.corpo.contains(h), "seção ausente: {}", h);
         }
         // Link interno do corpo absolutizado no formato `texto "url"`.
@@ -457,7 +495,10 @@ mod tests {
         ));
         // Conteúdo pontual das seções curtas.
         assert!(f.corpo.contains("Canal:\nInternet."));
-        assert!(f.corpo.contains("Base Legal:\nArt. 1º da Portaria nº 582/00."));
+        assert!(
+            f.corpo
+                .contains("Base Legal:\nArt. 1º da Portaria nº 582/00.")
+        );
     }
 
     #[test]

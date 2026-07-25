@@ -1,11 +1,11 @@
 use std::sync::Arc;
 use std::time::Instant;
 
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use tracing::debug;
 
 use crate::api::dto::{Answer, Question};
-use crate::rag::{exec_all_question, QueryType};
+use crate::rag::{QueryType, exec_all_question};
 use crate::state::AppState;
 
 pub async fn question_handler(

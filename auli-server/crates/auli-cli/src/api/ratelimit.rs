@@ -14,14 +14,14 @@ use std::num::NonZeroU32;
 use std::sync::Arc;
 
 use axum::{
+    Json,
     body::Body,
     extract::{ConnectInfo, State},
     http::{HeaderMap, Request, StatusCode},
     middleware::Next,
     response::{IntoResponse, Response},
-    Json,
 };
-use governor::{clock::DefaultClock, state::keyed::DefaultKeyedStateStore, Quota, RateLimiter};
+use governor::{Quota, RateLimiter, clock::DefaultClock, state::keyed::DefaultKeyedStateStore};
 use serde_json::json;
 
 /// Keyed (per-IP) in-memory GCRA limiter. State per key is a few bytes; for help-desk volumes
@@ -38,7 +38,8 @@ pub type SharedLimiter = Arc<IpRateLimiter>;
 /// Compartilhado com `/v1/retrieve` (D-MCP-6): o recurso caro e disputado é o embedder, e as duas
 /// rotas o tocam. O `app()` constrói UM e injeta nas duas.
 pub fn question_rate_limiter() -> SharedLimiter {
-    let quota = Quota::per_second(NonZeroU32::new(1).unwrap()).allow_burst(NonZeroU32::new(2).unwrap());
+    let quota =
+        Quota::per_second(NonZeroU32::new(1).unwrap()).allow_burst(NonZeroU32::new(2).unwrap());
     Arc::new(RateLimiter::keyed(quota))
 }
 
@@ -53,7 +54,8 @@ pub fn question_rate_limiter() -> SharedLimiter {
 /// Nota: o 429 sai como JSON simples, não como erro JSON-RPC. É correto no nível HTTP e clientes
 /// MCP tratam falha de transporte; formatar o 429 em JSON-RPC exigiria um middleware próprio.
 pub fn mcp_rate_limiter() -> SharedLimiter {
-    let quota = Quota::per_second(NonZeroU32::new(10).unwrap()).allow_burst(NonZeroU32::new(30).unwrap());
+    let quota =
+        Quota::per_second(NonZeroU32::new(10).unwrap()).allow_burst(NonZeroU32::new(30).unwrap());
     Arc::new(RateLimiter::keyed(quota))
 }
 

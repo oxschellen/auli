@@ -12,13 +12,20 @@
 
 /// Comprime espaços e remove zero-width (`U+200B`) e no-break space (`U+00A0`).
 pub fn clean(s: &str) -> String {
-    s.replace('\u{200b}', "").replace('\u{00a0}', " ").split_whitespace().collect::<Vec<_>>().join(" ")
+    s.replace('\u{200b}', "")
+        .replace('\u{00a0}', " ")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 /// Decodifica entidades HTML ([`decode_entities`]) e comprime espaços. **Não** remove zero-width/nbsp
 /// (ver o header do módulo): preserva byte a byte o que o `clean_inline` de ba/pr produzia.
 pub fn clean_decoded(s: &str) -> String {
-    decode_entities(s).split_whitespace().collect::<Vec<_>>().join(" ")
+    decode_entities(s)
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 /// Decodifica o conjunto de entidades HTML que os portais da frota emitem. Superset do que ba usava
@@ -53,7 +60,9 @@ mod tests {
 
     #[test]
     fn decode_entities_cobre_o_conjunto_da_frota() {
-        assert_eq!(decode_entities("&aacute;gua &amp; sal &#39;x&#39; &lt;b&gt; &quot;y&quot; a&nbsp;b"),
-                   "água & sal 'x' <b> \"y\" a b");
+        assert_eq!(
+            decode_entities("&aacute;gua &amp; sal &#39;x&#39; &lt;b&gt; &quot;y&quot; a&nbsp;b"),
+            "água & sal 'x' <b> \"y\" a b"
+        );
     }
 }

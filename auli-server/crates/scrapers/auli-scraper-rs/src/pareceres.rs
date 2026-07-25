@@ -36,9 +36,11 @@ use auli_scraper_kit::{cache, clean};
 
 use crate::errors::{Error, Result};
 
-const LISTING_URL: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/Search.aspx?CodArea=3&CodGroup=159";
+const LISTING_URL: &str =
+    "http://www.legislacao.sefaz.rs.gov.br/Site/Search.aspx?CodArea=3&CodGroup=159";
 const DETAIL_BASE: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=";
-const UA: &str = "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
+const UA: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
 const DOCS_DIR: &str = "../data/rs/docs/pareceres";
 // Cache namespace da frota: `<CACHE_BASE>/cache/<CACHE_KIND>` = `../data/rs/raw/cache/pareceres`,
@@ -73,8 +75,14 @@ pub fn run(use_cache: bool) -> Result<()> {
     println!("🔎 Enumerando documentos (CodArea=3 / CodGroup=159)…");
     let all_rows = enumerate(&jar, use_cache)?;
     let total_docs = all_rows.len();
-    let rows: Vec<Row> = all_rows.into_iter().filter(|r| is_consulta_formal(&r.numero)).collect();
-    println!("   {} consultas formais (pareceres+informações) de {total_docs} documentos.", rows.len());
+    let rows: Vec<Row> = all_rows
+        .into_iter()
+        .filter(|r| is_consulta_formal(&r.numero))
+        .collect();
+    println!(
+        "   {} consultas formais (pareceres+informações) de {total_docs} documentos.",
+        rows.len()
+    );
     if rows.len() < MIN_PARECERES {
         return Err(Error::Custom(format!(
             "coleta devolveu {} pareceres (< MIN {MIN_PARECERES}); abortando para não truncar.",
@@ -91,7 +99,12 @@ pub fn run(use_cache: bool) -> Result<()> {
         if corpo.is_empty() {
             eprintln!("⚠️  corpo vazio: inpKey={} ({})", row.inp_key, row.numero);
         }
-        items.push(Parecer { numero: row.numero, assunto: row.assunto, corpo, link: url });
+        items.push(Parecer {
+            numero: row.numero,
+            assunto: row.assunto,
+            corpo,
+            link: url,
+        });
         if (i + 1) % 25 == 0 {
             println!("   detalhe {}/{total}", i + 1);
         }
@@ -203,7 +216,14 @@ fn collect_form_fields(doc: &Html) -> Vec<(String, String)> {
         match typ.as_str() {
             "checkbox" | "radio" => {
                 if v.attr("checked").is_some() {
-                    fields.push((name.to_string(), if val.is_empty() { "on".into() } else { val.to_string() }));
+                    fields.push((
+                        name.to_string(),
+                        if val.is_empty() {
+                            "on".into()
+                        } else {
+                            val.to_string()
+                        },
+                    ));
                 }
             }
             "submit" | "button" | "image" | "reset" | "file" => {}
@@ -262,20 +282,32 @@ fn with_retry(label: &str, mut f: impl FnMut() -> Result<Vec<u8>>) -> Result<Vec
             Err(e) => {
                 last = e.to_string();
                 if attempt < ATTEMPTS {
-                    eprintln!("⚠️  {label}: tentativa {attempt}/{ATTEMPTS} falhou ({last}); retentando…");
+                    eprintln!(
+                        "⚠️  {label}: tentativa {attempt}/{ATTEMPTS} falhou ({last}); retentando…"
+                    );
                     sleep(Duration::from_secs(attempt as u64));
                 }
             }
         }
     }
-    Err(Error::Custom(format!("{label} falhou após {ATTEMPTS} tentativas: {last}")))
+    Err(Error::Custom(format!(
+        "{label} falhou após {ATTEMPTS} tentativas: {last}"
+    )))
 }
 
 /// GET via `curl`. Com `jar`, escreve/lê os cookies (`-c`/`-b`) para manter a sessão.
 fn curl_get(url: &str, jar: Option<&str>) -> Result<Vec<u8>> {
     with_retry(&format!("curl GET {url}"), || {
-        let mut args: Vec<&str> =
-            vec!["-sS", "--fail-with-body", "--max-time", "40", "-A", UA, "-H", "Accept: */*"];
+        let mut args: Vec<&str> = vec![
+            "-sS",
+            "--fail-with-body",
+            "--max-time",
+            "40",
+            "-A",
+            UA,
+            "-H",
+            "Accept: */*",
+        ];
         if let Some(j) = jar {
             args.extend_from_slice(&["-c", j, "-b", j]);
         }
@@ -301,12 +333,25 @@ fn curl_post_form(url: &str, body: &str, jar: &str) -> Result<Vec<u8>> {
     with_retry(&format!("curl POST {url}"), || {
         let mut child = Command::new("curl")
             .args([
-                "-sS", "--fail-with-body", "--max-time", "40",
-                "-A", UA, "-H", "Accept: */*",
-                "-H", "Content-Type: application/x-www-form-urlencoded",
-                "-b", jar, "-c", jar,
-                "--data-binary", "@-",
-                "-o", "-", url,
+                "-sS",
+                "--fail-with-body",
+                "--max-time",
+                "40",
+                "-A",
+                UA,
+                "-H",
+                "Accept: */*",
+                "-H",
+                "Content-Type: application/x-www-form-urlencoded",
+                "-b",
+                jar,
+                "-c",
+                jar,
+                "--data-binary",
+                "@-",
+                "-o",
+                "-",
+                url,
             ])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -339,10 +384,9 @@ fn curl_post_form(url: &str, body: &str, jar: &str) -> Result<Vec<u8>> {
 /// (PARECER, DECRETO, …); capturamos todos aqui e filtramos por PARECER em [`run`] — se filtrássemos
 /// no regex, uma página só de decretos zeraria os "novos" e abortaria a paginação cedo demais.
 fn parse_rows(html: &str) -> Vec<Row> {
-    let re = Regex::new(
-        r#"(?s)goDocument\((\d+),''\)"\s*>\s*([^<]*)</a>\s*</h5>\s*<p>\s*(.*?)\s*</p>"#,
-    )
-    .expect("regex de listagem válida");
+    let re =
+        Regex::new(r#"(?s)goDocument\((\d+),''\)"\s*>\s*([^<]*)</a>\s*</h5>\s*<p>\s*(.*?)\s*</p>"#)
+            .expect("regex de listagem válida");
     re.captures_iter(html)
         .map(|c| Row {
             inp_key: c[1].to_string(),
@@ -403,29 +447,61 @@ fn html_to_text(html: &str) -> String {
 }
 
 fn strip_tags(s: &str) -> String {
-    Regex::new(r"(?s)<[^>]*>").expect("regex de tags válida").replace_all(s, " ").into_owned()
+    Regex::new(r"(?s)<[^>]*>")
+        .expect("regex de tags válida")
+        .replace_all(s, " ")
+        .into_owned()
 }
 
 /// Entidades nomeadas frequentes no texto jurídico (o `kit::decode_entities` só cobre um punhado).
 /// `&amp;` fica por último para não re-decodificar entidades duplo-escapadas.
 const NAMED_ENTITIES: &[(&str, &str)] = &[
     ("&nbsp;", " "),
-    ("&ndash;", "–"), ("&mdash;", "—"),
-    ("&ordm;", "º"), ("&ordf;", "ª"), ("&deg;", "°"), ("&sect;", "§"),
-    ("&hellip;", "…"), ("&laquo;", "«"), ("&raquo;", "»"),
-    ("&aacute;", "á"), ("&agrave;", "à"), ("&acirc;", "â"), ("&atilde;", "ã"), ("&auml;", "ä"),
-    ("&eacute;", "é"), ("&ecirc;", "ê"), ("&egrave;", "è"),
-    ("&iacute;", "í"), ("&iuml;", "ï"),
-    ("&oacute;", "ó"), ("&ocirc;", "ô"), ("&otilde;", "õ"), ("&ouml;", "ö"),
-    ("&uacute;", "ú"), ("&uuml;", "ü"), ("&ugrave;", "ù"),
-    ("&ccedil;", "ç"), ("&ntilde;", "ñ"),
-    ("&Aacute;", "Á"), ("&Agrave;", "À"), ("&Acirc;", "Â"), ("&Atilde;", "Ã"),
-    ("&Eacute;", "É"), ("&Ecirc;", "Ê"),
+    ("&ndash;", "–"),
+    ("&mdash;", "—"),
+    ("&ordm;", "º"),
+    ("&ordf;", "ª"),
+    ("&deg;", "°"),
+    ("&sect;", "§"),
+    ("&hellip;", "…"),
+    ("&laquo;", "«"),
+    ("&raquo;", "»"),
+    ("&aacute;", "á"),
+    ("&agrave;", "à"),
+    ("&acirc;", "â"),
+    ("&atilde;", "ã"),
+    ("&auml;", "ä"),
+    ("&eacute;", "é"),
+    ("&ecirc;", "ê"),
+    ("&egrave;", "è"),
+    ("&iacute;", "í"),
+    ("&iuml;", "ï"),
+    ("&oacute;", "ó"),
+    ("&ocirc;", "ô"),
+    ("&otilde;", "õ"),
+    ("&ouml;", "ö"),
+    ("&uacute;", "ú"),
+    ("&uuml;", "ü"),
+    ("&ugrave;", "ù"),
+    ("&ccedil;", "ç"),
+    ("&ntilde;", "ñ"),
+    ("&Aacute;", "Á"),
+    ("&Agrave;", "À"),
+    ("&Acirc;", "Â"),
+    ("&Atilde;", "Ã"),
+    ("&Eacute;", "É"),
+    ("&Ecirc;", "Ê"),
     ("&Iacute;", "Í"),
-    ("&Oacute;", "Ó"), ("&Ocirc;", "Ô"), ("&Otilde;", "Õ"),
-    ("&Uacute;", "Ú"), ("&Ccedil;", "Ç"),
-    ("&quot;", "\""), ("&apos;", "'"), ("&#39;", "'"),
-    ("&lt;", "<"), ("&gt;", ">"),
+    ("&Oacute;", "Ó"),
+    ("&Ocirc;", "Ô"),
+    ("&Otilde;", "Õ"),
+    ("&Uacute;", "Ú"),
+    ("&Ccedil;", "Ç"),
+    ("&quot;", "\""),
+    ("&apos;", "'"),
+    ("&#39;", "'"),
+    ("&lt;", "<"),
+    ("&gt;", ">"),
     ("&amp;", "&"),
 ];
 
@@ -465,16 +541,21 @@ fn form_urlencoded(pairs: &[(&str, &str)]) -> String {
         let mut out = String::with_capacity(s.len());
         for b in s.bytes() {
             match b {
-                b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => out.push(b as char),
+                b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                    out.push(b as char)
+                }
                 b' ' => out.push('+'),
                 _ => out.push_str(&format!("%{b:02X}")),
             }
         }
         out
     }
-    pairs.iter().map(|(k, v)| format!("{}={}", enc(k), enc(v))).collect::<Vec<_>>().join("&")
+    pairs
+        .iter()
+        .map(|(k, v)| format!("{}={}", enc(k), enc(v)))
+        .collect::<Vec<_>>()
+        .join("&")
 }
-
 
 #[cfg(test)]
 mod tests {

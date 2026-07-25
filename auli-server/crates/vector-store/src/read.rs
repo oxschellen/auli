@@ -4,7 +4,7 @@ use std::path::Path;
 
 use serde::de::DeserializeOwned;
 
-use crate::{read_collection_file, scan, Record, Result};
+use crate::{Record, Result, read_collection_file, scan};
 
 /// A single collection opened read-only. Holds its records as an **immutable** vector — once
 /// loaded it is never mutated, so queries need no lock and an `Arc<ReadStore<P>>` can be shared
@@ -24,7 +24,9 @@ impl<P> ReadStore<P> {
     where
         P: DeserializeOwned,
     {
-        Ok(Self { records: read_collection_file::<P>(path)?.records })
+        Ok(Self {
+            records: read_collection_file::<P>(path)?.records,
+        })
     }
 
     pub fn len(&self) -> usize {

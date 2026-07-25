@@ -137,7 +137,15 @@ pub fn scrape(
 
     // 1) Catálogo (chave de cache lógica e curta).
     let servicos_url = format!("{}/portal/servicos?{}", API_BASE, SERVICOS_QUERY);
-    let lista_json = load(&agent, data_dir, &servicos_url, "servicos#todos", use_cache, &mut token, &mut pending)?;
+    let lista_json = load(
+        &agent,
+        data_dir,
+        &servicos_url,
+        "servicos#todos",
+        use_cache,
+        &mut token,
+        &mut pending,
+    )?;
     let resp: ServicosResp = serde_json::from_str(&lista_json)
         .map_err(|e| anyhow!("JSON do catálogo inválido: {}", e))?;
     println!("MA: {} itens (total={})", resp.items.len(), resp.total);
@@ -157,7 +165,15 @@ pub fn scrape(
         let descricao = match it.id_conteudo {
             Some(idc) if idc > 0 => {
                 let url = format!("{}/portal/conteudos/{}", API_BASE, idc);
-                let cj = load(&agent, data_dir, &url, &url, use_cache, &mut token, &mut pending)?;
+                let cj = load(
+                    &agent,
+                    data_dir,
+                    &url,
+                    &url,
+                    use_cache,
+                    &mut token,
+                    &mut pending,
+                )?;
                 let c: Conteudo = serde_json::from_str(&cj)
                     .map_err(|e| anyhow!("JSON do conteúdo {} inválido: {}", idc, e))?;
                 html_to_text(c.descricao.as_deref().unwrap_or_default())
@@ -189,10 +205,18 @@ pub fn scrape(
     }
 
     let ocorr: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
-    println!("MA: {} serviços ({} ocorrências) em {} público(s)", items.len(), ocorr, publicos_ordem.len());
+    println!(
+        "MA: {} serviços ({} ocorrências) em {} público(s)",
+        items.len(),
+        ocorr,
+        publicos_ordem.len()
+    );
     let publicos = publicos_ordem
         .into_iter()
-        .map(|nome| Publico { slug: slug_publico(&nome), nome })
+        .map(|nome| Publico {
+            slug: slug_publico(&nome),
+            nome,
+        })
         .collect();
     Ok((items, publicos))
 }
@@ -200,8 +224,8 @@ pub fn scrape(
 /// Agent `ureq` com o intermediário GlobalSign embutido como trust anchor (rustls padrão). Resolve a
 /// cadeia incompleta do servidor sem desabilitar a verificação nem usar native-tls.
 fn build_agent() -> Agent {
-    let cert =
-        Certificate::from_pem(GLOBALSIGN_INTERMEDIATE_PEM.as_bytes()).expect("intermediário PEM válido");
+    let cert = Certificate::from_pem(GLOBALSIGN_INTERMEDIATE_PEM.as_bytes())
+        .expect("intermediário PEM válido");
     let roots = RootCerts::new_with_certs(&[cert]);
     Agent::config_builder()
         .user_agent(USER_AGENT)
@@ -226,7 +250,10 @@ fn load(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", cache_key);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            cache_key
+        );
     }
     if token.is_none() {
         *token = Some(login(agent)?);
@@ -242,7 +269,11 @@ fn load(
         },
     )?;
     if !body.trim_start().starts_with(['{', '[']) {
-        bail!("resposta não-JSON de {} (erro/auth?): {:?}", url, body.chars().take(60).collect::<String>());
+        bail!(
+            "resposta não-JSON de {} (erro/auth?): {:?}",
+            url,
+            body.chars().take(60).collect::<String>()
+        );
     }
     pending.push((cache_key.to_string(), body.clone()));
     sleep(COURTESY);
@@ -252,13 +283,18 @@ fn load(
 /// Login anônimo (credenciais públicas do bundle) → devolve o `authtoken` (já com "Bearer ").
 fn login(agent: &Agent) -> Result<String> {
     println!("MA: login anônimo (cliente público {})", ID_CLIENTE);
-    let body = serde_json::json!({ "id_cliente": ID_CLIENTE, "senha": SENHA_PUBLICA, "portal": true });
+    let body =
+        serde_json::json!({ "id_cliente": ID_CLIENTE, "senha": SENHA_PUBLICA, "portal": true });
     let resp = auli_scraper_kit::http::post_json(
         agent,
         &format!("{}/login", API_BASE),
         &[],
         &body,
-        &GetOpts { log_prefix: "MA", accept: Some("application/json"), ..Default::default() },
+        &GetOpts {
+            log_prefix: "MA",
+            accept: Some("application/json"),
+            ..Default::default()
+        },
     )?;
     let parsed: LoginResp =
         serde_json::from_str(&resp).map_err(|e| anyhow!("JSON do login inválido: {}", e))?;
@@ -311,7 +347,10 @@ fn html_to_text(html: &str) -> String {
             _ => {}
         }
     }
-    let decoded: String = Html::parse_fragment(&spaced).root_element().text().collect();
+    let decoded: String = Html::parse_fragment(&spaced)
+        .root_element()
+        .text()
+        .collect();
     clean(&decoded)
 }
 
@@ -334,7 +373,10 @@ fn slugify(s: &str) -> String {
         };
         buf.push(m);
     }
-    buf.split('-').filter(|p| !p.is_empty()).collect::<Vec<_>>().join("-")
+    buf.split('-')
+        .filter(|p| !p.is_empty())
+        .collect::<Vec<_>>()
+        .join("-")
 }
 
 /// Guard: invariante `únicos == total` (a API dá o próprio total) + piso estático.
@@ -349,7 +391,11 @@ fn validar(items: &[ServicoRaw], total: i64) -> Result<()> {
         );
     }
     if unicos < MIN_SERVICOS {
-        bail!("catálogo capado/vazio? só {} serviço(s) (mínimo {}).", unicos, MIN_SERVICOS);
+        bail!(
+            "catálogo capado/vazio? só {} serviço(s) (mínimo {}).",
+            unicos,
+            MIN_SERVICOS
+        );
     }
     Ok(())
 }
@@ -379,18 +425,26 @@ mod tests {
 
     #[test]
     fn link_prioriza_externo_depois_conteudo_depois_catalogo() {
-        assert_eq!(link(&item(1, "x", "COMPANY", Some(9), Some("https://ext/y"))), "https://ext/y");
+        assert_eq!(
+            link(&item(1, "x", "COMPANY", Some(9), Some("https://ext/y"))),
+            "https://ext/y"
+        );
         assert_eq!(
             link(&item(2, "x", "COMPANY", Some(3171), None)),
             "https://portal-sgc.sefaz.ma.gov.br/portal/conteudo/3171"
         );
-        assert_eq!(link(&item(3, "x", "COMPANY", None, Some("  "))), "https://portal-sgc.sefaz.ma.gov.br/portal/servicos");
+        assert_eq!(
+            link(&item(3, "x", "COMPANY", None, Some("  "))),
+            "https://portal-sgc.sefaz.ma.gov.br/portal/servicos"
+        );
     }
 
     #[test]
     fn html_to_text_decodifica_e_remove_tags() {
         // Tags viram espaço (fronteira de tag), entidades são decodificadas, espaços comprimidos.
-        let t = html_to_text("<h2>Ouvidoria</h2><p>Baseada nos princ&iacute;pios <b>constitucionais</b>.</p>");
+        let t = html_to_text(
+            "<h2>Ouvidoria</h2><p>Baseada nos princ&iacute;pios <b>constitucionais</b>.</p>",
+        );
         assert!(t.starts_with("Ouvidoria Baseada nos princípios constitucionais"));
         assert!(!t.contains('<') && !t.contains("&iacute;"));
         assert!(!t.contains("  "), "sem espaços duplos: {t:?}");
@@ -399,7 +453,8 @@ mod tests {
 
     #[test]
     fn parse_login_e_catalogo() {
-        let l: LoginResp = serde_json::from_str(r#"{"authtoken":"Bearer eyJ.x.y","refreshtoken":"r"}"#).unwrap();
+        let l: LoginResp =
+            serde_json::from_str(r#"{"authtoken":"Bearer eyJ.x.y","refreshtoken":"r"}"#).unwrap();
         assert_eq!(l.authtoken, "Bearer eyJ.x.y");
         let s: ServicosResp = serde_json::from_str(
             r#"{"items":[{"id":485,"nomeServico":"SEFAZNET","flgTipoServico":"COMPANY","idConteudo":null,"linkExterno":"https://e"}],"total":38}"#,
@@ -425,8 +480,18 @@ mod tests {
             ocorrencias: vec![],
         };
         let items: Vec<ServicoRaw> = (0..MIN_SERVICOS).map(dummy).collect();
-        assert!(validar(&items, MIN_SERVICOS as i64 + 5).unwrap_err().to_string().contains("capad"));
-        assert!(validar(&items[..1], 0).unwrap_err().to_string().contains("capado"));
+        assert!(
+            validar(&items, MIN_SERVICOS as i64 + 5)
+                .unwrap_err()
+                .to_string()
+                .contains("capad")
+        );
+        assert!(
+            validar(&items[..1], 0)
+                .unwrap_err()
+                .to_string()
+                .contains("capado")
+        );
         assert!(validar(&items, MIN_SERVICOS as i64).is_ok());
     }
 }

@@ -95,7 +95,11 @@ impl Recognizer for TelefoneBrRecognizer {
             if !self.validate(m.as_str()) {
                 continue;
             }
-            let boost = if Self::tem_contexto(text, m.start()) { 0.2 } else { 0.0 };
+            let boost = if Self::tem_contexto(text, m.start()) {
+                0.2
+            } else {
+                0.0
+            };
             achados.push(PiiEntity {
                 entity_type: self.entity_type(),
                 span: Span::new(m.start(), m.end()),
@@ -138,7 +142,11 @@ impl Recognizer for TelefoneBrRecognizer {
 
     fn validate(&self, candidate: &str) -> bool {
         let d = Self::digitos(candidate);
-        let n = if d.starts_with("55") && d.len() > 11 { &d[2..] } else { &d[..] };
+        let n = if d.starts_with("55") && d.len() > 11 {
+            &d[2..]
+        } else {
+            &d[..]
+        };
         match n.len() {
             10 => true,                    // fixo (ou celular antigo)
             11 => n.as_bytes()[2] == b'9', // celular novo exige o 9
@@ -162,9 +170,18 @@ mod tests {
     #[test]
     fn formatado_dispensa_contexto() {
         // Celular e fixo formatados, sem palavra de contexto por perto.
-        assert_eq!(achados("Atende no (51) 3214-5678 comercial."), ["(51) 3214-5678"]);
-        assert_eq!(achados("Ocorreu no (51) 99876-5432 hoje."), ["(51) 99876-5432"]);
-        assert_eq!(achados("Ligações de +55 51 99876-5432 entram."), ["+55 51 99876-5432"]);
+        assert_eq!(
+            achados("Atende no (51) 3214-5678 comercial."),
+            ["(51) 3214-5678"]
+        );
+        assert_eq!(
+            achados("Ocorreu no (51) 99876-5432 hoje."),
+            ["(51) 99876-5432"]
+        );
+        assert_eq!(
+            achados("Ligações de +55 51 99876-5432 entram."),
+            ["+55 51 99876-5432"]
+        );
     }
 
     #[test]
@@ -172,7 +189,10 @@ mod tests {
         // Sem palavra de contexto: 10–11 dígitos corridos NÃO disparam.
         assert!(achados("O código 5133214567 refere-se ao setor.").is_empty());
         // Com contexto: dispara.
-        assert_eq!(achados("Contato pelo whatsapp 51998765432 por favor.").len(), 1);
+        assert_eq!(
+            achados("Contato pelo whatsapp 51998765432 por favor.").len(),
+            1
+        );
     }
 
     #[test]

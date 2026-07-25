@@ -34,17 +34,27 @@ fn manifest_validates_and_query_retrieves() {
     let mpath = manifest::manifest_path(&packs_dir, "rs");
     let m = manifest::validate_manifest(&mpath, &identity()).expect("manifest should validate");
     assert_eq!(m.embed_dim, 1024);
-    assert!(m.collections.iter().any(|c| c.kind == "faqs" && c.count > 0));
+    assert!(
+        m.collections
+            .iter()
+            .any(|c| c.kind == "faqs" && c.count > 0)
+    );
 
     // 2. Load the faqs collection read-only.
     let store = ReadStore::<String>::load(packs_dir.join("rs-faqs.json")).expect("load rs-faqs");
-    assert!(store.len() > 1000, "expected the full faq corpus, got {}", store.len());
+    assert!(
+        store.len() > 1000,
+        "expected the full faq corpus, got {}",
+        store.len()
+    );
 
     // 3. Embed a real question with the SAME encoder the packs were built with.
     let cache = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "./models".into());
     let embedder = Embedder::new(cache.into(), 16).expect("load embedder");
     let q = embedder
-        .embed_dense(vec!["Como obtenho uma certidão negativa de débitos?".to_string()])
+        .embed_dense(vec![
+            "Como obtenho uma certidão negativa de débitos?".to_string(),
+        ])
         .expect("embed question")
         .pop()
         .expect("one vector");
@@ -55,10 +65,20 @@ fn manifest_validates_and_query_retrieves() {
     let hits = store.query_scored(&q, 20);
     assert_eq!(hits.len(), 20);
     let distances: Vec<f32> = hits.iter().map(|(_, d)| *d).collect();
-    assert!(distances.windows(2).all(|w| w[0] <= w[1]), "must be sorted best-first");
-    assert!(distances[0] < 1.0, "top hit should be a genuine match, got dist {}", distances[0]);
+    assert!(
+        distances.windows(2).all(|w| w[0] <= w[1]),
+        "must be sorted best-first"
+    );
+    assert!(
+        distances[0] < 1.0,
+        "top hit should be a genuine match, got dist {}",
+        distances[0]
+    );
     assert!(distances[0] >= 0.0, "cosine distance is non-negative");
 
     eprintln!("top-5 distances: {:?}", &distances[..5]);
-    eprintln!("top hit document starts: {:?}", &hits[0].0.chars().take(80).collect::<String>());
+    eprintln!(
+        "top hit document starts: {:?}",
+        &hits[0].0.chars().take(80).collect::<String>()
+    );
 }

@@ -68,9 +68,18 @@ pub fn scrape(
         }
         let ocorrencias = publicos
             .into_iter()
-            .map(|publico| Ocorrencia { publico, classe: c.classe.clone() })
+            .map(|publico| Ocorrencia {
+                publico,
+                classe: c.classe.clone(),
+            })
             .collect();
-        items.push(ServicoRaw { titulo, descricao, link: url, orgao: ORGAO.to_string(), ocorrencias });
+        items.push(ServicoRaw {
+            titulo,
+            descricao,
+            link: url,
+            orgao: ORGAO.to_string(),
+            ocorrencias,
+        });
     }
 
     validar(&items)?;
@@ -80,12 +89,26 @@ pub fn scrape(
     }
 
     let ocorrencias: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
-    let classes: HashSet<&str> =
-        items.iter().flat_map(|s| s.ocorrencias.iter()).map(|o| o.classe.as_str()).collect();
-    println!("PB: {} serviços ({} ocorrências) em {} classe(s)", items.len(), ocorrencias, classes.len());
+    let classes: HashSet<&str> = items
+        .iter()
+        .flat_map(|s| s.ocorrencias.iter())
+        .map(|o| o.classe.as_str())
+        .collect();
+    println!(
+        "PB: {} serviços ({} ocorrências) em {} classe(s)",
+        items.len(),
+        ocorrencias,
+        classes.len()
+    );
     let publicos_ordem = vec![
-        Publico { nome: PUB_CIDADAO.to_string(), slug: "servicos-ao-cidadao".to_string() },
-        Publico { nome: PUB_EMPRESA.to_string(), slug: "servicos-a-empresa".to_string() },
+        Publico {
+            nome: PUB_CIDADAO.to_string(),
+            slug: "servicos-ao-cidadao".to_string(),
+        },
+        Publico {
+            nome: PUB_EMPRESA.to_string(),
+            slug: "servicos-a-empresa".to_string(),
+        },
     ];
     Ok((items, publicos_ordem))
 }
@@ -102,12 +125,18 @@ fn load(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", url);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            url
+        );
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "PB", ..Default::default() },
+        &GetOpts {
+            log_prefix: "PB",
+            ..Default::default()
+        },
     )?;
     pending.push((url.to_string(), body.clone()));
     sleep(COURTESY);
@@ -233,7 +262,10 @@ fn html_to_text(html: &str) -> String {
             _ => {}
         }
     }
-    let decoded: String = Html::parse_fragment(&spaced).root_element().text().collect();
+    let decoded: String = Html::parse_fragment(&spaced)
+        .root_element()
+        .text()
+        .collect();
     clean(&decoded)
 }
 
@@ -288,16 +320,26 @@ mod tests {
         let c1 = cards.iter().find(|c| c.id == "1").unwrap();
         // classe = subcategoria imediata, NÃO "Para Empresa"
         assert_eq!(c1.classe, "NOTA FISCAL ELETRÔNICA");
-        assert_eq!(cards.iter().find(|c| c.id == "50").unwrap().classe, "CADASTRO");
+        assert_eq!(
+            cards.iter().find(|c| c.id == "50").unwrap().classe,
+            "CADASTRO"
+        );
     }
 
     #[test]
     fn parse_ficha_extrai_titulo_descricao_publicos() {
         let (titulo, descricao, publicos) = parse_ficha(FICHA);
-        assert_eq!(titulo, "NOTA FISCAL ELETRÔNICA - NFe - Consultar Credenciamentos.");
+        assert_eq!(
+            titulo,
+            "NOTA FISCAL ELETRÔNICA - NFe - Consultar Credenciamentos."
+        );
         assert!(descricao.contains("O que é o serviço: Permite consultar o credenciamento."));
         assert!(descricao.contains("Taxa: Gratuito."));
-        assert!(descricao.contains("Acessar o serviço: https://www.sefaz.pb.gov.br/servirtual/nf-e/consultar"));
+        assert!(
+            descricao.contains(
+                "Acessar o serviço: https://www.sefaz.pb.gov.br/servirtual/nf-e/consultar"
+            )
+        );
         // Público-alvo não entra na descrição (vira ocorrência); "Informações adicionais: -" é descartado
         assert!(!descricao.contains("Público-alvo"));
         assert!(!descricao.contains("Informações adicionais"));
@@ -307,7 +349,10 @@ mod tests {
     #[test]
     fn parse_publicos_normaliza_e_dedup() {
         assert_eq!(parse_publicos("Empresa."), vec!["Empresa"]);
-        assert_eq!(parse_publicos("Cidadão, Empresa."), vec!["Cidadão", "Empresa"]);
+        assert_eq!(
+            parse_publicos("Cidadão, Empresa."),
+            vec!["Cidadão", "Empresa"]
+        );
         assert!(parse_publicos("").is_empty());
     }
 

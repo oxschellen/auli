@@ -16,15 +16,16 @@ pub mod cache;
 pub mod docs;
 pub mod http;
 
-mod aggregate;
 mod agent;
+mod aggregate;
 mod text;
 
-pub use aggregate::{PerPublicoServicos, aggregate_servicos, descricao_body};
 pub use agent::build_agent;
+pub use aggregate::{PerPublicoServicos, aggregate_servicos, descricao_body};
 pub use text::{clean, clean_decoded, decode_entities};
 
 /// Identidade de rede padrão da frota (Firefox/124 em Linux, usado por 8 dos 11 scrapers). Uma
 /// divergência local (ex.: um portal que exija outro UA) deve vir com **comentário do motivo** —
 /// senão é drift. (Pendência de projeto: avaliar um UA identificável `AuliBot/x.y (+url)`.)
-pub const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";
+pub const USER_AGENT: &str =
+    "Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0";

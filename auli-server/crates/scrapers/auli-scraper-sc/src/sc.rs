@@ -145,9 +145,13 @@ impl<'de> Deserialize<'de> for StringOrNum {
 /// Scrapes all SC services and returns them grouped per público (in display order) plus the
 /// `publicos_ordem`, ready for `aggregate_servicos` to fold into the snapshot. SC no longer writes
 /// per-público files during the scrape — the fan-out is now `process`'s job.
-type ScrapeResult = (auli_scraper_kit::PerPublicoServicos, Vec<auli_contract::Publico>);
+type ScrapeResult = (
+    auli_scraper_kit::PerPublicoServicos,
+    Vec<auli_contract::Publico>,
+);
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     let build_id = discover_build_id(data_dir, &agent, use_cache)?;
     println!("SC buildId: {}", build_id);
@@ -158,7 +162,8 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn s
 
     // 2. Group services into the per-público buckets, fetching each detail page once.
     let pubs = publicos();
-    let mut buckets: BTreeMap<i64, Vec<Servico>> = pubs.iter().map(|(id, ..)| (*id, Vec::new())).collect();
+    let mut buckets: BTreeMap<i64, Vec<Servico>> =
+        pubs.iter().map(|(id, ..)| (*id, Vec::new())).collect();
 
     for (i, item) in items.iter().enumerate() {
         let detail = match fetch_detail(data_dir, &agent, &build_id, &item.slug, use_cache) {
@@ -364,15 +369,19 @@ fn fetch_cached(
 ) -> Result<String, Box<dyn std::error::Error>> {
     // A chave de cache é a URL lógica (sem buildId); o fetch é a `data_url`. O retry/backoff é o
     // `kit::http::get_string` (bridge map_err p/ o Box<dyn Error> deste crate).
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", logical_url, use_cache)
-        .map_err(|e| e.to_string())?
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", logical_url, use_cache)
+            .map_err(|e| e.to_string())?
     {
         return Ok(cached);
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         data_url,
-        &GetOpts { log_prefix: "SC", ..Default::default() },
+        &GetOpts {
+            log_prefix: "SC",
+            ..Default::default()
+        },
     )
     .map_err(|e| e.to_string())?;
     auli_scraper_kit::cache::write(data_dir, "servicos", logical_url, &body);
@@ -390,7 +399,10 @@ mod tests {
             normalize_links("[[https://x.sc.gov.br/a Clique aqui]]"),
             "Clique aqui \"https://x.sc.gov.br/a\""
         );
-        assert_eq!(normalize_links("[[https://x.sc.gov.br/a]]"), "\"https://x.sc.gov.br/a\"");
+        assert_eq!(
+            normalize_links("[[https://x.sc.gov.br/a]]"),
+            "\"https://x.sc.gov.br/a\""
+        );
         assert_eq!(normalize_links("sem link nenhum"), "sem link nenhum");
         // Amostra real do portal.
         assert_eq!(
@@ -401,7 +413,8 @@ mod tests {
 
     #[test]
     fn parse_build_id_extrai_do_marker() {
-        let html = r#"<script>{"props":{},"buildId":"LEoHxAKKyLD8ldaA4Q9Wm","isFallback":false}</script>"#;
+        let html =
+            r#"<script>{"props":{},"buildId":"LEoHxAKKyLD8ldaA4Q9Wm","isFallback":false}</script>"#;
         assert_eq!(parse_build_id(html).unwrap(), "LEoHxAKKyLD8ldaA4Q9Wm");
         assert!(parse_build_id("<html>sem buildId</html>").is_err());
     }
@@ -431,7 +444,10 @@ mod tests {
         let rs = parsed.page_props.resposta_api.response_servicos;
         assert_eq!(rs.paginas_totais.0, "22");
         assert_eq!(rs.itens.len(), 2);
-        assert_eq!(rs.itens[0].slug, "acessar-anexos-de-documentos-de-fiscalizacao");
+        assert_eq!(
+            rs.itens[0].slug,
+            "acessar-anexos-de-documentos-de-fiscalizacao"
+        );
         let ids: Vec<i64> = rs.itens[0].publicos.iter().map(|p| p.id).collect();
         assert_eq!(ids, vec![3, 4]);
         assert!(rs.itens[1].publicos.is_empty());
@@ -454,8 +470,14 @@ mod tests {
         assert_eq!(d.finalidade, "Garantir o contraditório.");
         assert_eq!(d.etapas_processo.len(), 2);
         assert_eq!(d.requisitos, vec!["Estar cadastrado"]);
-        assert_eq!(d.grupo_servico.as_ref().unwrap().nome, "Contencioso Tributário");
-        assert_eq!(d.orgao.as_ref().unwrap().nome, "Secretaria de Estado da Fazenda");
+        assert_eq!(
+            d.grupo_servico.as_ref().unwrap().nome,
+            "Contencioso Tributário"
+        );
+        assert_eq!(
+            d.orgao.as_ref().unwrap().nome,
+            "Secretaria de Estado da Fazenda"
+        );
         assert_eq!(d.publicos[0].id, 3);
     }
 

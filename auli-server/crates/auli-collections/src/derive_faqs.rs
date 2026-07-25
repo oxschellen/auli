@@ -24,7 +24,9 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaFaqs) -> 
 
     // Árvore `.md` — a FONTE do `auli update` para faqs (TAREFA-FAQS-MD). Regenerada do zero a cada
     // process (D1). Os artefatos de `raw/` acima seguem intactos.
-    let base = Path::new(data_dir).parent().ok_or_else(|| format!("data_dir sem pai: {data_dir}"))?;
+    let base = Path::new(data_dir)
+        .parent()
+        .ok_or_else(|| format!("data_dir sem pai: {data_dir}"))?;
     let docs_dir = base.join("docs").join("faqs");
     let docs: Vec<(auli_contract::mddoc_faq::FaqHeader, String)> = table
         .items
@@ -42,7 +44,10 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaFaqs) -> 
         .collect();
     let gravados = auli_contract::mddoc_faq::materializar_arvore(&docs_dir, &docs)
         .map_err(|e| format!("materialização da árvore de faqs: {e}"))?;
-    println!("📄 docs: {gravados} faqs materializadas em {}", docs_dir.display());
+    println!(
+        "📄 docs: {gravados} faqs materializadas em {}",
+        docs_dir.display()
+    );
 
     Ok(())
 }
@@ -99,7 +104,10 @@ mod tests {
             origin: origin.into(),
             url: "u".into(),
         };
-        assert_eq!(faq_from_raw(&raw("Inicial | A")).text_to_embed, "Inicial | A\nP: q1\nR: r1");
+        assert_eq!(
+            faq_from_raw(&raw("Inicial | A")).text_to_embed,
+            "Inicial | A\nP: q1\nR: r1"
+        );
         assert_eq!(faq_from_raw(&raw("")).text_to_embed, "P: q1\nR: r1");
     }
 

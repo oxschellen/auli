@@ -81,14 +81,19 @@ pub fn scrape(
 
     // Chave de cache = o endpoint + o órgão. O cache só grava DEPOIS dos guards (D-RJ5).
     let logical = format!("{}#dept={}", SEARCH_URL, DEPARTMENT_SLUG);
-    let (json, from_cache) = match auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)? {
-        Some(cached) => (cached, true),
-        None => (fetch_search(&agent)?, false),
-    };
+    let (json, from_cache) =
+        match auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)? {
+            Some(cached) => (cached, true),
+            None => (fetch_search(&agent)?, false),
+        };
 
     let raw: Vec<Item> = parse(&json)?;
     let result_total = raw.iter().map(|i| i.result_total).max().unwrap_or(0);
-    println!("ES: recebidos {} itens (API anuncia resultTotal={})", raw.len(), result_total);
+    println!(
+        "ES: recebidos {} itens (API anuncia resultTotal={})",
+        raw.len(),
+        result_total
+    );
 
     let (items, publicos_ordem) = build_servicos(&raw);
 
@@ -121,7 +126,11 @@ fn fetch_search(agent: &ureq::Agent) -> Result<String> {
         SEARCH_URL,
         &[("Origin", "https://portal.es.gov.br")],
         &body,
-        &GetOpts { log_prefix: "ES", accept: Some("application/json"), ..Default::default() },
+        &GetOpts {
+            log_prefix: "ES",
+            accept: Some("application/json"),
+            ..Default::default()
+        },
     )
 }
 
@@ -177,7 +186,10 @@ fn build_servicos(raw: &[Item]) -> (Vec<ServicoRaw>, Vec<Publico>) {
             if !publicos_ordem.contains(p) {
                 publicos_ordem.push(p.clone());
             }
-            ocorrencias.push(Ocorrencia { publico: p.clone(), classe: classe.clone() });
+            ocorrencias.push(Ocorrencia {
+                publico: p.clone(),
+                classe: classe.clone(),
+            });
         }
 
         out.push(ServicoRaw {
@@ -198,7 +210,10 @@ fn build_servicos(raw: &[Item]) -> (Vec<ServicoRaw>, Vec<Publico>) {
 
     let publicos = publicos_ordem
         .into_iter()
-        .map(|nome| Publico { slug: slug_publico(&nome), nome })
+        .map(|nome| Publico {
+            slug: slug_publico(&nome),
+            nome,
+        })
         .collect();
     (out, publicos)
 }
@@ -246,7 +261,10 @@ fn html_to_text(html: &str) -> String {
             _ => {}
         }
     }
-    let decoded: String = Html::parse_fragment(&spaced).root_element().text().collect();
+    let decoded: String = Html::parse_fragment(&spaced)
+        .root_element()
+        .text()
+        .collect();
     clean(&decoded)
 }
 
@@ -271,7 +289,10 @@ fn slugify(s: &str) -> String {
         };
         buf.push(m);
     }
-    buf.split('-').filter(|p| !p.is_empty()).collect::<Vec<_>>().join("-")
+    buf.split('-')
+        .filter(|p| !p.is_empty())
+        .collect::<Vec<_>>()
+        .join("-")
 }
 
 /// Guard: invariante dinâmico `únicos == resultTotal` + piso estático.
@@ -328,7 +349,10 @@ mod tests {
         assert_eq!(dua.ocorrencias[0].classe, "IMPOSTOS E MULTAS");
         assert_eq!(dua.link, "https://portal.es.gov.br/servico/emissao-de-dua");
         // ordem dos públicos: Cidadão (1º serviço), Empresa (2º).
-        assert_eq!(publicos.iter().map(|p| p.nome.as_str()).collect::<Vec<_>>(), ["Cidadão", "Empresa"]);
+        assert_eq!(
+            publicos.iter().map(|p| p.nome.as_str()).collect::<Vec<_>>(),
+            ["Cidadão", "Empresa"]
+        );
         assert_eq!(publicos[0].slug, "servicos-cidadao");
     }
 
@@ -366,7 +390,9 @@ mod tests {
         };
         let items: Vec<ServicoRaw> = (0..MIN_SERVICOS).map(dummy).collect();
         // resultTotal maior que o coletado -> catálogo capado (page size pequeno).
-        let err = validar(&items, MIN_SERVICOS as i64 + 5).unwrap_err().to_string();
+        let err = validar(&items, MIN_SERVICOS as i64 + 5)
+            .unwrap_err()
+            .to_string();
         assert!(err.contains("incompleto/divergente"), "veio: {err}");
     }
 
@@ -379,7 +405,12 @@ mod tests {
             orgao: ORGAO.into(),
             ocorrencias: vec![],
         }];
-        assert!(validar(&poucos, 1).unwrap_err().to_string().contains("capado"));
+        assert!(
+            validar(&poucos, 1)
+                .unwrap_err()
+                .to_string()
+                .contains("capado")
+        );
     }
 
     #[test]

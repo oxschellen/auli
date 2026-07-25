@@ -14,7 +14,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // CLI: auli-scraper-pi [--usecache] servicos   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
-    let cmd = raw.iter().find(|a| !a.starts_with("--")).map(String::as_str).unwrap_or("servicos");
+    let cmd = raw
+        .iter()
+        .find(|a| !a.starts_with("--"))
+        .map(String::as_str)
+        .unwrap_or("servicos");
 
     println!("🏛️  Scraper PI (SEFAZ-PI) — coleção: {}", cmd);
     if use_cache {
@@ -28,7 +32,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    println!("✅ Snapshot atualizado. Rode `auli-collections {}` para derivar os artefatos.", ENTITY);
+    println!(
+        "✅ Snapshot atualizado. Rode `auli-collections {}` para derivar os artefatos.",
+        ENTITY
+    );
     Ok(())
 }
 

@@ -9,5 +9,7 @@ where
     F: FnOnce() -> Result<T> + Send + 'static,
     T: Send + 'static,
 {
-    tokio::task::spawn_blocking(f).await.map_err(|e| e.to_string())?
+    tokio::task::spawn_blocking(f)
+        .await
+        .map_err(|e| e.to_string())?
 }

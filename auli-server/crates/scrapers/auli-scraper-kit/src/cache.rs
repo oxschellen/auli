@@ -87,8 +87,14 @@ mod tests {
     fn cada_kind_grava_no_seu_diretorio() {
         let base = std::env::temp_dir().join(format!("auli-cache-test-{}", std::process::id()));
         let base = base.to_str().unwrap();
-        assert_eq!(cache_dir(base, "servicos"), PathBuf::from(format!("{base}/cache/servicos")));
-        assert_eq!(cache_dir(base, "pareceres"), PathBuf::from(format!("{base}/cache/pareceres")));
+        assert_eq!(
+            cache_dir(base, "servicos"),
+            PathBuf::from(format!("{base}/cache/servicos"))
+        );
+        assert_eq!(
+            cache_dir(base, "pareceres"),
+            PathBuf::from(format!("{base}/cache/pareceres"))
+        );
     }
 
     #[test]
@@ -98,8 +104,14 @@ mod tests {
         let url = "http://exemplo/doc?id=1";
         write(base, "servicos", url, "conteudo-servicos");
         write(base, "pareceres", url, "conteudo-pareceres");
-        assert_eq!(read(base, "servicos", url).as_deref(), Some("conteudo-servicos"));
-        assert_eq!(read(base, "pareceres", url).as_deref(), Some("conteudo-pareceres"));
+        assert_eq!(
+            read(base, "servicos", url).as_deref(),
+            Some("conteudo-servicos")
+        );
+        assert_eq!(
+            read(base, "pareceres", url).as_deref(),
+            Some("conteudo-pareceres")
+        );
         // Um kind sem gravação não vê o do outro.
         assert_eq!(read(base, "faqs", url), None);
         let _ = std::fs::remove_dir_all(&dir);

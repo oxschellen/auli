@@ -102,7 +102,11 @@ mod tests {
         let r = anon
             .anonimizar("O contribuinte de CPF 529.982.247-25 pediu certidão.")
             .expect("anonimizar");
-        assert!(!r.texto.contains("529.982.247-25"), "CPF vazou: {}", r.texto);
+        assert!(
+            !r.texto.contains("529.982.247-25"),
+            "CPF vazou: {}",
+            r.texto
+        );
         assert!(!r.mapping.entries.is_empty(), "nenhuma entidade detectada");
     }
 
@@ -114,7 +118,10 @@ mod tests {
             .expect("anonimizar");
         // O LLM ecoa o placeholder na resposta; o restore devolve o valor original.
         let restaurado = anon.restaurar(&r.texto, &r.mapping);
-        assert!(restaurado.contains("11.222.333/0001-81"), "restore falhou: {restaurado}");
+        assert!(
+            restaurado.contains("11.222.333/0001-81"),
+            "restore falhou: {restaurado}"
+        );
     }
 
     #[test]
@@ -123,6 +130,10 @@ mod tests {
         let r = anon
             .anonimizar("Qual o período de inadimplência para cancelar um parcelamento?")
             .expect("anonimizar");
-        assert!(r.mapping.entries.is_empty(), "falso positivo: {:?}", r.texto);
+        assert!(
+            r.mapping.entries.is_empty(),
+            "falso positivo: {:?}",
+            r.texto
+        );
     }
 }

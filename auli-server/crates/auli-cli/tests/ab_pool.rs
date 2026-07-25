@@ -19,16 +19,22 @@ const POOL_K: usize = 8;
 #[test]
 #[ignore = "ferramenta de rotulagem; rode explicitamente com AULI_AB_* setados"]
 fn dump_pool() {
-    let (Ok(antes_p), Ok(novo_p)) = (std::env::var("AULI_AB_ANTES"), std::env::var("AULI_AB_NOVO"))
-    else {
+    let (Ok(antes_p), Ok(novo_p)) = (
+        std::env::var("AULI_AB_ANTES"),
+        std::env::var("AULI_AB_NOVO"),
+    ) else {
         eprintln!("AULI_AB_ANTES/AULI_AB_NOVO não setados — pulando");
         return;
     };
     let consultas_p = std::env::var("AULI_AB_CONSULTAS").expect("AULI_AB_CONSULTAS");
     let cache = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "../../models".into());
 
-    let antes = read_collection_file::<String>(&antes_p).expect("ANTES").records;
-    let novo = read_collection_file::<String>(&novo_p).expect("NOVO").records;
+    let antes = read_collection_file::<String>(&antes_p)
+        .expect("ANTES")
+        .records;
+    let novo = read_collection_file::<String>(&novo_p)
+        .expect("NOVO")
+        .records;
     let consultas: Vec<String> = std::fs::read_to_string(&consultas_p)
         .expect("consultas")
         .lines()

@@ -49,7 +49,10 @@ pub fn load_all(packs_root: impl AsRef<Path>) -> Result<Collections> {
             // `docs_hash` (entidade sem árvore / pacote anterior) ⇒ nada a validar.
             let docs_dir = packs_root.join(id).join("docs");
             manifest::validate_docs_hash(&docs_dir, &manifest)?;
-            println!("🔎 Manifesto de '{}' validado contra a identidade local.", id);
+            println!(
+                "🔎 Manifesto de '{}' validado contra a identidade local.",
+                id
+            );
         } else {
             eprintln!(
                 "⚠️  Manifesto ausente para '{}' ({:?}). Carregando pacotes sem validação — gere com `auli update`.",

@@ -3,9 +3,9 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use axum::{
+    Json,
     extract::{ConnectInfo, Path, Query, State},
     response::IntoResponse,
-    Json,
 };
 use chrono::Local;
 use serde_json::json;
@@ -41,7 +41,9 @@ pub async fn list_handler(
     let docs = match state.engine.store(&collection_name) {
         Some(store) => store.list(),
         None => {
-            return Json(json!({ "status": "Erro", "message": format!("Coleção '{}' não carregada", collection_name) }))
+            return Json(
+                json!({ "status": "Erro", "message": format!("Coleção '{}' não carregada", collection_name) }),
+            );
         }
     };
     let message = docs

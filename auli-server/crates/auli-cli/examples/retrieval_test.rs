@@ -11,11 +11,21 @@ use vector_store::ReadStore;
 /// Extrai `numero` (1ª linha após `## pergunta`) e `assunto` (2ª) do `stored_repr` para exibição.
 fn resumo_doc(doc: &str) -> (String, String) {
     let linhas: Vec<&str> = doc.lines().collect();
-    let idx = linhas.iter().position(|l| l.trim_start().starts_with("## pergunta"));
+    let idx = linhas
+        .iter()
+        .position(|l| l.trim_start().starts_with("## pergunta"));
     match idx {
         Some(i) => {
-            let numero = linhas.get(i + 1).map(|s| s.trim()).unwrap_or("").to_string();
-            let assunto = linhas.get(i + 2).map(|s| s.trim()).unwrap_or("").to_string();
+            let numero = linhas
+                .get(i + 1)
+                .map(|s| s.trim())
+                .unwrap_or("")
+                .to_string();
+            let assunto = linhas
+                .get(i + 2)
+                .map(|s| s.trim())
+                .unwrap_or("")
+                .to_string();
             (numero, assunto)
         }
         None => (String::new(), linhas.first().unwrap_or(&"").to_string()),
@@ -23,7 +33,9 @@ fn resumo_doc(doc: &str) -> (String, String) {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let pack = std::env::args().nth(1).expect("uso: ... -- <caminho do pack pareceres.json>");
+    let pack = std::env::args()
+        .nth(1)
+        .expect("uso: ... -- <caminho do pack pareceres.json>");
     let cache = std::env::var("EMBED_CACHE_DIR").expect("EMBED_CACHE_DIR ausente");
 
     eprintln!("🧠 carregando embedder de {cache} ...");
@@ -41,13 +53,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
 
     for q in perguntas {
-        let emb = embedder.embed_dense(vec![q.to_string()])?.into_iter().next().unwrap();
+        let emb = embedder
+            .embed_dense(vec![q.to_string()])?
+            .into_iter()
+            .next()
+            .unwrap();
         let hits = store.query_scored(&emb, 5);
         println!("❓ {q}");
         for (rank, (doc, score)) in hits.iter().enumerate() {
             let (numero, assunto) = resumo_doc(doc);
             let assunto_curto: String = assunto.chars().take(90).collect();
-            println!("   {}. [{:.3}] {}  —  {}", rank + 1, score, numero, assunto_curto);
+            println!(
+                "   {}. [{:.3}] {}  —  {}",
+                rank + 1,
+                score,
+                numero,
+                assunto_curto
+            );
         }
         println!();
     }

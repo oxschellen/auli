@@ -25,7 +25,8 @@ impl PlacaRecognizer {
     #[must_use]
     pub fn novo() -> Self {
         Self {
-            mercosul: Regex::new(r"(?i)[a-z]{3}\d[a-z]\d{2}").expect("regex placa Mercosul inválida"),
+            mercosul: Regex::new(r"(?i)[a-z]{3}\d[a-z]\d{2}")
+                .expect("regex placa Mercosul inválida"),
             antiga: Regex::new(r"(?i)[a-z]{3}-?\d{4}").expect("regex placa antiga inválida"),
             contexto: Regex::new(r"(?i)\bplacas?\b|ve[íi]culo|\bcarro\b|caminh[ãa]o|\bmoto\b")
                 .expect("regex de contexto placa inválida"),
@@ -80,7 +81,11 @@ impl Recognizer for PlacaRecognizer {
             if !Self::limites_ok(text, m.start(), m.end()) {
                 continue;
             }
-            let boost = if self.tem_contexto(text, m.start()) { 0.15 } else { 0.0 };
+            let boost = if self.tem_contexto(text, m.start()) {
+                0.15
+            } else {
+                0.0
+            };
             achados.push(PiiEntity {
                 entity_type: self.entity_type(),
                 span: Span::new(m.start(), m.end()),

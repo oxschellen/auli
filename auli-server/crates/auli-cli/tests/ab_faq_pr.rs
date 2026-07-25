@@ -82,9 +82,10 @@ struct Placar {
 #[test]
 #[ignore = "precisa dos dois packs + modelo; rode explicitamente com AULI_AB_* setados"]
 fn ab_faq_pr() {
-    let (Ok(antes_p), Ok(novo_p)) =
-        (std::env::var("AULI_AB_ANTES"), std::env::var("AULI_AB_NOVO"))
-    else {
+    let (Ok(antes_p), Ok(novo_p)) = (
+        std::env::var("AULI_AB_ANTES"),
+        std::env::var("AULI_AB_NOVO"),
+    ) else {
         eprintln!("AULI_AB_ANTES/AULI_AB_NOVO não setados — pulando");
         return;
     };
@@ -92,8 +93,12 @@ fn ab_faq_pr() {
         .unwrap_or_else(|_| "../../data/eval/faq_pr_consultas.txt".into());
     let cache = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "../../models".into());
 
-    let antes = read_collection_file::<String>(&antes_p).expect("pack ANTES").records;
-    let novo = read_collection_file::<String>(&novo_p).expect("pack NOVO").records;
+    let antes = read_collection_file::<String>(&antes_p)
+        .expect("pack ANTES")
+        .records;
+    let novo = read_collection_file::<String>(&novo_p)
+        .expect("pack NOVO")
+        .records;
     assert!(!antes.is_empty() && !novo.is_empty(), "pack vazio");
     let consultas = ler_consultas(&consultas_p);
     println!(
@@ -101,7 +106,10 @@ fn ab_faq_pr() {
         antes.len(),
         novo.len(),
         consultas.len(),
-        consultas.iter().filter(|c| !c.fragmentos.is_empty()).count()
+        consultas
+            .iter()
+            .filter(|c| !c.fragmentos.is_empty())
+            .count()
     );
 
     let embedder = Embedder::new(cache.into(), 8).expect("embedder");
@@ -115,14 +123,23 @@ fn ab_faq_pr() {
         for (rotulo, hits) in [("ANTES", &ta), ("NOVO ", &tn)] {
             for (i, (dist, doc)) in hits.iter().enumerate() {
                 // A 1ª linha do `stored_repr` é `## pergunta`; a 2ª/3ª identificam o item.
-                let titulo: String =
-                    doc.lines().skip(1).take(2).collect::<Vec<_>>().join(" / ").chars().take(120).collect();
+                let titulo: String = doc
+                    .lines()
+                    .skip(1)
+                    .take(2)
+                    .collect::<Vec<_>>()
+                    .join(" / ")
+                    .chars()
+                    .take(120)
+                    .collect();
                 println!("  {rotulo} {}. {:.4}  {titulo}", i + 1, dist);
             }
         }
         if !c.fragmentos.is_empty() {
-            let (a, n) =
-                (posicao_do_acerto(&ta, &c.fragmentos), posicao_do_acerto(&tn, &c.fragmentos));
+            let (a, n) = (
+                posicao_do_acerto(&ta, &c.fragmentos),
+                posicao_do_acerto(&tn, &c.fragmentos),
+            );
             for (pos, placar) in [(a, &mut pa), (n, &mut pn)] {
                 if let Some(p) = pos {
                     placar.hit5 += 1;
@@ -141,10 +158,19 @@ fn ab_faq_pr() {
         println!();
     }
 
-    let rotuladas = consultas.iter().filter(|c| !c.fragmentos.is_empty()).count();
+    let rotuladas = consultas
+        .iter()
+        .filter(|c| !c.fragmentos.is_empty())
+        .count();
     println!("──────────────── PLACAR (sobre {rotuladas} consultas rotuladas)");
-    println!("  ANTES  hit@1 {}/{rotuladas}   hit@5 {}/{rotuladas}", pa.hit1, pa.hit5);
-    println!("  NOVO   hit@1 {}/{rotuladas}   hit@5 {}/{rotuladas}", pn.hit1, pn.hit5);
+    println!(
+        "  ANTES  hit@1 {}/{rotuladas}   hit@5 {}/{rotuladas}",
+        pa.hit1, pa.hit5
+    );
+    println!(
+        "  NOVO   hit@1 {}/{rotuladas}   hit@5 {}/{rotuladas}",
+        pn.hit1, pn.hit5
+    );
     println!("  Gate (D-FAQPR / P5): promover só se NOVO ≥ ANTES nos dois. As consultas sem");
     println!("  fragmento acima são julgamento humano — leia os top-5 lado a lado.\n");
 }

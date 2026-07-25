@@ -43,9 +43,12 @@ static RE_INDEX_ROW: LazyLock<Regex> = LazyLock::new(|| {
     .expect("regex do índice inválida")
 });
 static RE_TAG: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?s)<[^>]+>").unwrap());
-static RE_HEAD: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<head[^>]*>.*?</head>").unwrap());
-static RE_SCRIPT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<script[^>]*>.*?</script>").unwrap());
-static RE_STYLE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)<style[^>]*>.*?</style>").unwrap());
+static RE_HEAD: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?is)<head[^>]*>.*?</head>").unwrap());
+static RE_SCRIPT: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?is)<script[^>]*>.*?</script>").unwrap());
+static RE_STYLE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?is)<style[^>]*>.*?</style>").unwrap());
 static RE_COMMENT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?s)<!--.*?-->").unwrap());
 static RE_BLOCK: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?is)</(p|div|tr|h[1-6]|li)>|<br\s*/?>").unwrap());
@@ -59,7 +62,8 @@ const DETAIL_BASE: &str =
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
 const DOCS_DIR: &str = "../data/sc/docs/pareceres";
 const CACHE_DIR: &str = "../data/sc/raw/cache/pareceres";
-const UA: &str = "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
+const UA: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 const COURTESY: Duration = Duration::from_millis(1000);
 const MIN_YEAR: i32 = 2011;
 const MIN_PARECERES: usize = 1500; // guarda contra coleta truncada (esperado ~1744 em 2011+)
@@ -139,7 +143,13 @@ pub fn run(use_cache: bool) -> Result<()> {
 fn cache_path(url: &str) -> PathBuf {
     let name: String = url
         .chars()
-        .map(|c| if c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.') { c } else { '_' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '.') {
+                c
+            } else {
+                '_'
+            }
+        })
         .collect();
     PathBuf::from(CACHE_DIR).join(format!("{name}.html"))
 }
@@ -155,7 +165,10 @@ fn fetch(agent: &ureq::Agent, url: &str, use_cache: bool) -> Result<String> {
     if use_cache {
         bail!("cache miss para {url} (modo --usecache, sem rede)");
     }
-    let opts = GetOpts { log_prefix: "SC-par", ..GetOpts::default() };
+    let opts = GetOpts {
+        log_prefix: "SC-par",
+        ..GetOpts::default()
+    };
     let body = get_string(agent, url, &opts)?;
     if let Some(parent) = path.parent() {
         let _ = std::fs::create_dir_all(parent);
@@ -248,10 +261,18 @@ fn normalize_lines(s: &str) -> String {
 fn decode_html(s: &str) -> String {
     // Numéricas: &#211; e &#xD3;
     let s = RE_DEC.replace_all(s, |c: &regex::Captures| {
-        c[1].parse::<u32>().ok().and_then(char::from_u32).map(String::from).unwrap_or_default()
+        c[1].parse::<u32>()
+            .ok()
+            .and_then(char::from_u32)
+            .map(String::from)
+            .unwrap_or_default()
     });
     let s = RE_HEX.replace_all(&s, |c: &regex::Captures| {
-        u32::from_str_radix(&c[1], 16).ok().and_then(char::from_u32).map(String::from).unwrap_or_default()
+        u32::from_str_radix(&c[1], 16)
+            .ok()
+            .and_then(char::from_u32)
+            .map(String::from)
+            .unwrap_or_default()
     });
     let mut s = s.into_owned();
     for (ent, ch) in NAMED {
@@ -264,20 +285,61 @@ fn decode_html(s: &str) -> String {
 
 /// Entidades nomeadas relevantes (Latin-1/pt-BR + pontuação). `&amp;` por último ao aplicar.
 const NAMED: &[(&str, &str)] = &[
-    ("&nbsp;", " "), ("&aacute;", "á"), ("&Aacute;", "Á"), ("&agrave;", "à"), ("&Agrave;", "À"),
-    ("&acirc;", "â"), ("&Acirc;", "Â"), ("&atilde;", "ã"), ("&Atilde;", "Ã"), ("&auml;", "ä"),
-    ("&eacute;", "é"), ("&Eacute;", "É"), ("&ecirc;", "ê"), ("&Ecirc;", "Ê"), ("&egrave;", "è"),
-    ("&iacute;", "í"), ("&Iacute;", "Í"), ("&icirc;", "î"), ("&oacute;", "ó"), ("&Oacute;", "Ó"),
-    ("&ocirc;", "ô"), ("&Ocirc;", "Ô"), ("&otilde;", "õ"), ("&Otilde;", "Õ"), ("&ouml;", "ö"),
-    ("&uacute;", "ú"), ("&Uacute;", "Ú"), ("&ucirc;", "û"), ("&uuml;", "ü"), ("&Uuml;", "Ü"),
-    ("&ccedil;", "ç"), ("&Ccedil;", "Ç"), ("&ntilde;", "ñ"), ("&Ntilde;", "Ñ"),
-    ("&ordf;", "ª"), ("&ordm;", "º"), ("&deg;", "°"), ("&sect;", "§"), ("&middot;", "·"),
-    ("&hellip;", "…"), ("&ndash;", "–"), ("&mdash;", "—"), ("&laquo;", "«"), ("&raquo;", "»"),
-    ("&lsquo;", "‘"), ("&rsquo;", "’"), ("&ldquo;", "“"), ("&rdquo;", "”"),
-    ("&quot;", "\""), ("&apos;", "'"), ("&#39;", "'"), ("&lt;", "<"), ("&gt;", ">"),
+    ("&nbsp;", " "),
+    ("&aacute;", "á"),
+    ("&Aacute;", "Á"),
+    ("&agrave;", "à"),
+    ("&Agrave;", "À"),
+    ("&acirc;", "â"),
+    ("&Acirc;", "Â"),
+    ("&atilde;", "ã"),
+    ("&Atilde;", "Ã"),
+    ("&auml;", "ä"),
+    ("&eacute;", "é"),
+    ("&Eacute;", "É"),
+    ("&ecirc;", "ê"),
+    ("&Ecirc;", "Ê"),
+    ("&egrave;", "è"),
+    ("&iacute;", "í"),
+    ("&Iacute;", "Í"),
+    ("&icirc;", "î"),
+    ("&oacute;", "ó"),
+    ("&Oacute;", "Ó"),
+    ("&ocirc;", "ô"),
+    ("&Ocirc;", "Ô"),
+    ("&otilde;", "õ"),
+    ("&Otilde;", "Õ"),
+    ("&ouml;", "ö"),
+    ("&uacute;", "ú"),
+    ("&Uacute;", "Ú"),
+    ("&ucirc;", "û"),
+    ("&uuml;", "ü"),
+    ("&Uuml;", "Ü"),
+    ("&ccedil;", "ç"),
+    ("&Ccedil;", "Ç"),
+    ("&ntilde;", "ñ"),
+    ("&Ntilde;", "Ñ"),
+    ("&ordf;", "ª"),
+    ("&ordm;", "º"),
+    ("&deg;", "°"),
+    ("&sect;", "§"),
+    ("&middot;", "·"),
+    ("&hellip;", "…"),
+    ("&ndash;", "–"),
+    ("&mdash;", "—"),
+    ("&laquo;", "«"),
+    ("&raquo;", "»"),
+    ("&lsquo;", "‘"),
+    ("&rsquo;", "’"),
+    ("&ldquo;", "“"),
+    ("&rdquo;", "”"),
+    ("&quot;", "\""),
+    ("&apos;", "'"),
+    ("&#39;", "'"),
+    ("&lt;", "<"),
+    ("&gt;", ">"),
     ("&amp;", "&"),
 ];
-
 
 #[cfg(test)]
 mod tests {
@@ -306,7 +368,10 @@ mod tests {
         assert_eq!(rows.len(), 1, "só a linha 2026 do painel do ano");
         assert_eq!(rows[0].numero, "CONSULTA COPAT nº 0037/26");
         assert_eq!(rows[0].guid, "AAAA-1");
-        assert_eq!(rows[0].assunto_or_ementa(), "ICMS. SUBSTITUIÇÃO TRIBUTÁRIA.");
+        assert_eq!(
+            rows[0].assunto_or_ementa(),
+            "ICMS. SUBSTITUIÇÃO TRIBUTÁRIA."
+        );
     }
 
     // helper de teste (o campo é `ementa`)

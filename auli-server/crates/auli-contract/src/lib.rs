@@ -37,7 +37,11 @@ pub struct Table<P> {
 impl<P> Table<P> {
     /// Cria uma tabela a partir da entidade, do nome e dos registros.
     pub fn new(id: impl Into<String>, nome: impl Into<String>, items: Vec<P>) -> Self {
-        Self { id: id.into(), nome: nome.into(), items }
+        Self {
+            id: id.into(),
+            nome: nome.into(),
+            items,
+        }
     }
 
     /// Quantos registros a tabela contém.
@@ -196,7 +200,8 @@ impl Embeddable for Consulta {
             link: self.link.clone(),
             doc_path: format!("docs/pareceres/{}.md", mddoc::slug(&self.numero)),
         };
-        serde_json::to_string(&payload).expect("ConsultaPackPayload serializa sem falha (campos String)")
+        serde_json::to_string(&payload)
+            .expect("ConsultaPackPayload serializa sem falha (campos String)")
     }
 }
 
@@ -222,7 +227,11 @@ pub struct ConsultaPackPayload {
 /// Vive no contrato (e não no `auli-collections`) porque os DOIS lados precisam dela: o produtor
 /// (sinopse/derive) ao gravar, e o `auli update` ao hidratar o `resumo` da árvore (G4).
 pub fn compose_text_to_embed(numero: &str, assunto: &str, resumo: &str) -> String {
-    [numero, assunto, resumo].into_iter().filter(|s| !s.is_empty()).collect::<Vec<_>>().join("\n")
+    [numero, assunto, resumo]
+        .into_iter()
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 /// Key de embedding de um serviço: breadcrumb `tipo | classe` + título + snippet
@@ -236,7 +245,9 @@ pub fn compose_servico_text_to_embed(
     descricao: &str,
 ) -> String {
     let snippet: String = descricao.chars().take(300).collect();
-    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim()).trim().to_string()
+    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim())
+        .trim()
+        .to_string()
 }
 
 /// Key de embedding de uma FAQ (D-FAQPR-1): assunto (= breadcrumb `origin`) +
@@ -275,7 +286,10 @@ pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str, resposta: &str) -
 /// MESMO formato do `stored_repr` gordo, byte a byte — é esse o invariante da G3 (o contexto RAG
 /// montado não pode mudar). Ponto único: servidor e testes passam por aqui.
 pub fn render_consulta_block(p: &ConsultaPackPayload, corpo: &str) -> String {
-    format!("## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}", p.numero, p.assunto, corpo, p.link)
+    format!(
+        "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
+        p.numero, p.assunto, corpo, p.link
+    )
 }
 
 #[cfg(test)]
@@ -384,18 +398,30 @@ mod tests {
             resumo: "Análise sobre apropriação de crédito.".into(),
             corpo: "É o parecer.".into(),
             link: "https://exemplo/parecer/25148".into(),
-            text_to_embed: "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito.".into(),
+            text_to_embed:
+                "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito."
+                    .into(),
             sinopse_info: None,
         };
-        assert_eq!(p.text_to_embed(), "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito.");
+        assert_eq!(
+            p.text_to_embed(),
+            "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito."
+        );
         // G3: `stored_repr` agora é o payload LEVE (JSON, sem corpo), com `doc_path` derivado do slug.
         let payload: ConsultaPackPayload = serde_json::from_str(&p.stored_repr()).unwrap();
         assert_eq!(payload.numero, "PARECER Nº 25148");
         assert_eq!(payload.doc_path, "docs/pareceres/parecer-no-25148.md");
-        assert!(!p.stored_repr().contains("É o parecer."), "o corpo NÃO pode ir para o pack (G3)");
+        assert!(
+            !p.stored_repr().contains("É o parecer."),
+            "o corpo NÃO pode ir para o pack (G3)"
+        );
         // Remontado com o corpo, reproduz o bloco de sempre.
         let block = render_consulta_block(&payload, &p.corpo);
-        assert!(block.starts_with("## pergunta\nPARECER Nº 25148\nICMS – crédito fiscal na cesta básica"));
+        assert!(
+            block.starts_with(
+                "## pergunta\nPARECER Nº 25148\nICMS – crédito fiscal na cesta básica"
+            )
+        );
         assert!(block.contains("## resposta\nÉ o parecer."));
         assert!(block.contains("Link: https://exemplo/parecer/25148"));
 
@@ -442,11 +468,17 @@ mod tests {
     fn render_do_payload_leve_equivale_ao_stored_repr_gordo() {
         let c = sample_consulta();
         let p = payload_de(&c, "docs/pareceres/parecer-no-25148.md");
-        assert_eq!(render_consulta_block(&p, &c.corpo), stored_repr_gordo_golden(&c));
+        assert_eq!(
+            render_consulta_block(&p, &c.corpo),
+            stored_repr_gordo_golden(&c)
+        );
         // Invariante ponta-a-ponta da G3: o que o pack GRAVA (stored_repr → payload JSON), desserializado
         // e remontado com o corpo, reproduz o bloco gordo byte a byte. É o coração da fase.
         let do_pack: ConsultaPackPayload = serde_json::from_str(&c.stored_repr()).unwrap();
-        assert_eq!(render_consulta_block(&do_pack, &c.corpo), stored_repr_gordo_golden(&c));
+        assert_eq!(
+            render_consulta_block(&do_pack, &c.corpo),
+            stored_repr_gordo_golden(&c)
+        );
     }
 
     #[test]
@@ -455,7 +487,10 @@ mod tests {
         let mut c = sample_consulta();
         c.corpo = "Preâmbulo.\n\n## resposta\nRecursivo.\nLink: falso\n## corpo\nfim".into();
         let p = payload_de(&c, "docs/pareceres/x.md");
-        assert_eq!(render_consulta_block(&p, &c.corpo), stored_repr_gordo_golden(&c));
+        assert_eq!(
+            render_consulta_block(&p, &c.corpo),
+            stored_repr_gordo_golden(&c)
+        );
     }
 
     #[test]
@@ -463,14 +498,20 @@ mod tests {
         let c = sample_consulta();
         let p = payload_de(&c, "docs/pareceres/x.md");
         let bloco = render_consulta_block(&p, "");
-        assert!(bloco.ends_with(&format!("\nLink: {}", c.link)), "bloco: {bloco:?}");
+        assert!(
+            bloco.ends_with(&format!("\nLink: {}", c.link)),
+            "bloco: {bloco:?}"
+        );
     }
 
     #[test]
     fn payload_faz_round_trip_por_json() {
         let p = payload_de(&sample_consulta(), "docs/pareceres/parecer-no-25148.md");
         let json = serde_json::to_string(&p).unwrap();
-        assert_eq!(serde_json::from_str::<ConsultaPackPayload>(&json).unwrap(), p);
+        assert_eq!(
+            serde_json::from_str::<ConsultaPackPayload>(&json).unwrap(),
+            p
+        );
     }
 
     #[test]
@@ -479,7 +520,10 @@ mod tests {
         let mut c = sample_consulta();
         c.corpo = "MARCADOR-DE-CORPO-UNICO".into();
         let json = serde_json::to_string(&payload_de(&c, "docs/pareceres/x.md")).unwrap();
-        assert!(!json.contains("MARCADOR-DE-CORPO-UNICO"), "corpo vazou para o payload: {json}");
+        assert!(
+            !json.contains("MARCADOR-DE-CORPO-UNICO"),
+            "corpo vazou para o payload: {json}"
+        );
     }
 
     #[test]
@@ -514,6 +558,9 @@ mod tests {
     fn consulta_com_sinopse_none_omite_o_campo_no_json() {
         // `skip_serializing_if` mantém o registro legado byte-idêntico ao snapshot antigo.
         let json = serde_json::to_string(&sample_consulta()).unwrap();
-        assert!(!json.contains("sinopse_info"), "JSON não deve conter sinopse_info quando None: {json}");
+        assert!(
+            !json.contains("sinopse_info"),
+            "JSON não deve conter sinopse_info quando None: {json}"
+        );
     }
 }

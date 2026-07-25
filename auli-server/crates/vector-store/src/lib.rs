@@ -53,13 +53,17 @@ pub struct CollectionData<P> {
 // Manual `Default` so callers don't need `P: Default` to make an empty collection.
 impl<P> Default for CollectionData<P> {
     fn default() -> Self {
-        Self { records: Vec::new() }
+        Self {
+            records: Vec::new(),
+        }
     }
 }
 
 /// Read a collection file. A missing file is **not** an error — it yields an empty collection,
 /// preserving the old `load_from_disk` semantics.
-pub fn read_collection_file<P: DeserializeOwned>(path: impl AsRef<Path>) -> Result<CollectionData<P>> {
+pub fn read_collection_file<P: DeserializeOwned>(
+    path: impl AsRef<Path>,
+) -> Result<CollectionData<P>> {
     match fs::read(path.as_ref()) {
         Ok(bytes) => Ok(serde_json::from_slice(&bytes)?),
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(CollectionData::default()),
@@ -69,7 +73,10 @@ pub fn read_collection_file<P: DeserializeOwned>(path: impl AsRef<Path>) -> Resu
 
 /// Write a collection file, creating parent directories as needed. The whole file is rewritten on
 /// every call — O(n), fine for the small corpora here (see the README tradeoff note).
-pub fn write_collection_file<P: Serialize>(path: impl AsRef<Path>, data: &CollectionData<P>) -> Result<()> {
+pub fn write_collection_file<P: Serialize>(
+    path: impl AsRef<Path>,
+    data: &CollectionData<P>,
+) -> Result<()> {
     let path = path.as_ref();
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
@@ -102,7 +109,11 @@ pub fn cosine_distance(a: &[f32], b: &[f32]) -> f32 {
 
 /// Score every record against `embedding` and return `(payload, distance)` sorted best-first
 /// (ascending distance), truncated to `max_results`. The query core of [`ReadStore`].
-pub(crate) fn scan<P: Clone>(records: &[Record<P>], embedding: &[f32], max_results: usize) -> Vec<(P, f32)> {
+pub(crate) fn scan<P: Clone>(
+    records: &[Record<P>],
+    embedding: &[f32],
+    max_results: usize,
+) -> Vec<(P, f32)> {
     let mut scored: Vec<(P, f32)> = records
         .iter()
         .map(|r| (r.payload.clone(), cosine_distance(embedding, &r.embedding)))
@@ -141,7 +152,10 @@ mod tests {
         let corrupt = cosine_distance(&[1.0, 0.0, 0.0], &[0.0, 0.0]);
         let opposite = cosine_distance(&[1.0, 0.0], &[-1.0, 0.0]);
         approx(corrupt, 2.0);
-        assert!(corrupt >= opposite, "corrupt {corrupt} must not outrank anti-correlated {opposite}");
+        assert!(
+            corrupt >= opposite,
+            "corrupt {corrupt} must not outrank anti-correlated {opposite}"
+        );
     }
 
     #[test]
@@ -159,7 +173,11 @@ mod tests {
     fn payload_is_generic_and_roundtrips_as_document_key() {
         // On-disk key stays `document` for format compatibility even though the field is `payload`.
         let data = CollectionData {
-            records: vec![Record { id: "id-1".into(), embedding: vec![0.1, 0.2], payload: "hello".to_string() }],
+            records: vec![Record {
+                id: "id-1".into(),
+                embedding: vec![0.1, 0.2],
+                payload: "hello".to_string(),
+            }],
         };
         let json = serde_json::to_string(&data).unwrap();
         assert!(json.contains("\"document\":\"hello\""), "got {json}");
@@ -170,9 +188,21 @@ mod tests {
     #[test]
     fn scan_sorts_best_first_and_truncates() {
         let recs = vec![
-            Record { id: "id-1".into(), embedding: vec![1.0, 0.0], payload: "a".to_string() },
-            Record { id: "id-2".into(), embedding: vec![0.0, 1.0], payload: "b".to_string() },
-            Record { id: "id-3".into(), embedding: vec![-1.0, 0.0], payload: "c".to_string() },
+            Record {
+                id: "id-1".into(),
+                embedding: vec![1.0, 0.0],
+                payload: "a".to_string(),
+            },
+            Record {
+                id: "id-2".into(),
+                embedding: vec![0.0, 1.0],
+                payload: "b".to_string(),
+            },
+            Record {
+                id: "id-3".into(),
+                embedding: vec![-1.0, 0.0],
+                payload: "c".to_string(),
+            },
         ];
         let out = scan(&recs, &[1.0, 0.0], 2);
         assert_eq!(out.len(), 2);

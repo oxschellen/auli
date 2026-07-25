@@ -22,7 +22,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // CLI: auli-scraper-go [--usecache] servicos   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
-    let cmd = raw.iter().find(|a| !a.starts_with("--")).map(String::as_str).unwrap_or("servicos");
+    let cmd = raw
+        .iter()
+        .find(|a| !a.starts_with("--"))
+        .map(String::as_str)
+        .unwrap_or("servicos");
 
     println!("🏛️  Scraper GO (SEFAZ-GO / Economia) — coleção: {}", cmd);
     if use_cache {
@@ -34,14 +38,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         other => return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into()),
     }
 
-    println!("✅ Snapshot atualizado. Rode `auli-collections {}` para derivar os artefatos.", ENTITY);
+    println!(
+        "✅ Snapshot atualizado. Rode `auli-collections {}` para derivar os artefatos.",
+        ENTITY
+    );
     Ok(())
 }
 
 fn run_servicos(use_cache: bool) -> Result<(), Box<dyn std::error::Error>> {
     // ServicoRaw direto (padrão CE/RJ): identidade = idServico (D-GO2/5), ocorrências por categoria.
     let (items, publicos_ordem) = go::scrape(DATA_DIR, use_cache)?;
-    auli_contract::snapshot::write_servicos(ENTITY, DATA_DIR, &scraper_info(), publicos_ordem, items)?;
+    auli_contract::snapshot::write_servicos(
+        ENTITY,
+        DATA_DIR,
+        &scraper_info(),
+        publicos_ordem,
+        items,
+    )?;
     println!("🎉 Coleta de serviços gravada no snapshot.");
     Ok(())
 }

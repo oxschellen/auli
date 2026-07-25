@@ -96,9 +96,13 @@ struct Section {
 
 /// Raspa todos os serviços do MG e devolve-os agrupados per-público (na ordem de exibição) mais o
 /// `publicos_ordem`, prontos para o `aggregate_servicos` dobrar no snapshot.
-type ScrapeResult = (auli_scraper_kit::PerPublicoServicos, Vec<auli_contract::Publico>);
+type ScrapeResult = (
+    auli_scraper_kit::PerPublicoServicos,
+    Vec<auli_contract::Publico>,
+);
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // 1. Categorias, da página inicial do catálogo.
     let home = fetch_page(data_dir, &agent, "csm_catalogo_de_servicos", &[], use_cache)?;
@@ -139,9 +143,17 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn s
     let mut bodies: BTreeMap<String, String> = BTreeMap::new();
     let unique: Vec<&CatalogItem> = {
         let mut seen = std::collections::HashSet::new();
-        occurrences.iter().map(|(_, i)| i).filter(|i| seen.insert(i.sys_id.clone())).collect()
+        occurrences
+            .iter()
+            .map(|(_, i)| i)
+            .filter(|i| seen.insert(i.sys_id.clone()))
+            .collect()
     };
-    println!("MG: {} itens únicos ({} ocorrências)", unique.len(), occurrences.len());
+    println!(
+        "MG: {} itens únicos ({} ocorrências)",
+        unique.len(),
+        occurrences.len()
+    );
     for (n, item) in unique.iter().enumerate() {
         let body = match fetch_article_body(data_dir, &agent, &item.sys_id, use_cache) {
             Ok(body) if !body.trim().is_empty() => body,
@@ -162,7 +174,8 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn s
 
     // 4. Fan-out per-público pelas tags do item, no agrupamento do próprio portal.
     let pubs = publicos();
-    let mut buckets: BTreeMap<usize, Vec<Servico>> = (0..pubs.len()).map(|i| (i, Vec::new())).collect();
+    let mut buckets: BTreeMap<usize, Vec<Servico>> =
+        (0..pubs.len()).map(|i| (i, Vec::new())).collect();
     for (categoria, item) in &occurrences {
         let tags: Vec<&str> = item
             .representative_type_value
@@ -196,7 +209,10 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn s
     let mut inputs = Vec::new();
     let mut publicos_ordem = Vec::new();
     for (idx, (nome, slug, _)) in pubs.iter().enumerate() {
-        publicos_ordem.push(auli_contract::Publico { nome: nome.to_string(), slug: slug.to_string() });
+        publicos_ordem.push(auli_contract::Publico {
+            nome: nome.to_string(),
+            slug: slug.to_string(),
+        });
         inputs.push((nome.to_string(), buckets.remove(&idx).unwrap_or_default()));
     }
     Ok((inputs, publicos_ordem))
@@ -213,7 +229,10 @@ fn push_servico(
     bodies: &BTreeMap<String, String>,
 ) {
     let titulo = item.name.trim().to_string();
-    let body = bodies.get(&item.sys_id).map(String::as_str).unwrap_or_default();
+    let body = bodies
+        .get(&item.sys_id)
+        .map(String::as_str)
+        .unwrap_or_default();
     let descricao = format!("{}\n{}\n{}\n{}", publico, categoria, titulo, body);
     buckets.entry(idx).or_default().push(Servico {
         id: 0, // renumerado per-arquivo pelo process
@@ -234,16 +253,25 @@ fn fetch_article_body(
     sys_id: &str,
     use_cache: bool,
 ) -> Result<String, Box<dyn std::error::Error>> {
-    let page = fetch_page(data_dir, agent, "catalog_item_info", &[("sys_id", sys_id)], use_cache)?;
+    let page = fetch_page(
+        data_dir,
+        agent,
+        "catalog_item_info",
+        &[("sys_id", sys_id)],
+        use_cache,
+    )?;
     let data = widget_data(&page, "edx_article_header")
         .ok_or("widget edx_article_header ausente na página do item")?;
-    let sections: Vec<Section> =
-        serde_json::from_value(data["kbContentData"]["data"].clone())?;
+    let sections: Vec<Section> = serde_json::from_value(data["kbContentData"]["data"].clone())?;
 
     let mut body = String::new();
     for sec in &sections {
         let raw = sec.content.as_deref().unwrap_or_default();
-        let text = if raw.contains('<') { html_to_text(raw) } else { raw.trim().to_string() };
+        let text = if raw.contains('<') {
+            html_to_text(raw)
+        } else {
+            raw.trim().to_string()
+        };
         if text.is_empty() {
             continue;
         }
@@ -269,8 +297,10 @@ fn fetch_page(
     params: &[(&str, &str)],
     use_cache: bool,
 ) -> Result<Value, Box<dyn std::error::Error>> {
-    let query: String =
-        params.iter().map(|(k, v)| format!("&{}={}", k, v)).collect();
+    let query: String = params
+        .iter()
+        .map(|(k, v)| format!("&{}={}", k, v))
+        .collect();
     let logical = format!("{}/csm?id={}{}", BASE, page_id, query);
     let api_url = format!(
         "{}/api/now/sp/page?id={}{}&portal_id={}",
@@ -281,8 +311,9 @@ fn fetch_page(
     // ServiceNow (`X-Portal`/`X-Requested-With`), retorna `Value` (parse-antes-de-cachear) e o crate
     // usa `Box<dyn Error>` — não encaixa no `kit::http::get_string` (só `accept`, devolve String).
     // Só a leitura do cache é do kit.
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)
-        .map_err(|e| e.to_string())?
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", &logical, use_cache)
+            .map_err(|e| e.to_string())?
     {
         return Ok(serde_json::from_str(&cached)?);
     }
@@ -368,7 +399,11 @@ fn html_to_text(html: &str) -> String {
         let url = &caps[1];
         let inner = strip_tags(&caps[2]);
         let text = inner.trim();
-        if text.is_empty() { format!("\"{}\"", url) } else { format!("{} \"{}\"", text, url) }
+        if text.is_empty() {
+            format!("\"{}\"", url)
+        } else {
+            format!("{} \"{}\"", text, url)
+        }
     });
     let with_breaks = BLOCK_END_RE.replace_all(&with_links, "\n");
     clean_text(&strip_tags(&with_breaks))
@@ -376,7 +411,11 @@ fn html_to_text(html: &str) -> String {
 
 /// Só o texto de um fragmento HTML (sem tags, entidades decodificadas).
 fn strip_tags(fragment: &str) -> String {
-    scraper::Html::parse_fragment(fragment).root_element().text().collect::<Vec<_>>().join("")
+    scraper::Html::parse_fragment(fragment)
+        .root_element()
+        .text()
+        .collect::<Vec<_>>()
+        .join("")
 }
 
 /// Normaliza espaços por linha e descarta linhas vazias.
@@ -396,7 +435,10 @@ mod tests {
     fn html_to_text_preserves_links_and_blocks() {
         let html = r#"<p>Emita pelo <a href="https://cdt.fazenda.mg.gov.br/">sistema CDT</a>.</p><ul><li>Item um</li><li>Item dois</li></ul>"#;
         let text = html_to_text(html);
-        assert_eq!(text, "Emita pelo sistema CDT \"https://cdt.fazenda.mg.gov.br/\".\nItem um\nItem dois");
+        assert_eq!(
+            text,
+            "Emita pelo sistema CDT \"https://cdt.fazenda.mg.gov.br/\".\nItem um\nItem dois"
+        );
     }
 
     #[test]

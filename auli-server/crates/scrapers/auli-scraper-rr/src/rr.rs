@@ -69,7 +69,10 @@ fn load(data_dir: &str, use_cache: bool) -> Result<(String, bool), Box<dyn std::
     let body = auli_scraper_kit::http::get_string(
         &agent,
         SCRIPT_URL,
-        &GetOpts { log_prefix: "RR", ..Default::default() },
+        &GetOpts {
+            log_prefix: "RR",
+            ..Default::default()
+        },
     )?;
     if !body.contains("const apps") {
         return Err(format!("`const apps` sumiu de {} (bundle mudou?)", SCRIPT_URL).into());
@@ -94,10 +97,17 @@ fn parse(js: &str) -> Vec<ServicoRaw> {
         if titulo.is_empty() || link.is_empty() {
             continue;
         }
-        let ocorrencia = Ocorrencia { publico, classe: CLASSE.to_string() };
+        let ocorrencia = Ocorrencia {
+            publico,
+            classe: CLASSE.to_string(),
+        };
         if let Some(&i) = pos.get(&link) {
             // href já visto (serviço em 2 categorias) -> acumula o outro público.
-            if !items[i].ocorrencias.iter().any(|o| o.publico == ocorrencia.publico) {
+            if !items[i]
+                .ocorrencias
+                .iter()
+                .any(|o| o.publico == ocorrencia.publico)
+            {
                 items[i].ocorrencias.push(ocorrencia);
             }
             continue;
@@ -140,7 +150,10 @@ fn publicos_ordem(items: &[ServicoRaw]) -> Vec<Publico> {
                 PUB_EMPRESA => "servicos-a-empresa",
                 _ => "servicos-gerais",
             };
-            Publico { nome, slug: slug.to_string() }
+            Publico {
+                nome,
+                slug: slug.to_string(),
+            }
         })
         .collect()
 }
@@ -182,7 +195,10 @@ mod tests {
         let items = parse(JS);
         // 2 hrefs distintos: o CND (cidadão + empresa) e o SINTEGRA (empresa).
         assert_eq!(items.len(), 2);
-        let cnd = items.iter().find(|s| s.link.ends_with("wp_siate_emitir")).unwrap();
+        let cnd = items
+            .iter()
+            .find(|s| s.link.ends_with("wp_siate_emitir"))
+            .unwrap();
         assert_eq!(cnd.titulo, "Certidão Negativa"); // 1º título vence
         let pubs: Vec<_> = cnd.ocorrencias.iter().map(|o| o.publico.as_str()).collect();
         assert_eq!(pubs, ["Cidadão", "Empresa"]);
@@ -198,8 +214,13 @@ mod tests {
     fn publicos_ordem_mapeia_slugs() {
         let po = publicos_ordem(&parse(JS));
         assert_eq!(
-            po.iter().map(|p| (p.nome.as_str(), p.slug.as_str())).collect::<Vec<_>>(),
-            [("Cidadão", "servicos-ao-cidadao"), ("Empresa", "servicos-a-empresa")]
+            po.iter()
+                .map(|p| (p.nome.as_str(), p.slug.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                ("Cidadão", "servicos-ao-cidadao"),
+                ("Empresa", "servicos-a-empresa")
+            ]
         );
     }
 

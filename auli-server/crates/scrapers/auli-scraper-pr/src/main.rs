@@ -15,7 +15,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // CLI: auli-scraper-pr [--usecache] servicos|pareceres   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
-    let cmd = raw.iter().find(|a| !a.starts_with("--")).map(String::as_str).unwrap_or("servicos");
+    let cmd = raw
+        .iter()
+        .find(|a| !a.starts_with("--"))
+        .map(String::as_str)
+        .unwrap_or("servicos");
 
     println!("🏛️  Scraper PR (SEFA-PR) — coleção: {}", cmd);
     if use_cache {
@@ -31,11 +35,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             return Ok(());
         }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos | pareceres", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | pareceres",
+                other
+            )
+            .into());
         }
     }
 
-    println!("✅ Snapshot atualizado. Rode `auli-collections {}` para derivar os artefatos.", ENTITY);
+    println!(
+        "✅ Snapshot atualizado. Rode `auli-collections {}` para derivar os artefatos.",
+        ENTITY
+    );
     Ok(())
 }
 

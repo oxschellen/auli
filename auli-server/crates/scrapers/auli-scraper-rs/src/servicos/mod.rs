@@ -63,7 +63,10 @@ fn load_per_tipo(
 fn publicos_ordem_from(tipos: &[TipoServicos]) -> Vec<auli_contract::Publico> {
     tipos
         .iter()
-        .map(|t| auli_contract::Publico { nome: t.tipo.clone(), slug: t.filename.clone() })
+        .map(|t| auli_contract::Publico {
+            nome: t.tipo.clone(),
+            slug: t.filename.clone(),
+        })
         .collect()
 }
 
@@ -74,7 +77,10 @@ fn report_failed_detail_urls(failed: &[String]) {
         return;
     }
 
-    eprintln!("\n⚠️  {} página(s) de detalhe falharam ao carregar:", failed.len());
+    eprintln!(
+        "\n⚠️  {} página(s) de detalhe falharam ao carregar:",
+        failed.len()
+    );
     for url in failed {
         eprintln!("  - {}", url);
     }

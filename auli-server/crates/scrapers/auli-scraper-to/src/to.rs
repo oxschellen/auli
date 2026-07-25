@@ -37,8 +37,13 @@ const DETALHE_BASE: &str =
 
 /// Vocabulário de público (o campo `lblTipoRelacionamento` concatena valores por espaço; os compostos
 /// vêm primeiro para casar "Órgão Público" como UM valor, não "Órgão"+"Público").
-const PUBLICOS_VOCAB: [&str; 5] =
-    ["Órgão Público", "Servidor Público", "Servidor", "Cidadão", "Empresa"];
+const PUBLICOS_VOCAB: [&str; 5] = [
+    "Órgão Público",
+    "Servidor Público",
+    "Servidor",
+    "Cidadão",
+    "Empresa",
+];
 /// Fallback quando falta público/classe (defensivo — não observado).
 const GERAL: &str = "Geral";
 /// Órgão de origem.
@@ -102,10 +107,18 @@ pub fn scrape(
     }
 
     let ocorr: usize = items.iter().map(|s| s.ocorrencias.len()).sum();
-    println!("TO: {} serviços ({} ocorrências) em {} público(s)", items.len(), ocorr, publicos_ordem.len());
+    println!(
+        "TO: {} serviços ({} ocorrências) em {} público(s)",
+        items.len(),
+        ocorr,
+        publicos_ordem.len()
+    );
     let publicos = publicos_ordem
         .into_iter()
-        .map(|nome| Publico { slug: slug_publico(&nome), nome })
+        .map(|nome| Publico {
+            slug: slug_publico(&nome),
+            nome,
+        })
         .collect();
     Ok((items, publicos))
 }
@@ -122,12 +135,18 @@ fn load(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", url);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            url
+        );
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "TO", ..Default::default() },
+        &GetOpts {
+            log_prefix: "TO",
+            ..Default::default()
+        },
     )?;
     if !body.contains("cod_assunto_documento_tipo") && !body.contains("ContentPlaceHolder1") {
         bail!("HTML inesperado de {} (markup mudou / erro?)", url);
@@ -158,8 +177,15 @@ fn parse_ids(html: &str) -> Vec<String> {
 fn extract_cod(href: &str) -> Option<String> {
     const K: &str = "cod_assunto_documento_tipo=";
     let i = href.find(K)? + K.len();
-    let digits: String = href[i..].chars().take_while(|c| c.is_ascii_digit()).collect();
-    if digits.is_empty() { None } else { Some(digits) }
+    let digits: String = href[i..]
+        .chars()
+        .take_while(|c| c.is_ascii_digit())
+        .collect();
+    if digits.is_empty() {
+        None
+    } else {
+        Some(digits)
+    }
 }
 
 /// Texto (decodificado + limpo) de um span ASP.NET por id `ctl00_ContentPlaceHolder1_<lbl>`.
@@ -192,7 +218,11 @@ fn build_servico(id: &str, det: &Detail, publicos_ordem: &mut Vec<String>) -> Op
     if titulo.is_empty() {
         return None;
     }
-    let classe = if det.grupo.is_empty() { GERAL.to_string() } else { det.grupo.clone() };
+    let classe = if det.grupo.is_empty() {
+        GERAL.to_string()
+    } else {
+        det.grupo.clone()
+    };
 
     let mut publicos = parse_publicos(&det.relacionamento);
     if publicos.is_empty() {
@@ -215,7 +245,10 @@ fn build_servico(id: &str, det: &Detail, publicos_ordem: &mut Vec<String>) -> Op
         if !publicos_ordem.contains(p) {
             publicos_ordem.push(p.clone());
         }
-        ocorrencias.push(Ocorrencia { publico: p.clone(), classe: classe.clone() });
+        ocorrencias.push(Ocorrencia {
+            publico: p.clone(),
+            classe: classe.clone(),
+        });
     }
 
     Some(ServicoRaw {
@@ -229,12 +262,18 @@ fn build_servico(id: &str, det: &Detail, publicos_ordem: &mut Vec<String>) -> Op
 
 /// Descrição rica: Conceituação (o que é) + Como solicitar + Documentos + Custos + Prazo (não-vazias).
 fn montar_descricao(det: &Detail) -> String {
-    [&det.conceituacao, &det.requisito, &det.documentacao, &det.taxa, &det.prazo]
-        .into_iter()
-        .filter(|s| !s.is_empty())
-        .cloned()
-        .collect::<Vec<_>>()
-        .join("\n\n")
+    [
+        &det.conceituacao,
+        &det.requisito,
+        &det.documentacao,
+        &det.taxa,
+        &det.prazo,
+    ]
+    .into_iter()
+    .filter(|s| !s.is_empty())
+    .cloned()
+    .collect::<Vec<_>>()
+    .join("\n\n")
 }
 
 /// Público(s) a partir do `lblTipoRelacionamento` (vocabulário fixo, compostos primeiro). Devolve na
@@ -272,7 +311,10 @@ fn slugify(s: &str) -> String {
         };
         buf.push(m);
     }
-    buf.split('-').filter(|p| !p.is_empty()).collect::<Vec<_>>().join("-")
+    buf.split('-')
+        .filter(|p| !p.is_empty())
+        .collect::<Vec<_>>()
+        .join("-")
 }
 
 /// Guard (D-RJ5): reprova coleta capada (abaixo do mínimo). Avisa se coletou menos que a listagem.
@@ -327,13 +369,22 @@ mod tests {
     #[test]
     fn field_decodifica_entidades_e_limpa() {
         let doc = Html::parse_document(DET);
-        assert_eq!(field(&doc, "lblTxtConceituacao"), "Permite você acessar a lista.");
-        assert_eq!(field(&doc, "lblTxtServico"), "Acessar o Boletim Informativo"); // espaços comprimidos
+        assert_eq!(
+            field(&doc, "lblTxtConceituacao"),
+            "Permite você acessar a lista."
+        );
+        assert_eq!(
+            field(&doc, "lblTxtServico"),
+            "Acessar o Boletim Informativo"
+        ); // espaços comprimidos
     }
 
     #[test]
     fn parse_publicos_vocabulario() {
-        assert_eq!(parse_publicos("Cidadão Empresa"), vec!["Cidadão", "Empresa"]);
+        assert_eq!(
+            parse_publicos("Cidadão Empresa"),
+            vec!["Cidadão", "Empresa"]
+        );
         assert_eq!(parse_publicos("Órgão Público"), vec!["Órgão Público"]); // composto = 1 valor
         assert_eq!(parse_publicos("Empresa"), vec!["Empresa"]);
         assert!(parse_publicos("").is_empty());
@@ -345,12 +396,18 @@ mod tests {
         let mut ord = Vec::new();
         let s = build_servico("8017", &det, &mut ord).unwrap();
         assert_eq!(s.titulo, "Acessar o Boletim Informativo");
-        assert_eq!(s.link, "https://servicos.to.gov.br/servico_detalhado.aspx?cod_assunto_documento_tipo=8017");
+        assert_eq!(
+            s.link,
+            "https://servicos.to.gov.br/servico_detalhado.aspx?cod_assunto_documento_tipo=8017"
+        );
         assert_eq!(s.orgao, "SEFAZ-TO");
         // Cidadão + Empresa -> 2 ocorrências, mesma classe (grupo).
         assert_eq!(s.ocorrencias.len(), 2);
         assert_eq!(s.ocorrencias[0].publico, "Cidadão");
-        assert_eq!(s.ocorrencias[0].classe, "Finanças, Impostos e Gestão Pública");
+        assert_eq!(
+            s.ocorrencias[0].classe,
+            "Finanças, Impostos e Gestão Pública"
+        );
         assert_eq!(ord, vec!["Cidadão", "Empresa"]);
         // descricao rica junta as seções não-vazias (prazo vazio fica de fora).
         assert!(s.descricao.starts_with("Permite você acessar a lista."));
@@ -409,6 +466,11 @@ mod tests {
             orgao: ORGAO.into(),
             ocorrencias: vec![],
         }];
-        assert!(validar(&poucos, 45).unwrap_err().to_string().contains("capado"));
+        assert!(
+            validar(&poucos, 45)
+                .unwrap_err()
+                .to_string()
+                .contains("capado")
+        );
     }
 }

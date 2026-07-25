@@ -126,7 +126,10 @@ async fn retrieve(
 
 /// Render retrieved docs into the RAG context block, one entry per doc (1-based index).
 fn render(docs: &[String], fmt: impl Fn(usize, &str) -> String) -> String {
-    docs.iter().enumerate().map(|(i, doc)| fmt(i + 1, doc)).collect()
+    docs.iter()
+        .enumerate()
+        .map(|(i, doc)| fmt(i + 1, doc))
+        .collect()
 }
 
 // Montagem do contexto RAG — funções PURAS (sem I/O, sem Engine), extraídas do
@@ -149,7 +152,9 @@ fn montar_rag_pareceres(blocos: &[String], relacionados: &[String]) -> String {
     if relacionados.is_empty() {
         return principal;
     }
-    let rel = render(relacionados, |i, bloco| format!("\n## PARECER RELACIONADO\n{i}\n{bloco}\n"));
+    let rel = render(relacionados, |i, bloco| {
+        format!("\n## PARECER RELACIONADO\n{i}\n{bloco}\n")
+    });
     format!("{principal}{rel}")
 }
 
@@ -168,7 +173,9 @@ fn bloco_parecer(payload_json: &str, docs_root: &Path, entity_id: &str) -> Strin
     let payload: ConsultaPackPayload = match serde_json::from_str(payload_json) {
         Ok(p) => p,
         Err(e) => {
-            error!("payload de parecer não desserializa ({e}) — pack incompatível passou pelo boot?");
+            error!(
+                "payload de parecer não desserializa ({e}) — pack incompatível passou pelo boot?"
+            );
             return payload_json.to_string();
         }
     };
@@ -258,7 +265,11 @@ pub async fn exec_all_question(
                 FAQ_BAND,
             );
             let (svc_docs, faq_docs) = tokio::try_join!(svc_fut, faq_fut)?;
-            info!("Foram selecionados {} serviços e {} faqs", svc_docs.len(), faq_docs.len());
+            info!(
+                "Foram selecionados {} serviços e {} faqs",
+                svc_docs.len(),
+                faq_docs.len()
+            );
 
             montar_rag_servicos_faqs(&svc_docs, &faq_docs)
         }
@@ -277,7 +288,10 @@ pub async fn exec_all_question(
             // No pareceres vectorized for this entity yet — answer with a friendly notice instead of
             // prompting the LLM on empty context (which would invite a hallucinated answer).
             if par_docs.is_empty() {
-                return Ok("A consulta de Pareceres ainda não está disponível para esta entidade.".to_string());
+                return Ok(
+                    "A consulta de Pareceres ainda não está disponível para esta entidade."
+                        .to_string(),
+                );
             }
 
             // Expansão por grafo: pareceres que citam os MESMOS dispositivos dos recuperados — sinal
@@ -290,12 +304,18 @@ pub async fn exec_all_question(
                 let seeds: Vec<String> = par_docs
                     .iter()
                     .filter_map(|pj| {
-                        serde_json::from_str::<ConsultaPackPayload>(pj).ok().map(|p| p.numero)
+                        serde_json::from_str::<ConsultaPackPayload>(pj)
+                            .ok()
+                            .map(|p| p.numero)
                     })
                     .collect();
                 run_blocking(move || {
-                    let nums =
-                        engine.pareceres_relacionados(&id, &seeds, MAX_RELACIONADOS, MIN_DISPOSITIVOS_COMUNS);
+                    let nums = engine.pareceres_relacionados(
+                        &id,
+                        &seeds,
+                        MAX_RELACIONADOS,
+                        MIN_DISPOSITIVOS_COMUNS,
+                    );
                     let blocos = nums
                         .iter()
                         .filter_map(|n| engine.bloco_por_numero(&id, n).ok().flatten())
@@ -333,7 +353,11 @@ pub async fn exec_all_question(
     // resposta antes de devolvê-la ao usuário; com o flag desligado, envia a original (comportamento
     // anterior). Os documentos do RAG são conteúdo público e NÃO passam por anonimização.
     let anonimizar = config().anonimizar_llm;
-    let entrada_llm = if anonimizar { &pergunta_anon } else { &question };
+    let entrada_llm = if anonimizar {
+        &pergunta_anon
+    } else {
+        &question
+    };
     let t = Instant::now();
     let resposta_llm = llm::chat(&system_prompt, entrada_llm).await?;
     tempos.llm_ms = t.elapsed().as_millis() as u64;
@@ -360,7 +384,15 @@ pub async fn exec_all_question(
         "tempos da consulta"
     );
 
-    log_question(&cfg.id, query_type.label(), &question, &pergunta_anon, &answer, &rag, tempos)?;
+    log_question(
+        &cfg.id,
+        query_type.label(),
+        &question,
+        &pergunta_anon,
+        &answer,
+        &rag,
+        tempos,
+    )?;
 
     Ok(answer)
 }
@@ -417,8 +449,16 @@ fn log_question(
     let agora = chrono::Local::now();
     let path = format!("{}/{}.txt", log_dir, agora.format("%Y-%m-%d_%H-%M-%S"));
     let stamp = agora.format("%Y-%m-%d %H:%M:%S").to_string();
-    let content =
-        format_log_record(&stamp, entidade, tipo, &tempos.linha(), original, sanitizada, answer, rag);
+    let content = format_log_record(
+        &stamp,
+        entidade,
+        tipo,
+        &tempos.linha(),
+        original,
+        sanitizada,
+        answer,
+        rag,
+    );
     let mut file = OpenOptions::new().create(true).append(true).open(&path)?;
     debug!("Log da consulta gravado em {}", path);
     writeln!(file, "{}", content)
@@ -427,10 +467,10 @@ fn log_question(
 #[cfg(test)]
 mod tests {
     use super::{
-        bloco_parecer, format_log_record, montar_rag_pareceres, montar_rag_servicos_faqs, QueryType,
-        TemposConsulta,
+        QueryType, TemposConsulta, bloco_parecer, format_log_record, montar_rag_pareceres,
+        montar_rag_servicos_faqs,
     };
-    use auli_contract::{mddoc, ConsultaPackPayload};
+    use auli_contract::{ConsultaPackPayload, mddoc};
     use std::path::Path;
 
     fn payload(doc_path: &str) -> String {
@@ -457,11 +497,18 @@ mod tests {
             link: "http://x/1".into(),
             sinopse_info: None,
         };
-        std::fs::write(pdir.join("parecer-no-1.md"), mddoc::render_doc(&header, None, "É o corpo integral.")).unwrap();
+        std::fs::write(
+            pdir.join("parecer-no-1.md"),
+            mddoc::render_doc(&header, None, "É o corpo integral."),
+        )
+        .unwrap();
 
         let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir, "sc");
         // Bloco de sempre, com o corpo lido da árvore.
-        assert_eq!(bloco, "## pergunta\nPARECER Nº 1\nICMS – crédito\n\n## resposta\nÉ o corpo integral.\nLink: http://x/1");
+        assert_eq!(
+            bloco,
+            "## pergunta\nPARECER Nº 1\nICMS – crédito\n\n## resposta\nÉ o corpo integral.\nLink: http://x/1"
+        );
         let _ = std::fs::remove_dir_all(&dir);
     }
 
@@ -470,8 +517,14 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("auli-rag-g3-miss-{}", std::process::id()));
         // Nada materializado: o doc_path aponta para arquivo inexistente.
         let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir, "sc");
-        assert!(bloco.contains("[corpo indisponível — ver link]"), "bloco: {bloco}");
-        assert!(bloco.contains("Resumo do parecer."), "usa o resumo no lugar do corpo");
+        assert!(
+            bloco.contains("[corpo indisponível — ver link]"),
+            "bloco: {bloco}"
+        );
+        assert!(
+            bloco.contains("Resumo do parecer."),
+            "usa o resumo no lugar do corpo"
+        );
         assert!(bloco.contains("Link: http://x/1"), "preserva o link");
         // Nunca propaga erro — a query segue.
     }
@@ -497,8 +550,16 @@ mod tests {
     #[test]
     fn tempos_linha_pina_o_formato() {
         // Contrato de grep, não estética: `grep -h TEMPOS logs/*.txt` depende deste formato.
-        let t = TemposConsulta { embed_ms: 1, retrieve_ms: 2, llm_ms: 3, total_ms: 6 };
-        assert_eq!(t.linha(), "embed: 1 ms · retrieve+montagem: 2 ms · llm: 3 ms · total: 6 ms");
+        let t = TemposConsulta {
+            embed_ms: 1,
+            retrieve_ms: 2,
+            llm_ms: 3,
+            total_ms: 6,
+        };
+        assert_eq!(
+            t.linha(),
+            "embed: 1 ms · retrieve+montagem: 2 ms · llm: 3 ms · total: 6 ms"
+        );
     }
 
     #[test]
@@ -520,12 +581,20 @@ mod tests {
         // A linha TEMPOS entra ENTRE o cabeçalho CONSULTA e a régua — posição, não só presença.
         let i_consulta = rec.find("CONSULTA · 2026-07-16").expect("linha CONSULTA");
         let i_tempos = rec.find("TEMPOS · embed: 12 ms").expect("linha TEMPOS");
-        let i_regua = rec[i_consulta..].find("====").map(|d| i_consulta + d).expect("régua após CONSULTA");
-        assert!(i_consulta < i_tempos && i_tempos < i_regua, "TEMPOS deve ficar entre CONSULTA e a régua");
+        let i_regua = rec[i_consulta..]
+            .find("====")
+            .map(|d| i_consulta + d)
+            .expect("régua após CONSULTA");
+        assert!(
+            i_consulta < i_tempos && i_tempos < i_regua,
+            "TEMPOS deve ficar entre CONSULTA e a régua"
+        );
 
         // As quatro seções, na ordem: original → anonimizada → resposta → contexto RAG.
         let i_orig = rec.find("PERGUNTA (ORIGINAL)").expect("seção original");
-        let i_anon = rec.find("PERGUNTA (ANONIMIZADA)").expect("seção anonimizada");
+        let i_anon = rec
+            .find("PERGUNTA (ANONIMIZADA)")
+            .expect("seção anonimizada");
         let i_resp = rec.find("RESPOSTA").expect("seção resposta");
         let i_rag = rec.find("CONTEXTO RAG").expect("seção rag");
         assert!(i_orig < i_anon && i_anon < i_resp && i_resp < i_rag);

@@ -23,7 +23,9 @@ pub mod state;
 pub mod update;
 mod util;
 
-use crate::api::{cors_routes, data_routes, mcp_routes, public_routes, question_routes, retrieve_routes};
+use crate::api::{
+    cors_routes, data_routes, mcp_routes, public_routes, question_routes, retrieve_routes,
+};
 use crate::config::config;
 use crate::state::AppState;
 
@@ -64,7 +66,8 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
     // Packs live under `<data>/<id>/packs/`. With no `--packs-dir`, fall back to the shared data
     // root (`AULI_DATA_DIR`, default `./data`) — the same dir the registry/prompts load from — so
     // the registry and the packs can never resolve to different roots by accident.
-    let packs_dir = packs_dir.unwrap_or_else(|| entities::data_dir().to_string_lossy().into_owned());
+    let packs_dir =
+        packs_dir.unwrap_or_else(|| entities::data_dir().to_string_lossy().into_owned());
 
     // Eager-load + validate all packs before serving (refuse to start on incompatible data).
     let collections = packs::load_all(&packs_dir).expect("Falha ao carregar os pacotes de vetores");
@@ -72,8 +75,11 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
 
     // Load the embedding model once before serving (slow: loads/downloads the ONNX model).
     let embedder = Arc::new(
-        auli_core::embed::Embedder::new(config().embed_cache_dir.clone().into(), config().embed_threads)
-            .expect("Falha ao inicializar o embedder (fastembed/BGE-M3)"),
+        auli_core::embed::Embedder::new(
+            config().embed_cache_dir.clone().into(),
+            config().embed_threads,
+        )
+        .expect("Falha ao inicializar o embedder (fastembed/BGE-M3)"),
     );
     println!("🧠 Embedder fastembed (BGE-M3) carregado");
 
@@ -92,10 +98,16 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
         std::path::PathBuf::from(&packs_dir),
     ));
 
-    let state = Arc::new(AppState { engine, anonimizador });
+    let state = Arc::new(AppState {
+        engine,
+        anonimizador,
+    });
 
     println!("----------------------------------------------------");
-    println!("Auli Server v{} - Read-only packs + in-process embeddings", env!("CARGO_PKG_VERSION"));
+    println!(
+        "Auli Server v{} - Read-only packs + in-process embeddings",
+        env!("CARGO_PKG_VERSION")
+    );
     println!("----------------------------------------------------");
 
     let app = app(state);
@@ -108,7 +120,10 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
     println!("✅ Server started successfully at {bind_addr}");
     println!(" ");
 
-    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
-        .await
-        .expect("Falha no servidor HTTP");
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await
+    .expect("Falha no servidor HTTP");
 }

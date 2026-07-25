@@ -111,7 +111,11 @@ impl Recognizer for InscricaoEstadualRecognizer {
                 {
                     continue; // já coberto por padrão de outra UF
                 }
-                let confianca = if (padrao.valida_dv)(m.as_str()) { 0.9 } else { 0.7 };
+                let confianca = if (padrao.valida_dv)(m.as_str()) {
+                    0.9
+                } else {
+                    0.7
+                };
                 achados.push(PiiEntity {
                     entity_type: self.entity_type(),
                     span: Span::new(m.start(), m.end()),
@@ -175,9 +179,15 @@ mod tests {
     #[test]
     fn mascara_com_contexto_mesmo_com_dv_invalido() {
         // 224/3210012 tem DV inválido, mas o contexto "IE" garante o mascaramento (0.7).
-        assert_eq!(achados("A IE 224/3210012 consta como baixada."), ["224/3210012"]);
+        assert_eq!(
+            achados("A IE 224/3210012 consta como baixada."),
+            ["224/3210012"]
+        );
         // Forma "inscrição estadual" por extenso também vale como contexto.
-        assert_eq!(achados("A inscrição estadual 224/3210012 está ativa."), ["224/3210012"]);
+        assert_eq!(
+            achados("A inscrição estadual 224/3210012 está ativa."),
+            ["224/3210012"]
+        );
     }
 
     #[test]

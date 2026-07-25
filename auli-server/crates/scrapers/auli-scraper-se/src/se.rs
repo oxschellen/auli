@@ -46,11 +46,20 @@ pub fn scrape(
         auli_scraper_kit::cache::write(data_dir, "servicos", CARTA_URL, &html);
     }
 
-    let classes: HashSet<&str> =
-        items.iter().flat_map(|s| s.ocorrencias.iter()).map(|o| o.classe.as_str()).collect();
-    println!("SE: {} serviços em {} classe(s)", items.len(), classes.len());
-    let publicos_ordem =
-        vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
+    let classes: HashSet<&str> = items
+        .iter()
+        .flat_map(|s| s.ocorrencias.iter())
+        .map(|o| o.classe.as_str())
+        .collect();
+    println!(
+        "SE: {} serviços em {} classe(s)",
+        items.len(),
+        classes.len()
+    );
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.to_string(),
+        slug: PUBLICO_SLUG.to_string(),
+    }];
     Ok((items, publicos_ordem))
 }
 
@@ -69,10 +78,17 @@ fn load(data_dir: &str, use_cache: bool) -> Result<(String, bool), Box<dyn std::
     }
     let body = auli_scraper_kit::http::get_via_curl(
         CARTA_URL,
-        &GetOpts { log_prefix: "SE", ..Default::default() },
+        &GetOpts {
+            log_prefix: "SE",
+            ..Default::default()
+        },
     )?;
     if !body.contains("panel-collapse") {
-        return Err(format!("HTML inesperado de {} (accordion sumiu / markup mudou?)", CARTA_URL).into());
+        return Err(format!(
+            "HTML inesperado de {} (accordion sumiu / markup mudou?)",
+            CARTA_URL
+        )
+        .into());
     }
     Ok((body, true))
 }
@@ -114,7 +130,10 @@ fn parse(html: &str) -> Vec<ServicoRaw> {
             descricao,
             link,
             orgao: ORGAO.to_string(),
-            ocorrencias: vec![Ocorrencia { publico: PUBLICO_NOME.to_string(), classe }],
+            ocorrencias: vec![Ocorrencia {
+                publico: PUBLICO_NOME.to_string(),
+                classe,
+            }],
         });
     }
     items
@@ -181,7 +200,10 @@ fn cap_len(s: String, max: usize) -> String {
         return s;
     }
     let truncado: String = s.chars().take(max).collect();
-    let corte = truncado.rsplit_once(' ').map(|(a, _)| a).unwrap_or(&truncado);
+    let corte = truncado
+        .rsplit_once(' ')
+        .map(|(a, _)| a)
+        .unwrap_or(&truncado);
     format!("{} …", corte.trim_end())
 }
 
@@ -253,13 +275,23 @@ mod tests {
     fn parse_extrai_servicos_titulo_classe_link() {
         let items = parse(CARTA);
         assert_eq!(items.len(), 2);
-        let plantao = items.iter().find(|s| s.link.ends_with("#plantao_fiscal")).unwrap();
+        let plantao = items
+            .iter()
+            .find(|s| s.link.ends_with("#plantao_fiscal"))
+            .unwrap();
         assert_eq!(plantao.titulo, "Plantão Fiscal");
         assert_eq!(plantao.ocorrencias[0].classe, "Serviços Gerais"); // antes de qualquer tema
-        assert!(plantao.descricao.contains("Descrição do serviço: Atendimento fiscal."));
+        assert!(
+            plantao
+                .descricao
+                .contains("Descrição do serviço: Atendimento fiscal.")
+        );
         assert!(plantao.descricao.contains("Onde solicitar: Presencial."));
 
-        let itcmd_svc = items.iter().find(|s| s.link.ends_with("#entrada_decl_itcmd")).unwrap();
+        let itcmd_svc = items
+            .iter()
+            .find(|s| s.link.ends_with("#entrada_decl_itcmd"))
+            .unwrap();
         assert_eq!(itcmd_svc.titulo, "Entrada de Declaração de ITCMD");
         assert_eq!(itcmd_svc.ocorrencias[0].classe, "ITCMD"); // sob accordion_itcmd
         assert!(itcmd_svc.descricao.contains("Área responsável: GAITCMD."));

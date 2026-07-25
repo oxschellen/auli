@@ -128,10 +128,20 @@ pub fn scrape(
         auli_scraper_kit::cache::write(data_dir, "servicos", url, raw);
     }
 
-    let classes: HashSet<&str> = items.iter().flat_map(|s| s.ocorrencias.iter()).map(|o| o.classe.as_str()).collect();
-    println!("AC: {} serviços em {} classe(s)", items.len(), classes.len());
-    let publicos_ordem =
-        vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
+    let classes: HashSet<&str> = items
+        .iter()
+        .flat_map(|s| s.ocorrencias.iter())
+        .map(|o| o.classe.as_str())
+        .collect();
+    println!(
+        "AC: {} serviços em {} classe(s)",
+        items.len(),
+        classes.len()
+    );
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.to_string(),
+        slug: PUBLICO_SLUG.to_string(),
+    }];
     Ok((items, publicos_ordem))
 }
 
@@ -160,15 +170,24 @@ fn load(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", url);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            url
+        );
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "AC", ..Default::default() },
+        &GetOpts {
+            log_prefix: "AC",
+            ..Default::default()
+        },
     )?;
     if !body.contains("elementor") {
-        bail!("HTML inesperado de {} (não é Elementor / markup mudou?)", url);
+        bail!(
+            "HTML inesperado de {} (não é Elementor / markup mudou?)",
+            url
+        );
     }
     pending.push((url.to_string(), body.clone()));
     sleep(COURTESY);
@@ -207,7 +226,11 @@ fn parse_carta(html: &str) -> Vec<Card> {
             .find(|(p, _)| *p < pos)
             .map(|(_, c)| c.clone())
             .unwrap_or_else(|| CLASSE_FALLBACK.to_string());
-        out.push(Card { post_id, titulo, classe });
+        out.push(Card {
+            post_id,
+            titulo,
+            classe,
+        });
     }
     out
 }
@@ -243,7 +266,10 @@ fn html_to_text(html: &str) -> String {
             _ => {}
         }
     }
-    let decoded: String = Html::parse_fragment(&spaced).root_element().text().collect();
+    let decoded: String = Html::parse_fragment(&spaced)
+        .root_element()
+        .text()
+        .collect();
     clean(&decoded)
 }
 
@@ -304,7 +330,11 @@ mod tests {
     #[test]
     fn parse_carta_extrai_cards_e_categoria() {
         let cards = parse_carta(CARTA);
-        assert_eq!(cards.len(), 2, "2 serviços distintos (o 'Acesse…' é ignorado, o ?p dup também)");
+        assert_eq!(
+            cards.len(),
+            2,
+            "2 serviços distintos (o 'Acesse…' é ignorado, o ?p dup também)"
+        );
         let ipva = cards.iter().find(|c| c.post_id == "20859").unwrap();
         assert_eq!(ipva.titulo, "IPVA – Isenção Táxi / Mototáxi");
         assert_eq!(ipva.classe, "IPVA"); // "Serviços do IPVA" -> "IPVA"
@@ -316,10 +346,16 @@ mod tests {
     fn extract_descricao_isola_o_corpo_do_post() {
         let d = extract_descricao(POST);
         // pega SÓ o post-content (não o header/footer); entidades decodificadas; SEM o CSS do <style>.
-        assert!(d.starts_with("São isentos de IPVA os veículos de táxi"), "veio: {d}");
+        assert!(
+            d.starts_with("São isentos de IPVA os veículos de táxi"),
+            "veio: {d}"
+        );
         assert!(!d.contains("Benjamin Constant"), "não deve pegar o rodapé");
         assert!(!d.contains("menu topo"));
-        assert!(!d.contains("transition"), "não deve pegar o CSS do <style>: {d}");
+        assert!(
+            !d.contains("transition"),
+            "não deve pegar o CSS do <style>: {d}"
+        );
         assert!(!d.contains('<') && !d.contains("&iacute;"));
     }
 

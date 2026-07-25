@@ -59,7 +59,10 @@ pub struct AuliMcp {
 #[tool_router]
 impl AuliMcp {
     pub fn new(engine: Arc<Engine>) -> Self {
-        Self { engine, tool_router: Self::tool_router() }
+        Self {
+            engine,
+            tool_router: Self::tool_router(),
+        }
     }
 
     #[tool(
@@ -152,10 +155,9 @@ impl AuliMcp {
                     .map_err(|e| McpError::internal_error(e.to_string(), None))?;
                 Ok(CallToolResult::success(vec![ContentBlock::text(json)]))
             }
-            None => Ok(CallToolResult::success(vec![ContentBlock::text(erro_numero_nao_achado(
-                &args.numero,
-                &uf,
-            ))])),
+            None => Ok(CallToolResult::success(vec![ContentBlock::text(
+                erro_numero_nao_achado(&args.numero, &uf),
+            )])),
         }
     }
 }
@@ -168,8 +170,13 @@ fn formatar_entidades(engine: &Engine) -> String {
         .entidades_com(KIND)
         .into_iter()
         .map(|id| {
-            let nome = entities::get_entity(Some(&id)).map(|c| c.name.clone()).unwrap_or_else(|_| id.clone());
-            let total = engine.store(&format!("{id}-{KIND}")).map(|s| s.len()).unwrap_or(0);
+            let nome = entities::get_entity(Some(&id))
+                .map(|c| c.name.clone())
+                .unwrap_or_else(|_| id.clone());
+            let total = engine
+                .store(&format!("{id}-{KIND}"))
+                .map(|s| s.len())
+                .unwrap_or(0);
             format!("- {id} ({nome}): {total} pareceres")
         })
         .collect();
@@ -241,7 +248,10 @@ mod tests {
     fn cols() -> Collections {
         let mut c = Collections::new();
         c.insert("sc-pareceres".into(), store_de(vec!["{}"]));
-        c.insert("mg-pareceres".into(), Arc::new(ReadStore::from_records(vec![])));
+        c.insert(
+            "mg-pareceres".into(),
+            Arc::new(ReadStore::from_records(vec![])),
+        );
         c
     }
 
@@ -253,24 +263,36 @@ mod tests {
         let com_acervo = auli_retrieval::entidades_com(&c, KIND);
 
         assert!(com_acervo.contains(&"sc".to_string()), "sc tem acervo");
-        assert!(!com_acervo.contains(&"mg".to_string()), "mg está registrada mas com store VAZIO");
+        assert!(
+            !com_acervo.contains(&"mg".to_string()),
+            "mg está registrada mas com store VAZIO"
+        );
         assert!(!com_acervo.contains(&"zz".to_string()), "zz não existe");
 
         // E o store de mg EXISTE — é exatamente por isso que a guarda não pode ser `is_some()`.
-        assert!(c.get("mg-pareceres").is_some(), "o store vazio está no mapa");
+        assert!(
+            c.get("mg-pareceres").is_some(),
+            "o store vazio está no mapa"
+        );
     }
 
     #[test]
     fn mensagem_de_uf_sem_acervo_aponta_para_listar_entidades() {
         let msg = erro_uf_sem_acervo("mg");
         assert!(msg.contains("mg"), "cita a UF: {msg}");
-        assert!(msg.contains("listar_entidades"), "ensina o próximo passo: {msg}");
+        assert!(
+            msg.contains("listar_entidades"),
+            "ensina o próximo passo: {msg}"
+        );
     }
 
     #[test]
     fn mensagem_de_numero_nao_achado_ensina_o_proximo_passo() {
         let msg = erro_numero_nao_achado("PARECER Nº 999", "sc");
-        assert!(msg.contains("PARECER Nº 999") && msg.contains("sc"), "msg: {msg}");
+        assert!(
+            msg.contains("PARECER Nº 999") && msg.contains("sc"),
+            "msg: {msg}"
+        );
         assert!(msg.contains("buscar_pareceres"), "msg: {msg}");
     }
 
@@ -286,7 +308,10 @@ mod tests {
     fn top_k_e_limitado_como_no_retrieve() {
         // Mesmo contrato da rota HTTP: 1..=20, com 5 de padrão.
         assert_eq!(None.unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K), 5);
-        assert_eq!(Some(9999usize).unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K), MAX_TOP_K);
+        assert_eq!(
+            Some(9999usize).unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K),
+            MAX_TOP_K
+        );
         assert_eq!(Some(0usize).unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K), 1);
     }
 }

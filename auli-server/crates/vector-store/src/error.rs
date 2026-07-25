@@ -20,6 +20,12 @@ pub enum Error {
 
     /// Arity enforcement: `Writer::upsert` requires `ids`, `embeddings` and `payloads` to have the
     /// same length. A mismatch would otherwise `zip` to the shortest and drop the rest silently.
-    #[error("Aridade incompatível no upsert: ids={ids}, embeddings={embeddings}, payloads={payloads}")]
-    ArityMismatch { ids: usize, embeddings: usize, payloads: usize },
+    #[error(
+        "Aridade incompatível no upsert: ids={ids}, embeddings={embeddings}, payloads={payloads}"
+    )]
+    ArityMismatch {
+        ids: usize,
+        embeddings: usize,
+        payloads: usize,
+    },
 }

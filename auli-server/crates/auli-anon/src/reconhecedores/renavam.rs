@@ -142,7 +142,10 @@ mod tests {
     #[test]
     fn mascara_com_contexto_mesmo_com_dv_invalido() {
         // 12345678901 tem DV inválido, mas o contexto "RENAVAM" garante o mascaramento.
-        assert_eq!(achados("O veículo RENAVAM 12345678901 tem IPVA em aberto."), ["12345678901"]);
+        assert_eq!(
+            achados("O veículo RENAVAM 12345678901 tem IPVA em aberto."),
+            ["12345678901"]
+        );
     }
 
     #[test]

@@ -135,7 +135,11 @@ fn parse_frontmatter(fm: &str) -> Result<DocHeader> {
             let prompt_versao: u32 = versao.parse().map_err(|_| {
                 anyhow::anyhow!("frontmatter: `sinopse_prompt_versao` não é inteiro — {versao:?}")
             })?;
-            Some(SinopseInfo { modelo, prompt_versao, gerada_em })
+            Some(SinopseInfo {
+                modelo,
+                prompt_versao,
+                gerada_em,
+            })
         }
         _ => bail!(
             "frontmatter: `sinopse_*` parcial — as três chaves (sinopse_modelo, \
@@ -158,13 +162,22 @@ fn separa_secoes(resto: &str) -> Result<(Option<String>, String)> {
     };
     // O corpo é tudo após a linha da âncora — inclusive linhas que pareçam âncoras ou cercas.
     let apos = &resto[ini_corpo..];
-    let corpo = apos.split_once('\n').map(|(_, c)| c).unwrap_or("").trim().to_string();
+    let corpo = apos
+        .split_once('\n')
+        .map(|(_, c)| c)
+        .unwrap_or("")
+        .trim()
+        .to_string();
 
     // `## sinopse`, se houver, precisa vir ANTES do corpo (só olhamos a região anterior).
     let antes = &resto[..ini_corpo];
     let sinopse = posicao_ancora(antes, ANCORA_SINOPSE).map(|ini| {
         let apos = &antes[ini..];
-        apos.split_once('\n').map(|(_, s)| s).unwrap_or("").trim().to_string()
+        apos.split_once('\n')
+            .map(|(_, s)| s)
+            .unwrap_or("")
+            .trim()
+            .to_string()
     });
 
     Ok((sinopse, corpo))
@@ -196,7 +209,10 @@ pub fn render_doc(header: &DocHeader, sinopse: Option<&str>, corpo: &str) -> Str
     if let Some(si) = &header.sinopse_info {
         out.push_str(&format!("sinopse_modelo: {}\n", colapsa_linha(&si.modelo)));
         out.push_str(&format!("sinopse_prompt_versao: {}\n", si.prompt_versao));
-        out.push_str(&format!("sinopse_gerada_em: {}\n", colapsa_linha(&si.gerada_em)));
+        out.push_str(&format!(
+            "sinopse_gerada_em: {}\n",
+            colapsa_linha(&si.gerada_em)
+        ));
     }
     out.push_str(CERCA);
     out.push('\n');
@@ -253,7 +269,10 @@ pub fn escrever_lote_se_ausente(
         if let Some(anterior) = vistos.insert(s.clone(), &header.numero)
             && anterior != header.numero
         {
-            bail!("colisão de slug: {anterior:?} e {:?} geram o mesmo arquivo `{s}.md`", header.numero);
+            bail!(
+                "colisão de slug: {anterior:?} e {:?} geram o mesmo arquivo `{s}.md`",
+                header.numero
+            );
         }
     }
     let (mut criados, mut pulados) = (0usize, 0usize);
@@ -309,7 +328,9 @@ pub(crate) fn slug_truncado(s: &str, max: usize) -> &str {
 /// números de parecer (`nº` → `no`). Devolve iterador porque `ß`/`æ` viram dois caracteres.
 fn sem_acento(c: char) -> impl Iterator<Item = char> {
     let s: &str = match c {
-        'á' | 'à' | 'â' | 'ã' | 'ä' | 'å' | 'Á' | 'À' | 'Â' | 'Ã' | 'Ä' | 'Å' | 'ª' => "a",
+        'á' | 'à' | 'â' | 'ã' | 'ä' | 'å' | 'Á' | 'À' | 'Â' | 'Ã' | 'Ä' | 'Å' | 'ª' => {
+            "a"
+        }
         'é' | 'è' | 'ê' | 'ë' | 'É' | 'È' | 'Ê' | 'Ë' => "e",
         'í' | 'ì' | 'î' | 'ï' | 'Í' | 'Ì' | 'Î' | 'Ï' => "i",
         'ó' | 'ò' | 'ô' | 'õ' | 'ö' | 'Ó' | 'Ò' | 'Ô' | 'Õ' | 'Ö' | 'º' | '°' => "o",
@@ -376,8 +397,14 @@ mod tests {
         let mut h = header_completo();
         h.sinopse_info = None;
         let texto = render_doc(&h, None, "Corpo cru.");
-        assert!(!texto.contains("sinopse_modelo"), "pendente não emite chaves sinopse_*");
-        assert!(!texto.contains(ANCORA_SINOPSE), "pendente não emite a seção");
+        assert!(
+            !texto.contains("sinopse_modelo"),
+            "pendente não emite chaves sinopse_*"
+        );
+        assert!(
+            !texto.contains(ANCORA_SINOPSE),
+            "pendente não emite a seção"
+        );
         let (h2, sin2, corpo2) = parse_doc(&texto).unwrap();
         assert_eq!(h2, h);
         assert_eq!(sin2, None);
@@ -405,9 +432,13 @@ mod tests {
 
     #[test]
     fn chave_desconhecida_e_erro_alto() {
-        let texto = "---\nnumero: N\nassunto: A\nlink: L\nresumo: nao vai aqui\n---\n\n## corpo\nc\n";
+        let texto =
+            "---\nnumero: N\nassunto: A\nlink: L\nresumo: nao vai aqui\n---\n\n## corpo\nc\n";
         let e = parse_doc(texto).unwrap_err().to_string();
-        assert!(e.contains("desconhecida") && e.contains("resumo"), "erro: {e}");
+        assert!(
+            e.contains("desconhecida") && e.contains("resumo"),
+            "erro: {e}"
+        );
     }
 
     #[test]
@@ -435,7 +466,9 @@ mod tests {
     fn frontmatter_ausente_ou_aberto_e_erro() {
         let e = parse_doc("## corpo\nc\n").unwrap_err().to_string();
         assert!(e.contains("cerca"), "erro: {e}");
-        let e = parse_doc("---\nnumero: N\n\n## corpo\nc\n").unwrap_err().to_string();
+        let e = parse_doc("---\nnumero: N\n\n## corpo\nc\n")
+            .unwrap_err()
+            .to_string();
         assert!(e.contains("não foi fechado"), "erro: {e}");
     }
 
@@ -458,7 +491,10 @@ mod tests {
         let mut h = header_completo();
         h.assunto = "ICMS.\n  REGIME  DE\nST".into();
         let texto = render_doc(&h, None, "c");
-        assert!(texto.contains("assunto: ICMS. REGIME DE ST\n"), "texto:\n{texto}");
+        assert!(
+            texto.contains("assunto: ICMS. REGIME DE ST\n"),
+            "texto:\n{texto}"
+        );
         // E o que volta do parse é a forma colapsada (round-trip estável a partir daí).
         let (h2, _, _) = parse_doc(&texto).unwrap();
         assert_eq!(h2.assunto, "ICMS. REGIME DE ST");
@@ -512,10 +548,18 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("auli-mddoc-colisao-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         let mk = |n: &str| mddoc_header(n);
-        let docs = vec![(mk("CONSULTA 1/26"), "a".to_string()), (mk("CONSULTA 1-26"), "b".to_string())];
-        let e = escrever_lote_se_ausente(&dir, &docs).unwrap_err().to_string();
+        let docs = vec![
+            (mk("CONSULTA 1/26"), "a".to_string()),
+            (mk("CONSULTA 1-26"), "b".to_string()),
+        ];
+        let e = escrever_lote_se_ausente(&dir, &docs)
+            .unwrap_err()
+            .to_string();
         assert!(e.contains("colisão de slug"), "erro: {e}");
-        assert!(e.contains("CONSULTA 1/26") && e.contains("CONSULTA 1-26"), "deve nomear os dois: {e}");
+        assert!(
+            e.contains("CONSULTA 1/26") && e.contains("CONSULTA 1-26"),
+            "deve nomear os dois: {e}"
+        );
         // E não escreveu nada: a checagem roda ANTES de tocar o disco.
         assert!(!dir.exists() || std::fs::read_dir(&dir).unwrap().count() == 0);
     }
@@ -525,7 +569,10 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("auli-mddoc-lote-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         // O MESMO numero duas vezes no lote não é colisão de identidade — é duplicata; o 2º é pulado.
-        let docs = vec![(mddoc_header("A 1"), "x".to_string()), (mddoc_header("A 1"), "x".to_string())];
+        let docs = vec![
+            (mddoc_header("A 1"), "x".to_string()),
+            (mddoc_header("A 1"), "x".to_string()),
+        ];
         assert_eq!(escrever_lote_se_ausente(&dir, &docs).unwrap(), (1, 1));
         // Re-rodar o lote inteiro: tudo pulado (incremental).
         assert_eq!(escrever_lote_se_ausente(&dir, &docs).unwrap(), (0, 2));
@@ -552,9 +599,15 @@ mod tests {
 
     #[test]
     fn slug_acentos_ordinais_e_barra() {
-        assert_eq!(slug("CONSULTA COPAT nº 0037/26"), "consulta-copat-no-0037-26");
+        assert_eq!(
+            slug("CONSULTA COPAT nº 0037/26"),
+            "consulta-copat-no-0037-26"
+        );
         assert_eq!(slug("PARECER Nº 25148"), "parecer-no-25148");
-        assert_eq!(slug("Consulta nº 12/2008 — ICMS/ST"), "consulta-no-12-2008-icms-st");
+        assert_eq!(
+            slug("Consulta nº 12/2008 — ICMS/ST"),
+            "consulta-no-12-2008-icms-st"
+        );
         assert_eq!(slug("ÁÉÍÓÚ ção"), "aeiou-cao");
         // Sem hífen sobrando nas pontas.
         assert_eq!(slug("///abc///"), "abc");

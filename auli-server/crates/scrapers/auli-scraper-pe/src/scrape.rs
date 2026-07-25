@@ -10,9 +10,9 @@ use scraper::{ElementRef, Html, Selector};
 use ureq::Agent;
 
 use auli_contract::Publico;
+use auli_contract::ServicoPerPublico as Servico;
 use auli_scraper_kit::PerPublicoServicos;
 use auli_scraper_kit::http::GetOpts;
-use auli_contract::ServicoPerPublico as Servico;
 
 const BASE: &str = "https://www.sefaz.pe.gov.br";
 // A home renderiza o menu global completo (verificado também em páginas internas — o menu vem da
@@ -47,7 +47,8 @@ struct MenuItem {
 
 /// Raspa os serviços do PE e devolve os per-público (na ordem do menu) + a ordem dos públicos.
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Vec<Publico>)> {
-    let agent = auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent =
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
     // 1. Seed: a home, com o menu global.
     let seed = fetch(&agent, data_dir, SEED_URL, use_cache)?;
@@ -62,11 +63,17 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Ve
     let mut inputs: PerPublicoServicos = Vec::new();
     for (titulo_portal, nome, _) in &pubs {
         let Some((_, items)) = blocks.iter().find(|(t, _)| t == titulo_portal) else {
-            bail!("bloco '{}' ausente em #menu_servicos — layout mudou?", titulo_portal);
+            bail!(
+                "bloco '{}' ausente em #menu_servicos — layout mudou?",
+                titulo_portal
+            );
         };
         println!("PE: bloco '{}' -> {} ocorrências", nome, items.len());
         if items.is_empty() {
-            eprintln!("⚠️  PE: bloco '{}' veio vazio — estrutura do menu mudou?", nome);
+            eprintln!(
+                "⚠️  PE: bloco '{}' veio vazio — estrutura do menu mudou?",
+                nome
+            );
         }
         let servicos = items
             .iter()
@@ -90,7 +97,10 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Ve
 
     let publicos_ordem = pubs
         .iter()
-        .map(|(_, nome, slug)| Publico { nome: nome.to_string(), slug: slug.to_string() })
+        .map(|(_, nome, slug)| Publico {
+            nome: nome.to_string(),
+            slug: slug.to_string(),
+        })
         .collect();
     Ok((inputs, publicos_ordem))
 }
@@ -100,10 +110,12 @@ pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Ve
 /// um subgrupo (header vira classe dos filhos; header com href real também vira item — D-PE3, caso
 /// "Tributos Transferências Constitucionais" em municípios, que é uma página real).
 fn parse_menu(doc: &Html) -> Result<Vec<(String, Vec<MenuItem>)>> {
-    let menu = doc
-        .select(&sel("#menu_servicos"))
-        .next()
-        .ok_or_else(|| anyhow!("menu '#menu_servicos' ausente no seed {} — layout mudou?", SEED_URL))?;
+    let menu = doc.select(&sel("#menu_servicos")).next().ok_or_else(|| {
+        anyhow!(
+            "menu '#menu_servicos' ausente no seed {} — layout mudou?",
+            SEED_URL
+        )
+    })?;
 
     let mut out = Vec::new();
     for block in menu.select(&sel("div.submenu_block")) {
@@ -147,13 +159,21 @@ fn collect_ul(ul: &ElementRef, out: &mut Vec<MenuItem>) {
         // Filhos do subgrupo: classe = texto do header.
         if let Some(nested_ul) = nested {
             for a in nested_ul.select(&sel("a")) {
-                let Some(href) = a.value().attr("href") else { continue };
-                let Some(link) = canonical(href) else { continue };
+                let Some(href) = a.value().attr("href") else {
+                    continue;
+                };
+                let Some(link) = canonical(href) else {
+                    continue;
+                };
                 let titulo = text(&a);
                 if titulo.is_empty() {
                     continue;
                 }
-                out.push(MenuItem { titulo, link, classe: header_titulo.clone() });
+                out.push(MenuItem {
+                    titulo,
+                    link,
+                    classe: header_titulo.clone(),
+                });
             }
         }
     }
@@ -197,13 +217,18 @@ fn sel(s: &str) -> Selector {
 /// Busca (ou lê do cache) a página `url`. Em `--usecache` um miss é erro (sem rede). O retry/backoff
 /// é o `kit::http::get_string`; o wrapper mantém o cache-write e a cortesia entre fetches de rede.
 fn fetch(agent: &Agent, data_dir: &str, url: &str, use_cache: bool) -> Result<String> {
-    if let Some(cached) = auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)? {
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)?
+    {
         return Ok(cached);
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "PE", ..Default::default() },
+        &GetOpts {
+            log_prefix: "PE",
+            ..Default::default()
+        },
     )?;
     auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
     sleep(COURTESY);
@@ -228,7 +253,10 @@ mod tests {
         let blocks = parsed();
         // O decoy `#menu_pulicacoes` da fixture não pode vazar para cá.
         let titulos: Vec<&str> = blocks.iter().map(|(t, _)| t.as_str()).collect();
-        assert_eq!(titulos, ["Para cidadãos", "Para empresas", "Para municípios"]);
+        assert_eq!(
+            titulos,
+            ["Para cidadãos", "Para empresas", "Para municípios"]
+        );
     }
 
     #[test]
@@ -237,7 +265,11 @@ mod tests {
         let (_, items) = &blocks[0];
         // 5 de topo + 4 sob "Tributos" (header do subgrupo é javascript:; e não vira item).
         assert_eq!(items.len(), 9);
-        assert!(items.iter().all(|i| !i.titulo.is_empty() && i.link.starts_with("http")));
+        assert!(
+            items
+                .iter()
+                .all(|i| !i.titulo.is_empty() && i.link.starts_with("http"))
+        );
         let ipva = items.iter().find(|i| i.titulo.starts_with("IPVA")).unwrap();
         // Whitespace interno do <a> colapsado.
         assert_eq!(ipva.titulo, "IPVA - e demais serviços para Veículos");
@@ -255,9 +287,16 @@ mod tests {
         // 12 na primeira coluna + 13 na segunda (duas <ul class="col45"> no mesmo bloco).
         assert_eq!(items.len(), 25);
         assert!(items.iter().any(|i| i.titulo == "SEF I"));
-        assert!(items.iter().any(|i| i.titulo == "Programa de Conformidade e Autorregularização - Coopera"));
+        assert!(
+            items
+                .iter()
+                .any(|i| i.titulo == "Programa de Conformidade e Autorregularização - Coopera")
+        );
         // URL com percent-encoding preservada como está no href.
-        let lib = items.iter().find(|i| i.titulo == "Liberação de Mercadoria").unwrap();
+        let lib = items
+            .iter()
+            .find(|i| i.titulo == "Liberação de Mercadoria")
+            .unwrap();
         assert_eq!(
             lib.link,
             "https://www.sefaz.pe.gov.br/Servicos/Paginas/Libera%C3%A7%C3%A3o-de-Mercadorias.aspx"
@@ -279,7 +318,10 @@ mod tests {
         assert_eq!(icms_ipi.classe, "Tributos Transferências Constitucionais");
         // Filho com link externo absoluto preservado.
         let ipva = items.iter().find(|i| i.titulo == "IPVA").unwrap();
-        assert_eq!(ipva.link, "https://arevirtualws.sefaz.pe.gov.br/sfar/sfar_municipio_periodo.php");
+        assert_eq!(
+            ipva.link,
+            "https://arevirtualws.sefaz.pe.gov.br/sfar/sfar_municipio_periodo.php"
+        );
     }
 
     #[test]
@@ -311,8 +353,15 @@ mod tests {
 
         let out = auli_scraper_kit::aggregate_servicos(&inputs);
 
-        let efisco = out.iter().find(|s| s.link == "https://efisco.sefaz.pe.gov.br/").unwrap();
-        let pubs: Vec<&str> = efisco.ocorrencias.iter().map(|o| o.publico.as_str()).collect();
+        let efisco = out
+            .iter()
+            .find(|s| s.link == "https://efisco.sefaz.pe.gov.br/")
+            .unwrap();
+        let pubs: Vec<&str> = efisco
+            .ocorrencias
+            .iter()
+            .map(|o| o.publico.as_str())
+            .collect();
         assert_eq!(pubs, ["Cidadãos", "Empresas", "Municípios"]);
 
         let dae10 = out

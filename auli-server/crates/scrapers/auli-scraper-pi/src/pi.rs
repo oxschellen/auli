@@ -31,8 +31,7 @@ const BASE: &str = "https://portal.sefaz.pi.gov.br";
 /// Shell público de onde extraímos o Bearer anônimo (efêmero).
 const SHELL_URL: &str = "https://portal.sefaz.pi.gov.br/";
 /// Endpoint do `_search` (GET) sobre a classe de conteúdo. O corpo ES vai em `?_body=`.
-const SEARCH_URL: &str =
-    "https://portal.sefaz.pi.gov.br/api/1/govPiPortalInstitucional/_classId/5cd32901df14eb3d461160f0/_search";
+const SEARCH_URL: &str = "https://portal.sefaz.pi.gov.br/api/1/govPiPortalInstitucional/_classId/5cd32901df14eb3d461160f0/_search";
 /// `_id` do catálogo cidadão "Carta de Serviços" (o `parent._id` dos serviços). Os demais catálogos
 /// do portal (Notícias, Legislações, Tesouro, Serviços de Pessoal…) NÃO entram — não são a carta.
 const CATALOGO_ID: &str = "69381ceceecdd6684a84c49c";
@@ -126,9 +125,15 @@ pub fn scrape(
         auli_scraper_kit::cache::write(data_dir, "servicos", &cache_key, &json);
     }
 
-    println!("PI: {} serviços (total ES={}, dedup por _id)", items.len(), resp.hits.total);
-    let publicos_ordem =
-        vec![Publico { nome: PUBLICO_NOME.to_string(), slug: PUBLICO_SLUG.to_string() }];
+    println!(
+        "PI: {} serviços (total ES={}, dedup por _id)",
+        items.len(),
+        resp.hits.total
+    );
+    let publicos_ordem = vec![Publico {
+        nome: PUBLICO_NOME.to_string(),
+        slug: PUBLICO_SLUG.to_string(),
+    }];
     Ok((items, publicos_ordem))
 }
 
@@ -138,7 +143,10 @@ fn fetch_token(agent: &ureq::Agent) -> Result<String> {
     let shell = auli_scraper_kit::http::get_string(
         agent,
         SHELL_URL,
-        &GetOpts { log_prefix: "PI", ..Default::default() },
+        &GetOpts {
+            log_prefix: "PI",
+            ..Default::default()
+        },
     )?;
     parse_token(&shell)
 }
@@ -159,8 +167,10 @@ fn fetch_services(agent: &ureq::Agent, token: &str, url: &str) -> Result<String>
     // Defesa: um erro/negação do edge vem como HTML ou como `{generalMessages:[…]}`; o corpo bom é o
     // envelope ES. Se não começa com `{`, aborta (não deixa lixo virar snapshot).
     if !body.trim_start().starts_with('{') {
-        bail!("resposta inesperada do _search (não-JSON) — edge/erro? primeiros bytes: {:?}",
-            &body.chars().take(60).collect::<String>());
+        bail!(
+            "resposta inesperada do _search (não-JSON) — edge/erro? primeiros bytes: {:?}",
+            &body.chars().take(60).collect::<String>()
+        );
     }
     Ok(body)
 }
@@ -210,7 +220,9 @@ fn parse_token(shell: &str) -> Result<String> {
         .ok_or_else(|| anyhow!("token não encontrado no shell (markup mudou?)"))?
         + KEY.len();
     let rest = &shell[start..];
-    let end = rest.find('"').ok_or_else(|| anyhow!("token malformado no shell"))?;
+    let end = rest
+        .find('"')
+        .ok_or_else(|| anyhow!("token malformado no shell"))?;
     let tok = rest[..end].trim();
     if !tok.starts_with("Bearer ") || tok.len() < 20 {
         bail!("valor de Authorization inesperado no shell");
@@ -310,7 +322,10 @@ mod tests {
         let r = parse(RESP_JSON).unwrap();
         assert_eq!(r.hits.total, 3);
         assert_eq!(r.hits.hits.len(), 3);
-        assert_eq!(r.hits.hits[0].source.friendly_url.as_deref(), Some("nota-fiscal-avulsa-eletronica"));
+        assert_eq!(
+            r.hits.hits[0].source.friendly_url.as_deref(),
+            Some("nota-fiscal-avulsa-eletronica")
+        );
     }
 
     #[test]
@@ -319,8 +334,14 @@ mod tests {
         let items = build_servicos(&r.hits.hits);
         assert_eq!(items.len(), 3);
         assert_eq!(items[0].titulo, "Nota Fiscal Avulsa Eletrônica");
-        assert_eq!(items[0].descricao, "Emissão de nota fiscal avulsa pelo contribuinte.");
-        assert_eq!(items[0].link, "https://portal.sefaz.pi.gov.br/nota-fiscal-avulsa-eletronica");
+        assert_eq!(
+            items[0].descricao,
+            "Emissão de nota fiscal avulsa pelo contribuinte."
+        );
+        assert_eq!(
+            items[0].link,
+            "https://portal.sefaz.pi.gov.br/nota-fiscal-avulsa-eletronica"
+        );
         assert_eq!(items[0].orgao, "SEFAZ-PI");
         assert_eq!(items[0].ocorrencias.len(), 1);
         assert_eq!(items[0].ocorrencias[0].publico, "Serviços");
@@ -368,13 +389,19 @@ mod tests {
         let u = search_url();
         assert!(u.starts_with(SEARCH_URL));
         // o corpo url-encoded deve conter o id do catálogo (dígitos ficam literais).
-        assert!(u.contains(CATALOGO_ID), "url deve filtrar pelo catálogo Carta de Serviços");
+        assert!(
+            u.contains(CATALOGO_ID),
+            "url deve filtrar pelo catálogo Carta de Serviços"
+        );
     }
 
     #[test]
     fn parse_token_extrai_bearer() {
         let shell = r#"...window.SYDLE.config = {"ui-api":{"REQUEST_PARAMS":{"headers":{"Authorization":"Bearer eyJabc.def.ghi_LONG_TOKEN"}}}}..."#;
-        assert_eq!(parse_token(shell).unwrap(), "Bearer eyJabc.def.ghi_LONG_TOKEN");
+        assert_eq!(
+            parse_token(shell).unwrap(),
+            "Bearer eyJabc.def.ghi_LONG_TOKEN"
+        );
     }
 
     #[test]
@@ -389,8 +416,13 @@ mod tests {
                 ocorrencias: vec![],
             })
             .collect();
-        let err = validar(&items, MIN_SERVICOS as i64 + 1).unwrap_err().to_string();
-        assert!(err.contains("não cobre"), "esperava guard de subcobertura, veio: {err}");
+        let err = validar(&items, MIN_SERVICOS as i64 + 1)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("não cobre"),
+            "esperava guard de subcobertura, veio: {err}"
+        );
     }
 
     #[test]
@@ -403,7 +435,10 @@ mod tests {
             ocorrencias: vec![],
         }];
         let err = validar(&poucos, 1).unwrap_err().to_string();
-        assert!(err.contains("capado"), "esperava guard de mínimo, veio: {err}");
+        assert!(
+            err.contains("capado"),
+            "esperava guard de mínimo, veio: {err}"
+        );
     }
 
     #[test]

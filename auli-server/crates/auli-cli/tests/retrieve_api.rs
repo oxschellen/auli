@@ -33,11 +33,18 @@ fn data_dir() -> Option<String> {
 fn estado_real(data: &str) -> Arc<AppState> {
     let collections = auli_cli::packs::load_all(data).expect("carregar packs");
     let cache = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "./models".into());
-    let embedder = Arc::new(auli_core::embed::Embedder::new(cache.into(), 16).expect("carregar embedder"));
-    let engine =
-        Arc::new(auli_retrieval::Engine::new(collections, embedder, std::path::PathBuf::from(data)));
+    let embedder =
+        Arc::new(auli_core::embed::Embedder::new(cache.into(), 16).expect("carregar embedder"));
+    let engine = Arc::new(auli_retrieval::Engine::new(
+        collections,
+        embedder,
+        std::path::PathBuf::from(data),
+    ));
     let anonimizador = Arc::new(auli_anon::Anonimizador::novo().expect("carregar anonimizador"));
-    Arc::new(AppState { engine, anonimizador })
+    Arc::new(AppState {
+        engine,
+        anonimizador,
+    })
 }
 
 /// POST com `ConnectInfo` injetado — o middleware de rate limit extrai o IP do socket, e sem essa
@@ -49,7 +56,8 @@ fn post(uri: &str, corpo: serde_json::Value) -> Request<Body> {
         .header("Content-Type", "application/json")
         .body(Body::from(corpo.to_string()))
         .unwrap();
-    req.extensions_mut().insert(ConnectInfo(SocketAddr::from(([127, 0, 0, 1], 40000))));
+    req.extensions_mut()
+        .insert(ConnectInfo(SocketAddr::from(([127, 0, 0, 1], 40000))));
     req
 }
 
@@ -80,15 +88,26 @@ async fn retrieve_de_pareceres_devolve_metadados_com_score_e_sem_corpo() {
 
     assert_eq!(resp.status(), StatusCode::OK);
 
-    let bytes = axum::body::to_bytes(resp.into_body(), usize::MAX).await.unwrap();
+    let bytes = axum::body::to_bytes(resp.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let json: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
 
     assert_eq!(json["entity"], "sc");
     assert_eq!(json["kind"], "pareceres");
 
-    let pareceres = json["pareceres"].as_array().expect("vetor pareceres presente");
-    assert!(!pareceres.is_empty(), "a busca deveria achar pareceres em sc");
-    assert!(pareceres.len() <= 5, "top_k=5 é teto: veio {}", pareceres.len());
+    let pareceres = json["pareceres"]
+        .as_array()
+        .expect("vetor pareceres presente");
+    assert!(
+        !pareceres.is_empty(),
+        "a busca deveria achar pareceres em sc"
+    );
+    assert!(
+        pareceres.len() <= 5,
+        "top_k=5 é teto: veio {}",
+        pareceres.len()
+    );
 
     // O contrato da rota: metadados + score, NUNCA o corpo (que é o que `obter_parecer` serve).
     for p in pareceres {
@@ -100,8 +119,14 @@ async fn retrieve_de_pareceres_devolve_metadados_com_score_e_sem_corpo() {
     }
 
     // Distância cosseno: ordenada best-first e não-negativa.
-    let scores: Vec<f64> = pareceres.iter().map(|p| p["score"].as_f64().unwrap()).collect();
-    assert!(scores.windows(2).all(|w| w[0] <= w[1]), "best-first: {scores:?}");
+    let scores: Vec<f64> = pareceres
+        .iter()
+        .map(|p| p["score"].as_f64().unwrap())
+        .collect();
+    assert!(
+        scores.windows(2).all(|w| w[0] <= w[1]),
+        "best-first: {scores:?}"
+    );
     assert!(scores[0] >= 0.0, "distância cosseno é não-negativa");
 
     // O vetor do outro kind vem vazio, mas PRESENTE (contrato do RetrieveResponse).
@@ -136,7 +161,9 @@ async fn retrieve_de_kind_generico_devolve_hits_e_pareceres_vazio() {
         .unwrap();
 
     assert_eq!(resp.status(), StatusCode::OK);
-    let bytes = axum::body::to_bytes(resp.into_body(), usize::MAX).await.unwrap();
+    let bytes = axum::body::to_bytes(resp.into_body(), usize::MAX)
+        .await
+        .unwrap();
     let json: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
 
     assert_eq!(json["kind"], "faqs");

@@ -2,10 +2,10 @@
 
 use std::path::PathBuf;
 
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 
-use crate::{read_collection_file, write_collection_file, CollectionData, Error, Record, Result};
+use crate::{CollectionData, Error, Record, Result, read_collection_file, write_collection_file};
 
 /// Writes `<name>.json` collection files under a base directory. Each operation reads the current
 /// file, applies the change, and rewrites it — the clean-reload pattern (`reset` then `upsert`)
@@ -16,7 +16,9 @@ pub struct Writer {
 
 impl Writer {
     pub fn new(base_path: impl Into<PathBuf>) -> Self {
-        Self { base_path: base_path.into() }
+        Self {
+            base_path: base_path.into(),
+        }
     }
 
     /// On-disk path for a `<entity>-<kind>` collection name.
@@ -40,7 +42,13 @@ impl Writer {
     /// silent degrade (a wrong-width vector that `cosine_distance` would later score as max-distance)
     /// into a loud write-time error, so `cosine_distance`'s `2.0` fallback is left to cover only
     /// *legitimate* anti-correlation at query time.
-    pub fn upsert<P>(&self, name: &str, ids: &[String], embeddings: Vec<Vec<f32>>, payloads: &[P]) -> Result<u64>
+    pub fn upsert<P>(
+        &self,
+        name: &str,
+        ids: &[String],
+        embeddings: Vec<Vec<f32>>,
+        payloads: &[P],
+    ) -> Result<u64>
     where
         P: Serialize + DeserializeOwned + Clone,
     {
@@ -67,11 +75,18 @@ impl Writer {
             .or_else(|| embeddings.first().map(|e| e.len()))
             && let Some(bad) = embeddings.iter().find(|e| e.len() != expected)
         {
-            return Err(Error::DimensionMismatch { expected, got: bad.len() });
+            return Err(Error::DimensionMismatch {
+                expected,
+                got: bad.len(),
+            });
         }
 
         for ((id, emb), payload) in ids.iter().zip(embeddings).zip(payloads.iter()) {
-            let rec = Record { id: id.clone(), embedding: emb, payload: payload.clone() };
+            let rec = Record {
+                id: id.clone(),
+                embedding: emb,
+                payload: payload.clone(),
+            };
             match data.records.iter_mut().find(|r| r.id == rec.id) {
                 Some(existing) => *existing = rec,
                 None => data.records.push(rec),
@@ -108,7 +123,12 @@ mod tests {
 
         // Upsert by existing id replaces in place (no duplicate, count stable).
         let total = w
-            .upsert("rs-faqs", &["id-1".to_string()], vec![vec![9.0, 9.0]], &["ALPHA".to_string()])
+            .upsert(
+                "rs-faqs",
+                &["id-1".to_string()],
+                vec![vec![9.0, 9.0]],
+                &["ALPHA".to_string()],
+            )
             .unwrap();
         assert_eq!(total, 2);
         let data: CollectionData<String> = read_collection_file(w.path_for("rs-faqs")).unwrap();
@@ -125,22 +145,50 @@ mod tests {
         w.reset::<String>("c").unwrap();
 
         // First insert fixes width = 3.
-        w.upsert("c", &["id-1".into()], vec![vec![1.0, 2.0, 3.0]], &["a".to_string()]).unwrap();
+        w.upsert(
+            "c",
+            &["id-1".into()],
+            vec![vec![1.0, 2.0, 3.0]],
+            &["a".to_string()],
+        )
+        .unwrap();
 
         // A later width-2 vector is rejected, and nothing is written.
         let err = w
-            .upsert("c", &["id-2".into()], vec![vec![1.0, 2.0]], &["b".to_string()])
+            .upsert(
+                "c",
+                &["id-2".into()],
+                vec![vec![1.0, 2.0]],
+                &["b".to_string()],
+            )
             .unwrap_err();
-        assert!(matches!(err, Error::DimensionMismatch { expected: 3, got: 2 }));
+        assert!(matches!(
+            err,
+            Error::DimensionMismatch {
+                expected: 3,
+                got: 2
+            }
+        ));
         let data: CollectionData<String> = read_collection_file(w.path_for("c")).unwrap();
         assert_eq!(data.records.len(), 1, "rejected batch must not persist");
 
         // A mismatched width WITHIN the first batch (into an empty collection) is also caught.
         w.reset::<String>("d").unwrap();
         let err = w
-            .upsert("d", &["id-1".into(), "id-2".into()], vec![vec![1.0, 2.0], vec![1.0, 2.0, 3.0]], &["a".to_string(), "b".to_string()])
+            .upsert(
+                "d",
+                &["id-1".into(), "id-2".into()],
+                vec![vec![1.0, 2.0], vec![1.0, 2.0, 3.0]],
+                &["a".to_string(), "b".to_string()],
+            )
             .unwrap_err();
-        assert!(matches!(err, Error::DimensionMismatch { expected: 2, got: 3 }));
+        assert!(matches!(
+            err,
+            Error::DimensionMismatch {
+                expected: 2,
+                got: 3
+            }
+        ));
 
         let _ = std::fs::remove_dir_all(&dir);
     }
@@ -154,9 +202,21 @@ mod tests {
 
         // Two ids but only one payload — must error, not truncate to one record.
         let err = w
-            .upsert("c", &["id-1".into(), "id-2".into()], vec![vec![1.0], vec![2.0]], &["a".to_string()])
+            .upsert(
+                "c",
+                &["id-1".into(), "id-2".into()],
+                vec![vec![1.0], vec![2.0]],
+                &["a".to_string()],
+            )
             .unwrap_err();
-        assert!(matches!(err, Error::ArityMismatch { ids: 2, embeddings: 2, payloads: 1 }));
+        assert!(matches!(
+            err,
+            Error::ArityMismatch {
+                ids: 2,
+                embeddings: 2,
+                payloads: 1
+            }
+        ));
         let data: CollectionData<String> = read_collection_file(w.path_for("c")).unwrap();
         assert_eq!(data.records.len(), 0, "rejected batch must not persist");
 

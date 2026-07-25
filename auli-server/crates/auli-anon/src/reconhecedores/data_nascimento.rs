@@ -126,7 +126,10 @@ mod tests {
             achados("O dependente nasceu em 14/03/1998 e consta no ITCD."),
             ["14/03/1998"]
         );
-        assert_eq!(achados("Data de nascimento: 01/12/2000, confirmar."), ["01/12/2000"]);
+        assert_eq!(
+            achados("Data de nascimento: 01/12/2000, confirmar."),
+            ["01/12/2000"]
+        );
     }
 
     #[test]

@@ -47,7 +47,13 @@ pub fn scrape(
     let mut pending: Vec<(String, String)> = Vec::new();
 
     // 1) Deriva o UUID da SEFAZ (não hardcodado).
-    let organs = load(&agent, data_dir, &format!("{}/organs.json", API), use_cache, &mut pending)?;
+    let organs = load(
+        &agent,
+        data_dir,
+        &format!("{}/organs.json", API),
+        use_cache,
+        &mut pending,
+    )?;
     let uuid = derive_sefaz_uuid(&organs)?;
     println!("AL: SEFAZ organ_id = {}", uuid);
 
@@ -63,7 +69,8 @@ pub fn scrape(
     for id in &stubs {
         let url = format!("{}/services/{}.json", API, id);
         let det = load(&agent, data_dir, &url, use_cache, &mut pending)?;
-        let d: Value = serde_json::from_str(&det).map_err(|e| format!("detalhe {id} inválido: {e}"))?;
+        let d: Value =
+            serde_json::from_str(&det).map_err(|e| format!("detalhe {id} inválido: {e}"))?;
         let servico = build_servico(&d);
         if servico.titulo.is_empty() || !vistos.insert(servico.link.clone()) {
             continue;
@@ -100,12 +107,19 @@ fn load(
         return Ok(cached);
     }
     if use_cache {
-        bail!("cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.", url);
+        bail!(
+            "cache vazio para {} (--usecache, sem rede). Rode uma coleta com rede primeiro.",
+            url
+        );
     }
     let body = auli_scraper_kit::http::get_string(
         agent,
         url,
-        &GetOpts { log_prefix: "AL", accept: Some("application/json"), ..Default::default() },
+        &GetOpts {
+            log_prefix: "AL",
+            accept: Some("application/json"),
+            ..Default::default()
+        },
     )?;
     pending.push((url.to_string(), body.clone()));
     sleep(COURTESY);
@@ -115,11 +129,14 @@ fn load(
 /// Deriva o `organ_id` da SEFAZ de `organs.json`: `acronym == SEFAZ` e `nature == Estadual`. Exige
 /// exatamente 1 match (0 = fonte quebrada; >1 = ambíguo) — não hardcodar o UUID (lição CE).
 fn derive_sefaz_uuid(organs_json: &str) -> Result<String> {
-    let v: Value = serde_json::from_str(organs_json).map_err(|e| anyhow!("organs.json inválido: {e}"))?;
+    let v: Value =
+        serde_json::from_str(organs_json).map_err(|e| anyhow!("organs.json inválido: {e}"))?;
     let arr = as_list(&v).ok_or_else(|| anyhow!("organs.json não é uma lista"))?;
     let matches: Vec<&Value> = arr
         .iter()
-        .filter(|o| eq_ci(str_field(o, "acronym"), "SEFAZ") && eq_ci(str_field(o, "nature"), "Estadual"))
+        .filter(|o| {
+            eq_ci(str_field(o, "acronym"), "SEFAZ") && eq_ci(str_field(o, "nature"), "Estadual")
+        })
         .collect();
     match matches.as_slice() {
         [o] => {
@@ -130,23 +147,33 @@ fn derive_sefaz_uuid(organs_json: &str) -> Result<String> {
             Ok(id.to_string())
         }
         [] => bail!("SEFAZ não encontrada em organs.json (acronym=SEFAZ, nature=Estadual)"),
-        m => bail!("{} órgãos batem SEFAZ/Estadual — ambíguo, não dá para derivar o UUID", m.len()),
+        m => bail!(
+            "{} órgãos batem SEFAZ/Estadual — ambíguo, não dá para derivar o UUID",
+            m.len()
+        ),
     }
 }
 
 /// Parseia os stubs da lista filtrada. Guarda de coerência: todo item deve ter `organ == uuid`
 /// (senão o filtro falhou silenciosamente). Bail se a lista vier vazia.
 fn parse_stubs(lista_json: &str, uuid: &str) -> Result<Vec<String>> {
-    let v: Value = serde_json::from_str(lista_json).map_err(|e| anyhow!("services.json inválido: {e}"))?;
+    let v: Value =
+        serde_json::from_str(lista_json).map_err(|e| anyhow!("services.json inválido: {e}"))?;
     let arr = as_list(&v).ok_or_else(|| anyhow!("services.json não é uma lista"))?;
     if arr.is_empty() {
-        bail!("lista da SEFAZ veio vazia — fonte quebrada ou UUID mudou (não 'SEFAZ sem serviços')");
+        bail!(
+            "lista da SEFAZ veio vazia — fonte quebrada ou UUID mudou (não 'SEFAZ sem serviços')"
+        );
     }
     let mut ids = Vec::new();
     for s in arr {
         let organ = str_field(s, "organ");
         if organ != uuid {
-            bail!("filtro incoerente: serviço com organ={} != SEFAZ {} — filtro falhou", organ, uuid);
+            bail!(
+                "filtro incoerente: serviço com organ={} != SEFAZ {} — filtro falhou",
+                organ,
+                uuid
+            );
         }
         let id = str_field(s, "id");
         if !id.is_empty() {
@@ -181,11 +208,20 @@ fn build_servico(d: &Value) -> ServicoRaw {
     let mut ocorrencias = Vec::new();
     for publico in &publicos {
         for classe in &classes {
-            ocorrencias.push(Ocorrencia { publico: publico.clone(), classe: classe.clone() });
+            ocorrencias.push(Ocorrencia {
+                publico: publico.clone(),
+                classe: classe.clone(),
+            });
         }
     }
 
-    ServicoRaw { titulo, descricao, link, orgao: ORGAO.to_string(), ocorrencias }
+    ServicoRaw {
+        titulo,
+        descricao,
+        link,
+        orgao: ORGAO.to_string(),
+        ocorrencias,
+    }
 }
 
 /// Descrição rica: `description` + prazo (`estimated_time`) + etapas (`steps`, com canais) +
@@ -223,7 +259,11 @@ fn build_descricao(d: &Value) -> String {
                         .map(|c| {
                             let ty = str_field(c, "type");
                             let cd = html_to_text(str_field(c, "description"));
-                            if cd.is_empty() { ty.to_string() } else { format!("{} {}", ty, cd) }
+                            if cd.is_empty() {
+                                ty.to_string()
+                            } else {
+                                format!("{} {}", ty, cd)
+                            }
                         })
                         .filter(|s| !s.trim().is_empty())
                         .collect()
@@ -247,7 +287,11 @@ fn build_descricao(d: &Value) -> String {
                         return None;
                     }
                     let ty = html_to_text(str_field(a, "type"));
-                    Some(if ty.is_empty() { r } else { format!("{}: {}", ty, r) })
+                    Some(if ty.is_empty() {
+                        r
+                    } else {
+                        format!("{}: {}", ty, r)
+                    })
                 })
                 .collect()
         })
@@ -288,7 +332,12 @@ fn publicos_ordem(items: &[ServicoRaw]) -> Vec<Publico> {
             }
         }
     }
-    seen.into_iter().map(|nome| Publico { slug: slugify(&nome), nome }).collect()
+    seen.into_iter()
+        .map(|nome| Publico {
+            slug: slugify(&nome),
+            nome,
+        })
+        .collect()
 }
 
 /// Slug de arquivo a partir do nome do público (deacentua, minúsculo, não-alfanumérico → `-`).
@@ -330,8 +379,10 @@ fn eq_ci(a: &str, b: &str) -> bool {
 
 /// A lista de um JSON que pode ser um array no topo ou um objeto embrulhando um array.
 fn as_list(v: &Value) -> Option<&Vec<Value>> {
-    v.as_array()
-        .or_else(|| v.as_object().and_then(|m| m.values().find_map(Value::as_array)))
+    v.as_array().or_else(|| {
+        v.as_object()
+            .and_then(|m| m.values().find_map(Value::as_array))
+    })
 }
 
 /// HTML -> texto: tags viram espaço, entidades decodificadas (html5ever), clean. Faz o strip de tags
@@ -405,8 +456,16 @@ mod tests {
     #[test]
     fn derive_sefaz_uuid_exige_estadual() {
         // Ignora o ARSAL e a SEFAZ Municipal; pega a Estadual.
-        assert_eq!(derive_sefaz_uuid(ORGANS).unwrap(), "e1799779-d21d-411e-8387-03cbc106c6c1");
-        assert!(derive_sefaz_uuid("[]").unwrap_err().to_string().contains("não encontrada"));
+        assert_eq!(
+            derive_sefaz_uuid(ORGANS).unwrap(),
+            "e1799779-d21d-411e-8387-03cbc106c6c1"
+        );
+        assert!(
+            derive_sefaz_uuid("[]")
+                .unwrap_err()
+                .to_string()
+                .contains("não encontrada")
+        );
     }
 
     #[test]
@@ -415,8 +474,18 @@ mod tests {
         assert_eq!(parse_stubs(ok, "U").unwrap(), vec!["a", "b"]);
         // um stub fora do órgão -> bail (filtro falhou)
         let bad = r#"[{"id":"a","organ":"U"},{"id":"b","organ":"X"}]"#;
-        assert!(parse_stubs(bad, "U").unwrap_err().to_string().contains("incoerente"));
-        assert!(parse_stubs("[]", "U").unwrap_err().to_string().contains("vazia"));
+        assert!(
+            parse_stubs(bad, "U")
+                .unwrap_err()
+                .to_string()
+                .contains("incoerente")
+        );
+        assert!(
+            parse_stubs("[]", "U")
+                .unwrap_err()
+                .to_string()
+                .contains("vazia")
+        );
     }
 
     #[test]
@@ -424,19 +493,37 @@ mod tests {
         let d: Value = serde_json::from_str(DETALHE).unwrap();
         let s = build_servico(&d);
         assert_eq!(s.titulo, "Regularização Simples Nacional - SEFAZ");
-        assert!(s.link.starts_with("http://www.alagoasdigital.al.gov.br/servico/588fba6f/"));
+        assert!(
+            s.link
+                .starts_with("http://www.alagoasdigital.al.gov.br/servico/588fba6f/")
+        );
         // descrição rica, com entidades decodificadas e sem tags
         assert!(s.descricao.contains("Permite regularizar pendências."));
         assert!(s.descricao.contains("Prazo: Imediato"));
         assert!(s.descricao.contains("- Acessar o portal: Faça login."));
-        assert!(s.descricao.contains("Canais: WEB https://contribuinte.sefaz.al.gov.br; TELEFONE"));
-        assert!(s.descricao.contains("Requisitos: Contribuinte: login e senha"));
+        assert!(
+            s.descricao
+                .contains("Canais: WEB https://contribuinte.sefaz.al.gov.br; TELEFONE")
+        );
+        assert!(
+            s.descricao
+                .contains("Requisitos: Contribuinte: login e senha")
+        );
         assert!(s.descricao.contains("Informações adicionais: Lei nº 5900."));
         assert!(!s.descricao.contains('<') && !s.descricao.contains("&ccedil;"));
         // público de audiences (não de applicants.type), classe de categories, cartesiano
-        let pares: Vec<_> =
-            s.ocorrencias.iter().map(|o| (o.publico.as_str(), o.classe.as_str())).collect();
-        assert_eq!(pares, [("Empresa", "Economia e Finanças"), ("Cidadão", "Economia e Finanças")]);
+        let pares: Vec<_> = s
+            .ocorrencias
+            .iter()
+            .map(|o| (o.publico.as_str(), o.classe.as_str()))
+            .collect();
+        assert_eq!(
+            pares,
+            [
+                ("Empresa", "Economia e Finanças"),
+                ("Cidadão", "Economia e Finanças")
+            ]
+        );
     }
 
     #[test]
