@@ -7,9 +7,11 @@
 //! `tokio::task::spawn_blocking`. Phase 1 uses only the dense output, preserving the old
 //! `Vec<Vec<f32>>` contract.
 //!
-//! Embedding strategy (see the migration plan): we embed a short, high-signal *key* (the user
-//! question / FAQ `## pergunta` / service description), so `max_length` is sized to the key, not
-//! to a whole document.
+//! Embedding strategy: we embed a *key* — não o documento inteiro —, mas a key deixou de ser
+//! sempre curta: desde a TAREFA-FAQ-PR a das FAQs carrega a RESPOSTA junto (assunto + `P:` + `R:`).
+//! Por isso o `max_length` é o teto do próprio modelo ([`EMBED_MAX_TOKENS`]), e não um valor
+//! dimensionado à key: cortar por baixo dos panos é o que não pode acontecer. Quem estoura o teto é
+//! detectável por [`Embedder::conta_tokens`] — o `update` avisa, item a item.
 
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -22,6 +24,12 @@ use crate::error::{Error, Result};
 /// dimensionless and stores whatever width the embedder emits.
 pub const EMBED_DIM: usize = 1024;
 
+/// Teto de tokens do BGE-M3 — e o `max_length` com que o encoder é construído. Texto acima disto é
+/// truncado PELO TOKENIZER (o excedente não chega ao modelo): é o comportamento aceito, com aviso no
+/// `update`, não um erro. Era 512 até a TAREFA-FAQ-PR, quando a key das FAQs passou a incluir a
+/// resposta — com 512 a maioria das respostas seria cortada em silêncio.
+pub const EMBED_MAX_TOKENS: usize = 8192;
+
 pub struct Embedder {
     inner: Mutex<Bgem3Embedding>,
 }
@@ -31,7 +39,7 @@ impl Embedder {
     /// Face into `cache_dir`) the BGE-M3 INT8 ONNX model.
     pub fn new(cache_dir: PathBuf, threads: usize) -> Result<Self> {
         let opts = Bgem3InitOptions::new(Bgem3Model::BGEM3Q)
-            .with_max_length(512) // keys are short — size to the key, not the document
+            .with_max_length(EMBED_MAX_TOKENS) // o teto do modelo — ver a const
             .with_intra_threads(threads)
             .with_cache_dir(cache_dir);
         let model = Bgem3Embedding::try_new(opts)?; // anyhow::Error -> crate::Error via #[from]
@@ -57,6 +65,21 @@ impl Embedder {
         let mut model = self.inner.lock().map_err(|_| Error::from("embedder mutex poisoned"))?;
         let out = model.embed(&texts, Some(1))?;
         Ok(out.dense)
+    }
+
+    /// Quantos tokens deste texto o encoder REALMENTE consome — pelo tokenizer do próprio modelo,
+    /// já com a truncagem em [`EMBED_MAX_TOKENS`] aplicada. Por isso o resultado nunca passa do
+    /// teto, e **igual ao teto significa que o texto bateu nele** (o excedente foi descartado).
+    ///
+    /// É o que permite ao `update` avisar quais itens foram cortados sem estimar por chars — a
+    /// razão chars/token varia demais entre idiomas para servir de guarda.
+    pub fn conta_tokens(&self, texto: &str) -> Result<usize> {
+        let model = self.inner.lock().map_err(|_| Error::from("embedder mutex poisoned"))?;
+        let enc = model
+            .tokenizer
+            .encode(texto, true)
+            .map_err(|e| Error::from(format!("tokenizer: {e}")))?;
+        Ok(enc.len())
     }
 }
 
@@ -107,6 +130,21 @@ mod testes_ordem {
                  Se `embed_dense` deixar de usar batch_size=1, o padding volta a vazar."
             );
         }
+    }
+
+    /// O detector de truncamento: `conta_tokens` bate no teto exatamente quando o texto passa dele.
+    /// É o que sustenta o aviso do `update` — se um dia o `max_length` deixar de ser aplicado ao
+    /// tokenizer, o aviso viraria silêncio e este teste falha.
+    #[test]
+    #[ignore = "carrega o modelo BGE-M3 (lento); rode com --ignored"]
+    fn conta_tokens_bate_no_teto_so_quando_o_texto_estoura() {
+        let cache = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "../models".into());
+        let e = Embedder::new(cache.into(), 4).expect("embedder");
+        let curto = e.conta_tokens("Como emitir a guia de IPVA?").unwrap();
+        assert!(curto > 0 && curto < 32, "texto curto: {curto} tokens");
+        // Bem acima do teto: o excedente é descartado, então a contagem PARA no teto.
+        let gigante = "palavra ".repeat(EMBED_MAX_TOKENS);
+        assert_eq!(e.conta_tokens(&gigante).unwrap(), EMBED_MAX_TOKENS);
     }
 
     /// Guarda o outro lado do invariante: a mesma entrada, embedada duas vezes, dá o MESMO vetor

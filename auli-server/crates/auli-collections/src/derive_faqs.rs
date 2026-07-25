@@ -56,7 +56,11 @@ fn faq_from_raw(raw: &auli_contract::FaqRaw) -> auli_contract::Faq {
         resposta: raw.resposta.clone(),
         origin: raw.origin.clone(),
         url: raw.url.clone(),
-        text_to_embed: auli_contract::compose_faq_text_to_embed(&raw.origin, &raw.pergunta),
+        text_to_embed: auli_contract::compose_faq_text_to_embed(
+            &raw.origin,
+            &raw.pergunta,
+            &raw.resposta,
+        ),
     }
 }
 
@@ -95,11 +99,8 @@ mod tests {
             origin: origin.into(),
             url: "u".into(),
         };
-        assert_eq!(
-            faq_from_raw(&raw("Inicial | A")).text_to_embed,
-            "Inicial | A q1"
-        );
-        assert_eq!(faq_from_raw(&raw("")).text_to_embed, "q1");
+        assert_eq!(faq_from_raw(&raw("Inicial | A")).text_to_embed, "Inicial | A\nP: q1\nR: r1");
+        assert_eq!(faq_from_raw(&raw("")).text_to_embed, "P: q1\nR: r1");
     }
 
     #[test]

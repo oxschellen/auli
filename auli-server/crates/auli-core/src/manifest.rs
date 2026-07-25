@@ -22,27 +22,33 @@ pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 
 /// Bumped whenever what gets embedded changes (the scraper's `text_to_embed` formula / the contract
 /// `stored_repr`). A pack built under an old strategy is incompatible with a server running a new one
-/// even if the model matches. v2: source is the typed `auli-contract` (was: `portal-*.txt` parsing).
+/// even if the model matches — `validate_manifest` exige IGUALDADE, então qualquer divergência fecha
+/// a porta no boot.
+///
+/// **A numeração foi REINICIADA em jul/2026 (TAREFA-FAQ-PR): esta é a estratégia 1 da nova série.**
+/// O que mudou: a key das faqs passou a incluir a RESPOSTA (assunto + `P:` + `R:`, D-FAQPR-1), e o
+/// encoder subiu de `max_length` 512 para o teto do modelo (8192) — com 512 a resposta seria cortada
+/// em silêncio. Os dois efeitos mudam vetores, e o reset veio casado com rescrape completo: recomeço
+/// limpo de código e de dados juntos. **Pré-condição do reset (declarada e verificada): nenhum pack
+/// da série antiga carimbado `1` sobrevive em lugar nenhum** — um pack v1 ORIGINAL validaria em
+/// silêncio contra este `1` novo. Bumps futuros seguem daqui: 2, 3, …
 ///
 /// Regra da sinopse (F5): regenerar sinopses em massa (mudança de `SINOPSE_PROMPT_VERSION` ou do
 /// modelo da sinopse + re-geração) muda os textos embedados de `pareceres` ⇒ bump obrigatório aqui.
 /// Sinopses novas convivendo com antigas (append-only, sem re-geração) NÃO exigem bump — o embedder
 /// é o mesmo.
 ///
-/// v3 (G3): o pack de `pareceres` passou a guardar o payload LEVE (JSON sem corpo) no lugar do bloco
-/// pré-renderizado; um servidor G3 lendo pack v2 (bloco gordo) renderizaria lixo. O bump fecha essa
-/// porta no boot (`validate_manifest` exige igualdade) — packs pré-G3 são incompatíveis por construção.
+/// ### Nota histórica — a numeração aposentada (v1–v4)
 ///
-/// v4: correção do **vazamento de padding** no embedder. Até aqui o `update` embedava os documentos
-/// em lote e o fastembed fazia padding ao maior do lote, contaminando o vetor agrupado — o MESMO
-/// texto saía com cosseno ~0,98 conforme a companhia (ver `embed::testes_ordem`). A query nunca
-/// sofreu disso (o servidor embeda uma pergunta só), então documentos e perguntas viviam em regimes
-/// diferentes do mesmo modelo. Com `batch_size = 1` os documentos passam ao regime da query. Os
-/// vetores mudam ⇒ **todo pack anterior é incompatível** e precisa ser regerado.
-///
-/// (Bump aqui, e não em `EMBED_MODEL_ID`: o modelo e a quantização são os mesmos; o que mudou foi
-/// COMO ele é invocado. O efeito prático — re-ingestão obrigatória — é idêntico.)
-pub const STRATEGY_VERSION: u32 = 4;
+/// Continua sendo o registro canônico do que cada carimbo antigo significa, caso apareça um pack
+/// velho: **v2** — a fonte passou a ser o `auli-contract` tipado (era o parsing de `portal-*.txt`).
+/// **v3 (G3)** — o pack de `pareceres` passou a guardar o payload LEVE (JSON sem corpo) no lugar do
+/// bloco pré-renderizado; servidor G3 lendo pack v2 renderizaria lixo. **v4** — correção do
+/// vazamento de padding: o `update` embedava em lote e o fastembed fazia padding ao maior do lote,
+/// contaminando o vetor agrupado (o mesmo texto saía com cosseno ~0,98 conforme a companhia — ver
+/// `embed::testes_ordem`), enquanto a query, embedada sozinha, vivia noutro regime; `batch_size = 1`
+/// pôs os dois no mesmo. Nos três casos o efeito prático era o desta série: re-ingestão obrigatória.
+pub const STRATEGY_VERSION: u32 = 1;
 
 /// The triple that must match between the packs and the running server.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

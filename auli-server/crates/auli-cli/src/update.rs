@@ -25,7 +25,7 @@
 use std::path::{Path, PathBuf};
 
 use auli_contract::{Embeddable, Table};
-use auli_core::embed::{Embedder, EMBED_DIM};
+use auli_core::embed::{EMBED_DIM, EMBED_MAX_TOKENS, Embedder};
 use auli_core::manifest::{self, CollectionEntry, Manifest};
 use serde::de::DeserializeOwned;
 use vector_store::Writer;
@@ -52,6 +52,7 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     // `process` — faqs mudam no portal. Mesmo fallback de TRANSIÇÃO dos serviços.
     match preparar_faqs(&docs_dir)? {
         Some(faqs) => {
+            avisar_faqs_truncadas(&embedder, &faqs)?;
             println!("🔢 faqs: {} registros → vetorizando...", faqs.len());
             entries.push(ingest_items(&embedder, &writer, &entity, "faqs", &faqs, &out)?);
         }
@@ -121,6 +122,33 @@ pub fn run_update(entity: String, source: PathBuf, out: PathBuf, version: Option
     Ok(())
 }
 
+/// Avisa quais faqs batem no teto de tokens do encoder e portanto vão ao índice **truncadas**.
+///
+/// Aviso, não erro (D-FAQPR-5 revisada): o item ainda vetoriza, com o excedente descartado pelo
+/// tokenizer. O que não pode é isso acontecer em silêncio — daí a contagem pelo tokenizer REAL e o
+/// nome do `.md` de cada vítima, recomputado do par `(url, pergunta)` que dá o nome do arquivo.
+/// Amostra de até 5, no padrão dos outros relatórios do update.
+fn avisar_faqs_truncadas(embedder: &Embedder, faqs: &[auli_contract::Faq]) -> Result<()> {
+    let mut truncadas: Vec<String> = Vec::new();
+    for f in faqs {
+        if embedder.conta_tokens(&f.text_to_embed)? >= EMBED_MAX_TOKENS {
+            truncadas.push(format!(
+                "{}.md",
+                auli_contract::mddoc_faq::slug_faq(&f.pergunta, &f.url)
+            ));
+        }
+    }
+    if !truncadas.is_empty() {
+        let amostra = truncadas.iter().take(5).cloned().collect::<Vec<_>>().join(", ");
+        let reticencias = if truncadas.len() > 5 { ", …" } else { "" };
+        println!(
+            "⚠️  {} faq(s) acima de {EMBED_MAX_TOKENS} tokens — o excedente NÃO entra no vetor: {amostra}{reticencias}",
+            truncadas.len()
+        );
+    }
+    Ok(())
+}
+
 /// Lê a árvore `docs/faqs/*.md` — **a FONTE** (TAREFA-FAQS-MD) — e devolve as faqs prontas para
 /// vetorizar, ou `None` se a entidade não tem árvore (fallback de transição: o chamador cai no JSON
 /// legado com aviso).
@@ -147,7 +175,12 @@ fn preparar_faqs(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Faq>>> {
         let (header, corpo) = auli_contract::mddoc_faq::parse_doc_faq(&texto)
             .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
         faqs.push(auli_contract::Faq {
-            text_to_embed: auli_contract::compose_faq_text_to_embed(&header.origin, &header.pergunta),
+            // `&corpo` antes do move para `resposta`: a ordem dos campos no literal é a de avaliação.
+            text_to_embed: auli_contract::compose_faq_text_to_embed(
+                &header.origin,
+                &header.pergunta,
+                &corpo,
+            ),
             pergunta: header.pergunta,
             resposta: corpo,
             origin: header.origin,
@@ -484,10 +517,10 @@ mod tests {
         assert_eq!(f.origin, "Inicial | FAQ");
         assert_eq!(f.url, "https://x/Primeira");
         assert_eq!(f.resposta, "resposta de Primeira", "resposta == corpo do `.md`");
-        // `text_to_embed` recomposto pelo ponto único do contrato, nos dois ramos.
-        assert_eq!(f.text_to_embed, "Inicial | FAQ Primeira");
+        // `text_to_embed` recomposto pelo ponto único do contrato — com a RESPOSTA (D-FAQPR-1).
+        assert_eq!(f.text_to_embed, "Inicial | FAQ\nP: Primeira\nR: resposta de Primeira");
         assert_eq!(faqs[1].origin, "", "origin vazio sobrevive ao round-trip pela árvore");
-        assert_eq!(faqs[1].text_to_embed, "Segunda");
+        assert_eq!(faqs[1].text_to_embed, "P: Segunda\nR: resposta de Segunda");
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
     }
 

@@ -239,15 +239,35 @@ pub fn compose_servico_text_to_embed(
     format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim()).trim().to_string()
 }
 
-/// Key de embedding de uma FAQ: breadcrumb `origin` + a pergunta (só a pergunta
-/// quando não há breadcrumb) — a mesma key do antigo `EmbedStrategy::QuestionKey`.
+/// Key de embedding de uma FAQ (D-FAQPR-1): assunto (= breadcrumb `origin`) +
+/// `P:` pergunta + `R:` resposta, um por linha. **Linha de campo vazio é OMITIDA**
+/// — nunca linha em branco, placeholder ou `R:` pendurado. Os campos passam por
+/// [`mddoc::colapsa_linha`], então o texto final tem no máximo 3 linhas e é
+/// determinístico byte a byte (pré-condição de pack reproduzível).
+///
+/// A resposta entra porque ela carrega vocabulário que a pergunta não tem; o
+/// assunto no cabeçalho desambigua perguntas parecidas entre temas ("qual o
+/// prazo?" existe em vários). Na fórmula anterior a key era só breadcrumb +
+/// pergunta (`QuestionKey`) — cega para a resposta.
+///
 /// Vive no contrato porque os DOIS lados precisam dela: o produtor
 /// (`derive_faqs`) e o `auli update` ao rematerializar da árvore `docs/faqs/*.md`.
-///
-/// NOTA: existe decisão de evoluir para pergunta+resposta — é tarefa FUTURA
-/// separada (mudança de vetor isolada, atribuível só a ela). Não antecipar aqui.
-pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str) -> String {
-    if origin.is_empty() { pergunta.to_string() } else { format!("{} {}", origin, pergunta) }
+pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str, resposta: &str) -> String {
+    let assunto = mddoc::colapsa_linha(origin);
+    let pergunta = mddoc::colapsa_linha(pergunta);
+    let resposta = mddoc::colapsa_linha(resposta);
+    let mut out = String::with_capacity(assunto.len() + pergunta.len() + resposta.len() + 8);
+    if !assunto.is_empty() {
+        out.push_str(&assunto);
+        out.push('\n');
+    }
+    out.push_str("P: ");
+    out.push_str(&pergunta);
+    if !resposta.is_empty() {
+        out.push_str("\nR: ");
+        out.push_str(&resposta);
+    }
+    out
 }
 
 /// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
@@ -325,14 +345,35 @@ mod tests {
     }
 
     #[test]
-    fn compose_faq_congela_os_dois_ramos() {
-        // Literais esperados, não recomputados: a fórmula é a do `faq_from_raw`
-        // histórico, byte a byte — mudá-la exige re-vetorizar os packs de faqs.
+    fn compose_faq_congela_o_template() {
+        // Literais esperados, não recomputados: mudar o template exige re-vetorizar
+        // os packs de faqs, então a mudança tem que doer aqui primeiro.
+        // (a) item completo: assunto, P: e R:, nesta ordem.
         assert_eq!(
-            compose_faq_text_to_embed("Inicial | Perguntas Frequentes", "Como emitir a guia?"),
-            "Inicial | Perguntas Frequentes Como emitir a guia?"
+            compose_faq_text_to_embed("Inicial | IPVA", "Como emitir a guia?", "Acesse o portal."),
+            "Inicial | IPVA\nP: Como emitir a guia?\nR: Acesse o portal."
         );
-        assert_eq!(compose_faq_text_to_embed("", "Como emitir a guia?"), "Como emitir a guia?");
+        // (b) sem assunto: a linha some — nada de linha em branco no topo.
+        assert_eq!(
+            compose_faq_text_to_embed("", "Como emitir a guia?", "Acesse o portal."),
+            "P: Como emitir a guia?\nR: Acesse o portal."
+        );
+        // (c) sem resposta (corpo vazio é estado legal da árvore): nada de `R:` pendurado.
+        assert_eq!(
+            compose_faq_text_to_embed("Inicial | IPVA", "Como emitir a guia?", ""),
+            "Inicial | IPVA\nP: Como emitir a guia?"
+        );
+        // (d) campos sujos: quebras e espaços múltiplos colapsam — o texto final tem 3 linhas.
+        let key = compose_faq_text_to_embed(
+            " Inicial |  IPVA ",
+            "Como   emitir\na guia?",
+            "Acesse o portal.\n\nDepois clique  em Emitir.\n",
+        );
+        assert_eq!(
+            key,
+            "Inicial | IPVA\nP: Como emitir a guia?\nR: Acesse o portal. Depois clique em Emitir."
+        );
+        assert_eq!(key.lines().count(), 3);
     }
 
     #[test]
