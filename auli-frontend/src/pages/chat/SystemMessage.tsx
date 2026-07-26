@@ -10,6 +10,13 @@ interface SystemMessageProps {
   showButton: boolean;
 }
 
+/** Aviso exibido no rodapé de toda resposta gerada (não aparece na saudação,
+ *  que chega com showButton=false). Texto validado com o NAVI — manter uma frase só. */
+const DISCLAIMER =
+  "A Auli é um protótipo experimental de inteligência artificial. As respostas são geradas " +
+  "automaticamente, podem variar e conter imprecisões, e têm caráter apenas informativo — " +
+  "confira sempre as fontes e os links indicados.";
+
 export const SystemMessage = ({ messageText, showButton }: SystemMessageProps) => {
   return (
     <Flex px={3} py={2} w="100%">
@@ -35,6 +42,19 @@ export const SystemMessage = ({ messageText, showButton }: SystemMessageProps) =
             {messageText}
           </ReactMarkdown>
         </Box>
+
+        {showButton && (
+          <Box
+            mt={2}
+            pt={2}
+            borderTop="1px solid var(--chakra-colors-border)"
+            fontSize="11px"
+            lineHeight="1.4"
+            color="fg.muted"
+          >
+            {DISCLAIMER}
+          </Box>
+        )}
 
         {showButton && (
           <Flex justify="flex-end" mt={0}>
