@@ -671,6 +671,40 @@ afeta todo mundo, por isso não foi feita agora).
 
 ---
 
+## 29. Página **Sobre**: duas afirmações falsas (aberta — 2026-07-26)
+
+O commit `509a021` atualizou [about.md](auli-frontend/public/about.md) e removeu duas alegações
+mortas da lista de tecnologias — **ChromaDB** e **Ollama**, aposentados quando a busca passou a ser o
+crate `vector-store` embutido e os embeddings o BGE-M3 via fastembed, ambos in-process. Sobraram
+outras duas, da mesma família. É **página pública**, então a redação é do mantenedor; ficam
+registradas, não corrigidas por conta própria.
+
+**1. "Autenticação JWT (RS256)" — não existe.** `grep -rl "jsonwebtoken\|RS256"` no workspace
+inteiro (`.rs`, `.toml`, `.ts`, `.tsx`) devolve **zero**. O que protege o servidor hoje é rate
+limiting — o próprio (`api/ratelimit.rs`) mais o do Cloudflare —, e o item **D-MCP-9** desta mesma
+página já registra "hoje sem autenticação: é conteúdo público e somente-leitura". Herança de uma
+arquitetura anterior, igual ao ChromaDB.
+
+**2. A seção Privacidade promete mais do que o sistema entrega.** Ela afirma que o sistema registra
+"apenas a pergunta e a resposta gerada — sem ... coleta de dados pessoais". Isso conflita com a
+doutrina do log fechada em 2026-07-25 (§7.0 do `auli_operations.md`): o log de auditoria é
+**deliberadamente íntegro** e guarda a pergunta crua e a resposta restaurada. Na auditoria dos 118
+arquivos, **3 tinham PII do usuário** na pergunta e 1 na resposta. Se a pessoa digita o CNPJ, ele vai
+para o disco.
+
+Esta segunda **já estava mapeada** em [auli-anon_pendencias.md](auli-anon_pendencias.md) ("Aba
+'Sobre' (frontend). Não prometer 'dados 100% anônimos'"), com a redação sugerida — que é verdadeira
+e continua favorável, porque descreve a fronteira que o `auli-anon` de fato protege:
+
+> identificadores estruturados (CPF, CNPJ, telefone, e-mail, …) são mascarados automaticamente antes
+> de sair do processo
+
+O disclaimer de IA que o mesmo commit acrescentou (rodapé do chat + seção "Aviso importante") cobre
+**variação e imprecisão da resposta**, que é outro eixo — não substitui nenhuma das duas correções
+acima.
+
+---
+
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) está no ar com três ferramentas e
