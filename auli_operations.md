@@ -766,8 +766,25 @@ scripts/deploy-frontend.sh --dry-run     # roda a parte local inteira; imprime o
 scripts/deploy-frontend.sh               # publica
 ```
 
-Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SMOKE_BASE`); os
-padrões apontam para o VPS de produção. Ver o cabeçalho do script.
+Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SMOKE_HOST`,
+`SMOKE_ORIGIN`, `SMOKE_BASE`); os padrões apontam para o VPS de produção. Ver o cabeçalho do script.
+
+**O smoke test mede a ORIGEM, não a borda.** Ele conecta direto no IP da VPS (`SMOKE_ORIGIN`,
+derivado do `DEPLOY_HOST`) mandando o SNI de `SMOKE_HOST` (`auli.com.br`), via `curl --resolve`. Os
+dois motivos:
+
+- **`auli.com.br` está atrás de Cloudflare** (resolve para `2606:4700:…`, não para o IP da VPS).
+  Verificar pelo domínio mediria o cache do CDN junto com o servidor — logo depois de um deploy isso
+  mente nas duas direções: pode aprovar o que não subiu, ou reprovar o que subiu.
+- **O certificado do servidor cobre só `auli.com.br`.** Bater no hostname da VPS por HTTPS falha com
+  `curl (60) no alternative certificate subject name matches`. Era o que o `SMOKE_INSECURE=1`
+  contornava, ao custo de deixar o gate cego para qualquer problema de TLS. Com o `--resolve`, dá
+  para ter conexão direta E cadeia validada.
+
+`SMOKE_INSECURE=1` continua como escape (cert expirado/ausente) e **mantém** o fixamento na origem —
+ele só desliga a verificação. Se `SMOKE_ORIGIN` não resolver, o script avisa e cai no DNS público em
+vez de abortar: o `getent` tem `|| true` justamente porque, com `pipefail`, uma falha ali mataria o
+script **depois do upload e antes do rollback automático**.
 
 ### 11.1 A guarda de entidade vazia
 

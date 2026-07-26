@@ -17,15 +17,26 @@
 #   DEPLOY_HOST   destino ssh/scp           (padrão: root@novoauli.vps-kinghost.net)
 #   DEPLOY_PORT   porta ssh                 (padrão: 22)
 #   WEBROOT       raiz servida pelo Apache  (padrão: /var/www/html)
-#   SMOKE_BASE    URL base do smoke test    (padrão: https://novoauli.vps-kinghost.net)
-#   SMOKE_INSECURE=0  exige certificado válido no smoke test (padrão: 1, ignora)
+#   SMOKE_HOST    nome que o certificado cobre  (padrão: auli.com.br)
+#   SMOKE_ORIGIN  onde o smoke CONECTA          (padrão: o host de DEPLOY_HOST)
+#   SMOKE_BASE    URL base do smoke test        (padrão: https://$SMOKE_HOST)
+#   SMOKE_INSECURE=1  ignora o certificado no smoke (padrão: 0)
+#
+# O smoke conecta DIRETO na origem (`SMOKE_ORIGIN`, a VPS) e manda o SNI de `SMOKE_HOST` — via
+# `curl --resolve`. Assim ele valida a cadeia TLS de verdade E continua testando o servidor, não a
+# borda: o domínio público está atrás de Cloudflare, e verificar por ele mediria o cache do CDN
+# junto — logo depois de um deploy isso mente nas duas direções. O certificado do servidor cobre
+# só `auli.com.br`, então bater no hostname da VPS por HTTPS falharia no nome (era o que o
+# `SMOKE_INSECURE=1` contornava, ao custo de deixar o gate cego para problema de certificado).
 set -euo pipefail
 
 DEPLOY_HOST="${DEPLOY_HOST:-root@novoauli.vps-kinghost.net}"
 DEPLOY_PORT="${DEPLOY_PORT:-22}"
 WEBROOT="${WEBROOT:-/var/www/html}"
-SMOKE_BASE="${SMOKE_BASE:-https://novoauli.vps-kinghost.net}"
-SMOKE_INSECURE="${SMOKE_INSECURE:-1}"
+SMOKE_HOST="${SMOKE_HOST:-auli.com.br}"
+SMOKE_ORIGIN="${SMOKE_ORIGIN:-${DEPLOY_HOST#*@}}"
+SMOKE_BASE="${SMOKE_BASE:-https://$SMOKE_HOST}"
+SMOKE_INSECURE="${SMOKE_INSECURE:-0}"
 
 STAGING="$WEBROOT.novo"
 ANTIGO="$WEBROOT.antigo"
@@ -127,7 +138,26 @@ if [ "$DRY_RUN" = 1 ]; then
 fi
 
 CURL=(curl -sS --max-time 30)
-[ "$SMOKE_INSECURE" = 1 ] && CURL+=(-k)
+
+# Fixar na origem e verificar o certificado são ORTOGONAIS: o `--resolve` decide QUEM responde, o
+# `-k` decide se a cadeia é conferida. Por isso o fixamento vale sempre — inclusive com
+# SMOKE_INSECURE=1, que existe para o cert quebrado e não deveria, de tabela, mandar o smoke medir
+# o CDN.
+# O `|| true` é obrigatório: com `set -o pipefail`, um `getent` que não resolve faz o pipeline sair
+# não-zero e o `set -e` abortaria o script AQUI — depois do upload e antes do rollback automático.
+smoke_ip="$(getent ahostsv4 "$SMOKE_ORIGIN" 2>/dev/null | awk 'NR==1{print $1}' || true)"
+if [ -n "$smoke_ip" ]; then
+  CURL+=(--resolve "$SMOKE_HOST:443:$smoke_ip")
+  echo "   🔗 smoke na origem $SMOKE_ORIGIN ($smoke_ip) com o SNI de $SMOKE_HOST."
+else
+  echo "   ⚠️  não resolvi '$SMOKE_ORIGIN' — o smoke vai pelo DNS público de $SMOKE_HOST"
+  echo "      (pode medir o cache do CDN em vez do servidor)."
+fi
+
+if [ "$SMOKE_INSECURE" = 1 ]; then
+  CURL+=(-k)
+  echo "   ⚠️  SMOKE_INSECURE=1: certificado NÃO verificado (o gate fica cego para problema de TLS)."
+fi
 
 falhas=0
 verificar() { # <caminho> <content-type esperado (substring)>
