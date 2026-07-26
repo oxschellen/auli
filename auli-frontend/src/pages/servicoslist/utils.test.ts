@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { filterServicoGroups, type Servico, type ServicoGroup } from "./utils";
+import {
+  empresaPrimeiro,
+  filterServicoGroups,
+  getDefaultTipoServicos,
+  type Servico,
+  type ServicoGroup,
+  type TipoServico,
+} from "./utils";
 
 function svc(id: number, classe: string, titulo: string): Servico {
   return { id, classe, titulo, link: `http://x/${id}` };
@@ -50,5 +57,82 @@ describe("filterServicoGroups", () => {
 
   it("termo ausente derruba tudo", () => {
     expect(filterServicoGroups(grouped, "credito inexistente")).toEqual([]);
+  });
+});
+
+/** Abas a partir dos rótulos; o `filename` não participa da ordenação, só acompanha. */
+function abas(...tipos: string[]): TipoServico[] {
+  return tipos.map((tipo) => ({ tipo, filename: `f-${tipo}` }));
+}
+
+const rotulos = (t: TipoServico[]) => t.map((x) => x.tipo);
+
+describe("empresaPrimeiro", () => {
+  it("traz Empresa para a frente preservando a ordem das demais", () => {
+    // O índice real do `sp`.
+    const r = empresaPrimeiro(abas("Cidadão", "Empresa", "Servidor Público", "Tributos"));
+    expect(rotulos(r)).toEqual(["Empresa", "Cidadão", "Servidor Público", "Tributos"]);
+  });
+
+  it("preserva a cauda longa intacta — o caso do `pr`, com 7 abas", () => {
+    const r = empresaPrimeiro(
+      abas("Cidadão", "Empresa", "Município", "Produtor rural", "Receita/PR", "Programas", "Legislação"),
+    );
+    expect(rotulos(r)).toEqual([
+      "Empresa",
+      "Cidadão",
+      "Município",
+      "Produtor rural",
+      "Receita/PR",
+      "Programas",
+      "Legislação",
+    ]);
+  });
+
+  it("reconhece o plural `Empresas` — mg / pe / rs", () => {
+    const r = empresaPrimeiro(abas("Cidadãos", "Empresas", "Fornecedores", "Agentes", "Servidores"));
+    expect(rotulos(r)).toEqual(["Empresas", "Cidadãos", "Fornecedores", "Agentes", "Servidores"]);
+  });
+
+  it("reconhece `Pessoa Jurídica` — o rótulo do `am` para a mesma audiência", () => {
+    const r = empresaPrimeiro(abas("Pessoa Física", "Pessoa Jurídica", "Órgãos Públicos"));
+    expect(rotulos(r)).toEqual(["Pessoa Jurídica", "Pessoa Física", "Órgãos Públicos"]);
+  });
+
+  it("é idempotente e no-op quando já começa com empresa — al / ma", () => {
+    const entrada = abas("Empresa", "Cidadão", "Órgão Público", "Certidões");
+    const uma = empresaPrimeiro(entrada);
+    expect(rotulos(uma)).toEqual(rotulos(entrada));
+    expect(rotulos(empresaPrimeiro(uma))).toEqual(rotulos(entrada));
+  });
+
+  it("não altera entidade sem aba de empresa — os 10 de público único", () => {
+    expect(rotulos(empresaPrimeiro(abas("Serviços")))).toEqual(["Serviços"]);
+    expect(rotulos(empresaPrimeiro(abas("Cidadão", "Contabilista", "Poder Público")))).toEqual([
+      "Cidadão",
+      "Contabilista",
+      "Poder Público",
+    ]);
+  });
+
+  it("não casa por substring — 'Apoio Empresarial' não é a aba de empresa", () => {
+    // A lista é de rótulos EXATOS: um /empresa/i pegaria isto por acidente.
+    expect(rotulos(empresaPrimeiro(abas("Cidadão", "Apoio Empresarial")))).toEqual([
+      "Cidadão",
+      "Apoio Empresarial",
+    ]);
+  });
+
+  it("aguenta array vazio e não muta a entrada", () => {
+    expect(empresaPrimeiro([])).toEqual([]);
+    const entrada = abas("Cidadão", "Empresa");
+    const copia = rotulos(entrada);
+    empresaPrimeiro(entrada);
+    expect(rotulos(entrada)).toEqual(copia);
+  });
+
+  it("o fallback sem índice também abre em Empresas", () => {
+    // getDefaultTipoServicos mantém a ordem do DADO (Cidadãos first); quem exibe passa por aqui.
+    expect(rotulos(empresaPrimeiro(getDefaultTipoServicos()))[0]).toBe("Empresas");
   });
 });

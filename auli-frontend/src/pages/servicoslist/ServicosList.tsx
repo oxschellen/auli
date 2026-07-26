@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { AccordionItem } from "./ServicosAccordion";
 import {
   getDefaultTipoServicos,
+  empresaPrimeiro,
   filterServicoGroups,
   type Servico,
   type TipoServico,
@@ -28,8 +29,11 @@ export function ServicosList() {
     jsonFetcher<TipoServico[]>,
     SWR_OPTS
   );
-  const tipoServicos =
-    tipoIndex && tipoIndex.length > 0 ? tipoIndex : getDefaultTipoServicos();
+  // `empresaPrimeiro` reordena SÓ para exibição: a aba de empresa vai para a frente (e, por
+  // consequência do `[0]` abaixo, vira a aba inicial). O JSON em disco e a ordem do dado não mudam.
+  const tipoServicos = empresaPrimeiro(
+    tipoIndex && tipoIndex.length > 0 ? tipoIndex : getDefaultTipoServicos(),
+  );
 
   const [active, setActive] = useState("");
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
