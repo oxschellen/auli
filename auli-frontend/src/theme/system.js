@@ -69,6 +69,12 @@ const config = defineConfig({
           // text inside a <mark>: the browser default forces near-black, unreadable over a dark
           // surface. Flat 2-level leaf for the same reason as `inverted` above.
           highlight: { value: { base: "{colors.ink}", _dark: "#ffffff" } },
+          // Rótulo de controle INERTE (aba de coleção que a entidade não tem). Precisa ser um
+          // degrau visível abaixo de `muted`, que já é a cor da aba não-selecionada mas clicável —
+          // sem isso, "inativa" e "apenas não-escolhida" ficam indistinguíveis. Contraste baixo de
+          // propósito (~2,5:1 sobre `bg.subtle`): a WCAG 1.4.3 dispensa componentes inativos, e a
+          // dica de que o botão não responde é justamente o apagamento. Irmão de `bg.mapInactive`.
+          disabled: { value: { base: "{colors.neutral.400}", _dark: "#7d7d82" } },
         },
         border: {
           DEFAULT: { value: { base: "{colors.neutral.200}", _dark: "#2a2a2c" } },

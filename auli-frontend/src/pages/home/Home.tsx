@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import type { KeyboardEvent } from "react";
+import { useMemo, useRef, useState } from "react";
+import type { ComponentType, KeyboardEvent } from "react";
 import { Flex, Box, chakra } from "@chakra-ui/react";
 import { Chat } from "../chat/Chat";
 import { ServicosList } from "../servicoslist/ServicosList";
@@ -8,18 +8,59 @@ import { PareceresList } from "../parecereslist/PareceresList";
 import { NotasList } from "../notaslist/NotasList";
 import { ConteudosList } from "../conteudoslist/ConteudosList";
 import { About } from "../about/About";
+import { useSelectedEntity } from "../../shared/EntityContext";
+import { hasCollection } from "../../shared/entities";
+import type { Collection } from "../../shared/entities";
 
-const menuItems = [
-  { id: "chat", label: "Chat", Component: Chat },
-  { id: "servicos", label: "Serviços", Component: ServicosList },
-  { id: "faqs", label: "FAQs", Component: FaqsList },
-  { id: "pareceres", label: "Pareceres", Component: PareceresList },
-  { id: "notas", label: "Notas", Component: NotasList },
-  { id: "conteudos", label: "Conteúdos", Component: ConteudosList },
-  { id: "about", label: "Sobre", Component: About },
+/** As sete abas, na ordem da barra. `collection: null` = sempre disponível (`chat` fala com o RAG
+ *  da entidade, `about` é estático); as demais dependem de a entidade ter a coleção. */
+const TABS: { id: string; label: string; Component: ComponentType; collection: Collection | null }[] = [
+  { id: "chat", label: "Chat", Component: Chat, collection: null },
+  { id: "servicos", label: "Serviços", Component: ServicosList, collection: "servicos" },
+  { id: "faqs", label: "FAQs", Component: FaqsList, collection: "faqs" },
+  { id: "pareceres", label: "Pareceres", Component: PareceresList, collection: "pareceres" },
+  { id: "notas", label: "Notas", Component: NotasList, collection: "notas" },
+  { id: "conteudos", label: "Conteúdos", Component: ConteudosList, collection: "conteudos" },
+  { id: "about", label: "Sobre", Component: About, collection: null },
 ];
 
+/**
+ * Próxima aba HABILITADA a partir de `fromId`, andando `delta` (+1/−1) e dando a volta nas pontas.
+ * Devolve `undefined` só se nenhuma estiver habilitada — impossível na prática, porque `chat` e
+ * `about` nunca são desativados, mas é o que torna a função total e o laço garantidamente finito.
+ *
+ * Pura e exportada por causa do envolvimento de índice: `(((i + delta*passo) % n) + n) % n` é onde
+ * mora o off-by-one, e delta negativo em `%` do JS devolve resto negativo.
+ */
+export function proximaHabilitada<T extends { id: string; disabled: boolean }>(
+  itens: T[],
+  fromId: string,
+  delta: 1 | -1,
+): T | undefined {
+  const n = itens.length;
+  const i = itens.findIndex((t) => t.id === fromId);
+  if (i < 0) return undefined;
+  for (let passo = 1; passo <= n; passo++) {
+    const candidata = itens[(((i + delta * passo) % n) + n) % n];
+    if (!candidata.disabled) return candidata;
+  }
+  return undefined;
+}
+
 export const Home = () => {
+  const entity = useSelectedEntity();
+  // Todas as abas continuam VISÍVEIS — a que a entidade não tem fica inerte, não desaparece: some
+  // com a aba e o usuário não sabe que a seção existe; apagada, ele vê que existe e não vale aqui.
+  // 23 das 27 entidades declaram só `servicos`, então isso desativa 4 das 7 na maioria dos estados.
+  const menuItems = useMemo(
+    () =>
+      TABS.map((t) => ({
+        ...t,
+        disabled: t.collection !== null && !hasCollection(entity, t.collection),
+      })),
+    [entity],
+  );
+
   const [selectedId, setSelectedId] = useState("chat");
   // Mount a tab's content only once it's first activated, then keep it mounted
   // so its state (scroll, search, chat history) survives tab switches. This
@@ -33,15 +74,17 @@ export const Home = () => {
   };
 
   // Arrow-key navigation across the tablist (WAI-ARIA tabs pattern): move focus
-  // and activate the neighbouring tab, wrapping at the ends.
+  // and activate the neighbouring tab, wrapping at the ends. Abas inativas são
+  // SALTADAS — a seta anda até a próxima habilitada. A varredura termina sempre:
+  // `chat` e `about` nunca são desativados, então há no mínimo dois destinos.
   const onTabKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     const delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
     if (!delta) return;
     e.preventDefault();
-    const i = menuItems.findIndex((m) => m.id === selectedId);
-    const next = menuItems[(i + delta + menuItems.length) % menuItems.length];
-    selectTab(next.id);
-    tabRefs.current[next.id]?.focus();
+    const proxima = proximaHabilitada(menuItems, selectedId, delta);
+    if (!proxima) return;
+    selectTab(proxima.id);
+    tabRefs.current[proxima.id]?.focus();
   };
 
   return (
@@ -60,16 +103,21 @@ export const Home = () => {
                 id={`tab-${item.id}`}
                 aria-selected={isActive}
                 aria-controls={`tabpanel-${item.id}`}
+                // `aria-disabled`, não o atributo `disabled`: o segundo tira o botão da árvore de
+                // acessibilidade, e aí o leitor de tela não anuncia que a seção existe — que é
+                // exatamente o que queremos comunicar. Com `aria-disabled` ele é anunciado como
+                // indisponível. (Padrão WAI-ARIA para tabs.)
+                aria-disabled={item.disabled || undefined}
                 // Roving tabindex: only the active tab is in the tab order; the
                 // rest are reached via the arrow keys.
                 tabIndex={isActive ? 0 : -1}
-                onClick={() => selectTab(item.id)}
+                onClick={item.disabled ? undefined : () => selectTab(item.id)}
                 onKeyDown={onTabKeyDown}
                 flex="1 1 0"
                 maxW="100px"
                 minW={0}
                 px="2px"
-                cursor="pointer"
+                cursor={item.disabled ? "not-allowed" : "pointer"}
                 textAlign="center"
                 overflow="hidden"
                 textOverflow="ellipsis"
@@ -77,7 +125,7 @@ export const Home = () => {
                 fontSize="clamp(0.75rem, 2.64vw, 0.92rem)"
                 fontFamily="body"
                 fontWeight={isActive ? "700" : "500"}
-                color={isActive ? "accent" : "fg.muted"}
+                color={item.disabled ? "fg.disabled" : isActive ? "accent" : "fg.muted"}
                 pt={isActive ? "5px" : "6px"}
                 pb="5px"
                 bg={isActive ? "bg.canvas" : "bg.subtle"}
