@@ -1,8 +1,9 @@
-//! The `auli` binary — a thin clap dispatcher over two modes, `server` and `update`.
+//! The `auli` binary — a thin clap dispatcher over three modes, `server`, `update` and `bundle`.
 //!
 //! Subcommands (not flags) so each mode has its own exclusive options:
 //!   auli server  --port <p> [--bind <addr>] [--packs-dir <dir>]   (--packs-dir defaults to $AULI_DATA_DIR or ./data)
 //!   auli update  --entity <id> --source <dir_com_contrato_json> --out <dir> [--version <v>]
+//!   auli bundle  [--data-root <dir>] [--out <dir>]
 
 use std::path::PathBuf;
 
@@ -44,6 +45,15 @@ enum Command {
         #[arg(long)]
         version: Option<String>,
     },
+    /// Empacota as árvores `.md` de cada estado num `<id>.zip` + `downloads.json`, para download.
+    Bundle {
+        /// Raiz do `data/` (onde ficam o `registry.toml` e os `<id>/docs/`).
+        #[arg(long, default_value = "data")]
+        data_root: PathBuf,
+        /// Destino dos zips. O default é servido pelo frontend e sobe no deploy dele.
+        #[arg(long, default_value = "auli-frontend/public/downloads")]
+        out: PathBuf,
+    },
 }
 
 #[tokio::main]
@@ -66,6 +76,12 @@ async fn main() {
             // Synchronous, CPU-bound work — runs to completion on the async entrypoint thread.
             if let Err(e) = auli_cli::run_update(entity, source, out, version) {
                 eprintln!("Erro no update: {e}");
+                std::process::exit(1);
+            }
+        }
+        Command::Bundle { data_root, out } => {
+            if let Err(e) = auli_cli::run_bundle(data_root, out) {
+                eprintln!("Erro no bundle: {e}");
                 std::process::exit(1);
             }
         }

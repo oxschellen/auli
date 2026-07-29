@@ -54,6 +54,8 @@ governor = "0.10.4"
 # `server-side-http`) é o que permite o `nest_service`.
 rmcp = { version = "2.2", features = ["server", "macros", "transport-streamable-http-server", "schemars"] }
 schemars = "1.0"
+zip = { version = "8.6", default-features = false, features = ["deflate"] }
+sha2 = "0.10.9"
 
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }

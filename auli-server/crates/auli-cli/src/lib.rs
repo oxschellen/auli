@@ -12,6 +12,7 @@ use axum::Router;
 use tokio::net::TcpListener;
 
 pub mod api;
+pub mod bundle;
 pub mod config;
 pub mod entities;
 pub mod error;
@@ -29,6 +30,7 @@ use crate::api::{
 use crate::config::config;
 use crate::state::AppState;
 
+pub use bundle::run_bundle;
 pub use update::run_update;
 
 /// Assemble the full application router. Kept separate from `run_server` so tests can build the
