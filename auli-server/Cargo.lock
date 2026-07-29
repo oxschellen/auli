@@ -260,6 +260,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "auli-instruct"
+version = "0.1.0"
+
+[[package]]
 name = "auli-llm"
 version = "0.1.0"
 dependencies = [
