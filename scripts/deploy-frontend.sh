@@ -64,11 +64,26 @@ remoto() {
   fi
 }
 
-echo "▶ 1/6  public/ a partir de data/"
+echo "▶ 1/7  public/ a partir de data/"
 scripts/build-frontend-public.sh
 
 echo
-echo "▶ 2/6  guarda: toda entidade do registry precisa de public/<id>/ com arquivos"
+echo "▶ 2/7  zips de download por estado (public/downloads/)"
+# Aqui, e não no build-frontend-public.sh: aquele é rodado sozinho com frequência e não deve
+# arrastar ~70 MB de zip junto. Tem de vir ANTES do build, porque o Vite copia public/ para dist/ —
+# é assim que os zips sobem, sem caminho de publicação próprio. O bundle é determinístico: quando o
+# conteúdo não muda, ele nem reescreve os arquivos.
+BUNDLE_BIN="${AULI_BIN:-$ROOT/auli-server/target/release/auli}"
+if [ -x "$BUNDLE_BIN" ]; then
+  "$BUNDLE_BIN" bundle --data-root "$ROOT/data" --out "$FRONT/public/downloads"
+else
+  echo "⚠️  $BUNDLE_BIN não encontrado — os zips NÃO foram regerados."
+  echo "   Compile (cargo build --release -p auli-cli) e rode de novo, ou publique ciente de que"
+  echo "   public/downloads/ vai com o conteúdo da última geração (ou vazio, na primeira vez)."
+fi
+
+echo
+echo "▶ 3/7  guarda: toda entidade do registry precisa de public/<id>/ com arquivos"
 # O furo que deixou Roraima quebrada em produção: `rm -rf` + `mkdir` por entidade cria o diretório
 # mesmo sem fonte, e o `(0 arquivos)` no log passa despercebido. Aqui isso para o deploy.
 vazias=()
@@ -98,7 +113,7 @@ fi
 echo "✅ guarda ok"
 
 echo
-echo "▶ 3/6  build do app"
+echo "▶ 4/7  build do app"
 (cd "$FRONT" && npm run build)
 
 # Sanidade do que vai subir: sem isso, um build parcial substituiria o site inteiro.
@@ -107,7 +122,7 @@ echo "▶ 3/6  build do app"
 echo "✅ dist/ ok ($(du -sh "$FRONT/dist" | cut -f1))"
 
 echo
-echo "▶ 4/6  upload para o staging ($STAGING)"
+echo "▶ 5/7  upload para o staging ($STAGING)"
 remoto "rm -rf '$STAGING' && mkdir -p '$STAGING'"
 if [ "$DRY_RUN" = 1 ]; then
   echo "   [dry-run] scp: dist/* -> $DEPLOY_HOST:$STAGING/"
@@ -124,12 +139,12 @@ echo "   preservando dotfiles do webroot atual (ex.: .htaccess)"
 remoto "find '$WEBROOT' -maxdepth 1 -name '.*' ! -name '.' ! -name '..' -exec cp -a {} '$STAGING'/ \; 2>/dev/null || true"
 
 echo
-echo "▶ 5/6  troca atômica"
+echo "▶ 6/7  troca atômica"
 remoto "rm -rf '$ANTIGO' && mv '$WEBROOT' '$ANTIGO' && mv '$STAGING' '$WEBROOT'"
 echo "✅ publicado (versão anterior preservada em $ANTIGO)"
 
 echo
-echo "▶ 6/6  smoke test"
+echo "▶ 7/7  smoke test"
 if [ "$DRY_RUN" = 1 ]; then
   echo "   [dry-run] pulado"
   echo
