@@ -38,20 +38,26 @@ else
   echo "ℹ️  --keep-cache: mantendo o cache (scrape cache-first, rede só no miss)"
 fi
 
-# 2. Re-scrape das faqs → grava data/rs/raw/rs-faqs.json (o contrato tipado).
+# 2. Re-scrape das faqs → grava data/rs/rs-faqs-snapshot.json (o snapshot da coleta).
 echo "🕸️  scrapeando faqs do RS…"
 ( cd "$SERVER" && cargo run --release -p auli-scraper-rs -- faqs )
 
-# 3. Binários release que o build-packs.sh exige (auli + auli-collections).
+# 3. Binários release que os passos seguintes exigem (auli + auli-collections).
 echo "🔧 compilando binários release…"
 ( cd "$SERVER" && cargo build --release -p auli-cli -p auli-collections )
 
-# 4. Re-vetoriza os packs a partir do raw recém-scrapeado (muda o docs_hash;
+# 4. Deriva os artefatos do snapshot — inclusive a árvore `docs/faqs/*.md`, que é a FONTE que o
+#    `auli update` lê (TAREFA-FAQS-MD). Sem este passo o build-packs re-vetorizaria a árvore ANTIGA
+#    e o scrape novo não chegaria ao índice. O process resolve `data/` pelo CWD, daí o subshell.
+echo "🌳 derivando artefatos do snapshot (árvore docs/faqs)…"
+( cd "$SERVER" && ./target/release/auli-collections rs )
+
+# 5. Re-vetoriza os packs a partir da árvore recém-derivada (muda o docs_hash;
 #    o boot do servidor recusa subir até os packs baterem — daí ser obrigatório).
 echo "📦 re-vetorizando os packs do RS…"
 "$ROOT/scripts/build-packs.sh" rs
 
-# 5. Sobe o servidor (recompila + serve na 3000).
+# 6. Sobe o servidor (recompila + serve na 3000).
 if [ "$SERVE" -eq 1 ]; then
   echo "🚀 subindo o servidor…"
   ( cd "$ROOT" && ./start_server.sh )
