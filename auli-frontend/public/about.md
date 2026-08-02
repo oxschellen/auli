@@ -28,6 +28,16 @@ Busca inteligente: São recuperados os documentos mais relevantes da base de con
 
 Resposta contextualizada: Os documentos recuperados são enviados como contexto para um modelo de linguagem, que gera uma resposta clara, precisa e alinhada às informações oficiais — sempre com os links das fontes.
 
+## Consulte a Auli de dentro da sua IA
+
+Além deste portal, o acervo pode ser consultado diretamente de dentro de assistentes de IA como ChatGPT, Claude e Copilot, por meio do protocolo **MCP** (Model Context Protocol). O servidor é público e não exige autenticação:
+
+`https://api.auli.com.br/mcp`
+
+Na aba **MCP** deste portal há um manual de instalação para cada assistente. Em alguns, o próprio usuário configura em poucos minutos; no Microsoft 365 Copilot, a configuração depende da área de TI da organização.
+
+O conector expõe hoje o acervo de pareceres e respostas a consultas tributárias, sempre com o link do documento na fonte oficial. Quem preferir levar os dados para a própria ferramenta pode usar a aba **Downloads**, que oferece o conteúdo de cada estado em um arquivo compactado, com um documento por arquivo.
+
 ## Privacidade
 
 A Auli foi projetada com forte foco em privacidade. O sistema registra apenas a pergunta e a resposta gerada — sem rastreamento de usuários, coleta de dados pessoais, identidade, localização ou histórico individual.
