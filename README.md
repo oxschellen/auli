@@ -7,12 +7,17 @@ services, FAQs, legal opinions (_pareceres_) and administrative notes (_notas_) 
 to the source.
 
 The pilot tenant is **SEFAZ-RS** (Rio Grande do Sul); the system is **multi-tenant by state**, so
-one codebase serves many secretariats from isolated data.
+one codebase serves many secretariats from isolated data. **27 states are registered** and 26 have
+their service catalog collected — 4.156 serviços, 19.780 pareceres and 1.947 FAQs indexed today.
 
-- 🌐 Production: [auli.com.br](https://auli.com.br) · API: `https://api.auli.com.br/v1`
+- 🌐 Production: [auli.com.br](https://auli.com.br) · API: `https://api.auli.com.br/v1` ·
+  MCP: `https://api.auli.com.br/mcp`
 - 🔒 **Privacy by design** — embeddings run **locally, in-process** (fastembed / BGE-M3 ONNX). No
   external embedding service; question/document text never leaves the process. Only the final
   answer drafting calls an external LLM.
+- 🤖 **Usable from your own AI** — the MCP server exposes the pareceres corpus to ChatGPT, Claude
+  and Copilot; step-by-step guides live in [`manuais/`](manuais/). Prefer your own pipeline? Each
+  state's corpus is downloadable as a `.zip` of one `.md` per document.
 - 📄 License: **MIT**
 
 > 📚 In-depth docs (Portuguese): **[docs/auli_features.md](docs/auli_features.md)** (product),
@@ -39,8 +44,11 @@ external LLM      (Groq-compatible) drafts the answer from the retrieved context
 answer + official links
 ```
 
-Official content is **scraped** from each secretariat's portal, **transformed into structured
-text**, and **vectorized into per-state packs** (`auli update`) that the server loads read-only.
+Official content is **scraped** from each secretariat's portal, **derived into a tree of one
+`.md` per document** (`data/<id>/docs/<kind>/`, frontmatter + body), and **vectorized into
+per-state packs** (`auli update`) that the server loads read-only. That `.md` tree — not the JSON
+contract — is the vectorization source for serviços, FAQs and pareceres; it is also what the
+download `.zip` ships, so what an external AI reads is byte-for-byte what the engine indexed.
 
 ### Three faces, one engine
 
@@ -75,8 +83,9 @@ This is a **monorepo** of four cooperating components plus shared docs.
 | [`auli-frontend/`](auli-frontend/)                                             | **auli-frontend**    | Web UI: state selection (interactive Brazil map), chat, and reference tabs.                                                                                                                      | React 19 + TypeScript + Vite |
 | [`auli-server/crates/auli-collections/`](auli-server/crates/auli-collections/) | **auli-collections** | Offline derivation step: turns a scraper snapshot into the typed `auli-contract` (`Table<P>`) + artifacts. The scraping itself is the per-entity `auli-scraper-<id>` crates (sharing `auli-scraper-kit`). | Rust (synchronous)           |
 | [`data/`](data/)                                                               | **shared data**      | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`.                                                                          | TOML + JSON/txt              |
-| [`scripts/`](scripts/)                                                         | **tooling**          | `build-packs.sh` (vectorize), `gen-frontend-entities.mjs` + `build-frontend-public.sh` (regen frontend from `data/`).                                                                            | Bash + Node                  |
-| `auli_*.md`                                                                    | **docs**             | Product, technical and operations references (Portuguese).                                                                                                                                       | —                            |
+| [`scripts/`](scripts/)                                                         | **tooling**          | `build-packs.sh` (vectorize), `build-frontend-public.sh` + `gen-frontend-entities.mjs` (regen frontend from `data/`), `deploy-frontend.sh` (staged, atomic publish), `update-rs-faqs.sh` (end-to-end re-scrape), CI guards. | Bash + Node                  |
+| [`docs/`](docs/)                                                               | **docs**             | Product, technical and operations references (Portuguese).                                                                                                                                       | —                            |
+| [`manuais/`](manuais/)                                                         | **end-user guides**  | How to reach the MCP server from ChatGPT, Claude, GitHub Copilot and Microsoft 365 Copilot. Served in-app by the **MCP** tab.                                                                    | —                            |
 | [`start_server.sh`](start_server.sh)                                           | **runbook script**   | Build (incremental) + run the server + Cloudflare tunnel.                                                                                                                                        | Bash                         |
 
 > **One shared `data/` tree, no manual copies.** Entities/collections live once in
@@ -110,19 +119,25 @@ space is shared by construction.
 | [`crates/vector-store`](auli-server/crates/vector-store/)         | Generic flat cosine store. Read/write split: `ReadStore` (query, immutable) vs `Writer` (ingest). Dimension enforced on first insert.                                                                              |
 | [`crates/auli-core`](auli-server/crates/auli-core/)               | Auli domain: BGE-M3 embedder (dim 1024), the per-kind retrieval knobs (`corpus`), and the pack **manifest** (embedding identity + integrity hash).                                                                 |
 | [`crates/auli-retrieval`](auli-server/crates/auli-retrieval/)     | The **retrieval engine**: embedder + `ReadStore`s + proximity narrowing. Read-only by construction (it only ever sees `ReadStore`, never `Writer`) and free of HTTP/LLM/anonymizer — the piece shared by all three faces (`/v1/question`, `/v1/retrieve`, `/mcp`).                    |
-| [`crates/auli-cli`](auli-server/crates/auli-cli/)                 | The `auli` binary — `server` (Axum, RAG, `/v1/retrieve`, MCP via `rmcp`, config) and `update` (vectorizer). Dispatch via `clap`.                                                                                                                   |
+| [`crates/auli-cli`](auli-server/crates/auli-cli/)                 | The `auli` binary — `server` (Axum, RAG, `/v1/retrieve`, MCP via `rmcp`, config), `update` (vectorizer) and `bundle` (deterministic download `.zip` per state). Dispatch via `clap`.                                                                                                                   |
 | [`crates/auli-collections`](auli-server/crates/auli-collections/) | Offline **derivation** (`<id> process`): snapshot → `auli-contract` tables (`<id>-<kind>.json`) + artifacts.                                                                                                                            |
-| [`crates/scrapers/auli-scraper-<id>`](auli-server/crates/) + [`auli-scraper-kit`](auli-server/crates/scrapers/auli-scraper-kit/) | The **scrapers** — one binary per state (`rs`/`sc`/`sp`/`pr`/`mg`) writing a snapshot; `auli-scraper-kit` is their shared cache / aggregation / snapshot I/O.                                                                                                                            |
+| [`crates/scrapers/auli-scraper-<id>`](auli-server/crates/scrapers/) + [`auli-scraper-kit`](auli-server/crates/scrapers/auli-scraper-kit/) | The **scrapers** — **27 crates, one binary per state**, each writing a snapshot; `auli-scraper-kit` is their shared HTTP/cache / aggregation / snapshot I/O. Per-portal notes in [`SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).                                                                                                                            |
 
-Two modes:
+Three subcommands:
 
 ```bash
 auli update --entity <id> --source <data/<id>/raw> --out <packs-dir> [--version <v>]   # only writer
 auli server [--packs-dir <dir>] [--port 3000]   # read-only; --packs-dir defaults to $AULI_DATA_DIR
+auli bundle [--data-root data] [--out auli-frontend/public/downloads]   # download .zip per state
 ```
 
-`auli update` reads the scraper's typed contract (`<source>/<id>-faqs.json`, `<id>-servicos.json` =
-`auli_contract::Table<P>`), embeds each record's `text_to_embed` and stores its `stored_repr`.
+`auli update` reads the `.md` tree in `data/<id>/docs/<kind>/`, embeds each record's
+`text_to_embed` and stores its `stored_repr`.
+
+`auli bundle` zips each state's `docs/` tree **deterministically** (fixed entry order, fixed
+permissions, one content-derived timestamp), so an unchanged corpus produces a byte-identical
+file. It writes a `downloads.json` manifest with a size, a `sha256`, per-kind document counts and
+an `atualizado_em` that only moves when the content does.
 
 `auli server` is read-only by construction: it eager-loads collections via `ReadStore`, **validates
 the pack manifest** against the local embedding identity at boot (and refuses to start on mismatch),
@@ -133,10 +148,17 @@ and only ever embeds the incoming question.
 A single-page app (no router; **tab navigation**) built with React 19, Vite, and Chakra UI v3.
 
 - **State selection** with an interactive map of Brazil; choice persisted in `localStorage`.
-- **Chat** against `POST /v1/question` (25 s timeout, friendly errors, copy button, markdown).
+- **Chat** against `POST /v1/question` (25 s timeout, friendly errors, copy button, markdown), with
+  a **query-type selector**: serviços+FAQs or pareceres.
 - **Reference tabs** — Serviços, FAQs, Pareceres, Notas, Conteúdos — each reading static files from
   `public/<id>/`; "coming soon" placeholders for collections a state doesn't have yet.
+- **Downloads** — every state's corpus as a `.zip`, with document counts, size and last-changed
+  date from the `bundle` manifest.
+- **MCP** — the connector guides from [`manuais/`](manuais/), rendered inline.
 - Light/dark mode, mobile-first, virtual-keyboard aware. Tested with Vitest.
+
+The last three tabs are **global** (not scoped to the selected state), so they stay available even
+for a state whose data isn't collected yet.
 
 ```bash
 cd auli-frontend
@@ -158,15 +180,20 @@ aggregation, snapshot I/O). Then **`auli-collections <id> process`** derives, of
 materializing each record's `text_to_embed`) plus the human-readable `portal-<kind>.txt` audit
 _print_ and the per-público fan-out files.
 
-Active scrapers (one crate per state):
+**27 scrapers are active**, one crate per state, and no two portals are alike: Next.js and Drupal,
+SharePoint and ColdFusion, WordPress and Angular, public REST APIs and hand-rolled HTML. Some need
+a JA3-evading `curl` subprocess, one embeds its whole catalog in a lazy-loaded JS chunk, another
+serves an incomplete TLS chain that has to be pinned. Each crate documents its portal's shape in
+[`SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).
 
 - **RS** (`auli-scraper-rs`) — FAQs (portal CMS via AJAX/`ureq`) + serviços (**headless Chrome** for
-  the listing, `ureq` for details). The only crate that uses Chrome.
-- **SC** (`auli-scraper-sc`) — serviços via SEF-SC Next.js JSON API.
-- **SP** (`auli-scraper-sp`) — serviços via SharePoint REST (anonymous JSON).
-- **PR** (`auli-scraper-pr`) — serviços via server-side Drupal HTML.
-- **MG** (`auli-scraper-mg`) — serviços via ServiceNow CSM page API (JSON).
+  the listing, `ureq` for details).
+- **SP / PR / SC** — plus **pareceres**: 15.605, 2.060 and 1.743 opinions respectively.
 - On-disk **cache** with an offline `--usecache` mode; **dedup** of services shared across audiences.
+
+The cache is **cache-first always** — `--usecache` only changes what a miss does (bail vs. network).
+A genuine re-scrape therefore means deleting that collection's cache first, which is what
+`scripts/update-rs-faqs.sh` does before running the six-step scrape → derive → vectorize chain.
 
 ```bash
 cd auli-server
@@ -195,11 +222,12 @@ cp .env.example .env        # then fill in LLM_API_* (LLM endpoint)
 ```
 
 Generate the vector packs the server serves (only needed when content or the embedding strategy
-changes) — `build-packs.sh` runs `auli update` over the scraper's contract in `data/<id>/raw/` into
-`data/<id>/packs/` (`pareceres`/`notas` have no struct source yet and are skipped):
+changes) — `build-packs.sh` runs `auli update` over the `.md` trees in `data/<id>/docs/` into
+`data/<id>/packs/`, and derives the pareceres index the UI reads (`notas` has no struct source yet
+and is skipped):
 
 ```bash
-scripts/build-packs.sh rs          # per entity: rs | sc | sp | pr | mg
+scripts/build-packs.sh rs          # per entity, any of the 27 ids in data/registry.toml
 ```
 
 A healthy boot logs the loaded entities, a validated manifest, per-collection record counts, the
@@ -233,27 +261,30 @@ Required variables panic at startup if missing.
 
 ## Content types
 
-| Type          | What it is                                     | Where it appears today    |
-| ------------- | ---------------------------------------------- | ------------------------- |
-| **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab |
-| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab     |
-| **Pareceres** | Legal/technical opinions                       | Pareceres tab (reference) |
-| **Notas**     | Administrative/tax notes                       | Notas tab (reference)     |
-| **Conteúdos** | Misc reference materials                       | Conteúdos tab (reference) |
+| Type          | What it is                                     | Where it appears today                          | Volume |
+| ------------- | ---------------------------------------------- | ----------------------------------------------- | ------ |
+| **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab                       | 4.156 across 26 states |
+| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | 1.947 (RS) |
+| **Pareceres** | Legal/technical opinions                       | Chat (dedicated query type) + tab + **MCP**     | 19.780 (SP, PR, SC, RS) |
+| **Notas**     | Administrative/tax notes                       | Notas tab (reference)                           | RS |
+| **Conteúdos** | Misc reference materials                       | Conteúdos tab (reference)                       | RS |
 
-Today **Serviços and FAQs** feed the assistant's answers; **Pareceres, Notas and Conteúdos** are
-available as reference navigation in the UI.
+**Serviços and FAQs** feed the default chat mode. **Pareceres** have their own query type, with
+**graph expansion by co-citation** — opinions citing the same legal provisions as the retrieved
+ones are surfaced as related — and are the corpus exposed over MCP. **Notas and Conteúdos** remain
+reference-only navigation.
 
 ---
 
 ## Status
 
-- **Working today:** RAG chat for the configured state, full UI (chat + reference tabs + state
-  selection with map), and local embeddings. **Five states active** — Serviços for RS, SC, SP, PR
-  and MG, plus FAQs for RS. The backend is open (no auth) and database-free — it serves from packs
-  alone.
-- **In progress:** Serviços for more states, FAQs beyond RS, automated scraping of Pareceres/Notas,
-  and using those reference types in the assistant's answers.
+- **Working today:** RAG chat for the configured state, the full UI (chat, reference tabs,
+  downloads, connector guides, state selection with map), local embeddings, an MCP server for
+  external assistants. **27 states registered, 26 with serviços collected**
+  (4.156), pareceres for four (19.780) and FAQs for RS (1.947). The backend is open (no auth) and
+  database-free — it serves from packs alone.
+- **In progress:** serviços for AP (the 27th, pending the portal coming back), FAQs beyond RS,
+  automated scraping of notas, and a controlled vocabulary for the legal-provision graph.
 
 For the precise active-vs-modeled breakdown (routes, auth flows, cross-repo divergences), see
 **[docs/auli_code.md](docs/auli_code.md)** §7.
