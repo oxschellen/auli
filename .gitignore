@@ -76,3 +76,8 @@ web_config.txt
 # doutrina do bloco acima: são reconstruíveis a partir da árvore `data/<id>/docs/` e envelhecem a
 # cada raspagem, então não entram no repositório.
 *.tsv
+
+# Exploração do curso sobre o portal: briefings, esqueleto, lições e relatórios. Trabalho em
+# andamento, com conteúdo do portal citado ao longo do texto — fica local por enquanto. Se virar
+# produto, o material autoral pode ser separado do dado citado e versionado então.
+/curso/
