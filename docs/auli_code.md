@@ -318,6 +318,24 @@ A quarta é a face MCP do tipo `ServicosFaqs` do chat: reusa `rag::retrieve` e
 (`SERVICES.n_results`/`FAQS.n_results`, `SVC_*`/`FAQ_*`). Não é reimplementação — é o mesmo código,
 e é o que torna a paridade automática em vez de combinada.
 
+**Decisões fechadas do `consultar_servicos_faqs`** (PR #115) — registradas porque cada uma é uma
+alternativa razoável que foi recusada por um motivo, e sem o motivo alguém a "conserta" depois:
+
+- **Uma ferramenta só**, não `buscar_servicos` + `buscar_faqs`. O chat também trata a dupla como um
+  tipo único (`QueryType::ServicosFaqs`); separar criaria no MCP uma granularidade que o motor não
+  tem.
+- **A saída é o bloco de texto do chat, não JSON.** As outras ferramentas devolvem JSON porque são
+  listas de hits com metadados; esta devolve o **contexto já montado**, e o formato é o contrato —
+  travado por `montar_rag_servicos_faqs_pina_o_formato` em `rag.rs`. Converter para JSON exigiria
+  desmontar o que o `montar_rag_*` monta, e a paridade morreria na primeira divergência.
+- **Sem `top_k`.** É o que garante que as constantes sejam as mesmas nas duas faces. Um knob no MCP
+  faria o assistente pedir recortes que o chat nunca produz, e a calibração das bandas deixaria de
+  valer para os dois de graça.
+- **Coleção ausente não é erro.** A guarda é `serviços OU FAQs`; UF com só um dos dois responde com
+  a parte que tem, como o chat. Só a dupla ausência vira `invalid_params`.
+- **Nenhum LLM neste caminho** (D-MCP-5). Quem raciocina sobre o bloco é a IA do usuário — é o papel
+  que o LLM do Auli cumpre no chat.
+
 Detalhes que o código explicita:
 
 - **A guarda da UF roda antes do embed** e usa `entidades_com` (§3.11), não `store().is_some()`.
