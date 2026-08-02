@@ -708,6 +708,55 @@ acima.
 
 ---
 
+## 30. Embeddings na GPU — **medido e REPROVADO** (2026-08-02)
+
+A ideia de rodar o embedder BGE-M3 na GPU do home server (RTX 3060) foi levada até o gate de
+medição da `TAREFA-NOVO-GPU` e **reprovou**: a GPU é mais **lenta** que a CPU. Registrado aqui para
+ninguém reabrir o assunto sem dado novo — a intuição diz "GPU é mais rápida" e ela está errada
+neste caso específico.
+
+**Como foi medido.** Spike descartável (branch `spike/gpu-bench`, não mergeado): dependência direta
+do `ort` pinada em `=2.0.0-rc.12`, construtor `Embedder::new_cuda` registrando `ort::ep::CUDA` com
+`.error_on_failure()`, e um `embed_bench` sobre **keys reais** lidas da árvore `docs/` e compostas
+pelas mesmas funções `auli_contract::compose_*` que o `update` usa — com `embed_dense` e seu
+`batch_size = 1` intocados.
+
+**Os números** (RTX 3060 8 GB, driver 580.173.02, `EMBED_THREADS=24`; amostragem por passo):
+
+| Corpus | tokens/key (média) | CPU | CUDA | speedup |
+| --- | --- | --- | --- | --- |
+| `sp/pareceres` (n=295) | 526 | **5,7 texts/s** | 3,7 texts/s | **0,65×** |
+| `rs/faqs` (n=195) | 311 | **6,4 texts/s** | 4,7 texts/s | **0,73×** |
+
+O CPU reproduz em 0,3% entre execuções (51,72 s / 51,59 s), e o segundo par rodou no MESMO binário
+compilado com a feature, então build não é variável. Extrapolado, o `update` de SP inteiro leva
+**~46 min em CPU** e **~71 min em CUDA**.
+
+**Por que.** É a hipótese F4 da tarefa confirmada em campo: o modelo embutido é **INT8**
+(`gpahal/bge-m3-onnx-int8`) e o CUDA EP do ONNX Runtime tem cobertura apenas **parcial** de
+operadores quantizados. O provider registrou de verdade — a GPU trabalhou a 50–59% de utilização,
++680 MiB de VRAM —, mas o grafo fica particionado e o vai-e-vem CPU↔GPU nó-a-nó custa mais do que os
+kernels economizam. Não é "ganho modesto": é regressão.
+
+**Achado operacional colhido no caminho** (útil se alguém retomar): as libs
+`libonnxruntime_providers_shared.so` e `libonnxruntime_providers_cuda.so` (108 MB) são baixadas pelo
+`ort` para `~/.cache/ort.pyke.io/dfbin/…`, mas o loader as procura **ao lado do executável** —
+sem copiá-las, a sessão falha com `Failed to load library …_providers_shared.so`. O
+`.error_on_failure()` fez seu papel e falhou alto em vez de cair para CPU calado; sem ele, o
+benchmark teria medido CPU duas vezes e "provado" um speedup de 1,00×.
+
+**O que fica.** A `TAREFA-NOVO-GPU.md` para na F0, como previsto — nada de `enum Device`, feature
+`cuda` ou flag `--device` no `update`. O lado `server` já estava decidido contra por outra via
+(§7.1 do `docs/auli_operations.md`: 18 ms de embed sobre 3,5 s de resposta).
+
+**Única rota que poderia mudar o veredito**, e ela é cara: trocar o modelo por um ONNX **fp16/fp32**
+próprio via `UserDefinedBgem3Model`/`try_new_from_user_defined` do fastembed, onde o CUDA EP tem
+cobertura completa. Isso **muda o espaço de embeddings** ⇒ bump de `EMBED_MODEL_ID` + reembed das 27
+entidades. Só se justificaria por outro motivo que não a velocidade (qualidade do fp16 vs INT8, por
+exemplo) — e aí a GPU seria consequência, não causa.
+
+---
+
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) está no ar com três ferramentas e
