@@ -674,13 +674,21 @@ afeta todo mundo, por isso não foi feita agora).
 
 ---
 
-## 29. Página **Sobre**: duas afirmações falsas (aberta — 2026-07-26)
+## 29. Página **Sobre**: duas afirmações falsas — ✅ **resolvidas (2026-08-02)**
 
 O commit `509a021` atualizou [about.md](auli-frontend/public/about.md) e removeu duas alegações
 mortas da lista de tecnologias — **ChromaDB** e **Ollama**, aposentados quando a busca passou a ser o
 crate `vector-store` embutido e os embeddings o BGE-M3 via fastembed, ambos in-process. Sobraram
-outras duas, da mesma família. É **página pública**, então a redação é do mantenedor; ficam
-registradas, não corrigidas por conta própria.
+outras duas, da mesma família, registradas abaixo.
+
+> **Resolvidas pelo mantenedor em 2026-08-02.** A linha do JWT foi retirada. A seção Privacidade foi
+> reescrita em torno do que é verdadeiro e verificável: a Auli **não identifica quem pergunta** (sem
+> cadastro, cookie de rastreamento ou IP em disco), **registra a pergunta como escrita** — com o
+> aviso explícito de que dado pessoal digitado pelo usuário fica gravado — e **mascara CPF/CNPJ/
+> telefone/e-mail antes de qualquer chamada ao provedor do modelo**. A promessa genérica de "sem
+> coleta de dados pessoais" saiu: ela induzia exatamente o comportamento contra o qual parecia
+> proteger. O gatilho da revisão foi a inclusão do MCP no log de auditoria, que tornou o texto
+> antigo ainda mais distante do comportamento real.
 
 **1. "Autenticação JWT (RS256)" — não existe.** `grep -rl "jsonwebtoken\|RS256"` no workspace
 inteiro (`.rs`, `.toml`, `.ts`, `.tsx`) devolve **zero**. O que protege o servidor hoje é rate
