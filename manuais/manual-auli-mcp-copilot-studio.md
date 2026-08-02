@@ -23,13 +23,14 @@ Copilot que já usa no Edge.
 | Acervo | 19.780 pareceres tributários de SEFAZ-SP (15.605), SEFA-PR (2.060), SEF-SC (1.743) e SEFAZ-RS (372) |
 | Origem dos dados | Documentos públicos das secretarias estaduais da fazenda, com link oficial em cada resultado |
 
-Três ferramentas são expostas:
+Quatro ferramentas são expostas:
 
 | Ferramenta | O que faz |
 |---|---|
-| `listar_entidades` | Lista as UFs com acervo e o total de documentos de cada uma |
+| `listar_entidades` | Lista as UFs com acervo e, para cada uma, o que tem indexado (pareceres, serviços, FAQs) e os totais |
 | `buscar_pareceres` | Busca semântica numa UF. Devolve número, ementa, sinopse, link oficial e score — **não** devolve o corpo |
 | `obter_parecer` | Devolve o corpo integral de um parecer, dado a UF e o número exato |
+| `consultar_servicos_faqs` | Serviços de atendimento e perguntas frequentes de uma UF, num único bloco de texto. Para dúvidas de "como fazer" (guias, cadastros, certidões, parcelamentos) |
 
 **O que trafega para fora do tenant:** o texto da pergunta e a sigla da UF. Nada mais — não há
 upload de documento, não há contexto do Microsoft 365, não há identificação do usuário. **O que o
@@ -105,9 +106,9 @@ a365 develop-mcp register-external-mcp-server \
   --server-name "Auli" \
   --server-url "https://api.auli.com.br/mcp" \
   --publisher "Auli" \
-  --description "Pareceres tributários das secretarias estaduais da fazenda (SP, PR, SC, RS)" \
+  --description "Pareceres tributários, serviços de atendimento e perguntas frequentes das secretarias estaduais da fazenda" \
   --auth-type "NoAuth" \
-  --tools "listar_entidades,buscar_pareceres,obter_parecer"
+  --tools "listar_entidades,buscar_pareceres,obter_parecer,consultar_servicos_faqs"
 ```
 
 Depois disso, um **AI admin** ou **Global admin** revisa em **Agents → Tools → Requests** no centro
@@ -127,7 +128,7 @@ connector* → *Import OpenAPI file*):
 swagger: '2.0'
 info:
   title: Auli
-  description: Pareceres tributários das secretarias estaduais da fazenda
+  description: Pareceres tributários, serviços de atendimento e perguntas frequentes das secretarias estaduais da fazenda
   version: 1.0.0
 host: api.auli.com.br
 basePath: /
@@ -194,7 +195,7 @@ depender de ninguém:
 ## Resumo para colar
 
 - URL: `https://api.auli.com.br/mcp` · Transporte: streamable HTTP · Autenticação: nenhuma
-- Ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer`
+- Ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer`, `consultar_servicos_faqs`
 - Onde: Copilot Studio → Tools → Add a tool → New tool → Model Context Protocol
 - Obrigatório: orquestração generativa ligada + conector liberado na DLP do Power Platform
 - Publicação: Publish → canais Teams e Microsoft 365 Copilot → Show to everyone in my org →

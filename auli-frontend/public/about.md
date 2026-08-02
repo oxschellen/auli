@@ -36,7 +36,7 @@ Além deste portal, o acervo pode ser consultado diretamente de dentro de assist
 
 Na aba **MCP** deste portal há um manual de instalação para cada assistente. Em alguns, o próprio usuário configura em poucos minutos; no Microsoft 365 Copilot, a configuração depende da área de TI da organização.
 
-O conector expõe hoje o acervo de pareceres e respostas a consultas tributárias, sempre com o link do documento na fonte oficial. Quem preferir levar os dados para a própria ferramenta pode usar a aba **Downloads**, que oferece o conteúdo de cada estado em um arquivo compactado, com um documento por arquivo.
+O conector expõe hoje o acervo de pareceres e respostas a consultas tributárias, e também a consulta de serviços de atendimento e perguntas frequentes — sempre com o link do documento na fonte oficial. Quem preferir levar os dados para a própria ferramenta pode usar a aba **Downloads**, que oferece o conteúdo de cada estado em um arquivo compactado, com um documento por arquivo.
 
 ## Privacidade
 

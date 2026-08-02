@@ -71,8 +71,9 @@ funcionando.
 
 ## Como perguntar bem
 
-O acervo é de **pareceres e consultas tributárias** — respostas que as secretarias deram a
-perguntas de contribuintes. Funciona melhor quando você diz **o estado** e **o tema**.
+O acervo tem duas frentes: **pareceres e consultas tributárias** — respostas que as secretarias
+deram a perguntas de contribuintes — e os **serviços de atendimento e perguntas frequentes** dos
+portais, para dúvidas de "como fazer". Funciona melhor quando você diz **o estado** e **o tema**.
 
 Bons exemplos:
 
@@ -84,6 +85,8 @@ Bons exemplos:
 > No Rio Grande do Sul, há parecer sobre isenção de ICMS no transporte de cargas? Me mostre o
 > texto completo do mais relevante.
 
+> Em Minas Gerais, como faço para emitir a segunda via da guia do IPVA?
+
 Duas dicas que mudam muito o resultado:
 
 - **Diga o estado.** Sem isso o ChatGPT pode escolher um por conta ou perguntar qual.
@@ -92,9 +95,12 @@ Duas dicas que mudam muito o resultado:
 
 ## O que ele não faz
 
-**Só pareceres.** Serviços do portal e perguntas frequentes não estão neste conector.
+**Pareceres só dos quatro estados da tabela.** Se você pedir um parecer de Minas Gerais, não há.
 
-**Só os quatro estados da tabela.** Se você perguntar sobre Minas Gerais, não há acervo.
+**Serviços e perguntas frequentes cobrem estados diferentes.** Os serviços de atendimento existem
+em quase todas as secretarias; as perguntas frequentes, hoje, só no Rio Grande do Sul. Pergunte
+*"quais estados têm acervo no Auli, e o que cada um tem?"* — o ChatGPT consulta isso na hora, em vez
+de você conferir numa lista que envelhece.
 
 **Não é consultoria.** São documentos públicos, com o link oficial. Confira sempre no link antes
 de usar em algo que importa — e lembre que parecer tem data: regra citada em 2014 pode ter mudado.

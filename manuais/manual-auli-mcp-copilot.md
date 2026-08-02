@@ -82,11 +82,12 @@ Este passo não é opcional: nos modos *Ask* e *Edit* o Copilot **não usa ferra
 simplesmente não vai ser consultado.
 
 **11.** Clique no botão de **ferramentas** (*Configure Tools*, ícone de chave inglesa) e confirme
-que as três ferramentas do Auli estão marcadas:
+que as quatro ferramentas do Auli estão marcadas:
 
 - `listar_entidades` — quais estados têm acervo
 - `buscar_pareceres` — busca por assunto
 - `obter_parecer` — texto integral de um parecer
+- `consultar_servicos_faqs` — serviços de atendimento e perguntas frequentes
 
 Pronto.
 
@@ -126,8 +127,9 @@ Na primeira vez o Copilot vai pedir sua autorização para rodar a ferramenta �
 
 ## Como perguntar bem
 
-O acervo é de **pareceres e consultas tributárias** — respostas que as secretarias deram a perguntas
-de contribuintes. Funciona melhor quando você diz **o estado** e **o tema**.
+O acervo tem duas frentes: **pareceres e consultas tributárias** — respostas que as secretarias
+deram a perguntas de contribuintes — e os **serviços de atendimento e perguntas frequentes** dos
+portais, para dúvidas de "como fazer". Funciona melhor quando você diz **o estado** e **o tema**.
 
 Bons exemplos:
 
@@ -138,6 +140,8 @@ Bons exemplos:
 
 > No Rio Grande do Sul, há parecer sobre isenção de ICMS no transporte de cargas? Me mostre o texto
 > completo do mais relevante.
+
+> Em Minas Gerais, como faço para emitir a segunda via da guia do IPVA?
 
 Três dicas que mudam muito o resultado:
 
@@ -151,9 +155,12 @@ Três dicas que mudam muito o resultado:
 
 ## O que ele não faz
 
-**Só pareceres.** Serviços do portal e perguntas frequentes não estão neste servidor.
+**Pareceres só dos quatro estados da tabela.** Se você pedir um parecer de Minas Gerais, não há.
 
-**Só os quatro estados da tabela.** Se você perguntar sobre Minas Gerais, não há acervo.
+**Serviços e perguntas frequentes cobrem estados diferentes.** Os serviços de atendimento existem
+em quase todas as secretarias; as perguntas frequentes, hoje, só no Rio Grande do Sul. Pergunte
+*"quais estados têm acervo no Auli, e o que cada um tem?"* — o Copilot consulta isso na hora, em vez
+de você conferir numa lista que envelhece.
 
 **Não vale para o autocompletar.** As sugestões de código que aparecem enquanto você digita não
 usam MCP. Só o chat em modo Agente usa.
