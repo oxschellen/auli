@@ -128,7 +128,7 @@ vetorial é compartilhado por construção, não por convenção.
 ### 3.2 Os dois modos (subcomandos)
 
 ```text
-auli update  --entity <id> --source <dir_com_contrato_json> --out <dir> [--version <v>]
+auli update  --entity <id> --out <dir> [--version <v>]   # fonte: as árvores `<dir>/../docs/`
 auli server  [--port <p>] [--bind <addr>] [--packs-dir <dir>]   # --bind default 0.0.0.0; --packs-dir default = $AULI_DATA_DIR (./data)
 ```
 

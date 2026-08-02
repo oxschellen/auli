@@ -2,7 +2,7 @@
 //!
 //! Subcommands (not flags) so each mode has its own exclusive options:
 //!   auli server  --port <p> [--bind <addr>] [--packs-dir <dir>]   (--packs-dir defaults to $AULI_DATA_DIR or ./data)
-//!   auli update  --entity <id> --source <dir_com_contrato_json> --out <dir> [--version <v>]
+//!   auli update  --entity <id> --out <dir> [--version <v>]   (fonte: as árvores `<dir>/../docs/`)
 //!   auli bundle  [--data-root <dir>] [--out <dir>]
 
 use std::path::PathBuf;
@@ -39,8 +39,6 @@ enum Command {
         #[arg(long)]
         entity: String,
         #[arg(long)]
-        source: PathBuf,
-        #[arg(long)]
         out: PathBuf,
         #[arg(long)]
         version: Option<String>,
@@ -69,12 +67,11 @@ async fn main() {
         }
         Command::Update {
             entity,
-            source,
             out,
             version,
         } => {
             // Synchronous, CPU-bound work — runs to completion on the async entrypoint thread.
-            if let Err(e) = auli_cli::run_update(entity, source, out, version) {
+            if let Err(e) = auli_cli::run_update(entity, out, version) {
                 eprintln!("Erro no update: {e}");
                 std::process::exit(1);
             }

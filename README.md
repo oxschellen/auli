@@ -79,7 +79,7 @@ This is a **monorepo** of four cooperating components plus shared docs.
 
 | Path                                                                           | Component            | Role                                                                                                                                                                                             | Stack                        |
 | ------------------------------------------------------------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
-| [`auli-server/`](auli-server/)                                                 | **auli workspace**   | The current backend: the `auli` binary in two modes — `auli server` (read-only RAG) and `auli update` (vectorizer). Plus the shared `auli-contract` crate and the scraper, all in one workspace. | Rust (Axum, Tokio)           |
+| [`auli-server/`](auli-server/)                                                 | **auli workspace**   | The current backend: the `auli` binary in three modes — `auli server` (read-only RAG), `auli update` (vectorizer) and `auli bundle` (download zips). Plus the shared `auli-contract` crate and the scrapers, all in one workspace. | Rust (Axum, Tokio)           |
 | [`auli-frontend/`](auli-frontend/)                                             | **auli-frontend**    | Web UI: state selection (interactive Brazil map), chat, and reference tabs.                                                                                                                      | React 19 + TypeScript + Vite |
 | [`auli-server/crates/auli-collections/`](auli-server/crates/auli-collections/) | **auli-collections** | Offline derivation step: turns a scraper snapshot into the typed `auli-contract` (`Table<P>`) + artifacts. The scraping itself is the per-entity `auli-scraper-<id>` crates (sharing `auli-scraper-kit`). | Rust (synchronous)           |
 | [`data/`](data/)                                                               | **shared data**      | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`.                                                                          | TOML + JSON/txt              |
@@ -126,7 +126,7 @@ space is shared by construction.
 Three subcommands:
 
 ```bash
-auli update --entity <id> --source <data/<id>/raw> --out <packs-dir> [--version <v>]   # only writer
+auli update --entity <id> --out <packs-dir> [--version <v>]   # only writer; source = ../docs/
 auli server [--packs-dir <dir>] [--port 3000]   # read-only; --packs-dir defaults to $AULI_DATA_DIR
 auli bundle [--data-root data] [--out auli-frontend/public/downloads]   # download .zip per state
 ```

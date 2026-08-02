@@ -1,17 +1,16 @@
 //! `auli update` — the vectorizer / pack builder (the only writer).
 //!
-//! For each content kind it reads the scraper's contract table `<source>/<entity>-<table>.json`
-//! (an `auli_contract::Table<P>`), embeds each record's `text_to_embed()` and stores its
-//! `stored_repr()` — via `auli-core::embed`, the SAME encoder the server uses on the query —
-//! assigns sequential `id-1..id-N`, and `Writer::reset` + `upsert` into
+//! For each content kind it reads the `.md` tree in `<out>/../docs/<kind>/`, embeds each record's
+//! `text_to_embed()` and stores its `stored_repr()` — via `auli-core::embed`, the SAME encoder the
+//! server uses on the query — assigns sequential `id-1..id-N`, and `Writer::reset` + `upsert` into
 //! `<out>/<entity>-<kind>.json`. Finally writes `<out>/<entity>.manifest.json` stamping the
 //! embedding identity, so the server can validate it at boot.
 //!
-//! `servicos` is one vocabulary end-to-end: the pack/kind is `<entity>-servicos`. **A fonte passou a
-//! ser a árvore `docs/servicos/*.md` (TAREFA-SERVICOS-MD)**, regenerada a cada
-//! `auli-collections <id> process`; entidade ainda sem árvore cai no `<entity>-servicos.json` com
-//! aviso — fallback de transição, a remover quando todas tiverem sido re-processadas. `notas` has no
-//! struct source yet and is simply absent until modeled as a contract.
+//! `servicos` is one vocabulary end-to-end: the pack/kind is `<entity>-servicos`. **A fonte é a
+//! árvore `docs/servicos/*.md` (TAREFA-SERVICOS-MD)**, regenerada a cada
+//! `auli-collections <id> process`; o mesmo vale para `faqs` (TAREFA-FAQS-MD). Entidade sem a
+//! árvore é pulada. `notas` has no struct source yet and is simply absent until modeled as a
+//! contract.
 //!
 //! **`pareceres` é a exceção (G5b): a fonte é a árvore `docs/pareceres/*.md`, não um JSON.** Os
 //! produtores (scrapers) criam um `.md` por consulta inédita; o passo `auli-collections <id> sinopse`
@@ -24,20 +23,14 @@
 
 use std::path::{Path, PathBuf};
 
-use auli_contract::{Embeddable, Table};
+use auli_contract::Embeddable;
 use auli_core::embed::{EMBED_DIM, EMBED_MAX_TOKENS, Embedder};
 use auli_core::manifest::{self, CollectionEntry, Manifest};
-use serde::de::DeserializeOwned;
 use vector_store::Writer;
 
 use crate::error::Result;
 
-pub fn run_update(
-    entity: String,
-    source: PathBuf,
-    out: PathBuf,
-    version: Option<String>,
-) -> Result<()> {
+pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Result<()> {
     dotenvy::dotenv().ok();
     let cache_dir = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "./models".to_string());
     let threads: usize = std::env::var("EMBED_THREADS")
@@ -57,60 +50,21 @@ pub fn run_update(
         .ok_or_else(|| format!("diretório de packs sem pai: {}", out.display()))?
         .join("docs");
     // faqs: a FONTE é a árvore `docs/faqs/*.md` (TAREFA-FAQS-MD), regenerada do zero a cada
-    // `process` — faqs mudam no portal. Mesmo fallback de TRANSIÇÃO dos serviços.
-    match preparar_faqs(&docs_dir)? {
-        Some(faqs) => {
-            avisar_faqs_truncadas(&embedder, &faqs)?;
-            println!("🔢 faqs: {} registros → vetorizando...", faqs.len());
-            entries.push(ingest_items(
-                &embedder, &writer, &entity, "faqs", &faqs, &out,
-            )?);
-        }
-        None => {
-            println!(
-                "⚠️  {entity}: sem árvore docs/faqs — lendo o JSON legado \
-                 (rode `auli-collections {entity} process` para migrar)."
-            );
-            if let Some(entry) = ingest::<auli_contract::Faq>(
-                &embedder,
-                &writer,
-                &entity,
-                "faqs",
-                &format!("{}-faqs.json", entity),
-                &source,
-                &out,
-            )? {
-                entries.push(entry);
-            }
-        }
+    // `process` — faqs mudam no portal. Entidade sem árvore -> pulada (só o RS tem faqs hoje).
+    if let Some(faqs) = preparar_faqs(&docs_dir)? {
+        avisar_faqs_truncadas(&embedder, &faqs)?;
+        println!("🔢 faqs: {} registros → vetorizando...", faqs.len());
+        entries.push(ingest_items(
+            &embedder, &writer, &entity, "faqs", &faqs, &out,
+        )?);
     }
     // servicos: a FONTE é a árvore `docs/servicos/*.md` (TAREFA-SERVICOS-MD), regenerada do zero a
-    // cada `process` — serviços mudam no portal. Fallback de TRANSIÇÃO: entidade sem árvore ainda lê
-    // o `<entity>-servicos.json` com aviso; remover quando todas tiverem sido re-processadas.
-    match preparar_servicos(&docs_dir)? {
-        Some(servicos) => {
-            println!("🔢 servicos: {} registros → vetorizando...", servicos.len());
-            entries.push(ingest_items(
-                &embedder, &writer, &entity, "servicos", &servicos, &out,
-            )?);
-        }
-        None => {
-            println!(
-                "⚠️  {entity}: sem árvore docs/servicos — lendo o JSON legado \
-                 (rode `auli-collections {entity} process` para migrar)."
-            );
-            if let Some(entry) = ingest::<auli_contract::Servico>(
-                &embedder,
-                &writer,
-                &entity,
-                "servicos",
-                &format!("{}-servicos.json", entity),
-                &source,
-                &out,
-            )? {
-                entries.push(entry);
-            }
-        }
+    // cada `process` — serviços mudam no portal. Entidade sem árvore -> pulada.
+    if let Some(servicos) = preparar_servicos(&docs_dir)? {
+        println!("🔢 servicos: {} registros → vetorizando...", servicos.len());
+        entries.push(ingest_items(
+            &embedder, &writer, &entity, "servicos", &servicos, &out,
+        )?);
     }
     // pareceres: a FONTE é a árvore `docs/pareceres/*.md` (G5b) — o JSON saiu do caminho. Os
     // produtores (scrapers) criam um `.md` por consulta inédita; o passo
@@ -375,44 +329,6 @@ fn recusar_pareceres_sem_sinopse(entity: &str, pendentes: &[String]) -> Result<(
 
 /// Ingest one contract table into the entity's `<entity>-<kind>` vector collection.
 ///
-/// `source_file` is the scraper's contract JSON (e.g. `rs-servicos.json`); `kind` is the engine
-/// vector kind (e.g. `servicos`). Embeds `P::text_to_embed`, stores `P::stored_repr`. Returns the
-/// manifest entry, or `None` if the source is absent (a kind with no struct source yet — skipped).
-fn ingest<P>(
-    embedder: &Embedder,
-    writer: &Writer,
-    entity: &str,
-    kind: &str,
-    source_file: &str,
-    source_dir: &Path,
-    out: &Path,
-) -> Result<Option<CollectionEntry>>
-where
-    P: Embeddable + DeserializeOwned,
-{
-    let src = source_dir.join(source_file);
-    if !src.exists() {
-        println!("⏭️  {} ausente ({:?}) — pulando", kind, src);
-        return Ok(None);
-    }
-
-    let bytes = std::fs::read(&src)?;
-    let table: Table<P> = serde_json::from_slice(&bytes)?;
-    println!(
-        "🔢 {}: {} registros → vetorizando...",
-        kind,
-        table.items.len()
-    );
-    Ok(Some(ingest_items(
-        embedder,
-        writer,
-        entity,
-        kind,
-        &table.items,
-        out,
-    )?))
-}
-
 /// Núcleo do ingest: embeda `text_to_embed`, guarda `stored_repr` e devolve a entrada de manifesto.
 /// Separado de [`ingest`] porque pareceres não vêm mais direto do arquivo — passam pela hidratação
 /// da árvore (G4) e chegam aqui em memória.

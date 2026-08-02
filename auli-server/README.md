@@ -20,8 +20,8 @@ so the document vectors and the live query vector share one cosine space by cons
 ## The two modes
 
 ```bash
-# Build vectors ("packs") from an entity's typed contract in data/<id>/raw/ (the only writer):
-auli update --entity rs --source ../data/rs/raw --out ../data/rs/packs [--version 2]
+# Build vectors ("packs") from an entity's `.md` trees in data/<id>/docs/ (the only writer):
+auli update --entity rs --out ../data/rs/packs [--version 2]
 
 # Serve the API read-only from pre-built packs (validates the manifest at boot):
 # packs live under <packs-dir>/<id>/packs/; --packs-dir defaults to $AULI_DATA_DIR.
