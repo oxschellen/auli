@@ -574,22 +574,25 @@ congelada no plano.
 Serviços e FAQs viraram árvores `.md` (`data/<id>/docs/{servicos,faqs}/*.md`), a FONTE do
 `auli update`, irmãs da de pareceres. As 27 entidades migraram na campanha de jul/2026 — cada
 migração exigiu **re-raspar**, porque a árvore deriva do snapshot e as entidades materializadas antes
-dessa fronteira não tinham um (daí [scripts/migrar-arvore-servicos.sh](scripts/migrar-arvore-servicos.sh)).
+dessa fronteira não tinham um (daí o `migrar-arvore-servicos.sh`, hoje [scripts/atualizar-servicos.sh](scripts/atualizar-servicos.sh)).
 A campanha rendeu um efeito colateral: 13 das 25 entidades voltaram com o catálogo corrigido, porque
 os portais tinham mudado desde a coleta anterior.
 
-**Aberto — os dois fallbacks de transição (D9) em [update.rs](auli-server/crates/auli-cli/src/update.rs):**
+**✅ Fechado em 02/08/2026 — os dois fallbacks de transição (D9) saíram do
+[update.rs](auli-server/crates/auli-cli/src/update.rs).**
 
-1. **`servicos` (≈ linha 81)** — ✅ **resolvido em 02/08/2026.** O portal voltou (200), e
-   `scripts/migrar-arvore-servicos.sh ap` migrou a última entidade: 49 serviços em
-   `data/ap/docs/servicos/`, pack re-vetorizado. O gate do diff passou limpo — todos os artefatos de
-   `raw/` idênticos ao backup, ou seja, o portal do Amapá não mudou desde a coleta de 06/07 e a
-   migração foi só troca de fonte. **As 27 entidades têm árvore; o fallback pode sair.**
-2. **`faqs` (≈ linha 61)** — **o ramo já é inalcançável e o aviso é enganoso.** Só o RS tem FAQs, e o
-   RS já tem a árvore; as outras 26 entidades não têm nem árvore nem `<id>-faqs.json`, então o
-   `ingest` do fallback nunca acha arquivo — mas o `⚠️ <id>: sem árvore docs/faqs — rode process para
-   migrar` é impresso em toda rodada de `update`, recomendando algo que não existe para fazer. **Este
-   pode ser removido agora**, sem esperar o `ap`.
+1. **`servicos`** — o portal do Amapá voltou (200) e o `scripts/atualizar-servicos.sh ap` (então
+   `migrar-arvore-servicos.sh`) migrou a última entidade: 49 serviços em `data/ap/docs/servicos/`.
+   O gate do diff passou limpo — todos os artefatos de `raw/` idênticos ao backup, ou seja, o portal
+   não mudou desde a coleta de 06/07 e a migração foi só troca de fonte.
+2. **`faqs`** — o ramo já era inalcançável e o aviso, enganoso: imprimia `⚠️ <id>: sem árvore
+   docs/faqs` em toda rodada, recomendando um `process` que não tinha o que produzir (só o RS tem
+   FAQs, e o RS já tinha a árvore).
+
+Com os dois fora, `auli update` lê **só** as árvores `docs/<kind>/*.md`; coleção sem árvore é
+pulada em silêncio. A flag `--source`, que existia para apontar o JSON legado em `raw/`, saiu junto
+— ficou sem leitor. Os hashes do pack do `ap` antes e depois da remoção são idênticos
+(`3b956d3ec3238ac7` / `docs_hash 22ffb1e65d91211e`): nada do que é produzido mudou.
 
 ### TAREFA-FAQ-PR (PR #109) — ✅ entregue
 

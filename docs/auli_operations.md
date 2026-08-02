@@ -122,7 +122,7 @@ Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo
 2. **Derivar** (offline) → o contrato `<id>-faqs.json`/`<id>-servicos.json` + prints + index +
    per-público (e a árvore `faqs-tree.json` p/ a UI, no RS) em `data/<id>/raw/`:
    `./target/release/auli-collections <id>`.
-3. **Vetorizar** → `scripts/build-packs.sh <id>` (aponta o `auli update --source` para `raw/`).
+3. **Vetorizar** → `scripts/build-packs.sh <id>` (roda o `auli update`, que lê as árvores `docs/`).
 
 ```bash
 cd auli-server
@@ -150,18 +150,17 @@ precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
 > com 512 a resposta seria cortada em silêncio. Texto acima do teto é truncado **com aviso** no
 > `auli update`, nomeando os `.md` afetados — no acervo do RS nenhum item chega lá.
 
-> **Migrar uma entidade para a árvore `docs/servicos/*.md`** (a fonte do `update` desde a
-> TAREFA-SERVICOS-MD): **`scripts/migrar-arvore-servicos.sh <id>...`**, que faz o ciclo inteiro
-> (backup → scrape → process → diff de `raw/` → build-packs) e para na primeira entidade que falhar.
+> **Re-raspar os serviços de uma entidade**: **`scripts/atualizar-servicos.sh <id>...`**, que faz o
+> ciclo inteiro (backup → scrape → process → diff de `raw/` → build-packs) e para na primeira
+> entidade que falhar.
 >
-> O `process` só deriva do **snapshot**, e as entidades materializadas antes dessa fronteira não têm
-> um — então migrar exige **re-raspar**, não é derivação offline. Depois do `process`,
-> `build-packs.sh <id>` é **obrigatório**: criar `docs/` muda o `docs_hash` e o boot recusa até os
-> packs baterem. Enquanto a árvore não existe, o `update` cai no `<id>-servicos.json` legado com
-> aviso — fallback de transição, não erro.
+> O `process` só deriva do **snapshot**, então atualizar exige **re-raspar** — não é derivação
+> offline. Depois do `process`, `build-packs.sh <id>` é **obrigatório**: mexer em `docs/` muda o
+> `docs_hash` e o boot recusa até os packs baterem. Entidade sem a árvore é simplesmente pulada pelo
+> `update` (o fallback para o JSON legado saiu em 02/08/2026, com o `ap`).
 >
-> Estado (jul/2026): **25 das 26 entidades com dado já migraram**. Falta a `ap` — o portal
-> (`web-pro01.sefaz.ap.gov.br`) estava fora do ar; é rodar o script quando voltar.
+> Estado (ago/2026): **as 27 entidades têm árvore**. O script nasceu como
+> `migrar-arvore-servicos.sh`, para a campanha da TAREFA-SERVICOS-MD; ela terminou, o ciclo ficou.
 >
 > Vale comparar os artefatos de `raw/` com os de antes: se mudarem, o **portal** mudou (e não a
 > migração). Nas oito primeiras entidades migradas apareceram serviço novo (MG, CE), serviço
