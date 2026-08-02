@@ -71,3 +71,8 @@ web_config.txt
 !/data/registry.toml
 !/data/prompts/
 /*.patch
+
+# Saídas de análise derivadas dos dados do portal (TSVs de frontmatter, tabelas de apoio). Mesma
+# doutrina do bloco acima: são reconstruíveis a partir da árvore `data/<id>/docs/` e envelhecem a
+# cada raspagem, então não entram no repositório.
+*.tsv
