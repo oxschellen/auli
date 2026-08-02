@@ -906,8 +906,14 @@ registrado como próximo passo:
   `rag::montar_rag_servicos_faqs`, com as MESMAS constantes do chat — a saída é byte a byte a do
   portal, e calibrar as bandas (item abaixo) move as duas faces junto. `listar_entidades` passou a
   reportar os três kinds.
-- **`buscar_pareceres` multi-UF numa chamada.** Hoje é uma UF por chamada e o assistente itera —
-  o que funciona, mas gasta um round-trip por estado numa pergunta comparativa.
+- ~~**`buscar_pareceres` multi-UF numa chamada.**~~ ❌ **decidido: NÃO fazer (2026-08-02).** Fica uma
+  UF por chamada, com o assistente iterando. O custo real é um round-trip por estado numa pergunta
+  comparativa — barato perto do que a alternativa traria: juntar UFs numa resposta só convida a
+  ordenar os resultados entre elas, e **score de cosseno só é comparável dentro da mesma identidade
+  de embedding**. Hoje todos os packs compartilham a identidade, então funcionaria; no dia em que
+  uma entidade for reembedada com outro modelo, viraria erro silencioso de ranqueamento. Iterar
+  mantém cada resposta dentro de um pack só. (O assistente ainda pode comparar entre chamadas —
+  isso o servidor não controla —, mas ele não é induzido a isso pela forma da resposta.)
 - **Calibração das bandas.** `SVC_BAND`/`FAQ_BAND`/`PAR_BAND` seguem em `f32::INFINITY` (mantendo
   a paridade com o comportamento antigo de "pega tudo até o teto"). Agora que o `/v1/retrieve`
   **expõe os scores**, dá para calibrar com dados reais: rodar os ~10 testes do SC, ler os arrays
