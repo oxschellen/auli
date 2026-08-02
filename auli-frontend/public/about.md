@@ -40,8 +40,11 @@ O conector expõe hoje o acervo de pareceres e respostas a consultas tributária
 
 ## Privacidade
 
-A Auli foi projetada com forte foco em privacidade. O sistema registra apenas a pergunta e a resposta gerada — sem rastreamento de usuários, coleta de dados pessoais, identidade, localização ou histórico individual.
-Os registros servem exclusivamente para aprimoramento contínuo das respostas.
+**A Auli não sabe quem você é.** Não há cadastro, login nem cookie de rastreamento, e o seu endereço IP não é gravado — nada liga uma consulta a uma pessoa, a um local ou a um histórico individual. O navegador guarda apenas a sua preferência de estado, que nunca é enviada ao servidor.
+
+**O que fica registrado:** a pergunta, o horário e os documentos consultados. Serve para auditar a qualidade das respostas e o mascaramento automático descrito abaixo. Como a pergunta é guardada exatamente como você a escreveu, **dados pessoais que você mesmo digitar ficam gravados** — se incluir um CPF ou CNPJ, ele fica no registro. Evite informar dados que não sejam necessários à dúvida.
+
+**O que não sai daqui:** antes de a pergunta ser enviada ao modelo de linguagem que redige a resposta, identificadores como CPF, CNPJ, telefone e e-mail são substituídos automaticamente por marcadores. O provedor do modelo não recebe esses dados. No conector MCP, nenhum modelo externo é chamado — a pergunta não sai do servidor.
 
 ## Tecnologia
 
@@ -51,8 +54,7 @@ Backend em Rust
 Busca semântica com banco vetorial próprio, embutido no servidor  
 Embeddings gerados localmente com o modelo BGE-M3  
 LLM para geração das respostas  
-API de recuperação e servidor MCP para integração com outras ferramentas de IA  
-Autenticação JWT (RS256)
+API de recuperação e servidor MCP para integração com outras ferramentas de IA
 
 ## Projeto aberto e colaborativo
 
