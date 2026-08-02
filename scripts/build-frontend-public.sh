@@ -72,3 +72,12 @@ for id in "${IDS[@]}"; do
   fi
   echo "📦 public/$id/  <- data/$id/{raw/*.json, ref/*}  ($n arquivos)"
 done
+
+# manuais/: os manuais de instalação do conector MCP são GLOBAIS (não escopados a entidade) e
+# autorados em manuais/ na raiz. Copiados aqui — não à mão — pela mesma razão do resto do script:
+# fonte única, sem drift. O README.md fica de fora: a aba MCP do frontend cumpre o papel de índice.
+# Fora do laço de propósito: mesmo chamado com um `<id>`, este passo roda.
+dst_manuais="$PUB/manuais"
+rm -rf "$dst_manuais"; mkdir -p "$dst_manuais"
+cp "$ROOT"/manuais/manual-*.md "$dst_manuais/"
+echo "📦 public/manuais/  <- manuais/manual-*.md  ($(find "$dst_manuais" -name '*.md' | wc -l) arquivos)"
