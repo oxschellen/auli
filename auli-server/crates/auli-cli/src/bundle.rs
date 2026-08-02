@@ -7,9 +7,20 @@
 //! que o upload não é incremental — todo deploy reenvia o conjunto (hoje ~70 MB, dos quais o
 //! `sp.zip` sozinho é 51 MB).
 //!
-//! **Determinismo é requisito, não acabamento.** mtime fixo, compressão fixa e ordem estável das
-//! entradas: duas execuções têm de produzir bytes idênticos. Sem isso o `sha256` do manifesto vira
-//! ruído, e um deploy que não mudou conteúdo nenhum parece ter mudado tudo.
+//! **Determinismo é requisito, não acabamento.** mtime carimbado, compressão fixa e ordem estável
+//! das entradas: duas execuções têm de produzir bytes idênticos. Sem isso o `sha256` do manifesto
+//! vira ruído, e um deploy que não mudou conteúdo nenhum parece ter mudado tudo.
+//!
+//! O mtime das entradas **não** é a data real dos arquivos, e também não é uma constante fictícia:
+//! é a data em que o conteúdo daquele estado mudou pela última vez. A data real não serve porque o
+//! `auli-collections process` reescreve a árvore inteira a cada execução — hoje os 1.945 `.md` do
+//! RS têm o mesmo mtime, embora 1.893 deles não tenham mudado uma vírgula. Usá-la faria o zip
+//! mudar de bytes por causa de metadado, e o `sha256` deixaria de significar "o conteúdo mudou".
+//!
+//! Em vez disso, cada estado carrega no manifesto um `conteudo_sha256` — hash só de (caminho,
+//! conteúdo), imune a mtime — e um `atualizado_em`. Quando o hash bate com o da execução anterior,
+//! a data é reaproveitada; quando não bate, vira hoje. O determinismo se mantém porque a data só
+//! anda quando o conteúdo anda, e os arquivos extraídos passam a dizer algo verdadeiro.
 //!
 //! A lista de estados vem do `registry.toml` — a MESMA fonte da verdade do server, do collections e
 //! do frontend —, e não de uma varredura de `data/`. Um `data/<id>/` órfão no disco não vira
@@ -28,6 +39,9 @@ use crate::error::Result;
 
 /// Nível do deflate. Fixo por contrato: mudar aqui muda todos os `sha256` do manifesto de uma vez.
 const NIVEL_COMPRESSAO: i64 = 6;
+
+/// Formato do `atualizado_em` no manifesto e da data carimbada nas entradas do zip.
+const FORMATO_DATA: &str = "%Y-%m-%d";
 
 /// Permissão gravada em toda entrada. Fixa para o zip não herdar o umask de quem gerou.
 const PERMISSAO: u32 = 0o644;
@@ -63,6 +77,14 @@ pub struct EntradaManifesto {
     /// e para ninguém baixar 51 MB sem saber.
     pub tamanho: String,
     pub sha256: String,
+    /// Hash só de (caminho, conteúdo) das fontes — imune a mtime. É ele que decide se o
+    /// `atualizado_em` anda; o `sha256` acima não serve, porque muda também quando muda a
+    /// embalagem (README, nível de compressão).
+    pub conteudo_sha256: String,
+    /// Data em que o conteúdo deste estado mudou pela última vez (`YYYY-MM-DD`). É também o mtime
+    /// carimbado em toda entrada do zip.
+    pub atualizado_em: String,
+    /// Quando este zip foi *gerado* — anda a cada execução, ao contrário do `atualizado_em`.
     pub gerado_em: String,
     pub tipos: Vec<ContagemTipo>,
 }
@@ -169,14 +191,44 @@ fn coletar_md(dir: &Path, out: &mut Vec<PathBuf>) -> Result<()> {
     Ok(())
 }
 
+/// Hash das FONTES de um estado: (caminho dentro do zip, conteúdo), na ordem da descoberta. Não
+/// entra mtime, nem os README gerados, nem nada da embalagem — é o que permite responder "o acervo
+/// mudou?" sem confundir com "o pacote mudou?".
+pub fn hash_fontes(estado: &EstadoBundle) -> Result<String> {
+    let mut hasher = Sha256::new();
+    for tipo in &estado.tipos {
+        for arquivo in &tipo.arquivos {
+            let relativo = arquivo.strip_prefix(&tipo.dir).unwrap_or(arquivo);
+            hasher.update(tipo.kind.as_bytes());
+            hasher.update(b"/");
+            hasher.update(relativo.to_string_lossy().replace('\\', "/").as_bytes());
+            hasher.update(b"\0");
+            let conteudo = fs::read(arquivo)
+                .map_err(|e| format!("não consegui ler {}: {e}", arquivo.display()))?;
+            hasher.update(&conteudo);
+            hasher.update(b"\0");
+        }
+    }
+    Ok(format!("{:x}", hasher.finalize()))
+}
+
+/// A data `YYYY-MM-DD` como `zip::DateTime` (meia-noite), para carimbar as entradas.
+fn data_do_zip(iso: &str) -> Result<DateTime> {
+    let d = chrono::NaiveDate::parse_from_str(iso, FORMATO_DATA)
+        .map_err(|e| format!("data inválida {iso:?} (esperado YYYY-MM-DD): {e}"))?;
+    use chrono::Datelike;
+    DateTime::from_date_and_time(d.year() as u16, d.month() as u8, d.day() as u8, 0, 0, 0)
+        .map_err(|e| format!("data {iso:?} fora do que o formato ZIP representa: {e:?}").into())
+}
+
 /// Monta o `.zip` de um estado **em memória** e devolve os bytes — é essa forma que deixa o teste de
-/// determinismo comparar duas execuções sem passar por disco.
-pub fn gerar_zip(estado: &EstadoBundle) -> Result<Vec<u8>> {
+/// determinismo comparar duas execuções sem passar por disco. `data` é carimbada em toda entrada.
+pub fn gerar_zip(estado: &EstadoBundle, data: DateTime) -> Result<Vec<u8>> {
     let mut writer = ZipWriter::new(Cursor::new(Vec::new()));
     let opcoes = SimpleFileOptions::default()
         .compression_method(CompressionMethod::Deflated)
         .compression_level(Some(NIVEL_COMPRESSAO))
-        .last_modified_time(DateTime::default()) // 1980-01-01 00:00:00
+        .last_modified_time(data)
         .unix_permissions(PERMISSAO);
 
     escrever(
@@ -339,6 +391,25 @@ pub fn formatar_tamanho(bytes: u64) -> String {
     }
 }
 
+/// O que a execução anterior registrou, para decidir se a data do conteúdo anda ou fica.
+#[derive(Deserialize)]
+struct EntradaAnterior {
+    estado: String,
+    #[serde(default)]
+    conteudo_sha256: String,
+    #[serde(default)]
+    atualizado_em: String,
+}
+
+/// Lê o `downloads.json` da execução anterior. Ausente ou ilegível não é erro — significa apenas
+/// que não há histórico e todas as datas serão de hoje.
+fn manifesto_anterior(caminho: &Path) -> Vec<EntradaAnterior> {
+    fs::read_to_string(caminho)
+        .ok()
+        .and_then(|t| serde_json::from_str(&t).ok())
+        .unwrap_or_default()
+}
+
 /// Gera `<out>/<id>.zip` para todo estado com conteúdo, mais o `downloads.json`.
 pub fn run_bundle(data_root: PathBuf, out: PathBuf) -> Result<()> {
     let estados = descobrir(&data_root)?;
@@ -351,12 +422,25 @@ pub fn run_bundle(data_root: PathBuf, out: PathBuf) -> Result<()> {
     }
 
     fs::create_dir_all(&out)?;
-    let gerado_em = chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Secs, true);
+    let caminho_manifesto = out.join("downloads.json");
+    let anteriores = manifesto_anterior(&caminho_manifesto);
+    let agora = chrono::Utc::now();
+    let gerado_em = agora.to_rfc3339_opts(chrono::SecondsFormat::Secs, true);
+    let hoje = agora.format(FORMATO_DATA).to_string();
 
     let mut manifesto = Vec::with_capacity(estados.len());
     let mut total = 0u64;
     for estado in &estados {
-        let bytes = gerar_zip(estado)?;
+        // A data só anda quando as FONTES andam — daí o hash próprio, imune a mtime e à embalagem.
+        let conteudo_sha256 = hash_fontes(estado)?;
+        let atualizado_em = anteriores
+            .iter()
+            .find(|a| a.estado == estado.id)
+            .filter(|a| a.conteudo_sha256 == conteudo_sha256 && !a.atualizado_em.is_empty())
+            .map(|a| a.atualizado_em.clone())
+            .unwrap_or_else(|| hoje.clone());
+
+        let bytes = gerar_zip(estado, data_do_zip(&atualizado_em)?)?;
         let sha256 = sha256_hex(&bytes);
         let arquivo = format!("{}.zip", estado.id);
         let destino = out.join(&arquivo);
@@ -373,9 +457,10 @@ pub fn run_bundle(data_root: PathBuf, out: PathBuf) -> Result<()> {
         let tamanho_bytes = bytes.len() as u64;
         total += tamanho_bytes;
         println!(
-            "  {} {:>10}  {}{}",
+            "  {} {:>10}  {}  {}{}",
             arquivo,
             formatar_tamanho(tamanho_bytes),
+            atualizado_em,
             estado
                 .tipos
                 .iter()
@@ -393,6 +478,8 @@ pub fn run_bundle(data_root: PathBuf, out: PathBuf) -> Result<()> {
             tamanho_bytes,
             tamanho: formatar_tamanho(tamanho_bytes),
             sha256,
+            conteudo_sha256,
+            atualizado_em,
             gerado_em: gerado_em.clone(),
             tipos: estado
                 .tipos
@@ -406,7 +493,7 @@ pub fn run_bundle(data_root: PathBuf, out: PathBuf) -> Result<()> {
     }
 
     let json = serde_json::to_string_pretty(&manifesto)?;
-    fs::write(out.join("downloads.json"), json)?;
+    fs::write(&caminho_manifesto, json)?;
 
     println!(
         "✅ {} zips ({}) + downloads.json em {}",
@@ -481,6 +568,19 @@ state = "Estado WW"
         raiz
     }
 
+    /// Data arbitrária mas fixa para os testes que não são sobre datas.
+    fn data_de_teste_zip() -> DateTime {
+        data_do_zip("2026-07-29").unwrap()
+    }
+
+    /// A data carimbada numa entrada do zip, como `YYYY-MM-DD`.
+    fn data_da_entrada(bytes: &[u8], nome: &str) -> String {
+        let mut arquivo = zip::ZipArchive::new(Cursor::new(bytes.to_vec())).unwrap();
+        let entrada = arquivo.by_name(nome).unwrap();
+        let d = entrada.last_modified().unwrap();
+        format!("{:04}-{:02}-{:02}", d.year(), d.month(), d.day())
+    }
+
     fn nomes_no_zip(bytes: &[u8]) -> Vec<String> {
         let mut arquivo = zip::ZipArchive::new(Cursor::new(bytes.to_vec())).unwrap();
         (0..arquivo.len())
@@ -525,7 +625,7 @@ state = "Estado WW"
         let raiz = data_de_teste("estrutura");
         let estados = descobrir(&raiz).unwrap();
         let zz = estados.iter().find(|e| e.id == "zz").unwrap();
-        let nomes = nomes_no_zip(&gerar_zip(zz).unwrap());
+        let nomes = nomes_no_zip(&gerar_zip(zz, data_de_teste_zip()).unwrap());
 
         assert!(nomes.contains(&"README.md".to_string()));
         for tipo in ["servicos", "faqs", "pareceres"] {
@@ -543,7 +643,7 @@ state = "Estado WW"
         let raiz = data_de_teste("um-tipo");
         let estados = descobrir(&raiz).unwrap();
         let yy = estados.iter().find(|e| e.id == "yy").unwrap();
-        let nomes = nomes_no_zip(&gerar_zip(yy).unwrap());
+        let nomes = nomes_no_zip(&gerar_zip(yy, data_de_teste_zip()).unwrap());
 
         assert_eq!(
             nomes,
@@ -561,7 +661,7 @@ state = "Estado WW"
         let raiz = data_de_teste("verbatim");
         let estados = descobrir(&raiz).unwrap();
         let zz = estados.iter().find(|e| e.id == "zz").unwrap();
-        let bytes = gerar_zip(zz).unwrap();
+        let bytes = gerar_zip(zz, data_de_teste_zip()).unwrap();
 
         let original = fs::read_to_string(raiz.join("zz/docs/servicos/a-um.md")).unwrap();
         assert_eq!(conteudo_no_zip(&bytes, "servicos/a-um.md"), original);
@@ -573,11 +673,14 @@ state = "Estado WW"
         let estados = descobrir(&raiz).unwrap();
 
         // Duas descobertas independentes, para o teste também cobrir a ordem vinda do `read_dir`.
-        let primeira: Vec<Vec<u8>> = estados.iter().map(|e| gerar_zip(e).unwrap()).collect();
+        let primeira: Vec<Vec<u8>> = estados
+            .iter()
+            .map(|e| gerar_zip(e, data_de_teste_zip()).unwrap())
+            .collect();
         let segunda: Vec<Vec<u8>> = descobrir(&raiz)
             .unwrap()
             .iter()
-            .map(|e| gerar_zip(e).unwrap())
+            .map(|e| gerar_zip(e, data_de_teste_zip()).unwrap())
             .collect();
 
         for (a, b) in primeira.iter().zip(segunda.iter()) {
@@ -635,6 +738,67 @@ state = "Estado WW"
         // `ww` (sem docs/) e `xx` (fora do registry) não podem ter virado arquivo.
         assert!(!out.join("ww.zip").exists());
         assert!(!out.join("xx.zip").exists());
+    }
+
+    #[test]
+    fn hash_das_fontes_ignora_mtime() {
+        // O caso real: o `process` reescreve a árvore inteira e carimba mtime novo em todos os
+        // arquivos, mesmo nos que não mudaram. O hash não pode enxergar isso.
+        let raiz = data_de_teste("hash-mtime");
+        let antes = hash_fontes(&descobrir(&raiz).unwrap()[0]).unwrap();
+
+        let alvo = raiz.join("yy/docs/pareceres/y1.md");
+        let conteudo = fs::read(&alvo).unwrap();
+        fs::write(&alvo, &conteudo).unwrap(); // reescreve idêntico: mtime novo, conteúdo igual
+
+        assert_eq!(antes, hash_fontes(&descobrir(&raiz).unwrap()[0]).unwrap());
+    }
+
+    #[test]
+    fn hash_das_fontes_muda_com_o_conteudo() {
+        let raiz = data_de_teste("hash-conteudo");
+        let antes = hash_fontes(&descobrir(&raiz).unwrap()[0]).unwrap();
+        fs::write(raiz.join("yy/docs/pareceres/y1.md"), "outro texto\n").unwrap();
+        assert_ne!(antes, hash_fontes(&descobrir(&raiz).unwrap()[0]).unwrap());
+    }
+
+    #[test]
+    fn data_do_conteudo_fica_quando_nada_muda_e_anda_quando_muda() {
+        let raiz = data_de_teste("data-conteudo");
+        let out = raiz.join("downloads");
+        run_bundle(raiz.clone(), out.clone()).unwrap();
+
+        // Reescreve o manifesto com uma data antiga, simulando um pacote gerado há tempos.
+        let ler = |out: &PathBuf| -> Vec<serde_json::Value> {
+            serde_json::from_str(&fs::read_to_string(out.join("downloads.json")).unwrap()).unwrap()
+        };
+        let mut entradas = ler(&out);
+        for e in &mut entradas {
+            e["atualizado_em"] = serde_json::json!("2020-03-15");
+        }
+        fs::write(
+            out.join("downloads.json"),
+            serde_json::to_string_pretty(&entradas).unwrap(),
+        )
+        .unwrap();
+
+        // Conteúdo intocado: a data tem de ser preservada, e chegar carimbada nos arquivos.
+        run_bundle(raiz.clone(), out.clone()).unwrap();
+        let depois = ler(&out);
+        for e in &depois {
+            assert_eq!(e["atualizado_em"], "2020-03-15");
+        }
+        let bytes = fs::read(out.join("yy.zip")).unwrap();
+        assert_eq!(data_da_entrada(&bytes, "pareceres/y1.md"), "2020-03-15");
+
+        // Agora um documento muda: só o estado afetado ganha data nova.
+        fs::write(raiz.join("yy/docs/pareceres/y1.md"), "texto novo\n").unwrap();
+        run_bundle(raiz.clone(), out.clone()).unwrap();
+        let final_ = ler(&out);
+        let yy = final_.iter().find(|e| e["estado"] == "yy").unwrap();
+        let zz = final_.iter().find(|e| e["estado"] == "zz").unwrap();
+        assert_ne!(yy["atualizado_em"], "2020-03-15", "yy mudou, data anda");
+        assert_eq!(zz["atualizado_em"], "2020-03-15", "zz não mudou, data fica");
     }
 
     #[test]
