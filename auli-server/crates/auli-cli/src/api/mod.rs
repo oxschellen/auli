@@ -64,8 +64,14 @@ pub fn retrieve_routes(state: Arc<AppState>, limiter: SharedLimiter) -> Router {
 // browsers (o Claude conecta a partir da nuvem da Anthropic, sem header Origin).
 pub fn mcp_routes(state: Arc<AppState>) -> Router {
     let engine = state.engine.clone();
+    let anonimizador = state.anonimizador.clone();
     let service = StreamableHttpService::new(
-        move || Ok(crate::mcp::AuliMcp::new(engine.clone())),
+        move || {
+            Ok(crate::mcp::AuliMcp::new(
+                engine.clone(),
+                anonimizador.clone(),
+            ))
+        },
         LocalSessionManager::default().into(),
         StreamableHttpServerConfig::default().with_allowed_hosts(MCP_ALLOWED_HOSTS),
     );

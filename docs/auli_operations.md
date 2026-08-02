@@ -603,6 +603,7 @@ Há **três** destinos distintos:
 | Tipo                    | Onde                                                                   | Conteúdo                                                                                                                                                                                                                |
 | ----------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Q&A do RAG** ⚠️ PII    | `logs/<AAAA-MM-DD_HH-MM-SS>.txt` na raiz do repo (um arquivo por pergunta) | Quatro seções: `PERGUNTA (ORIGINAL)` — **texto cru, com PII** —, `PERGUNTA (ANONIMIZADA)`, `RESPOSTA` (**restaurada**, PII de volta) e `CONTEXTO RAG`. Ver **§7.0**. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `$AULI_LOG_DIR` (default `./logs` do CWD). O `start_server.sh` exporta `AULI_LOG_DIR=<raiz>/logs` (absoluto), então caem na **raiz do repo**, não em `auli-server/`. |
+| **Chamadas MCP** ⚠️ PII  | o **mesmo** `logs/…` acima                                              | Mesmo formato, **sem a seção `RESPOSTA`** (não há LLM neste caminho) e com `tipo: mcp:<ferramenta>` no cabeçalho. Só as três ferramentas que recebem pergunta; `listar_entidades` não gera registro. Ver §7.0 e §12. |
 | **cloudflared**         | `/tmp/auli-cloudflared.log`                                            | saída do túnel Cloudflare (redirecionada pelo `start_server.sh`).                                                                                                                                                       |
 | **Console (`tracing`)** | **stdout/stderr** do terminal (não vai a arquivo)                      | boot, scores, `info/debug/warn`. Controlado por `RUST_LOG`.                                                                                                                                                             |
 
@@ -634,7 +635,7 @@ Controles compensatórios:
 | --- | --- |
 | Permissão | `logs/` **0700**, arquivos **0600** — reaplicado a cada gravação pelo `log_question`, então um diretório herdado com modo frouxo se conserta sozinho. |
 | Versionamento | `**/logs/` está no `.gitignore` — nunca vai ao GitHub. Confira com `git check-ignore -v logs/`. |
-| Retenção | **manual** (ver abaixo). Não há expurgo automático. |
+| Retenção | **manual** (ver abaixo). Não há expurgo automático. ⚠️ **Desde 2026-08-02 o MCP também grava**, e o regime de volume é outro: o chat é ~1 arquivo por interação humana, enquanto um assistente faz **várias** chamadas por conversa. Reavaliar a periodicidade do expurgo — a doutrina de retenção não mudou, o volume sim. |
 | Cópia/compartilhamento | Quem lê o diretório lê PII. Não colar trecho de log em issue, PR ou chat sem revisar. |
 
 Retenção — o expurgo é seu, e não roda sozinho:
@@ -848,9 +849,21 @@ Quatro ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer` e
 `consultar_servicos_faqs` (detalhes em [docs/auli_code.md](docs/auli_code.md) §3.12).
 
 > **Privacidade (D-MCP-5).** Este caminho **não chama LLM externo**: a pergunta é embedada
-> localmente e nunca sai do processo. Por isso não passa pelo anonimizador, e o log registra só
-> metadados (`uf`, `top_k`, nº de hits) — nunca o texto da pergunta. O log completo com pergunta
-> segue existindo apenas no caminho do chat.
+> localmente e nunca sai do processo — nenhum texto do usuário atravessa a fronteira do serviço.
+>
+> **Registro em disco (revisto em 2026-08-02).** Antes, o MCP só emitia metadados no `tracing`, e
+> nada em `logs/`. Isso não era doutrina — era lacuna: a D-MCP-5 fala da fronteira do LLM, nunca
+> decidiu que a chamada não deveria ser registrada. Hoje **as três ferramentas que recebem
+> pergunta** (`buscar_pareceres`, `obter_parecer`, `consultar_servicos_faqs`) gravam pelo MESMO
+> caminho do chat: mesmo diretório, mesmas permissões, mesmo formato — com `tipo: mcp:<ferramenta>`
+> no cabeçalho e **sem a seção `RESPOSTA`**, que não existe aqui (quem redige é o assistente do
+> usuário). `listar_entidades` não gera registro: não há pergunta. O anonimizador passou a rodar
+> neste caminho **só para produzir o par original/anonimizada** — o mesmo par que torna a §7.0
+> auditável.
+>
+> A superfície MCP é pública e sem autenticação, e era a única sem trilha. A correção alinha as
+> duas faces: **não se registra quem perguntou** (sem nome, IP ou sessão — o IP existe só em
+> memória, no rate limiter), registra-se **a pergunta, o horário e o que foi devolvido**.
 
 ### 12.1 Teste de protocolo (antes de qualquer cliente)
 

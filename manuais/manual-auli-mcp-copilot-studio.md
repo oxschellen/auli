@@ -33,9 +33,18 @@ Quatro ferramentas são expostas:
 | `consultar_servicos_faqs` | Serviços de atendimento e perguntas frequentes de uma UF, num único bloco de texto. Para dúvidas de "como fazer" (guias, cadastros, certidões, parcelamentos) |
 
 **O que trafega para fora do tenant:** o texto da pergunta e a sigla da UF. Nada mais — não há
-upload de documento, não há contexto do Microsoft 365, não há identificação do usuário. **O que o
-servidor registra em log:** apenas metadados (UF, quantidade de resultados, tempo de resposta). O
-texto da pergunta nunca é gravado; isso é regra do código, não configuração.
+upload de documento, não há contexto do Microsoft 365, não há identificação do usuário.
+
+**O que o servidor registra em log:** a pergunta, o horário e o que foi devolvido. **Não é
+registrado nada que identifique quem perguntou** — sem nome, sem endereço IP, sem sessão, sem
+usuário. Isso é regra do código, não configuração: o IP existe apenas em memória, para o limite de
+requisições, e nunca chega ao disco.
+
+O registro serve para auditar a qualidade das respostas e o mascaramento automático de dados
+pessoais. Vale saber que **se o usuário digitar um dado pessoal na própria pergunta** (um CNPJ, por
+exemplo), ele fica gravado — o registro guarda a pergunta original **e** a versão mascarada, lado a
+lado, justamente para permitir conferir o que o mascaramento deixou passar. Os arquivos ficam com
+permissão restrita ao usuário do serviço e nunca saem do servidor.
 
 ## Pré-requisitos
 
@@ -161,8 +170,13 @@ que o endpoint fala MCP por transporte streamable.
 >
 > **Sentido do fluxo:** apenas leitura. O servidor não recebe documento, não acessa dados do
 > Microsoft 365 e não identifica o usuário. O que sai do tenant é o texto da pergunta e a sigla da
-> UF consultada; do lado do servidor, apenas metadados de uso são registrados — o texto da pergunta
-> não é gravado.
+> UF consultada.
+>
+> **Registro do lado do servidor:** a pergunta, o horário e o conteúdo devolvido, **sem qualquer
+> identificação de quem perguntou** — sem nome, sem IP, sem sessão. O registro fica em arquivo de
+> acesso restrito no servidor, não é compartilhado com terceiros e serve para auditar a qualidade
+> das respostas e o mascaramento automático de dados pessoais. Dado pessoal que o próprio usuário
+> escreva na pergunta é gravado, junto da versão mascarada correspondente.
 >
 > **O que peço:** (a) liberar o conector correspondente na política de dados do Power Platform e
 > (b) aprovar, em Integrated apps, o agente que será submetido pelo Copilot Studio.

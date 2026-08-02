@@ -395,7 +395,7 @@ pub async fn exec_all_question(
         query_type.label(),
         &question,
         &pergunta_anon,
-        &answer,
+        Some(&answer),
         &rag,
         tempos,
     )?;
@@ -426,7 +426,7 @@ fn format_log_record(
     tempos: &str,
     original: &str,
     sanitizada: &str,
-    answer: &str,
+    answer: Option<&str>,
     rag: &str,
 ) -> String {
     let regua = "=".repeat(64);
@@ -435,6 +435,14 @@ fn format_log_record(
         let faltam = 64usize.saturating_sub(base.chars().count());
         format!("{base}{}", "-".repeat(faltam))
     };
+    // `answer: None` = caminho MCP, que não chama LLM (D-MCP-5): quem redige a resposta é o
+    // assistente do usuário, e ela nunca passa por este processo. A seção é OMITIDA em vez de
+    // gravada vazia — vazio seria ambíguo com "o LLM devolveu string vazia". Com `Some`, o
+    // registro é byte a byte o de sempre (ver `log_record_has_header_and_sections_in_order`).
+    let resposta = match answer {
+        Some(a) => format!("{}\n{a}\n\n", secao("RESPOSTA")),
+        None => String::new(),
+    };
     format!(
         "{regua}\n\
          CONSULTA · {stamp} · entidade: {entidade} · tipo: {tipo}\n\
@@ -442,22 +450,24 @@ fn format_log_record(
          {regua}\n\n\
          {}\n{original}\n\n\
          {}\n{sanitizada}\n\n\
-         {}\n{answer}\n\n\
+         {resposta}\
          {}\n{rag}\n\
          {regua}",
         secao("PERGUNTA (ORIGINAL)"),
         secao("PERGUNTA (ANONIMIZADA)"),
-        secao("RESPOSTA"),
         secao("CONTEXTO RAG (documentos recuperados)"),
     )
 }
 
-fn log_question(
+/// `pub(crate)` porque a face MCP grava pelo MESMO caminho — mesmo diretório, mesmas permissões
+/// (0700/0600), mesmo formato. Duplicar o gravador criaria dois lugares para acertar a doutrina de
+/// §7.0 do `auli_operations.md`; `answer: None` é a única diferença (o MCP não chama LLM).
+pub(crate) fn log_question(
     entidade: &str,
     tipo: &str,
     original: &str,
     sanitizada: &str,
-    answer: &str,
+    answer: Option<&str>,
     rag: &str,
     tempos: TemposConsulta,
 ) -> std::io::Result<()> {
@@ -606,7 +616,7 @@ mod tests {
             "embed: 12 ms · retrieve+montagem: 3 ms · llm: 950 ms · total: 970 ms",
             "CNPJ 11.222.333/0001-81 pode aderir?",
             "CNPJ [CNPJ_1] pode aderir?",
-            "Sim, o CNPJ 11.222.333/0001-81 atende.",
+            Some("Sim, o CNPJ 11.222.333/0001-81 atende."),
             "## PARECER\n0\n...",
         );
 
@@ -638,6 +648,38 @@ mod tests {
         assert!(rec.contains("CNPJ 11.222.333/0001-81 pode aderir?"));
         assert!(rec.contains("CNPJ [CNPJ_1] pode aderir?"));
         assert!(rec.contains("Sim, o CNPJ 11.222.333/0001-81 atende."));
+    }
+
+    /// O registro do caminho MCP: mesmo cabeçalho, mesmas seções de pergunta e de contexto — e
+    /// **sem** a seção RESPOSTA, porque nenhum LLM é chamado ali (D-MCP-5). Omitir é diferente de
+    /// gravar vazio: uma seção `RESPOSTA` em branco seria lida como "o modelo não respondeu".
+    #[test]
+    fn log_record_do_mcp_omite_a_secao_resposta() {
+        let rec = format_log_record(
+            "2026-08-02 19:48:01",
+            "rs",
+            "mcp:consultar_servicos_faqs",
+            "embed: 14 ms · retrieve+montagem: 2 ms · llm: 0 ms · total: 17 ms",
+            "como parcelar ICMS em atraso?",
+            "como parcelar ICMS em atraso?",
+            None,
+            "\n## servico\n1\n...",
+        );
+
+        assert!(
+            !rec.contains("RESPOSTA"),
+            "a seção RESPOSTA não pode existir no caminho MCP: {rec}"
+        );
+        // O resto do registro é o de sempre, na mesma ordem.
+        let i_orig = rec.find("PERGUNTA (ORIGINAL)").expect("seção original");
+        let i_anon = rec
+            .find("PERGUNTA (ANONIMIZADA)")
+            .expect("seção anonimizada");
+        let i_rag = rec.find("CONTEXTO RAG").expect("seção rag");
+        assert!(i_orig < i_anon && i_anon < i_rag);
+        assert!(rec.contains("tipo: mcp:consultar_servicos_faqs"), "{rec}");
+        // `llm: 0 ms` preserva o contrato de grep da linha TEMPOS (ver `tempos_linha_pina_o_formato`).
+        assert!(rec.contains("llm: 0 ms"), "{rec}");
     }
 
     #[test]

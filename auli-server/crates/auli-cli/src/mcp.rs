@@ -20,9 +20,11 @@ use rmcp::{
     schemars, tool, tool_handler, tool_router,
 };
 
+use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_core::corpus::{FAQS, SERVICES};
 use auli_retrieval::Engine;
 
+use crate::rag::TemposConsulta;
 use crate::{entities, rag};
 
 /// Teto de top_k das buscas MCP (mesmo racional do /v1/retrieve).
@@ -73,15 +75,62 @@ pub struct ObterParecerArgs {
 #[derive(Clone)]
 pub struct AuliMcp {
     engine: Arc<Engine>,
+    /// Usado SÓ para produzir a seção `PERGUNTA (ANONIMIZADA)` do registro de auditoria. Este
+    /// caminho não chama LLM externo (D-MCP-5), então não há texto a proteger na saída — o par
+    /// original/anonimizada existe pelo mesmo motivo do chat: auditar o que o `auli-anon` deixa
+    /// passar (§7.0 do `auli_operations.md`).
+    anonimizador: Arc<Anonimizador>,
     tool_router: ToolRouter<AuliMcp>,
 }
 
 #[tool_router]
 impl AuliMcp {
-    pub fn new(engine: Arc<Engine>) -> Self {
+    pub fn new(engine: Arc<Engine>, anonimizador: Arc<Anonimizador>) -> Self {
         Self {
             engine,
+            anonimizador,
             tool_router: Self::tool_router(),
+        }
+    }
+
+    /// Grava o registro de auditoria de uma chamada MCP pelo **mesmo caminho do chat**: mesmo
+    /// diretório (`$AULI_LOG_DIR`), mesmas permissões (0700/0600), mesmo formato — sem a seção
+    /// `RESPOSTA`, que aqui não existe (nenhum LLM é chamado; quem redige é o assistente do
+    /// usuário).
+    ///
+    /// **O que NÃO é registrado, por construção:** nome, IP, sessão ou qualquer identificador de
+    /// quem chamou. O registro é `pergunta + horário + o que foi devolvido` — a mesma doutrina da
+    /// §7.0, que troca privacidade-no-disco por auditabilidade, com os controles compensatórios
+    /// de acesso e retenção.
+    ///
+    /// Falha de gravação **não derruba a chamada**: é uma API pública somente-leitura, e recusar
+    /// uma consulta porque o disco falhou seria pior que perder um registro. Diverge aqui do chat
+    /// (que propaga o erro) de propósito.
+    fn registrar(
+        &self,
+        uf: &str,
+        ferramenta: &str,
+        pergunta: &str,
+        devolvido: &str,
+        tempos: TemposConsulta,
+    ) {
+        let anonimizada = match self.anonimizador.anonimizar(pergunta) {
+            Ok(a) => a.texto,
+            Err(e) => {
+                tracing::warn!("anonimização falhou no log MCP: {e}");
+                TEXTO_FALLBACK_ERRO.to_string()
+            }
+        };
+        if let Err(e) = rag::log_question(
+            uf,
+            &format!("mcp:{ferramenta}"),
+            pergunta,
+            &anonimizada,
+            None, // sem LLM neste caminho
+            devolvido,
+            tempos,
+        ) {
+            tracing::warn!("falha ao gravar o log da chamada MCP: {e}");
         }
     }
 
@@ -132,12 +181,25 @@ impl AuliMcp {
         .map_err(|e| McpError::internal_error(e.to_string(), None))?;
 
         // D-MCP-5: só metadados no log — nunca o texto da pergunta.
-        tracing::info!(uf = %uf, top_k, hits = hits.len(), ms = t.elapsed().as_millis() as u64,
-            "mcp buscar_pareceres");
+        let ms = t.elapsed().as_millis() as u64;
+        tracing::info!(uf = %uf, top_k, hits = hits.len(), ms, "mcp buscar_pareceres");
 
         // JSON estruturado no content de texto: é o formato que assistentes consomem melhor.
         let json = serde_json::to_string_pretty(&hits)
             .map_err(|e| McpError::internal_error(e.to_string(), None))?;
+        // `search_pareceres` funde embed + varredura, então o split não existe aqui: o tempo vai
+        // inteiro em `retrieve_ms` (rotulado "retrieve+montagem" na linha TEMPOS).
+        self.registrar(
+            &uf,
+            "buscar_pareceres",
+            &args.pergunta,
+            &json,
+            TemposConsulta {
+                retrieve_ms: ms,
+                total_ms: ms,
+                ..Default::default()
+            },
+        );
         Ok(CallToolResult::success(vec![ContentBlock::text(json)]))
     }
 
@@ -171,16 +233,25 @@ impl AuliMcp {
         tracing::info!(uf = %uf, achou = achado.is_some(), ms = t.elapsed().as_millis() as u64,
             "mcp obter_parecer");
 
-        match achado {
-            Some(p) => {
-                let json = serde_json::to_string_pretty(&p)
-                    .map_err(|e| McpError::internal_error(e.to_string(), None))?;
-                Ok(CallToolResult::success(vec![ContentBlock::text(json)]))
-            }
-            None => Ok(CallToolResult::success(vec![ContentBlock::text(
-                erro_numero_nao_achado(&args.numero, &uf),
-            )])),
-        }
+        let ms = t.elapsed().as_millis() as u64;
+        let devolvido = match &achado {
+            Some(p) => serde_json::to_string_pretty(p)
+                .map_err(|e| McpError::internal_error(e.to_string(), None))?,
+            None => erro_numero_nao_achado(&args.numero, &uf),
+        };
+        // Aqui a "pergunta" é o número pedido — é o que o usuário digitou nesta chamada.
+        self.registrar(
+            &uf,
+            "obter_parecer",
+            &args.numero,
+            &devolvido,
+            TemposConsulta {
+                retrieve_ms: ms,
+                total_ms: ms,
+                ..Default::default()
+            },
+        );
+        Ok(CallToolResult::success(vec![ContentBlock::text(devolvido)]))
     }
 
     #[tool(
@@ -218,6 +289,8 @@ impl AuliMcp {
             .await
             .map_err(|e| McpError::internal_error(e.to_string(), None))?
             .map_err(|e| McpError::internal_error(e.to_string(), None))?;
+        let embed_ms = t.elapsed().as_millis() as u64;
+        let t_ret = Instant::now();
 
         // As MESMAS constantes do chat — a paridade byte a byte depende disso. `rag::retrieve`
         // é tolerante a coleção ausente (contribui vazio), exatamente como no chat.
@@ -246,9 +319,22 @@ impl AuliMcp {
         tracing::info!(uf = %uf, servicos = svc_docs.len(), faqs = faq_docs.len(),
             ms = t.elapsed().as_millis() as u64, "mcp consultar_servicos_faqs");
 
-        Ok(CallToolResult::success(vec![ContentBlock::text(
-            rag::montar_rag_servicos_faqs(&svc_docs, &faq_docs),
-        )]))
+        let bloco = rag::montar_rag_servicos_faqs(&svc_docs, &faq_docs);
+        // Único caminho MCP onde embed e retrieve são medidos separadamente — é o que torna a
+        // linha TEMPOS comparável com a do chat para a MESMA pergunta.
+        self.registrar(
+            &uf,
+            "consultar_servicos_faqs",
+            &args.pergunta,
+            &bloco,
+            TemposConsulta {
+                embed_ms,
+                retrieve_ms: t_ret.elapsed().as_millis() as u64,
+                total_ms: t.elapsed().as_millis() as u64,
+                ..Default::default()
+            },
+        );
+        Ok(CallToolResult::success(vec![ContentBlock::text(bloco)]))
     }
 }
 
