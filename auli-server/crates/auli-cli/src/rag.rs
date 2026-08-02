@@ -408,7 +408,7 @@ pub async fn exec_all_question(
 /// Isso **revisa** o §4 (Fase 2, "obrigatório") do plano do `auli-anon`, que mandava persistir só
 /// o texto anonimizado. A contrapartida é que a proteção do log passa a ser de **acesso e
 /// retenção**, não de conteúdo: `log_question` grava com 0700/0600, `logs/` está fora do git, e a
-/// retenção é operada (`auli_operations.md` §7). O que o `auli-anon` garante segue intacto e é
+/// retenção é operada (`docs/auli_operations.md` §7). O que o `auli-anon` garante segue intacto e é
 /// outra coisa: o LLM externo só vê placeholders (Fase 3) e o stdout em nível `info` só mostra a
 /// pergunta anonimizada. **Quem tem leitura deste diretório tem leitura de PII** — tratar como tal
 /// ao copiar, versionar ou compartilhar.

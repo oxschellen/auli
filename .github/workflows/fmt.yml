@@ -2,7 +2,7 @@ name: fmt
 
 # Guarda da formatação: `cargo fmt --check` no workspace inteiro. Existe porque o repo passou
 # meses sem esse guarda e acumulou 723 divergências — cada crate tocado colhia um pedaço da
-# dívida e virava ruído no diff (ver auli_pendencias.md §28).
+# dívida e virava ruído no diff (ver docs/auli_pendencias.md §28).
 #
 # Barato pelo mesmo critério do scraper-boundary: o rustfmt PARSEIA, não compila — nada de
 # fastembed/ort. O build/test continua rodando localmente.

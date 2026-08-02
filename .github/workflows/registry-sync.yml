@@ -2,7 +2,7 @@ name: registry-sync
 
 # Guard-rail barato: garante que data/registry.toml continua sendo a fonte única de entidades
 # (frontend em dia + sem cópias fora do registry). Não compila Rust (fastembed/ort são pesados);
-# o build/test Rust roda localmente (ver auli_operations.md).
+# o build/test Rust roda localmente (ver docs/auli_operations.md).
 on:
   pull_request:
     paths:

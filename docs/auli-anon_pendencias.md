@@ -1,7 +1,7 @@
 # auli-anon — pendências (Fase 4 e afins)
 
 Estado atual do crate `auli-anon` e do que falta. Complementa o plano em
-[`IMPLEMENTACAO_auli-anon.md`](IMPLEMENTACAO_auli-anon.md).
+[`docs/IMPLEMENTACAO_auli-anon.md`](docs/IMPLEMENTACAO_auli-anon.md).
 
 ## O que já está pronto (Fases 0–3)
 
@@ -18,7 +18,7 @@ Estado atual do crate `auli-anon` e do que falta. Complementa o plano em
   público, outra categoria). **Requisito revisto, não corrigido:** o log é deliberadamente íntegro,
   porque sem o par original/anonimizada lado a lado não há como auditar o que o anonimizador
   deixou passar. A proteção passou a ser de acesso e retenção — ver `format_log_record` em
-  [rag.rs](auli-server/crates/auli-cli/src/rag.rs) e `auli_operations.md` §7.
+  [rag.rs](auli-server/crates/auli-cli/src/rag.rs) e `docs/auli_operations.md` §7.
 - **Fase 3** (PR #56): anonimização na fronteira do LLM (sanitize→restore), atrás do flag
   `AULI_ANONIMIZAR_LLM` (default on).
 

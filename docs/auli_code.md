@@ -6,7 +6,7 @@ relevante cita o arquivo que a sustenta. Quando algo não pôde ser confirmado n
 está marcado como **NÃO CONFIRMADO NO CÓDIGO**.
 
 **Operação:** para **compilar, gerar os dados e subir o app** (com Cloudflare Tunnel) e saber **onde ficam
-os logs**, ver o runbook [auli_operations.md](auli_operations.md).
+os logs**, ver o runbook [docs/auli_operations.md](docs/auli_operations.md).
 
 > Convenção deste documento: distingo explicitamente o que está **implementado e ativo**
 > do que está apenas **modelado/inativo** (rotas sem fluxo completo, dependências
@@ -331,10 +331,10 @@ Detalhes que o código explicita:
 > ⚠️ O smoke de protocolo roda em **localhost**, que o default do rmcp já permite — então ele
 > **não pega** uma `allowed_hosts` mal configurada. Foi assim que o problema chegou à
 > produção. O que cobre isso é o teste `mcp_allowed_hosts_inclui_o_hostname_publico` (`api/mod.rs`)
-> e, no runbook, o smoke apontado para a **URL pública** ([auli_operations.md](auli_operations.md) §12.1).
+> e, no runbook, o smoke apontado para a **URL pública** ([docs/auli_operations.md](docs/auli_operations.md) §12.1).
 
 Smoke de protocolo: [`scripts/mcp-smoke.sh`](scripts/mcp-smoke.sh) (initialize → initialized →
-tools/list → tools/call). Conexão de clientes: [auli_operations.md](auli_operations.md) §12.
+tools/list → tools/call). Conexão de clientes: [docs/auli_operations.md](docs/auli_operations.md) §12.
 
 ---
 
@@ -530,7 +530,7 @@ ocorrências nativas** (resolveu o limite multi-classe do modelo antigo). FAQs s
 
 `text_to_embed`: faqs → breadcrumb `origin` + pergunta (a mesma key do antigo `QuestionKey`);
 serviços → `tipo | classe` + título + início do corpo (fórmula ainda **provisória**, ver
-[auli_pendencias.md](auli_pendencias.md)). A tentativa de raspar por aqui é rejeitada com erro
+[docs/auli_pendencias.md](docs/auli_pendencias.md)). A tentativa de raspar por aqui é rejeitada com erro
 explícito ("a coleta agora é feita pelos binários `auli-scraper-*`").
 
 `pareceres`/`notas` seguem **autorados** em `data/<id>/ref/` (sem scraper, sem `Table<P>`) — ausentes
@@ -574,7 +574,7 @@ nos packs até serem modelados.
 
 Resíduo: dentro do backend o domínio é fonte única (`corpus`/`vector-store`); o `auli-frontend`
 mantém um espelho **gerado** (não mais divergente) do registro. Pendências em
-[auli_pendencias.md](auli_pendencias.md).
+[docs/auli_pendencias.md](docs/auli_pendencias.md).
 
 ---
 

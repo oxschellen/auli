@@ -88,7 +88,7 @@ o scraper, a UI e o engine falam um vocabulário só. Os packs saem `<id>-servic
 
 ## 6. Conteúdo dos docs de scrapers desatualizado — ✅ **resolvido**
 
-`auli_code.md` (§3.1 layout, §5 scrapers/cobertura, §7 resumo) e o runbook `auli_operations.md`
+`docs/auli_code.md` (§3.1 layout, §5 scrapers/cobertura, §7 resumo) e o runbook `docs/auli_operations.md`
 foram atualizados para as **9 entidades**: RS descrito como **API JSON `tudofacil`** (não mais
 headless), tabela/cobertura completas (pe/ba/rj/ce), contagens atuais, o rótulo `snapshot v2 → v3`,
 e a nota do `auli-docs/` obsoleto removida. Referência viva:
@@ -238,7 +238,7 @@ Portal `portal.sefaz.pi.gov.br` = **SPA Sydle ONE (molde CE)**, edge Azion.
 ## 13. Entidade `am` (SEFAZ-AM) integrada — ✅ **resolvida (14ª entidade)**
 
 Portal `www.sefaz.am.gov.br/portfolio-servicos` = **Next.js App Router (RSC)**. Descoberta completa em
-`descobertas.md#am`.
+`docs/descobertas.md#am`.
 
 - **D-AM1 — transporte (App Router, não Pages Router):** sem `__NEXT_DATA__` nem `/_next/data/{buildId}`
   (buildId irrelevante). A listagem inteira vem no **flight RSC** via header **`RSC: 1`** na URL
@@ -291,11 +291,11 @@ navegador (a descoberta provou zero-XHR: todo o conteúdo é server-rendered no 
 **Custo/risco:** **~278 GETs** (um por serviço, cacheáveis; cortesia entre eles) — mais pesado que
 qualquer scraper atual. Os **39 serviços link-only** (externo/submenu) NÃO têm página de detalhe → sem
 `serviceDetails`; a v2 mantém para eles só o `resumo` da listagem. Guard sugerido: um piso de seções
-não-vazias por serviço para pegar regressão de parser. Evidência e amostras em `descobertas.md#am` (Fase 3).
+não-vazias por serviço para pegar regressão de parser. Evidência e amostras em `docs/descobertas.md#am` (Fase 3).
 
 ## 14. Entidade `pa` (SEFA-PA) integrada — ✅ **resolvida (15ª entidade)**
 
-Fonte = catálogo estadual **paradigital** (API Prodepa/Spring), escolhida na descoberta (`descobertas.md#pa`);
+Fonte = catálogo estadual **paradigital** (API Prodepa/Spring), escolhida na descoberta (`docs/descobertas.md#pa`);
 o candidato `portal-digital` estava fora do ar (522) e o Joomla foi extinto.
 
 - **D-PA-FONTE — API anônima:** `para-digital.sistemas.pa.gov.br/para-digital-service/portal`, tudo GET
@@ -322,7 +322,7 @@ o candidato `portal-digital` estava fora do ar (522) e o Joomla foi extinto.
 ## 15. Entidade `es` (SEFAZ-ES) integrada — ✅ **resolvida (16ª entidade)**
 
 Fonte = `portal.es.gov.br` (SPA React sobre **X-Via**, MESMO stack do MT). O `conectacidadao`/
-`guiadeservicos` do enunciado migraram/morreram (307 → portal.es.gov.br). Descoberta em `descobertas.md#es`.
+`guiadeservicos` do enunciado migraram/morreram (307 → portal.es.gov.br). Descoberta em `docs/descobertas.md#es`.
 
 - **D-ES-FONTE / D-ES-MOLDE-MT:** listagem por órgão = **`POST /v1/search`**
   `{query:"", groups:["CATALOG"], departmentSlug, from, size}`, **anônima**. SEFAZ =
@@ -344,7 +344,7 @@ Fonte = `portal.es.gov.br` (SPA React sobre **X-Via**, MESMO stack do MT). O `co
 ## 16. Entidade `ro` (SEFIN-RO) integrada — ✅ **resolvida (17ª entidade)**
 
 Agência Virtual = SPA **Sydle ONE geração "conecta-360" (= molde PI, NÃO o CE)**. Descoberta em
-`descobertas.md#ro`.
+`docs/descobertas.md#ro`.
 
 - **D-RO-FONTE:** shell em `agenciavirtual.sefin.ro.gov.br` (Bearer anônimo efêmero → re-extrair a cada
   rodada), API em `sydleone.sefin.ro.gov.br` (**tenant por host**, sem header de conta como o CE). App
@@ -371,7 +371,7 @@ eventual descrição rica v2.
 ## 17. Entidade `to` (SEFAZ-TO) integrada — ✅ **resolvida (18ª entidade)**
 
 Carta de Serviços em `servicos.to.gov.br` — **ASP.NET WebForms / IIS (HTML server-rendered)**, molde
-HTML-scraping (como BA/RJ), NÃO SPA/JSON. Descoberta em `descobertas.md#to`.
+HTML-scraping (como BA/RJ), NÃO SPA/JSON. Descoberta em `docs/descobertas.md#to`.
 
 - **D-TO-FONTE:** SEFAZ = órgão **`cod_empresa=37`**. Listagem (1 GET) `listar_servico.aspx?cod_empresa=37`
   → 45 serviços; identidade = `cod_assunto_documento_tipo`. Detalhe (1 GET/serviço)
@@ -390,7 +390,7 @@ HTML-scraping (como BA/RJ), NÃO SPA/JSON. Descoberta em `descobertas.md#to`.
 ## 18. Entidade `ma` (SEFAZ-MA) integrada — ✅ **resolvida (19ª entidade)**
 
 Portal SGC (`portal-sgc.sefaz.ma.gov.br`) = **SPA Angular + API REST Spring Boot** (`/sgc/api`).
-Descoberta em `descobertas.md#ma`.
+Descoberta em `docs/descobertas.md#ma`.
 
 - **D-MA-AUTH — anônima (molde GO):** o front loga com **credenciais PÚBLICAS baked no bundle**
   (`{id_cliente:"41", senha:"<bcrypt>", portal:true}` → `POST /sgc/api/login` → `{authtoken}`); token no
@@ -411,7 +411,7 @@ Descoberta em `descobertas.md#ma`.
 
 ## 19. Entidade `ap` (SEFAZ-AP) integrada — ✅ **resolvida (20ª entidade)**
 
-Portal `www.sefaz.ap.gov.br` = **SPA Angular (FUSE)**. Descoberta em `descobertas.md#ap`.
+Portal `www.sefaz.ap.gov.br` = **SPA Angular (FUSE)**. Descoberta em `docs/descobertas.md#ap`.
 
 - **D-AP-FONTE — catálogo hardcoded no bundle JS:** a página `#/categorias/{cat}/{servico}` mostra
   descrição rica, mas **nenhuma API dispara** — os dados são arrays `mock*` embutidos no chunk lazy
@@ -430,7 +430,7 @@ Portal `www.sefaz.ap.gov.br` = **SPA Angular (FUSE)**. Descoberta em `descoberta
 
 ## 20. Entidade `ac` (SEFAZ-AC) integrada — ✅ **resolvida (21ª entidade)**
 
-Portal `sefaz.ac.gov.br` = **WordPress + Elementor** (HTML server-rendered). Descoberta em `descobertas.md#ac`.
+Portal `sefaz.ac.gov.br` = **WordPress + Elementor** (HTML server-rendered). Descoberta em `docs/descobertas.md#ac`.
 
 - **D-AC-FONTE:** `wp-json` = 404 (sem REST). A **Carta de Serviços** (`?page_id=6732`) lista **17
   serviços** em cards por categoria (Geral / Notas Fiscais / Cadastros / IPVA); cada card → post
@@ -449,7 +449,7 @@ Portal `sefaz.ac.gov.br` = **WordPress + Elementor** (HTML server-rendered). Des
 ## 21. Entidade `df` (SEFAZ-DF) integrada — ✅ **resolvida (22ª entidade)**
 
 Portal da Receita/SEEC-DF: **Carta de Serviços em ColdFusion** (`receita.fazenda.df.gov.br/aplicacoes/CartaServicos/`).
-Descoberta em `descobertas.md#df`.
+Descoberta em `docs/descobertas.md#df`.
 
 - **D-DF-FONTE:** **qualquer** `listaSubCategorias.cfm?...` (independente dos params) embute a **árvore
   inteira** do catálogo como objeto JS — subcategorias → `{'item':[{'url':'…servico.cfm?…','desc':'Título'}]}`.
@@ -468,7 +468,7 @@ Descoberta em `descobertas.md#df`.
 ## 22. Entidade `rn` (SEFAZ-RN) integrada — ✅ **resolvida (23ª entidade)**
 
 Portal `www.sefaz.rn.gov.br` = **WordPress + SPA React**; a UVT (`uvt.sefaz.rn.gov.br`) é app
-AngularJS/IIS transacional. Descoberta em `descobertas.md#rn`.
+AngularJS/IIS transacional. Descoberta em `docs/descobertas.md#rn`.
 
 - **D-RN-FONTE:** o RN **não tem uma Carta de Serviços descritiva**. O único catálogo estruturado é o
   CPT **`servicos`** da WP REST (`/wp-json/wp/v2/servicos`, **15 cards**): `title` + `acf.categories`
@@ -487,7 +487,7 @@ AngularJS/IIS transacional. Descoberta em `descobertas.md#rn`.
 ## 23. Entidade `pb` (SEFAZ-PB) integrada — ✅ **resolvida (24ª entidade)**
 
 Carta de Serviços em **PHP** (`cartaservico.sefaz.pb.gov.br`; o portal institucional
-`www.sefaz.pb.gov.br` é Joomla). Descoberta em `descobertas.md#pb`.
+`www.sefaz.pb.gov.br` é Joomla). Descoberta em `docs/descobertas.md#pb`.
 
 - **D-PB-FONTE:** `servicos.php` = accordion aninhado (categoria → público → subcategoria → serviço) com
   links `saibamais.php?id=N` (**101 serviços**; cada id aparece **2×** — árvores por público → dedup por
@@ -503,7 +503,7 @@ Carta de Serviços em **PHP** (`cartaservico.sefaz.pb.gov.br`; o portal instituc
 ## 24. Entidade `al` (SEFAZ-AL) integrada — ✅ **resolvida (25ª entidade)**
 
 A SEFAZ-AL não tem portal próprio: serviços no **Portal Alagoas Digital** (API REST pública "Dados
-Abertos", sem auth). Descoberta/validação em `descobertas.md#al`.
+Abertos", sem auth). Descoberta/validação em `docs/descobertas.md#al`.
 
 - **D-AL-FONTE:** `organs.json` (deriva o UUID da SEFAZ: `acronym=SEFAZ` + `nature=Estadual`, 1 match) →
   `services.json?organ_id={UUID}` (stubs) → `services/{id}.json` (detalhe rico). `robots.txt` libera
@@ -526,7 +526,7 @@ Abertos", sem auth). Descoberta/validação em `descobertas.md#al`.
 ## 25. Entidade `se` (SEFAZ-SE) integrada — ✅ **resolvida (26ª entidade)**
 
 Portal SharePoint 2013 (molde do PE), mas a Carta é uma **única página HTML**. Descoberta em
-`descobertas.md#se`.
+`docs/descobertas.md#se`.
 
 - **D-SE-FONTE:** a Carta de Serviços é `SitePages/servicos_cidadao.aspx` (~890 KB, Bootstrap accordion,
   **91 painéis**), chegada pelo menu SERVIÇOS → CARTAS DE SERVIÇOS. **1 GET**, sem detalhe por serviço.
@@ -546,7 +546,7 @@ Portal SharePoint 2013 (molde do PE), mas a Carta é uma **única página HTML**
 
 ## 26. Entidade `rr` (SEFAZ-RR) integrada — ✅ **resolvida (27ª entidade)**
 
-Portal `www.sefaz.rr.gov.br` = site custom sem catálogo server-rendered. Descoberta em `descobertas.md#rr`.
+Portal `www.sefaz.rr.gov.br` = site custom sem catálogo server-rendered. Descoberta em `docs/descobertas.md#rr`.
 
 - **D-RR-FONTE:** o nav só tem Ouvidoria/Transparência/Downloads; os serviços são apps GeneXus/SIATE em
   `portalweb.sefaz.rr.gov.br` (sem landing "Central de Serviços", tudo 404). MAS o `script.js` da home
@@ -687,12 +687,12 @@ arquitetura anterior, igual ao ChromaDB.
 
 **2. A seção Privacidade promete mais do que o sistema entrega.** Ela afirma que o sistema registra
 "apenas a pergunta e a resposta gerada — sem ... coleta de dados pessoais". Isso conflita com a
-doutrina do log fechada em 2026-07-25 (§7.0 do `auli_operations.md`): o log de auditoria é
+doutrina do log fechada em 2026-07-25 (§7.0 do `docs/auli_operations.md`): o log de auditoria é
 **deliberadamente íntegro** e guarda a pergunta crua e a resposta restaurada. Na auditoria dos 118
 arquivos, **3 tinham PII do usuário** na pergunta e 1 na resposta. Se a pessoa digita o CNPJ, ele vai
 para o disco.
 
-Esta segunda **já estava mapeada** em [auli-anon_pendencias.md](auli-anon_pendencias.md) ("Aba
+Esta segunda **já estava mapeada** em [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md) ("Aba
 'Sobre' (frontend). Não prometer 'dados 100% anônimos'"), com a redação sugerida — que é verdadeira
 e continua favorável, porque descreve a fronteira que o `auli-anon` de fato protege:
 
@@ -726,7 +726,7 @@ rate limit. O que ficou registrado como próximo passo:
   **expõe os scores**, dá para calibrar com dados reais: rodar os ~10 testes do SC, ler os arrays
   de distância e baixar cada banda para logo acima de onde os matches genuínos se separam do
   enchimento. É a pendência com maior efeito sobre a qualidade da resposta. (Ao mexer nelas, rodar
-  `scripts/parity-replay.py` — ver `auli_operations.md` §6.1 — para ver EXATAMENTE quais documentos
+  `scripts/parity-replay.py` — ver `docs/auli_operations.md` §6.1 — para ver EXATAMENTE quais documentos
   mudam de contexto.)
 
 ### Latência percebida no chat via MCP (medido 2026-07-21)

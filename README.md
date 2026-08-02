@@ -15,9 +15,9 @@ one codebase serves many secretariats from isolated data.
   answer drafting calls an external LLM.
 - 📄 License: **MIT**
 
-> 📚 In-depth docs (Portuguese): **[auli_features.md](auli_features.md)** (product),
-> **[auli_code.md](auli_code.md)** (code-audited technical reference), and
-> **[auli_operations.md](auli_operations.md)** (build/run/deploy runbook).
+> 📚 In-depth docs (Portuguese): **[docs/auli_features.md](docs/auli_features.md)** (product),
+> **[docs/auli_code.md](docs/auli_code.md)** (code-audited technical reference), and
+> **[docs/auli_operations.md](docs/auli_operations.md)** (build/run/deploy runbook).
 
 ---
 
@@ -83,14 +83,14 @@ This is a **monorepo** of four cooperating components plus shared docs.
 > [`data/registry.toml`](data/registry.toml); the scraper writes `data/<id>/raw/`, reference content
 > lands in `data/<id>/ref/`, and `auli update` builds `data/<id>/packs/`. The frontend's
 > `entities.ts` and `public/<id>/` are **generated** from `data/` by `scripts/` (the prior
-> hand-copying is gone). See [auli_code.md](auli_code.md) §2.
+> hand-copying is gone). See [docs/auli_code.md](docs/auli_code.md) §2.
 >
 > **The repo holds code + config, not collected data.** Only `data/registry.toml` and
 > `data/prompts/` are versioned. Everything under `data/<id>/**` (ref, raw, packs, scraper cache)
 > is **gitignored**: it lives on the collection machine and is rebuilt by the pipeline
 > (scraper → `auli-collections` → `auli update`). A fresh clone therefore has **no** state data —
 > run the pipeline to populate it. Steps per content type, including the pareceres/consultas flow
-> (scrape → sinopse → vectorize), are in [auli_operations.md](auli_operations.md) §4.
+> (scrape → sinopse → vectorize), are in [docs/auli_operations.md](docs/auli_operations.md) §4.
 
 ---
 
@@ -178,7 +178,7 @@ cargo run -p auli-collections -- rs process             # derive artifacts from 
 
 ## Quick start (backend, the live path)
 
-Full runbook (cmake notes, Cloudflare Tunnel, logs, troubleshooting): **[auli_operations.md](auli_operations.md)**.
+Full runbook (cmake notes, Cloudflare Tunnel, logs, troubleshooting): **[docs/auli_operations.md](docs/auli_operations.md)**.
 
 **Prerequisites:** Rust (stable) · `cmake` + a C compiler (for `aws-lc-sys`) · a `.env` in the repo
 root (see below). No database is required. First build/run downloads the ONNX Runtime and the
@@ -256,7 +256,7 @@ available as reference navigation in the UI.
   and using those reference types in the assistant's answers.
 
 For the precise active-vs-modeled breakdown (routes, auth flows, cross-repo divergences), see
-**[auli_code.md](auli_code.md)** §7.
+**[docs/auli_code.md](docs/auli_code.md)** §7.
 
 ---
 

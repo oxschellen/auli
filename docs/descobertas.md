@@ -2,8 +2,8 @@
 
 > Consolidação dos relatórios de descoberta: 14 de **serviços** por entidade (antes arquivos
 > `descoberta-*.md` separados) + 1 de **pareceres** (RS). Cada seção documenta como o portal foi
-> investigado. Referenciado por `SCRAPERS.md`, `auli_pendencias.md` e comentários nos crates
-> (âncoras `descobertas.md#<uf>` e `#rs-pareceres`).
+> investigado. Referenciado por `SCRAPERS.md`, `docs/auli_pendencias.md` e comentários nos crates
+> (âncoras `docs/descobertas.md#<uf>` e `#rs-pareceres`).
 
 ## Índice
 
@@ -404,7 +404,7 @@ tarefa confirmado.)
 
 ---
 
-## Pontos de decisão a catalogar (candidatos a D-AM* em `auli_pendencias.md` — NÃO decididos aqui)
+## Pontos de decisão a catalogar (candidatos a D-AM* em `docs/auli_pendencias.md` — NÃO decididos aqui)
 
 1. **Agendáveis** → **flag/atributo** (ação "Agendar Serviço"), não público. Evidência: rota
    `/agendaveis` == `todos` (278); 113 serviços têm a ação. *Recomendação: flag.*
@@ -1239,7 +1239,7 @@ canônico do snapshot é a página da Agência Virtual (`catalogo-servicos+…`)
    conta). Prós de parametrizar PI/RO: um crate, N estados; contras: acoplar dois estados a um contrato
    de terceiros que evolui. **NÃO decidir/refatorar aqui.** (O "3º tenant PA/portal-digital" do enunciado
    ficou **inconclusivo**: na descoberta do PA aquele host estava fora do ar (522) e usamos o
-   paradigital/Prodepa — outra plataforma; ver `descobertas.md#pa`.)
+   paradigital/Prodepa — outra plataforma; ver `docs/descobertas.md#pa`.)
 2. **Escopo dos tipos** — só `catalogo-servicos` (194), como o CE. Temas/Conteúdos fora.
 3. **Id canônico** — `_id` (24-hex) estável; `identifier` (slug) estável. Link usa ambos
    (`{identifier}+{_id}`). Igual CE/PI.

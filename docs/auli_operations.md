@@ -2,7 +2,7 @@
 
 Runbook prático para **compilar, gerar os dados e subir o servidor da Auli** (workspace `auli-server`,
 modo `server`) com o túnel do **Cloudflare** (cloudflared), e para saber **onde ficam os logs**. Para a descrição
-técnica do código, ver [auli_code.md](auli_code.md) (§3 cobre o workspace `auli-server`).
+técnica do código, ver [docs/auli_code.md](docs/auli_code.md) (§3 cobre o workspace `auli-server`).
 
 > TL;DR — numa máquina já preparada (build feito, packs gerados):
 >
@@ -846,7 +846,7 @@ O servidor expõe, no **mesmo processo e na mesma porta** do `/v1/question`, um 
 auditor consulte o acervo como **ferramenta**, sem passar pelo chat.
 
 Três ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer` (detalhes em
-[auli_code.md](auli_code.md) §3.12).
+[docs/auli_code.md](docs/auli_code.md) §3.12).
 
 > **Privacidade (D-MCP-5).** Este caminho **não chama LLM externo**: a pergunta é embedada
 > localmente e nunca sai do processo. Por isso não passa pelo anonimizador, e o log registra só

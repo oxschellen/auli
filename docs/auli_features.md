@@ -2,7 +2,7 @@
 
 Visão de produto do Projeto Auli: para que serve, quem usa e o que ele faz hoje. As
 funcionalidades abaixo refletem o que está implementado no código (ver
-[auli_code.md](auli_code.md) para o detalhamento técnico e a distinção entre o que está
+[docs/auli_code.md](docs/auli_code.md) para o detalhamento técnico e a distinção entre o que está
 ativo e o que está apenas modelado).
 
 ---
@@ -155,7 +155,7 @@ referência na interface.
 | **scrapers + auli-collections** | Abastecimento: os **scrapers por estado** coletam do portal (gravam o snapshot) e o **auli-collections** deriva o contrato padronizado que alimenta a busca                                            |
 
 > O backend é o workspace **auli-server** (`vector-store` ← `auli-core` ← `auli-cli`); ver
-> [auli_code.md](auli_code.md) §3.
+> [docs/auli_code.md](docs/auli_code.md) §3.
 
 ---
 
@@ -169,4 +169,4 @@ referência na interface.
   também nas respostas do assistente.
 
 Para o que é apenas modelado/planejado versus efetivamente ativo no código (rotas, fluxos de
-autenticação, divergências entre os repositórios), consulte [auli_code.md](auli_code.md).
+autenticação, divergências entre os repositórios), consulte [docs/auli_code.md](docs/auli_code.md).

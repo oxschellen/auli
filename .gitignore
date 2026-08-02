@@ -66,7 +66,7 @@ web_config.txt
 #   data/registry.toml   (registro de entidades)
 #   data/prompts/        (prompts do RAG, autorados)
 # O que já está no histórico permanece (sem rewrite); a partir daqui o repo só para de crescer.
-# Onde os dados vivem e como regenerá-los: ver `auli_operations.md` §4.
+# Onde os dados vivem e como regenerá-los: ver `docs/auli_operations.md` §4.
 /data/*
 !/data/registry.toml
 !/data/prompts/
