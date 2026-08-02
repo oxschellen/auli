@@ -304,13 +304,19 @@ Servidor **Model Context Protocol** sobre o mesmo motor, via **`rmcp` 2.2** (SDK
 axum — mesmo processo, mesma porta, mesmo `Arc<Engine>`. É a razão de não ser um binário separado:
 o BGE-M3 carrega **uma vez**.
 
-Três ferramentas em pt-BR (D-MCP-7) — o consumidor é a IA de um auditor brasileiro:
+Quatro ferramentas em pt-BR (D-MCP-7, ampliada) — o consumidor é a IA de um auditor brasileiro:
 
-| Ferramenta         | Argumentos                | Devolve                                                    |
-| ------------------ | ------------------------- | ---------------------------------------------------------- |
-| `listar_entidades` | —                         | UFs com acervo **não-vazio**, nome da secretaria e total   |
-| `buscar_pareceres` | `uf`, `pergunta`, `top_k` | metadados + sinopse + link + score; **sem** o corpo        |
-| `obter_parecer`    | `uf`, `numero`            | o parecer com o **corpo integral**, lido da árvore `docs/` |
+| Ferramenta                | Argumentos                | Devolve                                                        |
+| ------------------------- | ------------------------- | -------------------------------------------------------------- |
+| `listar_entidades`        | —                         | UFs com acervo **não-vazio** e, por UF, os kinds e seus totais |
+| `buscar_pareceres`        | `uf`, `pergunta`, `top_k` | metadados + sinopse + link + score; **sem** o corpo            |
+| `obter_parecer`           | `uf`, `numero`            | o parecer com o **corpo integral**, lido da árvore `docs/`     |
+| `consultar_servicos_faqs` | `uf`, `pergunta`          | o bloco de contexto RAG serviços+FAQs, byte a byte o do chat   |
+
+A quarta é a face MCP do tipo `ServicosFaqs` do chat: reusa `rag::retrieve` e
+`rag::montar_rag_servicos_faqs` (ambos `pub(crate)` por isso) com as MESMAS constantes
+(`SERVICES.n_results`/`FAQS.n_results`, `SVC_*`/`FAQ_*`). Não é reimplementação — é o mesmo código,
+e é o que torna a paridade automática em vez de combinada.
 
 Detalhes que o código explicita:
 

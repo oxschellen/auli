@@ -889,8 +889,9 @@ lhe restava: o `update` típico deixaria de ser uma operação de dezenas de min
 
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
-A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) está no ar com três ferramentas e
-rate limit. O que ficou registrado como próximo passo:
+A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) subiu com três ferramentas e rate
+limit; a quarta (`consultar_servicos_faqs`) entrou depois — ver o item riscado abaixo. O que ficou
+registrado como próximo passo:
 
 - **Auth opcional no `/mcp` (D-MCP-9).** Hoje sem autenticação: é conteúdo público e somente-leitura,
   atrás do tunnel e com rate limit próprio (10 req/s, burst 30). Uma API key por header
@@ -899,8 +900,12 @@ rate limit. O que ficou registrado como próximo passo:
 - **Rate limit do `/mcp` em JSON-RPC.** O 429 sai como JSON simples, não como erro JSON-RPC.
   Correto no nível HTTP e os clientes tratam, mas um middleware próprio para `/mcp` daria uma
   mensagem melhor ao assistente.
-- **Ferramenta `buscar_servicos_faqs` (D-MCP-7).** A v1 expõe só `pareceres`. A rota
-  `/v1/retrieve` **já** aceita os quatro kinds; falta a ferramenta MCP equivalente.
+- ~~**Ferramenta `buscar_servicos_faqs` (D-MCP-7).**~~ ✅ **resolvida (2026-08-02)** — entrou como
+  **`consultar_servicos_faqs`** (o nome mudou porque as tools `buscar_*` devolvem JSON de hits e
+  esta devolve o bloco de contexto do chat, não uma lista). Reusa `rag::retrieve` e
+  `rag::montar_rag_servicos_faqs`, com as MESMAS constantes do chat — a saída é byte a byte a do
+  portal, e calibrar as bandas (item abaixo) move as duas faces junto. `listar_entidades` passou a
+  reportar os três kinds.
 - **`buscar_pareceres` multi-UF numa chamada.** Hoje é uma UF por chamada e o assistente itera —
   o que funciona, mas gasta um round-trip por estado numa pergunta comparativa.
 - **Calibração das bandas.** `SVC_BAND`/`FAQ_BAND`/`PAR_BAND` seguem em `f32::INFINITY` (mantendo

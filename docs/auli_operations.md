@@ -844,8 +844,8 @@ O servidor expõe, no **mesmo processo e na mesma porta** do `/v1/question`, um 
 (Model Context Protocol) em `/mcp` — streamable HTTP, via `rmcp`. Isso permite que a IA de um
 auditor consulte o acervo como **ferramenta**, sem passar pelo chat.
 
-Três ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer` (detalhes em
-[docs/auli_code.md](docs/auli_code.md) §3.12).
+Quatro ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer` e
+`consultar_servicos_faqs` (detalhes em [docs/auli_code.md](docs/auli_code.md) §3.12).
 
 > **Privacidade (D-MCP-5).** Este caminho **não chama LLM externo**: a pergunta é embedada
 > localmente e nunca sai do processo. Por isso não passa pelo anonimizador, e o log registra só

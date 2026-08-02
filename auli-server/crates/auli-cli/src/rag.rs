@@ -28,10 +28,13 @@ use crate::util::run_blocking;
 // doc up to the ceiling (`Collection::n_results`). To enable adaptive narrowing, run real
 // questions, read the per-kind score arrays printed below, and lower each band to just above
 // where genuine matches separate from filler.
-const SVC_FLOOR: usize = 0;
-const SVC_BAND: f32 = f32::INFINITY;
-const FAQ_FLOOR: usize = 0;
-const FAQ_BAND: f32 = f32::INFINITY;
+// As de serviços/FAQs são `pub(crate)` porque a ferramenta MCP `consultar_servicos_faqs` usa as
+// MESMAS constantes — é o que faz a paridade com o chat ser automática: calibrar uma banda aqui
+// move as duas faces junto. As de pareceres seguem privadas (o MCP não passa por este caminho).
+pub(crate) const SVC_FLOOR: usize = 0;
+pub(crate) const SVC_BAND: f32 = f32::INFINITY;
+pub(crate) const FAQ_FLOOR: usize = 0;
+pub(crate) const FAQ_BAND: f32 = f32::INFINITY;
 const PAR_FLOOR: usize = 0;
 const PAR_BAND: f32 = f32::INFINITY;
 
@@ -102,7 +105,7 @@ impl QueryType {
 /// semantics: never fail the question over a missing collection. The (CPU-bound) scan runs on a
 /// blocking worker thread. Note the engine's score array is logged by `search_embedded` itself,
 /// keyed by collection name rather than by `label`.
-async fn retrieve(
+pub(crate) async fn retrieve(
     engine: Arc<Engine>,
     collection: String,
     label: &'static str,
@@ -136,9 +139,12 @@ fn render(docs: &[String], fmt: impl Fn(usize, &str) -> String) -> String {
 // `exec_all_question` no G2 para que a paridade do formato tenha trava automatizada. Recebem
 // documentos JÁ PRONTOS para renderizar: para pareceres, os blocos já montados por
 // `bloco_parecer` (que é quem lê a árvore `docs/`). Ver o item 8 do G2 na TAREFA-MCP.
+//
+// A partir da ferramenta MCP `consultar_servicos_faqs`, `montar_rag_servicos_faqs` e `retrieve`
+// são também a implementação da face MCP — é o que garante saída byte a byte igual à do chat.
 
 /// Contexto do tipo `ServicosFaqs`: serviços numerados + FAQs numeradas, nesta ordem.
-fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String]) -> String {
+pub(crate) fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String]) -> String {
     let rag_service = render(svc_docs, |i, doc| format!("\n## servico\n{i}\n{doc}\n"));
     let rag_faq = render(faq_docs, |i, doc| format!("\n// Resultado: {i}\n{doc}\n"));
     format!("{}\n{}", rag_service, rag_faq)

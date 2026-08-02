@@ -32,8 +32,9 @@ Mesmo nome, empresas relacionadas, produtos diferentes.
 SEFA-PR, SEF-SC e SEFAZ-RS. Documentos públicos, cada resultado com o link da fonte oficial, que
 prevalece sobre a cópia.
 
-Três ferramentas: `listar_entidades` (que UFs existem), `buscar_pareceres` (busca por assunto, exige
-a UF) e `obter_parecer` (texto integral, pelo número).
+Quatro ferramentas: `listar_entidades` (o que cada UF tem), `buscar_pareceres` (busca por assunto,
+exige a UF), `obter_parecer` (texto integral, pelo número) e `consultar_servicos_faqs` (serviços de
+atendimento e perguntas frequentes de uma UF, para dúvidas de "como fazer").
 
 **Os totais acima são mantidos à mão nos quatro manuais.** Quando entrar um estado novo com acervo
 de pareceres, todos precisam ser atualizados juntos.
