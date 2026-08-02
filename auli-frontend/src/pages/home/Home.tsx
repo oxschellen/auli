@@ -7,13 +7,15 @@ import { FaqsList } from "../faqslist/FaqsList";
 import { PareceresList } from "../parecereslist/PareceresList";
 import { NotasList } from "../notaslist/NotasList";
 import { ConteudosList } from "../conteudoslist/ConteudosList";
+import { DownloadsList } from "../downloadslist/DownloadsList";
 import { About } from "../about/About";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { hasCollection } from "../../shared/entities";
 import type { Collection } from "../../shared/entities";
 
-/** As sete abas, na ordem da barra. `collection: null` = sempre disponível (`chat` fala com o RAG
- *  da entidade, `about` é estático); as demais dependem de a entidade ter a coleção. */
+/** As oito abas, na ordem da barra. `collection: null` = sempre disponível (`chat` fala com o RAG
+ *  da entidade, `about` é estático, `downloads` lista TODOS os estados); as demais dependem de a
+ *  entidade ter a coleção. */
 const TABS: { id: string; label: string; Component: ComponentType; collection: Collection | null }[] = [
   { id: "chat", label: "Chat", Component: Chat, collection: null },
   { id: "servicos", label: "Serviços", Component: ServicosList, collection: "servicos" },
@@ -21,6 +23,7 @@ const TABS: { id: string; label: string; Component: ComponentType; collection: C
   { id: "pareceres", label: "Pareceres", Component: PareceresList, collection: "pareceres" },
   { id: "notas", label: "Notas", Component: NotasList, collection: "notas" },
   { id: "conteudos", label: "Conteúdos", Component: ConteudosList, collection: "conteudos" },
+  { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null },
   { id: "about", label: "Sobre", Component: About, collection: null },
 ];
 
