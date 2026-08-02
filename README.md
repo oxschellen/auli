@@ -7,8 +7,8 @@ services, FAQs, legal opinions (_pareceres_) and administrative notes (_notas_) 
 to the source.
 
 The pilot tenant is **SEFAZ-RS** (Rio Grande do Sul); the system is **multi-tenant by state**, so
-one codebase serves many secretariats from isolated data. **27 states are registered** and 26 have
-their service catalog collected — 4.156 serviços, 19.780 pareceres and 1.947 FAQs indexed today.
+one codebase serves many secretariats from isolated data. **All 27 registered states** have their
+service catalog collected — 4.205 serviços, 19.780 pareceres and 1.947 FAQs indexed today.
 
 - 🌐 Production: [auli.com.br](https://auli.com.br) · API: `https://api.auli.com.br/v1` ·
   MCP: `https://api.auli.com.br/mcp`
@@ -263,7 +263,7 @@ Required variables panic at startup if missing.
 
 | Type          | What it is                                     | Where it appears today                          | Volume |
 | ------------- | ---------------------------------------------- | ----------------------------------------------- | ------ |
-| **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab                       | 4.156 across 26 states |
+| **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab                       | 4.205 across 27 states |
 | **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | 1.947 (RS) |
 | **Pareceres** | Legal/technical opinions                       | Chat (dedicated query type) + tab + **MCP**     | 19.780 (SP, PR, SC, RS) |
 | **Notas**     | Administrative/tax notes                       | Notas tab (reference)                           | RS |
@@ -280,11 +280,11 @@ reference-only navigation.
 
 - **Working today:** RAG chat for the configured state, the full UI (chat, reference tabs,
   downloads, connector guides, state selection with map), local embeddings, an MCP server for
-  external assistants. **27 states registered, 26 with serviços collected**
-  (4.156), pareceres for four (19.780) and FAQs for RS (1.947). The backend is open (no auth) and
+  external assistants. **All 27 registered states have serviços collected**
+  (4.205), pareceres for four (19.780) and FAQs for RS (1.947). The backend is open (no auth) and
   database-free — it serves from packs alone.
-- **In progress:** serviços for AP (the 27th, pending the portal coming back), FAQs beyond RS,
-  automated scraping of notas, and a controlled vocabulary for the legal-provision graph.
+- **In progress:** FAQs beyond RS, automated scraping of notas, and a controlled vocabulary for the
+  legal-provision graph.
 
 For the precise active-vs-modeled breakdown (routes, auth flows, cross-repo divergences), see
 **[docs/auli_code.md](docs/auli_code.md)** §7.
