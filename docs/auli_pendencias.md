@@ -895,6 +895,58 @@ lhe restava: o `update` típico deixaria de ser uma operação de dezenas de min
 
 ---
 
+## 32. Redesenho do frontend, entrega 3: botão "Entrar" no cabeçalho (aberta — 2026-08-02)
+
+Última das três partes de um redesenho cujas duas primeiras já estão em produção na `v0.1.60`. As
+outras duas **evitaram deliberadamente** o `AppHeader.tsx` para que ele fosse mexido de uma vez só,
+aqui.
+
+| entrega | o que era | estado |
+| --- | --- | --- |
+| 1 | navegação em sidebar agrupada, no lugar das 9 abas planas | ✅ PR #118 |
+| 2 | seletor de tipo de consulta dentro da caixa de mensagem | ✅ PR #119 |
+| 3 | **botão "Entrar" no cabeçalho — casca, sem backend** | aberta |
+
+**O escopo declarado é só a casca.** Nada de autenticação de verdade: sem provedor, sem sessão, sem
+token, sem rota protegida. A motivação registrada na entrega 1 era outra — a barra de abas "não tem
+para onde crescer quando o login chegar" —, ou seja, o botão existe para reservar o lugar e provar
+que o cabeçalho comporta o crescimento.
+
+**Onde mexe.** Só em [`AppHeader.tsx`](../auli-frontend/src/shared/AppHeader.tsx). O cabeçalho hoje é
+um `Flex` de três colunas, com `minW="96px"` nas laterais para manter o "Auli" centralizado:
+
+- **esquerda** — a pílula `UF + trocar` (só aparece com entidade escolhida);
+- **centro** — "Auli" e o subtítulo (`v.0.1.60 · SEFAZ-RS`);
+- **direita** — o `ColorModeButton`, sozinho.
+
+O "Entrar" naturalmente cai à direita, ao lado do botão de tema. O `minW="96px"` das laterais
+provavelmente precisa subir para os dois lados continuarem simétricos e o título não sair do centro.
+
+**O que a tarefa NÃO decidiu, e é o que a pendência guarda:**
+
+- **O que o botão faz sem backend.** Abre um diálogo com "em breve"? Não faz nada e fica
+  `aria-disabled`? Aponta para um formulário externo? Casca que não comunica o que é vira ruído.
+- **Se há estado a fingir.** Um "Entrar" que nunca muda para "Sair"/avatar é meia casca; um que muda
+  exige decidir onde mora esse estado — e hoje o único estado global do app é a entidade
+  (`EntityContext`, persistida em `localStorage`).
+- **Para que serviria a conta**, quando existir. Isso não é detalhe de UI: hoje **nada** no sistema é
+  por usuário — o log de auditoria é deliberadamente anônimo (§7.0 do `auli_operations.md`: "não
+  registramos nomes ou IPs"), e a `about.md` afirma ao usuário que "a Auli não sabe quem você é". Um
+  login real colidiria com essa promessa e exigiria revisá-la **antes**, não depois. A casca não
+  colide; o que ela promete, sim.
+
+**Restrições herdadas das entregas 1 e 2** (não reabrir sem motivo):
+
+- O cabeçalho é `position: sticky` com `zIndex={100}`, acima do `zIndex={20}` da barra de composição
+  do chat — que é `fixed` e recua a largura da sidebar (ver `shared/layout.ts` e a PR #121).
+- A superfície é `bg.inverted` (preta nos dois modos), então o botão precisa das folhas `fg.inverted`
+  / `border.inverted`, como a pílula de troca de estado já faz. Ver a tabela de tokens no
+  `auli-frontend/THEME.md`.
+- O guarda-corpo de cor (`no-restricted-syntax`) proíbe literal de cor em componente; qualquer tom
+  novo entra como token semântico no `system.js` **e** na tabela do `THEME.md`.
+
+---
+
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) subiu com três ferramentas e rate
