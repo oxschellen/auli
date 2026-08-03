@@ -106,11 +106,15 @@ impl AuliMcp {
     /// Falha de gravação **não derruba a chamada**: é uma API pública somente-leitura, e recusar
     /// uma consulta porque o disco falhou seria pior que perder um registro. Diverge aqui do chat
     /// (que propaga o erro) de propósito.
+    ///
+    /// `aderencia` é a seção de proximidade já montada (vazia quando a chamada não fez busca
+    /// vetorial — só o `obter_parecer`, que vai pelo número).
     fn registrar(
         &self,
         uf: &str,
         ferramenta: &str,
         pergunta: &str,
+        aderencia: &str,
         devolvido: &str,
         tempos: TemposConsulta,
     ) {
@@ -121,15 +125,16 @@ impl AuliMcp {
                 TEXTO_FALLBACK_ERRO.to_string()
             }
         };
-        if let Err(e) = rag::log_question(
-            uf,
-            &format!("mcp:{ferramenta}"),
-            pergunta,
-            &anonimizada,
-            None, // sem LLM neste caminho
-            devolvido,
+        if let Err(e) = rag::log_question(&rag::RegistroConsulta {
+            entidade: uf,
+            tipo: &format!("mcp:{ferramenta}"),
+            original: pergunta,
+            sanitizada: &anonimizada,
+            answer: None, // sem LLM neste caminho
+            aderencia,
+            rag: devolvido,
             tempos,
-        ) {
+        }) {
             tracing::warn!("falha ao gravar o log da chamada MCP: {e}");
         }
     }
@@ -189,10 +194,15 @@ impl AuliMcp {
             .map_err(|e| McpError::internal_error(e.to_string(), None))?;
         // `search_pareceres` funde embed + varredura, então o split não existe aqui: o tempo vai
         // inteiro em `retrieve_ms` (rotulado "retrieve+montagem" na linha TEMPOS).
+        // O JSON devolvido já carrega o score de cada parecer; a seção é montada assim mesmo para
+        // que o registro tenha o MESMO formato nas quatro ferramentas e no chat.
+        let aderencia =
+            rag::montar_aderencia(&rag::aderencia("parecer", hits.iter().map(|h| h.score)));
         self.registrar(
             &uf,
             "buscar_pareceres",
             &args.pergunta,
+            &aderencia,
             &json,
             TemposConsulta {
                 retrieve_ms: ms,
@@ -244,6 +254,7 @@ impl AuliMcp {
             &uf,
             "obter_parecer",
             &args.numero,
+            "", // sem busca vetorial: o parecer é achado pelo número exato
             &devolvido,
             TemposConsulta {
                 retrieve_ms: ms,
@@ -312,20 +323,29 @@ impl AuliMcp {
             rag::FAQ_FLOOR,
             rag::FAQ_BAND,
         );
-        let (svc_docs, faq_docs) = tokio::try_join!(svc_fut, faq_fut)
+        let (svc_hits, faq_hits) = tokio::try_join!(svc_fut, faq_fut)
             .map_err(|e| McpError::internal_error(e.to_string(), None))?;
 
         // D-MCP-5: só metadados no log — nunca o texto da pergunta.
-        tracing::info!(uf = %uf, servicos = svc_docs.len(), faqs = faq_docs.len(),
+        tracing::info!(uf = %uf, servicos = svc_hits.len(), faqs = faq_hits.len(),
             ms = t.elapsed().as_millis() as u64, "mcp consultar_servicos_faqs");
 
-        let bloco = rag::montar_rag_servicos_faqs(&svc_docs, &faq_docs);
+        let bloco =
+            rag::montar_rag_servicos_faqs(&rag::payloads(&svc_hits), &rag::payloads(&faq_hits));
+        // Os mesmos rótulos do chat — mesma pergunta, mesmos números nos dois registros.
+        let mut itens = rag::aderencia("servico", svc_hits.iter().map(|h| Some(h.score)));
+        itens.extend(rag::aderencia(
+            "faq",
+            faq_hits.iter().map(|h| Some(h.score)),
+        ));
+        let aderencia = rag::montar_aderencia(&itens);
         // Único caminho MCP onde embed e retrieve são medidos separadamente — é o que torna a
         // linha TEMPOS comparável com a do chat para a MESMA pergunta.
         self.registrar(
             &uf,
             "consultar_servicos_faqs",
             &args.pergunta,
+            &aderencia,
             &bloco,
             TemposConsulta {
                 embed_ms,
