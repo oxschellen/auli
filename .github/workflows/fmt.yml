@@ -8,17 +8,18 @@ name: fmt
 # fastembed/ort. O build/test continua rodando localmente.
 #
 # O workspace é `auli-server/`, não a raiz do repo, daí o `--manifest-path`.
+#
+# SEM filtro de `paths`, de propósito (era `auli-server/**/*.rs` + Cargo.toml): workflow que não
+# dispara não cria check run, e check OBRIGATÓRIO que nunca reporta trava a PR em "Expected" para
+# sempre. Como o guarda custa ~12s, rodar sempre sai mais barato que a engenharia para contornar.
 on:
   pull_request:
-    paths:
-      - "auli-server/**/*.rs"
-      - "auli-server/**/Cargo.toml"
-      - ".github/workflows/fmt.yml"
   push:
     branches: [main]
 
 jobs:
-  check:
+  # Nome do job = nome do check obrigatório. Distinto entre os workflows por isso.
+  fmt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

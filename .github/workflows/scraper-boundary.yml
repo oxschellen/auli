@@ -4,17 +4,18 @@ name: scraper-boundary
 # `auli-server/crates/scrapers/` referencia o `auli-scraper-kit`. A fronteira (tipos + I/O do
 # snapshot) mora no `auli-contract`, o crate leve; o kit é exclusivo dos scrapers. Não compila
 # Rust (fastembed/ort são pesados); o build/test roda localmente (ver docs/auli_operations.md).
+#
+# SEM filtro de `paths`, de propósito (era `auli-server/crates/**` + o script): workflow que não
+# dispara não cria check run, e check OBRIGATÓRIO que nunca reporta trava a PR em "Expected" para
+# sempre. Como o guarda custa ~9s, rodar sempre sai mais barato que a engenharia para contornar.
 on:
   pull_request:
-    paths:
-      - "auli-server/crates/**"
-      - "scripts/check-scraper-boundary.sh"
-      - ".github/workflows/scraper-boundary.yml"
   push:
     branches: [main]
 
 jobs:
-  check:
+  # Nome do job = nome do check obrigatório. Distinto entre os workflows por isso.
+  scraper-boundary:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

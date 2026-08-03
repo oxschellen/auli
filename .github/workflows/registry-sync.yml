@@ -3,23 +3,23 @@ name: registry-sync
 # Guard-rail barato: garante que data/registry.toml continua sendo a fonte única de entidades
 # (frontend em dia + sem cópias fora do registry). Não compila Rust (fastembed/ort são pesados);
 # o build/test Rust roda localmente (ver docs/auli_operations.md).
+#
+# SEM filtro de `paths`, de propósito: workflow que não dispara não cria check run, e check
+# OBRIGATÓRIO que nunca reporta trava a PR em "Expected" para sempre. Como o guarda custa ~12s,
+# rodar sempre sai mais barato que a engenharia para contornar.
+#
+# Isso ATENDE, e de forma mais simples, o motivo pelo qual o filtro antigo listava
+# `auli-server/entities/**` e `auli-server/crates/auli-collections/src/entities/**` — dirs que não
+# existem, listados para que o workflow disparasse SE reaparecessem (check #2 do script). Sem
+# filtro nenhum, ele dispara sempre, então o padrão que se quer barrar é pego de qualquer jeito.
 on:
   pull_request:
-    paths:
-      - "data/registry.toml"
-      - "auli-frontend/src/shared/entities.ts"
-      - "scripts/gen-frontend-entities.mjs"
-      - "scripts/check-registry-sync.sh"
-      # GUARDA (check #2 do script/`check-registry-sync.sh`): estes dois dirs NÃO existem hoje — de
-      # propósito. O filtro dispara o workflow SE eles reaparecerem, para o check falhar já no PR (e
-      # não só no push a main). Não remover por "não existir": é o padrão que queremos barrar.
-      - "auli-server/entities/**"
-      - "auli-server/crates/auli-collections/src/entities/**"
   push:
     branches: [main]
 
 jobs:
-  check:
+  # Nome do job = nome do check obrigatório. Distinto entre os workflows por isso.
+  registry-sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

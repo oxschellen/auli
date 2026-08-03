@@ -1,0 +1,50 @@
+name: frontend
+
+# CI do frontend: lint, testes e build. Existe porque não existia — até a PR #119 o
+# `auli-frontend/` era a única parte do repo sem nenhum guarda automatizado, e os três workflows
+# vizinhos são todos filtrados para `auli-server/`, `data/` e `scripts/`. Na prática, uma PR só de
+# frontend passava sem rodar check algum: `npm test`/`lint`/`build` só aconteciam se alguém
+# lembrasse de rodá-los na máquina.
+#
+# Ao contrário dos vizinhos, este NÃO é um guarda barato que evita compilar de propósito — aqui
+# rodar tudo é o objetivo, e é viável: a suíte inteira leva segundos (vitest em jsdom, sem rede) e
+# o `vite build` idem. Não há equivalente ao fastembed/ort para justificar deixar de fora.
+#
+# `npm run build` já roda `tsc --noEmit` antes do bundle, então o typecheck está coberto pelo
+# terceiro passo — não há passo separado para ele.
+#
+# SEM filtro de `paths`, como os três vizinhos e pelo mesmo motivo: workflow que não dispara não
+# cria check run, e check OBRIGATÓRIO que nunca reporta trava a PR em "Expected" para sempre. Este
+# é o mais caro dos quatro (~60s, contra ~10s dos outros) e ainda assim domina o relógio sozinho —
+# eles correm em paralelo.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  # Nome do job = nome do check obrigatório. Distinto entre os workflows por isso.
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: auli-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: auli-frontend/package-lock.json
+      # `ci`, não `install`: instala exatamente o que está no lock e FALHA se ele divergir do
+      # package.json — que é justamente o desencontro que se quer descobrir aqui, e não na máquina
+      # de quem for buildar depois.
+      - name: npm ci
+        run: npm ci
+      - name: lint
+        run: npm run lint
+      - name: testes
+        run: npm test
+      # Roda `tsc --noEmit` e depois o bundle; cobre o typecheck.
+      - name: build
+        run: npm run build
