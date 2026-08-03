@@ -1,6 +1,6 @@
 import { Flex, Textarea, IconButton, Box } from "@chakra-ui/react";
 import { MdSend } from "react-icons/md";
-import type { ChangeEvent, RefObject } from "react";
+import type { ChangeEvent, ReactNode, RefObject } from "react";
 import { isPromptValid, charsRemaining } from "./utils/prompt";
 
 interface InputProps {
@@ -9,47 +9,71 @@ interface InputProps {
   updatePrompt: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   loading: boolean;
   callServerAPI: (prompt: string) => void;
+  /** Controles que moram DENTRO da caixa de mensagem, acima do campo — hoje o seletor de tipo de
+   *  consulta. Slot em vez de import direto para o `Input` não depender do que é composto nele
+   *  (e para os testes dele seguirem montando o campo sozinho). */
+  children?: ReactNode;
 }
 
-export const Input = ({ textareaRef, prompt, updatePrompt, loading, callServerAPI }: InputProps) => {
+/**
+ * A caixa de mensagem: um cartão ÚNICO com borda, contendo os controles (`children`), o campo e o
+ * botão de enviar.
+ *
+ * A borda é do cartão, não do textarea — antes cada um tinha a sua, e aninhar o seletor deixaria
+ * moldura dentro de moldura dentro de moldura. Pelo mesmo motivo o anel de foco subiu para o
+ * cartão via `_focusWithin`: acende com o campo E com os chips, que é o que "esta caixa está
+ * ativa" quer dizer.
+ */
+export const Input = ({
+  textareaRef,
+  prompt,
+  updatePrompt,
+  loading,
+  callServerAPI,
+  children,
+}: InputProps) => {
   const valid = isPromptValid(prompt);
   const remaining = charsRemaining(prompt);
   return (
-    <Box py={1} bg="bg.canvas" borderColor="border">
-      <Flex
-        mx="auto"
-        flexDirection="row"
-        alignItems="flex-start"
-      >
+    <Box
+      // O cartão passou a reunir controles heterogêneos (o seletor, o campo, o enviar), então
+      // agrupá-los é a marcação honesta — e é o que o dá nome para o leitor de tela.
+      role="group"
+      aria-label="Caixa de mensagem"
+      mx={3}
+      mb={2}
+      px={2}
+      pt={2}
+      pb={1}
+      bg="bg.canvas"
+      border="1px solid"
+      borderColor="border"
+      borderRadius="12px"
+      _focusWithin={{ borderColor: "accent", boxShadow: "focusRing" }}
+      transition="border-color 0.15s ease, box-shadow 0.15s ease"
+    >
+      {children}
+
+      <Flex mx="auto" flexDirection="row" alignItems="flex-start">
         <Textarea
           ref={textareaRef}
           id="prompt-id"
           name="prompt"
           size="md"
           fontSize="1rem"
-          mt={2}
-          mb={2}
-          px={4}
-          py={3}
+          px={2}
+          py={2}
           rows={3}
           minH="80px"
-          ml={1}
           variant="outline"
           placeholder="Digite sua pergunta..."
-          border="1px solid"
-          borderColor="border"
+          // Sem borda e sem anel próprios: quem os desenha é o cartão (ver o topo do arquivo).
+          border="none"
           bg="bg.canvas"
           color="fg"
           _placeholder={{ color: "fg.muted" }}
-          _focus={{
-            borderColor: "accent",
-            boxShadow: "focusRing",
-            outline: "none",
-          }}
-          _hover={{
-            borderColor: "brand.400",
-          }}
-          borderRadius="12px"
+          _focus={{ outline: "none", boxShadow: "none" }}
+          borderRadius="8px"
           value={prompt}
           onChange={updatePrompt}
           onKeyDown={(event) => {
@@ -69,8 +93,7 @@ export const Input = ({ textareaRef, prompt, updatePrompt, loading, callServerAP
         <IconButton
           borderRadius="full"
           ml={2}
-          mr={1}
-          mt={7}
+          mt={4}
           px={4}
           h="48px"
           minW="48px"
@@ -98,9 +121,9 @@ export const Input = ({ textareaRef, prompt, updatePrompt, loading, callServerAP
           <MdSend size={20} />
         </IconButton>
       </Flex>
-      
+
       {/* Character count hint */}
-      <Flex justify="flex-end" px={2} mt={1}>
+      <Flex justify="flex-end" px={2}>
         <Box fontSize="xs" color={valid ? "accent" : "fg.muted"} fontWeight={valid ? "500" : "400"}>
           {valid ? "Pronto para enviar" : `Mínimo ${remaining} caracteres`}
         </Box>

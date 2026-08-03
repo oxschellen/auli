@@ -72,15 +72,16 @@ export const Chat = () => {
           backgroundColor: "var(--chakra-colors-bg-canvas)",
         }}
       >
-        <SelectQuestionType questionType={questionType} updateQuestionType={updateQuestionType} />
-
+        {/* O seletor mora DENTRO da caixa de mensagem: é filho do `Input`, não irmão. */}
         <Input
           textareaRef={textareaRef}
           prompt={prompt}
           updatePrompt={updatePrompt}
           loading={loading}
           callServerAPI={handleCallServerAPI}
-        />
+        >
+          <SelectQuestionType questionType={questionType} updateQuestionType={updateQuestionType} />
+        </Input>
       </div>
     </Flex>
   );

@@ -21,6 +21,8 @@ function setup(prompt: string, overrides: Partial<Parameters<typeof Input>[0]> =
   return props;
 }
 
+const caixa = () => screen.getByRole("group", { name: "Caixa de mensagem" });
+
 describe("Input", () => {
   it("disables send and shows the minimum-chars hint for a short prompt", () => {
     setup(SHORT);
@@ -54,6 +56,20 @@ describe("Input", () => {
       key: "Enter",
     });
     expect(callServerAPI).not.toHaveBeenCalled();
+  });
+
+  it("põe os controles do slot DENTRO da mesma caixa do campo", () => {
+    // A entrega 2: o seletor de tipo de consulta deixa de ser irmão do campo e passa a morar na
+    // caixa de mensagem. Aqui o slot é dublê — o teste é do contrato, não do seletor.
+    setup(VALID, { children: <p>controle no slot</p> });
+    expect(caixa()).toContainElement(screen.getByText("controle no slot"));
+    expect(caixa()).toContainElement(screen.getByPlaceholderText("Digite sua pergunta..."));
+    expect(caixa()).toContainElement(screen.getByLabelText("Enviar pesquisa"));
+  });
+
+  it("sem slot, a caixa segue montando só o campo e o enviar", () => {
+    setup(VALID);
+    expect(caixa()).toContainElement(screen.getByPlaceholderText("Digite sua pergunta..."));
   });
 
   it("does not submit on Shift+Enter (newline)", () => {
