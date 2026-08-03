@@ -13,17 +13,17 @@ name: frontend
 # `npm run build` já roda `tsc --noEmit` antes do bundle, então o typecheck está coberto pelo
 # terceiro passo — não há passo separado para ele.
 #
-# O job se chama `frontend`, e não `check` como os vizinhos, de propósito: check obrigatório é
-# identificado pelo NOME, e três jobs `check` seriam indistinguíveis na hora de exigi-los.
+# SEM filtro de `paths`, como os três vizinhos e pelo mesmo motivo: workflow que não dispara não
+# cria check run, e check OBRIGATÓRIO que nunca reporta trava a PR em "Expected" para sempre. Este
+# é o mais caro dos quatro (~60s, contra ~10s dos outros) e ainda assim domina o relógio sozinho —
+# eles correm em paralelo.
 on:
   pull_request:
-    paths:
-      - "auli-frontend/**"
-      - ".github/workflows/frontend.yml"
   push:
     branches: [main]
 
 jobs:
+  # Nome do job = nome do check obrigatório. Distinto entre os workflows por isso.
   frontend:
     runs-on: ubuntu-latest
     defaults:
