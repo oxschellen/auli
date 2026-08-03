@@ -17,12 +17,6 @@ interface BrazilMapProps {
  * the `d`/`viewBox` attributes. Colors are resolved from the theme via `useToken` (concrete values),
  * so the map still follows light/dark mode without relying on Chakra emitting each CSS var.
  */
-// Active states use the live `accent`/`brand.600` CSS variables (same as the entity cards) so the
-// selectable blue matches the cards and tracks light/dark mode. `useToken` is only used for colors
-// that Chakra doesn't emit as a standalone CSS var (the inert fill and the stroke).
-// Selectable-state fill: a lighter blue than the app accent (map-specific).
-const FILL_ACTIVE = "#3f9df2";
-
 type Point = { x: number; y: number };
 
 /** Parse a path into its rings (sub-polygons). Paths are absolute-coordinate
@@ -81,13 +75,18 @@ function centerOf(d: string, nudge?: Point): Point & { size: number } {
 const LABEL_NUDGE: Record<string, Point> = {
   SC: { x: 0, y: 10 },
 };
-// Highlight (hover/focus) fill: teal, distinct from the accent-blue selectable
-// states and the grey inactive ones.
-const FILL_ACTIVE_HOVER = "#2dd4bf";
-
 export function BrazilMap({ onSelect }: BrazilMapProps) {
   const [hoveredUf, setHoveredUf] = useState<string | null>(null);
-  const [fillInactive, stroke] = useToken("colors", ["bg.mapInactive", "bg.canvas"]);
+  // Todas as cores do mapa vêm do tema por `useToken` (valores concretos): os elementos SVG são
+  // nativos, e o `fill`/`stroke` deles precisa de um valor, não do var que o Chakra emitiria.
+  // Ver `bg.map*`/`fg.mapLabel` em `src/theme/system.js` para o papel de cada uma.
+  const [fillInactive, stroke, fillActive, fillActiveHover, labelInk] = useToken("colors", [
+    "bg.mapInactive",
+    "bg.canvas",
+    "bg.mapActive",
+    "bg.mapActiveHover",
+    "fg.mapLabel",
+  ]);
 
   return (
     <Box w="100%" maxW="506px" mx="auto">
@@ -103,7 +102,7 @@ export function BrazilMap({ onSelect }: BrazilMapProps) {
           const entity = getEntityByUf(uf);
           const available = Boolean(entity);
           const hovered = hoveredUf === uf;
-          const fill = !available ? fillInactive : hovered ? FILL_ACTIVE_HOVER : FILL_ACTIVE;
+          const fill = !available ? fillInactive : hovered ? fillActiveHover : fillActive;
           const center = available ? centerOf(d, LABEL_NUDGE[uf]) : null;
 
           return (
@@ -145,7 +144,7 @@ export function BrazilMap({ onSelect }: BrazilMapProps) {
                 fontSize={center.size}
                 fontWeight={900}
                 // Dark ink for contrast against the teal highlight fill.
-                fill="#083344"
+                fill={labelInk}
                 style={{ pointerEvents: "none", userSelect: "none" }}
               >
                 {uf}

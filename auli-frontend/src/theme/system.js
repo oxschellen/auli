@@ -51,6 +51,13 @@ const config = defineConfig({
           overlay: { value: { base: "rgba(0,0,0,0.06)", _dark: "rgba(255,255,255,0.1)" } },
           // fill for inert/unavailable states on the Brazil selection map
           mapInactive: { value: { base: "{colors.neutral.200}", _dark: "#9aa0a6" } },
+          // Estado SELECIONÁVEL do mapa: azul mais claro que o `accent` do app, específico do
+          // mapa. Mesmo valor nos dois modos, como era quando o literal morava no componente —
+          // o que separa os estados é o traço (`bg.canvas`), e esse já acompanha o modo.
+          mapActive: { value: { base: "#3f9df2", _dark: "#3f9df2" } },
+          // Realce de hover/foco no mapa: turquesa, para não confundir com o azul selecionável
+          // nem com o cinza inerte.
+          mapActiveHover: { value: { base: "#2dd4bf", _dark: "#2dd4bf" } },
           // search-term highlight (<mark>). Translucent like `overlay` so it reads on any surface
           // it lands on (canvas, app, subtle) without a per-surface variant. Amber on purpose:
           // `accent` is the link color here, and marking matches in it would read as clickable.
@@ -75,6 +82,10 @@ const config = defineConfig({
           // propósito (~2,5:1 sobre `bg.subtle`): a WCAG 1.4.3 dispensa componentes inativos, e a
           // dica de que o botão não responde é justamente o apagamento. Irmão de `bg.mapInactive`.
           disabled: { value: { base: "{colors.neutral.400}", _dark: "#7d7d82" } },
+          // Sigla da UF desenhada sobre o realce turquesa do mapa (`bg.mapActiveHover`). Tinta
+          // escura pelo contraste, e igual nos dois modos porque a superfície sob ela também é.
+          // Folha plana de 2 níveis pelo mesmo motivo de `inverted` acima.
+          mapLabel: { value: { base: "#083344", _dark: "#083344" } },
         },
         border: {
           DEFAULT: { value: { base: "{colors.neutral.200}", _dark: "#2a2a2c" } },
