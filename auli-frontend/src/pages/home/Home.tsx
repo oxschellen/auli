@@ -27,6 +27,7 @@ import { About } from "../about/About";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { hasCollection } from "../../shared/entities";
 import type { Collection } from "../../shared/entities";
+import { SIDEBAR_WIDTH } from "../../shared/layout";
 
 /** Grupo de navegação. `null` = topo (sem título); `rodape` cola no pé da sidebar. */
 type Grupo = null | "acervo" | "integracoes" | "rodape";
@@ -308,7 +309,9 @@ export const Home = () => {
           é ancestral do chat, então o "único container de scroll" do App.tsx segue valendo. */}
       <Box
         hideBelow="md"
-        w="210px"
+        // Compartilhada com a barra de composição do chat, que é `fixed` e precisa saber onde a
+        // sidebar termina para não invadi-la. Ver `shared/layout.ts`.
+        w={SIDEBAR_WIDTH}
         flexShrink={0}
         bg="bg.app"
         borderRight="1px solid var(--chakra-colors-border)"
