@@ -43,24 +43,35 @@ don't reach for a raw value or an off-list Chakra default.
 | `bg.subtle` | Subtle fill (scrollbar track, row hover) | `#f1f5f9` | `#272729` |
 | `bg.inverted` | Header / nav (black in **both** modes) | `#000000` | `#000000` |
 | `bg.overlay` | Translucent hover overlay on any surface | `rgba(0,0,0,.06)` | `rgba(255,255,255,.1)` |
+| `bg.highlight` | Search-term highlight (`<mark>`) — translucent, so it reads on any surface. Amber, not `accent`: marked text in the link color would read as clickable | `rgba(250,204,21,.45)` | `rgba(250,204,21,.28)` |
+| `bg.mapInactive` | Brazil map: inert / unavailable state fill | `#e2e8f0` | `#9aa0a6` |
+| `bg.mapActive` | Brazil map: selectable state fill | `#3f9df2` | `#3f9df2` |
+| `bg.mapActiveHover` | Brazil map: hover/focus fill | `#2dd4bf` | `#2dd4bf` |
 | `fg` | Primary text | `#1d1d1f` | `#ffffff` |
 | `fg.muted` | Secondary / muted text | `#64748b` | `#cccccc` |
+| `fg.disabled` | Label of an **inert** control (a collection the entity lacks). A visible step below `muted`, which is the unselected-but-clickable color — low contrast on purpose, since the dimming *is* the affordance (WCAG 1.4.3 exempts inactive components) | `#94a3b8` | `#7d7d82` |
 | `fg.inverted` | Text on inverted/black surfaces | `#ffffff` | `#ffffff` |
 | `fg.invertedMuted` | Muted text on inverted surfaces (header subtitle) | `rgba(255,255,255,.6)` | `rgba(255,255,255,.6)` |
+| `fg.highlight` | Text inside a `<mark>` — the browser default forces near-black, unreadable on a dark surface | `#1d1d1f` | `#ffffff` |
+| `fg.mapLabel` | Brazil map: UF label over the hover fill | `#083344` | `#083344` |
 | `border` | All borders / hairlines | `#e2e8f0` | `#2a2a2c` |
 | `border.inverted` | Hairline on inverted/black surfaces | `rgba(255,255,255,.12)` | `rgba(255,255,255,.12)` |
 | `accent` | Action blue (links, primary buttons) | `#0066cc` | `#2997ff` |
 | `accent.fg` | Text/icon on an accent fill | `#ffffff` | `#ffffff` |
 | `bubble.user` | Chat: the user's message bubble | `#dbeafe` | `#1e3a5f` |
-| `bg.mapActive` | Brazil map: selectable state fill | `#3f9df2` | `#3f9df2` |
-| `bg.mapActiveHover` | Brazil map: hover/focus fill | `#2dd4bf` | `#2dd4bf` |
-| `fg.mapLabel` | Brazil map: UF label over the hover fill | `#083344` | `#083344` |
 
-There is also one **semantic shadow** token:
+Some of these are **flat 2-level leaves** where a 3-level name would read better
+(`fg.highlight`, not `fg.highlight.text`; `fg.inverted`/`fg.invertedMuted` rather
+than `fg.inverted.muted`). That is not style: Chakra v3 does not reliably emit a
+3-level semantic var when the parent carries a `DEFAULT`, and the header subtitle
+once fell back to `fg` — invisible on black — because of it.
+
+There are also two **semantic shadow** tokens:
 
 | Token | Role | Light | Dark |
 | --- | --- | --- | --- |
 | `focusRing` | Accent focus ring for text inputs (`boxShadow="focusRing"`) | `0 0 0 3px rgba(0,102,204,.15)` | `0 0 0 3px rgba(41,151,255,.25)` |
+| `cardHover` | Subtle lift on hoverable cards (the state-selection cards) | `0 4px 16px rgba(0,0,0,.08)` | `0 4px 16px rgba(0,0,0,.4)` |
 
 > The raw palette these are built from (`brand.*`, `ink`, `neutral.*`, …) lives
 > in the `tokens.colors` block of `system.js`. Treat primitives as private —
