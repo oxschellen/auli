@@ -52,6 +52,9 @@ don't reach for a raw value or an off-list Chakra default.
 | `accent` | Action blue (links, primary buttons) | `#0066cc` | `#2997ff` |
 | `accent.fg` | Text/icon on an accent fill | `#ffffff` | `#ffffff` |
 | `bubble.user` | Chat: the user's message bubble | `#dbeafe` | `#1e3a5f` |
+| `bg.mapActive` | Brazil map: selectable state fill | `#3f9df2` | `#3f9df2` |
+| `bg.mapActiveHover` | Brazil map: hover/focus fill | `#2dd4bf` | `#2dd4bf` |
+| `fg.mapLabel` | Brazil map: UF label over the hover fill | `#083344` | `#083344` |
 
 There is also one **semantic shadow** token:
 
