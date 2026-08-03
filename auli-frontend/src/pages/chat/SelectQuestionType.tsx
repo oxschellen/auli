@@ -14,12 +14,15 @@ interface SelectQuestionTypeProps {
 }
 
 /**
- * Radio selector shown above the chat input: pick the kind of query to run. Themed with the app's
- * semantic tokens so the selected chip follows the accent color in both light and dark mode.
+ * Radio selector shown at the top of the chat message box: pick the kind of query to run. Themed
+ * with the app's semantic tokens so the selected chip follows the accent color in both light and
+ * dark mode.
+ *
+ * Não tem margem horizontal própria: quem espaça é o cartão que o contém (ver `Input`).
  */
 export const SelectQuestionType = ({ questionType, updateQuestionType }: SelectQuestionTypeProps) => {
   return (
-    <Box mx={3} maxW="1440px" bg="bg.subtle" borderRadius="12px" px={2} py={1} mb={2}>
+    <Box maxW="1440px" bg="bg.subtle" borderRadius="12px" px={2} py={1} mb={2}>
       <Text
         fontSize="0.525rem"
         fontWeight="600"
