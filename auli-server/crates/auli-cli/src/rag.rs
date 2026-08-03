@@ -12,7 +12,7 @@ use std::time::Instant;
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_contract::{ConsultaPackPayload, render_consulta_block};
 use auli_core::corpus::{FAQS, PARECERES, SERVICES};
-use auli_retrieval::Engine;
+use auli_retrieval::{Engine, Hit};
 use tracing::{debug, error, info, trace, warn};
 
 use crate::config::config;
@@ -105,6 +105,9 @@ impl QueryType {
 /// semantics: never fail the question over a missing collection. The (CPU-bound) scan runs on a
 /// blocking worker thread. Note the engine's score array is logged by `search_embedded` itself,
 /// keyed by collection name rather than by `label`.
+///
+/// Devolve os `Hit` inteiros (payload **e** score): o score alimenta a seção `ADERÊNCIA` do
+/// registro de auditoria (ver [`montar_aderencia`]). Antes era descartado aqui.
 pub(crate) async fn retrieve(
     engine: Arc<Engine>,
     collection: String,
@@ -113,10 +116,10 @@ pub(crate) async fn retrieve(
     n_results: usize,
     floor: usize,
     band: f32,
-) -> Result<Vec<String>> {
+) -> Result<Vec<Hit>> {
     run_blocking(move || {
         match engine.search_embedded(&collection, &embedding, n_results, floor, band) {
-            Ok(hits) => Ok(hits.into_iter().map(|h| h.payload).collect()),
+            Ok(hits) => Ok(hits),
             Err(auli_retrieval::Error::ColecaoAusente(_)) => {
                 warn!("coleção '{label}' ausente para esta entidade — ignorando");
                 Ok(vec![])
@@ -125,6 +128,13 @@ pub(crate) async fn retrieve(
         }
     })
     .await
+}
+
+/// Os payloads dos hits, na ordem — o que `montar_rag_*` consome. Existe porque a montagem do
+/// contexto é PURA (`&[String]`) e o score só interessa ao log: separar aqui mantém as travas de
+/// paridade byte a byte apontando para o texto, e nada mais.
+pub(crate) fn payloads(hits: &[Hit]) -> Vec<String> {
+    hits.iter().map(|h| h.payload.clone()).collect()
 }
 
 /// Render retrieved docs into the RAG context block, one entry per doc (1-based index).
@@ -162,6 +172,43 @@ fn montar_rag_pareceres(blocos: &[String], relacionados: &[String]) -> String {
         format!("\n## PARECER RELACIONADO\n{i}\n{bloco}\n")
     });
     format!("{principal}{rel}")
+}
+
+// ---- Seção ADERÊNCIA do registro de auditoria ----
+//
+// O quão perto da pergunta ficou CADA documento escolhido. Vive só no log: o bloco RAG que vai ao
+// prompt do LLM não muda um byte (é o mesmo `rag` nos dois lugares, e as travas de paridade acima
+// existem exatamente para isso). Serve a duas perguntas do auditor: "por que este documento
+// entrou?" e "onde cortar a banda?" — daí as duas unidades na mesma linha.
+
+/// Uma linha da seção: o rótulo do documento (mesmo índice 1-based do bloco RAG) e sua distância
+/// cosseno. `None` = o documento não veio de busca vetorial (hoje só a expansão por grafo dos
+/// pareceres relacionados, que é por co-citação de dispositivos).
+pub(crate) type Aderencia = (String, Option<f32>);
+
+/// Rotula os scores de UMA coleção com o índice que o documento tem no bloco RAG.
+pub(crate) fn aderencia(
+    rotulo: &str,
+    scores: impl IntoIterator<Item = Option<f32>>,
+) -> Vec<Aderencia> {
+    scores
+        .into_iter()
+        .enumerate()
+        .map(|(i, s)| (format!("{rotulo} {}", i + 1), s))
+        .collect()
+}
+
+/// Dados → texto da seção. `aderência = 1 − distância` (maior = mais perto), e a distância crua
+/// segue ao lado porque é a unidade de `SVC_BAND`/`FAQ_BAND`/`PAR_BAND`: a calibragem se lê
+/// direto daqui, sem conversão de cabeça.
+pub(crate) fn montar_aderencia(itens: &[Aderencia]) -> String {
+    itens
+        .iter()
+        .map(|(rotulo, score)| match score {
+            Some(d) => format!("{rotulo} · aderência {:.3} · distância {d:.3}\n", 1.0 - d),
+            None => format!("{rotulo} · por co-citação de dispositivos (sem busca vetorial)\n"),
+        })
+        .collect()
 }
 
 /// Remonta o bloco de um parecer a partir do payload leve gravado no pack (G3): lê o corpo da árvore
@@ -249,6 +296,9 @@ pub async fn exec_all_question(
     // NOTA: o early-return de pareceres vazios está DENTRO do `match` e sai antes daqui — hoje sem
     // registro de auditoria, e continua assim (não instrumentado).
     let t = Instant::now();
+    // `aderencia` acompanha `rag` em paralelo: mesmos documentos, mesma ordem — mas só o `rag` vai
+    // ao prompt do LLM.
+    let mut itens_aderencia: Vec<Aderencia> = Vec::new();
     let rag = match query_type {
         QueryType::ServicosFaqs => {
             // Retrieve this entity's servicos + faqs concurrently, both through the engine.
@@ -270,17 +320,19 @@ pub async fn exec_all_question(
                 FAQ_FLOOR,
                 FAQ_BAND,
             );
-            let (svc_docs, faq_docs) = tokio::try_join!(svc_fut, faq_fut)?;
+            let (svc_hits, faq_hits) = tokio::try_join!(svc_fut, faq_fut)?;
             info!(
                 "Foram selecionados {} serviços e {} faqs",
-                svc_docs.len(),
-                faq_docs.len()
+                svc_hits.len(),
+                faq_hits.len()
             );
 
-            montar_rag_servicos_faqs(&svc_docs, &faq_docs)
+            itens_aderencia.extend(aderencia("servico", svc_hits.iter().map(|h| Some(h.score))));
+            itens_aderencia.extend(aderencia("faq", faq_hits.iter().map(|h| Some(h.score))));
+            montar_rag_servicos_faqs(&payloads(&svc_hits), &payloads(&faq_hits))
         }
         QueryType::Pareceres => {
-            let par_docs = retrieve(
+            let par_hits = retrieve(
                 engine.clone(),
                 cfg.collection(PARECERES.kind),
                 "par",
@@ -293,7 +345,7 @@ pub async fn exec_all_question(
 
             // No pareceres vectorized for this entity yet — answer with a friendly notice instead of
             // prompting the LLM on empty context (which would invite a hallucinated answer).
-            if par_docs.is_empty() {
+            if par_hits.is_empty() {
                 return Ok(
                     "A consulta de Pareceres ainda não está disponível para esta entidade."
                         .to_string(),
@@ -307,10 +359,10 @@ pub async fn exec_all_question(
             let relacionados = {
                 let engine = engine.clone();
                 let id = cfg.id.clone();
-                let seeds: Vec<String> = par_docs
+                let seeds: Vec<String> = par_hits
                     .iter()
-                    .filter_map(|pj| {
-                        serde_json::from_str::<ConsultaPackPayload>(pj)
+                    .filter_map(|h| {
+                        serde_json::from_str::<ConsultaPackPayload>(&h.payload)
                             .ok()
                             .map(|p| p.numero)
                     })
@@ -333,15 +385,23 @@ pub async fn exec_all_question(
 
             // G3: cada doc recuperado é o payload LEVE (JSON, sem corpo). Remonta o bloco de sempre
             // lendo o corpo da árvore `docs/` da entidade (`<docs_root>/<id>/<doc_path>`).
-            let blocos: Vec<String> = par_docs
+            let blocos: Vec<String> = par_hits
                 .iter()
-                .map(|payload_json| bloco_parecer(payload_json, engine.docs_root(), &cfg.id))
+                .map(|h| bloco_parecer(&h.payload, engine.docs_root(), &cfg.id))
                 .collect();
             info!(
                 "Foram selecionados {} pareceres (+{} relacionados por grafo)",
                 blocos.len(),
                 relacionados.len()
             );
+
+            itens_aderencia.extend(aderencia("parecer", par_hits.iter().map(|h| Some(h.score))));
+            // Os relacionados entram sem número: vieram por co-citação, não por vetor. Ficam na
+            // lista mesmo assim para que a seção espelhe o bloco RAG documento a documento.
+            itens_aderencia.extend(aderencia(
+                "parecer relacionado",
+                relacionados.iter().map(|_| None),
+            ));
             montar_rag_pareceres(&blocos, &relacionados)
         }
     };
@@ -396,6 +456,7 @@ pub async fn exec_all_question(
         &question,
         &pergunta_anon,
         Some(&answer),
+        &montar_aderencia(&itens_aderencia),
         &rag,
         tempos,
     )?;
@@ -427,6 +488,7 @@ fn format_log_record(
     original: &str,
     sanitizada: &str,
     answer: Option<&str>,
+    aderencia: &str,
     rag: &str,
 ) -> String {
     let regua = "=".repeat(64);
@@ -443,6 +505,16 @@ fn format_log_record(
         Some(a) => format!("{}\n{a}\n\n", secao("RESPOSTA")),
         None => String::new(),
     };
+    // Mesma disciplina do `answer`: seção vazia é OMITIDA, não gravada em branco. Vazio aqui
+    // significa "esta chamada não fez busca vetorial" (só o `obter_parecer`, que vai pelo número),
+    // e uma seção em branco seria lida como "buscou e não achou nada".
+    let aderencia = match aderencia.is_empty() {
+        false => format!(
+            "{}\n{aderencia}\n",
+            secao("ADERÊNCIA (proximidade da pergunta)")
+        ),
+        true => String::new(),
+    };
     format!(
         "{regua}\n\
          CONSULTA · {stamp} · entidade: {entidade} · tipo: {tipo}\n\
@@ -451,6 +523,7 @@ fn format_log_record(
          {}\n{original}\n\n\
          {}\n{sanitizada}\n\n\
          {resposta}\
+         {aderencia}\
          {}\n{rag}\n\
          {regua}",
         secao("PERGUNTA (ORIGINAL)"),
@@ -468,6 +541,7 @@ pub(crate) fn log_question(
     original: &str,
     sanitizada: &str,
     answer: Option<&str>,
+    aderencia: &str,
     rag: &str,
     tempos: TemposConsulta,
 ) -> std::io::Result<()> {
@@ -495,6 +569,7 @@ pub(crate) fn log_question(
         original,
         sanitizada,
         answer,
+        aderencia,
         rag,
     );
     let mut opts = OpenOptions::new();
@@ -512,8 +587,8 @@ pub(crate) fn log_question(
 #[cfg(test)]
 mod tests {
     use super::{
-        QueryType, TemposConsulta, bloco_parecer, format_log_record, montar_rag_pareceres,
-        montar_rag_servicos_faqs,
+        QueryType, TemposConsulta, aderencia, bloco_parecer, format_log_record, montar_aderencia,
+        montar_rag_pareceres, montar_rag_servicos_faqs,
     };
     use auli_contract::{ConsultaPackPayload, mddoc};
     use std::path::Path;
@@ -617,6 +692,7 @@ mod tests {
             "CNPJ 11.222.333/0001-81 pode aderir?",
             "CNPJ [CNPJ_1] pode aderir?",
             Some("Sim, o CNPJ 11.222.333/0001-81 atende."),
+            "parecer 1 · aderência 0.700 · distância 0.300\n",
             "## PARECER\n0\n...",
         );
 
@@ -635,14 +711,18 @@ mod tests {
             "TEMPOS deve ficar entre CONSULTA e a régua"
         );
 
-        // As quatro seções, na ordem: original → anonimizada → resposta → contexto RAG.
+        // As cinco seções, na ordem: original → anonimizada → resposta → aderência → contexto RAG.
+        // A aderência vem ANTES do contexto de propósito: primeiro por que cada documento entrou,
+        // depois o texto dele.
         let i_orig = rec.find("PERGUNTA (ORIGINAL)").expect("seção original");
         let i_anon = rec
             .find("PERGUNTA (ANONIMIZADA)")
             .expect("seção anonimizada");
         let i_resp = rec.find("RESPOSTA").expect("seção resposta");
+        let i_ader = rec.find("ADERÊNCIA").expect("seção aderência");
         let i_rag = rec.find("CONTEXTO RAG").expect("seção rag");
-        assert!(i_orig < i_anon && i_anon < i_resp && i_resp < i_rag);
+        assert!(i_orig < i_anon && i_anon < i_resp && i_resp < i_ader && i_ader < i_rag);
+        assert!(rec.contains("parecer 1 · aderência 0.700 · distância 0.300"));
 
         // A original mantém o PII; a anonimizada tem o placeholder; a resposta fica como veio.
         assert!(rec.contains("CNPJ 11.222.333/0001-81 pode aderir?"));
@@ -663,6 +743,7 @@ mod tests {
             "como parcelar ICMS em atraso?",
             "como parcelar ICMS em atraso?",
             None,
+            "servico 1 · aderência 0.550 · distância 0.450\n",
             "\n## servico\n1\n...",
         );
 
@@ -680,6 +761,48 @@ mod tests {
         assert!(rec.contains("tipo: mcp:consultar_servicos_faqs"), "{rec}");
         // `llm: 0 ms` preserva o contrato de grep da linha TEMPOS (ver `tempos_linha_pina_o_formato`).
         assert!(rec.contains("llm: 0 ms"), "{rec}");
+    }
+
+    #[test]
+    fn aderencia_numera_como_o_bloco_rag_e_converte_a_distancia() {
+        // Índice 1-based, igual ao do bloco RAG — é o que permite cruzar as duas seções do log.
+        // `aderência = 1 − distância`, e a distância crua fica ao lado (unidade das bandas).
+        let itens = aderencia("servico", [Some(0.25f32), Some(0.5)]);
+        assert_eq!(
+            montar_aderencia(&itens),
+            "servico 1 · aderência 0.750 · distância 0.250\n\
+             servico 2 · aderência 0.500 · distância 0.500\n"
+        );
+    }
+
+    #[test]
+    fn aderencia_sem_score_marca_a_origem_por_grafo() {
+        // Pareceres relacionados vêm por co-citação de dispositivos, não por vetor: não têm
+        // distância nenhuma, e inventar um número (0.0? 1.0?) seria mentir no registro.
+        let itens = aderencia("parecer relacionado", [None]);
+        assert_eq!(
+            montar_aderencia(&itens),
+            "parecer relacionado 1 · por co-citação de dispositivos (sem busca vetorial)\n"
+        );
+        // Sem documento nenhum, a seção sai vazia — e `format_log_record` a omite.
+        assert_eq!(montar_aderencia(&[]), "");
+    }
+
+    #[test]
+    fn log_record_omite_a_secao_aderencia_quando_nao_houve_busca() {
+        // Caminho do `obter_parecer`: o documento é achado pelo número exato, sem vetor.
+        let rec = format_log_record(
+            "2026-08-02 19:48:01",
+            "sc",
+            "mcp:obter_parecer",
+            "embed: 0 ms · retrieve+montagem: 1 ms · llm: 0 ms · total: 1 ms",
+            "CONSULTA COPAT nº 0091/17",
+            "CONSULTA COPAT nº 0091/17",
+            None,
+            "",
+            "{\"numero\":\"CONSULTA COPAT nº 0091/17\"}",
+        );
+        assert!(!rec.contains("ADERÊNCIA"), "{rec}");
     }
 
     #[test]

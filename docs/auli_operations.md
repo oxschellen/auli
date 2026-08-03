@@ -602,8 +602,8 @@ Há **três** destinos distintos:
 
 | Tipo                    | Onde                                                                   | Conteúdo                                                                                                                                                                                                                |
 | ----------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Q&A do RAG** ⚠️ PII    | `logs/<AAAA-MM-DD_HH-MM-SS>.txt` na raiz do repo (um arquivo por pergunta) | Quatro seções: `PERGUNTA (ORIGINAL)` — **texto cru, com PII** —, `PERGUNTA (ANONIMIZADA)`, `RESPOSTA` (**restaurada**, PII de volta) e `CONTEXTO RAG`. Ver **§7.0**. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `$AULI_LOG_DIR` (default `./logs` do CWD). O `start_server.sh` exporta `AULI_LOG_DIR=<raiz>/logs` (absoluto), então caem na **raiz do repo**, não em `auli-server/`. |
-| **Chamadas MCP** ⚠️ PII  | o **mesmo** `logs/…` acima                                              | Mesmo formato, **sem a seção `RESPOSTA`** (não há LLM neste caminho) e com `tipo: mcp:<ferramenta>` no cabeçalho. Só as três ferramentas que recebem pergunta; `listar_entidades` não gera registro. Ver §7.0 e §12. |
+| **Q&A do RAG** ⚠️ PII    | `logs/<AAAA-MM-DD_HH-MM-SS>.txt` na raiz do repo (um arquivo por pergunta) | Cinco seções: `PERGUNTA (ORIGINAL)` — **texto cru, com PII** —, `PERGUNTA (ANONIMIZADA)`, `RESPOSTA` (**restaurada**, PII de volta), `ADERÊNCIA` (ver §7.2) e `CONTEXTO RAG`. Ver **§7.0**. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `$AULI_LOG_DIR` (default `./logs` do CWD). O `start_server.sh` exporta `AULI_LOG_DIR=<raiz>/logs` (absoluto), então caem na **raiz do repo**, não em `auli-server/`. |
+| **Chamadas MCP** ⚠️ PII  | o **mesmo** `logs/…` acima                                              | Mesmo formato, **sem a seção `RESPOSTA`** (não há LLM neste caminho) e com `tipo: mcp:<ferramenta>` no cabeçalho. Só as três ferramentas que recebem pergunta; `listar_entidades` não gera registro. O `obter_parecer` também não traz `ADERÊNCIA` — acha pelo número, não por vetor. Ver §7.0, §7.2 e §12. |
 | **cloudflared**         | `/tmp/auli-cloudflared.log`                                            | saída do túnel Cloudflare (redirecionada pelo `start_server.sh`).                                                                                                                                                       |
 | **Console (`tracing`)** | **stdout/stderr** do terminal (não vai a arquivo)                      | boot, scores, `info/debug/warn`. Controlado por `RUST_LOG`.                                                                                                                                                             |
 
@@ -671,6 +671,49 @@ server (ver TAREFA-GPU): 18 ms de CPU sobre 3,5 s de resposta torna o ganho de G
 A mesma medição em campo estruturado sai no console (`tracing`): `info` "tempos da consulta" com
 `embed_ms`/`retrieve_ms`/`llm_ms`/`total_ms` separados, para filtrar/agregar no journal. As faces
 `/v1/retrieve` e `/mcp` logam um `ms` único (só o embed+scan; não chamam LLM).
+
+### 7.2 Aderência por documento (seção `ADERÊNCIA`)
+
+Toda consulta que passa por busca vetorial grava, logo antes do `CONTEXTO RAG`, **o quão perto da
+pergunta ficou cada documento escolhido** — na mesma ordem e com o mesmo número do bloco RAG:
+
+```text
+----- ADERÊNCIA (proximidade da pergunta) ----------------------
+servico 1 · aderência 0.656 · distância 0.344
+...
+faq 1 · aderência 0.744 · distância 0.256
+```
+
+São **duas leituras do mesmo número**. `distância` é a distância cosseno crua que o
+`vector-store` calcula: **0 = idêntico**, e quanto menor, mais perto. `aderência` é `1 − distância`,
+para ler na direção intuitiva (maior = mais aderente). As duas aparecem porque servem a coisas
+diferentes:
+
+- a **aderência** responde "este documento tinha o que ver com a pergunta?";
+- a **distância** é a unidade dos knobs `SVC_BAND`/`FAQ_BAND`/`PAR_BAND` em
+  [rag.rs](auli-server/crates/auli-cli/src/rag.rs) — a banda se calibra lendo esta coluna, sem
+  converter nada de cabeça (ver o comentário dos knobs, que já mandava "rodar perguntas reais e
+  ler os scores").
+
+Duas ressalvas de leitura:
+
+- **Não é probabilidade nem porcentagem de acerto.** É proximidade no espaço do BGE-M3. Em corpus
+  real os valores costumam ficar entre 0,55 e 0,75 — pouca dispersão, então o que informa é a
+  **queda relativa** dentro da lista, não o valor absoluto.
+- **A busca sempre devolve os mais próximos que existirem.** Uma lista inteira em ~0,55 sem nada
+  se destacando é o sinal típico de "não há documento sobre isso" — e é exatamente esse caso que a
+  seção torna visível no log.
+
+Pareceres trazidos pela **expansão por grafo** (co-citação de dispositivos) aparecem como
+`parecer relacionado N · por co-citação de dispositivos (sem busca vetorial)`: não vieram do vetor
+e não têm distância — inventar um número ali seria mentir no registro.
+
+A seção vive **só no log**. O bloco que vai ao prompt do LLM não muda um byte: é a mesma string
+`rag` nos dois lugares, e os testes `montar_rag_*_pina_o_formato` a travam byte a byte.
+
+```bash
+grep -h "aderência" logs/*.txt | sort -t' ' -k4 -n | head   # os piores casos do acervo
+```
 
 ---
 
