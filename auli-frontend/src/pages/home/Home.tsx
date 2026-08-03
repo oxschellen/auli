@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ComponentType, KeyboardEvent, RefObject } from "react";
 import { Flex, Box, Text, chakra } from "@chakra-ui/react";
 import {
@@ -211,7 +211,9 @@ const NavList = ({
           ))}
       </Box>
     ))}
-    <Box flex="1" />
+    {/* Espaçador que empurra o rodapé para o pé — presentacional pelo mesmo motivo dos
+        invólucros de grupo acima: é filho direto do tablist e não é um `tab`. */}
+    <Box flex="1" role="none" />
     {menuItems
       .filter((t) => t.grupo === "rodape")
       .map((item) => (
@@ -249,6 +251,25 @@ export const Home = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const drawerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const menuBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  // Esc fecha o drawer e devolve o foco ao botão que o abriu — o par mínimo que um overlay
+  // modal deve ao teclado.
+  //
+  // O ouvinte é do DOCUMENTO, não do painel: ao abrir, o foco continua no botão de menu, que
+  // fica FORA do drawer, então um `onKeyDown` no container não veria a tecla no caso mais comum.
+  // `globalThis.KeyboardEvent` porque `KeyboardEvent` aqui é o tipo sintético do React, importado
+  // no topo — o `addEventListener` quer o do DOM.
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const aoTeclar = (e: globalThis.KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setDrawerOpen(false);
+      menuBtnRef.current?.focus();
+    };
+    document.addEventListener("keydown", aoTeclar);
+    return () => document.removeEventListener("keydown", aoTeclar);
+  }, [drawerOpen]);
 
   const selectTab = (id: string) => {
     setSelectedId(id);
@@ -316,6 +337,7 @@ export const Home = () => {
           borderBottom="1px solid var(--chakra-colors-border)"
         >
           <chakra.button
+            ref={menuBtnRef}
             type="button"
             aria-label={drawerOpen ? "Fechar menu de seções" : "Abrir menu de seções"}
             aria-expanded={drawerOpen}
