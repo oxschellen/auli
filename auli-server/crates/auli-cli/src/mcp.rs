@@ -125,16 +125,16 @@ impl AuliMcp {
                 TEXTO_FALLBACK_ERRO.to_string()
             }
         };
-        if let Err(e) = rag::log_question(
-            uf,
-            &format!("mcp:{ferramenta}"),
-            pergunta,
-            &anonimizada,
-            None, // sem LLM neste caminho
+        if let Err(e) = rag::log_question(&rag::RegistroConsulta {
+            entidade: uf,
+            tipo: &format!("mcp:{ferramenta}"),
+            original: pergunta,
+            sanitizada: &anonimizada,
+            answer: None, // sem LLM neste caminho
             aderencia,
-            devolvido,
+            rag: devolvido,
             tempos,
-        ) {
+        }) {
             tracing::warn!("falha ao gravar o log da chamada MCP: {e}");
         }
     }
