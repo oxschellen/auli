@@ -53,7 +53,7 @@ e o preço está declarado:
   `Transportadora Rio Grande Ltda` real, que não será mascarada porque `Rio`/`Grande` estão lá.
 
 Esses casos são o insumo da fase seguinte, de pesquisa (dicionário de prenomes BR e NER pt-BR),
-que segue **fora de escopo**.
+que segue **fora de escopo** — e o dicionário já foi tentado e medido: ver §5.
 
 **Falso positivo residual conhecido:** `Estrada de Ferro 2` casa como endereço. Documentado e
 aceito — texto tributário raramente traz a construção, e apertar o padrão custaria endereço real.
@@ -126,7 +126,8 @@ Eduarda dos Santos` escapava).
 
 Os caminhos **2 (dicionário de prenomes BR)** e **3 (NER pt-BR via ONNX)** seguem abertos, agora
 como fase de pesquisa e não mais como alternativa: a §4.0 fechou a opção de reaproveitar o
-`PersonNameRecognizer` do cloakrs.
+`PersonNameRecognizer` do cloakrs. O caminho 2 foi implementado e **medido** — ver §5, que é a
+razão de ele continuar aberto.
 
 ### 4.4 Base compartilhada — `reconhecedores/comum.rs`
 
@@ -174,6 +175,107 @@ hospeda também a `STOPLIST` e os helpers `titlecase`/`comeca_maiuscula`.
   regra é do `deduplicate` do cloakrs, e o teste existe para um bump do crate não a mudar calado.
 - ✅ **Latência**: mediana **0,34 ms** (p95 0,35 ms) para pergunta de 1,2 KB densa em PII, contra
   o teto de 5 ms do plano §5.2. Construção do `Anonimizador`, uma vez no boot: 3,3 ms.
+
+## 5. Fase 5 (caminho 2, dicionário de prenomes) — **medida e REPROVADA como está** (2026-08-04)
+
+O caminho 2 foi implementado num patch (`NomeDicionarioRecognizer`, `auli_nome_dicionario_v1`,
+confiança 0.6): 18.938 prenomes do Censo 2010 do IBGE + 2.462 municípios compostos como guarda,
+embutidos por `include_str!`, gerados por `tools/gera_prenomes.py`. Ele pega o **nome solto**, sem
+gatilho — o buraco que a §4.3 declarou.
+
+O patch aplica limpo, tem 80 testes unitários + 8 de fixture verdes e clippy limpo. **Mesmo assim
+não deve ser mergeado**: quando medido fora das próprias fixtures, o custo supera o ganho por duas
+ordens de grandeza. Registrado aqui para que a Fase 5 seja retomada pelo diagnóstico, e não do zero.
+
+### 5.1 O que foi medido, e como
+
+Duas medições, ambas reproduzíveis. A dos logs imprime **só agregados** — nenhum trecho de
+pergunta sai do processo (doutrina §7.0 do `auli_operations.md`).
+
+**(a) Tráfego real** — 236 perguntas extraídas de `PERGUNTA (ORIGINAL)` dos arquivos de `logs/`:
+
+| | |
+|---|---|
+| Perguntas com sequência capitalizada de 2–4 tokens | 96 (41%) |
+| Total dessas sequências | 161 |
+| …precedidas de gatilho (a Fase 4 pega) | **1** |
+| …barradas pela stoplist institucional | 45 |
+| …em início de frase (maiúscula gramatical) | 22 |
+| …**órfãs** (candidatas a *miss*) | **93** |
+
+Antes do patch, um sanity check com um dicionário pequeno (138 prenomes colhidos da API pública do
+Censo — o *ranking* satura rápido, os mesmos nomes de topo dominam todas as UFs e décadas) achou
+**0 das 93 órfãs** começando por prenome. O dicionário de 18.938 do patch é ~140× maior e alcança
+a cauda, o que **inverte a pergunta**: deixa de ser "quanto recall ganha" e passa a ser "quanto
+vocabulário institucional ele marca como nome".
+
+**(b) Prosa institucional** — 3.000 documentos públicos de `data/<id>/docs/**` (23 MB). Por
+construção, quase nada ali deveria ser nome de pessoa.
+
+### 5.2 O resultado
+
+**Ganho:** detecções de NOME nas 236 perguntas reais foram de **1 para 2**. A detecção nova não
+aparece em nenhum documento público do acervo — ou seja, é provavelmente PII de verdade. Um acerto.
+
+**Custo:** no acervo público, **397 detecções de NOME, 137 distintas**. As mais frequentes:
+
+| Ocorrências | Detectado como nome | O que realmente é |
+|---|---|---|
+| 76× | `Franca de Manaus` | **Zona Franca de Manaus** |
+| 44× | `Aliomar Baleeiro` | doutrinador citado no parecer |
+| 15× | `Coleta de Carga` | serviço |
+| 11× | `Marinha Mercante` | termo do domínio |
+| 6× | `Vida Gerador de Benefício Livre` | **VGBL** |
+| 5× | `Paulo e Paraná` | de "São Paulo e Paraná" |
+| 5× | `Laudo Médico` | documento |
+| 3× | `Não Incidência` | conceito tributário |
+
+Sondas diretas confirmaram: **8 de 10 frases institucionais típicas são mascaradas**.
+`a Zona Franca de Manaus tem regime próprio` sai como `a Zona [NOME_1] tem regime próprio`.
+
+### 5.3 As três falhas — estruturais, não de calibração
+
+1. **A guarda de topônimo é contornada pelo próprio recorte.** O candidato começa no *primeiro
+   prenome* da sequência, então `São Paulo e Paraná` vira candidato `Paulo e Paraná` — e a guarda,
+   que compara **igualdade exata** com a lista de municípios, nunca chega a ver `São Paulo`.
+   `SAO PAULO` **está** no arquivo e mesmo assim vaza. A guarda só funciona quando o topônimo
+   *começa* com prenome (`Bento Gonçalves`, `Vera Cruz`, `Carlos Barbosa`) — exatamente o conjunto
+   que os testes do patch exercitam. **Os testes passam por acidente de seleção.**
+2. **O conector `e` encadeia itens de lista:** `Laudo Médico e Laudo Técnico` vira uma detecção só;
+   `Santa Catarina e São Paulo` vira `Catarina e São Paulo`. Faz sentido no reconhecedor ancorado,
+   onde o gatilho segura o contexto; sem gatilho, funde coisas não relacionadas.
+3. **Prenome + qualquer Titlecase é porteiro fraco.** `Franca`, `Coleta`, `Vida`, `Laudo` e
+   `Marinha` são prenomes reais do Censo. O que os salvaria é exigir que o **segundo** token
+   também seja plausível — sobrenome de dicionário, não qualquer palavra capitalizada.
+
+### 5.4 Por que isso importa em produção
+
+O texto anonimizado é o que vai ao LLM (Fase 3, `AULI_ANONIMIZAR_LLM` ligado por padrão): uma
+pergunta com `Zona Franca de Manaus` chega ao modelo **sem o sujeito**. A recuperação não sofre —
+o embedding usa o texto original —, o dano é no prompt e, por consequência, na resposta.
+
+A exposição hoje ainda é baixa: só **1 das 236** perguntas contém alguma das armadilhas testadas
+(`Não Incidência`). Mas é uma pergunta sobre Zona Franca de distância, e AM está no acervo.
+
+### 5.5 Se a Fase 5 for retomada
+
+- Guarda de topônimo por **contenção sobre a sequência inteira**, não igualdade sobre o candidato
+  recortado.
+- `e` **fora** dos conectores deste reconhecedor (mantido no ancorado).
+- Testar **exigir sobrenome de dicionário no 2º token**. É a mudança de maior impacto e a que
+  decide a viabilidade: mataria `Franca de Manaus`, `Coleta de Óleo Usado` e `Laudo Médico`,
+  preservando `João da Silva Pereira`. Exige uma fonte de sobrenomes — a do patch só tem prenomes.
+- **Gate obrigatório:** repetir a medição (b) sobre o acervo antes de aprovar qualquer versão.
+  Contagem de NOME em texto institucional é o número que decide, não o resultado das fixtures.
+- Pendências menores do patch: `cargo fmt --check` reprova em 6 pontos (gate do CI; o commit cita
+  clippy, não fmt) e nenhuma atualização de documentação, ao contrário das fases anteriores.
+
+### 5.6 Achado lateral — os reconhecedores nativos em texto longo
+
+Na varredura do acervo apareceram também `URL` 3447×, `IP_ADDRESS` 58× e `CREDIT_CARD` 1× — todos
+de reconhecedores **nativos** do cloakrs. Não é problema em produção (documento público não passa
+pelo anonimizador; só a pergunta passa), mas mostra que numeração legal e endereço de portal
+disparam esses padrões. Se algum dia o acervo passar a ser anonimizado, começar por aqui.
 
 ## Outras pendências (fora da Fase 4)
 
