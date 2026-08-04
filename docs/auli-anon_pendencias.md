@@ -353,6 +353,92 @@ porque ela reescreve o relato e pode reintroduzir um nome que o corpo trouxesse.
   positivos de NOME em 3.000 arquivos). A proposta desta seção é o oposto — escopo estreito,
   definido por estrutura.
 
+## 7. Fase 6 (razão social sem sufixo, por dicionário de segmentos) — **analisada, não aplicada**
+
+Existe um patch de Fase 6 (`RazaoSegmentoRecognizer`, `auli_razao_segmento_v1`, confiança 0.65)
+que ataca outra limitação declarada da §4: **razão social sem sufixo societário** —
+`Anderle Transportes` sem o `Ltda`. O porteiro deixa de ser o sufixo e passa a ser um **substantivo
+de ramo de atividade** (~120 termos curados em `data/segmentos_razao.txt`: `Transportes`,
+`Padaria`, `Distribuidora`, `Metalúrgica`…), exigindo além dele ao menos um token Titlecase
+**distintivo** — o nome da empresa.
+
+**Decisão de trabalho (2026-08-04): apenas analisado e registrado. Não aplicado, não medido em
+execução.** Primeiro se resolve a questão dos nomes (§5 e §6); a Fase 6 entra depois.
+
+### 7.1 O que o patch faz bem
+
+- **Lista curada e pequena** (120 substantivos), não dicionário massivo — o oposto da §5.
+- **Adjetivos deliberadamente fora** (`Comercial`, `Industrial`, `Atacadista`), com o motivo
+  escrito: `Código Comercial` e `Distrito Industrial` teriam densidade de armadilha maior que o
+  ganho. É a lição da §5 aplicada de forma preventiva.
+- **Duas condições**, não uma: termo de segmento **e** nome distintivo. `o setor de Transportes`
+  não casa porque falta o distintivo.
+- **Armadilhas locais** (`Federação`, `Câmara`, `Distrito`, `Terminal`…) em lista própria, não na
+  stoplist global, para não mudar o comportamento das Fases 4–5 — `Câmara` é sobrenome legítimo.
+- Confiança 0.65 acima do prenome (0.6) com justificativa: em `Rosa Transportes`, o termo de
+  segmento é sinal mais forte de empresa do que o prenome é de pessoa, e no empate de span decide
+  a confiança.
+
+### 7.2 Dependência estrutural: o patch está empilhado sobre a §5
+
+Ele **modifica** `nome_dicionario.rs` (promove `normaliza` para o `comum.rs`) e traz uma trava de
+convivência entre segmento e prenome. Ou seja: **não aplica sobre `main`**, só sobre a Fase 5 —
+que está reprovada. Herdaria os 397 falsos positivos de NOME junto.
+
+A dependência, porém, é **de embalagem, não de conceito**: a Fase 6 não precisa dos 18.938
+prenomes, só do helper `normaliza` e da própria lista de segmentos. Desempilhar é trabalho pequeno,
+e é pré-condição para avaliá-la em separado.
+
+### 7.3 O que a sonda mostrou
+
+A lógica do porteiro foi **reimplementada em Python** e rodada sobre os mesmos corpora da §5 — o
+patch **não** foi aplicado nem compilado. É aproximação do `RE_SEQ` do Rust (tokenização
+equivalente, com pontuação encerrando a sequência), então os números são de ordem de grandeza, não
+exatos:
+
+| | |
+|---|---|
+| Acervo público (3.000 documentos) | **373 detecções, 120 distintas** |
+| Perguntas reais (236) | **0 detecções, 0 perguntas afetadas** |
+
+As mais frequentes no acervo — todas falso positivo:
+
+| Ocorrências | Detectado como razão social | O que é |
+|---|---|---|
+| 99× | `Ministérios da Ciência e Tecnologia` | órgão federal |
+| 23× | `Livre Comércio` | de "Área de Livre Comércio" |
+| 14× | `Depósito Alfandegado Certificado` | regime aduaneiro |
+| 14× | `Comércio Exterior Camex` | órgão |
+| 11× | `Empresa Brasileira de Pesquisa Agropecuária` | Embrapa |
+| 10× | `Zonas de Livre Comércio` | conceito legal |
+| 9× | `Lei de Informática` | a lei |
+
+### 7.4 O defeito de maior alavanca: a lista de armadilhas é **singular**
+
+`ARMADILHAS` tem `MINISTERIO`, `ZONA`, `DISTRITO`, `CAMARA`, `FEDERACAO`, `CENTRO`, `SETOR`,
+`TERMINAL` — e o texto tributário usa o **plural**. Nenhum casa:
+
+`Ministérios`→`MINISTERIOS`, `Zonas`→`ZONAS`, `Áreas`→`AREAS` (nem singular existe na lista),
+`Distritos`, `Câmaras`, `Federações`, `Centros`, `Setores`, `Terminais` — **9 de 9 escapam**.
+Sozinho, isso explica os dois maiores falsos positivos (122 das 373 detecções).
+
+É o **mesmo padrão de falha da §5.3**: guarda que compara forma exata contra texto que varia. Lá
+era o topônimo composto, aqui é o plural. Vale como regra geral para a família: *guarda por
+igualdade exata é frágil; guarda por normalização morfológica ou por contenção é o que resiste.*
+
+Dois defeitos menores, herdados da §5: o conector `e` encadeia itens de lista
+(`Indústria e Comércio Exterior`, `Tarifas e Comércio`) e o span emitido é a **sequência inteira**,
+sem recorte.
+
+### 7.5 Quando for retomada
+
+- **Desempilhar da §5** primeiro (só `normaliza` + a lista de segmentos são necessários).
+- Armadilhas com **plural** — ou comparação por radical, ou as duas formas na lista.
+- `e` fora dos conectores, como na §5.5.
+- **Mesmo gate da §5.5:** medir contagem em texto institucional antes de aprovar. O alvo declarado
+  (`Anderle Transportes` sem sufixo) é legítimo e continua sendo limitação aberta da §4 — o que
+  falta é um porteiro que não marque `Comércio Exterior` junto.
+
 ## Outras pendências (fora da Fase 4)
 
 - ~~**Aba "Sobre" (frontend).** Não prometer "dados 100% anônimos".~~ ✅ **Resolvida
