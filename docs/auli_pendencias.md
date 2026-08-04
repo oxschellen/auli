@@ -947,6 +947,35 @@ provavelmente precisa subir para os dois lados continuarem simétricos e o títu
 
 ---
 
+## 33. Clippy: dívida zerada, mas **sem guarda no CI** (parcial — 2026-08-04)
+
+Irmã da §28, com um desfecho diferente: a dívida foi zerada, o gate **não** foi criado.
+
+**O sintoma.** `cargo clippy --workspace --all-targets -- -D warnings` reprovava desde o bump para o
+Rust 1.96 — 5 erros de lints que não existiam quando o código foi escrito (`collapsible_if` em
+`auli-scraper-pe`, `unnecessary_get_then_check` e três `unnecessary_literal_unwrap` em `mcp.rs`).
+Apareceu ao verificar a Fase 4 do `auli-anon`; zerado no PR #123, sem mudança de comportamento.
+
+**Uma sugestão do clippy foi recusada, de propósito.** Em `top_k_e_limitado_como_no_retrieve`
+([mcp.rs](auli-server/crates/auli-cli/src/mcp.rs)), a correção que o lint sugere deixaria
+`assert_eq!(DEFAULT_TOP_K.clamp(1, MAX_TOP_K), 5)` — que testa o `clamp` da std e apaga o que o teste
+existe para provar: que a `Option` ausente cai no padrão. A expressão passou a vir por closure, com o
+porquê em comentário no código. **Lição:** lint que incide sobre teste às vezes pede para apagar a
+asserção; ler antes de aplicar.
+
+**Por que não há workflow de clippy.** O argumento que torna o `fmt.yml` barato **não vale aqui**: o
+rustfmt parseia, o clippy **compila**. No workspace inteiro isso puxa `fastembed`/`ort` — exatamente
+o custo que o `scraper-boundary` existe para evitar. Um gate honesto precisa de decisão própria:
+escopar aos crates leves (`scrapers/*` + `auli-contract`), ou aceitar o workspace inteiro com cache de
+`~/.cargo` e `target/`.
+
+**⏳ Consequência assumida:** enquanto não houver gate, esta dívida só aparece para quem roda
+localmente e **volta a crescer no próximo bump de toolchain** — foi assim que os 5 chegaram. O mesmo
+risco de deriva de versão descrito no fim da §28 vale aqui, e com mais força: o clippy muda de lints
+entre versões bem mais do que o rustfmt muda de estilo.
+
+---
+
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) subiu com três ferramentas e rate
