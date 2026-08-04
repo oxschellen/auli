@@ -5,10 +5,12 @@ Estado atual do crate `auli-anon` e do que falta. Complementa o plano em
 
 ## O que já está pronto (Fases 0–3)
 
-- **Fase 0/1** (PR #54): crate leaf `auli-anon` + 8 reconhecedores customizados.
-  Cobertos **14 identificadores estruturados**: CPF, CNPJ numérico, e-mail (nativos do
+- **Fase 0/1** (PR #54): crate leaf `auli-anon` + **9** reconhecedores customizados.
+  Cobertos **12 tipos de identificador estruturado**: CPF, CNPJ numérico, e-mail (nativos do
   cloakrs) + CNPJ alfanumérico, telefone, IE (RS), protocolo, GA/GNRE, RENAVAM, placa, CEP,
   data de nascimento. Recall 100% sobre os estruturados, 0 falsos positivos no controle.
+  *(Corrigido em 2026-08-04: dizia "8 reconhecedores" e "14 identificadores" — a contagem não
+  fechava com a própria lista da frase nem com `reconhecedores/mod.rs`, que exporta 9.)*
 - **Fase 2** (PR #55): anonimização no **stdout** (o `info!` publica só a pergunta anonimizada) e
   omissão de IP. **⚠️ Corrigido em 2026-07-25:** esta linha dizia "anonimização no log de auditoria
   (`./logs`) e no stdout" — o log em disco **nunca foi anonimizado**. Ele grava a pergunta crua em
@@ -38,6 +40,34 @@ Ordem de implementação sugerida: **razão social → endereço → nome** (do 
 mais ambíguo).
 
 ---
+
+### 4.0 O que o cloakrs nativo NÃO resolve (verificado no fonte 0.3.0, 2026-08-04)
+
+Antes de escrever qualquer reconhecedor da Fase 4: o registry universal (`cloakrs_patterns`)
+**já registra** `PersonNameRecognizer`, `PhysicalAddressRecognizer` e `DateOfBirthRecognizer`, e
+os três **estão ativos no nosso scanner** — `supported_locales()` devolve `&[]`, e
+`supports_locale` trata slice vazio como universal, então o `Locale::BR` não os filtra. Eles
+rodam a cada pergunta e **nunca disparam em pt-BR**:
+
+| Reconhecedor nativo | Por que é inerte aqui |
+|---|---|
+| `person_name_dictionary_v1` | `validate_parts` exige que **prenome E sobrenome** estejam em duas listas EN `const` privadas (`FIRST_NAMES`/`LAST_NAMES`, ~50 nomes cada, sem nome brasileiro). Gate duro, não boost. |
+| `physical_address_us_v1` | Padrão US: **número antes** do logradouro + sufixo EN (`St`, `Ave`, `Blvd`…). `Av. Mauá, 1155` é a ordem inversa e sem sufixo EN. |
+| `date_of_birth` | O padrão `\d{1,2}[/-]\d{1,2}[/-]\d{4}` casa, mas os termos de contexto são EN (`dob`, `born`, `date of birth`) — daí o nosso `DataNascimentoRecognizer`. |
+
+Duas consequências para o plano abaixo:
+
+- **A opção (a) do §4.3 está fechada.** Não há "configurar/ativar" o `PersonName` do cloakrs: as
+  listas são `const` privadas do crate. As saídas reais são reconhecedor próprio, `deny_list` do
+  `ScannerBuilder` (literais conhecidos) ou NER.
+- **Reutilizar o `EntityType` nativo é possível sem reutilizar o reconhecedor** — `PersonName` →
+  `[PERSON_n]`, `PhysicalAddress` → `[ADDRESS_n]` —, como o `CnpjAlfanumericoRecognizer` já faz
+  com `EntityType::Cnpj`. Um `EntityType::Custom("nome")` daria `[NOME_n]` (o `redaction_tag` de
+  `Custom` é `upper_snake` do valor). Decidir por consistência de idioma dos placeholders.
+
+Knobs do `ScannerBuilder` ainda não usados e relevantes para a Fase 4: `min_confidence`
+(hoje `Confidence::ZERO` — tudo que os reconhecedores devolvem é mascarado), `allow_list`
+(literais que nunca mascaram — válvula para falso positivo de nome/endereço) e `deny_list`.
 
 ### 4.1 Razão social — `RazaoSocialRecognizer` (heurística de sufixo societário)
 
@@ -79,10 +109,11 @@ leve ao mais pesado:
    `titular`, `responsável`, `contador(a)?`. Recall parcial, mas falso-positivo baixo.
 2. **Dicionário de prenomes BR** (lista de nomes comuns) + heurística de sobrenome
    (conectores + capitalização). Melhora recall sem gatilho, ao custo de manter a lista.
-3. **NER leve (ONNX)**. cloakrs tem `EntityType::PersonName`, mas o registry BR default
-   **não pega** nomes pt-BR (a fixture 14 vaza hoje). Avaliar: (a) configurar/ativar o
-   recognizer de PersonName do cloakrs; (b) um modelo NER pt-BR via ONNX. **Custo alto** —
-   reintroduz um modelo/processo pesado ao lado do BGE-M3. Só se (1) e (2) forem insuficientes.
+3. **NER leve (ONNX)**. cloakrs tem `EntityType::PersonName`, mas o `PersonNameRecognizer` que
+   o acompanha é dicionário EN com gate duro e **não pega** nomes pt-BR (a fixture 14 vaza
+   hoje) — ver §4.0: não há o que configurar, a opção sobrou como modelo NER pt-BR via ONNX.
+   **Custo alto** — reintroduz um modelo/processo pesado ao lado do BGE-M3. Só se (1) e (2)
+   forem insuficientes.
 
 - **Placeholder:** `EntityType::Custom("nome")` → `[NOME_n]` (ou o nativo `PersonName` →
   `[PERSON]`).
@@ -120,9 +151,14 @@ leve ao mais pesado:
 
 ## Outras pendências (fora da Fase 4)
 
-- **Aba "Sobre" (frontend).** Não prometer "dados 100% anônimos". Texto sugerido:
-  *"identificadores estruturados (CPF, CNPJ, telefone, e-mail, …) são mascarados
-  automaticamente antes de sair do processo"*. Ver risco §7 do plano.
+- ~~**Aba "Sobre" (frontend).** Não prometer "dados 100% anônimos".~~ ✅ **Resolvida
+  (2026-08-02, PR #116, commit `2a9a6b2`).** [about.md](auli-frontend/public/about.md) hoje diz
+  o que o sistema faz: a pergunta é guardada como foi escrita (*"dados pessoais que você mesmo
+  digitar ficam gravados"*) e o mascaramento é descrito como fronteira de saída — *"antes de a
+  pergunta ser enviada ao modelo de linguagem … identificadores como CPF, CNPJ, telefone e
+  e-mail são substituídos automaticamente por marcadores"*, com a ressalva do MCP (nenhum
+  modelo externo é chamado). Alinhado com a §7.0 do `auli_operations.md` e com a §29 do
+  `auli_pendencias.md`.
 - **`cloakrs` é jovem (v0.3.0, pinado `=`).** Se abandonado, o custo de troca é baixo (toda
   a lógica de domínio está nos nossos reconhecedores); só usamos `PromptSanitizer`/`Scanner`/
   `Recognizer`. Reavaliar em cada bump.
