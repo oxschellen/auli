@@ -1,14 +1,16 @@
 //! Fixtures de aceitação portadas do harness `auli-anon-eval` — perguntas sintéticas
 //! estilo NAVI, com dados fictícios (CPF/CNPJ de DV válido, gerados para teste).
 //!
-//! Duas travas:
+//! Quatro travas:
 //! - [`regressao_coberto`] — todo identificador cujo reconhecedor existe (`coberto: true`)
 //!   permanece anonimizado, e a pergunta de controle não gera falso positivo.
 //! - [`recall_estruturado_fase1`] — Fase 1 concluída: 100% de recall sobre **todos** os
 //!   identificadores estruturados.
-//!
-//! Nome de pessoa, razão social e endereço livre ([`Classe::NomeRazaoEndereco`]) ficam fora de
-//! ambas as travas — dependem de NER/heurística e são escopo da Fase 4.
+//! - [`recall_nao_estruturado_fase4`] — Fase 4: as entidades sem forma canônica
+//!   ([`Classe::NomeRazaoEndereco`]) também não vazam. Diferente da Fase 1, a meta aqui é
+//!   **recall parcial documentado**: as heurísticas cobrem o caso ancorado, não todos.
+//! - [`controle_fase4_zero_falsos_positivos`] — o preço da Fase 4 não pode ser falso positivo:
+//!   frases de referência típicas seguem sem detecção alguma.
 
 use auli_anon::Anonimizador;
 
@@ -16,7 +18,7 @@ use auli_anon::Anonimizador;
 enum Classe {
     /// Identificador estruturado (alvo de recall da Fase 1).
     Estruturado,
-    /// Nome/razão social/endereço — exige NER/heurística (Fase 4, fora de escopo aqui).
+    /// Nome/razão social/endereço — sem forma canônica, cobertos por heurística na Fase 4.
     NomeRazaoEndereco,
     /// Pergunta sem PII: não deve gerar detecção alguma.
     Controle,
@@ -143,7 +145,7 @@ const FIXTURES: &[Fx] = &[
         id: "14",
         categoria: "Nome de pessoa (pt-BR)",
         classe: Classe::NomeRazaoEndereco,
-        coberto: false,
+        coberto: true,
         pergunta: "O produtor rural João da Silva Pereira quer saber como emitir nota de talão.",
         segredos: &["João da Silva Pereira"],
     },
@@ -151,7 +153,7 @@ const FIXTURES: &[Fx] = &[
         id: "15",
         categoria: "Razão social",
         classe: Classe::NomeRazaoEndereco,
-        coberto: false,
+        coberto: true,
         pergunta: "A empresa Anderle Transportes Ltda não consegue gerar o QR Code do Trânsito Livre.",
         segredos: &["Anderle Transportes"],
     },
@@ -167,7 +169,7 @@ const FIXTURES: &[Fx] = &[
         id: "17",
         categoria: "Endereço",
         classe: Classe::NomeRazaoEndereco,
-        coberto: false,
+        coberto: true,
         pergunta: "A sede fica na Av. Mauá, 1155, Centro, Porto Alegre. Como alterar o endereço do sócio?",
         segredos: &["Av. Mauá, 1155"],
     },
@@ -187,6 +189,26 @@ const FIXTURES: &[Fx] = &[
         pergunta: "Qual o período de inadimplência para cancelar um parcelamento, regra geral?",
         segredos: &[],
     },
+];
+
+/// Frases de referência típicas de uma resposta da Auli — o maior risco de falso positivo da
+/// Fase 4, porque são cheias de sequência capitalizada institucional, sigla em caixa alta e
+/// gatilho de nome sem nome depois. **Nenhuma pode gerar detecção.**
+///
+/// Cada uma corresponde a um falso positivo que existiu de fato durante a implementação: sem a
+/// regra de Titlecase, `PARCELAMENTO ICMS ME` virava razão social; sem a stoplist,
+/// `Simples Nacional ME` e `Vossa Senhoria` também.
+const CONTROLES_FASE4: &[&str] = &[
+    "Consulte a Receita Estadual do Rio Grande do Sul pelo Portal de Atendimento.",
+    "O Simples Nacional exige Inscrição Estadual ativa.",
+    "Emita a Nota Fiscal Eletrônica no portal.",
+    "O contribuinte deve apresentar a documentação.",
+    "Você me disse que a rua não tem número.",
+    "O regime do Simples Nacional ME impede o crédito?",
+    "PARCELAMENTO ICMS ME em duplicidade.",
+    "O contribuinte Vossa Senhoria já foi notificado.",
+    "Veja a Instrução Normativa RE 45/2019 e o Decreto 37.699/97.",
+    "O fato gerador ocorreu na Rodovia BR-116 km 23.",
 ];
 
 fn vazou<'a>(limpo: &str, segredos: &'a [&'a str]) -> Vec<&'a str> {
@@ -238,4 +260,79 @@ fn recall_estruturado_fase1() {
         "identificadores estruturados vazaram:\n{}",
         vazamentos.join("\n")
     );
+}
+
+/// Fase 4: as entidades sem forma canônica marcadas `coberto` não vazam.
+///
+/// A meta é **recall parcial documentado**, não os 100% da Fase 1: as heurísticas cobrem o caso
+/// ancorado (razão social com sufixo societário, endereço com logradouro + número, nome depois de
+/// gatilho) e assumem deixar passar o resto — nome solto, nome de um token, gatilho distante.
+#[test]
+fn recall_nao_estruturado_fase4() {
+    let anon = Anonimizador::novo().expect("construir anonimizador");
+    let mut vazamentos = Vec::new();
+    for fx in FIXTURES {
+        if fx.classe != Classe::NomeRazaoEndereco || !fx.coberto {
+            continue;
+        }
+        let r = anon.anonimizar(fx.pergunta).expect("anonimizar");
+        for s in vazou(&r.texto, fx.segredos) {
+            vazamentos.push(format!("[{}] {}: {}", fx.id, fx.categoria, s));
+        }
+    }
+    assert!(
+        vazamentos.is_empty(),
+        "entidades não estruturadas vazaram:\n{}",
+        vazamentos.join("\n")
+    );
+}
+
+/// O controle é a trava mais importante da Fase 4: heurística de nome/razão/endereço é a maior
+/// fonte de falso positivo do crate, e mascarar texto institucional degradaria a resposta sem
+/// proteger ninguém.
+#[test]
+fn controle_fase4_zero_falsos_positivos() {
+    let anon = Anonimizador::novo().expect("construir anonimizador");
+    for frase in CONTROLES_FASE4 {
+        let r = anon.anonimizar(frase).expect("anonimizar");
+        assert!(
+            r.mapping.entries.is_empty(),
+            "falso positivo em {frase:?}: {:?}",
+            r.mapping.entries
+        );
+        // Redundante com o assert acima por construção, mas é o que o usuário veria no log.
+        assert_eq!(&r.texto, frase, "o texto de controle foi alterado");
+    }
+}
+
+/// Ciclo completo com as três entidades novas: a pergunta sai com os placeholders da Fase 4 e a
+/// resposta do LLM volta com os valores originais. É a fronteira do LLM (Fase 3) exercitada com
+/// o que a Fase 4 acrescentou.
+#[test]
+fn restore_fase4() {
+    let anon = Anonimizador::novo().expect("construir anonimizador");
+    let pergunta = "o contribuinte João da Silva Pereira, da Anderle Transportes Ltda, \
+                    na Av. Mauá, 1155, pediu baixa";
+    let r = anon.anonimizar(pergunta).expect("anonimizar");
+    for placeholder in ["[NOME_1]", "[RAZAO_SOCIAL_1]", "[ENDERECO_1]"] {
+        assert!(
+            r.texto.contains(placeholder),
+            "faltou {placeholder} em: {}",
+            r.texto
+        );
+    }
+
+    let resposta_llm =
+        "Informe a [RAZAO_SOCIAL_1] que o pedido de [NOME_1], com sede na [ENDERECO_1], foi aceito.";
+    let restaurado = anon.restaurar(resposta_llm, &r.mapping);
+    for original in [
+        "João da Silva Pereira",
+        "Anderle Transportes Ltda",
+        "Av. Mauá, 1155",
+    ] {
+        assert!(
+            restaurado.contains(original),
+            "restore perdeu {original:?}: {restaurado}"
+        );
+    }
 }
