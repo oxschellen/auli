@@ -976,6 +976,123 @@ entre versões bem mais do que o rustfmt muda de estilo.
 
 ---
 
+## 34. Dependências Rust: lockfile atualizado, **`fastembed`/`ort` segurados** (parcial — 2026-08-04)
+
+Análise minuciosa de tudo que dava para subir no workspace. O lockfile andou (PR #124, um arquivo,
+nenhuma linha de código); o embedder **não**, de propósito — e o motivo é o miolo desta seção.
+
+### 34.1 O que entrou — ✅ resolvido
+
+`cargo update` moveu **109 pacotes** dentro do semver: tokio 1.52.3 → 1.53.1, regex 1.12.4 → 1.13.1,
+rustls 0.23.40 → 0.23.43, hyper 1.10.1 → 1.11.0, http 1.4.2 → 1.5.0, serde 1.0.229, clap 4.6.5,
+time 0.3.55, anyhow 1.0.104.
+
+Rodei os 452 pacotes do lock contra a **OSV** (não há `cargo-audit` instalado). Eram 4 alertas; 3
+saíram:
+
+| Pacote | Aviso | Nota |
+|---|---|---|
+| anyhow 1.0.102 → 1.0.104 | RUSTSEC-2026-0190 — unsoundness em `Error::downcast_mut` | não chamamos `downcast_mut` em lugar nenhum |
+| crossbeam-epoch 0.9.18 → 0.9.20 | RUSTSEC-2026-0204 — deref inválido no `fmt::Display` de `Atomic`/`Shared` | transitivo via rayon ← tokenizers ← fastembed |
+| quinn-proto 0.11.14 → 0.11.16 | RUSTSEC-2026-0185 / GHSA-4w2j-m93h-cj5j — **HIGH**, exaustão de memória remota | **não compilava aqui** (`http3` opcional do reqwest; `cargo tree --invert --target all` não o acha). Só existia no lock — mas some dele e deixa de ser falso positivo de auditoria |
+
+Sobra `paste 1.0.15` (não mantido, informativo, **sem correção upstream**), transitivo via
+tokenizers ← fastembed. Nada a fazer deste lado.
+
+### 34.2 A armadilha: subir `fastembed` muda os vetores — **medido**
+
+**O `fastembed` pina o `ort` por igualdade exata** — `5.17.2 → ort =2.0.0-rc.12`,
+`5.17.4 → ort =2.0.0-rc.13`. Não existe pegar as correções de um e segurar o outro: **o par anda
+junto ou não anda**.
+
+Sonda reproduzindo a construção do `Embedder` ([embed.rs](auli-server/crates/auli-core/src/embed.rs))
+— BGEM3Q, `max_length` 8192, `batch_size` 1, o modelo local de `models/` —, 6 frases, sob os dois
+pares:
+
+| Texto | cosseno rc.12 × rc.13 |
+|---|---|
+| PARECER — ICMS, crédito de energia elétrica | **0,983785** |
+| PARECER — ICMS, ST de medicamentos | **0,987717** |
+| IPVA — isenção para PCD | **0,984923** |
+| Como emitir a guia do ITCD? | 1,000000 |
+| Alíquota do ICMS interestadual, bens importados | **0,986802** |
+| Regime especial para contribuinte substituto | 1,000000 |
+
+- **Controle:** duas execuções do _mesmo_ build dão arquivos byte-idênticos → a diferença é da
+  versão, não do processo.
+- **Escala:** textos **distintos** ficam entre 0,31 e 0,63 de cosseno. A faixa angular útil vai de
+  ~0,63 a 1,0.
+
+Quatro das seis frases mudam de vetor, na **mesma ordem de grandeza do vazamento de padding que
+forçou a `STRATEGY_VERSION` v4** (cosseno 0,978 — e `embed::testes_ordem` registra que aquilo
+"trocava documentos na fronteira do top-k").
+
+**E a guarda de boot não pega.** `EmbedIdentity` é `(embed_model_id, embed_dim, strategy_version)`
+([manifest.rs](auli-server/crates/auli-core/src/manifest.rs)); **nenhum dos três muda com o `ort`**.
+Packs construídos sob rc.12 seriam servidos por um encoder de query rc.13 sem uma linha de
+reclamação no boot. Os testes existentes também não pegam: `embedding_e_deterministico_entre_chamadas`
+e `embedding_independe_da_ordem_e_da_composicao_do_lote` comparam **dentro de um build**.
+
+**Regra que fica:** a identidade do espaço de embeddings não está só no modelo — está também no
+runtime que executa o modelo. Subir `fastembed` é tarefa própria: **bump de `STRATEGY_VERSION` +
+re-ingestão completa das entidades**, decidido de propósito e não de carona num refresh de lockfile.
+
+**A receita para repetir a atualização sem arrastar o embedder** (`cargo update --exclude` **não
+existe** no cargo 1.96 — a tentativa óbvia falha):
+
+```bash
+cargo update
+cargo update -p fastembed --precise 5.17.2   # o pin exato traz o ort de volta sozinho
+```
+
+### 34.3 Um item que merecia checagem e passou
+
+**zlib-rs 0.6.6 → 0.6.7** é o backend deflate do `zip`, e o
+[bundle.rs](auli-server/crates/auli-cli/src/bundle.rs) exige zip **byte-idêntico** com nível fixo 6 —
+mudar a compressão mudaria todos os `sha256` do manifesto de downloads de uma vez. Comprimi o mesmo
+corpus de markdown tributário nas duas versões: `sha256` **igual** nos níveis 1, 6 e 9. As mudanças
+da 0.6.7 são LoongArch/LSX, não tocam x86-64.
+
+### 34.4 Aberto — o que a análise levantou e o PR não fez
+
+**⏳ Teste de vetor-ouro no `embed.rs`.** É o que fecharia o buraco da §34.2: algumas frases com
+vetores conhecidos gravados, `#[ignore]` como os outros, falhando alto no próximo bump de `ort`.
+Ficou de fora por ser código novo e merecer decisão própria. **Enquanto não existir, o único
+guarda-costas é esta seção.**
+
+**⏳ `tower-http` pede `features = ["full"]` para usar só o `CorsLayer`**
+([Cargo.toml](auli-server/crates/auli-cli/Cargo.toml), [api/mod.rs](auli-server/crates/auli-cli/src/api/mod.rs)),
+arrastando async-compression/flate2/zstd/brotli/fs para o build. Estreitar para `["cors"]` rende mais
+que qualquer bump de versão e independe dele. A 0.7.0 em si é de baixo risco — os quebras são em
+compression, follow-redirect, services/fs e trace/classify; em CORS a única mudança é relaxar o
+`Vary`.
+
+**⏳ `rmcp 2.2 → 3.x` é migração de protocolo, não bump.** A 3.0 implementa o MCP 2026-07-28, que
+**remove as sessões do protocolo** (sem `Mcp-Session-Id`, sem GET standalone, sem término por DELETE,
+sem retomada por `Last-Event-ID`) — e é exatamente o caminho que o `LocalSessionManager` monta em
+[api/mod.rs](auli-server/crates/auli-cli/src/api/mod.rs). `stateful_mode` vira `legacy_session_mode`;
+`call_tool` passa a devolver enums cientes de MRTR. Há guia oficial de migração. Ver também a seção
+**MCP v2**.
+
+**❌ `sha2 0.10.9 → 0.11.0` — descartado.** Verificado compilando: a 0.11 troca `GenericArray` por
+`hybrid_array::Array`, que **não implementa `LowerHex`**, e o `format!("{:x}", hasher.finalize())` do
+`bundle.rs` para de compilar. Em troca de nada — o digest SHA-256 é o mesmo e não há aviso de
+segurança.
+
+**Higiene do lock, para quem for auditar:** há **dois majors de reqwest** (0.12.28 via hf-hub,
+0.13.4 via auli-llm) e o `quinn` inteiro, e nenhum aparece na árvore compilada — são entradas de
+dependência **opcional** que o lock guarda mas o build nunca toca.
+
+### 34.5 O elo com a §33
+
+**Nenhum workflow da CI compila Rust** — `fmt`, `frontend`, `registry-sync` e `scraper-boundary`
+parseiam ou rodam script, e a decisão continua certa pelo mesmo motivo da §33 (clippy puxaria
+`fastembed`/`ort`). A consequência concreta, agora com um caso nomeado: **um `cargo update` que
+mudasse os embeddings passaria por toda a CI sem um vermelho.** Quem sustentou o PR #124 foi a suíte
+local — 483 testes, os três `--ignored` do embedder contra o modelo real, e `cargo fmt --check`.
+
+---
+
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) subiu com três ferramentas e rate
