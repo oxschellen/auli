@@ -72,6 +72,7 @@ impl Anonimizador {
             .recognizer(reconhecedores::DataNascimentoRecognizer::novo())
             .recognizer(reconhecedores::RazaoSocialRecognizer::novo())
             .recognizer(reconhecedores::EnderecoRecognizer::novo())
+            .recognizer(reconhecedores::NomePessoaRecognizer::novo())
             .build()
             .map_err(|e| AnonError::Construcao(e.to_string()))?;
         Ok(Self {
