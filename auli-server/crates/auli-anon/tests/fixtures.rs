@@ -305,6 +305,36 @@ fn controle_fase4_zero_falsos_positivos() {
     }
 }
 
+/// Sobreposição nome × razão social (D-ANON-4.7): em `João Pereira Ltda` precedido do gatilho
+/// `sócio`, os dois reconhecedores disparam sobre spans que se sobrepõem — o nome dentro da razão.
+///
+/// Quem resolve é o `deduplicate` do cloakrs (span mais longo vence; empate, maior confiança), não
+/// código nosso. O teste existe justamente por isso: é uma premissa emprestada de uma dependência
+/// pinada em `=0.3.0`, e um bump que mudasse a regra passaria despercebido sem esta trava.
+#[test]
+fn sobreposicao_nome_dentro_de_razao_social() {
+    let anon = Anonimizador::novo().expect("construir anonimizador");
+    let r = anon
+        .anonimizar("o sócio João Pereira Ltda consta no cadastro")
+        .expect("anonimizar");
+    assert_eq!(
+        r.mapping.entries.len(),
+        1,
+        "spans sobrepostos deveriam colapsar em um: {:?}",
+        r.mapping.entries
+    );
+    assert!(
+        r.texto.contains("[RAZAO_SOCIAL_1]"),
+        "o span mais longo (razão social) deveria vencer: {}",
+        r.texto
+    );
+    assert!(
+        !r.texto.contains("[NOME_"),
+        "o span mais curto (nome) não pode sobreviver: {}",
+        r.texto
+    );
+}
+
 /// Ciclo completo com as três entidades novas: a pergunta sai com os placeholders da Fase 4 e a
 /// resposta do LLM volta com os valores originais. É a fronteira do LLM (Fase 3) exercitada com
 /// o que a Fase 4 acrescentou.
