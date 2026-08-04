@@ -508,10 +508,7 @@ mod tests {
         assert!(!com_acervo.contains(&"zz".to_string()), "zz não existe");
 
         // E o store de mg EXISTE — é exatamente por isso que a guarda não pode ser `is_some()`.
-        assert!(
-            c.get("mg-pareceres").is_some(),
-            "o store vazio está no mapa"
-        );
+        assert!(c.contains_key("mg-pareceres"), "o store vazio está no mapa");
     }
 
     #[test]
@@ -544,13 +541,14 @@ mod tests {
 
     #[test]
     fn top_k_e_limitado_como_no_retrieve() {
-        // Mesmo contrato da rota HTTP: 1..=20, com 5 de padrão.
-        assert_eq!(None.unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K), 5);
-        assert_eq!(
-            Some(9999usize).unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K),
-            MAX_TOP_K
-        );
-        assert_eq!(Some(0usize).unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K), 1);
+        // Mesmo contrato da rota HTTP: 1..=20, com 5 de padrão. A expressão vem por closure, e não
+        // aplicada a `None`/`Some(_)` literal, porque o literal dispara `unnecessary_literal_unwrap`
+        // — e a reescrita que o lint sugere (o valor já desembrulhado) apagaria justamente o que se
+        // testa aqui: que a `Option` do argumento cai no padrão.
+        let efetivo = |top_k: Option<usize>| top_k.unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K);
+        assert_eq!(efetivo(None), 5);
+        assert_eq!(efetivo(Some(9999)), MAX_TOP_K);
+        assert_eq!(efetivo(Some(0)), 1);
     }
 
     // ---- `consultar_servicos_faqs` ----

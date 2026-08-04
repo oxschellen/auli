@@ -146,14 +146,14 @@ fn collect_ul(ul: &ElementRef, out: &mut Vec<MenuItem>) {
         };
 
         // O header vira item quando aponta para uma página real (top-level ou subgrupo D-PE3).
-        if let Some(link) = header_link {
-            if !header_titulo.is_empty() {
-                out.push(MenuItem {
-                    titulo: header_titulo.clone(),
-                    link,
-                    classe: CLASSE_GERAL.to_string(),
-                });
-            }
+        if let Some(link) = header_link
+            && !header_titulo.is_empty()
+        {
+            out.push(MenuItem {
+                titulo: header_titulo.clone(),
+                link,
+                classe: CLASSE_GERAL.to_string(),
+            });
         }
 
         // Filhos do subgrupo: classe = texto do header.
