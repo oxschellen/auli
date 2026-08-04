@@ -4,20 +4,27 @@
 
 mod cep;
 mod cnpj_alfanumerico;
+mod comum;
 mod data_nascimento;
+mod endereco;
 mod ga;
 mod ie;
+mod nome_pessoa;
 mod placa;
 mod protocolo;
+mod razao_social;
 mod renavam;
 mod telefone;
 
 pub use cep::CepRecognizer;
 pub use cnpj_alfanumerico::CnpjAlfanumericoRecognizer;
 pub use data_nascimento::DataNascimentoRecognizer;
+pub use endereco::EnderecoRecognizer;
 pub use ga::GaRecognizer;
 pub use ie::InscricaoEstadualRecognizer;
+pub use nome_pessoa::NomePessoaRecognizer;
 pub use placa::PlacaRecognizer;
 pub use protocolo::ProtocoloRecognizer;
+pub use razao_social::RazaoSocialRecognizer;
 pub use renavam::RenavamRecognizer;
 pub use telefone::TelefoneBrRecognizer;

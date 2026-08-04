@@ -4,6 +4,11 @@
 **Objetivo:** anonimizar dados pessoais e identificadores presentes nas perguntas dos analistas antes que elas (a) sejam persistidas no log de pergunta/resposta e (b) saiam do processo rumo ao LLM externo.
 **Estilo de trabalho:** implementar em etapas pequenas e incrementais, na ordem das fases abaixo. Concluir e validar cada fase antes de iniciar a próxima. Commits pequenos por fase.
 
+> **Status (2026-08-04):** este é o plano **como foi escrito**, mantido por valor histórico. As
+> Fases 0–4 estão entregues e **quatro pontos foram revisados na execução** — §2.1, §4, §6.5 e
+> §7, marcados no corpo do texto. O estado corrente, o que a Fase 4 não pega e o que sobrou de
+> pesquisa vivem em [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md).
+
 ---
 
 ## 1. Contexto e decisão técnica
@@ -21,6 +26,8 @@ Foi feita uma avaliação empírica (harness `auli-anon-eval`, incluído como re
 
 **Fora de escopo (por ora):** nome de pessoa e razão social. Exigem NER ou heurísticas dedicadas — ficam para a Fase 4, opcional. Documentar essa limitação no código e no README.
 
+> ✅ **Fase 4 entregue (2026-08-04)**, pelo caminho das heurísticas dedicadas — sem NER. Razão social por sufixo societário, endereço por logradouro + número, nome por gatilho de contexto. Recall parcial assumido e documentado em [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md).
+
 ---
 
 ## 2. Arquitetura
@@ -37,6 +44,15 @@ auli-cli      (binário: server, update)
 ```
 
 `auli-anon` NÃO depende de `vector-store` nem de `auli-core`. Ele expõe uma API pequena e é consumido por `auli-core` (ou pelo handler do server em `auli-cli`, conforme onde hoje vive a montagem do prompt — inspecionar o código e escolher o ponto natural; documentar a escolha no PR).
+
+> ⚠️ **Escolha feita na execução: `auli-cli`.** `auli-core` **não** depende de `auli-anon` (a
+> linha do diagrama acima ficou desatualizada); a única aresta é `auli-cli → auli-anon`
+> (`crates/auli-cli/Cargo.toml`). O ponto natural era mesmo o server: o `Anonimizador` é
+> construído uma vez no boot ([lib.rs](auli-server/crates/auli-cli/src/lib.rs)), vive no
+> `AppState` e é usado nas duas faces que recebem pergunta — o chat
+> ([rag.rs](auli-server/crates/auli-cli/src/rag.rs)) e o MCP
+> ([mcp.rs](auli-server/crates/auli-cli/src/mcp.rs)). `auli-retrieval` segue livre de PII por
+> construção (§3.11 do `auli_code.md`).
 
 ### 2.2 Dependências (Cargo.toml de `auli-anon`)
 
@@ -148,6 +164,16 @@ Verificar como o `Scanner` do cloakrs resolve spans sobrepostos (inspecionar `sc
 
 ### Fase 2 — log de pergunta/resposta (obrigatório)
 
+> ⚠️ **REVISTO na execução (2026-07-25).** Os itens 2 e 3 abaixo **não valem mais**: o log em
+> disco é **deliberadamente íntegro** — grava `PERGUNTA (ORIGINAL)` crua e `RESPOSTA` já
+> restaurada, ao lado de `PERGUNTA (ANONIMIZADA)`. Sem o par original/anonimizada lado a lado
+> não há como auditar o que o anonimizador deixou passar, que é o motivo de o log existir. A
+> proteção passou a ser de **acesso e retenção** (diretório 0700, arquivos 0600, `logs/` fora do
+> git), não de conteúdo. Doutrina em `format_log_record`
+> ([rag.rs](auli-server/crates/auli-cli/src/rag.rs)) e §7.0 do
+> [docs/auli_operations.md](docs/auli_operations.md). O item 4 (embedding sobre o texto original)
+> segue valendo; o item 1 também, mas com **fail-closed** no chamador, não `?`.
+
 No caminho onde a pergunta e a resposta são persistidas hoje:
 
 1. `let anon = anonimizador.anonimizar(&pergunta)?;`
@@ -192,6 +218,8 @@ No ponto onde o prompt é montado para o LLM externo:
 
 Nome de pessoa, razão social e endereço livre continuam vazando na Fase 1–3. Registrar no README de `auli-anon` com o plano da Fase 4.
 
+> ⚠️ **Superado pela Fase 4:** as três passaram a ser cobertas por heurística. A limitação mudou de "vazam sempre" para "vazam fora do padrão ancorado" — a lista do que não é pego está em `docs/auli-anon_pendencias.md` §4. A limitação foi registrada no doc de módulo do `lib.rs`, não num README do crate (que não existe).
+
 ---
 
 ## 6. Fases (ordem de execução — uma por vez)
@@ -200,14 +228,14 @@ Nome de pessoa, razão social e endereço livre continuam vazando na Fase 1–3.
 2. **Fase 1:** reconhecedores customizados §3.1→§3.10, um commit por reconhecedor com testes; ao final, fixtures completas passando com os aceites §5.2. *Um commit por reconhecedor + um do aceite.*
 3. **Fase 2:** integração no log (pergunta e resposta), com teste de integração no caminho de persistência. *Commit.*
 4. **Fase 3:** sanitize/restore na fronteira do LLM, atrás de flag. *Commit.*
-5. **Fase 4 (futura, NÃO implementar agora):** heurística de razão social (sequência capitalizada seguida de `Ltda|S\.?A\.?|EIRELI|ME|EPP`) e avaliação de NER leve para nomes. Apenas deixar um `TODO.md` no crate descrevendo.
+5. ~~**Fase 4 (futura, NÃO implementar agora)**~~ ✅ **entregue em 2026-08-04:** heurística de razão social (sufixo societário), de endereço (logradouro + número) e de nome (gatilho de contexto). O NER leve **não** foi necessário e segue fora de escopo, como fase de pesquisa. ⚠️ **Na execução não houve `TODO.md`:** quem cumpre esse papel é [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md), com a Fase 4 detalhada (§4.0–§4.3) e os critérios de aceite. Um `TODO.md` no crate seria um segundo lugar para manter.
 
 ---
 
 ## 7. Riscos e mitigação
 
 - **cloakrs é jovem (0.3.0, primeiro release recente).** Versão pinada com `=`; a API usada é pequena (`Scanner`, `PromptSanitizer`, `Recognizer`, `EntityType`); se o crate for abandonado, o custo de trocar por implementação própria é baixo porque toda a lógica de domínio está nos nossos reconhecedores. Não usar features além das citadas.
-- **Anonimização nunca é perfeita.** O texto anonimizado no log continua sendo tratado como dado sensível em termos de acesso; a anonimização reduz risco, não o elimina. Refletir isso na descrição da funcionalidade (não prometer "dados 100% anônimos" na aba Sobre — dizer "identificadores estruturados são automaticamente mascarados").
+- **Anonimização nunca é perfeita.** O texto anonimizado no log continua sendo tratado como dado sensível em termos de acesso; a anonimização reduz risco, não o elimina. Refletir isso na descrição da funcionalidade (não prometer "dados 100% anônimos" na aba Sobre — dizer "identificadores estruturados são automaticamente mascarados"). ✅ **Feito (2026-08-02, PR #116, commit `2a9a6b2`):** a seção Privacidade de [about.md](auli-frontend/public/about.md) passou a dizer que a pergunta é guardada como foi escrita e que o mascaramento é fronteira de **saída** (LLM externo), com a ressalva de que o MCP não chama modelo externo. O risco em si continua de pé — o que mudou foi a promessa.
 - **Regressão de qualidade das respostas (Fase 3).** O LLM perde acesso ao valor literal (ex.: não pode comentar "esse CNPJ é de fora do RS"). Mitigado pela flag e pelo fato de as respostas se basearem nos documentos recuperados, não nos identificadores.
 
 ---
