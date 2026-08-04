@@ -352,8 +352,7 @@ fn restore_fase4() {
         );
     }
 
-    let resposta_llm =
-        "Informe a [RAZAO_SOCIAL_1] que o pedido de [NOME_1], com sede na [ENDERECO_1], foi aceito.";
+    let resposta_llm = "Informe a [RAZAO_SOCIAL_1] que o pedido de [NOME_1], com sede na [ENDERECO_1], foi aceito.";
     let restaurado = anon.restaurar(resposta_llm, &r.mapping);
     for original in [
         "João da Silva Pereira",

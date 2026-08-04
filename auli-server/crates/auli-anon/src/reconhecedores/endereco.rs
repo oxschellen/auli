@@ -123,7 +123,10 @@ mod tests {
             achados("Rua Sete de Setembro, 666 em Porto Alegre"),
             ["Rua Sete de Setembro, 666"]
         );
-        assert_eq!(achados("na Avenida Ipiranga 6681"), ["Avenida Ipiranga 6681"]);
+        assert_eq!(
+            achados("na Avenida Ipiranga 6681"),
+            ["Avenida Ipiranga 6681"]
+        );
     }
 
     #[test]

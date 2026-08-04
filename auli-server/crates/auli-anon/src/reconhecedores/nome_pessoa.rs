@@ -123,7 +123,10 @@ mod tests {
             achados("Sr. Paulo Roberto Antunes compareceu"),
             ["Paulo Roberto Antunes"]
         );
-        assert_eq!(achados("o sócio Carlos Alberto informou"), ["Carlos Alberto"]);
+        assert_eq!(
+            achados("o sócio Carlos Alberto informou"),
+            ["Carlos Alberto"]
+        );
         assert_eq!(achados("titular: Ana Beatriz Rocha"), ["Ana Beatriz Rocha"]);
     }
 

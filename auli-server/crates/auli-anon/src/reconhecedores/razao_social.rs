@@ -199,9 +199,13 @@ mod tests {
     fn janela_limita_a_captura() {
         // Frase capitalizada longa: só os <= 5 tokens antes do sufixo entram.
         // (Sem termo da stoplist no meio — quem está sob teste aqui é a janela, não a stoplist.)
-        let v = achados("Grupo Industrial Comercial Importadora Exportadora Atlântica Serrana Ltda");
+        let v =
+            achados("Grupo Industrial Comercial Importadora Exportadora Atlântica Serrana Ltda");
         assert_eq!(v.len(), 1);
-        assert!(v[0].split_whitespace().count() <= 6, "capturou demais: {v:?}");
+        assert!(
+            v[0].split_whitespace().count() <= 6,
+            "capturou demais: {v:?}"
+        );
         assert!(v[0].ends_with("Ltda"));
     }
 
