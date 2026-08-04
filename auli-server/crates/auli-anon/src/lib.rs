@@ -70,6 +70,7 @@ impl Anonimizador {
             .recognizer(reconhecedores::RenavamRecognizer::novo())
             .recognizer(reconhecedores::PlacaRecognizer::novo())
             .recognizer(reconhecedores::DataNascimentoRecognizer::novo())
+            .recognizer(reconhecedores::RazaoSocialRecognizer::novo())
             .build()
             .map_err(|e| AnonError::Construcao(e.to_string()))?;
         Ok(Self {
