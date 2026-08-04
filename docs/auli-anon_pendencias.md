@@ -277,6 +277,82 @@ de reconhecedores **nativos** do cloakrs. Não é problema em produção (docume
 pelo anonimizador; só a pergunta passa), mas mostra que numeração legal e endereço de portal
 disparam esses padrões. Se algum dia o acervo passar a ser anonimizado, começar por aqui.
 
+## 6. Anonimização **estrutural** de pareceres (aberta — próximo passo, 2026-08-04)
+
+Direção nova, e a mais promissora depois da §5. O Carlos vai **buscar o texto de pareceres novos**
+para analisarmos a estrutura do documento; a hipótese é **anonimizar apenas a parte do documento
+que identifica o contribuinte**, em vez de varrer o texto inteiro com reconhecedores de entidade.
+
+**Por que isto ataca exatamente onde a §5 quebrou.** A Fase 5 falhou porque um reconhecedor de
+nome em texto livre não distingue `Aliomar Baleeiro` — doutrinador citado, que **deve** permanecer
+— do nome do consulente, que **deve** sair. Os dois são nomes de pessoa; o que os separa não é a
+forma, é **onde estão no documento**. Estrutura resolve o que a heurística lexical não resolve: em
+vez de perguntar "isto parece nome?", passa a perguntar "isto está no bloco de identificação?".
+
+Muda também o **ponto do pipeline**: tudo no `auli-anon` hoje roda sobre a **pergunta**, em
+`auli-cli`. Anonimizar documento é na **ingestão** (scraper/`auli-collections`), antes de o texto
+virar `docs/` e pack. Vale decidir cedo se o crate ganha uma API para isso ou se a lógica mora na
+ingestão — a §2.1 do plano avisa que essa escolha já foi feita errado uma vez.
+
+### 6.1 O acervo atual **já vem saneado da fonte**
+
+Ponto de partida, confirmado pelo Carlos e corroborado pela contagem: **os pareceres públicos já
+são saneados pela própria SEFAZ antes da publicação.** Não é efeito colateral do nosso pipeline
+nem sorte de amostragem — é etapa editorial do publicador. A medição nas quatro entidades com
+pareceres indexados:
+
+| UF | Pareceres | Com papel (`consulente`/`consignante`/`interessado`) | Com marcador `XYZ` |
+|---|---|---|---|
+| rs | 372 | 182 | 23 |
+| sc | 1.743 | 1.741 | 0 |
+| pr | 2.060 | 2.056 | 0 |
+| sp | 15.605 | 15.605 | 3 |
+
+O RS chega a substituir o nome por um literal (`XYZ vem formular consulta de seu interesse`); SC,
+PR e SP usam o papel (`A consulente indaga`, `A Consulente informa`). **Para o acervo de hoje, não
+há o que anonimizar.**
+
+Isso reposiciona a seção: o alvo não é o acervo existente, é **verificar se a mesma prática vale
+para as fontes novas**. Saneamento na origem é convenção do publicador, não garantia contratual —
+pode variar por UF, por época e por formato (o PDF antigo digitalizado é o suspeito natural). A
+amostra nova serve para confirmar a regra e, principalmente, para achar a exceção.
+
+### 6.2 A estrutura observada (amostra pequena, a confirmar)
+
+Os documentos já ingeridos têm cabeçalho estável, e é nele que uma identificação apareceria:
+
+- **RS** — `Informação n.º NNNNN` + `Assunto :` + cidade/data + a frase de abertura do relato.
+- **SC** — `CONSULTA N/AAAA` + `EMENTA:` + `DA CONSULTA`.
+- **PR** — `CONSULTA Nº: NN, de <data>` + `SÚMULA:` + relato.
+- **SP** — `RESPOSTA À CONSULTA TRIBUTÁRIA NNNN/AAAA, de <data>` + `Ementa` + itens numerados.
+
+No formato `.md` do acervo isso vive sob `## corpo`; acima dele há o frontmatter (`numero`,
+`assunto`, `link`) e a `## sinopse` gerada por LLM — **a sinopse também precisa entrar no escopo**,
+porque ela reescreve o relato e pode reintroduzir um nome que o corpo trouxesse.
+
+### 6.3 Perguntas que a amostra nova precisa responder
+
+1. A fonte identifica o contribuinte? O esperado é que **não** — as quatro atuais já vêm saneadas
+   da origem. Se a nova também vier, o trabalho acaba aqui, e o resultado é uma linha nesta seção.
+2. Se identifica, **onde** — cabeçalho, relato, assinatura, anexo? É região contígua e rotulada?
+3. A estrutura é estável dentro da UF e entre UFs? O que acontece com PDF convertido, onde a
+   quebra de linha destrói o rótulo?
+4. Identificação estruturada (CNPJ/IE do consulente) já é coberta pelos reconhecedores das Fases
+   0/1 — o que sobra de fato é **nome/razão social** dentro daquela região.
+5. Se a região for identificável, o mais seguro é **suprimir a região inteira** (ou substituí-la
+   por um marcador) em vez de rodar reconhecedor dentro dela: menos precisão exigida, zero risco
+   de mascarar doutrina.
+
+### 6.4 Cuidados
+
+- **Não vale para a pergunta do usuário.** Isto é sobre documento; o texto que o analista digita
+  continua sob as Fases 0–4.
+- **Reprocessamento.** Anonimizar na ingestão muda o texto embarcado ⇒ re-gera pack e espaço
+  vetorial da entidade. Decidir se vale reprocessar o acervo existente ou só valer daqui pra frente.
+- **A §5.6 continua valendo:** rodar o anonimizador inteiro sobre documento é ruim (397 falsos
+  positivos de NOME em 3.000 arquivos). A proposta desta seção é o oposto — escopo estreito,
+  definido por estrutura.
+
 ## Outras pendências (fora da Fase 4)
 
 - ~~**Aba "Sobre" (frontend).** Não prometer "dados 100% anônimos".~~ ✅ **Resolvida
