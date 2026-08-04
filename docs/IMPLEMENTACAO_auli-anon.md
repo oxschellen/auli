@@ -5,9 +5,9 @@
 **Estilo de trabalho:** implementar em etapas pequenas e incrementais, na ordem das fases abaixo. Concluir e validar cada fase antes de iniciar a próxima. Commits pequenos por fase.
 
 > **Status (2026-08-04):** este é o plano **como foi escrito**, mantido por valor histórico. As
-> Fases 0–3 estão entregues e **dois pontos foram revisados na execução** — o §4 (Fase 2) e o §7
-> (risco da aba "Sobre"), marcados no corpo do texto. O estado corrente e o que falta (Fase 4)
-> vivem em [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md).
+> Fases 0–4 estão entregues e **quatro pontos foram revisados na execução** — §2.1, §4, §6.5 e
+> §7, marcados no corpo do texto. O estado corrente, o que a Fase 4 não pega e o que sobrou de
+> pesquisa vivem em [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md).
 
 ---
 
@@ -25,6 +25,8 @@ Foi feita uma avaliação empírica (harness `auli-anon-eval`, incluído como re
 **Resultado da avaliação out of the box: recall 32% (7/22 segredos).** O cloakrs pega CPF, CNPJ e e-mail; vaza telefone BR, CNPJ alfanumérico (formato 2026), IE, protocolo, GA, RENAVAM, placa, CEP, data de nascimento, nomes e razão social. Portanto o grosso deste trabalho é **escrever reconhecedores customizados** para as entidades vazadas.
 
 **Fora de escopo (por ora):** nome de pessoa e razão social. Exigem NER ou heurísticas dedicadas — ficam para a Fase 4, opcional. Documentar essa limitação no código e no README.
+
+> ✅ **Fase 4 entregue (2026-08-04)**, pelo caminho das heurísticas dedicadas — sem NER. Razão social por sufixo societário, endereço por logradouro + número, nome por gatilho de contexto. Recall parcial assumido e documentado em [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md).
 
 ---
 
@@ -216,6 +218,8 @@ No ponto onde o prompt é montado para o LLM externo:
 
 Nome de pessoa, razão social e endereço livre continuam vazando na Fase 1–3. Registrar no README de `auli-anon` com o plano da Fase 4.
 
+> ⚠️ **Superado pela Fase 4:** as três passaram a ser cobertas por heurística. A limitação mudou de "vazam sempre" para "vazam fora do padrão ancorado" — a lista do que não é pego está em `docs/auli-anon_pendencias.md` §4. A limitação foi registrada no doc de módulo do `lib.rs`, não num README do crate (que não existe).
+
 ---
 
 ## 6. Fases (ordem de execução — uma por vez)
@@ -224,7 +228,7 @@ Nome de pessoa, razão social e endereço livre continuam vazando na Fase 1–3.
 2. **Fase 1:** reconhecedores customizados §3.1→§3.10, um commit por reconhecedor com testes; ao final, fixtures completas passando com os aceites §5.2. *Um commit por reconhecedor + um do aceite.*
 3. **Fase 2:** integração no log (pergunta e resposta), com teste de integração no caminho de persistência. *Commit.*
 4. **Fase 3:** sanitize/restore na fronteira do LLM, atrás de flag. *Commit.*
-5. **Fase 4 (futura, NÃO implementar agora):** heurística de razão social (sequência capitalizada seguida de `Ltda|S\.?A\.?|EIRELI|ME|EPP`) e avaliação de NER leve para nomes. Apenas deixar um `TODO.md` no crate descrevendo. ⚠️ **Na execução não houve `TODO.md`:** quem cumpre esse papel é [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md), com a Fase 4 detalhada (§4.0–§4.3) e os critérios de aceite. Um `TODO.md` no crate seria um segundo lugar para manter.
+5. ~~**Fase 4 (futura, NÃO implementar agora)**~~ ✅ **entregue em 2026-08-04:** heurística de razão social (sufixo societário), de endereço (logradouro + número) e de nome (gatilho de contexto). O NER leve **não** foi necessário e segue fora de escopo, como fase de pesquisa. ⚠️ **Na execução não houve `TODO.md`:** quem cumpre esse papel é [docs/auli-anon_pendencias.md](docs/auli-anon_pendencias.md), com a Fase 4 detalhada (§4.0–§4.3) e os critérios de aceite. Um `TODO.md` no crate seria um segundo lugar para manter.
 
 ---
 

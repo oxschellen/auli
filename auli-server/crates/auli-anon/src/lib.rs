@@ -12,13 +12,17 @@
 //!   texto cru e persistir/enviar [`TEXTO_FALLBACK_ERRO`], nunca o original.
 //! - O embedding da pergunta continua sendo calculado sobre o **texto original** (é local,
 //!   in-process — não há vazamento) para não degradar a busca vetorial.
-//! - Nome de pessoa, razão social e endereço livre **ainda não** são cobertos (Fase 4).
+//! - Nome de pessoa, razão social e endereço são cobertos por **heurística** (Fase 4), com recall
+//!   parcial assumido: sem o gatilho/porteiro esperado, a entidade passa. Ver
+//!   `docs/auli-anon_pendencias.md`.
 //!
-//! ## Estado (Fase 0)
-//! Apenas os reconhecedores nativos do cloakrs (locale BR): **CPF, CNPJ numérico e e-mail**.
-//! Os demais (telefone, IE, protocolo, GA, RENAVAM, placa, CEP, data de nascimento e o CNPJ
-//! alfanumérico de 2026) chegam na Fase 1 como reconhecedores customizados, plugados via
-//! `ScannerBuilder::recognizer(...)` no construtor.
+//! ## Estado (Fases 0–4)
+//! Reconhecedores nativos do cloakrs (locale BR): **CPF, CNPJ numérico e e-mail**. Os demais são
+//! nossos, plugados via `ScannerBuilder::recognizer(...)` no construtor:
+//! - **Fase 1, identificador estruturado** (validação por DV ou formato inequívoco): CNPJ
+//!   alfanumérico de 2026, telefone, IE, protocolo, GA, RENAVAM, placa, CEP, data de nascimento.
+//! - **Fase 4, entidade sem forma canônica** (heurística, confiança 0.7): razão social, endereço
+//!   e nome de pessoa.
 
 use cloakrs_core::{Locale, PromptMapping, PromptSanitizer};
 use cloakrs_locales::default_registry;

@@ -1,4 +1,4 @@
-# auli-anon — pendências (Fase 4 e afins)
+# auli-anon — estado e pendências
 
 Estado atual do crate `auli-anon` e do que falta. Complementa o plano em
 [`docs/IMPLEMENTACAO_auli-anon.md`](docs/IMPLEMENTACAO_auli-anon.md).
@@ -23,21 +23,40 @@ Estado atual do crate `auli-anon` e do que falta. Complementa o plano em
   [rag.rs](auli-server/crates/auli-cli/src/rag.rs) e `docs/auli_operations.md` §7.
 - **Fase 3** (PR #56): anonimização na fronteira do LLM (sanitize→restore), atrás do flag
   `AULI_ANONIMIZAR_LLM` (default on).
+- **Fase 4** (2026-08-04): as três entidades sem forma canônica — razão social, endereço e nome
+  de pessoa — por **heurística determinística**, sem dicionário de prenomes e sem NER. Detalhe
+  abaixo.
 
-## O que falta: Fase 4 — entidades não estruturadas
+## Fase 4 — entidades não estruturadas ✅ **entregue (2026-08-04)**
 
-Três entidades **ainda vazam** por não terem forma canônica (exigem NER ou heurística).
-Nas fixtures elas estão marcadas `Classe::NomeRazaoEndereco` e ficam **fora** da trava
-`recall_estruturado_fase1`:
+As três entidades que vaziam por não terem forma canônica passaram a ser cobertas por
+heurística determinística. Elas continuam marcadas `Classe::NomeRazaoEndereco` nas fixtures,
+mas agora com `coberto: true` e sob trava própria:
 
-| Fixture | Categoria | Segredo que vaza | Dificuldade |
-|---|---|---|---|
-| 15 | Razão social | `Anderle Transportes` | média |
-| 17 | Endereço | `Av. Mauá, 1155` | média–alta |
-| 14 | Nome de pessoa (pt-BR) | `João da Silva Pereira` | alta |
+| Fixture | Entidade | Reconhecedor | Placeholder | Porteiro |
+|---|---|---|---|---|
+| 15 | Razão social | `auli_razao_social_v1` | `[RAZAO_SOCIAL_n]` | sufixo societário |
+| 17 | Endereço | `auli_endereco_v1` | `[ENDERECO_n]` | logradouro **e** número |
+| 14 | Nome de pessoa | `auli_nome_pessoa_v1` | `[NOME_n]` | gatilho de contexto |
 
-Ordem de implementação sugerida: **razão social → endereço → nome** (do mais tratável ao
-mais ambíguo).
+Todos com confiança **0.7** — o menor nível do crate, o mesmo do RENAVAM com DV inválido mas
+contexto explícito. São heurísticas, não validações por DV, e a confiança diz isso.
+
+**O que continua fora (recall parcial assumido).** A regra da fase foi *precisão vence recall*,
+e o preço está declarado:
+
+- **nome solto**, sem gatilho antes (`João da Silva Pereira solicitou a baixa`);
+- **nome de um token só** (`Sr. João`) — o mínimo é 2 tokens (D-ANON-4.5);
+- **gatilho distante** do nome (`o contribuinte, que já esteve aqui, João Silva`);
+- **razão social sem sufixo** societário e **endereço sem número**;
+- qualquer candidato com token da **stoplist institucional** — inclusive um legítimo, como uma
+  `Transportadora Rio Grande Ltda` real, que não será mascarada porque `Rio`/`Grande` estão lá.
+
+Esses casos são o insumo da fase seguinte, de pesquisa (dicionário de prenomes BR e NER pt-BR),
+que segue **fora de escopo**.
+
+**Falso positivo residual conhecido:** `Estrada de Ferro 2` casa como endereço. Documentado e
+aceito — texto tributário raramente traz a construção, e apertar o padrão custaria endereço real.
 
 ---
 
@@ -69,57 +88,54 @@ Knobs do `ScannerBuilder` ainda não usados e relevantes para a Fase 4: `min_con
 (hoje `Confidence::ZERO` — tudo que os reconhecedores devolvem é mascarado), `allow_list`
 (literais que nunca mascaram — válvula para falso positivo de nome/endereço) e `deny_list`.
 
-### 4.1 Razão social — `RazaoSocialRecognizer` (heurística de sufixo societário)
+### 4.1 Razão social — `RazaoSocialRecognizer` ✅
 
-**A mais tratável.** Razão social quase sempre termina num sufixo societário canônico.
+Porteiro único: o **sufixo societário** (`Ltda`, `S.A.`, `S/A`, `EIRELI`, `EPP`, `ME`, `MEI`,
+`Cia`, `Companhia`), com janela de 1+4 tokens antes. Duas travas **não previstas no plano**,
+ambas motivadas por falso positivo medido:
 
-- **Padrão:** sequência capitalizada (com conectores `e`/`&`/`da`/`de`/`do`) seguida de
-  sufixo: `Ltda`, `S/A`, `S.A.`, `SA`, `EIRELI`, `ME`, `EPP`, `MEI`, `Cia`, `Companhia`.
-  Capturar do início da sequência capitalizada até o sufixo (inclusive).
-- **Anti-falso-positivo:** exigir o sufixo (é o porteiro); o sufixo sozinho é inequívoco,
-  não precisa de contexto. Cuidar de `ME`/`SA` isolados (siglas) — só casar quando
-  precedidos de uma sequência capitalizada plausível.
-- **Placeholder:** `EntityType::Custom("razao_social")` → `[RAZAO_SOCIAL_n]`.
-- **Fixture 15** deve mascarar `Anderle Transportes Ltda` (ou ao menos `Anderle Transportes`).
-- **Risco:** nomes de órgãos/produtos capitalizados sem sufixo NÃO casam (bom); o risco real
-  é capturar demais (uma frase capitalizada longa antes do `Ltda`) — limitar a janela a
-  ~5 tokens antes do sufixo.
+- **Titlecase para sufixo fraco** (`ME`/`SA`/`EPP`/`MEI`): os 2 tokens anteriores precisam ter
+  minúscula depois da inicial. Sem isso, `PARCELAMENTO ICMS ME` e `BAIXA DA IE ME` viravam razão
+  social — a contagem de tokens capitalizados do plano não distingue sigla em caixa alta.
+- **Stoplist institucional**: sem ela, `Simples Nacional ME` (Titlecase legítimo) passava.
 
-### 4.2 Endereço — `EnderecoRecognizer` (heurística de logradouro)
+Detalhe de regex que custou um teste: a guarda final **consome um caractere não alfanumérico** em
+vez de usar `\b`. Com `\b`, sufixo terminado em ponto (`S.A.`, `Ltda.`) perdia o ponto, porque
+não há fronteira de palavra entre `.` e o espaço seguinte e o motor desiste do `\.?` opcional.
 
-- **Padrão:** palavra de logradouro (`Rua`, `Av\.?`, `Avenida`, `Travessa`, `Praça`,
-  `Rodovia`, `Estrada`, `Alameda`, `Largo`) + nome do logradouro (capitalizado) + número.
-  Ex.: `Av. Mauá, 1155`.
-- **Escopo:** capturar até o número (o `, 1155`); bairro/cidade que seguem são mais ambíguos
-  — decidir se entram (a fixture 17 espera só `Av. Mauá, 1155`).
-- **Placeholder:** `EntityType::Custom("endereco")` → `[ENDERECO_n]`, ou reutilizar o nativo
-  `EntityType::PhysicalAddress` (placeholder `[ADDRESS]`) — decidir por consistência PT.
-- **Fixture 17** deve mascarar `Av. Mauá, 1155`.
-- **Risco:** "Rodovia BR-116 km 23" e nomes de logradouro em texto de referência; a palavra
-  de logradouro como porteiro reduz bastante o ruído.
+### 4.2 Endereço — `EnderecoRecognizer` ✅
 
-### 4.3 Nome de pessoa — `NomePessoaRecognizer` (a mais difícil)
+Dois porteiros obrigatórios: palavra de logradouro no início **e** número no fim; captura até o
+número, inclusive (D-ANON-4.4 — bairro/cidade/UF ficam de fora). Entre o nome e o número exige-se
+separador real, e é isso que mantém `Rodovia BR-116 km 23` fora: ali o dígito está colado dentro
+do token.
 
-Sem forma canônica; qualquer sequência capitalizada pode ser nome. Três caminhos, do mais
-leve ao mais pesado:
+Correção sobre o padrão do plano: o **conector é aceito também antes do 1º token**. Sem isso,
+`Travessa dos Cataventos, nº 22` e `Rua dos Andradas, 736` — a forma mais comum de endereço
+brasileiro — não casavam.
 
-1. **Heurística ancorada em contexto (recomendado começar por aqui).** Só capturar sequência
-   capitalizada (2–4 tokens, conectores `da`/`de`/`do`/`dos`/`das`/`e`) **após** um gatilho:
-   `Sr\.?`, `Sra\.?`, `contribuinte`, `requerente`, `produtor(a)? rural`, `sócio`, `nome`,
-   `titular`, `responsável`, `contador(a)?`. Recall parcial, mas falso-positivo baixo.
-2. **Dicionário de prenomes BR** (lista de nomes comuns) + heurística de sobrenome
-   (conectores + capitalização). Melhora recall sem gatilho, ao custo de manter a lista.
-3. **NER leve (ONNX)**. cloakrs tem `EntityType::PersonName`, mas o `PersonNameRecognizer` que
-   o acompanha é dicionário EN com gate duro e **não pega** nomes pt-BR (a fixture 14 vaza
-   hoje) — ver §4.0: não há o que configurar, a opção sobrou como modelo NER pt-BR via ONNX.
-   **Custo alto** — reintroduz um modelo/processo pesado ao lado do BGE-M3. Só se (1) e (2)
-   forem insuficientes.
+### 4.3 Nome de pessoa — `NomePessoaRecognizer` ✅ (caminho 1)
 
-- **Placeholder:** `EntityType::Custom("nome")` → `[NOME_n]` (ou o nativo `PersonName` →
-  `[PERSON]`).
-- **Fixture 14** deve mascarar `João da Silva Pereira`.
-- **Precedência:** cuidar para não colidir com razão social (um nome pode preceder `Ltda`);
-  o `deduplicate` do cloakrs resolve sobreposição pelo span mais longo.
+Implementado o **caminho 1** (heurística ancorada em gatilho), como o plano recomendava. Sem
+gatilho não há match. O span emitido é **só o nome**: o gatilho nunca é mascarado, senão a
+pergunta perderia o sentido (`o [NOME_1] solicitou` em vez de `o contribuinte [NOME_1] solicitou`).
+
+Duas correções sobre o padrão do plano: `\b` antes do grupo de gatilhos (sem ele, `nome` casava
+dentro de *sobrenome*) e conector opcional entre gatilho e nome (sem ele, `em nome de Maria
+Eduarda dos Santos` escapava).
+
+Os caminhos **2 (dicionário de prenomes BR)** e **3 (NER pt-BR via ONNX)** seguem abertos, agora
+como fase de pesquisa e não mais como alternativa: a §4.0 fechou a opção de reaproveitar o
+`PersonNameRecognizer` do cloakrs.
+
+### 4.4 Base compartilhada — `reconhecedores/comum.rs`
+
+Os nove reconhecedores das Fases 0/1 duplicam o próprio `limites_ok` porque cada um tem uma
+variação da regra de "separador colado a dígito", que protege CNPJ/protocolo de serem fatiados.
+Os três da Fase 4 casam **texto**: a regra não se aplica, e a fronteira precisa enxergar acento
+(`char::is_alphanumeric`, não `is_ascii_alphanumeric` — `'ã'` não é ASCII alfanumérico, e um match
+colado ao fim de palavra acentuada passaria). Daí um módulo, em vez de uma quarta cópia. Ele
+hospeda também a `STOPLIST` e os helpers `titlecase`/`comeca_maiuscula`.
 
 ---
 
@@ -129,25 +145,35 @@ leve ao mais pesado:
    `cloakrs_core::Recognizer` (`id`/`entity_type`/`supported_locales`/`scan`/`validate`),
    com os mesmos helpers `limites_ok` (boundaries de byte) e janela de contexto ~40 chars
    dos reconhecedores existentes. Regex compilada uma vez (no `novo()` ou `LazyLock`).
+   Se o reconhecedor casa **texto** e não dígito, usar `comum::limites_ok` (§4.4) em vez de
+   escrever a décima cópia.
 2. Registrar em `reconhecedores/mod.rs` (`mod` + `pub use`) e em `lib.rs`
    `Anonimizador::novo()` (`.recognizer(...)`).
 3. Testes unitários no módulo: positivos, negativos (sem gatilho), boundaries.
 4. Fixtures (`tests/fixtures.rs`): virar `coberto: true` a fixture correspondente.
-5. **Nova trava de aceite** para a Fase 4 (as fixtures 14/15/17 são `NomeRazaoEndereco`,
-   hoje fora do `recall_estruturado_fase1`): criar `recall_nao_estruturado_fase4` (ou
-   reclassificar) exigindo recall sobre nome/razão/endereço, aceitando **recall parcial**
-   documentado — diferente da meta de 100% dos estruturados.
+5. Trava de aceite correspondente: `recall_estruturado_fase1` (100%) para identificador
+   estruturado, `recall_nao_estruturado_fase4` (recall parcial documentado) para entidade sem
+   forma canônica. Se o reconhecedor novo puder gerar falso positivo em texto institucional,
+   acrescentar a frase típica a `CONTROLES_FASE4`.
 6. `cargo test -p auli-anon` e `cargo clippy -p auli-anon -- -D warnings` verdes.
    Lembrete: converter `map_or(true/false, …)` → `is_none_or`/`is_some_and` (o gate clippy
    `-D warnings` do workspace reprova a forma antiga).
 
-## Critérios de aceite da Fase 4
+## Critérios de aceite da Fase 4 — ✅ atendidos (2026-08-04)
 
-- Fixtures 14/15/17 mascaradas (recall parcial aceitável para nome; documentar o que não
-  pega).
-- **0 falsos positivos** na fixture de controle (20) e em texto de referência típico —
-  nomes/endereços são a maior fonte de falso-positivo; o controle não pode regredir.
-- Sem regressão nos 14 estruturados (a trava `recall_estruturado_fase1` continua verde).
+- ✅ Fixtures 14/15/17 mascaradas, sob `recall_nao_estruturado_fase4`; o que a heurística não
+  pega está listado acima.
+- ✅ **0 falsos positivos**: fixture de controle (20) intacta e 10 frases de referência típicas
+  em `CONTROLES_FASE4`, todas com zero detecção. Cada frase corresponde a um falso positivo que
+  existiu durante a implementação.
+- ✅ Sem regressão: `recall_estruturado_fase1` e `regressao_coberto` intocadas e verdes.
+- ✅ Span da entidade apenas — `span_exclui_o_gatilho` trava que o gatilho de nome não é mascarado.
+- ✅ Ciclo `anonimizar`→`restaurar` com os placeholders novos (`restore_fase4`); Fase 3 e
+  `AULI_ANONIMIZAR_LLM` inalteradas.
+- ✅ Sobreposição nome × razão social travada (`sobreposicao_nome_dentro_de_razao_social`) — a
+  regra é do `deduplicate` do cloakrs, e o teste existe para um bump do crate não a mudar calado.
+- ✅ **Latência**: mediana **0,34 ms** (p95 0,35 ms) para pergunta de 1,2 KB densa em PII, contra
+  o teto de 5 ms do plano §5.2. Construção do `Anonimizador`, uma vez no boot: 3,3 ms.
 
 ## Outras pendências (fora da Fase 4)
 
