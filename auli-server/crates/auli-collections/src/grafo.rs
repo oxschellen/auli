@@ -298,7 +298,12 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         .collect();
 
     // 8. Layout force-directed determinístico (spring-electrical + gravidade + anti-colisão).
-    let (xs, ys) = layout(n, &edges, &is_tema);
+    // Espaço pessoal constante por tipo: é o que a jurisprudência sempre usou (os dispositivos têm
+    // faixa estreita de `val`, então diferenciar por tamanho não mudaria o desenho).
+    let raios: Vec<f64> = (0..n)
+        .map(|i| if is_tema(i) { 0.05 } else { 0.03 })
+        .collect();
+    let (xs, ys) = layout(n, &edges, &is_tema, &raios, &LayoutParams::default());
 
     // 9. Monta os nós com posições normalizadas.
     let max_disp = disp_nodes.iter().map(|d| val[d]).max().unwrap_or(1).max(1);
@@ -362,14 +367,54 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
     Ok(())
 }
 
+/// Quanto os temas se afastam e quanto espaço pessoal cada tipo de nó reclama. Os defaults são os
+/// da jurisprudência (97 dispositivos para 16 temas: os temas precisam repelir forte para não
+/// colapsarem sobre a nuvem de normas). O `grafo_servicos` afrouxa esses valores porque lá a
+/// proporção é quase 1:1 e a repulsão da jurisprudência empurraria os sistemas todos para o centro.
+pub(crate) struct LayoutParams {
+    /// Multiplicador de repulsão entre dois temas.
+    pub rep_tema_tema: f64,
+    /// Multiplicador de repulsão entre um tema e um nó do outro tipo.
+    pub rep_tema_outro: f64,
+    /// Escala da repulsão global. Grafo pequeno tem menos repulsão somada e a gravidade o esmaga
+    /// num nó central; subir isto devolve o ar entre os nós.
+    pub rep_escala: f64,
+    /// Comprimento de repouso da mola das arestas do tipo 0 (co-citação / co-menção). Pesos altos
+    /// encurtam a mola, e dois hubs muito co-mencionados acabam sobrepostos.
+    pub rest_intra: f64,
+    /// Rigidez da mola do tipo 0. Alongar a mola sozinho não separa nada — a normalização final por
+    /// p95 reescala o desenho inteiro. O que muda a geometria RELATIVA é a razão entre a mola e a
+    /// repulsão, e é essa razão que este parâmetro controla.
+    pub forca_intra: f64,
+}
+
+impl Default for LayoutParams {
+    fn default() -> Self {
+        Self {
+            rep_tema_tema: 5.5,
+            rep_tema_outro: 2.0,
+            rep_escala: 1.0,
+            rest_intra: 0.12,
+            forca_intra: 0.95,
+        }
+    }
+}
+
 /// Simulação spring-electrical determinística. Init em círculo com jitter derivado do índice (sem
-/// PRNG externo → idempotente). Temas repelem-se muito mais forte (espalha os conceitos). Devolve
-/// posições normalizadas em [0,1] (centroide + raio p95).
-fn layout(
+/// PRNG externo → idempotente). Temas repelem-se mais forte (espalha os conceitos). Devolve
+/// posições normalizadas em [0,1] (centroide + raio p95). Compartilhada com o `grafo_servicos`: a
+/// física é a mesma, só muda o que é nó e o quanto os temas empurram (`LayoutParams`).
+/// `raios[i]` é o espaço pessoal do nó `i` na anti-colisão final. Precisa ser **por nó**, não uma
+/// constante por tipo: escalar todos os raios junto só infla o desenho, e a normalização por p95 no
+/// fim desfaz o efeito inteiro. O que separa nós grandes é a diferença RELATIVA entre os raios.
+pub(crate) fn layout(
     n: usize,
     edges: &[(usize, usize, u32, u8)],
     is_tema: &dyn Fn(usize) -> bool,
+    raios: &[f64],
+    p: &LayoutParams,
 ) -> (Vec<f64>, Vec<f64>) {
+    assert_eq!(raios.len(), n, "um raio de anti-colisão por nó");
     use std::f64::consts::TAU;
     let mut px = vec![0.0f64; n];
     let mut py = vec![0.0f64; n];
@@ -397,13 +442,13 @@ fn layout(
                 let d2 = dx * dx + dy * dy + 1e-4;
                 let d = d2.sqrt();
                 let mult = if is_tema(i) && is_tema(j) {
-                    5.5
+                    p.rep_tema_tema
                 } else if is_tema(i) || is_tema(j) {
-                    2.0
+                    p.rep_tema_outro
                 } else {
                     1.0
                 };
-                let f = REP / d2 * mult;
+                let f = REP * p.rep_escala / d2 * mult;
                 let (ux, uy) = (dx / d, dy / d);
                 fx[i] += ux * f;
                 fy[i] += uy * f;
@@ -415,9 +460,9 @@ fn layout(
             let dx = px[a] - px[b];
             let dy = py[a] - py[b];
             let d = (dx * dx + dy * dy).sqrt() + 1e-4;
-            let base = if k == 0 { 0.12 } else { 0.20 };
+            let base = if k == 0 { p.rest_intra } else { 0.20 };
             let rest = base * (1.0 - 0.3 * (w.min(6) as f64) / 6.0);
-            let strength = if k == 0 { 0.95 } else { 0.62 };
+            let strength = if k == 0 { p.forca_intra } else { 0.62 };
             let f = (d - rest) * strength;
             let (ux, uy) = (dx / d, dy / d);
             fx[a] -= ux * f;
@@ -434,10 +479,8 @@ fn layout(
             py[i] += vy[i].clamp(-0.045, 0.045);
         }
     }
-    // anti-colisão (raio por tipo; temas com mais espaço pessoal)
-    let rr: Vec<f64> = (0..n)
-        .map(|i| if is_tema(i) { 0.05 } else { 0.03 })
-        .collect();
+    // anti-colisão (espaço pessoal por nó — ver a doc do parâmetro `raios`)
+    let rr = raios;
     for _ in 0..110 {
         for i in 0..n {
             for j in i + 1..n {

@@ -1,0 +1,514 @@
+<title>Grafo de serviços — SEFAZ/RS</title>
+<style>
+  :root {
+    --bg: #e9ecf1; --surface: #f4f6f9; --panel: #ffffff;
+    --ink: #141a26; --ink-2: #52607a; --ink-3: #8a93a6;
+    --line: #d7dce4; --line-2: #e6eaf0;
+    --accent: #b07d1e; --accent-soft: rgba(176,125,30,.14);
+    --edge: rgba(30,40,60,.16); --edge-hi: rgba(176,125,30,.62);
+    --p-empresas:#2a78d6; --p-cidadaos:#1baf7a; --p-agentes:#4a3aa7;
+    --p-servidores:#eda100; --p-fornecedores:#e87ba4; --p-outros:#8a93a6;
+    --node-stroke: rgba(15,20,30,.35);
+    --shadow: 0 1px 2px rgba(20,26,38,.06), 0 8px 26px rgba(20,26,38,.09);
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b0e14; --surface: #12161f; --panel: #161b26;
+      --ink: #eef1f6; --ink-2: #a7b0c0; --ink-3: #6a7385;
+      --line: #232a36; --line-2: #1c222d;
+      --accent: #e3b256; --accent-soft: rgba(227,178,86,.16);
+      --edge: rgba(190,205,230,.14); --edge-hi: rgba(227,178,86,.55);
+      --p-empresas:#3987e5; --p-cidadaos:#199e70; --p-agentes:#9085e9;
+      --p-servidores:#c98500; --p-fornecedores:#d55181; --p-outros:#6a7385;
+      --node-stroke: rgba(0,0,0,.5);
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0e14; --surface: #12161f; --panel: #161b26;
+    --ink: #eef1f6; --ink-2: #a7b0c0; --ink-3: #6a7385;
+    --line: #232a36; --line-2: #1c222d;
+    --accent: #e3b256; --accent-soft: rgba(227,178,86,.16);
+    --edge: rgba(190,205,230,.14); --edge-hi: rgba(227,178,86,.55);
+    --p-empresas:#3987e5; --p-cidadaos:#199e70; --p-agentes:#9085e9;
+    --p-servidores:#c98500; --p-fornecedores:#d55181; --p-outros:#6a7385;
+    --node-stroke: rgba(0,0,0,.5);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"] {
+    --bg: #e9ecf1; --surface: #f4f6f9; --panel: #ffffff;
+    --ink: #141a26; --ink-2: #52607a; --ink-3: #8a93a6;
+    --line: #d7dce4; --line-2: #e6eaf0;
+    --accent: #b07d1e; --accent-soft: rgba(176,125,30,.14);
+    --edge: rgba(30,40,60,.16); --edge-hi: rgba(176,125,30,.62);
+    --p-empresas:#2a78d6; --p-cidadaos:#1baf7a; --p-agentes:#4a3aa7;
+    --p-servidores:#eda100; --p-fornecedores:#e87ba4; --p-outros:#8a93a6;
+    --node-stroke: rgba(15,20,30,.35);
+    --shadow: 0 1px 2px rgba(20,26,38,.06), 0 8px 26px rgba(20,26,38,.09);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+  }
+
+  /* O cabeçalho é moldura, não conteúdo: enxuto para o grafo ficar com a área. */
+  header {
+    padding: 9px 18px 8px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 18px; flex-wrap: wrap; background: var(--surface);
+  }
+  .eyebrow {
+    font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; margin: 0 0 2px;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 600; font-size: clamp(16px, 1.5vw, 20px);
+    line-height: 1.15; margin: 0; letter-spacing: -.01em; text-wrap: balance;
+  }
+  .thesis {
+    margin: 3px 0 0; color: var(--ink-2); max-width: 112ch; font-size: 12.5px; line-height: 1.4;
+  }
+  .thesis b { color: var(--ink); font-weight: 600; }
+  .stats { display: flex; gap: 18px; flex-shrink: 0; align-self: center; }
+  .stat { text-align: right; }
+  .stat .n {
+    font-family: var(--serif); font-size: 19px; font-weight: 600;
+    line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink);
+  }
+  .stat .l {
+    font-size: 9.5px; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--ink-3); margin-top: 3px;
+  }
+
+  main { flex: 1; display: flex; min-height: 0; }
+  .stage { position: relative; flex: 1; min-width: 0; }
+  canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+
+  .hint {
+    position: absolute; left: 16px; bottom: 14px; z-index: 3;
+    font-size: 11.5px; color: var(--ink-3); display: flex; gap: 14px;
+    align-items: center; pointer-events: none;
+    background: color-mix(in srgb, var(--surface) 78%, transparent);
+    padding: 5px 10px; border-radius: 7px; backdrop-filter: blur(3px);
+  }
+  .hint kbd {
+    font-family: var(--mono); font-size: 10.5px; background: var(--line-2);
+    border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink-2);
+  }
+  .reset {
+    position: absolute; right: 14px; top: 14px; z-index: 3;
+    font: inherit; font-size: 12.5px; color: var(--ink-2); cursor: pointer;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 6px 12px; box-shadow: var(--shadow); pointer-events: auto;
+  }
+  .reset:hover { color: var(--ink); border-color: var(--ink-3); }
+  .reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* floating tooltip */
+  .tip {
+    position: absolute; z-index: 5; pointer-events: none; max-width: 260px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
+    box-shadow: var(--shadow); padding: 9px 11px; font-size: 12.5px;
+    opacity: 0; transform: translateY(2px); transition: opacity .12s;
+  }
+  .tip.on { opacity: 1; transform: none; }
+  .tip .t-disp { font-weight: 600; color: var(--ink); line-height: 1.3; }
+  .tip .t-key { font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-top: 3px; word-break: break-all; }
+  .tip .t-meta { margin-top: 5px; color: var(--ink-2); }
+
+  aside {
+    width: 250px; flex-shrink: 0; border-left: 1px solid var(--line);
+    background: var(--surface); overflow-y: auto; padding: 12px 13px 18px;
+    display: flex; flex-direction: column; gap: 15px;
+  }
+  .sec-label {
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; margin: 0 0 7px;
+  }
+
+  .legend { display: flex; flex-direction: column; gap: 1px; }
+  .leg-row {
+    display: flex; align-items: center; gap: 8px; padding: 3px 6px;
+    border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--ink-2);
+    border: 1px solid transparent; user-select: none;
+  }
+  .leg-row:hover { background: var(--line-2); }
+  .leg-row[aria-pressed="true"] { color: var(--ink); }
+  .leg-row.dim { opacity: .4; }
+  .leg-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid var(--node-stroke); }
+  .leg-row .cnt {
+    margin-left: auto; font-size: 11px; color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* detail panel */
+  .detail { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 11px; }
+  .detail.empty .d-body { color: var(--ink-3); font-size: 11.5px; line-height: 1.5; }
+  .d-fam {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 10px;
+    letter-spacing: .04em; text-transform: uppercase; color: var(--ink-2);
+    font-weight: 600; margin-bottom: 6px;
+  }
+  .d-disp { font-family: var(--serif); font-size: 16px; font-weight: 600; line-height: 1.2; color: var(--ink); }
+  .d-key { font-family: var(--mono); font-size: 10.5px; color: var(--accent); margin-top: 6px; word-break: break-all; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+  .chip {
+    font-size: 11.5px; padding: 3px 9px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--ink-3); color: var(--ink-2); background: none;
+    font-family: inherit;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--ink); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .d-tema .d-disp { font-style: italic; }
+  .d-nums { display: flex; gap: 16px; margin: 9px 0; padding: 8px 0; border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); }
+  .d-nums .n { font-family: var(--serif); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .d-nums .l { font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin-top: 2px; }
+  .d-neigh-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 7px; }
+  .neigh { display: flex; flex-direction: column; gap: 2px; }
+  .neigh-row {
+    display: flex; align-items: center; gap: 7px; padding: 3px 6px; border-radius: 6px;
+    cursor: pointer; font-size: 11.5px; color: var(--ink-2); text-align: left;
+    background: none; border: none; width: 100%; font-family: inherit;
+  }
+  .neigh-row:hover { background: var(--line-2); color: var(--ink); }
+  .neigh-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .neigh-row .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .neigh-row .w { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--ink-3); font-size: 11.5px; flex-shrink: 0; }
+
+  .hubs { display: flex; flex-direction: column; gap: 2px; }
+  .hub-row {
+    display: flex; align-items: center; gap: 9px; padding: 3px 6px; border-radius: 6px;
+    cursor: pointer; background: none; border: none; width: 100%; font-family: inherit;
+    text-align: left; color: var(--ink-2);
+  }
+  .hub-row:hover { background: var(--line-2); color: var(--ink); }
+  .hub-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .hub-row .bar-wrap { flex: 1; min-width: 0; }
+  .hub-row .lbl { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hub-row .bar { height: 3px; border-radius: 2px; margin-top: 3px; background: var(--p-empresas); }
+  .hub-row .v { font-variant-numeric: tabular-nums; font-size: 11.5px; color: var(--ink-3); flex-shrink: 0; }
+
+  footer { padding: 6px 18px; border-top: 1px solid var(--line); background: var(--surface); font-size: 10.5px; color: var(--ink-3); }
+  footer b { color: var(--ink-2); font-weight: 600; }
+
+  @media (max-width: 820px) {
+    body { height: auto; overflow: auto; }
+    main { flex-direction: column; }
+    .stage { height: 62vh; }
+    aside { width: auto; border-left: none; border-top: 1px solid var(--line); }
+  }
+  @media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+</style>
+
+<header>
+  <div>
+    <p class="eyebrow">Auli · grafo da carta de serviços</p>
+    <h1>Os sistemas que o contribuinte gaúcho atravessa</h1>
+    <p class="thesis">Nós <b>coloridos</b> são sistemas (cor = público que mais os usa); os <b>contornados</b>, os assuntos que os serviços resolvem. Dois sistemas se aproximam quando o mesmo serviço exige os dois — clique num assunto para acender os que ele mobiliza.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n" id="s-par">—</div><div class="l">serviços</div></div>
+    <div class="stat"><div class="n" id="s-disp">—</div><div class="l">sistemas</div></div>
+    <div class="stat"><div class="n" id="s-cit">—</div><div class="l">menções</div></div>
+  </div>
+</header>
+
+<main>
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <button class="reset" id="reset">Reenquadrar</button>
+    <div class="hint"><span><kbd>arraste</kbd> mover</span><span><kbd>scroll</kbd> zoom</span><span><kbd>clique</kbd> focar</span></div>
+    <div class="tip" id="tip"></div>
+  </div>
+
+  <aside>
+    <section>
+      <p class="sec-label">Público predominante</p>
+      <div class="legend" id="legend"></div>
+    </section>
+    <section>
+      <p class="sec-label">Sistema</p>
+      <div class="detail empty" id="detail">
+        <div class="d-body">Passe o mouse ou clique num nó para ver o sistema, sua chave canônica e os sistemas que costumam vir junto com ele no mesmo serviço.</div>
+      </div>
+    </section>
+    <section>
+      <p class="sec-label">Assuntos <span style="color:var(--ink-3);font-weight:400;text-transform:none;letter-spacing:0">· o que o serviço resolve</span></p>
+      <div class="hubs" id="temas"></div>
+    </section>
+    <section>
+      <p class="sec-label">Sistemas-âncora <span style="color:var(--ink-3);font-weight:400;text-transform:none;letter-spacing:0">· por nº de serviços</span></p>
+      <div class="hubs" id="hubs"></div>
+    </section>
+  </aside>
+</main>
+
+<footer>
+  Núcleo: <b id="f-nodes">—</b> sistemas (≥2 serviços) + <b id="f-temas">—</b> assuntos-topo, ligados por co-menção e co-ocorrência. De <b id="f-total">—</b> sistemas canônicos ao todo, citados em <b id="f-cob">—</b> dos 422 serviços. Derivado de <b>auli-collections rs extrair-servicos | canonizar-servicos | grafo-servicos</b>.
+</footer>
+
+<script id="graph-data" type="application/json">{"meta":{"servicos":422,"servicos_com_sistema":215,"sistemas_total":133,"sis":22,"temas":21,"edges":117},"nodes":[{"kind":"sis","id":"aplicativo-ipva-rs","label":"aplicativo IPVA RS","fam":"Cidadãos","val":3,"x":0.1911,"y":0.796},{"kind":"sis","id":"caixa-postal-eletronica","label":"Caixa Postal Eletrônica","fam":"Cidadãos","val":6,"x":0.6389,"y":0.5461},{"kind":"sis","id":"cgcte","label":"CGCTE","fam":"Empresas","val":7,"x":0.4233,"y":0.2625},{"kind":"sis","id":"conta-corrente-fiscal","label":"Conta Corrente Fiscal","fam":"Empresas","val":2,"x":0.9901,"y":0.6509},{"kind":"sis","id":"dte","label":"DTE","fam":"Empresas","val":8,"x":0.457,"y":0.365},{"kind":"sis","id":"e-cac","label":"Portal e-CAC","fam":"Empresas","val":63,"x":0.4937,"y":0.4663},{"kind":"sis","id":"e-cnpj","label":"e-CNPJ","fam":"Empresas","val":2,"x":0.2421,"y":0.3832},{"kind":"sis","id":"efd","label":"EFD","fam":"Empresas","val":7,"x":0.7821,"y":0.7404},{"kind":"sis","id":"gia","label":"GIA","fam":"Empresas","val":3,"x":0.862,"y":0.6278},{"kind":"sis","id":"gia-st","label":"GIA-ST","fam":"Empresas","val":2,"x":0.1933,"y":0.1861},{"kind":"sis","id":"gov-br","label":"gov.br","fam":"Cidadãos","val":3,"x":0.3957,"y":0.692},{"kind":"sis","id":"nf-e","label":"NF-e","fam":"Empresas","val":14,"x":0.4307,"y":0.843},{"kind":"sis","id":"nfc-e","label":"NFC-e","fam":"Empresas","val":6,"x":0.5228,"y":0.8705},{"kind":"sis","id":"nfg","label":"Nota Fiscal Gaúcha","fam":"Cidadãos","val":4,"x":0.2946,"y":0.737},{"kind":"sis","id":"plantao-fiscal-virtual","label":"Plantão Fiscal Virtual","fam":"Empresas","val":9,"x":0.6483,"y":0.8743},{"kind":"sis","id":"portal-do-simples-nacional","label":"Portal do Simples Nacional","fam":"Empresas","val":3,"x":0.7699,"y":0.4617},{"kind":"sis","id":"portal-pessoa-fisica","label":"Portal Pessoa Física","fam":"Cidadãos","val":22,"x":0.4628,"y":0.5769},{"kind":"sis","id":"proa","label":"PROA","fam":"Empresas","val":2,"x":0.5374,"y":0.6398},{"kind":"sis","id":"protocolo-eletronico","label":"Protocolo Eletrônico","fam":"Empresas","val":75,"x":0.5612,"y":0.4525},{"kind":"sis","id":"redesim","label":"Portal REDESIM RS","fam":"Empresas","val":10,"x":0.2825,"y":0.321},{"kind":"sis","id":"sef","label":"SEF","fam":"Empresas","val":6,"x":0.6114,"y":0.2153},{"kind":"sis","id":"sistema-itc","label":"Sistema ITC","fam":"Empresas","val":2,"x":0.3187,"y":0.503},{"kind":"tema","id":"isenção","label":"isenção","val":34,"x":0.4126,"y":0.5624},{"kind":"tema","id":"nota fiscal eletrônica","label":"nota fiscal eletrônica","val":14,"x":0.512,"y":0.7455},{"kind":"tema","id":"pagamento","label":"pagamento","val":14,"x":0.0373,"y":0.9596},{"kind":"tema","id":"inscrição estadual","label":"inscrição estadual","val":13,"x":0.294,"y":0.1997},{"kind":"tema","id":"regime especial","label":"regime especial","val":12,"x":0.1657,"y":0.5583},{"kind":"tema","id":"substituição tributária","label":"substituição tributária","val":11,"x":0.3827,"y":0.0663},{"kind":"tema","id":"inscrição","label":"inscrição","val":10,"x":0.1203,"y":0.3946},{"kind":"tema","id":"parcelamento","label":"parcelamento","val":10,"x":0.2927,"y":0.625},{"kind":"tema","id":"recurso","label":"recurso","val":9,"x":0.5764,"y":0.3647},{"kind":"tema","id":"certidão de situação fiscal","label":"certidão de situação fiscal","val":8,"x":0.6905,"y":0.2758},{"kind":"tema","id":"crédito presumido","label":"crédito presumido","val":8,"x":0.7613,"y":0.3748},{"kind":"tema","id":"devolução","label":"devolução","val":8,"x":0.9013,"y":0.5303},{"kind":"tema","id":"cancelamento","label":"cancelamento","val":7,"x":0.64,"y":0.6908},{"kind":"tema","id":"acordo","label":"acordo","val":6,"x":0.5373,"y":0.2413},{"kind":"tema","id":"adesão","label":"adesão","val":6,"x":0.7386,"y":0.5919},{"kind":"tema","id":"alteração cadastral","label":"alteração cadastral","val":6,"x":0.3685,"y":0.3521},{"kind":"tema","id":"dívida ativa","label":"dívida ativa","val":6,"x":0.8752,"y":0.2339},{"kind":"tema","id":"intimação","label":"intimação","val":6,"x":0.552,"y":0.5399},{"kind":"tema","id":"regularização","label":"regularização","val":6,"x":0.6469,"y":0.4169},{"kind":"tema","id":"baixa","label":"baixa","val":5,"x":0.5047,"y":0.1253},{"kind":"tema","id":"cadastro","label":"cadastro","val":5,"x":0.3801,"y":0.4396}],"edges":[{"s":0,"t":10,"w":1,"k":0},{"s":0,"t":13,"w":1,"k":0},{"s":1,"t":5,"w":3,"k":0},{"s":1,"t":16,"w":1,"k":0},{"s":1,"t":18,"w":5,"k":0},{"s":2,"t":4,"w":1,"k":0},{"s":2,"t":5,"w":3,"k":0},{"s":2,"t":6,"w":1,"k":0},{"s":2,"t":9,"w":1,"k":0},{"s":2,"t":18,"w":1,"k":0},{"s":2,"t":19,"w":1,"k":0},{"s":3,"t":7,"w":1,"k":0},{"s":3,"t":8,"w":1,"k":0},{"s":4,"t":5,"w":1,"k":0},{"s":4,"t":6,"w":2,"k":0},{"s":4,"t":18,"w":1,"k":0},{"s":4,"t":19,"w":1,"k":0},{"s":4,"t":20,"w":1,"k":0},{"s":5,"t":10,"w":1,"k":0},{"s":5,"t":11,"w":1,"k":0},{"s":5,"t":15,"w":1,"k":0},{"s":5,"t":16,"w":14,"k":0},{"s":5,"t":17,"w":2,"k":0},{"s":5,"t":18,"w":47,"k":0},{"s":5,"t":19,"w":7,"k":0},{"s":5,"t":21,"w":2,"k":0},{"s":7,"t":8,"w":1,"k":0},{"s":7,"t":12,"w":1,"k":0},{"s":7,"t":14,"w":1,"k":0},{"s":8,"t":18,"w":1,"k":0},{"s":10,"t":18,"w":1,"k":0},{"s":11,"t":12,"w":3,"k":0},{"s":11,"t":13,"w":1,"k":0},{"s":11,"t":14,"w":1,"k":0},{"s":12,"t":13,"w":1,"k":0},{"s":13,"t":16,"w":1,"k":0},{"s":15,"t":18,"w":1,"k":0},{"s":16,"t":17,"w":2,"k":0},{"s":16,"t":18,"w":21,"k":0},{"s":16,"t":21,"w":1,"k":0},{"s":17,"t":18,"w":2,"k":0},{"s":18,"t":19,"w":3,"k":0},{"s":18,"t":21,"w":1,"k":0},{"s":35,"t":4,"w":1,"k":1},{"s":35,"t":5,"w":1,"k":1},{"s":35,"t":18,"w":1,"k":1},{"s":35,"t":20,"w":1,"k":1},{"s":36,"t":5,"w":2,"k":1},{"s":36,"t":7,"w":1,"k":1},{"s":36,"t":18,"w":2,"k":1},{"s":37,"t":2,"w":1,"k":1},{"s":37,"t":5,"w":2,"k":1},{"s":37,"t":18,"w":1,"k":1},{"s":37,"t":19,"w":1,"k":1},{"s":41,"t":2,"w":2,"k":1},{"s":41,"t":5,"w":2,"k":1},{"s":42,"t":2,"w":1,"k":1},{"s":42,"t":4,"w":1,"k":1},{"s":42,"t":5,"w":2,"k":1},{"s":42,"t":6,"w":1,"k":1},{"s":42,"t":16,"w":1,"k":1},{"s":42,"t":18,"w":2,"k":1},{"s":42,"t":21,"w":1,"k":1},{"s":34,"t":5,"w":1,"k":1},{"s":34,"t":7,"w":1,"k":1},{"s":34,"t":16,"w":1,"k":1},{"s":34,"t":18,"w":2,"k":1},{"s":31,"t":5,"w":1,"k":1},{"s":31,"t":18,"w":2,"k":1},{"s":32,"t":5,"w":4,"k":1},{"s":32,"t":18,"w":4,"k":1},{"s":33,"t":3,"w":1,"k":1},{"s":33,"t":7,"w":1,"k":1},{"s":33,"t":8,"w":1,"k":1},{"s":33,"t":15,"w":1,"k":1},{"s":33,"t":20,"w":1,"k":1},{"s":38,"t":18,"w":1,"k":1},{"s":28,"t":9,"w":1,"k":1},{"s":28,"t":13,"w":1,"k":1},{"s":28,"t":19,"w":1,"k":1},{"s":25,"t":2,"w":1,"k":1},{"s":25,"t":5,"w":3,"k":1},{"s":25,"t":9,"w":1,"k":1},{"s":25,"t":19,"w":1,"k":1},{"s":39,"t":1,"w":2,"k":1},{"s":39,"t":2,"w":1,"k":1},{"s":39,"t":5,"w":3,"k":1},{"s":39,"t":16,"w":3,"k":1},{"s":39,"t":17,"w":2,"k":1},{"s":39,"t":18,"w":4,"k":1},{"s":22,"t":5,"w":16,"k":1},{"s":22,"t":16,"w":10,"k":1},{"s":22,"t":18,"w":21,"k":1},{"s":23,"t":5,"w":1,"k":1},{"s":23,"t":11,"w":6,"k":1},{"s":23,"t":12,"w":2,"k":1},{"s":23,"t":13,"w":1,"k":1},{"s":23,"t":14,"w":2,"k":1},{"s":23,"t":16,"w":1,"k":1},{"s":24,"t":0,"w":1,"k":1},{"s":29,"t":0,"w":1,"k":1},{"s":29,"t":5,"w":1,"k":1},{"s":29,"t":13,"w":1,"k":1},{"s":29,"t":18,"w":2,"k":1},{"s":30,"t":5,"w":1,"k":1},{"s":30,"t":16,"w":1,"k":1},{"s":30,"t":18,"w":2,"k":1},{"s":30,"t":20,"w":1,"k":1},{"s":26,"t":18,"w":1,"k":1},{"s":40,"t":1,"w":1,"k":1},{"s":40,"t":2,"w":1,"k":1},{"s":40,"t":5,"w":2,"k":1},{"s":40,"t":15,"w":1,"k":1},{"s":40,"t":18,"w":3,"k":1},{"s":27,"t":2,"w":1,"k":1},{"s":27,"t":9,"w":1,"k":1},{"s":27,"t":20,"w":1,"k":1}]}</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById('graph-data').textContent);
+  const FAM = [
+    ['Cidadãos','--p-cidadaos'], ['Empresas','--p-empresas'], ['Fornecedores','--p-fornecedores'],
+    ['Agentes','--p-agentes'], ['Servidores','--p-servidores'],
+  ];
+  const famVar = Object.fromEntries(FAM);
+  const cssVar = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const famColor = (f) => cssVar(famVar[f] || '--p-outros');
+
+  const N = DATA.nodes, E = DATA.edges;
+  N.forEach((n,i)=>{ n.i=i; n.nb=[]; });                       // nb: [neighborIndex, weight, edgeKind]
+  E.forEach(e => { N[e.s].nb.push([e.t,e.w,e.k]); N[e.t].nb.push([e.s,e.w,e.k]); });
+  const isTema = n => n.kind==='tema';
+  const maxDisp = Math.max(...N.filter(n=>!isTema(n)).map(n=>n.val));
+  const maxTema = Math.max(...N.filter(isTema).map(n=>n.val));
+
+  const set=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
+  set('s-par', DATA.meta.servicos); set('s-disp', DATA.meta.sistemas_total);
+  set('s-cit', DATA.meta.servicos_com_sistema);
+  set('f-nodes', DATA.meta.sis); set('f-temas', DATA.meta.temas);
+  set('f-total', DATA.meta.sistemas_total); set('f-cob', DATA.meta.servicos_com_sistema);
+
+  const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  let W=0,H=0,DPR=1, cam={k:1,x:0,y:0}, base={sw:1,sh:1,ox:0,oy:0};
+  function resize(){
+    const r=cv.getBoundingClientRect(); DPR=Math.min(window.devicePixelRatio||1,2);
+    W=r.width; H=r.height; cv.width=W*DPR; cv.height=H*DPR;
+    // Escala por eixo, não um quadrado: numa tela larga o quadrado deixava faixas mortas dos dois
+    // lados. O esticão horizontal é limitado a 1.6× o vertical — acima disso a leitura de
+    // "quem está perto de quem" começa a mentir.
+    // Folga vertical maior que a horizontal: o rótulo fica ACIMA do nó, então o topo e a base é
+    // que cortam texto. Na horizontal 26px bastam.
+    const padX=26, padY=38, sh=Math.max(40,H-2*padY), sw=Math.min(W-2*padX, sh*1.6);
+    base={sw, sh, ox:(W-sw)/2, oy:(H-sh)/2}; draw();
+  }
+  const sx = n => (base.ox + n.x*base.sw)*cam.k + cam.x;
+  const sy = n => (base.oy + n.y*base.sh)*cam.k + cam.y;
+  // O sistema é o protagonista: piso e amplitude maiores que os do assunto. A escala do irmão
+  // (jurisprudência) deixava os sistemas com ~5px, porque lá `val` se concentra numa faixa estreita
+  // e aqui vai de 2 a 75 — o Protocolo Eletrônico precisa pesar tanto quanto o assunto mais comum.
+  const rad = n => (isTema(n) ? 6 + Math.sqrt(n.val/maxTema)*11 : 5 + Math.sqrt(n.val/maxDisp)*11) * Math.sqrt(cam.k);
+
+  let hoverI=-1, selI=-1, dimFam=new Set();
+  const nbSorted = i => N[i].nb.slice().sort((a,b)=>b[1]-a[1]);
+  const shown = n => !(!isTema(n) && dimFam.has(n.fam));
+  const isActive = i => {
+    if (!shown(N[i])) return false;
+    if (selI<0) return true;
+    if (i===selI) return true;
+    return N[selI].nb.some(([j])=>j===i);
+  };
+
+  function draw(){
+    ctx.setTransform(DPR,0,0,DPR,0,0); ctx.clearRect(0,0,W,H);
+    const focus = selI>=0 ? selI : hoverI;
+    const edgeCol=cssVar('--edge'), edgeHi=cssVar('--edge-hi');
+
+    // edges: disp-disp (k=0) always faint; tema-disp (k=1) only when its endpoints are in focus
+    for (const e of E){
+      const a=N[e.s], b=N[e.t];
+      if (!shown(a) || !shown(b)) continue;
+      const lit = focus>=0 && (e.s===focus || e.t===focus);
+      if (e.k===1 && !lit) continue;                 // concept links appear on focus only
+      ctx.beginPath(); ctx.moveTo(sx(a),sy(a)); ctx.lineTo(sx(b),sy(b));
+      ctx.strokeStyle = lit ? edgeHi : edgeCol;
+      ctx.globalAlpha = focus>=0 ? (lit?0.95:0.18) : 0.5;
+      ctx.lineWidth = Math.max(0.6,(0.5+Math.min(e.w,6)*0.45)*(lit?1.5:1));
+      if (e.k===1){ ctx.setLineDash([4,3]); } else ctx.setLineDash([]);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]); ctx.globalAlpha=1;
+
+    const stroke=cssVar('--node-stroke'), accent=cssVar('--accent'),
+          panel=cssVar('--panel'), ink2=cssVar('--ink-2');
+    // sistemas (preenchidos, cor do público)
+    for (const n of N){
+      if (isTema(n) || !shown(n)) continue;
+      const active=isActive(n.i), r=rad(n), x=sx(n), y=sy(n);
+      ctx.globalAlpha = (focus>=0 && !active) ? 0.14 : 1;
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=famColor(n.fam); ctx.fill();
+      ctx.lineWidth = (n.i===selI||n.i===hoverI)?2.5:1;
+      ctx.strokeStyle = (n.i===selI||n.i===hoverI)?accent:stroke; ctx.stroke();
+    }
+    // temas (outlined "concept" nodes, on top)
+    for (const n of N){
+      if (!isTema(n)) continue;
+      const active=isActive(n.i), r=rad(n), x=sx(n), y=sy(n);
+      ctx.globalAlpha = (focus>=0 && !active) ? 0.2 : 1;
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=panel; ctx.fill();
+      ctx.lineWidth = (n.i===selI||n.i===hoverI)?3:2.2;
+      ctx.strokeStyle = (n.i===selI||n.i===hoverI)?accent:ink2; ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    drawLabels(focus);
+  }
+
+  function drawLabels(focus){
+    ctx.textAlign='center'; ctx.textBaseline='bottom';
+    const ink=cssVar('--ink'), halo=cssVar('--surface'), drawn=[];
+    const put=(n,txt,weight,size)=>{
+      ctx.font=`${weight} ${size}px ${cssVar('--sans')}`;
+      const tw=ctx.measureText(txt).width, x=sx(n);
+      const colide=b=>drawn.some(d=>!(b[0]>d[0]+d[2]||b[0]+b[2]<d[0]||b[1]>d[1]+d[3]||b[1]+b[3]<d[1]));
+      // Tenta acima; se o slot já está tomado, tenta abaixo antes de desistir.
+      const acima=sy(n)-rad(n)-4, abaixo=sy(n)+rad(n)+4+size;
+      const caixa=y=>[x-tw/2-2,y-size-1,tw+4,size+3];
+      let y=acima, box=caixa(y);
+      if (colide(box)) { y=abaixo; box=caixa(y); }
+      const near = focus>=0 && (n.i===focus || N[focus].nb.some(([j])=>j===n.i));
+      if (colide(box) && !near) return;
+      drawn.push(box);
+      ctx.lineWidth=3.4; ctx.strokeStyle=halo; ctx.strokeText(txt,x,y);
+      ctx.fillStyle=ink; ctx.fillText(txt,x,y);
+    };
+    // sistemas primeiro (são o protagonista), do maior para o menor
+    N.filter(n=>!isTema(n)&&shown(n)).sort((a,b)=>b.val-a.val).forEach(n=>{
+      const near=focus>=0 && (n.i===focus || N[focus].nb.some(([j])=>j===n.i));
+      if (n.val>=5 || near){ if (focus<0||isActive(n.i)) put(n,short(n.label,32),'600',12); }
+    });
+    // depois os assuntos, também do maior para o menor
+    N.filter(n=>isTema(n)&&shown(n)&&(focus<0||isActive(n.i))).sort((a,b)=>b.val-a.val)
+      .forEach(n=>put(n,short(n.label,26),'700',12.5));
+  }
+  const short=(s,m)=>s.length>m?s.slice(0,m-1)+'…':s;
+
+  function pick(px,py){
+    let best=-1,bd=1e9;
+    // prefer temas (bigger, on top) then disp
+    for (const pass of [true,false]) for (const n of N){
+      if (isTema(n)!==pass || !shown(n)) continue;
+      const dx=px-sx(n),dy=py-sy(n),d=dx*dx+dy*dy,r=rad(n)+4;
+      if (d<=r*r && d<bd){ bd=d; best=n.i; }
+    }
+    return best;
+  }
+
+  const tip=document.getElementById('tip');
+  let dragging=false,moved=false,last=null;
+  cv.addEventListener('mousedown',e=>{dragging=true;moved=false;last=[e.clientX,e.clientY];cv.classList.add('dragging');});
+  window.addEventListener('mouseup',()=>{dragging=false;cv.classList.remove('dragging');});
+  window.addEventListener('mousemove',e=>{
+    if(dragging){const dx=e.clientX-last[0],dy=e.clientY-last[1];
+      if(Math.abs(dx)+Math.abs(dy)>2)moved=true; cam.x+=dx;cam.y+=dy;last=[e.clientX,e.clientY];draw();}
+  });
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top,i=pick(px,py);
+    if(i!==hoverI){hoverI=i;cv.style.cursor=i>=0?'pointer':'grab';draw();}
+    if(i>=0)showTip(N[i],px,py); else tip.classList.remove('on');
+  });
+  cv.addEventListener('mouseleave',()=>{hoverI=-1;tip.classList.remove('on');draw();});
+  cv.addEventListener('click',e=>{
+    if(moved)return; const r=cv.getBoundingClientRect();
+    select(pick(e.clientX-r.left,e.clientY-r.top));
+  });
+  cv.addEventListener('wheel',e=>{
+    e.preventDefault(); const r=cv.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top;
+    const f=Math.exp(-e.deltaY*0.0012),nk=Math.min(6,Math.max(0.35,cam.k*f)),g=nk/cam.k;
+    cam.x=px-(px-cam.x)*g; cam.y=py-(py-cam.y)*g; cam.k=nk; draw();
+  },{passive:false});
+
+  function showTip(n,px,py){
+    if(isTema(n)){
+      const nd=n.nb.length;
+      tip.innerHTML=`<div class="t-disp">${esc(n.label)}</div>`+
+        `<div class="t-meta">assunto · ${n.val} serviços · ${nd} sistemas</div>`;
+    } else {
+      tip.innerHTML=`<div class="t-disp">${esc(n.label)}</div><div class="t-key">${esc(n.id)}</div>`+
+        `<div class="t-meta">${n.val} serviços · <span style="color:${famColor(n.fam)}">${esc(n.fam||'—')}</span></div>`;
+    }
+    tip.classList.add('on');
+    let x=px+16,y=py+16; const tw=tip.offsetWidth,th=tip.offsetHeight;
+    if(x+tw>W-8)x=px-tw-16; if(y+th>H-8)y=py-th-16;
+    tip.style.left=x+'px'; tip.style.top=y+'px';
+  }
+
+  const detail=document.getElementById('detail');
+  function select(i){
+    selI=i;
+    if(i<0){ detail.className='detail empty';
+      detail.innerHTML='<div class="d-body">Passe o mouse ou clique num nó. Um sistema mostra com quais outros ele divide serviços e em que assuntos aparece; um assunto mostra os sistemas que ele mobiliza.</div>';
+      draw(); return; }
+    const n=N[i];
+    if(isTema(n)){
+      const ds=nbSorted(i).slice(0,9);
+      detail.className='detail d-tema';
+      detail.innerHTML=`<div class="d-fam"><span class="dot" style="background:none;border:2px solid var(--ink-2)"></span>Assunto do serviço</div>`+
+        `<div class="d-disp">${esc(n.label)}</div>`+
+        `<div class="d-nums"><div><div class="n">${n.val}</div><div class="l">serviços</div></div>`+
+        `<div><div class="n">${n.nb.length}</div><div class="l">sistemas</div></div></div>`+
+        `<div class="d-neigh-label">Sistemas mobilizados</div><div class="neigh">`+
+        ds.map(([j,w])=>`<button class="neigh-row" data-i="${j}"><span class="dot" style="width:9px;height:9px;background:${famColor(N[j].fam)}"></span><span class="lbl">${esc(N[j].label)}</span><span class="w">${w}×</span></button>`).join('')+`</div>`;
+    } else {
+      const disp=nbSorted(i).filter(([j])=>!isTema(N[j])).slice(0,6);
+      const temas=n.nb.filter(([j])=>isTema(N[j])).sort((a,b)=>b[1]-a[1]);
+      detail.className='detail';
+      detail.innerHTML=`<div class="d-fam"><span class="dot" style="background:${famColor(n.fam)}"></span>${esc(n.fam||'sem público')}</div>`+
+        `<div class="d-disp">${esc(n.label)}</div><div class="d-key">${esc(n.id)}</div>`+
+        `<div class="d-nums"><div><div class="n">${n.val}</div><div class="l">serviços</div></div>`+
+        `<div><div class="n">${disp.length}</div><div class="l">co-mencionados</div></div></div>`+
+        (disp.length?`<div class="d-neigh-label">Vêm no mesmo serviço</div><div class="neigh">`+
+          disp.map(([j,w])=>`<button class="neigh-row" data-i="${j}"><span class="dot" style="width:9px;height:9px;background:${famColor(N[j].fam)}"></span><span class="lbl">${esc(N[j].label)}</span><span class="w">${w}×</span></button>`).join('')+`</div>`:'')+
+        (temas.length?`<div class="d-neigh-label" style="margin-top:13px">Assuntos</div><div class="chips">`+
+          temas.map(([j])=>`<button class="chip" data-i="${j}">${esc(N[j].label)}</button>`).join('')+`</div>`:'');
+    }
+    detail.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>focusOn(+b.dataset.i));
+    draw();
+  }
+  function focusOn(i){
+    select(i);
+    const n=N[i];
+    cam.x=W/2-(base.ox+n.x*base.sw)*cam.k; cam.y=H/2-(base.oy+n.y*base.sh)*cam.k; draw();
+  }
+
+  // legenda: público predominante do sistema
+  const legend=document.getElementById('legend'), famCount={};
+  N.forEach(n=>{ if(!isTema(n)) famCount[n.fam]=(famCount[n.fam]||0)+1; });
+  FAM.forEach(([f])=>{
+    if(!famCount[f])return;
+    const row=document.createElement('div'); row.className='leg-row'; row.tabIndex=0;
+    row.setAttribute('role','button'); row.setAttribute('aria-pressed','true');
+    row.innerHTML=`<span class="dot" style="background:${famColor(f)}"></span><span>${esc(f)}</span><span class="cnt">${famCount[f]}</span>`;
+    const toggle=()=>{ if(dimFam.has(f)){dimFam.delete(f);row.classList.remove('dim');row.setAttribute('aria-pressed','true');}
+      else{dimFam.add(f);row.classList.add('dim');row.setAttribute('aria-pressed','false');} draw(); };
+    row.onclick=toggle; row.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}};
+    legend.appendChild(row);
+  });
+
+  // atalhos de assunto
+  const temasEl=document.getElementById('temas');
+  N.filter(isTema).sort((a,b)=>b.val-a.val).forEach(n=>{
+    const b=document.createElement('button'); b.className='hub-row';
+    b.innerHTML=`<span class="bar-wrap"><span class="lbl">${esc(n.label)}</span><span class="bar" style="width:${Math.round(100*n.val/maxTema)}%;background:var(--ink-2)"></span></span><span class="v">${n.val}</span>`;
+    b.onclick=()=>focusOn(n.i); temasEl.appendChild(b);
+  });
+
+  // sistemas-âncora
+  const hubs=document.getElementById('hubs');
+  N.filter(n=>!isTema(n)).sort((a,b)=>b.val-a.val).slice(0,7).forEach(n=>{
+    const b=document.createElement('button'); b.className='hub-row';
+    b.innerHTML=`<span class="bar-wrap"><span class="lbl">${esc(n.label)}</span><span class="bar" style="width:${Math.round(100*n.val/maxDisp)}%;background:${famColor(n.fam)}"></span></span><span class="v">${n.val}</span>`;
+    b.onclick=()=>focusOn(n.i); hubs.appendChild(b);
+  });
+
+  document.getElementById('reset').onclick=()=>{cam={k:1,x:0,y:0};select(-1);};
+  function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);
+  window.addEventListener('resize',resize); resize();
+})();
+</script>

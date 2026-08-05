@@ -184,8 +184,8 @@ fn regravar_linhas(path: &Path, linhas: &[Linha]) -> Result<()> {
 }
 
 /// Anexa uma linha (JSON já serializado) + `\n`, com flush. O `ler_linhas` tolera a cauda
-/// truncada que uma queda aqui poderia deixar.
-fn append_linha(path: &Path, json: &str) -> Result<()> {
+/// truncada que uma queda aqui poderia deixar. Compartilhada com o `extracao_servicos`.
+pub(crate) fn append_linha(path: &Path, json: &str) -> Result<()> {
     let mut f = std::fs::OpenOptions::new()
         .create(true)
         .append(true)
@@ -197,8 +197,9 @@ fn append_linha(path: &Path, json: &str) -> Result<()> {
 }
 
 /// Remove uma cerca markdown (```` ```json … ``` ````) se o modelo desobedecer o "JSON puro".
-/// Tolerância barata: o conteúdo é o mesmo, só a embalagem que erra.
-fn descercar(answer: &str) -> &str {
+/// Tolerância barata: o conteúdo é o mesmo, só a embalagem que erra. Compartilhada com o
+/// `extracao_servicos`.
+pub(crate) fn descercar(answer: &str) -> &str {
     let t = answer.trim();
     let t = t
         .strip_prefix("```json")
