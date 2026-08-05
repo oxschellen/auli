@@ -1,10 +1,13 @@
 mod canonizar;
+mod canonizar_servicos;
 mod derive_faqs;
 mod derive_pareceres;
 mod domain;
 mod errors;
 mod extracao;
+mod extracao_servicos;
 mod grafo;
+mod grafo_servicos;
 mod indice;
 mod process;
 mod servicos;
@@ -22,6 +25,7 @@ fn main() -> errors::Result<()> {
     //   sinopse    gera/mescla sinopses (aceita flags próprias; ver `sinopse::run`).
     //   indice     deriva o índice leve dos pareceres (árvore -> raw/) para o frontend.
     //   extrair    extrai metadados de grafo da árvore -> data/<id>/extracao/*.jsonl (TAREFA-EXTRACAO).
+    //   extrair-servicos  o mesmo sobre a árvore `docs/servicos` -> servicos-extracao.jsonl (sistemas+temas).
     //   canonizar  canoniza os dispositivos de extracao.jsonl -> dispositivos{.jsonl,-index.json} (TAREFA-CANONIZADOR).
     //   grafo      monta o grafo (dispositivos + temas, co-citação) -> data/<id>/extracao/grafo.json.
     // Só `sinopse` e `extrair` aceitam flags; os demais subcomandos continuam rejeitando.
@@ -54,6 +58,7 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
     // Flags só são aceitas pelo `sinopse`; para os demais, o erro atual permanece.
     if collection != "sinopse"
         && collection != "extrair"
+        && collection != "extrair-servicos"
         && let Some(flag) = flags.first()
     {
         return Err(format!(
@@ -75,10 +80,16 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         "indice" => indice::run(entity)?,
         // OFFLINE (+LLM): extrai metadados de grafo da árvore `.md` -> JSONL (não toca nos `.md`).
         "extrair" => extracao::run(entity, parse_extracao_flags(&flags)?)?,
+        // OFFLINE (+LLM): o mesmo sobre a árvore `docs/servicos` — {sistemas, temas} por serviço.
+        "extrair-servicos" => extracao_servicos::run(entity, parse_extracao_flags(&flags)?)?,
         // OFFLINE (determinístico, sem LLM): canoniza os dispositivos de `extracao.jsonl` -> grafo.
         "canonizar" => canonizar::run(entity)?,
+        // OFFLINE (determinístico, sem LLM): canoniza os sistemas de `servicos-extracao.jsonl`.
+        "canonizar-servicos" => canonizar_servicos::run(entity)?,
         // OFFLINE (determinístico, sem LLM): monta o grafo (nós + arestas + layout) -> grafo.json.
         "grafo" => grafo::run(entity)?,
+        // OFFLINE (determinístico, sem LLM): monta o grafo de sistemas+temas -> grafo-servicos.json.
+        "grafo-servicos" => grafo_servicos::run(entity)?,
         "faqs" | "servicos" => {
             return Err(
                 "a coleta agora é feita pelos binários `auli-scraper-rs` / `auli-scraper-sc`; \
@@ -88,7 +99,7 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         }
         other => {
             return Err(format!(
-                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice | extrair | canonizar | grafo",
+                "subcomando desconhecido: '{}'. Use: process (padrão) | pareceres | sinopse | indice | extrair | extrair-servicos | canonizar | canonizar-servicos | grafo | grafo-servicos",
                 other
             )
             .into());
