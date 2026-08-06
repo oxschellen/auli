@@ -33,6 +33,23 @@ use crate::state::AppState;
 pub use bundle::run_bundle;
 pub use update::run_update;
 
+/// Timestamp das linhas do `tracing` no fuso local (America/Sao_Paulo nesta máquina), para casar
+/// com o `Local::now()` que os `println!` das rotinas e o log de consultas do RAG já usam — o timer
+/// default do `tracing-subscriber` imprime UTC, o que deixava a mesma requisição com dois horários.
+/// Via `chrono` (já dependência) e não pela feature `local-time`: o `time::OffsetTime::local_*`
+/// não consegue detectar o offset em processo multithread no Linux e cai para sem-timestamp.
+struct HoraLocal;
+
+impl tracing_subscriber::fmt::time::FormatTime for HoraLocal {
+    fn format_time(&self, w: &mut tracing_subscriber::fmt::format::Writer<'_>) -> std::fmt::Result {
+        write!(
+            w,
+            "{}",
+            chrono::Local::now().format("%Y-%m-%d %H:%M:%S%.3f %:z")
+        )
+    }
+}
+
 /// Assemble the full application router. Kept separate from `run_server` so tests can build the
 /// router and exercise handlers without binding a socket.
 pub fn app(state: Arc<AppState>) -> Router {
@@ -57,6 +74,7 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
     // Default to `info`; override per-target with RUST_LOG (e.g. `RUST_LOG=auli_cli=debug`
     // to see score arrays / the full RAG prompt, or `=trace` for everything).
     tracing_subscriber::fmt()
+        .with_timer(HoraLocal)
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
                 .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info")),
