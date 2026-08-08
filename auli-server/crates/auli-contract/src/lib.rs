@@ -86,6 +86,29 @@ pub struct Faq {
     pub text_to_embed: String,
 }
 
+impl Faq {
+    /// Projeta a FAQ no [`Documento`] (D-B2): `trilha = origin`, `titulo = pergunta`,
+    /// `corpo = resposta`, e **ementa e resumo vazios** — uma pergunta frequente não tem ementa nem
+    /// síntese, que é justamente o que o [`Kind::exige_resumo`] dela diz.
+    ///
+    /// Os prefixos `P:`/`R:` NÃO aparecem aqui: eles vivem só na key
+    /// ([`compose_faq_text_to_embed`]), e o bloco sempre mostrou a pergunta e a resposta cruas.
+    /// `text_to_embed` é copiado já materializado — a projeção não recompõe nada.
+    pub fn para_documento(&self) -> Documento {
+        Documento {
+            kind: Kind::Faqs,
+            trilha: self.origin.clone(),
+            titulo: self.pergunta.clone(),
+            ementa: String::new(),
+            resumo: String::new(),
+            corpo: self.resposta.clone(),
+            link: self.url.clone(),
+            text_to_embed: self.text_to_embed.clone(),
+            resumo_info: None,
+        }
+    }
+}
+
 impl Embeddable for Faq {
     fn text_to_embed(&self) -> &str {
         &self.text_to_embed
@@ -126,6 +149,28 @@ pub struct Servico {
     pub descricao: String,
     /// Key a embeddar — preenchida pelo scraper.
     pub text_to_embed: String,
+}
+
+impl Servico {
+    /// Projeta o serviço no [`Documento`] (D-B2): `trilha = "tipo | classe"`, `titulo`,
+    /// `corpo = descricao`, e **ementa e resumo vazios** — um serviço não tem ementa nem síntese.
+    ///
+    /// `id` e `orgao` ficam para trás de propósito: são campos de BORDA, que alimentam os JSONs do
+    /// frontend e o `process`, e não entram nem na key nem no bloco. Quem precisa deles continua
+    /// olhando o [`Servico`].
+    pub fn para_documento(&self) -> Documento {
+        Documento {
+            kind: Kind::Servicos,
+            trilha: trilha_servico(&self.tipo, &self.classe),
+            titulo: self.titulo.clone(),
+            ementa: String::new(),
+            resumo: String::new(),
+            corpo: self.descricao.clone(),
+            link: self.link.clone(),
+            text_to_embed: self.text_to_embed.clone(),
+            resumo_info: None,
+        }
+    }
 }
 
 impl Embeddable for Servico {
@@ -713,6 +758,115 @@ mod tests {
                 "divergiu em {trilha:?}/{titulo:?}/{ementa:?}"
             );
         }
+    }
+
+    // ---- D-B2: as projeções das bordas ----
+    //
+    // A prova de que a tabela de mapeamento está certa: o bloco montado a partir da PROJEÇÃO tem
+    // de sair byte a byte igual ao `stored_repr` da struct de borda. Enquanto os dois caminhos
+    // coexistirem (o `stored_repr` só sai na B5), é isto que garante que trocar um pelo outro na
+    // B4 não muda o contexto do LLM.
+
+    #[test]
+    fn a_projecao_da_faq_reproduz_o_bloco_dela() {
+        let casos = [
+            ("Inicial | IPVA", "Como emitir?", "Acesse o portal."),
+            ("", "Sem breadcrumb", "Resposta."), // origin vazio: a linha some nos dois
+            ("Inicial | IPVA", "Sem resposta", ""),
+        ];
+        for (origin, pergunta, resposta) in casos {
+            let f = Faq {
+                pergunta: pergunta.into(),
+                resposta: resposta.into(),
+                origin: origin.into(),
+                url: "https://x/faq/1".into(),
+                text_to_embed: "irrelevante para o bloco".into(),
+            };
+            let d = f.para_documento();
+            assert_eq!(
+                bloco(&d, &d.corpo),
+                f.stored_repr(),
+                "divergiu em {pergunta:?}"
+            );
+            // A key atravessa a projeção intacta — ela é materializada, não recomposta aqui.
+            assert_eq!(d.text_to_embed, f.text_to_embed);
+            assert_eq!(d.kind, Kind::Faqs);
+            // Sem ementa e sem resumo: é o que `exige_resumo() == false` significa.
+            assert!(d.ementa.is_empty() && d.resumo.is_empty());
+        }
+    }
+
+    #[test]
+    fn a_projecao_do_servico_reproduz_o_bloco_dele() {
+        let casos = [
+            ("Empresas", "ICMS", "Emitir guia", "Passos."),
+            ("Cidadãos", "", "Classe vazia", "Descrição."),
+            ("", "", "Sem breadcrumb", "Descrição."), // trilha vira " | " nos dois
+        ];
+        for (tipo, classe, titulo, descricao) in casos {
+            let s = Servico {
+                id: 1,
+                tipo: tipo.into(),
+                classe: classe.into(),
+                orgao: "Receita Estadual".into(),
+                link: "https://x/svc/1".into(),
+                titulo: titulo.into(),
+                descricao: descricao.into(),
+                text_to_embed: "irrelevante para o bloco".into(),
+            };
+            let d = s.para_documento();
+            assert_eq!(
+                bloco(&d, &d.corpo),
+                s.stored_repr(),
+                "divergiu em {titulo:?}"
+            );
+            assert_eq!(d.text_to_embed, s.text_to_embed);
+            assert_eq!(d.kind, Kind::Servicos);
+            assert!(d.ementa.is_empty() && d.resumo.is_empty());
+        }
+    }
+
+    #[test]
+    fn a_projecao_do_servico_nao_carrega_id_nem_orgao_para_o_bloco() {
+        // `id` e `orgao` são campos de borda. O teste existe para que uma tentativa futura de
+        // enfiá-los no bloco (ex.: "mostrar o órgão ao LLM") seja uma decisão, não um efeito
+        // colateral — mudar o bloco muda o contexto de TODOS os serviços de todas as entidades.
+        let s = Servico {
+            id: 42,
+            tipo: "Empresas".into(),
+            classe: "ICMS".into(),
+            orgao: "MARCADOR-DE-ORGAO".into(),
+            link: "https://x/svc/1".into(),
+            titulo: "Emitir guia".into(),
+            descricao: "Passos.".into(),
+            text_to_embed: String::new(),
+        };
+        let d = s.para_documento();
+        let b = bloco(&d, &d.corpo);
+        assert!(!b.contains("MARCADOR-DE-ORGAO"), "bloco: {b}");
+        assert!(!b.contains("42"), "bloco: {b}");
+    }
+
+    #[test]
+    fn os_prefixos_da_faq_ficam_na_key_e_fora_do_bloco() {
+        // A torção da D-FAQPR-1 continua valendo depois da projeção: `P:`/`R:` entram no VALOR dos
+        // slots da key, e o bloco mostra pergunta e resposta cruas. Se um dia vazarem para o bloco,
+        // o LLM passa a ver `P: ` no texto do documento.
+        let f = Faq {
+            pergunta: "Como emitir?".into(),
+            resposta: "Acesse o portal.".into(),
+            origin: "Inicial | IPVA".into(),
+            url: "https://x/faq/1".into(),
+            text_to_embed: compose_faq_text_to_embed(
+                "Inicial | IPVA",
+                "Como emitir?",
+                "Acesse o portal.",
+            ),
+        };
+        assert!(f.text_to_embed.contains("P: ") && f.text_to_embed.contains("R: "));
+        let d = f.para_documento();
+        let b = bloco(&d, &d.corpo);
+        assert!(!b.contains("P: ") && !b.contains("R: "), "bloco: {b}");
     }
 
     #[test]
