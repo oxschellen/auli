@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Collection, Entity } from "../../../shared/entities";
 import { hasCollection } from "../../../shared/entities";
 
@@ -62,14 +62,13 @@ export const useQuestionType = (entity: Entity) => {
   const [questionType, setQuestionType] = useState<QuestionType>(readStored);
 
   const disponiveis = tiposDisponiveis(entity);
-  const efetivo = disponiveis.includes(questionType) ? questionType : DEFAULT_TYPE;
 
-  // Reconcilia o ESTADO com o efetivo, para que a próxima troca de entidade parta de um valor
-  // válido. Não grava no localStorage: a preferência original do usuário é preservada, e volta a
-  // valer sozinha quando ele retornar a uma entidade que a tenha.
-  useEffect(() => {
-    if (efetivo !== questionType) setQuestionType(efetivo);
-  }, [efetivo, questionType]);
+  // O tipo EFETIVO é derivado a cada render, não sincronizado por efeito: a escolha do usuário só
+  // vale onde a entidade tem a coleção, e fora dela o chat usa o padrão. O estado cru pode ficar
+  // apontando para um tipo indisponível, e isso é inofensivo — ninguém o lê (é o `efetivo` que sai
+  // daqui), e `updateQuestionType` valida o valor NOVO, nunca o antigo. É também o que faz a
+  // preferência voltar a valer sozinha quando o usuário retorna a uma entidade que a tenha.
+  const efetivo = disponiveis.includes(questionType) ? questionType : DEFAULT_TYPE;
 
   // RadioGroup devolve `string | null`; valida antes de persistir/aplicar.
   const updateQuestionType = (value: string | null) => {
