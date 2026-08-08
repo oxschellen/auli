@@ -235,6 +235,21 @@ pub fn render_doc(header: &DocHeader, sinopse: Option<&str>, corpo: &str) -> Str
 /// consulta já coletada, o produtor não a atualiza — é preciso remover o `.md` (decisão humana,
 /// porque isso descarta a sinopse) e recoletar.
 pub fn escrever_se_ausente(dir: &std::path::Path, header: &DocHeader, corpo: &str) -> Result<bool> {
+    escrever_se_ausente_interno(dir, header, None, corpo)
+}
+
+/// Miolo de [`escrever_se_ausente`], com a sinopse como parâmetro.
+///
+/// Existe porque há duas origens legítimas para a `## sinopse`: o passo LLM (que reescreve o `.md`
+/// depois) e a **própria coleta**, quando o produtor já recebe do portal um resumo autoral (o TARF
+/// traz a fundamentação da ementa no cabeçalho do acórdão). Nos dois casos a regra de ouro é a
+/// mesma — existe ⇒ pula, sem ler o arquivo — então só o argumento muda.
+fn escrever_se_ausente_interno(
+    dir: &std::path::Path,
+    header: &DocHeader,
+    sinopse: Option<&str>,
+    corpo: &str,
+) -> Result<bool> {
     let slug = slug(&header.numero);
     if slug.is_empty() {
         bail!("`numero` não gera slug: {:?}", header.numero);
@@ -247,7 +262,7 @@ pub fn escrever_se_ausente(dir: &std::path::Path, header: &DocHeader, corpo: &st
     // Escrita atômica (`.tmp` + rename), como o resto do pipeline: uma queda no meio nunca deixa um
     // `.md` truncado — que o parser rejeitaria e travaria o passo seguinte.
     let tmp = destino.with_extension("md.tmp");
-    std::fs::write(&tmp, render_doc(header, None, corpo))?;
+    std::fs::write(&tmp, render_doc(header, sinopse, corpo))?;
     std::fs::rename(&tmp, &destino)?;
     Ok(true)
 }
@@ -263,8 +278,46 @@ pub fn escrever_lote_se_ausente(
     dir: &std::path::Path,
     docs: &[(DocHeader, String)],
 ) -> Result<(usize, usize)> {
+    recusar_colisao_de_slug(docs.iter().map(|(h, _)| h))?;
+    let (mut criados, mut pulados) = (0usize, 0usize);
+    for (header, corpo) in docs {
+        if escrever_se_ausente_interno(dir, header, None, corpo)? {
+            criados += 1;
+        } else {
+            pulados += 1;
+        }
+    }
+    Ok((criados, pulados))
+}
+
+/// Variante do lote que aceita **sinopse por documento**; devolve `(criados, pulados)`.
+///
+/// Produtores cuja sinopse é autorada na coleta (o TARF a extrai da fundamentação que o próprio
+/// acórdão traz no cabeçalho) emitem por aqui; os de pareceres continuam emitindo pendente por
+/// [`escrever_lote_se_ausente`]. Fora a sinopse, a semântica é idêntica — mesma checagem de colisão
+/// de slug, mesmo "existe ⇒ pula", mesma escrita atômica.
+pub fn escrever_lote_se_ausente_com_sinopse(
+    dir: &std::path::Path,
+    docs: &[(DocHeader, Option<String>, String)],
+) -> Result<(usize, usize)> {
+    recusar_colisao_de_slug(docs.iter().map(|(h, _, _)| h))?;
+    let (mut criados, mut pulados) = (0usize, 0usize);
+    for (header, sinopse, corpo) in docs {
+        if escrever_se_ausente_interno(dir, header, sinopse.as_deref(), corpo)? {
+            criados += 1;
+        } else {
+            pulados += 1;
+        }
+    }
+    Ok((criados, pulados))
+}
+
+/// Erra se dois `numero` **distintos** do lote geram o mesmo arquivo. O mesmo `numero` repetido não
+/// é colisão — é duplicata, e o segundo é legitimamente pulado. Roda ANTES de tocar o disco: um lote
+/// com colisão não escreve nada.
+fn recusar_colisao_de_slug<'a>(headers: impl Iterator<Item = &'a DocHeader>) -> Result<()> {
     let mut vistos: std::collections::HashMap<String, &str> = std::collections::HashMap::new();
-    for (header, _) in docs {
+    for header in headers {
         let s = slug(&header.numero);
         if let Some(anterior) = vistos.insert(s.clone(), &header.numero)
             && anterior != header.numero
@@ -275,15 +328,7 @@ pub fn escrever_lote_se_ausente(
             );
         }
     }
-    let (mut criados, mut pulados) = (0usize, 0usize);
-    for (header, corpo) in docs {
-        if escrever_se_ausente(dir, header, corpo)? {
-            criados += 1;
-        } else {
-            pulados += 1;
-        }
-    }
-    Ok((criados, pulados))
+    Ok(())
 }
 
 /// Slug do `numero` para nome de arquivo: minúsculas, sem acento, `[^a-z0-9]+` → `-`, aparado.
@@ -576,6 +621,77 @@ mod tests {
         assert_eq!(escrever_lote_se_ausente(&dir, &docs).unwrap(), (1, 1));
         // Re-rodar o lote inteiro: tudo pulado (incremental).
         assert_eq!(escrever_lote_se_ausente(&dir, &docs).unwrap(), (0, 2));
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn lote_com_sinopse_emite_pendentes_e_sinopsados_no_mesmo_lote() {
+        let dir = std::env::temp_dir().join(format!("auli-mddoc-sin-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let docs = vec![
+            (
+                mddoc_header("ACÓRDÃO 510/24"),
+                Some("Fundamentação do cabeçalho.".to_string()),
+                "corpo A".to_string(),
+            ),
+            (mddoc_header("ACÓRDÃO 141/26"), None, "corpo B".to_string()),
+        ];
+        assert_eq!(
+            escrever_lote_se_ausente_com_sinopse(&dir, &docs).unwrap(),
+            (2, 0)
+        );
+
+        let ler = |slug: &str| {
+            parse_doc(&std::fs::read_to_string(dir.join(format!("{slug}.md"))).unwrap()).unwrap()
+        };
+        let (_, sin_a, corpo_a) = ler("acordao-510-24");
+        assert_eq!(sin_a.as_deref(), Some("Fundamentação do cabeçalho."));
+        assert_eq!(corpo_a, "corpo A");
+        let (_, sin_b, corpo_b) = ler("acordao-141-26");
+        assert_eq!(sin_b, None, "sem sinopse continua nascendo pendente");
+        assert_eq!(corpo_b, "corpo B");
+
+        // Re-rodar: tudo pulado, nada sobrescrito (o "existe ⇒ pula" vale igual aqui).
+        assert_eq!(
+            escrever_lote_se_ausente_com_sinopse(&dir, &docs).unwrap(),
+            (0, 2)
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn lote_com_sinopse_recusa_colisao_de_slug() {
+        let dir = std::env::temp_dir().join(format!("auli-mddoc-sin-col-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let docs = vec![
+            (mddoc_header("ACÓRDÃO 003/21"), None, "a".to_string()),
+            (
+                mddoc_header("Acordão 003/21"),
+                Some("s".to_string()),
+                "b".to_string(),
+            ),
+        ];
+        let e = escrever_lote_se_ausente_com_sinopse(&dir, &docs)
+            .unwrap_err()
+            .to_string();
+        assert!(e.contains("colisão de slug"), "erro: {e}");
+        assert!(!dir.exists() || std::fs::read_dir(&dir).unwrap().count() == 0);
+    }
+
+    #[test]
+    fn lote_sem_sinopse_grava_os_mesmos_bytes_de_antes() {
+        // Trava de regressão do refactor (D-TARF-10): a função antiga delega à nova com sinopse
+        // `None` e o arquivo tem que sair byte a byte igual ao `render_doc(header, None, corpo)`.
+        let dir = std::env::temp_dir().join(format!("auli-mddoc-bytes-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let h = mddoc_header("PARECER Nº 25148");
+        let corpo = "Texto oficial integral.";
+        assert_eq!(
+            escrever_lote_se_ausente(&dir, &[(h.clone(), corpo.to_string())]).unwrap(),
+            (1, 0)
+        );
+        let gravado = std::fs::read_to_string(dir.join("parecer-no-25148.md")).unwrap();
+        assert_eq!(gravado, render_doc(&h, None, corpo));
         let _ = std::fs::remove_dir_all(&dir);
     }
 

@@ -8,6 +8,7 @@ mod errors;
 mod faqs;
 mod pareceres;
 mod servicos;
+mod tarf;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
 pub const ENTITY: &str = "rs";
@@ -21,7 +22,7 @@ pub(crate) fn scraper_info() -> auli_contract::ScraperInfo {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-rs [--usecache] faqs|servicos|all|pareceres   (omitido -> all)
+    // CLI: auli-scraper-rs [--usecache] faqs|servicos|all|pareceres|tarf   (omitido -> all)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -48,9 +49,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             pareceres::run(use_cache)?;
             return Ok(());
         }
+        // Materializa a árvore `../data/rs/docs/tarf/` (acórdãos do TARF). Como `pareceres`, é
+        // opt-in explícito — não entra no `all` — e não gera snapshot: retorna antes da mensagem.
+        "tarf" => {
+            tarf::run(use_cache)?;
+            return Ok(());
+        }
         other => {
             return Err(format!(
-                "coleção desconhecida: '{}'. Use: faqs | servicos | all | pareceres",
+                "coleção desconhecida: '{}'. Use: faqs | servicos | all | pareceres | tarf",
                 other
             )
             .into());
