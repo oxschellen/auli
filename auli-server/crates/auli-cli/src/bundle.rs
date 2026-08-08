@@ -294,17 +294,37 @@ fn escrever(
 /// rótulo da coleção o apresenta como se fosse o acervo. Enquanto a coleta não fecha, é melhor não
 /// publicar do que publicar pela metade sem o leitor ter como saber.
 ///
-/// **`tarf` — remover desta lista quando a coleta do TARF fechar.** São 22.522 acórdãos no portal;
-/// em 08/08/2026 havia 2.600 na árvore (a coleta foi pausada para desbloquear a migração de
-/// formato). Retomar: `cargo build -p auli-scraper-rs && auli-scraper-rs tarf`.
+/// **Vazia desde 08/08/2026.** O `tarf` esteve aqui enquanto a coleta era pausada para a migração
+/// de formato; a decisão passou a ser publicar o que já existe e seguir coletando, com o README da
+/// pasta dizendo que a coleta está em andamento (ver [`nota_tipo`]) — o leitor fica sabendo, que era
+/// o ponto.
 ///
 /// A lista filtra o BUNDLE, não o dado: a árvore segue no disco e dentro do `docs_hash` do
-/// manifesto. Segurar a coleção movendo o diretório mudaria esse hash e faria o servidor recusar o
+/// manifesto. Segurar uma coleção movendo o diretório mudaria esse hash e faria o servidor recusar o
 /// boot — por isso o filtro mora aqui.
-const KINDS_SEGURADOS: &[&str] = &["tarf"];
+const KINDS_SEGURADOS: &[&str] = &[];
 
 fn kind_segurado(kind: &str) -> bool {
     KINDS_SEGURADOS.contains(&kind)
+}
+
+/// Aviso de coleção em coleta, para o README da pasta. `None` = acervo completo.
+///
+/// Publicar um recorte é uma decisão legítima — o dado parcial já serve a quem quer o formato ou os
+/// documentos recentes. O que não pode é o recorte **passar por acervo**: quem baixa uma pasta
+/// chamada "Acórdãos TARF" com N documentos assume que são os N que existem. Esta linha é a
+/// diferença entre publicar parcial e publicar enganando.
+fn nota_tipo(kind: &str) -> Option<&'static str> {
+    match kind {
+        // O portal do TARF tem ~22,5 mil acórdãos; a coleta corre a 1 req/s e é retomável, então a
+        // pasta cresce a cada rodada. Remover quando ela fechar.
+        "tarf" => Some(
+            "**Coleta em andamento.** O acervo do TARF é maior do que o publicado aqui: a coleta \
+             respeita o ritmo do portal e a pasta cresce a cada rodada. O que está nesta versão é \
+             completo e conferido — só não é tudo.",
+        ),
+        _ => None,
+    }
 }
 
 fn titulo_tipo(kind: &str) -> String {
@@ -352,6 +372,7 @@ fn readme_tipo(estado: &EstadoBundle, tipo: &TipoBundle) -> String {
          \n\
          {n} documentos, um por arquivo `.md`. Dados públicos da {nome}; cada arquivo traz no\n\
          frontmatter o link para a fonte oficial.\n\
+         {nota}\
          \n\
          ## Como usar com sua IA\n\
          \n\
@@ -374,6 +395,7 @@ fn readme_tipo(estado: &EstadoBundle, tipo: &TipoBundle) -> String {
         n = tipo.arquivos.len(),
         nome = estado.name,
         schema = schema_tipo(&tipo.kind),
+        nota = nota_tipo(&tipo.kind).map_or(String::new(), |n| format!("\n{n}\n")),
     )
 }
 
@@ -846,10 +868,23 @@ state = "Estado WW"
     }
 
     #[test]
-    fn kinds_segurados_ficam_fora_do_zip_e_o_resto_entra() {
-        assert!(kind_segurado("tarf"), "coleta incompleta não vai a público");
+    fn nenhuma_colecao_esta_segurada_hoje() {
+        // A lista está vazia desde 08/08/2026 (ver `KINDS_SEGURADOS`). O teste existe para o dia em
+        // que alguém puser algo lá: segurar uma coleção é decisão de publicação, não detalhe de
+        // implementação, e some do zip sem deixar rastro se ninguém estiver olhando.
+        for k in ["servicos", "faqs", "pareceres", "tarf"] {
+            assert!(!kind_segurado(k), "{k} deixou de ser publicado sem aviso");
+        }
+    }
+
+    #[test]
+    fn colecao_em_coleta_avisa_no_readme_da_pasta() {
+        // A diferença entre publicar parcial e publicar enganando: quem baixa "Acórdãos TARF" com N
+        // documentos assume que são os N que existem.
+        let nota = nota_tipo("tarf").expect("tarf está em coleta e precisa do aviso");
+        assert!(nota.contains("Coleta em andamento"));
         for k in ["servicos", "faqs", "pareceres"] {
-            assert!(!kind_segurado(k), "{k} está completo e deve ser publicado");
+            assert!(nota_tipo(k).is_none(), "{k} é acervo completo, sem aviso");
         }
     }
 
