@@ -309,6 +309,9 @@ fn preparar_jurisprudencia(
                 &header.ementa,
                 &resumo,
             ),
+            // Vem da árvore, não é chumbada: hoje a jurisprudência a grava vazia, e se um dia
+            // um `.md` trouxer trilha, ela atravessa até o bloco em vez de ser descartada aqui.
+            trilha: header.trilha,
             titulo: header.titulo,
             ementa: header.ementa,
             link: header.link,

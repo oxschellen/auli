@@ -181,6 +181,14 @@ pub struct Documento {
     /// escritos (esta struct não é persistida hoje — a fonte é a árvore `.md` desde a G5b).
     #[serde(default = "kind_pareceres")]
     pub kind: Kind,
+    /// **Trilha** — o caminho até o documento no portal de origem (`"Cidadãos | IPVA"` num serviço,
+    /// `"Inicial | Tema | Subtema"` numa FAQ). **Vazia na jurisprudência**, que não tem navegação:
+    /// um parecer é achado pelo número, não por trilha. Mesmo papel do `trilha` do frontmatter.
+    ///
+    /// Vazia é estado normal, não pendência — e é por isso que o [`bloco`] a omite em vez de deixar
+    /// uma linha em branco.
+    #[serde(default)]
+    pub trilha: String,
     /// **Título** — o identificador legível do documento (ex.: `"PARECER Nº 25148"`,
     /// `"ACÓRDÃO 510/24"`). Mesmo papel do `titulo` do frontmatter. (Antes: `numero`.)
     pub titulo: String,
@@ -370,6 +378,45 @@ pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str, resposta: &str) -
     compose_unificado(&trilha, &titulo, "", &resumo)
 }
 
+/// **O bloco único** de contexto RAG (D-B3): a mesma forma para as quatro coleções.
+///
+/// ```text
+/// ## pergunta
+/// {trilha}      ← omitida quando vazia
+/// {titulo}
+/// {ementa}      ← omitida quando vazia
+///
+/// ## resposta
+/// {conteudo}
+/// Link: {link}
+/// ```
+///
+/// O `conteudo` vem de FORA em vez de sair do `Documento` porque é ele que o serving lê tarde, da
+/// árvore, só para os k documentos escolhidos — e porque nas bordas ele tem nomes diferentes
+/// (`corpo` na jurisprudência, `descricao` no serviço, `resposta` na FAQ). O bloco não precisa saber
+/// disso.
+///
+/// **A seção `## pergunta` tem a MESMA geometria do [`compose_unificado`]** — os slots na ordem
+/// `trilha → titulo → ementa`, um por linha, pulando os vazios. Não é coincidência: o que a busca
+/// indexa e o que o LLM lê descrevem o mesmo documento, e mantê-los na mesma ordem é o que impede
+/// que um mude sem o outro. A diferença é o `resumo`, que entra na key e não no bloco (no bloco o
+/// que aparece é o conteúdo integral).
+///
+/// Substitui quatro renderizações que eram a mesma coisa escrita quatro vezes: os `stored_repr` de
+/// [`Faq`] e [`Servico`] e o [`render_consulta_block`] da jurisprudência. A equivalência é verificada
+/// byte a byte nos testes, contra reimplementações literais dos formatos antigos.
+pub fn bloco(d: &Documento, conteudo: &str) -> String {
+    let pergunta = [d.trilha.as_str(), d.titulo.as_str(), d.ementa.as_str()]
+        .into_iter()
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<_>>()
+        .join("\n");
+    format!(
+        "## pergunta\n{pergunta}\n\n## resposta\n{conteudo}\nLink: {}",
+        d.link
+    )
+}
+
 /// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
 ///
 /// MESMO formato do `stored_repr` gordo de ANTES da G3 (que não existe mais: hoje ele grava o
@@ -434,7 +481,45 @@ mod tests {
         assert!(block.contains("Link: https://exemplo/svc/1"));
     }
 
-    /// Reimplementação LITERAL das três fórmulas como estavam antes da unificação (D-FMT-6).
+    /// Reimplementação LITERAL dos três formatos de BLOCO como estavam antes da D-B3 — os dois
+    /// `stored_repr` (Faq, Servico) e o `render_consulta_block`. Copiados à mão, sem chamar nada do
+    /// código de produção: são a referência independente contra a qual o [`bloco`] único é medido.
+    ///
+    /// Se um destes divergir do `bloco`, o CONTEXTO QUE VAI AO LLM mudou — o que muda a resposta do
+    /// modelo para perguntas que já funcionavam. É a trava mais cara de perder desta etapa.
+    mod blocos_antigos {
+        pub fn faq(origin: &str, pergunta: &str, resposta: &str, url: &str) -> String {
+            let mut s = String::from("## pergunta\n");
+            if !origin.is_empty() {
+                s.push_str(origin);
+                s.push('\n');
+            }
+            s.push_str(pergunta);
+            s.push_str("\n\n## resposta\n");
+            s.push_str(resposta);
+            s.push_str(&format!("\nLink: {url}"));
+            s
+        }
+
+        pub fn servico(
+            tipo: &str,
+            classe: &str,
+            titulo: &str,
+            descricao: &str,
+            link: &str,
+        ) -> String {
+            format!(
+                "## pergunta\n{} | {}\n{}\n\n## resposta\n{}\nLink: {}",
+                tipo, classe, titulo, descricao, link
+            )
+        }
+
+        pub fn jurisprudencia(numero: &str, assunto: &str, corpo: &str, link: &str) -> String {
+            format!("## pergunta\n{numero}\n{assunto}\n\n## resposta\n{corpo}\nLink: {link}")
+        }
+    }
+
+    /// Reimplementação LITERAL das três fórmulas de KEY como estavam antes da unificação (D-FMT-6).
     /// Não chamam nada do código de produção de propósito: são a referência contra a qual o
     /// compose único é medido. Se um dia divergirem, é o compose que mudou — e mudar o compose
     /// re-vetoriza todos os packs.
@@ -470,6 +555,163 @@ mod tests {
                 out.push_str(&resposta);
             }
             out
+        }
+    }
+
+    // ---- D-B3: o bloco único reproduz os três formatos byte a byte ----
+
+    /// Monta um `Documento` só com os slots que o [`bloco`] lê. Os campos que ele ignora
+    /// (`corpo`, `text_to_embed`) vão vazios de propósito: se um dia o bloco começar a olhá-los,
+    /// estes testes quebram, que é o que se quer.
+    fn doc_de(trilha: &str, titulo: &str, ementa: &str, link: &str) -> Documento {
+        Documento {
+            kind: Kind::Pareceres,
+            trilha: trilha.into(),
+            titulo: titulo.into(),
+            ementa: ementa.into(),
+            resumo: String::new(),
+            corpo: String::new(),
+            link: link.into(),
+            text_to_embed: String::new(),
+            resumo_info: None,
+        }
+    }
+
+    #[test]
+    fn bloco_reproduz_o_formato_de_faq_byte_a_byte() {
+        // Projeção da FAQ: trilha = origin, titulo = pergunta, ementa vazia, conteudo = resposta.
+        let casos = [
+            ("Inicial | IPVA", "Como emitir a guia?", "Acesse o portal."),
+            ("", "Como emitir a guia?", "Acesse o portal."), // sem breadcrumb: a linha SOME
+            ("Inicial | IPVA", "Como emitir a guia?", ""),   // resposta vazia
+            ("Inicial | IPVA", "Pergunta", "Linha 1\nLinha 2"), // resposta multilinha
+        ];
+        for (origin, pergunta, resposta) in casos {
+            let d = doc_de(origin, pergunta, "", "https://x/faq/1");
+            assert_eq!(
+                bloco(&d, resposta),
+                blocos_antigos::faq(origin, pergunta, resposta, "https://x/faq/1"),
+                "divergiu em {origin:?}/{pergunta:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn bloco_reproduz_o_formato_de_servico_byte_a_byte() {
+        // Projeção do serviço: trilha = `tipo | classe`, titulo, ementa vazia, conteudo = descricao.
+        let casos = [
+            ("Empresas", "ICMS", "Emitir guia", "Passos para emitir."),
+            ("Cidadãos", "", "Classe vazia", "Descrição."),
+            // Tipo E classe vazios: a trilha vira `" | "`, que NÃO é string vazia — a linha
+            // continua saindo, igual ao formato antigo. É o caso que separa "slot vazio" de
+            // "slot com conteúdo degenerado", e o bloco não pode confundir os dois.
+            ("", "", "Sem breadcrumb", "Descrição."),
+            ("Empresas", "ICMS", "Sem descrição", ""),
+        ];
+        for (tipo, classe, titulo, descricao) in casos {
+            let d = doc_de(&trilha_servico(tipo, classe), titulo, "", "https://x/svc/1");
+            assert_eq!(
+                bloco(&d, descricao),
+                blocos_antigos::servico(tipo, classe, titulo, descricao, "https://x/svc/1"),
+                "divergiu em {tipo:?}/{classe:?}/{titulo:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn bloco_reproduz_o_formato_de_jurisprudencia_byte_a_byte() {
+        // Projeção da jurisprudência: trilha vazia, titulo = numero, ementa = assunto,
+        // conteudo = corpo.
+        let casos = [
+            ("PARECER Nº 25148", "ICMS – crédito fiscal", "É o parecer."),
+            ("ACÓRDÃO 510/24", "ICMS. PROCESSUAL.", "Corpo do acórdão."),
+            ("PARECER Nº 1", "Assunto", ""), // corpo vazio: o Link não pode se perder
+            // Corpo com as próprias âncoras no meio: é só concatenação, nada a escapar.
+            (
+                "PARECER Nº 2",
+                "Assunto",
+                "Preâmbulo.\n\n## resposta\nRecursivo.\nLink: falso",
+            ),
+        ];
+        for (numero, assunto, corpo) in casos {
+            let d = doc_de("", numero, assunto, "https://x/p/1");
+            assert_eq!(
+                bloco(&d, corpo),
+                blocos_antigos::jurisprudencia(numero, assunto, corpo, "https://x/p/1"),
+                "divergiu em {numero:?}/{assunto:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn bloco_de_jurisprudencia_sem_ementa_e_a_unica_divergencia_conhecida() {
+        // **Honestidade da unificação.** O formato antigo emitia o `assunto` sempre, então com ele
+        // vazio sobrava uma LINHA EM BRANCO entre o número e o `## resposta`. O bloco único pula
+        // slots vazios, e essa linha some.
+        //
+        // O estado É alcançável — mas por um documento só. Varredura das árvores de todas as
+        // entidades em 08/08/2026: `ementa` vazia em 1 de 19.780 pareceres
+        // (`data/pr/docs/pareceres/consulta-no-32-2007.md`) e em 0 de 3.800 acórdãos. Nas FAQs e
+        // nos serviços a ementa é vazia SEMPRE, e ali os dois formatos concordam (nenhum dos dois
+        // emitia a linha).
+        //
+        // Ou seja: o contexto RAG muda em UM caractere, em UM documento de todo o acervo, e só
+        // quando ele é recuperado. O vetor não muda (a key vem do `compose`, não do bloco), então
+        // não há re-vetorização. Fica registrado como decisão, não descoberto depois.
+        let d = doc_de("", "CONSULTA Nº 32/2007", "", "https://x/p/32");
+        let novo = bloco(&d, "É o parecer.");
+        let antigo = blocos_antigos::jurisprudencia(
+            "CONSULTA Nº 32/2007",
+            "",
+            "É o parecer.",
+            "https://x/p/32",
+        );
+        assert_eq!(
+            novo,
+            "## pergunta\nCONSULTA Nº 32/2007\n\n## resposta\nÉ o parecer.\nLink: https://x/p/32"
+        );
+        assert_eq!(
+            antigo,
+            "## pergunta\nCONSULTA Nº 32/2007\n\n\n## resposta\nÉ o parecer.\nLink: https://x/p/32"
+        );
+        assert_eq!(antigo.len(), novo.len() + 1, "a diferença é UM \\n");
+    }
+
+    #[test]
+    fn bloco_equivale_ao_render_consulta_block_do_payload_leve() {
+        // A outra ponta: o `bloco` tem de reproduzir o que o serving monta HOJE a partir do payload
+        // do pack. Enquanto as duas funções coexistirem (o `render_consulta_block` só sai na B5),
+        // é este teste que garante que não divergiram.
+        let c = sample_documento();
+        let p = payload_de(&c, "docs/pareceres/parecer-no-25148.md");
+        let d = doc_de("", &c.titulo, &c.ementa, &c.link);
+        assert_eq!(bloco(&d, &c.corpo), render_consulta_block(&p, &c.corpo));
+    }
+
+    #[test]
+    fn a_secao_pergunta_do_bloco_tem_a_mesma_geometria_do_compose() {
+        // O invariante que mantém key e bloco descrevendo o mesmo documento: os slots
+        // `trilha → titulo → ementa` saem na mesma ordem, pulando os mesmos vazios. O `resumo`
+        // é a única diferença — entra na key, não no bloco.
+        let casos = [
+            ("Cidadãos | IPVA", "Guia", ""),
+            ("", "PARECER Nº 1", "ICMS"),
+            ("", "Só o título", ""),
+        ];
+        for (trilha, titulo, ementa) in casos {
+            let d = doc_de(trilha, titulo, ementa, "http://x");
+            let secao = bloco(&d, "C")
+                .strip_prefix("## pergunta\n")
+                .unwrap()
+                .split("\n\n## resposta\n")
+                .next()
+                .unwrap()
+                .to_string();
+            assert_eq!(
+                secao,
+                compose_unificado(trilha, titulo, ementa, ""),
+                "divergiu em {trilha:?}/{titulo:?}/{ementa:?}"
+            );
         }
     }
 
@@ -595,6 +837,7 @@ mod tests {
     fn parecer_exposes_key_and_renders_block() {
         let p = Documento {
             kind: Kind::Pareceres,
+            trilha: String::new(),
             titulo: "PARECER Nº 25148".into(),
             ementa: "ICMS – crédito fiscal na cesta básica".into(),
             resumo: "Análise sobre apropriação de crédito.".into(),
@@ -637,6 +880,7 @@ mod tests {
     fn sample_documento() -> Documento {
         Documento {
             kind: Kind::Pareceres,
+            trilha: String::new(),
             titulo: "PARECER Nº 25148".into(),
             ementa: "ICMS – crédito fiscal na cesta básica".into(),
             resumo: "Análise sobre apropriação de crédito.".into(),

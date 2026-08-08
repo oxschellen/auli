@@ -174,6 +174,8 @@ fn parecer_from_lines(lines: &[&str]) -> Option<Documento> {
     Some(Documento {
         // Este bootstrap ingere o `.txt` legado de `ref/` — que só existiu para pareceres.
         kind: Kind::Pareceres,
+        // O `.txt` legado não tinha trilha, e pareceres não têm navegação de portal.
+        trilha: String::new(),
         titulo: numero,
         ementa: assunto,
         resumo,
