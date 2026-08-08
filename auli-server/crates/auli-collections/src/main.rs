@@ -76,8 +76,16 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         "pareceres" => derive_pareceres::run(entity)?,
         // OFFLINE: preenche as sinopses pendentes na árvore `docs/pareceres/*.md` (G4).
         "sinopse" => sinopse::run(entity, parse_sinopse_flags(&flags)?)?,
-        // OFFLINE: deriva o índice leve dos pareceres para o frontend (árvore -> raw/*-pareceres-index.json).
-        "indice" => indice::run(entity)?,
+        // OFFLINE: deriva o índice leve de uma coleção de jurisprudência para o frontend
+        // (árvore -> raw/<id>-<colecao>-index.json). Sem o 3º argumento, `pareceres` — o default
+        // preserva quem já roda `auli-collections <id> indice`.
+        "indice" => {
+            let nome = positional.get(2).map(String::as_str).unwrap_or("pareceres");
+            let colecao = indice::Colecao::parse(nome).ok_or_else(|| {
+                format!("coleção desconhecida para o índice: '{nome}'. Use: pareceres | tarf")
+            })?;
+            indice::run(entity, colecao)?
+        }
         // OFFLINE (+LLM): extrai metadados de grafo da árvore `.md` -> JSONL (não toca nos `.md`).
         "extrair" => extracao::run(entity, parse_extracao_flags(&flags)?)?,
         // OFFLINE (+LLM): o mesmo sobre a árvore `docs/servicos` — {sistemas, temas} por serviço.
