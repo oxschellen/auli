@@ -12,7 +12,8 @@
 ### 2. Em seguida, a seção "**Detalhes**": a orientação completa, com os demais serviços, FAQs e links aplicáveis.
 ### Se a resposta inteira couber no Resumo, omita a seção Detalhes.
 ### Para responder use as informações apresentadas na lista de serviços e nas perguntas frequentes (Faq) apresentados abaixo.
-### Cada serviço e cada pergunta do texto inicia com o marcador: ## pergunta
+### Cada documento do contexto inicia com o marcador: ## documento (seguido do número e do tipo — Serviço ou FAQ).
+### Dentro de cada documento, o título vem após o marcador ## pergunta e o conteúdo após o marcador ## resposta.
 ### Sempre apresente os links de chamadas https
 ### Apresente cada link no formato markdown [Título](URL), usando como texto o título exato do serviço ou da pergunta frequente — nunca exiba a URL crua no texto da resposta.
 ### Se a pergunta não puder ser respondida com as informações disponíveis, responda que não é possível responder

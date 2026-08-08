@@ -153,23 +153,57 @@ fn render(docs: &[String], fmt: impl Fn(usize, &str) -> String) -> String {
 // A partir da ferramenta MCP `consultar_servicos_faqs`, `montar_rag_servicos_faqs` e `retrieve`
 // são também a implementação da face MCP — é o que garante saída byte a byte igual à do chat.
 
+/// **O invólucro único** de todo documento do contexto (D-MARC-1).
+///
+/// Antes havia quatro — `## servico`, `// Resultado:`, `## PARECER` e `## PARECER RELACIONADO` —,
+/// um por coleção, com sintaxes que nem sequer combinavam entre si (uma delas era um comentário de
+/// JavaScript). O que distingue as coleções é a **natureza da fonte**, que a LLM precisa saber para
+/// citar direito; isso é DADO, não template. Então o template virou um só e a natureza virou o
+/// rótulo:
+///
+/// ```text
+/// ## documento 3: Parecer
+/// ```
+///
+/// O template INTERNO do bloco (`## pergunta` / `## resposta` / `Link:`) não muda um byte — ele já
+/// era unificado, e continua vindo pronto de quem chama.
+fn envolver(rotulo: &str, i: usize, conteudo: &str) -> String {
+    format!("\n## documento {i}: {rotulo}\n{conteudo}\n")
+}
+
+/// Os rótulos das coleções, como dado (D-MARC-2).
+mod rotulo {
+    pub const SERVICO: &str = "Serviço";
+    pub const FAQ: &str = "FAQ";
+    pub const PARECER: &str = "Parecer";
+    pub const PARECER_RELACIONADO: &str = "Parecer relacionado";
+    /// fase 2 — serving ainda não liga esta coleção. Declarado para o ponto de extensão já existir
+    /// nomeado: quando o TARF entrar no chat, é este rótulo que ele usa.
+    #[allow(dead_code)]
+    pub const ACORDAO_TARF: &str = "Acórdão TARF";
+}
+
 /// Contexto do tipo `ServicosFaqs`: serviços numerados + FAQs numeradas, nesta ordem.
+///
+/// A numeração segue **por coleção** (serviços 1..n, depois FAQs 1..m), e não corrida (D-MARC-3):
+/// a seção ADERÊNCIA do log rotula por coleção+índice, e a correspondência 1:1 com o bloco tem que
+/// se manter. Unifica-se o template, não a contagem.
 pub(crate) fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String]) -> String {
-    let rag_service = render(svc_docs, |i, doc| format!("\n## servico\n{i}\n{doc}\n"));
-    let rag_faq = render(faq_docs, |i, doc| format!("\n// Resultado: {i}\n{doc}\n"));
+    let rag_service = render(svc_docs, |i, doc| envolver(rotulo::SERVICO, i, doc));
+    let rag_faq = render(faq_docs, |i, doc| envolver(rotulo::FAQ, i, doc));
     format!("{}\n{}", rag_service, rag_faq)
 }
 
 /// Contexto do tipo `Pareceres`: um bloco numerado por parecer recuperado, e — quando a expansão
-/// por grafo devolve algo — uma seção `## PARECER RELACIONADO` com os pareceres que citam os mesmos
-/// dispositivos. Com `relacionados` vazio (default/sem grafo), a saída é BYTE-A-BYTE a de antes.
+/// por grafo devolve algo — os pareceres que citam os mesmos dispositivos, rotulados como
+/// relacionados. Com `relacionados` vazio (default/sem grafo), só a primeira seção sai.
 fn montar_rag_pareceres(blocos: &[String], relacionados: &[String]) -> String {
-    let principal = render(blocos, |i, bloco| format!("\n## PARECER\n{i}\n{bloco}\n"));
+    let principal = render(blocos, |i, bloco| envolver(rotulo::PARECER, i, bloco));
     if relacionados.is_empty() {
         return principal;
     }
     let rel = render(relacionados, |i, bloco| {
-        format!("\n## PARECER RELACIONADO\n{i}\n{bloco}\n")
+        envolver(rotulo::PARECER_RELACIONADO, i, bloco)
     });
     format!("{principal}{rel}")
 }
@@ -595,8 +629,8 @@ pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        QueryType, RegistroConsulta, TemposConsulta, aderencia, bloco_parecer, format_log_record,
-        montar_aderencia, montar_rag_pareceres, montar_rag_servicos_faqs,
+        QueryType, RegistroConsulta, TemposConsulta, aderencia, bloco_parecer, envolver,
+        format_log_record, montar_aderencia, montar_rag_pareceres, montar_rag_servicos_faqs,
     };
     use auli_contract::{ConsultaPackPayload, mddoc};
     use std::path::Path;
@@ -697,7 +731,7 @@ mod tests {
                 sanitizada: "CNPJ [CNPJ_1] pode aderir?",
                 answer: Some("Sim, o CNPJ 11.222.333/0001-81 atende."),
                 aderencia: "parecer 1 · aderência 0.700 · distância 0.300\n",
-                rag: "## PARECER\n0\n...",
+                rag: "## documento 1: Parecer\n...",
                 tempos: TemposConsulta {
                     embed_ms: 12,
                     retrieve_ms: 3,
@@ -755,7 +789,7 @@ mod tests {
                 sanitizada: "como parcelar ICMS em atraso?",
                 answer: None,
                 aderencia: "servico 1 · aderência 0.550 · distância 0.450\n",
-                rag: "\n## servico\n1\n...",
+                rag: "\n## documento 1: Serviço\n...",
                 tempos: TemposConsulta {
                     embed_ms: 14,
                     retrieve_ms: 2,
@@ -840,10 +874,28 @@ mod tests {
 
     // ---- Trava de paridade do formato do contexto RAG (item 8 do G2) ----
     //
-    // Estes dois testes pinam BYTE A BYTE a string que vai ao prompt do LLM e ao log de auditoria.
+    // Estes testes pinam BYTE A BYTE a string que vai ao prompt do LLM e ao log de auditoria.
     // São a razão de `montar_rag_*` existir: o G2 reescreve o caminho vivo do chat e, sem eles, a
     // única verificação de paridade seria o diff manual de log. Se um destes asserts falhar num
     // refactor futuro, o contexto do RAG mudou — o que muda a resposta do modelo.
+    //
+    // Os literais mudaram em 2026-08, deliberadamente (TAREFA-MARCADORES): os quatro invólucros
+    // viraram `## documento {i}: {rótulo}`. As travas impedem mudança ACIDENTAL, não decidida — por
+    // isso foram reescritas no mesmo commit do código, à mão, e não regeradas pela função sob teste.
+
+    #[test]
+    fn envolver_pina_o_involucro_unico() {
+        // A unidade do formato: quebra de linha, marcador, índice, dois-pontos, rótulo, conteúdo,
+        // quebra final. Tudo o mais é composição disto.
+        assert_eq!(
+            envolver("Serviço", 1, "CONTEUDO"),
+            "\n## documento 1: Serviço\nCONTEUDO\n"
+        );
+        assert_eq!(
+            envolver("Parecer relacionado", 12, "X"),
+            "\n## documento 12: Parecer relacionado\nX\n"
+        );
+    }
 
     #[test]
     fn montar_rag_servicos_faqs_pina_o_formato() {
@@ -851,7 +903,7 @@ mod tests {
         let faq = vec!["FAQ X".to_string()];
         assert_eq!(
             montar_rag_servicos_faqs(&svc, &faq),
-            "\n## servico\n1\nSERVICO A\n\n## servico\n2\nSERVICO B\n\n\n// Resultado: 1\nFAQ X\n"
+            "\n## documento 1: Serviço\nSERVICO A\n\n## documento 2: Serviço\nSERVICO B\n\n\n## documento 1: FAQ\nFAQ X\n"
         );
     }
 
@@ -862,30 +914,40 @@ mod tests {
         assert_eq!(montar_rag_servicos_faqs(&[], &[]), "\n");
         assert_eq!(
             montar_rag_servicos_faqs(&["SO SERVICO".to_string()], &[]),
-            "\n## servico\n1\nSO SERVICO\n\n"
+            "\n## documento 1: Serviço\nSO SERVICO\n\n"
+        );
+    }
+
+    #[test]
+    fn a_numeracao_e_por_colecao_e_nao_corrida() {
+        // D-MARC-3: as FAQs recomeçam em 1 depois dos serviços. É o que mantém a correspondência
+        // 1:1 com a seção ADERÊNCIA do log, que rotula por coleção+índice.
+        let rag = montar_rag_servicos_faqs(&["S1".into(), "S2".into()], &["F1".into()]);
+        assert!(rag.contains("## documento 2: Serviço\nS2"));
+        assert!(
+            rag.contains("## documento 1: FAQ\nF1"),
+            "faq recomeça em 1: {rag}"
         );
     }
 
     #[test]
     fn montar_rag_pareceres_pina_o_formato() {
-        // Sem relacionados: BYTE-A-BYTE o formato de sempre (a expansão por grafo não pode mudar o
-        // contexto quando não há grafo/entidade sem índice).
         let blocos = vec!["BLOCO UM".to_string(), "BLOCO DOIS".to_string()];
         assert_eq!(
             montar_rag_pareceres(&blocos, &[]),
-            "\n## PARECER\n1\nBLOCO UM\n\n## PARECER\n2\nBLOCO DOIS\n"
+            "\n## documento 1: Parecer\nBLOCO UM\n\n## documento 2: Parecer\nBLOCO DOIS\n"
         );
         assert_eq!(montar_rag_pareceres(&[], &[]), "");
     }
 
     #[test]
     fn montar_rag_pareceres_anexa_secao_relacionados() {
-        // Com relacionados: seção `## PARECER RELACIONADO` numerada à parte, DEPOIS dos recuperados.
+        // Com relacionados: rotulados à parte e numerados do 1, DEPOIS dos recuperados.
         let blocos = vec!["BLOCO UM".to_string()];
         let rel = vec!["BLOCO REL".to_string()];
         assert_eq!(
             montar_rag_pareceres(&blocos, &rel),
-            "\n## PARECER\n1\nBLOCO UM\n\n## PARECER RELACIONADO\n1\nBLOCO REL\n"
+            "\n## documento 1: Parecer\nBLOCO UM\n\n## documento 1: Parecer relacionado\nBLOCO REL\n"
         );
     }
 }

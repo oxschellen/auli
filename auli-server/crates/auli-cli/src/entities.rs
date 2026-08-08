@@ -33,8 +33,8 @@ const DEFAULT_SYSTEM_PROMPT: &str = r#"
 ### Instructions
 ### Responda sempre no idioma português do brasil.
 ### Para responder use as informações apresentadas na lista de serviços e nas perguntas frequentes (Faq) apresentados abaixo.
-### Cada serviço do texto inicia com o marcador: ## servico
-### Cada serviço e cada pergunta do texto inicia com o marcador: ## pergunta
+### Cada documento do contexto inicia com o marcador: ## documento (seguido do número e do tipo — Serviço ou FAQ).
+### Dentro de cada documento, o título vem após o marcador ## pergunta e o conteúdo após o marcador ## resposta.
 ### Sempre apresente os links de chamadas https
 ### Se a pergunta não puder ser respondida com as informações disponíveis, responda que não é possível responder
 "#;
@@ -45,7 +45,7 @@ const DEFAULT_PARECERES_PROMPT: &str = r#"
 ### Instructions
 ### Responda sempre no idioma português do brasil, usando exclusivamente os pareceres apresentados abaixo.
 ### Cite o número do parecer (ex.: PARECER Nº 25148) e apresente o link https correspondente.
-### Cada parecer inicia com o marcador: ## parecer; o assunto vem após ## pergunta e o conteúdo após ## resposta.
+### Cada parecer inicia com o marcador: ## documento (seguido do número e do tipo — Parecer ou Parecer relacionado); o assunto vem após ## pergunta e o conteúdo após ## resposta.
 ### Não responda perguntas fora do assunto relativo a tributos.
 ### Se a pergunta não puder ser respondida com os pareceres disponíveis, responda que não é possível responder.
 "#;
