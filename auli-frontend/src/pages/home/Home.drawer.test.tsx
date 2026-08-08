@@ -58,6 +58,8 @@ describe("drawer de seções (mobile)", () => {
 
     const lista = screen.getAllByRole("tablist")[0];
     expect(intrusos(lista)).toEqual([]);
-    expect(lista.querySelectorAll('[role="tab"]')).toHaveLength(9);
+    // Contagem literal de propósito: é o que pega uma aba entrando ou saindo sem intenção. Foi 9
+    // até ago/2026, quando "Acórdãos TARF" entrou no grupo Acervo.
+    expect(lista.querySelectorAll('[role="tab"]')).toHaveLength(10);
   });
 });

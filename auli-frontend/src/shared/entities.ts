@@ -8,7 +8,7 @@
  */
 
 /** As abas de coleção que uma entidade pode ter. `chat` está sempre disponível. */
-export type Collection = "conteudos" | "faqs" | "notas" | "pareceres" | "servicos";
+export type Collection = "conteudos" | "faqs" | "notas" | "pareceres" | "servicos" | "tarf";
 
 export interface Entity {
   /** Id estável; também a pasta `public/<id>/` e a chave de tenant no backend. */
@@ -29,7 +29,7 @@ export const ENTITIES: Entity[] = [
     name: "SEFAZ-RS",
     uf: "RS",
     state: "Rio Grande do Sul",
-    collections: ["servicos", "faqs", "pareceres", "notas", "conteudos"],
+    collections: ["servicos", "faqs", "pareceres", "notas", "conteudos", "tarf"],
   },
   {
     id: "sc",

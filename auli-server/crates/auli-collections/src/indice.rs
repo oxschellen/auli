@@ -1,8 +1,13 @@
-//! Subcomando `indice` — deriva o **índice leve de pareceres** que o frontend consome.
+//! Subcomando `indice` — deriva o **índice leve de jurisprudência** que o frontend consome.
 //!
-//! Fonte é a árvore `data/<id>/docs/pareceres/*.md` (fonte única desde a G5b); destino é
-//! `data/<id>/raw/<id>-pareceres-index.json`, de onde o `build-frontend-public.sh` já copia todo
+//! Fonte é a árvore `data/<id>/docs/<colecao>/*.md` (fonte única desde a G5b); destino é
+//! `data/<id>/raw/<id>-<colecao>-index.json`, de onde o `build-frontend-public.sh` já copia todo
 //! `raw/*.json` para `auli-frontend/public/<id>/`.
+//!
+//! Serve as duas coleções de jurisprudência ([`Colecao`]): `pareceres` (o default, para não quebrar
+//! quem já roda `auli-collections <id> indice`) e `tarf`. O que muda entre elas é só o diretório, o
+//! nome do artefato e o relatório — a leitura, a ordenação e o shape da entrada são os mesmos,
+//! porque o formato do `.md` é o mesmo desde a unificação do vocabulário.
 //!
 //! **Leve = sem o `corpo`.** A tab de Pareceres passa a mostrar a sinopse e um link para o portal,
 //! e busca sobre `[numero, assunto, resumo]`. É a mesma escolha da G3 no servidor (pack leve +
@@ -24,25 +29,72 @@ use serde::Serialize;
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
-use crate::sinopse::docs_dir;
+
+/// As coleções de jurisprudência que têm índice para o frontend.
+///
+/// Enum, e não string solta, porque cada variante carrega três coisas que precisam andar juntas: o
+/// subdiretório da árvore, o nome do artefato e o rótulo do relatório. Errar uma delas gera um JSON
+/// com nome certo e conteúdo de outra coleção — o tipo de defeito que só aparece na tela do usuário.
+///
+/// É o degrau mínimo do `TipoJurisprudencia` do ESTUDO-colecoes-trait: quando a fase 2 chegar (a
+/// struct `Jurisprudencia` genérica), ela absorve isto e o `match` exaustivo aponta cada ponto a
+/// preencher para a coleção seguinte.
+#[derive(Clone, Copy, PartialEq)]
+pub enum Colecao {
+    Pareceres,
+    Tarf,
+}
+
+impl Colecao {
+    /// Nome na CLI, no diretório da árvore e no artefato — é o mesmo nos três, de propósito.
+    pub fn nome(self) -> &'static str {
+        match self {
+            Self::Pareceres => "pareceres",
+            Self::Tarf => "tarf",
+        }
+    }
+
+    /// Como os documentos são chamados no relatório ("372 pareceres", "2600 acórdãos").
+    fn plural(self) -> &'static str {
+        match self {
+            Self::Pareceres => "pareceres",
+            Self::Tarf => "acórdãos",
+        }
+    }
+
+    /// `None` para nome desconhecido — o chamador erra alto em vez de derivar a coleção errada.
+    pub fn parse(s: &str) -> Option<Self> {
+        match s {
+            "pareceres" => Some(Self::Pareceres),
+            "tarf" => Some(Self::Tarf),
+            _ => None,
+        }
+    }
+}
 
 /// Uma entrada do índice. Espelha o `ConsultaPackPayload` do contrato menos o `doc_path` (que só
 /// interessa ao servidor) — o navegador não tem como ler a árvore.
+///
+/// Os nomes dos campos são os do vocabulário ANTIGO (`numero`/`assunto`) de propósito: este JSON é
+/// contrato com o frontend, não com a árvore. Renomeá-los quebraria a tab sem ganho nenhum — e no
+/// TARF eles continuam descrevendo o que descreviam: o número do acórdão e a ementa.
 #[derive(Serialize)]
 struct Entrada {
     numero: String,
     assunto: String,
-    /// A sinopse do documento. Vazia se o `.md` ainda está pendente.
+    /// A síntese do documento: a sinopse LLM nos pareceres, a fundamentação do cabeçalho no TARF.
+    /// Vazia se o `.md` ainda está pendente.
     resumo: String,
     link: String,
 }
 
-pub fn run(entity: &EntityConfig) -> Result<()> {
-    let dir = docs_dir(entity)?;
+pub fn run(entity: &EntityConfig, colecao: Colecao) -> Result<()> {
+    let dir = docs_dir(entity, colecao)?;
     if !dir.exists() {
         println!(
-            "ℹ️  {} não tem árvore de pareceres ({}); nada a derivar.",
+            "ℹ️  {} não tem árvore de {} ({}); nada a derivar.",
             entity.id,
+            colecao.plural(),
             dir.display()
         );
         return Ok(());
@@ -66,19 +118,34 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         .map(|e| e.numero.as_str())
         .collect();
 
-    let destino = format!("{}/{}-pareceres-index.json", entity.data_dir, entity.id);
+    let destino = format!(
+        "{}/{}-{}-index.json",
+        entity.data_dir,
+        entity.id,
+        colecao.nome()
+    );
     std::fs::write(&destino, serde_json::to_string_pretty(&entradas)?)?;
 
     println!(
-        "✅ {} ({} pareceres, {pendentes} sem sinopse)",
+        "✅ {} ({} {}, {pendentes} sem resumo)",
         destino,
-        entradas.len()
+        entradas.len(),
+        colecao.plural()
     );
     if pendentes > 0 {
-        println!(
-            "⚠️  rode `auli-collections {} sinopse` e derive de novo.",
-            entity.id
-        );
+        // O remédio difere por coleção: a sinopse dos pareceres vem de um passo LLM; a do TARF é
+        // extraída na coleta (a fundamentação do cabeçalho), então mandar rodar `sinopse` aqui seria
+        // um beco — aquele passo varre só `docs/pareceres/`.
+        match colecao {
+            Colecao::Pareceres => println!(
+                "⚠️  rode `auli-collections {} sinopse` e derive de novo.",
+                entity.id
+            ),
+            Colecao::Tarf => println!(
+                "⚠️  acórdão sem resumo não deveria existir: a coleta usa a ementa como fallback \
+                 quando não há fundamentação. Investigue o `.md` antes de publicar."
+            ),
+        }
     }
     if !sem_chave.is_empty() {
         let amostra: Vec<&str> = sem_chave.iter().take(5).copied().collect();
@@ -92,6 +159,17 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         );
     }
     Ok(())
+}
+
+/// Diretório da árvore da coleção: `data/<id>/docs/<colecao>` (irmão de `raw/`, que é o `data_dir`).
+///
+/// Local, e não o `sinopse::docs_dir`, porque aquele é — corretamente — fixo em `pareceres`: o passo
+/// de sinopse só existe para a coleção que precisa de LLM.
+fn docs_dir(entity: &EntityConfig, colecao: Colecao) -> Result<std::path::PathBuf> {
+    let base = Path::new(&entity.data_dir)
+        .parent()
+        .ok_or_else(|| format!("data_dir sem pai: {}", entity.data_dir))?;
+    Ok(base.join("docs").join(colecao.nome()))
 }
 
 /// Chave cronológica extraída do `numero`: `(ano, sequência)`. `None` quando o formato não é
@@ -215,10 +293,54 @@ mod tests {
             ("Informação n.º 15001", (2015, 1)),
             ("INFORMAÇÃO Nº 26003", (2026, 3)),
             ("PARECER N° 21015", (2021, 15)),
+            // TARF: `<seq>/<AA>`, com as grafias de prefixo do acervo (as quatro mais frequentes
+            // cobrem 21,5 mil dos 22,5 mil acórdãos; o resto varia só no prefixo, que a chave ignora).
+            ("ACÓRDÃO 510/24", (2024, 510)),
+            ("ACÓRDÃO Nº 1389/12", (2012, 1389)),
+            ("ACÓRDÃO DO PLENO Nº 082/18", (2018, 82)),
+            ("ACÓRDÃO PLENO 128/24", (2024, 128)),
+            ("ACÓRDÃO N° 1389/12", (2012, 1389)),
+            ("Acordão 003/21", (2021, 3)),
         ];
         for (numero, esperada) in casos {
             assert_eq!(chave_cronologica(numero), Some(esperada), "{numero}");
         }
+    }
+
+    #[test]
+    fn colecao_mapeia_nome_diretorio_e_artefato() {
+        assert_eq!(Colecao::parse("pareceres").unwrap().nome(), "pareceres");
+        assert_eq!(Colecao::parse("tarf").unwrap().nome(), "tarf");
+        assert!(
+            Colecao::parse("acordaos").is_none(),
+            "nome errado erra alto"
+        );
+        assert!(Colecao::parse("").is_none());
+        // O plural é do relatório, e é o que distingue as duas na saída do comando.
+        assert_eq!(Colecao::Tarf.plural(), "acórdãos");
+        assert_eq!(Colecao::Pareceres.plural(), "pareceres");
+    }
+
+    #[test]
+    fn cada_colecao_le_e_escreve_no_seu_lugar() {
+        // A troca que este enum existe para impedir: derivar o índice de uma coleção lendo a árvore
+        // da outra produziria um JSON com nome certo e conteúdo errado.
+        let ent = EntityConfig {
+            id: "rs".into(),
+            name: "SEFAZ-RS".into(),
+            system_prompt: String::new(),
+            data_dir: "/tmp/x/rs/raw".into(),
+        };
+        assert!(
+            docs_dir(&ent, Colecao::Pareceres)
+                .unwrap()
+                .ends_with("docs/pareceres")
+        );
+        assert!(
+            docs_dir(&ent, Colecao::Tarf)
+                .unwrap()
+                .ends_with("docs/tarf")
+        );
     }
 
     /// O pivô de século é o que impede o RS de 1999 de virar o mais recente do acervo.
