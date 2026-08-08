@@ -23,7 +23,7 @@ const MAX_TOP_K: usize = 20;
 const KIND_PADRAO: &str = Kind::Pareceres.as_str();
 
 /// O kind é de jurisprudência? Decide a FORMA da resposta: estes kinds guardam o payload leve
-/// (`ConsultaPackPayload`) no pack e são devolvidos decodificados, no vetor `pareceres`.
+/// (`DocumentoPack`) no pack e são devolvidos decodificados, no vetor `pareceres`.
 ///
 /// Kind fora do [`Kind`] (hoje só `notas`) é `false` — resposta genérica, como sempre foi.
 fn jurisprudencia(kind: &str) -> bool {
@@ -103,9 +103,8 @@ pub async fn retrieve_handler(
     // Exatamente UM dos vetores é preenchido, conforme o kind; o outro vai vazio (e serializa
     // vazio de propósito — ver o doc de `RetrieveResponse`).
     //
-    // O critério é **jurisprudência**, não "é o kind padrão": pareceres e acórdãos do TARF guardam o
-    // MESMO payload leve no pack (`ConsultaPackPayload`), então servir um acórdão pelo vetor `hits`
-    // entregaria ao cliente uma string JSON crua no campo `texto` em vez dos campos decodificados.
+    // O critério é **jurisprudência**, não "é o kind padrão": pareceres e acórdãos do TARF são
+    // devolvidos DECODIFICADOS (número, ementa, sinopse, link), que é o que o auditor consome.
     let body = if jurisprudencia(kind) {
         RetrieveResponse {
             entity: cfg.id.clone(),
@@ -117,6 +116,9 @@ pub async fn retrieve_handler(
                 .collect(),
         }
     } else {
+        // Pack v2: o payload deixou de ser o bloco pronto e virou JSON. O `texto` desta rota é
+        // contrato com quem já a consome, então o bloco é MONTADO aqui, lendo a árvore — a resposta
+        // sai igual à de antes. Servir o payload cru entregaria um JSON no lugar do texto.
         RetrieveResponse {
             entity: cfg.id.clone(),
             kind: kind.into(),
@@ -124,7 +126,11 @@ pub async fn retrieve_handler(
                 .into_iter()
                 .map(|h| RetrieveHit {
                     score: h.score,
-                    texto: h.payload,
+                    texto: crate::rag::bloco_documento(
+                        &h.payload,
+                        state.engine.docs_root(),
+                        &cfg.id,
+                    ),
                 })
                 .collect(),
             pareceres: vec![],

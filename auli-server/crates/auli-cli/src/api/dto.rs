@@ -118,8 +118,12 @@ mod tests {
             kind: "pareceres".into(),
             hits: vec![],
             pareceres: vec![auli_retrieval::decode_parecer(
+                // Payload do pack v2. Os nomes de campo aqui são os do PACK (`titulo`/`ementa`);
+                // os do JSON de saída, conferidos abaixo, são os do FIO (`numero`/`assunto`) — e é
+                // essa tradução, num lugar só, que este teste guarda.
                 &serde_json::json!({
-                    "numero": "PARECER Nº 1", "assunto": "ICMS", "resumo": "R.",
+                    "kind": "pareceres", "trilha": "", "titulo": "PARECER Nº 1",
+                    "ementa": "ICMS", "resumo": "R.",
                     "link": "http://x/1", "doc_path": "docs/pareceres/p1.md"
                 })
                 .to_string(),
@@ -130,6 +134,7 @@ mod tests {
         };
         let json = serde_json::to_value(&r).unwrap();
         assert_eq!(json["pareceres"][0]["numero"], "PARECER Nº 1");
+        assert_eq!(json["pareceres"][0]["assunto"], "ICMS");
         assert_eq!(json["pareceres"][0]["score"], 0.25);
         assert!(
             json["pareceres"][0].get("corpo").is_none(),

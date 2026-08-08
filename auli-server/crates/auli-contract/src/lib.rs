@@ -266,47 +266,82 @@ fn kind_pareceres() -> Kind {
     Kind::Pareceres
 }
 
+impl Documento {
+    /// Onde o `.md` deste documento vive, relativo ao diretório da entidade
+    /// (ex.: `"docs/tarf/acordao-510-24.md"`).
+    ///
+    /// **Derivado, nunca digitado.** A regra de nome difere por coleção e é a MESMA da
+    /// materialização da árvore — recomputá-la com outra regra produz um caminho que não existe, e
+    /// o sintoma só aparece na query, como corpo indisponível.
+    pub fn doc_path(&self) -> String {
+        let nome = match self.kind {
+            // Jurisprudência: o título É a identidade (o número do documento).
+            Kind::Pareceres | Kind::Tarf => mddoc::slug(&self.titulo),
+            // Serviço: slug do título + hash do link, que é a identidade real.
+            Kind::Servicos => mddoc::nome_servico_de(&self.titulo, &self.link),
+            // FAQ: o hash cobre o par `(url, pergunta)` — a url sozinha não distingue perguntas da
+            // mesma página.
+            Kind::Faqs => mddoc::nome_faq_de(&self.titulo, &self.link),
+        };
+        format!("docs/{}/{}.md", self.kind.as_str(), nome)
+    }
+
+    /// O que vai no pack, ao lado do vetor: tudo MENOS o corpo e a key.
+    ///
+    /// O corpo fica de fora porque é o ganho da fase (o pack encolhe e o texto é lido tarde,
+    /// só para os k documentos escolhidos); a key, porque já foi consumida — o vetor É ela.
+    pub fn pack(&self) -> DocumentoPack {
+        DocumentoPack {
+            kind: self.kind,
+            trilha: self.trilha.clone(),
+            titulo: self.titulo.clone(),
+            ementa: self.ementa.clone(),
+            resumo: self.resumo.clone(),
+            link: self.link.clone(),
+            doc_path: self.doc_path(),
+        }
+    }
+}
+
+/// **Payload de pack v2** — o que acompanha cada vetor, para TODAS as coleções.
+///
+/// Antes desta fase havia dois regimes: a jurisprudência guardava um payload leve (JSON) e lia o
+/// corpo tarde, enquanto serviços e FAQs guardavam o bloco de contexto inteiro, pré-renderizado.
+/// O segundo regime punha o texto integral de cada serviço e de cada FAQ dentro do pack — duas
+/// cópias do mesmo conteúdo, uma na árvore e outra no vetor.
+///
+/// Pack e servidor mudam em **lockstep**: alterar os campos daqui sem re-gerar os packs faz o
+/// serving renderizar lixo. É o que a `STRATEGY_VERSION` do manifesto protege — o boot recusa um
+/// pack de outra geração.
+///
+/// (Antes: `ConsultaPackPayload`, só de jurisprudência, com `numero`/`assunto`.)
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DocumentoPack {
+    pub kind: Kind,
+    pub trilha: String,
+    pub titulo: String,
+    pub ementa: String,
+    /// A síntese: sinopse LLM nos pareceres, fundamentação no TARF, **vazia** em serviços e FAQs.
+    /// É também o texto de degradação quando o corpo não pode ser lido (ver [`Kind::exige_resumo`]).
+    pub resumo: String,
+    pub link: String,
+    /// Caminho do `.md` na árvore, relativo ao diretório da entidade. Derivado por
+    /// [`Documento::doc_path`] — nunca recomputar com outra regra.
+    pub doc_path: String,
+}
+
 impl Embeddable for Documento {
     fn text_to_embed(&self) -> &str {
         &self.text_to_embed
     }
 
-    /// G3: o pack de jurisprudência guarda o **payload leve** (JSON, sem o corpo) — o corpo vive na
-    /// árvore `docs/` e é lido na query. `doc_path` usa o MESMO `mddoc::slug` da materialização;
-    /// nunca recomputar com outra regra. O servidor remonta o bloco `## pergunta`/`## resposta` de
-    /// sempre via `render_consulta_block(payload, corpo)`. Os demais kinds seguem com o bloco
-    /// pré-renderizado.
+    /// Pack v2: o payload leve (JSON, sem o corpo) para **todas** as coleções. O corpo vive na
+    /// árvore `docs/` e é lido na query, pelo `doc_path`; o servidor monta o bloco com
+    /// [`bloco`].
     fn stored_repr(&self) -> String {
-        let payload = ConsultaPackPayload {
-            numero: self.titulo.clone(),
-            assunto: self.ementa.clone(),
-            resumo: self.resumo.clone(),
-            link: self.link.clone(),
-            doc_path: format!(
-                "docs/{}/{}.md",
-                self.kind.as_str(),
-                mddoc::slug(&self.titulo)
-            ),
-        };
-        serde_json::to_string(&payload)
-            .expect("ConsultaPackPayload serializa sem falha (campos String)")
+        serde_json::to_string(&self.pack())
+            .expect("DocumentoPack serializa sem falha (campos String e um enum unitário)")
     }
-}
-
-/// Payload de pack de pareceres (G3): tudo MENOS o corpo, que vive na árvore `docs/` e é lido na
-/// query. `doc_path` é relativo ao diretório da entidade (ex.: `"docs/pareceres/<slug>.md"`).
-///
-/// É exatamente o que `Consulta::stored_repr` grava — a fiação da G3 está feita. O servidor lê o
-/// corpo da árvore por `doc_path` e remonta o bloco `## pergunta`/`## resposta` via
-/// [`render_consulta_block`]. Pack e servidor mudam em lockstep: alterar os campos daqui sem
-/// re-gerar os packs faz o serving renderizar lixo.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ConsultaPackPayload {
-    pub numero: String,
-    pub assunto: String,
-    pub resumo: String,
-    pub link: String,
-    pub doc_path: String,
 }
 
 /// Único ponto que compõe o `text_to_embed` de consultas (decisão §2.5 do plano). Indexa o
@@ -450,7 +485,7 @@ pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str, resposta: &str) -
 /// Substitui quatro renderizações que eram a mesma coisa escrita quatro vezes: os `stored_repr` de
 /// [`Faq`] e [`Servico`] e o [`render_consulta_block`] da jurisprudência. A equivalência é verificada
 /// byte a byte nos testes, contra reimplementações literais dos formatos antigos.
-pub fn bloco(d: &Documento, conteudo: &str) -> String {
+pub fn bloco(d: &DocumentoPack, conteudo: &str) -> String {
     let pergunta = [d.trilha.as_str(), d.titulo.as_str(), d.ementa.as_str()]
         .into_iter()
         .filter(|s| !s.is_empty())
@@ -462,16 +497,21 @@ pub fn bloco(d: &Documento, conteudo: &str) -> String {
     )
 }
 
-/// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
+/// O conteúdo a servir quando o `.md` não pôde ser lido (D-B3).
 ///
-/// MESMO formato do `stored_repr` gordo de ANTES da G3 (que não existe mais: hoje ele grava o
-/// payload leve), byte a byte — é esse o invariante da G3, o contexto RAG montado não pode mudar.
-/// Ponto único: servidor e testes passam por aqui.
-pub fn render_consulta_block(p: &ConsultaPackPayload, corpo: &str) -> String {
-    format!(
-        "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
-        p.numero, p.assunto, corpo, p.link
-    )
+/// Degradação **graciosa e por coleção**: a jurisprudência tem um `resumo`, que é uma síntese
+/// legítima do documento e serve de substituto útil; serviços e FAQs não têm nada equivalente, e
+/// inventar um resumo a partir de campo vazio produziria um bloco que parece completo e não é.
+/// Nos dois casos o `Link:` do bloco continua lá — é a fonte oficial, e é para ela que o leitor vai.
+///
+/// Nunca derruba a query: o passo de rede do LLM domina, e um documento degradado no meio de dez é
+/// muito melhor que uma pergunta sem resposta.
+pub fn conteudo_indisponivel(d: &DocumentoPack) -> String {
+    if d.kind.exige_resumo() && !d.resumo.is_empty() {
+        format!("[corpo indisponível — ver link]\n{}", d.resumo)
+    } else {
+        "[conteúdo indisponível — ver o link oficial]".to_string()
+    }
 }
 
 #[cfg(test)]
@@ -634,7 +674,7 @@ mod tests {
         for (origin, pergunta, resposta) in casos {
             let d = doc_de(origin, pergunta, "", "https://x/faq/1");
             assert_eq!(
-                bloco(&d, resposta),
+                bloco(&d.pack(), resposta),
                 blocos_antigos::faq(origin, pergunta, resposta, "https://x/faq/1"),
                 "divergiu em {origin:?}/{pergunta:?}"
             );
@@ -656,7 +696,7 @@ mod tests {
         for (tipo, classe, titulo, descricao) in casos {
             let d = doc_de(&trilha_servico(tipo, classe), titulo, "", "https://x/svc/1");
             assert_eq!(
-                bloco(&d, descricao),
+                bloco(&d.pack(), descricao),
                 blocos_antigos::servico(tipo, classe, titulo, descricao, "https://x/svc/1"),
                 "divergiu em {tipo:?}/{classe:?}/{titulo:?}"
             );
@@ -681,7 +721,7 @@ mod tests {
         for (numero, assunto, corpo) in casos {
             let d = doc_de("", numero, assunto, "https://x/p/1");
             assert_eq!(
-                bloco(&d, corpo),
+                bloco(&d.pack(), corpo),
                 blocos_antigos::jurisprudencia(numero, assunto, corpo, "https://x/p/1"),
                 "divergiu em {numero:?}/{assunto:?}"
             );
@@ -704,7 +744,7 @@ mod tests {
         // quando ele é recuperado. O vetor não muda (a key vem do `compose`, não do bloco), então
         // não há re-vetorização. Fica registrado como decisão, não descoberto depois.
         let d = doc_de("", "CONSULTA Nº 32/2007", "", "https://x/p/32");
-        let novo = bloco(&d, "É o parecer.");
+        let novo = bloco(&d.pack(), "É o parecer.");
         let antigo = blocos_antigos::jurisprudencia(
             "CONSULTA Nº 32/2007",
             "",
@@ -723,17 +763,6 @@ mod tests {
     }
 
     #[test]
-    fn bloco_equivale_ao_render_consulta_block_do_payload_leve() {
-        // A outra ponta: o `bloco` tem de reproduzir o que o serving monta HOJE a partir do payload
-        // do pack. Enquanto as duas funções coexistirem (o `render_consulta_block` só sai na B5),
-        // é este teste que garante que não divergiram.
-        let c = sample_documento();
-        let p = payload_de(&c, "docs/pareceres/parecer-no-25148.md");
-        let d = doc_de("", &c.titulo, &c.ementa, &c.link);
-        assert_eq!(bloco(&d, &c.corpo), render_consulta_block(&p, &c.corpo));
-    }
-
-    #[test]
     fn a_secao_pergunta_do_bloco_tem_a_mesma_geometria_do_compose() {
         // O invariante que mantém key e bloco descrevendo o mesmo documento: os slots
         // `trilha → titulo → ementa` saem na mesma ordem, pulando os mesmos vazios. O `resumo`
@@ -745,7 +774,7 @@ mod tests {
         ];
         for (trilha, titulo, ementa) in casos {
             let d = doc_de(trilha, titulo, ementa, "http://x");
-            let secao = bloco(&d, "C")
+            let secao = bloco(&d.pack(), "C")
                 .strip_prefix("## pergunta\n")
                 .unwrap()
                 .split("\n\n## resposta\n")
@@ -784,7 +813,7 @@ mod tests {
             };
             let d = f.para_documento();
             assert_eq!(
-                bloco(&d, &d.corpo),
+                bloco(&d.pack(), &d.corpo),
                 f.stored_repr(),
                 "divergiu em {pergunta:?}"
             );
@@ -816,7 +845,7 @@ mod tests {
             };
             let d = s.para_documento();
             assert_eq!(
-                bloco(&d, &d.corpo),
+                bloco(&d.pack(), &d.corpo),
                 s.stored_repr(),
                 "divergiu em {titulo:?}"
             );
@@ -842,7 +871,7 @@ mod tests {
             text_to_embed: String::new(),
         };
         let d = s.para_documento();
-        let b = bloco(&d, &d.corpo);
+        let b = bloco(&d.pack(), &d.corpo);
         assert!(!b.contains("MARCADOR-DE-ORGAO"), "bloco: {b}");
         assert!(!b.contains("42"), "bloco: {b}");
     }
@@ -865,7 +894,7 @@ mod tests {
         };
         assert!(f.text_to_embed.contains("P: ") && f.text_to_embed.contains("R: "));
         let d = f.para_documento();
-        let b = bloco(&d, &d.corpo);
+        let b = bloco(&d.pack(), &d.corpo);
         assert!(!b.contains("P: ") && !b.contains("R: "), "bloco: {b}");
     }
 
@@ -988,43 +1017,26 @@ mod tests {
     }
 
     #[test]
-    fn parecer_exposes_key_and_renders_block() {
-        let p = Documento {
-            kind: Kind::Pareceres,
-            trilha: String::new(),
-            titulo: "PARECER Nº 25148".into(),
-            ementa: "ICMS – crédito fiscal na cesta básica".into(),
-            resumo: "Análise sobre apropriação de crédito.".into(),
-            corpo: "É o parecer.".into(),
-            link: "https://exemplo/parecer/25148".into(),
-            text_to_embed:
-                "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito."
-                    .into(),
-            resumo_info: None,
-        };
-        assert_eq!(
-            p.text_to_embed(),
-            "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito."
-        );
-        // G3: `stored_repr` agora é o payload LEVE (JSON, sem corpo), com `doc_path` derivado do slug.
-        let payload: ConsultaPackPayload = serde_json::from_str(&p.stored_repr()).unwrap();
-        assert_eq!(payload.numero, "PARECER Nº 25148");
-        assert_eq!(payload.doc_path, "docs/pareceres/parecer-no-25148.md");
-        assert!(
-            !p.stored_repr().contains("É o parecer."),
-            "o corpo NÃO pode ir para o pack (G3)"
-        );
-        // Remontado com o corpo, reproduz o bloco de sempre.
-        let block = render_consulta_block(&payload, &p.corpo);
-        assert!(
-            block.starts_with(
-                "## pergunta\nPARECER Nº 25148\nICMS – crédito fiscal na cesta básica"
-            )
-        );
-        assert!(block.contains("## resposta\nÉ o parecer."));
-        assert!(block.contains("Link: https://exemplo/parecer/25148"));
+    fn documento_expoe_a_key_e_o_pack_v2() {
+        let p = sample_documento();
+        assert_eq!(p.text_to_embed(), "ICMS – crédito fiscal na cesta básica");
 
-        // The serialized shape is contract; round-trips through JSON.
+        // Pack v2: `stored_repr` é o payload leve (JSON, sem corpo), com `doc_path` derivado.
+        let pack: DocumentoPack = serde_json::from_str(&p.stored_repr()).unwrap();
+        assert_eq!(pack, p.pack());
+        assert_eq!(pack.titulo, "PARECER Nº 25148");
+        assert_eq!(pack.kind, Kind::Pareceres);
+        assert_eq!(pack.doc_path, "docs/pareceres/parecer-no-25148.md");
+
+        // Remontado com o corpo, dá o bloco de sempre.
+        let b = bloco(&pack, &p.corpo);
+        assert!(
+            b.starts_with("## pergunta\nPARECER Nº 25148\nICMS – crédito fiscal na cesta básica")
+        );
+        assert!(b.contains("## resposta\nÉ o parecer."));
+        assert!(b.contains("Link: https://exemplo/parecer/25148"));
+
+        // A forma serializada é contrato; faz round-trip por JSON.
         let table = Table::new("rs", "pareceres", vec![p]);
         let json = serde_json::to_string(&table).unwrap();
         let back: Table<Documento> = serde_json::from_str(&json).unwrap();
@@ -1045,85 +1057,157 @@ mod tests {
         }
     }
 
-    /// Golden da G3: o `stored_repr` gordo de HOJE, reimplementado aqui de propósito. Se o formato
-    /// mudar de um lado só, este teste quebra — é ele que garante que trocar o pack gordo pelo
-    /// payload leve + leitura tardia não mexe um byte no contexto RAG.
-    fn stored_repr_gordo_golden(c: &Documento) -> String {
-        format!(
-            "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
-            c.titulo, c.ementa, c.corpo, c.link
-        )
+    /// O `doc_path` de cada coleção, contra a regra de nome que a árvore REALMENTE usa. Recomputar
+    /// com outra regra produz um caminho que não existe — e o sintoma só aparece na query, como
+    /// corpo indisponível, sem erro nenhum no boot.
+    #[test]
+    fn doc_path_segue_a_regra_de_nome_de_cada_colecao() {
+        let mut d = sample_documento();
+        assert_eq!(d.doc_path(), "docs/pareceres/parecer-no-25148.md");
+
+        d.kind = Kind::Tarf;
+        d.titulo = "ACÓRDÃO 510/24".into();
+        assert_eq!(d.doc_path(), "docs/tarf/acordao-510-24.md");
+
+        // Serviço e FAQ levam hash de identidade no nome — conferidos contra as MESMAS funções que
+        // materializam a árvore, não contra literais copiados (que envelheceriam em silêncio).
+        let s = Servico {
+            id: 1,
+            tipo: "Empresas".into(),
+            classe: "ICMS".into(),
+            orgao: String::new(),
+            link: "https://x/svc/1".into(),
+            titulo: "Emitir guia".into(),
+            descricao: String::new(),
+            text_to_embed: String::new(),
+        };
+        assert_eq!(
+            s.para_documento().doc_path(),
+            format!(
+                "docs/servicos/{}.md",
+                mddoc::nome_servico_de(&s.titulo, &s.link)
+            )
+        );
+
+        let f = Faq {
+            pergunta: "Como emitir?".into(),
+            resposta: String::new(),
+            origin: "Inicial | IPVA".into(),
+            url: "https://x/faq/1".into(),
+            text_to_embed: String::new(),
+        };
+        assert_eq!(
+            f.para_documento().doc_path(),
+            format!("docs/faqs/{}.md", mddoc::nome_faq_de(&f.pergunta, &f.url))
+        );
     }
 
-    fn payload_de(c: &Documento, doc_path: &str) -> ConsultaPackPayload {
-        ConsultaPackPayload {
-            numero: c.titulo.clone(),
-            assunto: c.ementa.clone(),
-            resumo: c.resumo.clone(),
-            link: c.link.clone(),
-            doc_path: doc_path.into(),
+    #[test]
+    fn o_pack_v2_nao_carrega_o_corpo_de_nenhuma_colecao() {
+        // O ganho da fase, e o que ele custa se falhar: antes, serviços e FAQs guardavam o bloco
+        // INTEIRO no pack — o texto integral duplicado, uma cópia na árvore e outra no vetor.
+        let marcador = "MARCADOR-DE-CORPO-UNICO";
+        let mut jur = sample_documento();
+        jur.corpo = marcador.into();
+
+        let mut svc = Servico {
+            id: 1,
+            tipo: "Empresas".into(),
+            classe: "ICMS".into(),
+            orgao: String::new(),
+            link: "https://x/svc/1".into(),
+            titulo: "Emitir guia".into(),
+            descricao: marcador.into(),
+            text_to_embed: String::new(),
+        }
+        .para_documento();
+        svc.corpo = marcador.into();
+
+        let faq = Faq {
+            pergunta: "Como emitir?".into(),
+            resposta: marcador.into(),
+            origin: String::new(),
+            url: "https://x/faq/1".into(),
+            text_to_embed: String::new(),
+        }
+        .para_documento();
+
+        for d in [jur, svc, faq] {
+            let json = d.stored_repr();
+            assert!(
+                !json.contains(marcador),
+                "corpo vazou para o pack de {}: {json}",
+                d.kind
+            );
         }
     }
 
     #[test]
-    fn render_do_payload_leve_equivale_ao_stored_repr_gordo() {
-        let c = sample_documento();
-        let p = payload_de(&c, "docs/pareceres/parecer-no-25148.md");
-        assert_eq!(
-            render_consulta_block(&p, &c.corpo),
-            stored_repr_gordo_golden(&c)
-        );
-        // Invariante ponta-a-ponta da G3: o que o pack GRAVA (stored_repr → payload JSON), desserializado
-        // e remontado com o corpo, reproduz o bloco gordo byte a byte. É o coração da fase.
-        let do_pack: ConsultaPackPayload = serde_json::from_str(&c.stored_repr()).unwrap();
-        assert_eq!(
-            render_consulta_block(&do_pack, &c.corpo),
-            stored_repr_gordo_golden(&c)
-        );
+    fn pack_v2_faz_round_trip_por_json() {
+        let p = sample_documento().pack();
+        let json = serde_json::to_string(&p).unwrap();
+        assert_eq!(serde_json::from_str::<DocumentoPack>(&json).unwrap(), p);
     }
 
     #[test]
-    fn render_equivale_com_corpo_multilinha_e_ancoras_no_meio() {
+    fn bloco_com_corpo_multilinha_e_ancoras_no_meio() {
         // Corpo com as próprias âncoras no meio: é só concatenação, nada a escapar.
         let mut c = sample_documento();
         c.corpo = "Preâmbulo.\n\n## resposta\nRecursivo.\nLink: falso\n## corpo\nfim".into();
-        let p = payload_de(&c, "docs/pareceres/x.md");
         assert_eq!(
-            render_consulta_block(&p, &c.corpo),
-            stored_repr_gordo_golden(&c)
+            bloco(&c.pack(), &c.corpo),
+            format!(
+                "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
+                c.titulo, c.ementa, c.corpo, c.link
+            )
         );
     }
 
     #[test]
-    fn render_com_corpo_vazio_nao_perde_o_link() {
+    fn bloco_com_corpo_vazio_nao_perde_o_link() {
         let c = sample_documento();
-        let p = payload_de(&c, "docs/pareceres/x.md");
-        let bloco = render_consulta_block(&p, "");
-        assert!(
-            bloco.ends_with(&format!("\nLink: {}", c.link)),
-            "bloco: {bloco:?}"
-        );
+        let b = bloco(&c.pack(), "");
+        assert!(b.ends_with(&format!("\nLink: {}", c.link)), "bloco: {b:?}");
     }
 
+    /// A degradação da D-B3, e por que ela difere por coleção.
     #[test]
-    fn payload_faz_round_trip_por_json() {
-        let p = payload_de(&sample_documento(), "docs/pareceres/parecer-no-25148.md");
-        let json = serde_json::to_string(&p).unwrap();
+    fn conteudo_indisponivel_usa_o_resumo_so_onde_ele_existe() {
+        // Jurisprudência COM resumo: serve a síntese, que é substituto legítimo do corpo.
+        let jur = sample_documento().pack();
+        let deg = conteudo_indisponivel(&jur);
+        assert!(deg.contains("[corpo indisponível — ver link]"));
+        assert!(deg.contains("Análise sobre apropriação de crédito."));
+
+        // Jurisprudência SEM resumo (pendente): não há o que servir — cai no aviso genérico, em vez
+        // de um bloco que parece completo e está vazio.
+        let mut sem = sample_documento();
+        sem.resumo = String::new();
         assert_eq!(
-            serde_json::from_str::<ConsultaPackPayload>(&json).unwrap(),
-            p
+            conteudo_indisponivel(&sem.pack()),
+            "[conteúdo indisponível — ver o link oficial]"
         );
-    }
 
-    #[test]
-    fn payload_leve_nao_carrega_o_corpo() {
-        // O ganho da fase: o corpo não pode vazar para o pack por nenhum campo.
-        let mut c = sample_documento();
-        c.corpo = "MARCADOR-DE-CORPO-UNICO".into();
-        let json = serde_json::to_string(&payload_de(&c, "docs/pareceres/x.md")).unwrap();
+        // Serviços e FAQs nunca têm resumo, por definição.
+        let svc = Servico {
+            id: 1,
+            tipo: "Empresas".into(),
+            classe: "ICMS".into(),
+            orgao: String::new(),
+            link: "https://x/svc/1".into(),
+            titulo: "Emitir guia".into(),
+            descricao: "Passos.".into(),
+            text_to_embed: String::new(),
+        }
+        .para_documento();
+        assert_eq!(
+            conteudo_indisponivel(&svc.pack()),
+            "[conteúdo indisponível — ver o link oficial]"
+        );
+        // E o bloco degradado NUNCA perde o link — é para onde o leitor vai.
         assert!(
-            !json.contains("MARCADOR-DE-CORPO-UNICO"),
-            "corpo vazou para o payload: {json}"
+            bloco(&svc.pack(), &conteudo_indisponivel(&svc.pack()))
+                .ends_with("Link: https://x/svc/1")
         );
     }
 

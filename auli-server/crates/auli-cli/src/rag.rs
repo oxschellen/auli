@@ -10,7 +10,7 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
-use auli_contract::{ConsultaPackPayload, Kind, render_consulta_block};
+use auli_contract::{DocumentoPack, Kind, bloco, conteudo_indisponivel};
 use auli_core::corpus::{self, FAQS, SERVICES};
 use auli_retrieval::{Engine, Hit};
 use tracing::{debug, error, info, trace, warn};
@@ -137,13 +137,6 @@ pub(crate) async fn retrieve(
     .await
 }
 
-/// Os payloads dos hits, na ordem — o que `montar_rag_*` consome. Existe porque a montagem do
-/// contexto é PURA (`&[String]`) e o score só interessa ao log: separar aqui mantém as travas de
-/// paridade byte a byte apontando para o texto, e nada mais.
-pub(crate) fn payloads(hits: &[Hit]) -> Vec<String> {
-    hits.iter().map(|h| h.payload.clone()).collect()
-}
-
 /// Render retrieved docs into the RAG context block, one entry per doc (1-based index).
 fn render(docs: &[String], fmt: impl Fn(usize, &str) -> String) -> String {
     docs.iter()
@@ -248,35 +241,48 @@ pub(crate) fn montar_aderencia(itens: &[Aderencia]) -> String {
         .collect()
 }
 
-/// Remonta o bloco de um parecer a partir do payload leve gravado no pack (G3): lê o corpo da árvore
-/// `docs/` e delega ao contrato para montar o MESMO bloco de sempre.
+/// Remonta o bloco de UM documento a partir do payload do pack v2: lê o conteúdo da árvore `docs/`
+/// e delega ao contrato para montar o bloco.
 ///
-/// Degradação graciosa (D1 do plano): se o corpo não puder ser lido/parseado, `error!` no log (com o
-/// `doc_path`) e o bloco sai com o `resumo` no lugar do corpo, precedido de `[corpo indisponível — ver
-/// link]`. Payload que não desserializa (não deveria passar pelo boot) cai no mesmo caminho seguro.
-/// Nunca derruba a query — o passo de rede do LLM domina, então a leitura síncrona dos k arquivos é
+/// **Vale para as quatro coleções.** Antes da B4 só a jurisprudência passava por aqui — serviços e
+/// FAQs traziam o bloco inteiro pré-renderizado dentro do pack, o que duplicava o texto integral de
+/// cada documento (uma cópia na árvore, outra no vetor).
+///
+/// Degradação graciosa (D-B3): conteúdo ilegível vira [`conteudo_indisponivel`], que difere por
+/// coleção — a jurisprudência serve o `resumo`, que é síntese legítima; serviços e FAQs, que não têm
+/// resumo, servem um aviso. O `Link:` do bloco fica nos dois casos. Payload que não desserializa
+/// (não deveria passar pelo boot, que valida a `STRATEGY_VERSION`) cai no caminho seguro de servir o
+/// cru. Nunca derruba a query — o passo de rede do LLM domina, e a leitura síncrona dos k arquivos é
 /// irrelevante na latência.
-/// Lê o corpo via a função livre do motor (`auli_retrieval::ler_corpo`), e não pelo método do
-/// `Engine`, de propósito: assim esta função continua testável com um diretório temporário, sem
-/// construir um `Engine` (que carregaria o BGE-M3). O `Engine` só fornece a raiz — `docs_root()`.
-fn bloco_parecer(payload_json: &str, docs_root: &Path, entity_id: &str) -> String {
-    let payload: ConsultaPackPayload = match serde_json::from_str(payload_json) {
+///
+/// Lê via a função livre do motor (`auli_retrieval::ler_corpo`), e não pelo método do `Engine`, de
+/// propósito: assim esta função continua testável com um diretório temporário, sem construir um
+/// `Engine` (que carregaria o BGE-M3). O `Engine` só fornece a raiz — `docs_root()`.
+pub(crate) fn bloco_documento(payload_json: &str, docs_root: &Path, entity_id: &str) -> String {
+    let payload: DocumentoPack = match serde_json::from_str(payload_json) {
         Ok(p) => p,
         Err(e) => {
-            error!(
-                "payload de parecer não desserializa ({e}) — pack incompatível passou pelo boot?"
-            );
+            error!("payload não desserializa ({e}) — pack incompatível passou pelo boot?");
             return payload_json.to_string();
         }
     };
     match auli_retrieval::ler_corpo(docs_root, entity_id, &payload.doc_path) {
-        Ok(corpo) => render_consulta_block(&payload, &corpo),
+        Ok(corpo) => bloco(&payload, &corpo),
         Err(e) => {
-            error!(doc_path = %payload.doc_path, "corpo indisponível ({e}) — degradando para o resumo");
-            let corpo = format!("[corpo indisponível — ver link]\n{}", payload.resumo);
-            render_consulta_block(&payload, &corpo)
+            error!(doc_path = %payload.doc_path, kind = %payload.kind,
+                "conteúdo indisponível ({e}) — degradando");
+            bloco(&payload, &conteudo_indisponivel(&payload))
         }
     }
+}
+
+/// Os blocos de contexto de uma lista de hits, na ordem. Ponto único das duas faces: o chat e a
+/// ferramenta MCP `consultar_servicos_faqs` passam por aqui, e é isso que mantém a paridade byte a
+/// byte entre elas sem ninguém precisar lembrar.
+pub(crate) fn blocos(hits: &[Hit], docs_root: &Path, entity_id: &str) -> Vec<String> {
+    hits.iter()
+        .map(|h| bloco_documento(&h.payload, docs_root, entity_id))
+        .collect()
 }
 
 pub async fn exec_all_question(
@@ -366,7 +372,12 @@ pub async fn exec_all_question(
 
             itens_aderencia.extend(aderencia("servico", svc_hits.iter().map(|h| Some(h.score))));
             itens_aderencia.extend(aderencia("faq", faq_hits.iter().map(|h| Some(h.score))));
-            montar_rag_servicos_faqs(&payloads(&svc_hits), &payloads(&faq_hits))
+            // Pack v2: o payload é leve, então o bloco de CADA serviço e de CADA faq é montado
+            // aqui, lendo a árvore. Antes eles vinham prontos de dentro do pack.
+            montar_rag_servicos_faqs(
+                &blocos(&svc_hits, engine.docs_root(), &cfg.id),
+                &blocos(&faq_hits, engine.docs_root(), &cfg.id),
+            )
         }
         QueryType::Jurisprudencia(kind) => {
             let colecao = corpus::from_kind(kind.as_str())
@@ -403,9 +414,9 @@ pub async fn exec_all_question(
                 let seeds: Vec<String> = hits
                     .iter()
                     .filter_map(|h| {
-                        serde_json::from_str::<ConsultaPackPayload>(&h.payload)
+                        serde_json::from_str::<DocumentoPack>(&h.payload)
                             .ok()
-                            .map(|p| p.numero)
+                            .map(|p| p.titulo)
                     })
                     .collect();
                 run_blocking(move || {
@@ -429,13 +440,10 @@ pub async fn exec_all_question(
             // G3: cada doc recuperado é o payload LEVE (JSON, sem corpo). Remonta o bloco de sempre
             // lendo o corpo da árvore `docs/` da entidade (`<docs_root>/<id>/<doc_path>`). O
             // `doc_path` já traz a coleção, então o mesmo montador serve as duas.
-            let blocos: Vec<String> = hits
-                .iter()
-                .map(|h| bloco_parecer(&h.payload, engine.docs_root(), &cfg.id))
-                .collect();
+            let docs: Vec<String> = blocos(&hits, engine.docs_root(), &cfg.id);
             info!(
                 "Foram selecionados {} {} (+{} relacionados por grafo)",
-                blocos.len(),
+                docs.len(),
                 kind.plural(),
                 relacionados.len()
             );
@@ -453,7 +461,7 @@ pub async fn exec_all_question(
                 "parecer relacionado",
                 relacionados.iter().map(|_| None),
             ));
-            montar_rag_jurisprudencia(kind, &blocos, &relacionados)
+            montar_rag_jurisprudencia(kind, &docs, &relacionados)
         }
     };
     tempos.retrieve_ms = t.elapsed().as_millis() as u64;
@@ -646,17 +654,28 @@ pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        QueryType, RegistroConsulta, TemposConsulta, aderencia, bloco_parecer, envolver,
+        QueryType, RegistroConsulta, TemposConsulta, aderencia, bloco_documento, envolver,
         format_log_record, montar_aderencia, montar_rag_jurisprudencia, montar_rag_servicos_faqs,
     };
-    use auli_contract::{ConsultaPackPayload, Kind, mddoc};
+    use auli_contract::{DocumentoPack, Kind, mddoc};
     use std::path::Path;
 
     fn payload(doc_path: &str) -> String {
-        serde_json::to_string(&ConsultaPackPayload {
-            numero: "PARECER Nº 1".into(),
-            assunto: "ICMS – crédito".into(),
-            resumo: "Resumo do parecer.".into(),
+        payload_de(
+            Kind::Pareceres,
+            "PARECER Nº 1",
+            "Resumo do parecer.",
+            doc_path,
+        )
+    }
+
+    fn payload_de(kind: Kind, titulo: &str, resumo: &str, doc_path: &str) -> String {
+        serde_json::to_string(&DocumentoPack {
+            kind,
+            trilha: String::new(),
+            titulo: titulo.into(),
+            ementa: "ICMS – crédito".into(),
+            resumo: resumo.into(),
             link: "http://x/1".into(),
             doc_path: doc_path.into(),
         })
@@ -664,7 +683,7 @@ mod tests {
     }
 
     #[test]
-    fn bloco_parecer_le_corpo_da_arvore_e_monta_o_bloco() {
+    fn bloco_documento_le_corpo_da_arvore_e_monta_o_bloco() {
         // A raiz agora é `<docs_root>/<entity_id>/<doc_path>` (o motor resolve o `<id>`), então a
         // árvore do teste ganha o nível da entidade.
         let dir = std::env::temp_dir().join(format!("auli-rag-g3-ok-{}", std::process::id()));
@@ -678,7 +697,7 @@ mod tests {
         )
         .unwrap();
 
-        let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir, "sc");
+        let bloco = bloco_documento(&payload("docs/pareceres/parecer-no-1.md"), &dir, "sc");
         // Bloco de sempre, com o corpo lido da árvore.
         assert_eq!(
             bloco,
@@ -688,10 +707,10 @@ mod tests {
     }
 
     #[test]
-    fn bloco_parecer_degrada_para_o_resumo_quando_o_arquivo_falta() {
+    fn bloco_documento_degrada_para_o_resumo_quando_o_arquivo_falta() {
         let dir = std::env::temp_dir().join(format!("auli-rag-g3-miss-{}", std::process::id()));
         // Nada materializado: o doc_path aponta para arquivo inexistente.
-        let bloco = bloco_parecer(&payload("docs/pareceres/parecer-no-1.md"), &dir, "sc");
+        let bloco = bloco_documento(&payload("docs/pareceres/parecer-no-1.md"), &dir, "sc");
         assert!(
             bloco.contains("[corpo indisponível — ver link]"),
             "bloco: {bloco}"
@@ -704,10 +723,64 @@ mod tests {
         // Nunca propaga erro — a query segue.
     }
 
+    /// O caminho NOVO da B4: serviços e FAQs também passam pelo `bloco_documento`, e degradam
+    /// diferente da jurisprudência — eles não têm resumo para servir no lugar do corpo.
     #[test]
-    fn bloco_parecer_com_payload_invalido_nao_derruba() {
+    fn bloco_documento_de_servico_degrada_sem_inventar_resumo() {
+        let dir = std::env::temp_dir().join(format!("auli-rag-b4-svc-{}", std::process::id()));
+        let p = payload_de(Kind::Servicos, "Emitir guia", "", "docs/servicos/sumiu.md");
+        let bloco = bloco_documento(&p, &dir, "rs");
+        assert!(
+            bloco.contains("[conteúdo indisponível — ver o link oficial]"),
+            "bloco: {bloco}"
+        );
+        assert!(
+            !bloco.contains("[corpo indisponível"),
+            "esse é o aviso da jurisprudência, que TEM resumo: {bloco}"
+        );
+        // O link sobrevive à degradação — é para onde o leitor vai.
+        assert!(bloco.ends_with("Link: http://x/1"), "bloco: {bloco}");
+    }
+
+    /// A árvore de serviços é lida do MESMO jeito que a de pareceres — o `doc_path` do payload é
+    /// que manda. Sem este teste, um erro na montagem do caminho por coleção só apareceria em
+    /// produção, como todo serviço degradado.
+    #[test]
+    fn bloco_documento_le_a_arvore_de_servicos() {
+        let dir = std::env::temp_dir().join(format!("auli-rag-b4-svc-ok-{}", std::process::id()));
+        let sdir = dir.join("rs").join("docs/servicos");
+        std::fs::create_dir_all(&sdir).unwrap();
+        let header = mddoc::DocHeader {
+            titulo: "Emitir guia".into(),
+            trilha: "Empresas | ICMS".into(),
+            ementa: String::new(),
+            link: "http://x/1".into(),
+            orgao: Some("Receita Estadual".into()),
+            resumo_info: None,
+        };
+        std::fs::write(
+            sdir.join("emitir.md"),
+            mddoc::render_doc(&header, None, "Passos para emitir."),
+        )
+        .unwrap();
+
+        let p = payload_de(Kind::Servicos, "Emitir guia", "", "docs/servicos/emitir.md");
+        // A trilha do bloco vem do PAYLOAD, não do `.md` — é o pack que manda no que o LLM lê.
+        let mut pack: auli_contract::DocumentoPack = serde_json::from_str(&p).unwrap();
+        pack.trilha = "Empresas | ICMS".into();
+        pack.ementa = String::new();
+        let bloco = bloco_documento(&serde_json::to_string(&pack).unwrap(), &dir, "rs");
+        assert_eq!(
+            bloco,
+            "## pergunta\nEmpresas | ICMS\nEmitir guia\n\n## resposta\nPassos para emitir.\nLink: http://x/1"
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn bloco_documento_com_payload_invalido_nao_derruba() {
         // Pack incompatível que (hipoteticamente) passou pelo boot: não desserializa → serve cru.
-        let bloco = bloco_parecer("isto não é json", Path::new("/inexistente"), "sc");
+        let bloco = bloco_documento("isto não é json", Path::new("/inexistente"), "sc");
         assert_eq!(bloco, "isto não é json");
     }
 

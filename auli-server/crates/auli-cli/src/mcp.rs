@@ -372,8 +372,13 @@ impl AuliMcp {
         tracing::info!(uf = %uf, servicos = svc_hits.len(), faqs = faq_hits.len(),
             ms = t.elapsed().as_millis() as u64, "mcp consultar_servicos_faqs");
 
-        let bloco =
-            rag::montar_rag_servicos_faqs(&rag::payloads(&svc_hits), &rag::payloads(&faq_hits));
+        // Pack v2: os blocos são montados aqui, lendo a árvore — pelo MESMO ponto que o chat usa
+        // (`rag::blocos`), que é o que mantém a paridade byte a byte entre as duas faces.
+        let docs_root = self.engine.docs_root();
+        let bloco = rag::montar_rag_servicos_faqs(
+            &rag::blocos(&svc_hits, docs_root, &uf),
+            &rag::blocos(&faq_hits, docs_root, &uf),
+        );
         // Os mesmos rótulos do chat — mesma pergunta, mesmos números nos dois registros.
         let mut itens = rag::aderencia("servico", svc_hits.iter().map(|h| Some(h.score)));
         itens.extend(rag::aderencia(

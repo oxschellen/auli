@@ -48,7 +48,20 @@ pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 /// contaminando o vetor agrupado (o mesmo texto saía com cosseno ~0,98 conforme a companhia — ver
 /// `embed::testes_ordem`), enquanto a query, embedada sozinha, vivia noutro regime; `batch_size = 1`
 /// pôs os dois no mesmo. Nos três casos o efeito prático era o desta série: re-ingestão obrigatória.
-pub const STRATEGY_VERSION: u32 = 1;
+///
+/// ### Série nova
+///
+/// **2 (B4, ago/2026) — pack v2: o payload leve para TODAS as coleções.** Serviços e FAQs guardavam
+/// o bloco de contexto inteiro, pré-renderizado, dentro do pack — o texto integral de cada documento
+/// duplicado, uma cópia na árvore e outra ao lado do vetor. Agora as quatro coleções guardam o
+/// `DocumentoPack` (JSON com trilha/titulo/ementa/resumo/link/doc_path) e o servidor lê o conteúdo
+/// tarde, pelo `doc_path`, só para os k documentos escolhidos. Servidor novo lendo pack 1
+/// serviria JSON cru como texto do documento; servidor antigo lendo pack 2, idem ao contrário.
+///
+/// **Os VETORES não mudam neste bump.** Nenhuma fórmula de `text_to_embed` foi tocada — o que mudou
+/// é só o que viaja ao lado do vetor. O bump existe porque pack e servidor mudam em lockstep, não
+/// porque o espaço vetorial mudou; a re-ingestão é obrigatória do mesmo jeito.
+pub const STRATEGY_VERSION: u32 = 2;
 
 /// The triple that must match between the packs and the running server.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

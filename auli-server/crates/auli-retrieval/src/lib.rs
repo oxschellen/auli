@@ -21,7 +21,7 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
-use auli_contract::{ConsultaPackPayload, Kind, mddoc, render_consulta_block};
+use auli_contract::{DocumentoPack, Kind, bloco, conteudo_indisponivel, mddoc};
 use auli_core::embed::Embedder;
 use tracing::debug;
 use vector_store::ReadStore;
@@ -265,16 +265,15 @@ pub fn documento_por_numero(
         .ok_or(Error::ColecaoAusente(collection))?;
     let alvo = numero.trim().to_lowercase();
     for payload_json in store.list() {
-        let Ok(payload) = serde_json::from_str::<ConsultaPackPayload>(&payload_json) else {
+        let Ok(payload) = serde_json::from_str::<DocumentoPack>(&payload_json) else {
             continue; // pack incompatível: pula, não derruba
         };
-        if payload.numero.trim().to_lowercase() == alvo {
-            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path).unwrap_or_else(|e| {
-                format!("[corpo indisponível — ver link] ({e})\n{}", payload.resumo)
-            });
+        if payload.titulo.trim().to_lowercase() == alvo {
+            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path)
+                .unwrap_or_else(|_| conteudo_indisponivel(&payload));
             return Ok(Some(ParecerHit {
-                numero: payload.numero,
-                assunto: payload.assunto,
+                numero: payload.titulo,
+                assunto: payload.ementa,
                 resumo: payload.resumo,
                 link: payload.link,
                 score: None,
@@ -286,7 +285,7 @@ pub fn documento_por_numero(
 }
 
 /// Bloco de contexto RAG de UM parecer pelo `numero` exato — a MESMA renderização do chat
-/// (`render_consulta_block`), lendo o corpo da árvore `docs/`. `None` se o número não está na
+/// ([`auli_contract::bloco`]), lendo o corpo da árvore `docs/`. `None` se o número não está na
 /// coleção (ex.: parecer citado no grafo mas ainda não vetorizado). Usado pela expansão por grafo
 /// para incluir pareceres relacionados no mesmo formato dos recuperados por vetor.
 pub fn bloco_por_numero(
@@ -301,14 +300,13 @@ pub fn bloco_por_numero(
         .ok_or(Error::ColecaoAusente(collection))?;
     let alvo = numero.trim().to_lowercase();
     for payload_json in store.list() {
-        let Ok(payload) = serde_json::from_str::<ConsultaPackPayload>(&payload_json) else {
+        let Ok(payload) = serde_json::from_str::<DocumentoPack>(&payload_json) else {
             continue;
         };
-        if payload.numero.trim().to_lowercase() == alvo {
-            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path).unwrap_or_else(|e| {
-                format!("[corpo indisponível — ver link] ({e})\n{}", payload.resumo)
-            });
-            return Ok(Some(render_consulta_block(&payload, &corpo)));
+        if payload.titulo.trim().to_lowercase() == alvo {
+            let corpo = ler_corpo(docs_root, entity_id, &payload.doc_path)
+                .unwrap_or_else(|_| conteudo_indisponivel(&payload));
+            return Ok(Some(bloco(&payload, &corpo)));
         }
     }
     Ok(None)
@@ -396,13 +394,17 @@ pub fn ler_corpo(
     Ok(corpo)
 }
 
-/// Decodifica o payload leve de um parecer. JSON inválido degrada para um hit com o cru no
-/// `assunto` — visível, mas sem derrubar a resposta. Pública: o handler `/v1/retrieve` usa.
+/// Decodifica o payload do pack para o hit de saída. JSON inválido degrada para um hit com o cru
+/// no `assunto` — visível, mas sem derrubar a resposta. Pública: o handler `/v1/retrieve` usa.
+///
+/// Os nomes `numero`/`assunto` do [`ParecerHit`] são **contrato de fio** com os clientes MCP e com
+/// o `/v1/retrieve`, e por isso NÃO acompanharam o vocabulário interno: renomeá-los quebraria quem
+/// já consome. A tradução acontece aqui, num lugar só.
 pub fn decode_parecer(payload_json: &str, score: Option<f32>) -> ParecerHit {
-    match serde_json::from_str::<ConsultaPackPayload>(payload_json) {
+    match serde_json::from_str::<DocumentoPack>(payload_json) {
         Ok(p) => ParecerHit {
-            numero: p.numero,
-            assunto: p.assunto,
+            numero: p.titulo,
+            assunto: p.ementa,
             resumo: p.resumo,
             link: p.link,
             score,
@@ -487,9 +489,11 @@ mod tests {
     }
 
     fn payload_json(numero: &str, doc_path: &str) -> String {
-        serde_json::to_string(&ConsultaPackPayload {
-            numero: numero.into(),
-            assunto: "ICMS – crédito".into(),
+        serde_json::to_string(&DocumentoPack {
+            kind: Kind::Pareceres,
+            trilha: String::new(),
+            titulo: numero.into(),
+            ementa: "ICMS – crédito".into(),
             resumo: "Resumo do parecer.".into(),
             link: "http://x/1".into(),
             doc_path: doc_path.into(),
