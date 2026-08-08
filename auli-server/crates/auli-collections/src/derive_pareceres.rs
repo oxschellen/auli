@@ -3,7 +3,7 @@
 //! acervos coletados antes de os scrapers emitirem `.md` (G5).
 //!
 //! Emite `data/<id>/docs/pareceres/<slug>.md` — um por consulta INÉDITA (existe ⇒ pula), igual aos
-//! scrapers. O documento nasce pendente; quem preenche a `## sinopse` é
+//! scrapers. O documento nasce pendente; quem preenche o `## resumo` é
 //! `auli-collections <id> sinopse`. Pipeline: `derive/scraper → .md → sinopse → build-packs`.
 //!
 //! Não produz mais JSON: desde a G5b a árvore É a fonte, e o `auli update` lê dela direto.
@@ -77,12 +77,7 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         .iter()
         .map(|c| {
             (
-                mddoc::DocHeader {
-                    numero: c.numero.clone(),
-                    assunto: c.assunto.clone(),
-                    link: c.link.clone(),
-                    sinopse_info: None,
-                },
+                mddoc::cabecalho_jurisprudencia(&c.numero, &c.assunto, &c.link),
                 c.corpo.clone(),
             )
         })

@@ -15,6 +15,9 @@ members = [
     # `auli-scraper-kit`, NUNCA de fastembed/ort/auli-core. E vale a recíproca (D-C1): NADA fora
     # de `scrapers/` depende de nada aqui dentro — a fronteira (tipos + I/O) mora no contrato.
     "crates/scrapers/*",
+    # Ferramentas de janela: código que existe para uma migração e sai de cena depois dela. Ficam
+    # FORA de `crates/` de propósito (não são produção) e no workspace só para herdar o lockfile.
+    "tools/*",
 ]
 
 # Single shared Cargo.lock across the workspace: the `server` and `update` modes can never pick

@@ -23,7 +23,7 @@ use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 
-use auli_contract::mddoc_servico;
+use auli_contract::mddoc;
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -123,7 +123,7 @@ fn indexar(dir: &Path) -> Result<(Vec<DocIndex>, usize)> {
     let mut visto: HashMap<String, (u64, PathBuf)> = HashMap::new();
     for caminho in caminhos {
         let texto = std::fs::read_to_string(&caminho)?;
-        let (header, corpo) = mddoc_servico::parse_doc_servico(&texto).map_err(|e| {
+        let (header, _resumo, corpo) = mddoc::parse_doc(&texto).map_err(|e| {
             format!(
                 "`{}` não parseia ({e}) — corrija antes de rodar o extrair-servicos",
                 caminho.display()
@@ -331,7 +331,7 @@ pub fn run(entity: &EntityConfig, opts: ExtracaoOpts) -> Result<()> {
         let mut chars = 0usize;
         for d in &pendentes_idx {
             let texto = std::fs::read_to_string(&d.caminho)?;
-            if let Ok((h, corpo)) = mddoc_servico::parse_doc_servico(&texto) {
+            if let Ok((h, _resumo, corpo)) = mddoc::parse_doc(&texto) {
                 chars += h.titulo.chars().count() + corpo.chars().count();
             }
         }
@@ -376,7 +376,7 @@ pub fn run(entity: &EntityConfig, opts: ExtracaoOpts) -> Result<()> {
             break;
         }
         let texto = std::fs::read_to_string(&d.caminho)?;
-        let (_header, corpo) = mddoc_servico::parse_doc_servico(&texto)
+        let (_header, _resumo, corpo) = mddoc::parse_doc(&texto)
             .map_err(|e| format!("`{}` não parseia ({e})", d.caminho.display()))?;
 
         let (extracao, modelo, versao, headroom) = if let Some((params, system_prompt, rt)) = &llm {
@@ -481,17 +481,18 @@ mod tests {
     }
 
     fn escrever_doc(entity: &EntityConfig, arquivo: &str, titulo: &str, tipo: &str, corpo: &str) {
-        let header = mddoc_servico::ServicoHeader {
+        let header = mddoc::DocHeader {
             titulo: titulo.into(),
-            tipo: tipo.into(),
-            classe: "Cadastro".into(),
-            orgao: "RECEITA".into(),
+            trilha: auli_contract::trilha_servico(tipo, "Cadastro"),
+            ementa: String::new(),
             link: format!("https://exemplo/{tipo}/{titulo}"),
+            orgao: Some("RECEITA".into()),
+            resumo_info: None,
         };
         let dir = docs_servicos_dir(entity).unwrap();
         std::fs::write(
             dir.join(format!("{arquivo}.md")),
-            mddoc_servico::render_doc_servico(&header, corpo),
+            mddoc::render_doc(&header, None, corpo),
         )
         .unwrap();
     }

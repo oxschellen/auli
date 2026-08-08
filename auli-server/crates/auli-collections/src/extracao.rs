@@ -128,7 +128,7 @@ fn indexar(dir: &Path) -> Result<Vec<DocIndex>> {
         })?;
         out.push(DocIndex {
             caminho,
-            numero: header.numero,
+            numero: header.titulo,
         });
     }
     Ok(out)
@@ -348,7 +348,7 @@ pub fn run(entity: &EntityConfig, opts: ExtracaoOpts) -> Result<()> {
         for d in &pendentes_idx {
             let texto = std::fs::read_to_string(&d.caminho)?;
             if let Ok((h, _s, corpo)) = mddoc::parse_doc(&texto) {
-                chars += h.assunto.chars().count() + corpo.chars().count();
+                chars += h.ementa.chars().count() + corpo.chars().count();
             }
         }
         println!(
@@ -409,9 +409,9 @@ pub fn run(entity: &EntityConfig, opts: ExtracaoOpts) -> Result<()> {
                 rt,
                 params,
                 system_prompt,
-                &header.assunto,
+                &header.ementa,
                 &corpo,
-                &header.numero,
+                &header.titulo,
             ) {
                 Ok(g) => {
                     let hr = (g.remaining_requests, g.reset_requests);
@@ -428,14 +428,14 @@ pub fn run(entity: &EntityConfig, opts: ExtracaoOpts) -> Result<()> {
                     eprintln!(
                         "🛑 {}: cota da API esgotada (rate limit) em '{}'. Abortando o lote — \
                          os pendentes ficam para a próxima rodada (idempotente).",
-                        entity.id, header.numero
+                        entity.id, header.titulo
                     );
                     break;
                 }
                 Err(motivo) => {
-                    eprintln!("⚠️  {}: falha — {motivo}", header.numero);
+                    eprintln!("⚠️  {}: falha — {motivo}", header.titulo);
                     let erro = LinhaErro {
-                        numero: &header.numero,
+                        numero: &header.titulo,
                         motivo: &motivo,
                         quando: now_iso8601(),
                     };
@@ -447,11 +447,11 @@ pub fn run(entity: &EntityConfig, opts: ExtracaoOpts) -> Result<()> {
                 }
             }
         } else {
-            (fake_extracao(&header.numero), "fake".to_string(), 0, None)
+            (fake_extracao(&header.titulo), "fake".to_string(), 0, None)
         };
 
         let linha = Linha {
-            numero: header.numero.clone(),
+            numero: header.titulo.clone(),
             link: header.link.clone(),
             prompt_versao: versao,
             modelo,
@@ -518,12 +518,11 @@ mod tests {
 
     /// Escreve um `.md` mínimo na árvore do teste (sem sinopse — a extração não depende dela).
     fn escrever_doc(entity: &EntityConfig, slug: &str, numero: &str) {
-        let header = mddoc::DocHeader {
-            numero: numero.into(),
-            assunto: format!("assunto de {numero}"),
-            link: format!("https://exemplo/{numero}"),
-            sinopse_info: None,
-        };
+        let header = mddoc::cabecalho_jurisprudencia(
+            numero,
+            &format!("assunto de {numero}"),
+            &format!("https://exemplo/{numero}"),
+        );
         let corpo = format!("corpo integral de {numero}");
         let dir = docs_dir(entity).unwrap();
         std::fs::write(

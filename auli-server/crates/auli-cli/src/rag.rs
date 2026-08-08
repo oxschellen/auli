@@ -619,12 +619,8 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("auli-rag-g3-ok-{}", std::process::id()));
         let pdir = dir.join("sc").join("docs/pareceres");
         std::fs::create_dir_all(&pdir).unwrap();
-        let header = mddoc::DocHeader {
-            numero: "PARECER Nº 1".into(),
-            assunto: "ICMS – crédito".into(),
-            link: "http://x/1".into(),
-            sinopse_info: None,
-        };
+        let header =
+            mddoc::cabecalho_jurisprudencia("PARECER Nº 1", "ICMS – crédito", "http://x/1");
         std::fs::write(
             pdir.join("parecer-no-1.md"),
             mddoc::render_doc(&header, None, "É o corpo integral."),

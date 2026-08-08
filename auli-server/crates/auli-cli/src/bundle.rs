@@ -290,25 +290,32 @@ fn titulo_tipo(kind: &str) -> String {
     }
 }
 
-/// O schema real de cada tipo, tirado dos módulos `mddoc_servico` / `mddoc_faq` / `mddoc` do
-/// contrato. É o que permite a quem baixou escrever o próprio parser sem abrir 500 arquivos.
+/// O schema real de cada tipo, tirado do módulo `mddoc` do contrato — hoje um só, para todas as
+/// coleções. É o que permite a quem baixou escrever o próprio parser sem abrir 500 arquivos.
+///
+/// Todas as coleções compartilham o mesmo frontmatter desde o formato v2 (ago/2026) — o que muda
+/// entre elas é o que cada campo carrega, e é isso que estes textos explicam. Campo que não se
+/// aplica vem presente e vazio.
 fn schema_tipo(kind: &str) -> &'static str {
+    const COMUM: &str = "Frontmatter YAML entre `---`, com os campos `titulo`, `trilha`, `ementa` e \
+                         `link`, seguido do texto sob `## corpo`.";
     match kind {
         "servicos" => {
-            "Frontmatter YAML entre `---`, com os campos `titulo`, `tipo` (o público a que o\n\
-             serviço se destina), `classe` (a seção do portal), `orgao` e `link`. O texto do\n\
-             serviço vem depois, sob `## corpo`."
+            "Frontmatter YAML entre `---`, com os campos `titulo`, `trilha` (o público e a seção\n\
+             do portal, no formato `Público | Seção`), `ementa` (vazia nos serviços), `link` e\n\
+             `orgao`. A descrição do serviço vem depois, sob `## corpo`."
         }
         "faqs" => {
-            "Frontmatter YAML entre `---`, com os campos `pergunta`, `origin` (a trilha de\n\
-             navegação no portal, do tipo `Inicial | Tema | Subtema`) e `url`. A resposta é o\n\
-             corpo do arquivo, sob `## corpo`."
+            "Frontmatter YAML entre `---`, com os campos `titulo` (a pergunta), `trilha` (a trilha\n\
+             de navegação no portal, do tipo `Inicial | Tema | Subtema`), `ementa` (vazia nas\n\
+             perguntas) e `link`. A resposta é o corpo do arquivo, sob `## corpo`."
         }
-        "pareceres" => {
-            "Frontmatter YAML entre `---`, com os campos `numero`, `assunto` e `link`. O corpo\n\
-             traz duas seções: `## sinopse`, um resumo curto, e `## corpo`, o texto integral."
+        "pareceres" | "tarf" => {
+            "Frontmatter YAML entre `---`, com os campos `titulo` (o número do documento),\n\
+             `trilha` (vazia aqui), `ementa` (o assunto) e `link`. O corpo traz duas seções:\n\
+             `## resumo`, uma síntese curta, e `## corpo`, o texto integral."
         }
-        _ => "Frontmatter YAML entre `---` seguido do corpo do documento em Markdown.",
+        _ => COMUM,
     }
 }
 
@@ -328,10 +335,13 @@ fn readme_tipo(estado: &EstadoBundle, tipo: &TipoBundle) -> String {
          \n\
          {schema}\n\
          \n\
+         Formato v2 (ago/2026): todas as coleções compartilham o mesmo frontmatter. A versão\n\
+         anterior usava chaves próprias por coleção — ver histórico do repositório.\n\
+         \n\
          ## Origem\n\
          \n\
-         Conteúdo derivado de dados públicos da {nome}. Sinopses, quando presentes, são geradas\n\
-         automaticamente e servem de resumo — a fonte oficial é o link no frontmatter.\n",
+         Conteúdo derivado de dados públicos da {nome}. Os resumos, quando presentes, são gerados\n\
+         automaticamente — a fonte oficial é o link no frontmatter.\n",
         titulo = titulo_tipo(&tipo.kind),
         uf = estado.uf,
         n = tipo.arquivos.len(),

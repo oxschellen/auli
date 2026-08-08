@@ -184,8 +184,8 @@ fn ler_arvore(dir: &Path) -> Result<Vec<Entrada>> {
             )
         })?;
         out.push(Entrada {
-            numero: header.numero,
-            assunto: header.assunto,
+            numero: header.titulo,
+            assunto: header.ementa,
             resumo: sinopse.unwrap_or_default(),
             link: header.link,
         });

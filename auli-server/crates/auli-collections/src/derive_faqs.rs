@@ -28,22 +28,29 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaFaqs) -> 
         .parent()
         .ok_or_else(|| format!("data_dir sem pai: {data_dir}"))?;
     let docs_dir = base.join("docs").join("faqs");
-    let docs: Vec<(auli_contract::mddoc_faq::FaqHeader, String)> = table
+    // Vocabulário unificado (D-FMT-2): a pergunta é o `titulo`, o breadcrumb da página é a
+    // `trilha`, a `ementa` fica vazia e a resposta é o `## corpo`. A FAQ não tem `## resumo` — os
+    // prefixos `P:`/`R:` do embed são mapeamento do compose, não conteúdo da árvore.
+    let docs: Vec<(auli_contract::mddoc::DocHeader, String)> = table
         .items
         .iter()
         .map(|f| {
             (
-                auli_contract::mddoc_faq::FaqHeader {
-                    pergunta: f.pergunta.clone(),
-                    origin: f.origin.clone(),
-                    url: f.url.clone(),
+                auli_contract::mddoc::DocHeader {
+                    titulo: f.pergunta.clone(),
+                    trilha: f.origin.clone(),
+                    ementa: String::new(),
+                    link: f.url.clone(),
+                    orgao: None,
+                    resumo_info: None,
                 },
                 f.resposta.clone(),
             )
         })
         .collect();
-    let gravados = auli_contract::mddoc_faq::materializar_arvore(&docs_dir, &docs)
-        .map_err(|e| format!("materialização da árvore de faqs: {e}"))?;
+    let gravados =
+        auli_contract::mddoc::materializar_arvore(&docs_dir, &docs, auli_contract::mddoc::nome_faq)
+            .map_err(|e| format!("materialização da árvore de faqs: {e}"))?;
     println!(
         "📄 docs: {gravados} faqs materializadas em {}",
         docs_dir.display()
