@@ -8,6 +8,7 @@ use std::time::Instant;
 use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use tracing::{error, info};
 
+use auli_contract::Kind;
 use auli_core::corpus;
 
 use crate::api::dto::{RetrieveHit, RetrieveRequest, RetrieveResponse};
@@ -19,7 +20,15 @@ use crate::util::run_blocking;
 const MAX_TOP_K: usize = 20;
 
 /// Kind assumido quando o cliente não manda nenhum: o caso do auditor.
-const KIND_PADRAO: &str = "pareceres";
+const KIND_PADRAO: &str = Kind::Pareceres.as_str();
+
+/// O kind é de jurisprudência? Decide a FORMA da resposta: estes kinds guardam o payload leve
+/// (`ConsultaPackPayload`) no pack e são devolvidos decodificados, no vetor `pareceres`.
+///
+/// Kind fora do [`Kind`] (hoje só `notas`) é `false` — resposta genérica, como sempre foi.
+fn jurisprudencia(kind: &str) -> bool {
+    Kind::parse(kind).is_some_and(Kind::exige_resumo)
+}
 
 /// Resolve kind + top_k. Puro E independente do registry de entidades — `corpus::from_kind` é um
 /// vocabulário estático. Separado de propósito: é o que torna estes contratos testáveis sem
@@ -93,7 +102,11 @@ pub async fn retrieve_handler(
 
     // Exatamente UM dos vetores é preenchido, conforme o kind; o outro vai vazio (e serializa
     // vazio de propósito — ver o doc de `RetrieveResponse`).
-    let body = if kind == KIND_PADRAO {
+    //
+    // O critério é **jurisprudência**, não "é o kind padrão": pareceres e acórdãos do TARF guardam o
+    // MESMO payload leve no pack (`ConsultaPackPayload`), então servir um acórdão pelo vetor `hits`
+    // entregaria ao cliente uma string JSON crua no campo `texto` em vez dos campos decodificados.
+    let body = if jurisprudencia(kind) {
         RetrieveResponse {
             entity: cfg.id.clone(),
             kind: kind.into(),

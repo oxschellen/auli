@@ -30,6 +30,7 @@ use std::fs;
 use std::io::{Cursor, Write};
 use std::path::{Path, PathBuf};
 
+use auli_contract::Kind;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use zip::write::SimpleFileOptions;
@@ -315,26 +316,23 @@ fn kind_segurado(kind: &str) -> bool {
 /// chamada "Acórdãos TARF" com N documentos assume que são os N que existem. Esta linha é a
 /// diferença entre publicar parcial e publicar enganando.
 fn nota_tipo(kind: &str) -> Option<&'static str> {
-    match kind {
+    match Kind::parse(kind)? {
         // O portal do TARF tem ~22,5 mil acórdãos; a coleta corre a 1 req/s e é retomável, então a
         // pasta cresce a cada rodada. Remover quando ela fechar.
-        "tarf" => Some(
+        Kind::Tarf => Some(
             "**Coleta em andamento.** O acervo do TARF é maior do que o publicado aqui: a coleta \
              respeita o ritmo do portal e a pasta cresce a cada rodada. O que está nesta versão é \
              completo e conferido — só não é tudo.",
         ),
-        _ => None,
+        Kind::Servicos | Kind::Faqs | Kind::Pareceres => None,
     }
 }
 
+/// Rótulo de exibição da pasta. As pastas do bundle vêm do **disco** (`read_dir` sobre `docs/`),
+/// não do enum — daí o `&str` na entrada e o fallback: um diretório que não seja coleção conhecida
+/// aparece pelo próprio nome, em vez de sumir do README.
 fn titulo_tipo(kind: &str) -> String {
-    match kind {
-        "servicos" => "Serviços".to_string(),
-        "faqs" => "Perguntas Frequentes".to_string(),
-        "pareceres" => "Pareceres".to_string(),
-        "tarf" => "Acórdãos TARF".to_string(),
-        outro => outro.to_string(),
-    }
+    Kind::parse(kind).map_or_else(|| kind.to_string(), |k| k.titulo().to_string())
 }
 
 /// O schema real de cada tipo, tirado do módulo `mddoc` do contrato — hoje um só, para todas as
@@ -346,23 +344,25 @@ fn titulo_tipo(kind: &str) -> String {
 fn schema_tipo(kind: &str) -> &'static str {
     const COMUM: &str = "Frontmatter YAML entre `---`, com os campos `titulo`, `trilha`, `ementa` e \
                          `link`, seguido do texto sob `## corpo`.";
+    let Some(kind) = Kind::parse(kind) else {
+        return COMUM;
+    };
     match kind {
-        "servicos" => {
+        Kind::Servicos => {
             "Frontmatter YAML entre `---`, com os campos `titulo`, `trilha` (o público e a seção\n\
              do portal, no formato `Público | Seção`), `ementa` (vazia nos serviços), `link` e\n\
              `orgao`. A descrição do serviço vem depois, sob `## corpo`."
         }
-        "faqs" => {
+        Kind::Faqs => {
             "Frontmatter YAML entre `---`, com os campos `titulo` (a pergunta), `trilha` (a trilha\n\
              de navegação no portal, do tipo `Inicial | Tema | Subtema`), `ementa` (vazia nas\n\
              perguntas) e `link`. A resposta é o corpo do arquivo, sob `## corpo`."
         }
-        "pareceres" | "tarf" => {
+        Kind::Pareceres | Kind::Tarf => {
             "Frontmatter YAML entre `---`, com os campos `titulo` (o número do documento),\n\
              `trilha` (vazia aqui), `ementa` (o assunto) e `link`. O corpo traz duas seções:\n\
              `## resumo`, uma síntese curta, e `## corpo`, o texto integral."
         }
-        _ => COMUM,
     }
 }
 

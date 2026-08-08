@@ -24,9 +24,15 @@ prompt = "prompts/rs.txt"
 # Prompt específico para consultas de pareceres (query type=2). Opcional: entidades sem este campo
 # usam o prompt-padrão de pareceres. Campos de UI (uf/state/collections) são ignorados pelo backend.
 prompt_pareceres = "prompts/rs-pareceres.txt"
-# `tarf` é a aba de listagem dos acórdãos do Tribunal Administrativo de Recursos Fiscais. Ela lê o
-# `rs-tarf-index.json` e NÃO depende de vetores — o chat ainda não responde sobre acórdãos.
-# Esta linha é o interruptor da aba: tirá-la daqui (e rodar gen-frontend-entities.mjs) a desliga.
+# Prompt das consultas ao TARF (query type=3). Opcional: sem ele, a entidade cai no próprio
+# `prompt_pareceres` — acórdão também é jurisprudência, e as instruções de citar número e link valem
+# igual. O texto próprio existe para dizer o que só vale ali: um acórdão decide um caso concreto, não
+# é norma geral.
+prompt_tarf = "prompts/rs-tarf.txt"
+# `tarf` é a coleção dos acórdãos do Tribunal Administrativo de Recursos Fiscais. Ela dirige DUAS
+# coisas: a aba de listagem (que lê o `rs-tarf-index.json`) e a fonte "Acórdãos TARF" do chat (que lê
+# o pack vetorial `rs-tarf`).
+# Esta linha é o interruptor das duas: tirá-la daqui (e rodar gen-frontend-entities.mjs) as desliga.
 collections = ["servicos", "faqs", "pareceres", "notas", "conteudos", "tarf"]
 
 [[entities]]

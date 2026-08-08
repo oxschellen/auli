@@ -21,6 +21,7 @@ use rmcp::{
 };
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
+use auli_contract::Kind;
 use auli_core::corpus::{FAQS, SERVICES};
 use auli_retrieval::Engine;
 
@@ -32,14 +33,33 @@ const MAX_TOP_K: usize = 20;
 const DEFAULT_TOP_K: usize = 5;
 
 /// Kind dos pareceres — o único que a v1 expunha por MCP (D-MCP-7).
-const KIND: &str = "pareceres";
+const KIND: &str = Kind::Pareceres.as_str();
 
 /// Kinds da consulta Serviços+FAQs — a mesma dupla do tipo `ServicosFaqs` do chat.
-const KIND_SERVICOS: &str = "servicos";
-const KIND_FAQS: &str = "faqs";
+const KIND_SERVICOS: &str = Kind::Servicos.as_str();
+const KIND_FAQS: &str = Kind::Faqs.as_str();
+
+/// Kind dos acórdãos do TARF — a coleção opcional das ferramentas de jurisprudência (D-A6).
+const KIND_TARF: &str = Kind::Tarf.as_str();
 
 /// Kinds que o `listar_entidades` reporta, na ordem de exibição.
-const KINDS_LISTADOS: [&str; 3] = [KIND, KIND_SERVICOS, KIND_FAQS];
+const KINDS_LISTADOS: [&str; 4] = [KIND, KIND_TARF, KIND_SERVICOS, KIND_FAQS];
+
+/// Resolve o parâmetro opcional `colecao` das ferramentas de jurisprudência.
+///
+/// **Ausente ⇒ `pareceres`** — é o que mantém o cliente MCP antigo funcionando byte a byte: ele
+/// nunca manda o campo, e continua consultando exatamente o que consultava. Nome fora da
+/// jurisprudência (inclusive `servicos`, que é coleção legítima mas de outra natureza) é erro de
+/// parâmetro, não fallback silencioso para o padrão.
+fn resolver_colecao(colecao: Option<&str>) -> Result<Kind, McpError> {
+    let nome = colecao.map(str::trim).filter(|s| !s.is_empty());
+    let Some(nome) = nome else {
+        return Ok(Kind::Pareceres);
+    };
+    Kind::parse(nome)
+        .filter(|k| k.exige_resumo())
+        .ok_or_else(|| McpError::invalid_params(erro_colecao_invalida(nome), None))
+}
 
 #[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
 pub struct BuscarPareceresArgs {
@@ -52,6 +72,10 @@ pub struct BuscarPareceresArgs {
     /// Quantos resultados devolver (1 a 20; padrão 5).
     #[serde(default)]
     pub top_k: Option<usize>,
+    /// Acervo a consultar: "pareceres" (padrão) ou "tarf" (acórdãos do Tribunal Administrativo de
+    /// Recursos Fiscais, disponível só onde `listar_entidades` o reporta).
+    #[serde(default)]
+    pub colecao: Option<String>,
 }
 
 #[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
@@ -70,6 +94,10 @@ pub struct ObterParecerArgs {
     pub uf: String,
     /// Número EXATO como devolvido por `buscar_pareceres` (ex.: "CONSULTA COPAT nº 0091/17").
     pub numero: String,
+    /// Acervo do documento: "pareceres" (padrão) ou "tarf". Use o MESMO valor da busca que
+    /// devolveu este número.
+    #[serde(default)]
+    pub colecao: Option<String>,
 }
 
 #[derive(Clone)]
@@ -141,9 +169,9 @@ impl AuliMcp {
 
     #[tool(
         description = "Lista as UFs (secretarias estaduais de Fazenda) com acervo indexado no \
-        Auli, informando o que cada uma tem e os totais: pareceres tributários (para \
-        `buscar_pareceres`/`obter_parecer`), serviços de atendimento e FAQs (para \
-        `consultar_servicos_faqs`)."
+        Auli, informando o que cada uma tem e os totais: pareceres tributários e acórdãos do TARF \
+        (para `buscar_pareceres`/`obter_parecer`, via o parâmetro `colecao`), serviços de \
+        atendimento e FAQs (para `consultar_servicos_faqs`)."
     )]
     fn listar_entidades(&self) -> Result<CallToolResult, McpError> {
         let texto = formatar_entidades(&self.engine);
@@ -151,23 +179,29 @@ impl AuliMcp {
     }
 
     #[tool(
-        description = "Busca semântica no acervo de pareceres tributários de uma UF. Devolve \
-        para cada resultado: número, assunto (ementa), sinopse com palavras-chave, link oficial e \
-        score de proximidade (menor = mais próximo). NÃO devolve o corpo integral — use \
-        `obter_parecer` com o número para lê-lo."
+        description = "Busca semântica na jurisprudência tributária de uma UF. Por padrão consulta \
+        os PARECERES (interpretação da legislação pela Receita Estadual); com `colecao: \"tarf\"` \
+        consulta os ACÓRDÃOS do Tribunal Administrativo de Recursos Fiscais (decisões em recursos \
+        de contribuintes, caso a caso — não valem como norma geral). Devolve para cada resultado: \
+        número, assunto (ementa), sinopse, link oficial e score de proximidade (menor = mais \
+        próximo). NÃO devolve o corpo integral — use `obter_parecer` com o número para lê-lo."
     )]
     async fn buscar_pareceres(
         &self,
         Parameters(args): Parameters<BuscarPareceresArgs>,
     ) -> Result<CallToolResult, McpError> {
         let uf = args.uf.trim().to_lowercase();
+        let colecao = resolver_colecao(args.colecao.as_deref())?;
 
         // Guarda ANTES do embed, e pelo teste CERTO: com o `load_all` do auli-cli, toda entidade
-        // registrada tem store de pareceres (possivelmente VAZIO), então `store().is_some()` não
+        // registrada tem store de cada kind (possivelmente VAZIO), então `store().is_some()` não
         // distingue nada. `entidades_com` exige store não-vazio = "tem acervo de verdade".
         // De quebra, este caminho de erro fica testável sem carregar o modelo.
-        if !self.engine.entidades_com(KIND).contains(&uf) {
-            return Err(McpError::invalid_params(erro_uf_sem_acervo(&uf), None));
+        if !self.engine.entidades_com(colecao.as_str()).contains(&uf) {
+            return Err(McpError::invalid_params(
+                erro_uf_sem_acervo(&uf, colecao),
+                None,
+            ));
         }
 
         let top_k = args.top_k.unwrap_or(DEFAULT_TOP_K).clamp(1, MAX_TOP_K);
@@ -178,7 +212,7 @@ impl AuliMcp {
         // Embed + scan são CPU-bound: fora do runtime async (mesma disciplina das outras faces).
         let t = Instant::now();
         let hits = tokio::task::spawn_blocking(move || {
-            engine.search_pareceres(&uf2, &pergunta, top_k, 0, f32::INFINITY)
+            engine.search_jurisprudencia(&uf2, colecao, &pergunta, top_k, 0, f32::INFINITY)
         })
         .await
         .map_err(|e| McpError::internal_error(e.to_string(), None))?
@@ -187,7 +221,7 @@ impl AuliMcp {
 
         // D-MCP-5: só metadados no log — nunca o texto da pergunta.
         let ms = t.elapsed().as_millis() as u64;
-        tracing::info!(uf = %uf, top_k, hits = hits.len(), ms, "mcp buscar_pareceres");
+        tracing::info!(uf = %uf, colecao = %colecao, top_k, hits = hits.len(), ms, "mcp buscar_pareceres");
 
         // JSON estruturado no content de texto: é o formato que assistentes consomem melhor.
         let json = serde_json::to_string_pretty(&hits)
@@ -196,8 +230,10 @@ impl AuliMcp {
         // inteiro em `retrieve_ms` (rotulado "retrieve+montagem" na linha TEMPOS).
         // O JSON devolvido já carrega o score de cada parecer; a seção é montada assim mesmo para
         // que o registro tenha o MESMO formato nas quatro ferramentas e no chat.
-        let aderencia =
-            rag::montar_aderencia(&rag::aderencia("parecer", hits.iter().map(|h| h.score)));
+        let aderencia = rag::montar_aderencia(&rag::aderencia(
+            &colecao.rotulo().to_lowercase(),
+            hits.iter().map(|h| h.score),
+        ));
         self.registrar(
             &uf,
             "buscar_pareceres",
@@ -214,19 +250,23 @@ impl AuliMcp {
     }
 
     #[tool(
-        description = "Devolve o corpo integral de um parecer tributário de uma UF, dado o \
-        número exato (como devolvido por `buscar_pareceres`). Inclui assunto, sinopse e link \
-        oficial."
+        description = "Devolve o corpo integral de um documento de jurisprudência de uma UF, dado \
+        o número exato (como devolvido por `buscar_pareceres`). Passe o MESMO `colecao` usado na \
+        busca — sem ele, procura nos pareceres. Inclui assunto, sinopse e link oficial."
     )]
     async fn obter_parecer(
         &self,
         Parameters(args): Parameters<ObterParecerArgs>,
     ) -> Result<CallToolResult, McpError> {
         let uf = args.uf.trim().to_lowercase();
+        let colecao = resolver_colecao(args.colecao.as_deref())?;
 
         // Mesma guarda do `buscar_pareceres`, pelo mesmo motivo.
-        if !self.engine.entidades_com(KIND).contains(&uf) {
-            return Err(McpError::invalid_params(erro_uf_sem_acervo(&uf), None));
+        if !self.engine.entidades_com(colecao.as_str()).contains(&uf) {
+            return Err(McpError::invalid_params(
+                erro_uf_sem_acervo(&uf, colecao),
+                None,
+            ));
         }
 
         let numero = args.numero.clone();
@@ -235,19 +275,21 @@ impl AuliMcp {
 
         // I/O de disco + varredura da lista: também fora do runtime.
         let t = Instant::now();
-        let achado = tokio::task::spawn_blocking(move || engine.parecer_por_numero(&uf2, &numero))
-            .await
-            .map_err(|e| McpError::internal_error(e.to_string(), None))?
-            .map_err(|e| McpError::internal_error(e.to_string(), None))?;
+        let achado = tokio::task::spawn_blocking(move || {
+            engine.documento_por_numero(&uf2, colecao, &numero)
+        })
+        .await
+        .map_err(|e| McpError::internal_error(e.to_string(), None))?
+        .map_err(|e| McpError::internal_error(e.to_string(), None))?;
 
-        tracing::info!(uf = %uf, achou = achado.is_some(), ms = t.elapsed().as_millis() as u64,
-            "mcp obter_parecer");
+        tracing::info!(uf = %uf, colecao = %colecao, achou = achado.is_some(),
+            ms = t.elapsed().as_millis() as u64, "mcp obter_parecer");
 
         let ms = t.elapsed().as_millis() as u64;
         let devolvido = match &achado {
             Some(p) => serde_json::to_string_pretty(p)
                 .map_err(|e| McpError::internal_error(e.to_string(), None))?,
-            None => erro_numero_nao_achado(&args.numero, &uf),
+            None => erro_numero_nao_achado(&args.numero, &uf, colecao),
         };
         // Aqui a "pergunta" é o número pedido — é o que o usuário digitou nesta chamada.
         self.registrar(
@@ -419,18 +461,33 @@ fn linhas_entidades(dados: &[AcervoUf]) -> String {
     format!("UFs com acervo indexado:\n{}", linhas.join("\n"))
 }
 
-fn erro_uf_sem_acervo(uf: &str) -> String {
-    format!("UF '{uf}' sem acervo de pareceres. Use `listar_entidades`.")
+fn erro_uf_sem_acervo(uf: &str, colecao: Kind) -> String {
+    format!(
+        "UF '{uf}' sem acervo de {}. Use `listar_entidades`.",
+        colecao.plural()
+    )
+}
+
+/// Nome de coleção que não é jurisprudência. Enumera as válidas em vez de mandar o cliente adivinhar
+/// — `servicos` e `faqs` caem aqui de propósito: são coleções reais, mas destas ferramentas não.
+fn erro_colecao_invalida(nome: &str) -> String {
+    format!(
+        "Coleção '{nome}' desconhecida para esta ferramenta. Use '{}' (padrão) ou '{}'; para \
+         serviços e FAQs, use `consultar_servicos_faqs`.",
+        Kind::Pareceres.as_str(),
+        Kind::Tarf.as_str()
+    )
 }
 
 fn erro_uf_sem_servicos_faqs(uf: &str) -> String {
     format!("UF '{uf}' sem acervo de serviços nem de FAQs. Use `listar_entidades`.")
 }
 
-fn erro_numero_nao_achado(numero: &str, uf: &str) -> String {
+fn erro_numero_nao_achado(numero: &str, uf: &str, colecao: Kind) -> String {
     format!(
-        "Nenhum parecer com número '{numero}' na UF '{uf}'. Confira o número exato via \
-         `buscar_pareceres`."
+        "Nenhum documento de {} com número '{numero}' na UF '{uf}'. Confira o número exato via \
+         `buscar_pareceres` (com o mesmo valor de `colecao`).",
+        colecao.plural()
     )
 }
 
@@ -452,7 +509,9 @@ impl ServerHandler for AuliMcp {
                 "Acervo Auli das Secretarias da Fazenda estaduais brasileiras (conteúdo \
                  público, com links oficiais). Dois fluxos: (1) fundamentação tributária — \
                  `listar_entidades` → `buscar_pareceres` (uma busca por UF) → `obter_parecer` \
-                 para o corpo integral; scores são distância cosseno, menor = mais próximo. \
+                 para o corpo integral; scores são distância cosseno, menor = mais próximo. As \
+                 duas aceitam `colecao`: 'pareceres' (padrão, interpretação da legislação) ou \
+                 'tarf' (acórdãos do tribunal administrativo, decisões caso a caso). \
                  (2) atendimento ao contribuinte ('como fazer') — `consultar_servicos_faqs`, \
                  que devolve os serviços e FAQs da UF num bloco de texto pronto para \
                  fundamentar a resposta."
@@ -513,17 +572,53 @@ mod tests {
 
     #[test]
     fn mensagem_de_uf_sem_acervo_aponta_para_listar_entidades() {
-        let msg = erro_uf_sem_acervo("mg");
+        let msg = erro_uf_sem_acervo("mg", Kind::Pareceres);
         assert!(msg.contains("mg"), "cita a UF: {msg}");
+        assert!(msg.contains("pareceres"), "cita a coleção: {msg}");
         assert!(
             msg.contains("listar_entidades"),
             "ensina o próximo passo: {msg}"
         );
+        // A mensagem NOMEIA a coleção pedida: sem isso, quem pede `tarf` numa UF que só tem
+        // pareceres lê "sem acervo de pareceres" e conclui a coisa errada.
+        assert!(
+            erro_uf_sem_acervo("sp", Kind::Tarf).contains("acórdãos"),
+            "a coleção pedida tem de aparecer"
+        );
+    }
+
+    #[test]
+    fn colecao_ausente_e_pareceres_e_nome_invalido_e_erro() {
+        // A COMPATIBILIDADE da D-A6: cliente antigo não manda o campo e continua nos pareceres.
+        assert_eq!(resolver_colecao(None).unwrap(), Kind::Pareceres);
+        assert_eq!(resolver_colecao(Some("")).unwrap(), Kind::Pareceres);
+        assert_eq!(resolver_colecao(Some("  ")).unwrap(), Kind::Pareceres);
+        assert_eq!(resolver_colecao(Some(" tarf ")).unwrap(), Kind::Tarf);
+        assert_eq!(
+            resolver_colecao(Some("pareceres")).unwrap(),
+            Kind::Pareceres
+        );
+        // `servicos` é coleção legítima, mas não DESTAS ferramentas — erro, não fallback mudo.
+        for invalido in ["servicos", "faqs", "acordaos", "TARF"] {
+            assert!(
+                resolver_colecao(Some(invalido)).is_err(),
+                "{invalido} deveria ser recusado"
+            );
+        }
+    }
+
+    #[test]
+    fn mensagem_de_colecao_invalida_lista_as_validas() {
+        let msg = erro_colecao_invalida("acordaos");
+        assert!(msg.contains("acordaos"), "cita o valor recebido: {msg}");
+        assert!(msg.contains("pareceres") && msg.contains("tarf"), "{msg}");
+        // Quem pediu `servicos` é mandado para a ferramenta certa, não deixado no escuro.
+        assert!(msg.contains("consultar_servicos_faqs"), "{msg}");
     }
 
     #[test]
     fn mensagem_de_numero_nao_achado_ensina_o_proximo_passo() {
-        let msg = erro_numero_nao_achado("PARECER Nº 999", "sc");
+        let msg = erro_numero_nao_achado("PARECER Nº 999", "sc", Kind::Pareceres);
         assert!(
             msg.contains("PARECER Nº 999") && msg.contains("sc"),
             "msg: {msg}"

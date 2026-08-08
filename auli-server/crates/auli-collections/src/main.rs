@@ -81,9 +81,14 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         // preserva quem já roda `auli-collections <id> indice`.
         "indice" => {
             let nome = positional.get(2).map(String::as_str).unwrap_or("pareceres");
-            let colecao = indice::Colecao::parse(nome).ok_or_else(|| {
-                format!("coleção desconhecida para o índice: '{nome}'. Use: pareceres | tarf")
-            })?;
+            // Duas condições, não uma: o nome tem que ser uma coleção conhecida E de jurisprudência.
+            // `servicos` passa no `parse` e é recusado aqui — só quem promete `## resumo` tem índice
+            // leve (o `resumo` é justamente a coluna que a aba do frontend mostra).
+            let colecao = auli_contract::Kind::parse(nome)
+                .filter(|k| k.exige_resumo())
+                .ok_or_else(|| {
+                    format!("coleção desconhecida para o índice: '{nome}'. Use: pareceres | tarf")
+                })?;
             indice::run(entity, colecao)?
         }
         // OFFLINE (+LLM): extrai metadados de grafo da árvore `.md` -> JSONL (não toca nos `.md`).

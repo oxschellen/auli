@@ -21,7 +21,8 @@ export const Chat = () => {
   const entity = useSelectedEntity();
   const { prompt, setPrompt, updatePrompt } = usePrompt();
   const { messages, setMessages } = useMessages();
-  const { questionType, updateQuestionType } = useQuestionType();
+  // O seletor de fonte é dirigido pelo registry: a entidade decide quais tipos existem.
+  const { questionType, updateQuestionType, disponiveis } = useQuestionType(entity);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isSubmittingRef = useRef(false);
@@ -87,7 +88,11 @@ export const Chat = () => {
           loading={loading}
           callServerAPI={handleCallServerAPI}
         >
-          <SelectQuestionType questionType={questionType} updateQuestionType={updateQuestionType} />
+          <SelectQuestionType
+            questionType={questionType}
+            updateQuestionType={updateQuestionType}
+            disponiveis={disponiveis}
+          />
         </Input>
       </Box>
     </Flex>

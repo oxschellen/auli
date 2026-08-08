@@ -12,7 +12,8 @@ interface CallServerAPIArgs {
   API_URL: string;
   /** Active entity id (state), so the backend queries the right tenant's collections. */
   entityId?: string;
-  /** Selected query type ("1" = Serviços+FAQs, "2" = Pareceres); sent as the numeric `type` field. */
+  /** Tipo de consulta selecionado ("1" = Serviços+FAQs, "2" = Pareceres, "3" = Acórdãos TARF);
+   *  enviado como o campo numérico `type`. */
   questionType: QuestionType;
 }
 

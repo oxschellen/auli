@@ -21,7 +21,7 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
-use auli_contract::{ConsultaPackPayload, mddoc, render_consulta_block};
+use auli_contract::{ConsultaPackPayload, Kind, mddoc, render_consulta_block};
 use auli_core::embed::Embedder;
 use tracing::debug;
 use vector_store::ReadStore;
@@ -129,18 +129,24 @@ impl Engine {
         self.search_embedded(collection, &embedding, ceiling, floor, band)
     }
 
-    /// Busca em `<id>-pareceres` devolvendo hits DECODIFICADOS (payload leve → campos), sem corpo.
-    /// Payload que não desserializa não derruba a busca: vira um hit degradado com o JSON cru no
-    /// `assunto` (mesma filosofia do `bloco_parecer` de sempre — nunca propagar erro na query).
-    pub fn search_pareceres(
+    /// Busca em `<id>-<kind>` (uma coleção de JURISPRUDÊNCIA) devolvendo hits DECODIFICADOS
+    /// (payload leve → campos), sem corpo. Payload que não desserializa não derruba a busca: vira um
+    /// hit degradado com o JSON cru no `assunto` (mesma filosofia do `bloco_parecer` de sempre —
+    /// nunca propagar erro na query).
+    pub fn search_jurisprudencia(
         &self,
         entity_id: &str,
+        kind: Kind,
         texto: &str,
         ceiling: usize,
         floor: usize,
         band: f32,
     ) -> Result<Vec<ParecerHit>> {
-        let collection = format!("{entity_id}-pareceres");
+        debug_assert!(
+            kind.exige_resumo(),
+            "só jurisprudência tem payload de consulta"
+        );
+        let collection = format!("{entity_id}-{}", kind.as_str());
         Ok(self
             .search(&collection, texto, ceiling, floor, band)?
             .into_iter()
@@ -149,8 +155,13 @@ impl Engine {
     }
 
     /// Delegação (D-MCP-4).
-    pub fn parecer_por_numero(&self, entity_id: &str, numero: &str) -> Result<Option<ParecerHit>> {
-        parecer_por_numero(&self.collections, &self.docs_root, entity_id, numero)
+    pub fn documento_por_numero(
+        &self,
+        entity_id: &str,
+        kind: Kind,
+        numero: &str,
+    ) -> Result<Option<ParecerHit>> {
+        documento_por_numero(&self.collections, &self.docs_root, entity_id, kind, numero)
     }
 
     /// Delegação (D-MCP-4).
@@ -237,13 +248,18 @@ pub fn entidades_com(collections: &Collections, kind: &str) -> Vec<String> {
 /// Localiza um parecer pelo `numero` exato (comparação insensível a caixa), varrendo a lista da
 /// coleção. O(n) sobre milhares de registros — irrelevante ao lado do custo de rede do cliente.
 /// Preenche o `corpo` lendo a árvore `docs/` (degradação graciosa: corpo ausente vira aviso).
-pub fn parecer_por_numero(
+pub fn documento_por_numero(
     collections: &Collections,
     docs_root: &Path,
     entity_id: &str,
+    kind: Kind,
     numero: &str,
 ) -> Result<Option<ParecerHit>> {
-    let collection = format!("{entity_id}-pareceres");
+    debug_assert!(
+        kind.exige_resumo(),
+        "só jurisprudência tem payload de consulta"
+    );
+    let collection = format!("{entity_id}-{}", kind.as_str());
     let store = collections
         .get(&collection)
         .ok_or(Error::ColecaoAusente(collection))?;
@@ -560,7 +576,7 @@ mod tests {
         );
 
         // Caixa DIFERENTE da gravada: a busca é insensível a caixa e a espaços nas bordas.
-        let achado = parecer_por_numero(&cols, &root, "sc", "  parecer nº 1  ")
+        let achado = documento_por_numero(&cols, &root, "sc", Kind::Pareceres, "  parecer nº 1  ")
             .unwrap()
             .unwrap();
         assert_eq!(achado.numero, "PARECER Nº 1");
@@ -570,7 +586,7 @@ mod tests {
 
         // Miss: número que não existe na coleção.
         assert!(
-            parecer_por_numero(&cols, &root, "sc", "PARECER Nº 999")
+            documento_por_numero(&cols, &root, "sc", Kind::Pareceres, "PARECER Nº 999")
                 .unwrap()
                 .is_none()
         );
@@ -591,7 +607,7 @@ mod tests {
             )]),
         );
 
-        let achado = parecer_por_numero(&cols, &root, "sc", "PARECER Nº 1")
+        let achado = documento_por_numero(&cols, &root, "sc", Kind::Pareceres, "PARECER Nº 1")
             .unwrap()
             .unwrap();
         let corpo = achado.corpo.unwrap();
@@ -608,9 +624,59 @@ mod tests {
     #[test]
     fn parecer_por_numero_em_colecao_fora_do_mapa_e_erro_tipado() {
         let cols = Collections::new();
-        let e =
-            parecer_por_numero(&cols, Path::new("/inexistente"), "xx", "PARECER Nº 1").unwrap_err();
+        let e = documento_por_numero(
+            &cols,
+            Path::new("/inexistente"),
+            "xx",
+            Kind::Pareceres,
+            "PARECER Nº 1",
+        )
+        .unwrap_err();
         assert!(matches!(e, Error::ColecaoAusente(_)));
+    }
+
+    /// A trava da D-A6: o `kind` escolhe o STORE, e as duas coleções não se enxergam.
+    ///
+    /// Sem ela, o modo de falha é mudo nos dois sentidos: pedir um acórdão sem `colecao` devolveria
+    /// "não achado" (buscou nos pareceres), e um número que por acaso exista nas duas devolveria o
+    /// documento errado, com link e corpo de outro acervo.
+    #[test]
+    fn o_kind_escolhe_o_store_e_as_colecoes_nao_se_enxergam() {
+        let root = temp_dir("kind-escolhe-store");
+        let mut cols: Collections = Collections::new();
+        cols.insert(
+            "rs-pareceres".into(),
+            store_de(vec![(
+                payload_json("PARECER Nº 1", "docs/pareceres/parecer-no-1.md").as_str(),
+                vec![1.0],
+            )]),
+        );
+        cols.insert(
+            "rs-tarf".into(),
+            store_de(vec![(
+                payload_json("ACÓRDÃO 510/24", "docs/tarf/acordao-510-24.md").as_str(),
+                vec![1.0],
+            )]),
+        );
+
+        let achar = |kind, numero| {
+            documento_por_numero(&cols, &root, "rs", kind, numero)
+                .unwrap()
+                .map(|h| h.numero)
+        };
+        assert_eq!(
+            achar(Kind::Tarf, "ACÓRDÃO 510/24"),
+            Some("ACÓRDÃO 510/24".to_string())
+        );
+        assert_eq!(
+            achar(Kind::Pareceres, "PARECER Nº 1"),
+            Some("PARECER Nº 1".to_string())
+        );
+        // Cruzado: cada número só existe no próprio acervo.
+        assert_eq!(achar(Kind::Pareceres, "ACÓRDÃO 510/24"), None);
+        assert_eq!(achar(Kind::Tarf, "PARECER Nº 1"), None);
+
+        let _ = std::fs::remove_dir_all(&root);
     }
 
     #[test]
