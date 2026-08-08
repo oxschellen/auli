@@ -20,7 +20,7 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
-use auli_contract::mddoc_servico;
+use auli_contract::mddoc;
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -123,9 +123,13 @@ fn publicos_por_servico(entity: &EntityConfig) -> Result<HashMap<String, BTreeSe
             continue;
         }
         let texto = std::fs::read_to_string(&caminho)?;
-        let (header, _corpo) = mddoc_servico::parse_doc_servico(&texto)
+        let (header, _resumo, _corpo) = mddoc::parse_doc(&texto)
             .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
-        out.entry(header.titulo).or_default().insert(header.tipo);
+        out.entry(header.titulo).or_default().insert(
+            auli_contract::partes_trilha_servico(&header.trilha)
+                .0
+                .to_string(),
+        );
     }
     Ok(out)
 }
@@ -452,18 +456,19 @@ mod tests {
 
     fn escrever_servico(entity: &EntityConfig, arquivo: &str, titulo: &str, tipo: &str) {
         let base = Path::new(&entity.data_dir).parent().unwrap();
-        let header = mddoc_servico::ServicoHeader {
+        let header = mddoc::DocHeader {
             titulo: titulo.into(),
-            tipo: tipo.into(),
-            classe: "Cadastro".into(),
-            orgao: "RECEITA".into(),
+            trilha: auli_contract::trilha_servico(tipo, "Cadastro"),
+            ementa: String::new(),
             link: "https://exemplo".into(),
+            orgao: Some("RECEITA".into()),
+            resumo_info: None,
         };
         std::fs::write(
             base.join("docs")
                 .join("servicos")
                 .join(format!("{arquivo}.md")),
-            mddoc_servico::render_doc_servico(&header, "corpo"),
+            mddoc::render_doc(&header, None, "corpo"),
         )
         .unwrap();
     }

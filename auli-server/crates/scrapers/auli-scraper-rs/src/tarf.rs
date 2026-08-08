@@ -229,14 +229,17 @@ pub fn run(use_cache: bool) -> Result<()> {
         };
         lote.push((
             DocHeader {
-                numero,
-                assunto: extraido.ementa,
+                titulo: numero,
+                // Jurisprudência não tem classificação: a trilha fica vazia (D-FMT-2).
+                trilha: String::new(),
+                ementa: extraido.ementa,
                 link: item.link(),
-                // `sinopse_info` registra proveniência LLM, que aqui não existe: a sinopse é do
+                orgao: None,
+                // `resumo_info` registra proveniência LLM, que aqui não existe: o resumo é do
                 // próprio acórdão. E `docs/tarf/` está fora do alcance do passo
                 // `auli-collections <id> sinopse` (que varre só `docs/pareceres/`), então o
                 // documento nunca é confundido com um pendente.
-                sinopse_info: None,
+                resumo_info: None,
             },
             Some(sinopse),
             html_para_texto(&bruto),
@@ -272,7 +275,7 @@ fn gravar(
     if lote.is_empty() {
         return Ok(());
     }
-    let (c, p) = mddoc::escrever_lote_se_ausente_com_sinopse(dir, lote)?;
+    let (c, p) = mddoc::escrever_lote_se_ausente_com_resumo(dir, lote)?;
     *criados += c;
     *pulados += p;
     lote.clear();
@@ -515,7 +518,7 @@ static RE_ROTULO_EMENTA: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?i)^ementa\s*:?$").unwrap());
 
 /// O que o cabeçalho do acórdão fornece ao documento: a ementa (vira `assunto`) e a fundamentação
-/// resumida (vira `## sinopse`).
+/// resumida (vira `## resumo`).
 struct Extraido {
     ementa: String,
     fundamentacao: Vec<String>,
@@ -886,15 +889,17 @@ mod tests {
     }
 
     #[test]
-    fn documento_emitido_faz_round_trip_com_sinopse() {
-        // Fecha o ciclo: o que este módulo produz é parseável pelo contrato e nasce COM sinopse —
-        // o que satisfaz por construção a guarda `recusar_pareceres_sem_sinopse` do update.
+    fn documento_emitido_faz_round_trip_com_resumo() {
+        // Fecha o ciclo: o que este módulo produz é parseável pelo contrato e nasce COM resumo —
+        // o que satisfaz por construção a guarda `recusar_jurisprudencia_sem_resumo` do update.
         let e = extrair(MODERNO).unwrap();
         let header = DocHeader {
-            numero: "ACÓRDÃO 510/24".into(),
-            assunto: e.ementa,
+            titulo: "ACÓRDÃO 510/24".into(),
+            trilha: String::new(),
+            ementa: e.ementa,
             link: "https://tarf.sefaz.rs.gov.br/documento/ee87f4bc".into(),
-            sinopse_info: None,
+            orgao: None,
+            resumo_info: None,
         };
         let sinopse = e.fundamentacao.join("\n\n");
         let texto = mddoc::render_doc(&header, Some(&sinopse), &html_para_texto(MODERNO));
@@ -902,6 +907,6 @@ mod tests {
         assert_eq!(h, header);
         assert!(s.is_some_and(|s| !s.trim().is_empty()));
         assert!(corpo.contains("RELATÓRIO"));
-        assert_eq!(mddoc::slug(&h.numero), "acordao-510-24");
+        assert_eq!(mddoc::slug(&h.titulo), "acordao-510-24");
     }
 }

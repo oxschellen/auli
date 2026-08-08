@@ -1,11 +1,11 @@
 //! Subcomando `sinopse` — passo `auli-sinopse`, agora **editor da árvore** (G4).
 //!
 //! Fonte e destino são os `.md` de `data/<id>/docs/pareceres/`: **pendente = arquivo sem a seção
-//! `## sinopse`**. O passo lê cada arquivo, gera a sinopse do que falta (LLM real via `auli-llm`, ou
-//! `--fake` dev-only) e regrava o próprio `.md` — frontmatter `sinopse_*` + seção — atomicamente.
+//! `## resumo`**. O passo lê cada arquivo, gera a sinopse do que falta (LLM real via `auli-llm`, ou
+//! `--fake` dev-only) e regrava o próprio `.md` — frontmatter `resumo_*` + seção — atomicamente.
 //! O JSON não é mais tocado aqui; ele é só a origem estrutural da materialização (`auli update`).
 //!
-//! Retomada é implícita: o que já tem `## sinopse` é pulado, então re-rodar continua de onde parou.
+//! Retomada é implícita: o que já tem `## resumo` é pulado, então re-rodar continua de onde parou.
 //! `--force <numero>` re-pendura um documento específico. Invariante do passo:
 //! `reaproveitados + gerados + falhas + pendentes_restantes == total`.
 //!
@@ -22,7 +22,7 @@ use auli_contract::mddoc;
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
 
-/// Versão do prompt (gravada em `SinopseInfo.prompt_versao`). Bump a cada mudança do
+/// Versão do prompt (gravada em `ResumoInfo.prompt_versao`). Bump a cada mudança do
 /// `data/prompts/sinopse.txt`. `0` é reservado ao `--fake`.
 pub const SINOPSE_PROMPT_VERSION: u32 = 1;
 /// Teto de entrada do corpo (chars). Acima disso, trunca com aviso no log (v1: sem chunking).
@@ -103,11 +103,11 @@ fn indexar(dir: &Path, force: Option<&str>) -> Result<Vec<DocIndex>> {
             )
         })?;
         // `--force` re-pendura exatamente o `numero` alvo, mesmo que já tenha seção.
-        let forcado = force.is_some_and(|f| f == header.numero);
+        let forcado = force.is_some_and(|f| f == header.titulo);
         out.push(DocIndex {
             caminho,
             pendente: sinopse.is_none() || forcado,
-            numero: header.numero,
+            numero: header.titulo,
         });
     }
     Ok(out)
@@ -125,7 +125,7 @@ fn escrever_sinopse(
     let texto = std::fs::read_to_string(caminho)?;
     let (mut header, _sinopse_antiga, corpo) = mddoc::parse_doc(&texto)
         .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
-    header.sinopse_info = Some(auli_contract::SinopseInfo {
+    header.resumo_info = Some(auli_contract::ResumoInfo {
         modelo: modelo.to_string(),
         prompt_versao,
         gerada_em: gerada_em.to_string(),
@@ -305,7 +305,7 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
         for d in docs.iter().filter(|d| d.pendente) {
             let texto = std::fs::read_to_string(&d.caminho)?;
             if let Ok((h, _s, corpo)) = mddoc::parse_doc(&texto) {
-                chars += h.assunto.chars().count() + corpo.chars().count();
+                chars += h.ementa.chars().count() + corpo.chars().count();
             }
         }
         println!(
@@ -355,9 +355,9 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
                 rt,
                 params,
                 system_prompt,
-                &header.assunto,
+                &header.ementa,
                 &corpo,
-                &header.numero,
+                &header.titulo,
             ) {
                 Ok(g) => {
                     let hr = (g.remaining_requests, g.reset_requests);
@@ -374,18 +374,18 @@ pub fn run(entity: &EntityConfig, opts: SinopseOpts) -> Result<()> {
                     eprintln!(
                         "🛑 {}: cota da API esgotada (rate limit) em '{}'. Abortando o lote — \
                          os pendentes ficam para a próxima rodada (idempotente).",
-                        entity.id, header.numero
+                        entity.id, header.titulo
                     );
                     break;
                 }
                 Err(motivo) => {
-                    eprintln!("⚠️  {}: falha — {motivo}", header.numero);
+                    eprintln!("⚠️  {}: falha — {motivo}", header.titulo);
                     falhas += 1;
                     continue;
                 }
             }
         } else {
-            (fake_resumo(&header.assunto), "fake".to_string(), 0, None)
+            (fake_resumo(&header.ementa), "fake".to_string(), 0, None)
         };
 
         escrever_sinopse(&d.caminho, &resumo, &modelo, versao, &now_iso8601())?;
@@ -463,16 +463,16 @@ mod tests {
 
     /// Escreve um `.md` na árvore do teste. `sinopse: None` = documento pendente.
     fn escrever_doc(entity: &EntityConfig, slug: &str, numero: &str, sinopse: Option<&str>) {
-        let header = mddoc::DocHeader {
-            numero: numero.into(),
-            assunto: format!("assunto de {numero}"),
-            link: format!("https://exemplo/{numero}"),
-            sinopse_info: sinopse.map(|_| auli_contract::SinopseInfo {
-                modelo: "previa".into(),
-                prompt_versao: 1,
-                gerada_em: "2026-01-01T00:00:00Z".into(),
-            }),
-        };
+        let mut header = mddoc::cabecalho_jurisprudencia(
+            numero,
+            &format!("assunto de {numero}"),
+            &format!("https://exemplo/{numero}"),
+        );
+        header.resumo_info = sinopse.map(|_| auli_contract::ResumoInfo {
+            modelo: "previa".into(),
+            prompt_versao: 1,
+            gerada_em: "2026-01-01T00:00:00Z".into(),
+        });
         let corpo = format!("corpo integral de {numero}");
         let dir = docs_dir(entity).unwrap();
         std::fs::write(
@@ -487,7 +487,7 @@ mod tests {
         let dir = docs_dir(entity).unwrap();
         let texto = std::fs::read_to_string(dir.join(format!("{slug}.md"))).unwrap();
         let (h, sin, corpo) = mddoc::parse_doc(&texto).unwrap();
-        (sin, corpo, h.sinopse_info.map(|i| i.modelo))
+        (sin, corpo, h.resumo_info.map(|i| i.modelo))
     }
 
     fn opts(fake: bool, limit: Option<usize>, force: Option<&str>, dry_run: bool) -> SinopseOpts {
@@ -621,9 +621,9 @@ mod tests {
         let (h, sin, corpo) = mddoc::parse_doc(&texto).unwrap();
         assert_eq!(sin.as_deref(), Some("NOVA SINOPSE"));
         assert_eq!(corpo, "corpo integral de A 1", "corpo intocado");
-        assert_eq!(h.numero, "A 1");
+        assert_eq!(h.titulo, "A 1");
         assert_eq!(h.link, "https://exemplo/A 1", "link intocado");
-        let info = h.sinopse_info.unwrap();
+        let info = h.resumo_info.unwrap();
         assert_eq!(info.modelo, "modelo-x");
         assert_eq!(info.prompt_versao, 7);
     }

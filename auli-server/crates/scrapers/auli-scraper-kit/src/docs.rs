@@ -2,7 +2,7 @@
 //!
 //! Cada scraper de pareceres grava **um `.md` por consulta inédita** em
 //! `data/<id>/docs/pareceres/`, em vez de despejar tudo num `.txt` intermediário. O documento nasce
-//! **pendente** (sem `## sinopse`) — quem preenche é o passo `auli-collections <id> sinopse`.
+//! **pendente** (sem `## resumo`) — quem preenche é o passo `auli-collections <id> sinopse`.
 //!
 //! **"Existe ⇒ pula" é o incremental**, e é também a proteção: um `.md` já na árvore pode carregar
 //! uma sinopse que custou LLM, então re-coletar nunca o toca. O contrato (`mddoc`) é quem decide o
@@ -32,12 +32,7 @@ pub fn emitir_pareceres(dir: &Path, docs: &[DocParaEmitir<'_>]) -> Result<(usize
         .iter()
         .map(|d| {
             (
-                mddoc::DocHeader {
-                    numero: d.numero.to_string(),
-                    assunto: d.assunto.to_string(),
-                    link: d.link.to_string(),
-                    sinopse_info: None, // produtor emite pendente; a sinopse vem depois
-                },
+                mddoc::cabecalho_jurisprudencia(d.numero, d.assunto, d.link),
                 d.corpo.to_string(),
             )
         })

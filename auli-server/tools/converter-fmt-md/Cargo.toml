@@ -1,0 +1,12 @@
+[package]
+name = "converter-fmt-md"
+version = "0.1.0"
+edition = "2024"
+
+# Conversor ONE-SHOT das árvores append-only para o vocabulário unificado (D-FMT-8).
+#
+# Vive em `tools/`, fora de `crates/`, porque não é código de produção: existe para uma janela de
+# migração e some do caminho depois dela. Fica no workspace só para herdar o Cargo.lock único.
+[dependencies]
+auli-contract = { path = "../../crates/auli-contract" }
+anyhow = "1"

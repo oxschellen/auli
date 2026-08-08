@@ -108,24 +108,17 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
         .parent()
         .ok_or_else(|| format!("data_dir sem pai: {data_dir}"))?;
     let docs_dir = base.join("docs").join("servicos");
-    let docs: Vec<(auli_contract::mddoc_servico::ServicoHeader, String)> = table
+    let docs: Vec<(auli_contract::mddoc::DocHeader, String)> = table
         .items
         .iter()
-        .map(|s| {
-            (
-                auli_contract::mddoc_servico::ServicoHeader {
-                    titulo: s.titulo.clone(),
-                    tipo: s.tipo.clone(),
-                    classe: s.classe.clone(),
-                    orgao: s.orgao.clone(),
-                    link: s.link.clone(),
-                },
-                s.descricao.clone(),
-            )
-        })
+        .map(|s| (cabecalho_servico(s), s.descricao.clone()))
         .collect();
-    let gravados = auli_contract::mddoc_servico::materializar_arvore(&docs_dir, &docs)
-        .map_err(|e| format!("materialização da árvore de serviços: {e}"))?;
+    let gravados = auli_contract::mddoc::materializar_arvore(
+        &docs_dir,
+        &docs,
+        auli_contract::mddoc::nome_servico,
+    )
+    .map_err(|e| format!("materialização da árvore de serviços: {e}"))?;
     println!(
         "📄 docs: {} serviços materializados em {}",
         gravados,
@@ -165,6 +158,20 @@ pub fn process(id: &str, data_dir: &str, coleta: &auli_contract::ColetaServicos)
 /// Contribuintes") enquanto a curta (97) é a porta de entrada genérica ("Serviços Eletrônicos
 /// ICMS") — preferir a longa escolheria a descrição mais ESTREITA. "O primeiro" ao menos herda uma
 /// ordem com significado: a da coleta, que segue a listagem do próprio portal.
+/// Cabeçalho do serviço no vocabulário unificado (D-FMT-2): o título é o `titulo`, o breadcrumb
+/// `tipo | classe` é a `trilha` (pré-composta pelo contrato, byte-idêntica à do `text_to_embed` e à
+/// do bloco RAG), a `ementa` fica vazia e o `orgao` é o passthrough de D-FMT-3.
+fn cabecalho_servico(s: &auli_contract::Servico) -> auli_contract::mddoc::DocHeader {
+    auli_contract::mddoc::DocHeader {
+        titulo: s.titulo.clone(),
+        trilha: auli_contract::trilha_servico(&s.tipo, &s.classe),
+        ementa: String::new(),
+        link: s.link.clone(),
+        orgao: Some(s.orgao.clone()),
+        resumo_info: None,
+    }
+}
+
 fn fundir_duplicatas(items: &[auli_contract::ServicoRaw]) -> Vec<auli_contract::ServicoRaw> {
     let mut out: Vec<auli_contract::ServicoRaw> = Vec::with_capacity(items.len());
     let mut onde: std::collections::HashMap<String, usize> =
@@ -172,7 +179,7 @@ fn fundir_duplicatas(items: &[auli_contract::ServicoRaw]) -> Vec<auli_contract::
     let mut divergentes: Vec<&str> = Vec::new();
 
     for s in items {
-        let chave = auli_contract::mddoc_servico::slug_servico(&s.titulo, &s.link);
+        let chave = auli_contract::mddoc::nome_servico_de(&s.titulo, &s.link);
         match onde.get(&chave) {
             Some(&i) => {
                 let alvo = &mut out[i];

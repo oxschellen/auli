@@ -12,8 +12,6 @@
 //! concordam — sobre a forma E sobre o caminho/versão/leitura/escrita da fronteira.
 
 pub mod mddoc;
-pub mod mddoc_faq;
-pub mod mddoc_servico;
 pub mod snapshot;
 pub use snapshot::*;
 
@@ -143,11 +141,16 @@ impl Embeddable for Servico {
     }
 }
 
-/// Proveniência da sinopse gerada pelo passo `auli-sinopse` (fase posterior).
-/// `None` = registro sem sinopse gerada: pendente (resumo vazio) ou sumário autorado legado
+/// Proveniência do `## resumo` gerado pelo passo `auli-sinopse`.
+/// `None` = registro sem resumo gerado: pendente (resumo vazio) ou sumário autorado legado
 /// (resumo preenchido na origem, caso RS antigo).
+///
+/// (Antes: `SinopseInfo`.) O **nome do tipo** acompanhou o vocabulário unificado das árvores
+/// (D-FMT-4), mas o campo `Consulta::sinopse_info` conserva o nome antigo de propósito: ele é
+/// serializado nos snapshots, que não estão no escopo desta unificação. Nomes de tipo não vazam
+/// para o JSON — nomes de campo, sim.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct SinopseInfo {
+pub struct ResumoInfo {
     /// Modelo que gerou a sinopse (ex.: `"llama-3.3-70b-versatile"`).
     pub modelo: String,
     /// Versão do prompt do auli-sinopse (const `SINOPSE_PROMPT_VERSION` no gerador).
@@ -179,10 +182,10 @@ pub struct Consulta {
     pub link: String,
     /// Key a embeddar — preenchida na origem (para pareceres: `assunto` + `resumo`).
     pub text_to_embed: String,
-    /// Proveniência da sinopse (ver [`SinopseInfo`]). Ausente no JSON quando `None` —
+    /// Proveniência da sinopse (ver [`ResumoInfo`]). Ausente no JSON quando `None` —
     /// snapshots antigos continuam válidos sem migração.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub sinopse_info: Option<SinopseInfo>,
+    pub sinopse_info: Option<ResumoInfo>,
 }
 
 impl Embeddable for Consulta {
@@ -231,7 +234,20 @@ pub struct ConsultaPackPayload {
 /// Vive no contrato (e não no `auli-collections`) porque os DOIS lados precisam dela: o produtor
 /// (sinopse/derive) ao gravar, e o `auli update` ao hidratar o `resumo` da árvore (G4).
 pub fn compose_text_to_embed(numero: &str, assunto: &str, resumo: &str) -> String {
-    [numero, assunto, resumo]
+    compose_unificado("", numero, assunto, resumo)
+}
+
+/// **O compose único** (D-FMT-6): os quatro papéis do vocabulário unificado, um por linha, na
+/// geometria `trilha → titulo → ementa → resumo`, pulando os vazios.
+///
+/// A ordem não é estética: é o que faz cada coleção reproduzir a própria fórmula congelada quando
+/// os slots que não usa ficam vazios e se anulam. Jurisprudência preenche titulo/ementa/resumo e
+/// deixa a trilha vazia; serviços preenchem trilha/titulo/resumo e deixam a ementa vazia; faqs
+/// preenchem trilha/titulo/resumo. Os adaptadores por coleção ([`compose_text_to_embed`],
+/// [`compose_servico_text_to_embed`], [`compose_faq_text_to_embed`]) só decidem o que vai em cada
+/// slot — a fórmula é esta, e mudá-la re-vetoriza TUDO.
+pub fn compose_unificado(trilha: &str, titulo: &str, ementa: &str, resumo: &str) -> String {
+    [trilha, titulo, ementa, resumo]
         .into_iter()
         .filter(|s| !s.is_empty())
         .collect::<Vec<_>>()
@@ -242,14 +258,52 @@ pub fn compose_text_to_embed(numero: &str, assunto: &str, resumo: &str) -> Strin
 /// da descrição (300 chars). Vive no contrato porque os DOIS lados precisam dela:
 /// o produtor (`servicos::process`) ao materializar, e o `auli update` ao
 /// rematerializar na leitura da árvore `docs/servicos/*.md`.
+///
+/// Adaptador do compose único: `trilha = "tipo | classe"` (a breadcrumb pré-composta, que é também
+/// o que vai para o frontmatter), `titulo`, ementa vazia e `resumo = snippet`.
 pub fn compose_servico_text_to_embed(
     tipo: &str,
     classe: &str,
     titulo: &str,
     descricao: &str,
 ) -> String {
-    let snippet: String = descricao.chars().take(300).collect();
-    format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim())
+    // O `.trim()` final reproduz o da fórmula congelada: com `tipo` e `classe` vazios a trilha vira
+    // `" | "`, e a fórmula antiga aparava esse espaço à esquerda.
+    compose_unificado(
+        &trilha_servico(tipo, classe),
+        titulo,
+        "",
+        &snippet(descricao),
+    )
+    .trim()
+    .to_string()
+}
+
+/// A trilha do serviço: breadcrumb `tipo | classe`. Ponto único — o mesmo texto vai para o
+/// `text_to_embed` e para o frontmatter, e é o que o bloco RAG exibe.
+pub fn trilha_servico(tipo: &str, classe: &str) -> String {
+    format!("{tipo} | {classe}")
+}
+
+/// Inverso de [`trilha_servico`]: devolve `(tipo, classe)` de uma trilha de serviço.
+///
+/// Quebra no PRIMEIRO ` | ` porque é o `tipo` que é o campo simples (o nome de um público:
+/// "Cidadãos", "Empresas"), enquanto a classe é texto do portal. Sem separador, tudo é `tipo` e a
+/// classe fica vazia. Existe porque a árvore guarda a trilha já composta (é o que os dois funis
+/// consomem) e um consumidor — o grafo de serviços — ainda precisa do público isolado.
+pub fn partes_trilha_servico(trilha: &str) -> (&str, &str) {
+    match trilha.split_once(" | ") {
+        Some((tipo, classe)) => (tipo, classe),
+        None => (trilha, ""),
+    }
+}
+
+/// Snippet da descrição que entra na key: 300 chars contados em CHARS (há acentos), aparado.
+fn snippet(descricao: &str) -> String {
+    descricao
+        .chars()
+        .take(300)
+        .collect::<String>()
         .trim()
         .to_string()
 }
@@ -267,22 +321,23 @@ pub fn compose_servico_text_to_embed(
 ///
 /// Vive no contrato porque os DOIS lados precisam dela: o produtor
 /// (`derive_faqs`) e o `auli update` ao rematerializar da árvore `docs/faqs/*.md`.
+///
+/// Adaptador do compose único, com uma torção deliberada: os prefixos `P:`/`R:` entram no **valor**
+/// dos slots (`titulo = "P: {pergunta}"`, `resumo = "R: {resposta}"`), não na fórmula. É o que
+/// permite unificar sem re-vetorizar — a fórmula não sabe de prefixo nenhum, e quando o gate P5
+/// decidir removê-los, some este mapeamento, não o compose. (A `## resumo` da FAQ é ausente na
+/// árvore: o `R:` é montado aqui a partir do `## corpo`.)
 pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str, resposta: &str) -> String {
-    let assunto = mddoc::colapsa_linha(origin);
+    let trilha = mddoc::colapsa_linha(origin);
     let pergunta = mddoc::colapsa_linha(pergunta);
     let resposta = mddoc::colapsa_linha(resposta);
-    let mut out = String::with_capacity(assunto.len() + pergunta.len() + resposta.len() + 8);
-    if !assunto.is_empty() {
-        out.push_str(&assunto);
-        out.push('\n');
-    }
-    out.push_str("P: ");
-    out.push_str(&pergunta);
-    if !resposta.is_empty() {
-        out.push_str("\nR: ");
-        out.push_str(&resposta);
-    }
-    out
+    let titulo = format!("P: {pergunta}");
+    let resumo = if resposta.is_empty() {
+        String::new()
+    } else {
+        format!("R: {resposta}")
+    };
+    compose_unificado(&trilha, &titulo, "", &resumo)
 }
 
 /// Renderiza o bloco de contexto de uma consulta a partir do payload leve + corpo lido da árvore.
@@ -347,6 +402,117 @@ mod tests {
         let block = s.stored_repr();
         assert!(block.starts_with("## pergunta\nEmpresas | ICMS\nEmitir guia"));
         assert!(block.contains("Link: https://exemplo/svc/1"));
+    }
+
+    /// Reimplementação LITERAL das três fórmulas como estavam antes da unificação (D-FMT-6).
+    /// Não chamam nada do código de produção de propósito: são a referência contra a qual o
+    /// compose único é medido. Se um dia divergirem, é o compose que mudou — e mudar o compose
+    /// re-vetoriza todos os packs.
+    mod formulas_antigas {
+        pub fn jurisprudencia(numero: &str, assunto: &str, resumo: &str) -> String {
+            [numero, assunto, resumo]
+                .into_iter()
+                .filter(|s| !s.is_empty())
+                .collect::<Vec<_>>()
+                .join("\n")
+        }
+
+        pub fn servico(tipo: &str, classe: &str, titulo: &str, descricao: &str) -> String {
+            let snippet: String = descricao.chars().take(300).collect();
+            format!("{} | {}\n{}\n{}", tipo, classe, titulo, snippet.trim())
+                .trim()
+                .to_string()
+        }
+
+        pub fn faq(origin: &str, pergunta: &str, resposta: &str) -> String {
+            let assunto = crate::mddoc::colapsa_linha(origin);
+            let pergunta = crate::mddoc::colapsa_linha(pergunta);
+            let resposta = crate::mddoc::colapsa_linha(resposta);
+            let mut out = String::new();
+            if !assunto.is_empty() {
+                out.push_str(&assunto);
+                out.push('\n');
+            }
+            out.push_str("P: ");
+            out.push_str(&pergunta);
+            if !resposta.is_empty() {
+                out.push_str("\nR: ");
+                out.push_str(&resposta);
+            }
+            out
+        }
+    }
+
+    #[test]
+    fn compose_unificado_reproduz_a_formula_de_jurisprudencia_byte_a_byte() {
+        let casos = [
+            ("PARECER Nº 25148", "ICMS. Crédito.", "Resumo do parecer."),
+            ("PARECER Nº 1", "", "só resumo"),
+            ("PARECER Nº 2", "só assunto", ""),
+            ("PARECER Nº 3", "", ""),
+        ];
+        for (numero, assunto, resumo) in casos {
+            assert_eq!(
+                compose_text_to_embed(numero, assunto, resumo),
+                formulas_antigas::jurisprudencia(numero, assunto, resumo),
+                "divergiu em {numero:?}/{assunto:?}/{resumo:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn compose_unificado_reproduz_a_formula_de_servico_byte_a_byte() {
+        let descricao_longa = "á".repeat(400);
+        let casos = [
+            ("Empresas", "ICMS", "Emitir guia", "Passos para emitir."),
+            ("Cidadãos", "IPVA", "Guia", descricao_longa.as_str()),
+            ("Empresas", "ICMS", "Sem descrição", ""),
+            ("Empresas", "ICMS", "Descrição só de espaço", "   "),
+            ("", "", "Sem breadcrumb", "Descrição."), // trilha vira " | " e é aparada
+            ("Cidadãos", "", "Classe vazia", "Descrição."),
+        ];
+        for (tipo, classe, titulo, descricao) in casos {
+            assert_eq!(
+                compose_servico_text_to_embed(tipo, classe, titulo, descricao),
+                formulas_antigas::servico(tipo, classe, titulo, descricao),
+                "divergiu em {tipo:?}/{classe:?}/{titulo:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn compose_unificado_reproduz_a_formula_de_faq_byte_a_byte() {
+        let casos = [
+            ("Inicial | IPVA", "Como emitir a guia?", "Acesse o portal."),
+            ("", "Como emitir a guia?", "Acesse o portal."), // sem breadcrumb
+            ("Inicial | IPVA", "Como emitir a guia?", ""),   // sem resposta
+            ("Inicial | IPVA", "", "Acesse o portal."),      // pergunta vazia ⇒ `P: ` pelado
+            (
+                "  Inicial  |  IPVA ",
+                " Como  emitir? ",
+                " Acesse\no portal. ",
+            ), // colapso
+        ];
+        for (origin, pergunta, resposta) in casos {
+            assert_eq!(
+                compose_faq_text_to_embed(origin, pergunta, resposta),
+                formulas_antigas::faq(origin, pergunta, resposta),
+                "divergiu em {origin:?}/{pergunta:?}/{resposta:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn compose_de_servico_com_titulo_vazio_e_a_unica_divergencia_conhecida() {
+        // Honestidade da unificação: a fórmula antiga deixava uma LINHA EM BRANCO no lugar do
+        // título vazio; o compose único pula slots vazios. Só diverge aqui, e este estado não
+        // existe na árvore — o título é a identidade do serviço (é dele que sai o nome do
+        // arquivo). O teste existe para que a divergência seja uma decisão registrada, não uma
+        // descoberta futura.
+        let novo = compose_servico_text_to_embed("Empresas", "ICMS", "", "Descrição.");
+        let antigo = formulas_antigas::servico("Empresas", "ICMS", "", "Descrição.");
+        assert_eq!(novo, "Empresas | ICMS\nDescrição.");
+        assert_eq!(antigo, "Empresas | ICMS\n\nDescrição.");
     }
 
     #[test]
@@ -534,7 +700,7 @@ mod tests {
     #[test]
     fn consulta_with_sinopse_roundtrips_through_json() {
         let mut c = sample_consulta();
-        c.sinopse_info = Some(SinopseInfo {
+        c.sinopse_info = Some(ResumoInfo {
             modelo: "llama-3.3-70b-versatile".into(),
             prompt_versao: 1,
             gerada_em: "2026-07-18T14:00:00Z".into(),

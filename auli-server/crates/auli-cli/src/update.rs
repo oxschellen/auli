@@ -14,8 +14,8 @@
 //!
 //! **`pareceres` é a exceção (G5b): a fonte é a árvore `docs/pareceres/*.md`, não um JSON.** Os
 //! produtores (scrapers) criam um `.md` por consulta inédita; o passo `auli-collections <id> sinopse`
-//! preenche a `## sinopse`; aqui a árvore é lida em ordem de nome e vetorizada. A guarda recusa a
-//! vetorização se algum documento estiver sem sinopse — embedar sem ela é índice cego —, mas a
+//! preenche o `## resumo`; aqui a árvore é lida em ordem de nome e vetorizada. A guarda recusa a
+//! vetorização se algum documento estiver sem resumo — embedar sem ela é índice cego —, mas a
 //! árvore em si segue válida (pendência é estado legal dela).
 //!
 //! Does NOT use the server `Config` (no LLM vars needed for ingestion) — only the embedder
@@ -68,7 +68,7 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
     }
     // pareceres: a FONTE é a árvore `docs/pareceres/*.md` (G5b) — o JSON saiu do caminho. Os
     // produtores (scrapers) criam um `.md` por consulta inédita; o passo
-    // `auli-collections <entity> sinopse` preenche a `## sinopse`; aqui só lemos e vetorizamos.
+    // `auli-collections <entity> sinopse` preenche o `## resumo`; aqui só lemos e vetorizamos.
     // Entidade sem árvore -> pulada.
     if let Some(consultas) = preparar_pareceres(&entity, &docs_dir)? {
         println!(
@@ -122,7 +122,14 @@ fn avisar_faqs_truncadas(embedder: &Embedder, faqs: &[auli_contract::Faq]) -> Re
         if embedder.conta_tokens(&f.text_to_embed)? >= EMBED_MAX_TOKENS {
             truncadas.push(format!(
                 "{}.md",
-                auli_contract::mddoc_faq::slug_faq(&f.pergunta, &f.url)
+                auli_contract::mddoc::nome_faq(&auli_contract::mddoc::DocHeader {
+                    titulo: f.pergunta.clone(),
+                    trilha: f.origin.clone(),
+                    ementa: String::new(),
+                    link: f.url.clone(),
+                    orgao: None,
+                    resumo_info: None,
+                })
             ));
         }
     }
@@ -143,8 +150,8 @@ fn avisar_faqs_truncadas(embedder: &Embedder, faqs: &[auli_contract::Faq]) -> Re
 }
 
 /// Lê a árvore `docs/faqs/*.md` — **a FONTE** (TAREFA-FAQS-MD) — e devolve as faqs prontas para
-/// vetorizar, ou `None` se a entidade não tem árvore (fallback de transição: o chamador cai no JSON
-/// legado com aviso).
+/// vetorizar, ou `None` se a entidade não tem árvore — nesse caso a coleção é simplesmente pulada
+/// (o fallback para o JSON legado não existe mais: a árvore é a fonte).
 ///
 /// `Faq` não tem `id`: a rematerialização é só a struct + o `text_to_embed`, recomposto aqui pelo
 /// ponto único do contrato. Ordem = nome de arquivo, para o pack ser reproduzível.
@@ -165,19 +172,19 @@ fn preparar_faqs(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Faq>>> {
     let mut faqs = Vec::with_capacity(caminhos.len());
     for caminho in &caminhos {
         let texto = std::fs::read_to_string(caminho)?;
-        let (header, corpo) = auli_contract::mddoc_faq::parse_doc_faq(&texto)
+        let (header, _resumo, corpo) = auli_contract::mddoc::parse_doc(&texto)
             .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
         faqs.push(auli_contract::Faq {
             // `&corpo` antes do move para `resposta`: a ordem dos campos no literal é a de avaliação.
             text_to_embed: auli_contract::compose_faq_text_to_embed(
-                &header.origin,
-                &header.pergunta,
+                &header.trilha,
+                &header.titulo,
                 &corpo,
             ),
-            pergunta: header.pergunta,
+            pergunta: header.titulo,
             resposta: corpo,
-            origin: header.origin,
-            url: header.url,
+            origin: header.trilha,
+            url: header.link,
         });
     }
 
@@ -186,8 +193,8 @@ fn preparar_faqs(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Faq>>> {
 }
 
 /// Lê a árvore `docs/servicos/*.md` — **a FONTE** (TAREFA-SERVICOS-MD) — e devolve os serviços
-/// prontos para vetorizar, ou `None` se a entidade não tem árvore (fallback de transição: o chamador
-/// cai no JSON legado com aviso).
+/// prontos para vetorizar, ou `None` se a entidade não tem árvore — nesse caso a coleção é
+/// simplesmente pulada (o fallback para o JSON legado não existe mais: a árvore é a fonte).
 ///
 /// `id` sequencial e `text_to_embed` são **rematerializados aqui**, em ordem de nome de arquivo —
 /// pack reproduzível, mesma doutrina dos pareceres. O `.md` não guarda nenhum dos dois: eles são
@@ -209,19 +216,21 @@ fn preparar_servicos(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Servic
     let mut servicos = Vec::with_capacity(caminhos.len());
     for (i, caminho) in caminhos.iter().enumerate() {
         let texto = std::fs::read_to_string(caminho)?;
-        let (header, corpo) = auli_contract::mddoc_servico::parse_doc_servico(&texto)
+        let (header, _resumo, corpo) = auli_contract::mddoc::parse_doc(&texto)
             .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
+        // A trilha vem pré-composta da árvore; `tipo`/`classe` da struct de domínio são as partes.
+        let (tipo, classe) = auli_contract::partes_trilha_servico(&header.trilha);
         servicos.push(auli_contract::Servico {
             id: i + 1,
             text_to_embed: auli_contract::compose_servico_text_to_embed(
-                &header.tipo,
-                &header.classe,
+                tipo,
+                classe,
                 &header.titulo,
                 &corpo,
             ),
-            tipo: header.tipo,
-            classe: header.classe,
-            orgao: header.orgao,
+            tipo: tipo.to_string(),
+            classe: classe.to_string(),
+            orgao: header.orgao.unwrap_or_default(),
             link: header.link,
             titulo: header.titulo,
             descricao: corpo,
@@ -240,7 +249,7 @@ fn preparar_servicos(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Servic
 /// vetorizar, ou `None` se a entidade não tem árvore.
 ///
 /// O JSON saiu do caminho: cada `.md` carrega tudo que o índice precisa (frontmatter dá
-/// `numero`/`assunto`/`link`, a seção `## sinopse` dá o `resumo`, `## corpo` dá o corpo). O
+/// `titulo`/`ementa`/`link`, a seção `## resumo` dá o `resumo`, `## corpo` dá o corpo). O
 /// `text_to_embed` é recomposto aqui pelo ponto único (`compose_text_to_embed`), então todos os
 /// registros seguem a mesma fórmula, independentemente de quando foram produzidos.
 ///
@@ -267,22 +276,22 @@ fn preparar_pareceres(
     let mut pendentes: Vec<String> = Vec::new();
     for caminho in &caminhos {
         let texto = std::fs::read_to_string(caminho)?;
-        let (header, sinopse, corpo) = auli_contract::mddoc::parse_doc(&texto)
+        let (header, resumo, corpo) = auli_contract::mddoc::parse_doc(&texto)
             .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
-        let resumo = sinopse.unwrap_or_default();
+        let resumo = resumo.unwrap_or_default();
         if resumo.trim().is_empty() {
-            pendentes.push(header.numero.clone());
+            pendentes.push(header.titulo.clone());
         }
         consultas.push(auli_contract::Consulta {
             text_to_embed: auli_contract::compose_text_to_embed(
-                &header.numero,
-                &header.assunto,
+                &header.titulo,
+                &header.ementa,
                 &resumo,
             ),
-            numero: header.numero,
-            assunto: header.assunto,
+            numero: header.titulo,
+            assunto: header.ementa,
             link: header.link,
-            sinopse_info: header.sinopse_info,
+            sinopse_info: header.resumo_info,
             resumo,
             corpo,
         });
@@ -293,14 +302,18 @@ fn preparar_pareceres(
         consultas.len(),
         dir.display()
     );
-    recusar_pareceres_sem_sinopse(entity, &pendentes)?;
+    recusar_jurisprudencia_sem_resumo(entity, &pendentes)?;
     Ok(Some(consultas))
 }
 
-/// Recusa vetorizar quando algum `.md` da árvore está **sem a seção `## sinopse`**: embedar sem ela
-/// é regressão silenciosa (o `text_to_embed` fica cego para o corpo — é o que o passo `sinopse`
-/// resolve). Recebe os números já apurados pela leitura da árvore.
-fn recusar_pareceres_sem_sinopse(entity: &str, pendentes: &[String]) -> Result<()> {
+/// Recusa vetorizar quando algum `.md` de **jurisprudência** está sem a seção `## resumo`: embedar
+/// sem ela é regressão silenciosa (o `text_to_embed` fica cego para o corpo — é o que o passo
+/// `sinopse` resolve). Recebe os títulos já apurados pela leitura da árvore.
+///
+/// A exigência é **por coleção, não por formato** (D-FMT-7): serviços e faqs compartilham o mesmo
+/// vocabulário e nunca têm `## resumo`, e isso é estado normal deles — só a jurisprudência promete
+/// um resumo.
+fn recusar_jurisprudencia_sem_resumo(entity: &str, pendentes: &[String]) -> Result<()> {
     if pendentes.is_empty() {
         return Ok(());
     }
@@ -315,7 +328,7 @@ fn recusar_pareceres_sem_sinopse(entity: &str, pendentes: &[String]) -> Result<(
     // entidade já vetorizada, a árvore no disco fica À FRENTE do manifesto antigo — e o boot
     // recusaria por `docs_hash`, corretamente. Daí o aviso de reinício.
     Err(format!(
-        "{} documento(s) da árvore sem a seção `## sinopse` ({amostra}{reticencias}).\n\
+        "{} documento(s) da árvore sem a seção `## resumo` ({amostra}{reticencias}).\n\
          A VETORIZAÇÃO foi recusada para não indexar às cegas — a árvore em si está válida \
          (pendência é estado legal dela).\n\
          Remédio: rode `auli-collections {entity} sinopse` (ele preenche os `.md`) e depois \
@@ -386,7 +399,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use auli_contract::{SinopseInfo, mddoc};
+    use auli_contract::{ResumoInfo, mddoc};
 
     /// Monta uma árvore de teste e devolve `docs_dir` (o pai de `pareceres/`).
     fn arvore(tag: &str, docs: &[(&str, Option<&str>)]) -> PathBuf {
@@ -396,16 +409,16 @@ mod tests {
         let dir = base.join("docs").join("pareceres");
         std::fs::create_dir_all(&dir).unwrap();
         for (numero, sinopse) in docs {
-            let header = mddoc::DocHeader {
-                numero: (*numero).into(),
-                assunto: format!("assunto de {numero}"),
-                link: format!("http://x/{numero}"),
-                sinopse_info: sinopse.map(|_| SinopseInfo {
-                    modelo: "m".into(),
-                    prompt_versao: 1,
-                    gerada_em: "2026-07-20T00:00:00Z".into(),
-                }),
-            };
+            let mut header = mddoc::cabecalho_jurisprudencia(
+                numero,
+                &format!("assunto de {numero}"),
+                &format!("http://x/{numero}"),
+            );
+            header.resumo_info = sinopse.map(|_| ResumoInfo {
+                modelo: "m".into(),
+                prompt_versao: 1,
+                gerada_em: "2026-07-20T00:00:00Z".into(),
+            });
             let corpo = format!("corpo de {numero}");
             std::fs::write(
                 dir.join(format!("{}.md", mddoc::slug(numero))),
@@ -496,15 +509,18 @@ mod tests {
         let dir = base.join("docs").join("faqs");
         std::fs::create_dir_all(&dir).unwrap();
         for (nome_arquivo, pergunta, origin) in docs {
-            let header = auli_contract::mddoc_faq::FaqHeader {
-                pergunta: (*pergunta).into(),
-                origin: (*origin).into(),
-                url: format!("https://x/{pergunta}"),
+            let header = mddoc::DocHeader {
+                titulo: (*pergunta).into(),
+                trilha: (*origin).into(),
+                ementa: String::new(),
+                link: format!("https://x/{pergunta}"),
+                orgao: None,
+                resumo_info: None,
             };
             let corpo = format!("resposta de {pergunta}");
             std::fs::write(
                 dir.join(format!("{nome_arquivo}.md")),
-                auli_contract::mddoc_faq::render_doc_faq(&header, &corpo),
+                mddoc::render_doc(&header, None, &corpo),
             )
             .unwrap();
         }
@@ -551,7 +567,7 @@ mod tests {
 
     #[test]
     fn preparar_faqs_none_sem_arvore() {
-        // O gatilho do fallback de transição: sem árvore, o chamador cai no JSON legado.
+        // Sem árvore, a coleção é pulada pelo chamador.
         let base =
             std::env::temp_dir().join(format!("auli-update-faq-vazio-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
@@ -572,17 +588,18 @@ mod tests {
         let dir = base.join("docs").join("servicos");
         std::fs::create_dir_all(&dir).unwrap();
         for (nome_arquivo, titulo) in docs {
-            let header = auli_contract::mddoc_servico::ServicoHeader {
+            let header = mddoc::DocHeader {
                 titulo: (*titulo).into(),
-                tipo: "Cidadãos".into(),
-                classe: "IPVA".into(),
-                orgao: "Receita Estadual".into(),
+                trilha: auli_contract::trilha_servico("Cidadãos", "IPVA"),
+                ementa: String::new(),
                 link: format!("https://x/{titulo}"),
+                orgao: Some("Receita Estadual".into()),
+                resumo_info: None,
             };
             let corpo = format!("descrição de {titulo}");
             std::fs::write(
                 dir.join(format!("{nome_arquivo}.md")),
-                auli_contract::mddoc_servico::render_doc_servico(&header, &corpo),
+                mddoc::render_doc(&header, None, &corpo),
             )
             .unwrap();
         }
@@ -631,7 +648,7 @@ mod tests {
 
     #[test]
     fn preparar_servicos_none_sem_arvore() {
-        // O gatilho do fallback de transição: sem árvore, o chamador cai no JSON legado.
+        // Sem árvore, a coleção é pulada pelo chamador.
         let base =
             std::env::temp_dir().join(format!("auli-update-svc-vazio-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
