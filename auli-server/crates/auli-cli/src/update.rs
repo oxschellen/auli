@@ -277,7 +277,7 @@ fn preparar_jurisprudencia(
     entity: &str,
     docs_dir: &Path,
     kind: auli_contract::Kind,
-) -> Result<Option<Vec<auli_contract::Consulta>>> {
+) -> Result<Option<Vec<auli_contract::Documento>>> {
     debug_assert!(kind.exige_resumo(), "só jurisprudência passa por aqui");
     let dir = docs_dir.join(kind.as_str());
     if !dir.exists() {
@@ -292,7 +292,7 @@ fn preparar_jurisprudencia(
         return Ok(None);
     }
 
-    let mut consultas = Vec::with_capacity(caminhos.len());
+    let mut docs = Vec::with_capacity(caminhos.len());
     let mut pendentes: Vec<String> = Vec::new();
     for caminho in &caminhos {
         let texto = std::fs::read_to_string(caminho)?;
@@ -302,17 +302,17 @@ fn preparar_jurisprudencia(
         if resumo.trim().is_empty() {
             pendentes.push(header.titulo.clone());
         }
-        consultas.push(auli_contract::Consulta {
+        docs.push(auli_contract::Documento {
             kind,
             text_to_embed: auli_contract::compose_text_to_embed(
                 &header.titulo,
                 &header.ementa,
                 &resumo,
             ),
-            numero: header.titulo,
-            assunto: header.ementa,
+            titulo: header.titulo,
+            ementa: header.ementa,
             link: header.link,
-            sinopse_info: header.resumo_info,
+            resumo_info: header.resumo_info,
             resumo,
             corpo,
         });
@@ -320,12 +320,12 @@ fn preparar_jurisprudencia(
 
     println!(
         "📄 docs: {} {} lidos de {}",
-        consultas.len(),
+        docs.len(),
         kind.plural(),
         dir.display()
     );
     recusar_jurisprudencia_sem_resumo(entity, kind, &pendentes)?;
-    Ok(Some(consultas))
+    Ok(Some(docs))
 }
 
 /// Recusa vetorizar quando algum `.md` de **jurisprudência** está sem a seção `## resumo`: embedar
@@ -482,16 +482,16 @@ mod tests {
             .unwrap();
         assert_eq!(consultas.len(), 1);
         let c = &consultas[0];
-        assert_eq!(c.numero, "CONSULTA Nº 1/26");
-        assert_eq!(c.assunto, "assunto de CONSULTA Nº 1/26");
+        assert_eq!(c.titulo, "CONSULTA Nº 1/26");
+        assert_eq!(c.ementa, "assunto de CONSULTA Nº 1/26");
         assert_eq!(c.link, "http://x/CONSULTA Nº 1/26");
         assert_eq!(c.resumo, "SINOPSE UM");
         assert_eq!(c.corpo, "corpo de CONSULTA Nº 1/26");
-        assert_eq!(c.sinopse_info.as_ref().unwrap().modelo, "m");
+        assert_eq!(c.resumo_info.as_ref().unwrap().modelo, "m");
         // `text_to_embed` recomposto pelo ponto único: numero + assunto + sinopse.
         assert_eq!(
             c.text_to_embed,
-            auli_contract::compose_text_to_embed(&c.numero, &c.assunto, &c.resumo)
+            auli_contract::compose_text_to_embed(&c.titulo, &c.ementa, &c.resumo)
         );
     }
 
@@ -524,7 +524,7 @@ mod tests {
         assert_eq!(acordaos.len(), 1);
         let a = &acordaos[0];
         assert_eq!(a.kind, Kind::Tarf);
-        assert_eq!(a.numero, "ACÓRDÃO 510/24");
+        assert_eq!(a.titulo, "ACÓRDÃO 510/24");
         assert_eq!(a.resumo, "FUNDAMENTAÇÃO");
 
         // O payload que vai ao pack aponta para `docs/tarf/`, não para `docs/pareceres/`.
@@ -533,7 +533,7 @@ mod tests {
         // E o `text_to_embed` é o mesmo compose de sempre — nenhuma fórmula nova nesta coleção.
         assert_eq!(
             a.text_to_embed,
-            auli_contract::compose_text_to_embed(&a.numero, &a.assunto, &a.resumo)
+            auli_contract::compose_text_to_embed(&a.titulo, &a.ementa, &a.resumo)
         );
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
     }
@@ -608,7 +608,7 @@ mod tests {
         let consultas = preparar_jurisprudencia("xx", &docs, Kind::Pareceres)
             .unwrap()
             .unwrap();
-        let numeros: Vec<&str> = consultas.iter().map(|c| c.numero.as_str()).collect();
+        let numeros: Vec<&str> = consultas.iter().map(|c| c.titulo.as_str()).collect();
         assert_eq!(
             numeros,
             vec!["A 1", "B 2", "C 3"],

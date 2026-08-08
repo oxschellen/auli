@@ -147,10 +147,11 @@ impl Embeddable for Servico {
 /// `None` = registro sem resumo gerado: pendente (resumo vazio) ou sumário autorado legado
 /// (resumo preenchido na origem, caso RS antigo).
 ///
-/// (Antes: `SinopseInfo`.) O **nome do tipo** acompanhou o vocabulário unificado das árvores
-/// (D-FMT-4), mas o campo `Consulta::sinopse_info` conserva o nome antigo de propósito: ele é
-/// serializado nos snapshots, que não estão no escopo desta unificação. Nomes de tipo não vazam
-/// para o JSON — nomes de campo, sim.
+/// (Antes: `SinopseInfo`.) O nome do TIPO acompanhou o vocabulário unificado das árvores na D-FMT-4;
+/// o CAMPO ficou `sinopse_info` até a D-B1, sob a justificativa de ser serializado nos snapshots —
+/// justificativa que não se sustentava (`snapshot.rs` guarda `ColetaFaqs`/`ColetaServicos`, e o
+/// [`Documento`] não aparece em nenhum deles). Hoje os dois se chamam `resumo_info`, igual ao slot
+/// do [`mddoc::DocHeader`] de onde o valor vem.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ResumoInfo {
     /// Modelo que gerou a sinopse (ex.: `"llama-3.3-70b-versatile"`).
@@ -161,41 +162,50 @@ pub struct ResumoInfo {
     pub gerada_em: String,
 }
 
-/// Um registro da tabela `pareceres`: uma consulta tributária respondida (parecer/resposta de
-/// consulta — termo geral entre estados: "Pareceres" no RS, "Respostas de Consultas" em SP, COPAT
-/// em SC). Os campos vêm do conteúdo autorado (o sumário dá `numero`/`assunto`/`resumo`; `corpo` é
-/// o texto integral), mais a key materializada.
+/// **Um documento do acervo**, no vocabulário unificado das árvores (D-B1).
 ///
-/// (Antes: `Parecer`.) O **kind de domínio permanece `"pareceres"`** por compatibilidade — rota
-/// `/v1/{kind}/list`, sufixo da coleção vetorial, nomes de pack e labels não mudam; o nome da
-/// struct não aparece na serialização (serde grava só os campos).
+/// Hoje só a jurisprudência chega aqui — pareceres (o termo geral entre estados: "Pareceres" no RS,
+/// "Respostas de Consultas" em SP, COPAT em SC) e acórdãos do TARF. Serviços e FAQs ainda têm as
+/// próprias structs de borda ([`Servico`], [`Faq`]) e passarão a se projetar nesta.
+///
+/// (Antes: `Parecer`, depois `Consulta`.) O **kind de domínio permanece `"pareceres"`** por
+/// compatibilidade — rota `/v1/{kind}/list`, sufixo da coleção vetorial, nomes de pack e labels não
+/// mudam; o nome da struct não aparece na serialização (serde grava só os campos).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Consulta {
-    /// De QUAL coleção de jurisprudência este documento veio — hoje [`Kind::Pareceres`] ou
-    /// [`Kind::Tarf`]. É o que decide o `docs/<kind>/` do `doc_path` gravado no pack; sem ele, um
-    /// acórdão apontaria para a árvore dos pareceres e o corpo sairia indisponível na query.
+pub struct Documento {
+    /// De QUAL coleção este documento veio — hoje [`Kind::Pareceres`] ou [`Kind::Tarf`]. É o que
+    /// decide o `docs/<kind>/` do `doc_path` gravado no pack; sem ele, um acórdão apontaria para a
+    /// árvore dos pareceres e o corpo sairia indisponível na query.
     ///
     /// Ausente no JSON legado ⇒ `Pareceres`, que era a única coleção quando esses registros foram
     /// escritos (esta struct não é persistida hoje — a fonte é a árvore `.md` desde a G5b).
     #[serde(default = "kind_pareceres")]
     pub kind: Kind,
-    /// Identificador do parecer (ex.: `"PARECER Nº 25148"`).
-    pub numero: String,
-    /// Assunto/ementa (uma linha).
-    pub assunto: String,
-    /// Resumo do parecer (descrição resumida + palavras-chave do sumário autorado). Pode ser vazio.
+    /// **Título** — o identificador legível do documento (ex.: `"PARECER Nº 25148"`,
+    /// `"ACÓRDÃO 510/24"`). Mesmo papel do `titulo` do frontmatter. (Antes: `numero`.)
+    pub titulo: String,
+    /// **Ementa** — o assunto em uma linha. Mesmo papel do `ementa` do frontmatter.
+    /// (Antes: `assunto`.)
+    pub ementa: String,
+    /// **Resumo** — a síntese do documento: a sinopse LLM nos pareceres, a fundamentação do
+    /// cabeçalho no TARF. Pode ser vazio (pendente).
     #[serde(default)]
     pub resumo: String,
-    /// Corpo integral do parecer.
+    /// Corpo integral, lido de `## corpo`.
     pub corpo: String,
-    /// URL do parecer na legislação.
+    /// URL da fonte oficial.
     pub link: String,
-    /// Key a embeddar — preenchida na origem (para pareceres: `assunto` + `resumo`).
+    /// Key a embeddar — recomposta pelo ponto único ([`compose_text_to_embed`]).
     pub text_to_embed: String,
-    /// Proveniência da sinopse (ver [`ResumoInfo`]). Ausente no JSON quando `None` —
-    /// snapshots antigos continuam válidos sem migração.
+    /// Proveniência do resumo (ver [`ResumoInfo`]). Ausente no JSON quando `None`.
+    ///
+    /// (Antes: `sinopse_info`.) O nome antigo era mantido sob a justificativa de que o campo era
+    /// serializado nos snapshots — **o que não é verdade**: `snapshot.rs` guarda `ColetaFaqs` e
+    /// `ColetaServicos`, e esta struct não aparece em nenhum deles. Sem esse impedimento, o campo
+    /// acompanha o vocabulário e passa a ter o mesmo nome do [`mddoc::DocHeader::resumo_info`] de
+    /// onde é copiado.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub sinopse_info: Option<ResumoInfo>,
+    pub resumo_info: Option<ResumoInfo>,
 }
 
 /// O `kind` dos registros escritos antes de a jurisprudência ter mais de uma coleção.
@@ -203,7 +213,7 @@ fn kind_pareceres() -> Kind {
     Kind::Pareceres
 }
 
-impl Embeddable for Consulta {
+impl Embeddable for Documento {
     fn text_to_embed(&self) -> &str {
         &self.text_to_embed
     }
@@ -215,14 +225,14 @@ impl Embeddable for Consulta {
     /// pré-renderizado.
     fn stored_repr(&self) -> String {
         let payload = ConsultaPackPayload {
-            numero: self.numero.clone(),
-            assunto: self.assunto.clone(),
+            numero: self.titulo.clone(),
+            assunto: self.ementa.clone(),
             resumo: self.resumo.clone(),
             link: self.link.clone(),
             doc_path: format!(
                 "docs/{}/{}.md",
                 self.kind.as_str(),
-                mddoc::slug(&self.numero)
+                mddoc::slug(&self.titulo)
             ),
         };
         serde_json::to_string(&payload)
@@ -583,17 +593,17 @@ mod tests {
 
     #[test]
     fn parecer_exposes_key_and_renders_block() {
-        let p = Consulta {
+        let p = Documento {
             kind: Kind::Pareceres,
-            numero: "PARECER Nº 25148".into(),
-            assunto: "ICMS – crédito fiscal na cesta básica".into(),
+            titulo: "PARECER Nº 25148".into(),
+            ementa: "ICMS – crédito fiscal na cesta básica".into(),
             resumo: "Análise sobre apropriação de crédito.".into(),
             corpo: "É o parecer.".into(),
             link: "https://exemplo/parecer/25148".into(),
             text_to_embed:
                 "ICMS – crédito fiscal na cesta básica\nAnálise sobre apropriação de crédito."
                     .into(),
-            sinopse_info: None,
+            resumo_info: None,
         };
         assert_eq!(
             p.text_to_embed(),
@@ -620,37 +630,37 @@ mod tests {
         // The serialized shape is contract; round-trips through JSON.
         let table = Table::new("rs", "pareceres", vec![p]);
         let json = serde_json::to_string(&table).unwrap();
-        let back: Table<Consulta> = serde_json::from_str(&json).unwrap();
-        assert_eq!(back.items[0].numero, "PARECER Nº 25148");
+        let back: Table<Documento> = serde_json::from_str(&json).unwrap();
+        assert_eq!(back.items[0].titulo, "PARECER Nº 25148");
     }
 
-    fn sample_consulta() -> Consulta {
-        Consulta {
+    fn sample_documento() -> Documento {
+        Documento {
             kind: Kind::Pareceres,
-            numero: "PARECER Nº 25148".into(),
-            assunto: "ICMS – crédito fiscal na cesta básica".into(),
+            titulo: "PARECER Nº 25148".into(),
+            ementa: "ICMS – crédito fiscal na cesta básica".into(),
             resumo: "Análise sobre apropriação de crédito.".into(),
             corpo: "É o parecer.".into(),
             link: "https://exemplo/parecer/25148".into(),
             text_to_embed: "ICMS – crédito fiscal na cesta básica".into(),
-            sinopse_info: None,
+            resumo_info: None,
         }
     }
 
     /// Golden da G3: o `stored_repr` gordo de HOJE, reimplementado aqui de propósito. Se o formato
     /// mudar de um lado só, este teste quebra — é ele que garante que trocar o pack gordo pelo
     /// payload leve + leitura tardia não mexe um byte no contexto RAG.
-    fn stored_repr_gordo_golden(c: &Consulta) -> String {
+    fn stored_repr_gordo_golden(c: &Documento) -> String {
         format!(
             "## pergunta\n{}\n{}\n\n## resposta\n{}\nLink: {}",
-            c.numero, c.assunto, c.corpo, c.link
+            c.titulo, c.ementa, c.corpo, c.link
         )
     }
 
-    fn payload_de(c: &Consulta, doc_path: &str) -> ConsultaPackPayload {
+    fn payload_de(c: &Documento, doc_path: &str) -> ConsultaPackPayload {
         ConsultaPackPayload {
-            numero: c.numero.clone(),
-            assunto: c.assunto.clone(),
+            numero: c.titulo.clone(),
+            assunto: c.ementa.clone(),
             resumo: c.resumo.clone(),
             link: c.link.clone(),
             doc_path: doc_path.into(),
@@ -659,7 +669,7 @@ mod tests {
 
     #[test]
     fn render_do_payload_leve_equivale_ao_stored_repr_gordo() {
-        let c = sample_consulta();
+        let c = sample_documento();
         let p = payload_de(&c, "docs/pareceres/parecer-no-25148.md");
         assert_eq!(
             render_consulta_block(&p, &c.corpo),
@@ -677,7 +687,7 @@ mod tests {
     #[test]
     fn render_equivale_com_corpo_multilinha_e_ancoras_no_meio() {
         // Corpo com as próprias âncoras no meio: é só concatenação, nada a escapar.
-        let mut c = sample_consulta();
+        let mut c = sample_documento();
         c.corpo = "Preâmbulo.\n\n## resposta\nRecursivo.\nLink: falso\n## corpo\nfim".into();
         let p = payload_de(&c, "docs/pareceres/x.md");
         assert_eq!(
@@ -688,7 +698,7 @@ mod tests {
 
     #[test]
     fn render_com_corpo_vazio_nao_perde_o_link() {
-        let c = sample_consulta();
+        let c = sample_documento();
         let p = payload_de(&c, "docs/pareceres/x.md");
         let bloco = render_consulta_block(&p, "");
         assert!(
@@ -699,7 +709,7 @@ mod tests {
 
     #[test]
     fn payload_faz_round_trip_por_json() {
-        let p = payload_de(&sample_consulta(), "docs/pareceres/parecer-no-25148.md");
+        let p = payload_de(&sample_documento(), "docs/pareceres/parecer-no-25148.md");
         let json = serde_json::to_string(&p).unwrap();
         assert_eq!(
             serde_json::from_str::<ConsultaPackPayload>(&json).unwrap(),
@@ -710,7 +720,7 @@ mod tests {
     #[test]
     fn payload_leve_nao_carrega_o_corpo() {
         // O ganho da fase: o corpo não pode vazar para o pack por nenhum campo.
-        let mut c = sample_consulta();
+        let mut c = sample_documento();
         c.corpo = "MARCADOR-DE-CORPO-UNICO".into();
         let json = serde_json::to_string(&payload_de(&c, "docs/pareceres/x.md")).unwrap();
         assert!(
@@ -720,40 +730,47 @@ mod tests {
     }
 
     #[test]
-    fn consulta_with_sinopse_roundtrips_through_json() {
-        let mut c = sample_consulta();
-        c.sinopse_info = Some(ResumoInfo {
+    fn documento_com_resumo_info_faz_round_trip_por_json() {
+        let mut c = sample_documento();
+        c.resumo_info = Some(ResumoInfo {
             modelo: "llama-3.3-70b-versatile".into(),
             prompt_versao: 1,
             gerada_em: "2026-07-18T14:00:00Z".into(),
         });
         let json = serde_json::to_string(&c).unwrap();
-        let back: Consulta = serde_json::from_str(&json).unwrap();
+        let back: Documento = serde_json::from_str(&json).unwrap();
         assert_eq!(back, c);
     }
 
     #[test]
-    fn consulta_json_sem_sinopse_desserializa_como_none() {
-        // Forma dos snapshots atuais — sem o campo `sinopse_info`. Guarda-corpo da migração zero.
+    fn documento_json_sem_resumo_info_e_sem_kind_desserializa_com_os_defaults() {
+        // Os dois campos opcionais, testados juntos: `resumo_info` ausente ⇒ `None`, `kind` ausente
+        // ⇒ `Pareceres` (a única coleção que existia quando registros assim eram escritos).
+        //
+        // O literal usa o vocabulário NOVO (`titulo`/`ementa`) porque não há compatibilidade a
+        // preservar: esta struct não é serializada em lugar nenhum. O teste anterior dizia guardar
+        // "a forma dos snapshots atuais", mas `snapshot.rs` só guarda `ColetaFaqs`/`ColetaServicos`
+        // — a premissa era falsa, e é ela que liberou o rename dos campos na D-B1.
         let json = r#"{
-            "numero": "PARECER Nº 25148",
-            "assunto": "ICMS – crédito fiscal na cesta básica",
+            "titulo": "PARECER Nº 25148",
+            "ementa": "ICMS – crédito fiscal na cesta básica",
             "resumo": "Análise sobre apropriação de crédito.",
             "corpo": "É o parecer.",
             "link": "https://exemplo/parecer/25148",
             "text_to_embed": "ICMS – crédito fiscal na cesta básica"
         }"#;
-        let c: Consulta = serde_json::from_str(json).unwrap();
-        assert_eq!(c.sinopse_info, None);
+        let c: Documento = serde_json::from_str(json).unwrap();
+        assert_eq!(c.resumo_info, None);
+        assert_eq!(c.kind, Kind::Pareceres);
     }
 
     #[test]
-    fn consulta_com_sinopse_none_omite_o_campo_no_json() {
+    fn documento_com_resumo_info_none_omite_o_campo_no_json() {
         // `skip_serializing_if` mantém o registro legado byte-idêntico ao snapshot antigo.
-        let json = serde_json::to_string(&sample_consulta()).unwrap();
+        let json = serde_json::to_string(&sample_documento()).unwrap();
         assert!(
-            !json.contains("sinopse_info"),
-            "JSON não deve conter sinopse_info quando None: {json}"
+            !json.contains("resumo_info"),
+            "JSON não deve conter resumo_info quando None: {json}"
         );
     }
 }
