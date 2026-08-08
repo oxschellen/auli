@@ -144,6 +144,13 @@ pub fn descobrir(data_root: &Path) -> Result<Vec<EstadoBundle>> {
                 .file_name()
                 .map(|n| n.to_string_lossy().to_string())
                 .unwrap_or_default();
+            if kind_segurado(&kind) {
+                println!(
+                    "⏸️  {}/{kind}: segurado fora do zip (coleta incompleta).",
+                    ent.id
+                );
+                continue;
+            }
             let mut arquivos = Vec::new();
             coletar_md(&dir, &mut arquivos)?;
             if arquivos.is_empty() {
@@ -281,11 +288,31 @@ fn escrever(
 
 /// Rótulo de exibição do tipo. Tipo desconhecido cai no próprio nome — a rotina não hardcoda a
 /// lista de coleções, só sabe apresentar melhor as que existem hoje.
+/// Coleções que existem na árvore mas **não entram nos zips públicos**, por estarem incompletas.
+///
+/// Um zip é material de download com o site apontando para ele: publicar um recorte parcial sob o
+/// rótulo da coleção o apresenta como se fosse o acervo. Enquanto a coleta não fecha, é melhor não
+/// publicar do que publicar pela metade sem o leitor ter como saber.
+///
+/// **`tarf` — remover desta lista quando a coleta do TARF fechar.** São 22.522 acórdãos no portal;
+/// em 08/08/2026 havia 2.600 na árvore (a coleta foi pausada para desbloquear a migração de
+/// formato). Retomar: `cargo build -p auli-scraper-rs && auli-scraper-rs tarf`.
+///
+/// A lista filtra o BUNDLE, não o dado: a árvore segue no disco e dentro do `docs_hash` do
+/// manifesto. Segurar a coleção movendo o diretório mudaria esse hash e faria o servidor recusar o
+/// boot — por isso o filtro mora aqui.
+const KINDS_SEGURADOS: &[&str] = &["tarf"];
+
+fn kind_segurado(kind: &str) -> bool {
+    KINDS_SEGURADOS.contains(&kind)
+}
+
 fn titulo_tipo(kind: &str) -> String {
     match kind {
         "servicos" => "Serviços".to_string(),
         "faqs" => "Perguntas Frequentes".to_string(),
         "pareceres" => "Pareceres".to_string(),
+        "tarf" => "Acórdãos TARF".to_string(),
         outro => outro.to_string(),
     }
 }
@@ -816,5 +843,27 @@ state = "Estado WW"
         assert_eq!(formatar_tamanho(512), "512 B");
         assert_eq!(formatar_tamanho(2048), "2,0 KB");
         assert_eq!(formatar_tamanho(53_477_376), "51,0 MB");
+    }
+
+    #[test]
+    fn kinds_segurados_ficam_fora_do_zip_e_o_resto_entra() {
+        assert!(kind_segurado("tarf"), "coleta incompleta não vai a público");
+        for k in ["servicos", "faqs", "pareceres"] {
+            assert!(!kind_segurado(k), "{k} está completo e deve ser publicado");
+        }
+    }
+
+    #[test]
+    fn todo_kind_publicado_tem_titulo_e_schema_humanos() {
+        // Guarda contra o defeito real de 08/08/2026: o `tarf` entrou nos zips sem caso em
+        // `titulo_tipo`, e o README saiu com "tarf/ — 2600 documentos (tarf)". Kind novo tem que
+        // ganhar rótulo e schema ANTES de ser publicado.
+        for k in ["servicos", "faqs", "pareceres", "tarf"] {
+            assert_ne!(titulo_tipo(k), k, "`{k}` caiu no rótulo cru");
+            assert!(
+                schema_tipo(k).contains("titulo"),
+                "`{k}` sem schema próprio no README"
+            );
+        }
     }
 }
