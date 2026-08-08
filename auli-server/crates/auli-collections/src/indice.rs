@@ -4,10 +4,10 @@
 //! `data/<id>/raw/<id>-<colecao>-index.json`, de onde o `build-frontend-public.sh` já copia todo
 //! `raw/*.json` para `auli-frontend/public/<id>/`.
 //!
-//! Serve as duas coleções de jurisprudência ([`Colecao`]): `pareceres` (o default, para não quebrar
-//! quem já roda `auli-collections <id> indice`) e `tarf`. O que muda entre elas é só o diretório, o
-//! nome do artefato e o relatório — a leitura, a ordenação e o shape da entrada são os mesmos,
-//! porque o formato do `.md` é o mesmo desde a unificação do vocabulário.
+//! Serve as coleções de **jurisprudência** — as do contrato com `exige_resumo()`: `pareceres` (o
+//! default, para não quebrar quem já roda `auli-collections <id> indice`) e `tarf`. O que muda entre
+//! elas é só o diretório, o nome do artefato e o relatório — a leitura, a ordenação e o shape da
+//! entrada são os mesmos, porque o formato do `.md` é o mesmo desde a unificação do vocabulário.
 //!
 //! **Leve = sem o `corpo`.** A tab de Pareceres passa a mostrar a sinopse e um link para o portal,
 //! e busca sobre `[numero, assunto, resumo]`. É a mesma escolha da G3 no servidor (pack leve +
@@ -24,53 +24,11 @@
 use std::cmp::Reverse;
 use std::path::Path;
 
-use auli_contract::mddoc;
+use auli_contract::{Kind, mddoc};
 use serde::Serialize;
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
-
-/// As coleções de jurisprudência que têm índice para o frontend.
-///
-/// Enum, e não string solta, porque cada variante carrega três coisas que precisam andar juntas: o
-/// subdiretório da árvore, o nome do artefato e o rótulo do relatório. Errar uma delas gera um JSON
-/// com nome certo e conteúdo de outra coleção — o tipo de defeito que só aparece na tela do usuário.
-///
-/// É o degrau mínimo do `TipoJurisprudencia` do ESTUDO-colecoes-trait: quando a fase 2 chegar (a
-/// struct `Jurisprudencia` genérica), ela absorve isto e o `match` exaustivo aponta cada ponto a
-/// preencher para a coleção seguinte.
-#[derive(Clone, Copy, PartialEq)]
-pub enum Colecao {
-    Pareceres,
-    Tarf,
-}
-
-impl Colecao {
-    /// Nome na CLI, no diretório da árvore e no artefato — é o mesmo nos três, de propósito.
-    pub fn nome(self) -> &'static str {
-        match self {
-            Self::Pareceres => "pareceres",
-            Self::Tarf => "tarf",
-        }
-    }
-
-    /// Como os documentos são chamados no relatório ("372 pareceres", "2600 acórdãos").
-    fn plural(self) -> &'static str {
-        match self {
-            Self::Pareceres => "pareceres",
-            Self::Tarf => "acórdãos",
-        }
-    }
-
-    /// `None` para nome desconhecido — o chamador erra alto em vez de derivar a coleção errada.
-    pub fn parse(s: &str) -> Option<Self> {
-        match s {
-            "pareceres" => Some(Self::Pareceres),
-            "tarf" => Some(Self::Tarf),
-            _ => None,
-        }
-    }
-}
 
 /// Uma entrada do índice. Espelha o `ConsultaPackPayload` do contrato menos o `doc_path` (que só
 /// interessa ao servidor) — o navegador não tem como ler a árvore.
@@ -88,7 +46,7 @@ struct Entrada {
     link: String,
 }
 
-pub fn run(entity: &EntityConfig, colecao: Colecao) -> Result<()> {
+pub fn run(entity: &EntityConfig, colecao: Kind) -> Result<()> {
     let dir = docs_dir(entity, colecao)?;
     if !dir.exists() {
         println!(
@@ -122,7 +80,7 @@ pub fn run(entity: &EntityConfig, colecao: Colecao) -> Result<()> {
         "{}/{}-{}-index.json",
         entity.data_dir,
         entity.id,
-        colecao.nome()
+        colecao.as_str()
     );
     std::fs::write(&destino, serde_json::to_string_pretty(&entradas)?)?;
 
@@ -137,13 +95,20 @@ pub fn run(entity: &EntityConfig, colecao: Colecao) -> Result<()> {
         // extraída na coleta (a fundamentação do cabeçalho), então mandar rodar `sinopse` aqui seria
         // um beco — aquele passo varre só `docs/pareceres/`.
         match colecao {
-            Colecao::Pareceres => println!(
+            Kind::Pareceres => println!(
                 "⚠️  rode `auli-collections {} sinopse` e derive de novo.",
                 entity.id
             ),
-            Colecao::Tarf => println!(
+            Kind::Tarf => println!(
                 "⚠️  acórdão sem resumo não deveria existir: a coleta usa a ementa como fallback \
                  quando não há fundamentação. Investigue o `.md` antes de publicar."
+            ),
+            // Inalcançável: `run` só é chamado com coleção de jurisprudência (a guarda está no
+            // `main.rs`, que recusa qualquer `Kind` sem `exige_resumo`). O braço existe porque o
+            // `match` é exaustivo, e é ele que vai apontar aqui se um dia isso mudar.
+            Kind::Servicos | Kind::Faqs => println!(
+                "⚠️  {} não é coleção de jurisprudência — o `## resumo` não se aplica.",
+                colecao
             ),
         }
     }
@@ -165,11 +130,11 @@ pub fn run(entity: &EntityConfig, colecao: Colecao) -> Result<()> {
 ///
 /// Local, e não o `sinopse::docs_dir`, porque aquele é — corretamente — fixo em `pareceres`: o passo
 /// de sinopse só existe para a coleção que precisa de LLM.
-fn docs_dir(entity: &EntityConfig, colecao: Colecao) -> Result<std::path::PathBuf> {
+fn docs_dir(entity: &EntityConfig, colecao: Kind) -> Result<std::path::PathBuf> {
     let base = Path::new(&entity.data_dir)
         .parent()
         .ok_or_else(|| format!("data_dir sem pai: {}", entity.data_dir))?;
-    Ok(base.join("docs").join(colecao.nome()))
+    Ok(base.join("docs").join(colecao.as_str()))
 }
 
 /// Chave cronológica extraída do `numero`: `(ano, sequência)`. `None` quando o formato não é
@@ -308,17 +273,15 @@ mod tests {
     }
 
     #[test]
-    fn colecao_mapeia_nome_diretorio_e_artefato() {
-        assert_eq!(Colecao::parse("pareceres").unwrap().nome(), "pareceres");
-        assert_eq!(Colecao::parse("tarf").unwrap().nome(), "tarf");
-        assert!(
-            Colecao::parse("acordaos").is_none(),
-            "nome errado erra alto"
-        );
-        assert!(Colecao::parse("").is_none());
-        // O plural é do relatório, e é o que distingue as duas na saída do comando.
-        assert_eq!(Colecao::Tarf.plural(), "acórdãos");
-        assert_eq!(Colecao::Pareceres.plural(), "pareceres");
+    fn so_jurisprudencia_tem_indice() {
+        // A guarda que o `main.rs` aplica ao 3º argumento: `Kind` conhece quatro coleções, e só as
+        // de jurisprudência derivam índice leve. `servicos` é nome VÁLIDO de coleção — o que o
+        // recusa aqui é o `exige_resumo`, não o parse.
+        let aceita = |s: &str| Kind::parse(s).filter(|k| k.exige_resumo());
+        assert_eq!(aceita("pareceres"), Some(Kind::Pareceres));
+        assert_eq!(aceita("tarf"), Some(Kind::Tarf));
+        assert_eq!(aceita("servicos"), None, "coleção sem `## resumo`");
+        assert_eq!(aceita("acordaos"), None, "nome errado erra alto");
     }
 
     #[test]
@@ -332,15 +295,11 @@ mod tests {
             data_dir: "/tmp/x/rs/raw".into(),
         };
         assert!(
-            docs_dir(&ent, Colecao::Pareceres)
+            docs_dir(&ent, Kind::Pareceres)
                 .unwrap()
                 .ends_with("docs/pareceres")
         );
-        assert!(
-            docs_dir(&ent, Colecao::Tarf)
-                .unwrap()
-                .ends_with("docs/tarf")
-        );
+        assert!(docs_dir(&ent, Kind::Tarf).unwrap().ends_with("docs/tarf"));
     }
 
     /// O pivô de século é o que impede o RS de 1999 de virar o mais recente do acervo.

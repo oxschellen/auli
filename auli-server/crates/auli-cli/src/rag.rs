@@ -10,7 +10,7 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
-use auli_contract::{ConsultaPackPayload, render_consulta_block};
+use auli_contract::{ConsultaPackPayload, Kind, render_consulta_block};
 use auli_core::corpus::{FAQS, PARECERES, SERVICES};
 use auli_retrieval::{Engine, Hit};
 use tracing::{debug, error, info, trace, warn};
@@ -171,17 +171,12 @@ fn envolver(rotulo: &str, i: usize, conteudo: &str) -> String {
     format!("\n## documento {i}: {rotulo}\n{conteudo}\n")
 }
 
-/// Os rótulos das coleções, como dado (D-MARC-2).
-mod rotulo {
-    pub const SERVICO: &str = "Serviço";
-    pub const FAQ: &str = "FAQ";
-    pub const PARECER: &str = "Parecer";
-    pub const PARECER_RELACIONADO: &str = "Parecer relacionado";
-    /// fase 2 — serving ainda não liga esta coleção. Declarado para o ponto de extensão já existir
-    /// nomeado: quando o TARF entrar no chat, é este rótulo que ele usa.
-    #[allow(dead_code)]
-    pub const ACORDAO_TARF: &str = "Acórdão TARF";
-}
+/// O rótulo do documento que veio por **expansão de grafo**, não por busca vetorial.
+///
+/// Fica aqui, e não no `Kind`, porque não é uma coleção: é um PAPEL que um parecer assume neste
+/// contexto. O documento é o mesmo `Kind::Pareceres`; o que muda é como ele chegou — por co-citação
+/// de dispositivos —, e a LLM precisa saber disso para citá-lo com o peso certo.
+const ROTULO_PARECER_RELACIONADO: &str = "Parecer relacionado";
 
 /// Contexto do tipo `ServicosFaqs`: serviços numerados + FAQs numeradas, nesta ordem.
 ///
@@ -189,8 +184,8 @@ mod rotulo {
 /// a seção ADERÊNCIA do log rotula por coleção+índice, e a correspondência 1:1 com o bloco tem que
 /// se manter. Unifica-se o template, não a contagem.
 pub(crate) fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String]) -> String {
-    let rag_service = render(svc_docs, |i, doc| envolver(rotulo::SERVICO, i, doc));
-    let rag_faq = render(faq_docs, |i, doc| envolver(rotulo::FAQ, i, doc));
+    let rag_service = render(svc_docs, |i, doc| envolver(Kind::Servicos.rotulo(), i, doc));
+    let rag_faq = render(faq_docs, |i, doc| envolver(Kind::Faqs.rotulo(), i, doc));
     format!("{}\n{}", rag_service, rag_faq)
 }
 
@@ -198,12 +193,12 @@ pub(crate) fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String])
 /// por grafo devolve algo — os pareceres que citam os mesmos dispositivos, rotulados como
 /// relacionados. Com `relacionados` vazio (default/sem grafo), só a primeira seção sai.
 fn montar_rag_pareceres(blocos: &[String], relacionados: &[String]) -> String {
-    let principal = render(blocos, |i, bloco| envolver(rotulo::PARECER, i, bloco));
+    let principal = render(blocos, |i, bloco| envolver(Kind::Pareceres.rotulo(), i, bloco));
     if relacionados.is_empty() {
         return principal;
     }
     let rel = render(relacionados, |i, bloco| {
-        envolver(rotulo::PARECER_RELACIONADO, i, bloco)
+        envolver(ROTULO_PARECER_RELACIONADO, i, bloco)
     });
     format!("{principal}{rel}")
 }

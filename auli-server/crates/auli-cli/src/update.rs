@@ -23,7 +23,7 @@
 
 use std::path::{Path, PathBuf};
 
-use auli_contract::Embeddable;
+use auli_contract::{Embeddable, Kind};
 use auli_core::embed::{EMBED_DIM, EMBED_MAX_TOKENS, Embedder};
 use auli_core::manifest::{self, CollectionEntry, Manifest};
 use vector_store::Writer;
@@ -55,7 +55,12 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
         avisar_faqs_truncadas(&embedder, &faqs)?;
         println!("🔢 faqs: {} registros → vetorizando...", faqs.len());
         entries.push(ingest_items(
-            &embedder, &writer, &entity, "faqs", &faqs, &out,
+            &embedder,
+            &writer,
+            &entity,
+            Kind::Faqs,
+            &faqs,
+            &out,
         )?);
     }
     // servicos: a FONTE é a árvore `docs/servicos/*.md` (TAREFA-SERVICOS-MD), regenerada do zero a
@@ -63,7 +68,12 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
     if let Some(servicos) = preparar_servicos(&docs_dir)? {
         println!("🔢 servicos: {} registros → vetorizando...", servicos.len());
         entries.push(ingest_items(
-            &embedder, &writer, &entity, "servicos", &servicos, &out,
+            &embedder,
+            &writer,
+            &entity,
+            Kind::Servicos,
+            &servicos,
+            &out,
         )?);
     }
     // pareceres: a FONTE é a árvore `docs/pareceres/*.md` (G5b) — o JSON saiu do caminho. Os
@@ -79,7 +89,7 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
             &embedder,
             &writer,
             &entity,
-            "pareceres",
+            Kind::Pareceres,
             &consultas,
             &out,
         )?);
@@ -156,7 +166,7 @@ fn avisar_faqs_truncadas(embedder: &Embedder, faqs: &[auli_contract::Faq]) -> Re
 /// `Faq` não tem `id`: a rematerialização é só a struct + o `text_to_embed`, recomposto aqui pelo
 /// ponto único do contrato. Ordem = nome de arquivo, para o pack ser reproduzível.
 fn preparar_faqs(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Faq>>> {
-    let dir = docs_dir.join("faqs");
+    let dir = docs_dir.join(Kind::Faqs.as_str());
     if !dir.exists() {
         return Ok(None);
     }
@@ -200,7 +210,7 @@ fn preparar_faqs(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Faq>>> {
 /// pack reproduzível, mesma doutrina dos pareceres. O `.md` não guarda nenhum dos dois: eles são
 /// função da árvore, não do arquivo.
 fn preparar_servicos(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Servico>>> {
-    let dir = docs_dir.join("servicos");
+    let dir = docs_dir.join(Kind::Servicos.as_str());
     if !dir.exists() {
         return Ok(None);
     }
@@ -259,7 +269,7 @@ fn preparar_pareceres(
     entity: &str,
     docs_dir: &Path,
 ) -> Result<Option<Vec<auli_contract::Consulta>>> {
-    let dir = docs_dir.join("pareceres");
+    let dir = docs_dir.join(Kind::Pareceres.as_str());
     if !dir.exists() {
         return Ok(None); // entidade sem pareceres
     }
@@ -349,7 +359,7 @@ fn ingest_items<P>(
     embedder: &Embedder,
     writer: &Writer,
     entity: &str,
-    kind: &str,
+    kind: Kind,
     items: &[P],
     out: &Path,
 ) -> Result<CollectionEntry>
@@ -362,7 +372,7 @@ where
         .collect();
     let stored: Vec<String> = items.iter().map(|it| it.stored_repr()).collect();
 
-    let name = format!("{}-{}", entity, kind);
+    let name = format!("{}-{}", entity, kind.as_str());
     let embeddings = embedder.embed_dense(to_embed)?;
     // The manifest stamps `dim = EMBED_DIM` (a constant). If the model ever produces a different
     // real width without an `EMBED_MODEL_ID` bump, the manifest would lie and boot validation
@@ -387,7 +397,7 @@ where
     let written = std::fs::read(out.join(&file_name))?;
     println!("✅ {} → {} registros", name, total);
     Ok(CollectionEntry {
-        kind: kind.to_string(),
+        kind: kind.as_str().to_string(),
         count: total as usize,
         dim: EMBED_DIM,
         file: file_name,

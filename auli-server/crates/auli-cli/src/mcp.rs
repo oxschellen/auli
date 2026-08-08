@@ -21,6 +21,7 @@ use rmcp::{
 };
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
+use auli_contract::Kind;
 use auli_core::corpus::{FAQS, SERVICES};
 use auli_retrieval::Engine;
 
@@ -32,11 +33,11 @@ const MAX_TOP_K: usize = 20;
 const DEFAULT_TOP_K: usize = 5;
 
 /// Kind dos pareceres — o único que a v1 expunha por MCP (D-MCP-7).
-const KIND: &str = "pareceres";
+const KIND: &str = Kind::Pareceres.as_str();
 
 /// Kinds da consulta Serviços+FAQs — a mesma dupla do tipo `ServicosFaqs` do chat.
-const KIND_SERVICOS: &str = "servicos";
-const KIND_FAQS: &str = "faqs";
+const KIND_SERVICOS: &str = Kind::Servicos.as_str();
+const KIND_FAQS: &str = Kind::Faqs.as_str();
 
 /// Kinds que o `listar_entidades` reporta, na ordem de exibição.
 const KINDS_LISTADOS: [&str; 3] = [KIND, KIND_SERVICOS, KIND_FAQS];
