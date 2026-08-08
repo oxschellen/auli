@@ -85,8 +85,8 @@ simplesmente não vai ser consultado.
 que as quatro ferramentas do Auli estão marcadas:
 
 - `listar_entidades` — quais estados têm acervo
-- `buscar_pareceres` — busca por assunto
-- `obter_parecer` — texto integral de um parecer
+- `buscar_pareceres` — busca por assunto (parâmetro `colecao`: `pareceres`, o padrão, ou `tarf`)
+- `obter_parecer` — texto integral de um documento (mesmo `colecao` usado na busca)
 - `consultar_servicos_faqs` — serviços de atendimento e perguntas frequentes
 
 Pronto.

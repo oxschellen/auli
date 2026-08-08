@@ -17,7 +17,11 @@
 /// `Copy` porque é um discriminante: passa por valor em toda parte, e nenhum chamador precisa
 /// clonar. A ordem das variantes é a de **exibição** (serviços e faqs primeiro, jurisprudência
 /// depois) — é a ordem em que o `auli update` vetoriza e em que [`Kind::TODOS`] lista.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+///
+/// A serialização usa o MESMO texto do [`Kind::as_str`] — o vocabulário é um só, e um JSON com
+/// `"kind":"Tarf"` seria um segundo nome para a mesma coisa.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Kind {
     Servicos,
     Faqs,
@@ -37,6 +41,7 @@ impl Kind {
     /// Essa unificação é doutrina antiga do projeto (ver `corpus::Collection::kind`), e é por isso
     /// que **não existe um `dir()` separado**: um segundo método devolvendo o mesmo texto seria o
     /// primeiro lugar onde os dois poderiam divergir.
+    ///
     /// `const fn` para que consts de outros crates possam ser definidas a partir dela — é o que
     /// permite o MCP declarar `const KIND: &str = Kind::Pareceres.as_str()` em vez de repetir o
     /// literal.
@@ -115,6 +120,16 @@ mod tests {
         assert_eq!(Kind::TODOS.len(), 4);
         for k in Kind::TODOS {
             assert_eq!(Kind::parse(k.as_str()), Some(k), "{k}");
+        }
+    }
+
+    #[test]
+    fn serializa_com_o_mesmo_texto_do_as_str() {
+        // Um segundo nome para a mesma coisa (`"Tarf"` vs `"tarf"`) daria dois vocabulários.
+        for k in Kind::TODOS {
+            let json = serde_json::to_string(&k).unwrap();
+            assert_eq!(json, format!("\"{}\"", k.as_str()), "{k}");
+            assert_eq!(serde_json::from_str::<Kind>(&json).unwrap(), k);
         }
     }
 

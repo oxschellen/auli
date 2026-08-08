@@ -36,8 +36,11 @@ Quatro ferramentas: `listar_entidades` (o que cada UF tem), `buscar_pareceres` (
 exige a UF), `obter_parecer` (texto integral, pelo número) e `consultar_servicos_faqs` (serviços de
 atendimento e perguntas frequentes de uma UF, para dúvidas de "como fazer").
 
+As duas ferramentas de jurisprudência aceitam um parâmetro `colecao`: sem ele, consultam os **pareceres** (interpretação da legislação pela Receita Estadual); com `"tarf"`, os **acórdãos do TARF** do RS — decisões do tribunal administrativo em recursos de contribuintes, caso a caso, que não valem como norma geral. O acervo do TARF está em coleta e cresce a cada rodada; use `listar_entidades` para o total do momento.
+
 **Os totais acima são mantidos à mão nos quatro manuais.** Quando entrar um estado novo com acervo
-de pareceres, todos precisam ser atualizados juntos.
+de pareceres, todos precisam ser atualizados juntos. O total do TARF fica de fora até a coleta
+fechar — publicar um número que muda toda semana é pior do que mandar consultar `listar_entidades`.
 
 ## Quando nenhum caminho estiver disponível
 

@@ -1,16 +1,18 @@
 import { Box, HStack, RadioGroup, Text, Flex } from "@chakra-ui/react";
 import type { QuestionType } from "./utils/useQuestionType";
 
-/** The two query types, in display order. Values are sent (as numbers) in the request `type` field.
- *  An option can set `disabled: true` to show but block it (kept for reversibility). */
-const questionOptions: { label: string; value: QuestionType; disabled?: boolean }[] = [
-  { label: "Serviços+FAQs", value: "1" },
-  { label: "Pareceres", value: "2" },
-];
+/** O rótulo de cada tipo. Os valores são enviados (como número) no campo `type` da requisição. */
+const ROTULOS: Record<QuestionType, string> = {
+  "1": "Serviços+FAQs",
+  "2": "Pareceres",
+  "3": "Acórdãos TARF",
+};
 
 interface SelectQuestionTypeProps {
   questionType: QuestionType;
   updateQuestionType: (value: string | null) => void;
+  /** Os tipos que esta entidade tem, na ordem de exibição (ver `tiposDisponiveis`). */
+  disponiveis: QuestionType[];
 }
 
 /**
@@ -20,7 +22,13 @@ interface SelectQuestionTypeProps {
  *
  * Não tem margem horizontal própria: quem espaça é o cartão que o contém (ver `Input`).
  */
-export const SelectQuestionType = ({ questionType, updateQuestionType }: SelectQuestionTypeProps) => {
+export const SelectQuestionType = ({
+  questionType,
+  updateQuestionType,
+  disponiveis,
+}: SelectQuestionTypeProps) => {
+  // Com uma opção só não há o que escolher, e um rádio solto lê como controle quebrado.
+  if (disponiveis.length < 2) return null;
   return (
     <Box maxW="1440px" bg="bg.subtle" borderRadius="12px" px={2} py={1} mb={2}>
       <Text
@@ -39,16 +47,10 @@ export const SelectQuestionType = ({ questionType, updateQuestionType }: SelectQ
         onValueChange={({ value }) => updateQuestionType(value)}
       >
         <HStack gap={2} flexWrap="wrap" justify="flex-start">
-          {questionOptions.map((opt) => {
-            const selected = questionType === opt.value;
-            const disabled = Boolean(opt.disabled);
+          {disponiveis.map((tipo) => {
+            const selected = questionType === tipo;
             return (
-              <RadioGroup.Item
-                key={opt.value}
-                value={opt.value}
-                disabled={disabled}
-                cursor={disabled ? "not-allowed" : "pointer"}
-              >
+              <RadioGroup.Item key={tipo} value={tipo} cursor="pointer">
                 <RadioGroup.ItemHiddenInput />
                 <RadioGroup.ItemIndicator display="none" />
                 <Flex
@@ -61,15 +63,14 @@ export const SelectQuestionType = ({ questionType, updateQuestionType }: SelectQ
                   borderRadius="7px"
                   border="2px solid"
                   borderColor={selected ? "accent" : "border"}
-                  opacity={disabled ? 0.45 : 1}
                   transition="all 0.2s ease"
-                  _hover={disabled ? undefined : {
+                  _hover={{
                     borderColor: "accent",
                     transform: "translateY(-1px)",
                   }}
                 >
                   <RadioGroup.ItemText fontWeight={selected ? "600" : "500"} fontSize="0.665rem">
-                    {opt.label}
+                    {ROTULOS[tipo]}
                   </RadioGroup.ItemText>
                 </Flex>
               </RadioGroup.Item>

@@ -22,7 +22,7 @@
 
 use std::path::Path;
 
-use auli_contract::{Consulta, mddoc};
+use auli_contract::{Consulta, Kind, mddoc};
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -172,6 +172,8 @@ fn parecer_from_lines(lines: &[&str]) -> Option<Consulta> {
     let text_to_embed = crate::sinopse::compose_text_to_embed(&numero, &assunto, &resumo);
 
     Some(Consulta {
+        // Este bootstrap ingere o `.txt` legado de `ref/` — que só existiu para pareceres.
+        kind: Kind::Pareceres,
         numero,
         assunto,
         resumo,

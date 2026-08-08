@@ -11,7 +11,7 @@ use std::time::Instant;
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_contract::{ConsultaPackPayload, Kind, render_consulta_block};
-use auli_core::corpus::{FAQS, PARECERES, SERVICES};
+use auli_core::corpus::{self, FAQS, SERVICES};
 use auli_retrieval::{Engine, Hit};
 use tracing::{debug, error, info, trace, warn};
 
@@ -77,25 +77,32 @@ impl TemposConsulta {
 pub enum QueryType {
     /// Serviços + FAQs — the default RAG path.
     ServicosFaqs,
-    /// Pareceres only.
-    Pareceres,
+    /// Uma coleção de jurisprudência, sozinha: pareceres ou acórdãos do TARF. O caminho é o mesmo
+    /// (payload leve → corpo lido da árvore → bloco), e o que muda é a coleção, o rótulo do bloco e
+    /// o prompt de sistema — tudo dado, nenhum código a duplicar.
+    Jurisprudencia(Kind),
 }
 
 impl QueryType {
-    /// Map the wire code (`1`/`2`) to a `QueryType`. `None` or any unexpected value falls back to
-    /// `ServicosFaqs`, so a malformed `type` degrades gracefully instead of failing the request.
+    /// O código de fio → `QueryType`. `None` ou valor inesperado cai em `ServicosFaqs`, então um
+    /// `type` malformado degrada em vez de derrubar a requisição.
+    ///
+    /// Os códigos são **contrato com o frontend** e não podem ser reordenados: `2` é pareceres desde
+    /// a primeira versão da tab do auditor, e `3` é o TARF.
     pub fn from_code(code: Option<u8>) -> Self {
         match code {
-            Some(2) => QueryType::Pareceres,
+            Some(2) => QueryType::Jurisprudencia(Kind::Pareceres),
+            Some(3) => QueryType::Jurisprudencia(Kind::Tarf),
             _ => QueryType::ServicosFaqs,
         }
     }
 
-    /// Rótulo curto para o cabeçalho do log de auditoria.
+    /// Rótulo curto para o cabeçalho do log de auditoria. Contrato de grep
+    /// (`grep "tipo: pareceres" logs/*.txt`) — `pareceres` segue sendo `pareceres`.
     pub fn label(self) -> &'static str {
         match self {
             QueryType::ServicosFaqs => "servicos+faqs",
-            QueryType::Pareceres => "pareceres",
+            QueryType::Jurisprudencia(k) => k.as_str(),
         }
     }
 }
@@ -189,11 +196,12 @@ pub(crate) fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String])
     format!("{}\n{}", rag_service, rag_faq)
 }
 
-/// Contexto do tipo `Pareceres`: um bloco numerado por parecer recuperado, e — quando a expansão
-/// por grafo devolve algo — os pareceres que citam os mesmos dispositivos, rotulados como
-/// relacionados. Com `relacionados` vazio (default/sem grafo), só a primeira seção sai.
-fn montar_rag_pareceres(blocos: &[String], relacionados: &[String]) -> String {
-    let principal = render(blocos, |i, bloco| envolver(Kind::Pareceres.rotulo(), i, bloco));
+/// Contexto do tipo `Jurisprudencia`: um bloco numerado por documento recuperado, e — quando a
+/// expansão por grafo devolve algo — os pareceres que citam os mesmos dispositivos, rotulados como
+/// relacionados. Com `relacionados` vazio (default/sem grafo, e SEMPRE no TARF — D-A4), só a
+/// primeira seção sai.
+fn montar_rag_jurisprudencia(kind: Kind, blocos: &[String], relacionados: &[String]) -> String {
+    let principal = render(blocos, |i, bloco| envolver(kind.rotulo(), i, bloco));
     if relacionados.is_empty() {
         return principal;
     }
@@ -360,35 +368,39 @@ pub async fn exec_all_question(
             itens_aderencia.extend(aderencia("faq", faq_hits.iter().map(|h| Some(h.score))));
             montar_rag_servicos_faqs(&payloads(&svc_hits), &payloads(&faq_hits))
         }
-        QueryType::Pareceres => {
-            let par_hits = retrieve(
+        QueryType::Jurisprudencia(kind) => {
+            let colecao = corpus::from_kind(kind.as_str())
+                .expect("todo Kind é um kind de corpus — ver o teste de cobertura");
+            let hits = retrieve(
                 engine.clone(),
-                cfg.collection(PARECERES.kind),
-                "par",
+                cfg.collection(colecao.kind),
+                "jur",
                 embedding,
-                PARECERES.n_results,
+                colecao.n_results,
                 PAR_FLOOR,
                 PAR_BAND,
             )
             .await?;
 
-            // No pareceres vectorized for this entity yet — answer with a friendly notice instead of
-            // prompting the LLM on empty context (which would invite a hallucinated answer).
-            if par_hits.is_empty() {
-                return Ok(
-                    "A consulta de Pareceres ainda não está disponível para esta entidade."
-                        .to_string(),
-                );
+            // Coleção não vetorizada para esta entidade — avisa em vez de mandar o LLM responder com
+            // contexto vazio (que é convite a alucinação).
+            if hits.is_empty() {
+                return Ok(format!(
+                    "A consulta de {} ainda não está disponível para esta entidade.",
+                    kind.titulo()
+                ));
             }
 
             // Expansão por grafo: pareceres que citam os MESMOS dispositivos dos recuperados — sinal
             // complementar ao do vetor (acha conexão jurídica que a similaridade textual erra).
-            // Opt-in por entidade: sem `dispositivos-index.json`, `relacionados` fica vazio e o
-            // contexto é idêntico ao de antes. Bloqueante (lê o índice + varre o pack + lê corpos).
-            let relacionados = {
+            // **Exclusiva dos pareceres na v1** (D-A4): o `dispositivos-index.json` é derivado da
+            // árvore de pareceres, e o `bloco_por_numero` varre o pack de pareceres — apontá-lo para
+            // acórdãos devolveria, no melhor caso, nada; no pior, um parecer no meio do contexto de
+            // acórdãos, sem que a numeração do bloco denunciasse a troca.
+            let relacionados = if kind == Kind::Pareceres {
                 let engine = engine.clone();
                 let id = cfg.id.clone();
-                let seeds: Vec<String> = par_hits
+                let seeds: Vec<String> = hits
                     .iter()
                     .filter_map(|h| {
                         serde_json::from_str::<ConsultaPackPayload>(&h.payload)
@@ -410,28 +422,38 @@ pub async fn exec_all_question(
                     Ok::<Vec<String>, crate::error::Error>(blocos)
                 })
                 .await?
+            } else {
+                Vec::new()
             };
 
             // G3: cada doc recuperado é o payload LEVE (JSON, sem corpo). Remonta o bloco de sempre
-            // lendo o corpo da árvore `docs/` da entidade (`<docs_root>/<id>/<doc_path>`).
-            let blocos: Vec<String> = par_hits
+            // lendo o corpo da árvore `docs/` da entidade (`<docs_root>/<id>/<doc_path>`). O
+            // `doc_path` já traz a coleção, então o mesmo montador serve as duas.
+            let blocos: Vec<String> = hits
                 .iter()
                 .map(|h| bloco_parecer(&h.payload, engine.docs_root(), &cfg.id))
                 .collect();
             info!(
-                "Foram selecionados {} pareceres (+{} relacionados por grafo)",
+                "Foram selecionados {} {} (+{} relacionados por grafo)",
                 blocos.len(),
+                kind.plural(),
                 relacionados.len()
             );
 
-            itens_aderencia.extend(aderencia("parecer", par_hits.iter().map(|h| Some(h.score))));
+            // O rótulo da ADERÊNCIA é o do documento em minúsculas — nos pareceres isso dá
+            // exatamente `parecer`, o literal que o log usa desde sempre (ver o teste que o pina).
+            // Trocá-lo por `pareceres` mudaria um formato de log já em uso, de graça.
+            itens_aderencia.extend(aderencia(
+                &kind.rotulo().to_lowercase(),
+                hits.iter().map(|h| Some(h.score)),
+            ));
             // Os relacionados entram sem número: vieram por co-citação, não por vetor. Ficam na
             // lista mesmo assim para que a seção espelhe o bloco RAG documento a documento.
             itens_aderencia.extend(aderencia(
                 "parecer relacionado",
                 relacionados.iter().map(|_| None),
             ));
-            montar_rag_pareceres(&blocos, &relacionados)
+            montar_rag_jurisprudencia(kind, &blocos, &relacionados)
         }
     };
     tempos.retrieve_ms = t.elapsed().as_millis() as u64;
@@ -439,7 +461,7 @@ pub async fn exec_all_question(
     // System prompt = base prompt (per query type) + RAG context, closed with the original delimiter.
     let base_prompt = match query_type {
         QueryType::ServicosFaqs => &cfg.system_prompt,
-        QueryType::Pareceres => &cfg.pareceres_prompt,
+        QueryType::Jurisprudencia(kind) => cfg.prompt_de(kind),
     };
     let system_prompt = format!("{}{}'''", base_prompt, rag);
     trace!("System instructions with RAG: {}", system_prompt);
@@ -625,9 +647,9 @@ pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<()> {
 mod tests {
     use super::{
         QueryType, RegistroConsulta, TemposConsulta, aderencia, bloco_parecer, envolver,
-        format_log_record, montar_aderencia, montar_rag_pareceres, montar_rag_servicos_faqs,
+        format_log_record, montar_aderencia, montar_rag_jurisprudencia, montar_rag_servicos_faqs,
     };
-    use auli_contract::{ConsultaPackPayload, mddoc};
+    use auli_contract::{ConsultaPackPayload, Kind, mddoc};
     use std::path::Path;
 
     fn payload(doc_path: &str) -> String {
@@ -696,8 +718,14 @@ mod tests {
 
     #[test]
     fn query_type_label_is_stable() {
+        // Contrato de grep do cabeçalho `tipo: ...` do log de auditoria. `pareceres` continua
+        // `pareceres` depois de a variante virar `Jurisprudencia(Kind)` — era o risco da mudança.
         assert_eq!(QueryType::ServicosFaqs.label(), "servicos+faqs");
-        assert_eq!(QueryType::Pareceres.label(), "pareceres");
+        assert_eq!(
+            QueryType::Jurisprudencia(Kind::Pareceres).label(),
+            "pareceres"
+        );
+        assert_eq!(QueryType::Jurisprudencia(Kind::Tarf).label(), "tarf");
     }
 
     #[test]
@@ -860,11 +888,31 @@ mod tests {
 
     #[test]
     fn query_type_from_code_maps_2_to_pareceres_and_everything_else_to_default() {
-        assert_eq!(QueryType::from_code(Some(2)), QueryType::Pareceres);
+        // Os códigos são contrato com o frontend: `2` é pareceres desde a primeira versão da tab do
+        // auditor e não pode ser reordenado; `3` é o TARF.
+        assert_eq!(
+            QueryType::from_code(Some(2)),
+            QueryType::Jurisprudencia(Kind::Pareceres)
+        );
+        assert_eq!(
+            QueryType::from_code(Some(3)),
+            QueryType::Jurisprudencia(Kind::Tarf)
+        );
         assert_eq!(QueryType::from_code(Some(1)), QueryType::ServicosFaqs);
         assert_eq!(QueryType::from_code(None), QueryType::ServicosFaqs);
         // Unknown code degrades to the default rather than erroring.
         assert_eq!(QueryType::from_code(Some(9)), QueryType::ServicosFaqs);
+    }
+
+    /// A trava que impede o `expect` do caminho de jurisprudência de virar pânico em produção: todo
+    /// `Kind` tem que resolver em `corpus::from_kind`.
+    #[test]
+    fn todo_kind_resolve_em_corpus() {
+        for k in Kind::TODOS {
+            let c = auli_core::corpus::from_kind(k.as_str())
+                .unwrap_or_else(|e| panic!("{k} não resolve em corpus: {e}"));
+            assert_eq!(c.kind, k.as_str());
+        }
     }
 
     // ---- Trava de paridade do formato do contexto RAG (item 8 do G2) ----
@@ -929,10 +977,21 @@ mod tests {
     fn montar_rag_pareceres_pina_o_formato() {
         let blocos = vec!["BLOCO UM".to_string(), "BLOCO DOIS".to_string()];
         assert_eq!(
-            montar_rag_pareceres(&blocos, &[]),
+            montar_rag_jurisprudencia(Kind::Pareceres, &blocos, &[]),
             "\n## documento 1: Parecer\nBLOCO UM\n\n## documento 2: Parecer\nBLOCO DOIS\n"
         );
-        assert_eq!(montar_rag_pareceres(&[], &[]), "");
+        assert_eq!(montar_rag_jurisprudencia(Kind::Pareceres, &[], &[]), "");
+    }
+
+    /// O bloco do TARF: MESMO template, só o rótulo muda. É o que a D-MARC-1 promete — o que
+    /// distingue as coleções é dado, não estrutura.
+    #[test]
+    fn montar_rag_tarf_pina_o_formato() {
+        let blocos = vec!["BLOCO UM".to_string()];
+        assert_eq!(
+            montar_rag_jurisprudencia(Kind::Tarf, &blocos, &[]),
+            "\n## documento 1: Acórdão TARF\nBLOCO UM\n"
+        );
     }
 
     #[test]
@@ -941,7 +1000,7 @@ mod tests {
         let blocos = vec!["BLOCO UM".to_string()];
         let rel = vec!["BLOCO REL".to_string()];
         assert_eq!(
-            montar_rag_pareceres(&blocos, &rel),
+            montar_rag_jurisprudencia(Kind::Pareceres, &blocos, &rel),
             "\n## documento 1: Parecer\nBLOCO UM\n\n## documento 1: Parecer relacionado\nBLOCO REL\n"
         );
     }

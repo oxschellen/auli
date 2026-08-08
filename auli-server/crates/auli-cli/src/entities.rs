@@ -66,6 +66,11 @@ struct RegistryEntity {
     // Optional per-entity prompt for pareceres queries (type=2); empty -> DEFAULT_PARECERES_PROMPT.
     #[serde(default)]
     prompt_pareceres: String,
+    // Optional per-entity prompt for TARF queries (type=3); empty -> DEFAULT_PARECERES_PROMPT. O
+    // fallback é o de pareceres, e não um terceiro texto: sem prompt próprio, um acórdão ainda é
+    // jurisprudência, e as instruções de citar o número e o link valem igual.
+    #[serde(default)]
+    prompt_tarf: String,
 }
 
 #[derive(Debug, Clone)]
@@ -75,12 +80,27 @@ pub struct EntityConfig {
     pub system_prompt: String,
     // Prompt used for pareceres queries (type=2); the entity's `prompt_pareceres` or the default.
     pub pareceres_prompt: String,
+    // Prompt used for TARF queries (type=3); the entity's `prompt_tarf` or the pareceres default.
+    pub tarf_prompt: String,
 }
 
 impl EntityConfig {
-    // kind ∈ {"servicos", "faqs", "pareceres", "notas"} -> "rs-faqs"
+    // kind ∈ {"servicos", "faqs", "pareceres", "tarf", "notas"} -> "rs-faqs"
     pub fn collection(&self, kind: &str) -> String {
         format!("{}-{}", self.id, kind)
+    }
+
+    /// O prompt de sistema de UMA coleção de jurisprudência.
+    ///
+    /// Serviços e FAQs não passam por aqui — eles compartilham o `system_prompt`, que é o prompt do
+    /// chat de atendimento. Se um dia passarem, cairão no prompt de pareceres, que é errado; daí o
+    /// `debug_assert`, que faz o engano aparecer em teste em vez de na resposta.
+    pub fn prompt_de(&self, kind: auli_contract::Kind) -> &str {
+        debug_assert!(kind.exige_resumo(), "prompt_de é só para jurisprudência");
+        match kind {
+            auli_contract::Kind::Tarf => &self.tarf_prompt,
+            _ => &self.pareceres_prompt,
+        }
     }
 }
 
@@ -161,6 +181,9 @@ fn load_entities() -> HashMap<String, EntityConfig> {
             "pareceres",
             DEFAULT_PARECERES_PROMPT,
         );
+        // Sem `prompt_tarf`, cai no prompt de PARECERES da própria entidade (não no default global):
+        // ele já fala a língua do acervo daquela UF, e é a aproximação mais útil disponível.
+        let tarf_prompt = load_prompt(&base, &ent.id, &ent.prompt_tarf, "tarf", &pareceres_prompt);
         map.insert(
             ent.id.clone(),
             EntityConfig {
@@ -168,6 +191,7 @@ fn load_entities() -> HashMap<String, EntityConfig> {
                 name: ent.name,
                 system_prompt,
                 pareceres_prompt,
+                tarf_prompt,
             },
         );
     }

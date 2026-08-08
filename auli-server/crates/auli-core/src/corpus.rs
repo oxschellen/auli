@@ -27,13 +27,20 @@ pub const PARECERES: Collection = Collection {
     kind: "pareceres",
     n_results: 10,
 };
+// Acórdãos do TARF (D-A3): MESMA política dos pareceres na v1 — mesma família de documento
+// (jurisprudência), mesmo formato de payload no pack, mesmas bandas de score. Revisar só com
+// evidência de uso real, não por simetria estética.
+pub const TARF: Collection = Collection {
+    kind: "tarf",
+    n_results: 10,
+};
 pub const NOTAS: Collection = Collection {
     kind: "notas",
     n_results: 1,
 };
 
-// All four kinds, for callers that iterate (boot-time pack loading in `packs::load_all`).
-pub const ALL: [&Collection; 4] = [&SERVICES, &FAQS, &PARECERES, &NOTAS];
+// All five kinds, for callers that iterate (boot-time pack loading in `packs::load_all`).
+pub const ALL: [&Collection; 5] = [&SERVICES, &FAQS, &PARECERES, &TARF, &NOTAS];
 
 // Resolve a kind name to its Collection. `servicos` is the single vocabulary — the `/v1/{kind}/list`
 // route param, the vector-collection suffix, and the UI/registry label all agree. Unknown -> Err.
@@ -42,9 +49,10 @@ pub fn from_kind(kind: &str) -> std::result::Result<&'static Collection, String>
         "servicos" => Ok(&SERVICES),
         "faqs" => Ok(&FAQS),
         "pareceres" => Ok(&PARECERES),
+        "tarf" => Ok(&TARF),
         "notas" => Ok(&NOTAS),
         _ => Err(format!(
-            "Tipo de coleção desconhecido: '{}'. Tipos válidos: servicos, faqs, pareceres, notas.",
+            "Tipo de coleção desconhecido: '{}'. Tipos válidos: servicos, faqs, pareceres, tarf, notas.",
             kind
         )),
     }

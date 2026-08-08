@@ -18,6 +18,12 @@ Hoje o acervo tem **19.780 pareceres** de quatro estados:
 | Santa Catarina | SEF-SC | 1.743 |
 | Rio Grande do Sul | SEFAZ-RS | 372 |
 
+Além dos pareceres, o RS tem os **acórdãos do TARF** — o Tribunal Administrativo de Recursos
+Fiscais, segunda instância do contencioso tributário estadual. Para consultá-los, peça em
+português mesmo (*"o que o TARF já decidiu sobre..."*); por baixo, a busca leva `colecao: "tarf"`.
+São decisões de casos concretos, não interpretação normativa — o acervo está em coleta e cresce a
+cada rodada, então pergunte *quantos acórdãos existem hoje* em vez de confiar num número fixo.
+
 ## Antes de começar
 
 Você precisa de um plano **Pro** ou **Max**. No plano gratuito não é possível adicionar conectores

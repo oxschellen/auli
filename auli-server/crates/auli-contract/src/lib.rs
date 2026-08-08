@@ -171,6 +171,14 @@ pub struct ResumoInfo {
 /// struct não aparece na serialização (serde grava só os campos).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Consulta {
+    /// De QUAL coleção de jurisprudência este documento veio — hoje [`Kind::Pareceres`] ou
+    /// [`Kind::Tarf`]. É o que decide o `docs/<kind>/` do `doc_path` gravado no pack; sem ele, um
+    /// acórdão apontaria para a árvore dos pareceres e o corpo sairia indisponível na query.
+    ///
+    /// Ausente no JSON legado ⇒ `Pareceres`, que era a única coleção quando esses registros foram
+    /// escritos (esta struct não é persistida hoje — a fonte é a árvore `.md` desde a G5b).
+    #[serde(default = "kind_pareceres")]
+    pub kind: Kind,
     /// Identificador do parecer (ex.: `"PARECER Nº 25148"`).
     pub numero: String,
     /// Assunto/ementa (uma linha).
@@ -190,22 +198,32 @@ pub struct Consulta {
     pub sinopse_info: Option<ResumoInfo>,
 }
 
+/// O `kind` dos registros escritos antes de a jurisprudência ter mais de uma coleção.
+fn kind_pareceres() -> Kind {
+    Kind::Pareceres
+}
+
 impl Embeddable for Consulta {
     fn text_to_embed(&self) -> &str {
         &self.text_to_embed
     }
 
-    /// G3: o pack de pareceres guarda o **payload leve** (JSON, sem o corpo) — o corpo vive na árvore
-    /// `docs/` e é lido na query. `doc_path` usa o MESMO `mddoc::slug` da materialização; nunca
-    /// recomputar com outra regra. O servidor remonta o bloco `## pergunta`/`## resposta` de sempre
-    /// via `render_consulta_block(payload, corpo)`. Os demais kinds seguem com o bloco pré-renderizado.
+    /// G3: o pack de jurisprudência guarda o **payload leve** (JSON, sem o corpo) — o corpo vive na
+    /// árvore `docs/` e é lido na query. `doc_path` usa o MESMO `mddoc::slug` da materialização;
+    /// nunca recomputar com outra regra. O servidor remonta o bloco `## pergunta`/`## resposta` de
+    /// sempre via `render_consulta_block(payload, corpo)`. Os demais kinds seguem com o bloco
+    /// pré-renderizado.
     fn stored_repr(&self) -> String {
         let payload = ConsultaPackPayload {
             numero: self.numero.clone(),
             assunto: self.assunto.clone(),
             resumo: self.resumo.clone(),
             link: self.link.clone(),
-            doc_path: format!("docs/pareceres/{}.md", mddoc::slug(&self.numero)),
+            doc_path: format!(
+                "docs/{}/{}.md",
+                self.kind.as_str(),
+                mddoc::slug(&self.numero)
+            ),
         };
         serde_json::to_string(&payload)
             .expect("ConsultaPackPayload serializa sem falha (campos String)")
@@ -566,6 +584,7 @@ mod tests {
     #[test]
     fn parecer_exposes_key_and_renders_block() {
         let p = Consulta {
+            kind: Kind::Pareceres,
             numero: "PARECER Nº 25148".into(),
             assunto: "ICMS – crédito fiscal na cesta básica".into(),
             resumo: "Análise sobre apropriação de crédito.".into(),
@@ -607,6 +626,7 @@ mod tests {
 
     fn sample_consulta() -> Consulta {
         Consulta {
+            kind: Kind::Pareceres,
             numero: "PARECER Nº 25148".into(),
             assunto: "ICMS – crédito fiscal na cesta básica".into(),
             resumo: "Análise sobre apropriação de crédito.".into(),
