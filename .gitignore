@@ -70,6 +70,9 @@ web_config.txt
 /data/*
 !/data/registry.toml
 !/data/prompts/
+# Cópias de segurança das árvores antes de uma migração de formato (pré-condição do roteiro
+# D-FMT-9). São dado, como o `data/` que espelham — e maiores ainda, por serem duplicata.
+/data_backup*/
 /*.patch
 
 # Saídas de análise derivadas dos dados do portal (TSVs de frontmatter, tabelas de apoio). Mesma
