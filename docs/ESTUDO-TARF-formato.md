@@ -12,7 +12,7 @@ implementação decidiu e o que só apareceu ao rodar.
 
 ## 1. Decisões de recorte
 
-1. **TARF NÃO é uma nova entidade.** A via entidade-nova (uma "uf" chamada tarf) foi avaliada e **descartada**: maximizava o reuso por configuração, mas torcia a semântica (TARF ao lado de UFs; acórdãos com kind "pareceres"). Decisão: TARF é uma **coleção irmã** de servicos/faqs/pareceres dentro da entidade rs.
+1. **TARF é uma coleção irmã** de servicos/faqs/pareceres dentro da entidade rs — não uma entidade própria. Entidade é UF; acórdão não é parecer.
 2. **O formato .md dos pareceres é adotado sem alteração** para os acórdãos: frontmatter `numero`/`assunto`/`link`, seções `## sinopse` e `## corpo`, nome do arquivo = slug do numero. Árvore fonte: `data/rs/docs/tarf/*.md`.
 3. **Campos específicos do acórdão não ganham frontmatter.** Recurso, recorrentes, processo, auto de lançamento, decisão de 1ª instância ficam como texto no `## corpo` (que é onde o retrieval lê o conteúdo integral). Nada de esquema novo.
 

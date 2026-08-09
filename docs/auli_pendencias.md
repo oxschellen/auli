@@ -716,148 +716,22 @@ acima.
 
 ---
 
-## 30. Embeddings na GPU — **medido e REPROVADO** (2026-08-02)
-
-A ideia de rodar o embedder BGE-M3 na GPU do home server (RTX 3060) foi levada até o gate de
-medição da `TAREFA-NOVO-GPU` e **reprovou**: a GPU é mais **lenta** que a CPU. Registrado aqui para
-ninguém reabrir o assunto sem dado novo — a intuição diz "GPU é mais rápida" e ela está errada
-neste caso específico.
-
-**Como foi medido.** Spike descartável (branch `spike/gpu-bench`, não mergeado): dependência direta
-do `ort` pinada em `=2.0.0-rc.12`, construtor `Embedder::new_cuda` registrando `ort::ep::CUDA` com
-`.error_on_failure()`, e um `embed_bench` sobre **keys reais** lidas da árvore `docs/` e compostas
-pelas mesmas funções `auli_contract::compose_*` que o `update` usa — com `embed_dense` e seu
-`batch_size = 1` intocados.
-
-**Os números** (RTX 3060 8 GB, driver 580.173.02, `EMBED_THREADS=24`; amostragem por passo):
-
-| Corpus | tokens/key (média) | CPU | CUDA | speedup |
-| --- | --- | --- | --- | --- |
-| `sp/pareceres` (n=295) | 526 | **5,7 texts/s** | 3,7 texts/s | **0,65×** |
-| `rs/faqs` (n=195) | 311 | **6,4 texts/s** | 4,7 texts/s | **0,73×** |
-
-O CPU reproduz em 0,3% entre execuções (51,72 s / 51,59 s), e o segundo par rodou no MESMO binário
-compilado com a feature, então build não é variável. Extrapolado, o `update` de SP inteiro leva
-**~46 min em CPU** e **~71 min em CUDA**.
-
-**Por que — o mecanismo, não a hipótese.** O modelo é `model_quantized.onnx` (570 MB ≈ 1 byte por
-peso dos ~568M do BGE-M3). Inspecionando o grafo:
-
-| operador | ocorrências |
-| --- | --- |
-| `MatMulInteger` | **194** |
-| `DynamicQuantizeLinear` | **194** |
-| `DequantizeLinear` | 3 |
-| `QLinear*` | **0** |
-
-É **quantização dinâmica**: escala e zero-point calculados em runtime, e o matmul INT8 expresso como
-`MatMulInteger` — operador que o **CUDA EP não implementa**. O suporte a quantização na GPU passa
-pelo formato QDQ/QOperator (`QLinearMatMul` e família), do qual este grafo tem **zero** ocorrências.
-Ou seja: os 194 matmuls, que _são_ o trabalho pesado do transformer, não têm como sair da CPU. A GPU
-só pega operadores periféricos, e cada troca de mão paga transferência.
-
-A medição confirma o mecanismo de forma limpa — variando `EMBED_THREADS` (n=100, `sp/pareceres`):
-
-| threads | CPU | CUDA |
-| --- | --- | --- |
-| 1 | 799,7 ms/texto | **791,0 ms/texto** |
-| 24 | 189,3 ms/texto | 288,2 ms/texto |
-
-**Com 1 thread os dois caminhos empatam dentro de 1%.** A contribuição líquida da GPU é zero: o que
-ela acelera, a transferência devolve. Com 24 threads o caminho CUDA fica pior, porque os pontos de
-sincronização não paralelizam junto. O provider registrou de verdade (GPU a 50–59%, +680 MiB de
-VRAM) — não é caso de fallback silencioso.
-
-**Trocar de placa NÃO resolve** (RTX 5060 ou qualquer outra). Dois motivos independentes:
-
-1. Uma GPU mais rápida multiplica um termo medido como ~0. O gargalo é cobertura de operadores, não
-   FLOPS, e nenhuma placa muda quais ops o ONNX Runtime sabe rodar na GPU.
-2. O provider pré-compilado que o `ort` baixa traz SASS para `sm_30/70/75/80/86/89/90` e PTX até
-   `compute_90`. A RTX 3060 é `sm_86`; Blackwell (RTX 50xx) é **`sm_120`, ausente**. E o CUDA do
-   sistema é **12.4** (`libcublas.so.12.4.5.8`), anterior ao suporte a Blackwell (12.8+). Seria
-   preciso subir o toolchain inteiro e obter um ORT com `sm_120` antes de descobrir o motivo nº 1.
-
-**fp16 na CPU também não resolve.** O Ryzen 9 7950X (Zen 4) tem `avx512_vnni` ✅ — instruções nativas
-de produto escalar INT8, exatamente o que os 194 `MatMulInteger` consomem — mas **`avx512_fp16` ❌**
-(isso é Intel Sapphire Rapids+). Sem fp16 nativo o ORT converte para fp32 e calcula em fp32:
-paga-se a conversão e perde-se a aceleração de hardware. Expectativa de **2–3× mais lento** que hoje
-(estimativa arquitetural, não medida). Corolário importante: o baseline de CPU aqui **não é fraco** —
-é silício dedicado a INT8. A comparação nunca foi "GPU vs CPU fraca".
-
-**Achado operacional colhido no caminho** (útil se alguém retomar): as libs
-`libonnxruntime_providers_shared.so` e `libonnxruntime_providers_cuda.so` (108 MB) são baixadas pelo
-`ort` para `~/.cache/ort.pyke.io/dfbin/…`, mas o loader as procura **ao lado do executável** —
-sem copiá-las, a sessão falha com `Failed to load library …_providers_shared.so`. O
-`.error_on_failure()` fez seu papel e falhou alto em vez de cair para CPU calado; sem ele, o
-benchmark teria medido CPU duas vezes e "provado" um speedup de 1,00×.
-
-**O que fica.** A `TAREFA-NOVO-GPU.md` para na F0, como previsto — nada de `enum Device`, feature
-`cuda` ou flag `--device` no `update`. O lado `server` já estava decidido contra por outra via
-(§7.1 do `docs/auli_operations.md`: 18 ms de embed sobre 3,5 s de resposta).
-
-**Única rota que poderia mudar o veredito**, e ela é cara: trocar o modelo por um ONNX **fp16/fp32**
-próprio via `UserDefinedBgem3Model`/`try_new_from_user_defined` do fastembed, onde o CUDA EP tem
-cobertura completa. Isso **muda o espaço de embeddings** ⇒ bump de `EMBED_MODEL_ID` + reembed das 27
-entidades. Só se justificaria por outro motivo que não a velocidade (qualidade do fp16 vs INT8, por
-exemplo) — e aí a GPU seria consequência, não causa. Atenção ao efeito colateral: um espaço =
-**um modelo** para os dois modos, então o `server` (que fica em CPU) passaria a rodar fp16 sem VNNI —
-o embed da pergunta sairia de 18 ms para talvez 40–60 ms (irrelevante sobre 3,5 s de LLM), mas o
-`update` ficaria **dependente** da GPU em vez de tê-la como bônus inexistente.
-
-### 30.1 Escalonamento por threads — o trabalho satura em ~6 texts/s
-
-Medido no mesmo bench (`sp/pareceres`, n=50 — daí a leve diferença para os números de n=295 acima):
-
-| threads | texts/s | ganho vs 1 | eficiência |
-| --- | --- | --- | --- |
-| 1 | 1,4 | 1,0× | 100% |
-| 2 | 2,6 | 1,9× | 93% |
-| 4 | 4,3 | 3,1× | 77% |
-| 8 | 5,3 | 3,8× | 47% |
-| 16 | 6,0 | 4,3× | 27% |
-| 24 | 6,2 | 4,4× | **18%** |
-| 32 | 5,9 | 4,2× | 13% |
-
-De 8 para 24 threads — o triplo dos núcleos — compram-se **17%**; com 32 (SMT) piora. Existe um
-componente serial/limitado por memória que núcleo nenhum atravessa.
-
-Paralelismo **entre textos** também não escapa: 4 processos × 6 threads deram **4,6 texts/s
-agregados**, _pior_ que os 5,3 de um processo com 24 threads. Não é falta de paralelismo exposto —
-é saturação real.
-
-**Consequência prática (grátis):** `EMBED_THREADS=8` entrega ~85% do throughput usando um terço dos
-núcleos. Se o `update` de SP inutiliza a máquina por 46 min, com 8 threads leva ~54 min e deixa
-trabalhar — provavelmente melhor troca que os 17%.
-
-### 30.2 Qual CPU comprar — **nenhuma** (2026-08-02)
-
-Dada a saturação de 30.1, contagem de núcleos **não é a variável**: um Threadripper de 64 núcleos
-aterrissaria em ~6,3 texts/s. O que importaria seria desempenho por núcleo, e aí:
-
-- **Ryzen 9 9950X (Zen 5)** — datapath AVX512 completo (o Zen 4 dobra ops de 512 bits em unidades de
-  256). Ganho plausível de 10–30%. Incremental.
-- **Intel Core Ultra / Arrow Lake** — ⚠️ **sem AVX512**, logo sem VNNI: seria **downgrade** direto.
-- **Xeon com AMX-INT8** (Sapphire/Emerald Rapids) — único salto arquitetural real, motor de matriz
-  feito para INT8. **Mas com incerteza não resolvida:** não se verificou se o MLAS do ONNX Runtime
-  despacha `MatMulInteger` + `DynamicQuantizeLinear` (quantização _dinâmica_) para os kernels AMX —
-  o caminho AMX é mais maduro para QDQ estático. Comprar antes de testar é risco alto.
-
-O 7950X atual já é uma máquina INT8 forte. **Não há upgrade de CPU com boa relação custo-benefício**,
-e a maior alavanca de performance do sistema não é hardware — é a §31.
-
----
-
 ## 31. `update` incremental — a maior alavanca de performance do sistema (aberta — 2026-08-02)
 
-Surgiu como subproduto da §30: perseguindo GPU e CPU melhores, o que apareceu foi que **o custo não
-está em embeddar devagar, está em re-embeddar o que não mudou**.
+O custo **não está em embeddar devagar, está em re-embeddar o que não mudou**.
+
+O throughput do embedder satura em **~6 texts/s** e é insensível a hardware: medido de 1 a 32
+threads, de 8 para 24 (o triplo dos núcleos) compram-se 17%, e com 32 piora — existe um componente
+serial/limitado por memória que núcleo nenhum atravessa. Paralelismo entre PROCESSOS também não
+escapa: 4×6 threads deram 4,6 texts/s agregados, pior que 5,3 de um processo com 24. Consequência
+grátis: `EMBED_THREADS=8` entrega ~85% do throughput com um terço dos núcleos.
 
 **O problema.** O `update` é `Writer::reset` + `upsert` por coleção (`update.rs`, ~linha 369). Toda
 execução re-vetoriza a entidade inteira do zero. Chegaram 40 pareceres novos em SP? Os 15.605 são
 re-embeddados. A ~6 texts/s medidos, isso são **~46 min** para produzir ~40 vetores inéditos.
 
 Um update incremental faria o caso típico cair para **segundos**. É ganho de duas ordens de
-grandeza, e nenhuma CPU ou GPU do mercado chega perto disso (§30.1, §30.2).
+grandeza — e, pela saturação acima, nenhum hardware chega perto disso.
 
 **Por que o `reset` existe** — e é aqui que mora o trabalho de verdade. Não é preguiça: os ids são
 **posicionais**, `id-1..id-N` atribuídos pela ordem alfabética da árvore. Inserir um documento no
@@ -889,9 +763,6 @@ já substitui por id (`vector-store/src/write.rs:45`); o que falta é o id ser *
 - Determinismo: o pack resultante de um incremental tem que ser **idêntico** ao de um update do zero.
   Isso pede um teste — vetorizar do zero vs. incremental e comparar byte a byte — que é a única
   garantia real de que o atalho não introduziu deriva.
-
-**Relação com a §30.** Com o incremental no lugar, a discussão de GPU perde o pouco de motivação que
-lhe restava: o `update` típico deixaria de ser uma operação de dezenas de minutos.
 
 ### 31.1 A outra metade da dívida: a RAM — **remedido em 2026-08-08**
 

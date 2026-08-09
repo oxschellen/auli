@@ -38,9 +38,7 @@ impl Kind {
     /// árvore (`docs/<kind>/`), o sufixo da coleção vetorial (`<id>-<kind>`), o nome do pack, o
     /// parâmetro da rota `/v1/{kind}/list`, o rótulo do `registry.toml` e o argumento da CLI.
     ///
-    /// Essa unificação é doutrina antiga do projeto (ver `corpus::Collection::kind`), e é por isso
-    /// que **não existe um `dir()` separado**: um segundo método devolvendo o mesmo texto seria o
-    /// primeiro lugar onde os dois poderiam divergir.
+    /// Essa unificação é doutrina antiga do projeto (ver `corpus::Collection::kind`).
     ///
     /// `const fn` para que consts de outros crates possam ser definidas a partir dela — é o que
     /// permite o MCP declarar `const KIND: &str = Kind::Pareceres.as_str()` em vez de repetir o

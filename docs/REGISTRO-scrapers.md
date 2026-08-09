@@ -1648,8 +1648,8 @@ que ficou decidido:
   é uma diferença real frente aos pareceres, e é o que faz a coleção não depender de um passo LLM.
 - **Regra do parser, unificada entre os dois layouts de tabela:** varrer TODAS as tabelas atrás da
   linha rotulada `EMENTA`; a ementa é o **primeiro parágrafo** da célula, e a fundamentação é o
-  resto dela mais as linhas seguintes de rótulo vazio. A alternativa que o enunciado sugeria —
-  "célula inteira" — foi medida e rejeitada: estragaria ~66% do acervo.
+  resto dela mais as linhas seguintes de rótulo vazio. Medido em amostra estratificada por ano
+  (103 documentos) antes de fixar.
 - **Árvore append-only** (`escrever_lote_se_ausente_com_resumo`): "existe ⇒ pula". Isso responde a
   pendência da mutabilidade — as atualizações (`dataAtualizacao`) são **ignoradas**. Decisão
   consciente, não omissão: revisitar se aparecer evidência de acórdão materialmente alterado.
