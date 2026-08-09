@@ -20,10 +20,10 @@ O binário único `auli` tem dois modos:
 
 - **`auli server`** — sobe a API HTTP (axum) em `:3000`, **somente leitura**: carrega os pacotes
   de vetores, valida o manifesto e responde perguntas (RAG). Embeda só a pergunta; nunca escreve.
-- **`auli update`** — lê o **contrato tipado** (`data/<id>/raw/<id>-<kind>.json` =
-  `auli_contract::Table<P>`, **derivado pelo `auli-collections <id>`** a partir do snapshot — ver
-  §4.1), embeda o `text_to_embed` de cada registro e escreve os **pacotes** (`<id>-<kind>.json` +
-  `<id>.manifest.json`). É o **único do engine** que escreve dados.
+- **`auli update`** — lê as **árvores `.md`** (`data/<id>/docs/<kind>/*.md`, uma por coleção — a
+  fonte desde a G5b; o contrato JSON saiu do caminho), embeda o `text_to_embed` de cada registro e
+  escreve os **pacotes** (`<id>-<kind>.json` + `<id>.manifest.json`). É o **único do engine** que
+  escreve dados.
 
 Embeddings (fastembed/BGE-M3) e busca vetorial rodam **in-process** — não há Ollama, ChromaDB nem
 serviço de embedding para subir à parte.
@@ -71,9 +71,11 @@ cargo build --release --workspace      # ou só o engine: cargo build --release 
 ## 4. Dados necessários para servir
 
 Os dados vivem na pasta **`data/`** na raiz (`AULI_DATA_DIR`, default `../data` a partir de
-`auli-server/`). O `auli server` lê de lá: `registry.toml`, `prompts/`, os packs por entidade e —
-desde a G3 — a **árvore `data/<id>/docs/pareceres/*.md`**, de onde o corpo das consultas é lido
-**na hora da query** (o pack não carrega mais o corpo).
+`auli-server/`); o **catálogo** (`registry.toml` + `prompts/`) vive na **`config/`** irmã, derivada
+dela por convenção (`AULI_CONFIG_DIR` sobrepõe). O `auli server` lê os packs por entidade e — desde
+o pack v2 (ago/2026) — as **árvores `data/<id>/docs/<kind>/*.md` das QUATRO coleções**, de onde o
+conteúdo é lido **na hora da query**, só para os k documentos escolhidos. O pack guarda o payload
+leve, nunca o texto.
 
 > ⚠️ **A árvore `docs/` é requisito de serving, não artefato intermediário.** O manifesto carimba um
 > `docs_hash` e o boot **recusa subir** se a árvore divergir dele. Ao copiar dados entre máquinas,
@@ -135,10 +137,24 @@ for id in sc sp pr mg pe ba rj ce; do
 done
 ```
 
-Produz, por entidade, `data/<id>/packs/<id>-servicos.json` + `<id>.manifest.json` (`strategy_version: 1`,
-kind `servicos`) — e `<id>-faqs.json` onde houver FAQs (hoje só RS). Contagens atuais: **rs** serviços
-586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148, **pe** 38, **ba** 204, **rj** 91,
-**ce** 382. `notas` é autorada (sem scraper) e ainda **não** tem fonte struct no contrato — fica
+Produz, por entidade, `data/<id>/packs/<id>-<kind>.json` + `<id>.manifest.json`
+(`strategy_version: 2` desde o pack v2 de ago/2026).
+
+**Contagens (08/08/2026): 29.732 documentos** — 4.205 serviços nas 27 entidades, 19.780 pareceres
+(sp 15.605, pr 2.060, sc 1.743, rs 372), 1.947 FAQs (só rs) e 3.800 acórdãos do TARF (rs, coleta em
+andamento). Números viram mentira sozinhos; para a verdade do momento:
+
+```bash
+python3 -c "
+import json,glob
+t={}
+for m in sorted(glob.glob('data/*/packs/*.manifest.json')):
+    d=json.load(open(m))
+    for c in d['collections']: t[c['kind']]=t.get(c['kind'],0)+c['count']
+print(t, sum(t.values()))"
+```
+
+`notas` é autorada (sem scraper) e ainda **não** tem fonte struct no contrato — fica
 **ausente** até ser modelada; o server tolera packs ausentes (sobe com a coleção vazia). `pareceres`
 também é autorado, mas já tem um passo de ingestão do `.txt` de referência (ver nota abaixo). **Só
 precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
@@ -233,31 +249,56 @@ para o server rodando em `auli-server/`. Variáveis:
 
 ---
 
-### 4.5 Pareceres / Consultas — pipeline completo (scrape → sinopse → vetorizar)
+### 4.5 Jurisprudência — pipeline completo (scrape → [sinopse] → vetorizar)
 
-Vale para as 4 entidades com acervo de consultas formais: **rs** (Pareceres), **sc** (Consultas
-COPAT), **sp** (Respostas a Consultas), **pr** (Consultas SEFA). São **3 passos**: o scraper já
-emite a árvore, a sinopse a preenche, o build vetoriza.
+Duas coleções, **pareceres** e **tarf**, com o mesmo formato de `.md` e o mesmo caminho de
+vetorização desde ago/2026.
+
+**Pareceres / consultas formais** — 4 entidades: **rs** (Pareceres), **sc** (Consultas COPAT),
+**sp** (Respostas a Consultas), **pr** (Consultas SEFA). São **3 passos**: o scraper emite a árvore,
+a sinopse a preenche, o build vetoriza.
 
 ```text
 auli-scraper-<id> pareceres      → docs/pareceres/<slug>.md   (rede; um .md por consulta INÉDITA,
-                                                               nasce pendente = sem `## sinopse`)
+                                                               nasce pendente = sem `## resumo`)
 auli-collections <id> sinopse    → edita os .md               (LLM; preenche os pendentes)
 scripts/build-packs.sh <id>      → packs/<id>-pareceres.json     (embedding; lê a árvore)
                                  → raw/<id>-pareceres-index.json (índice leve da tab; idem)
 ```
 
-**Um acervo, dois consumidores.** O pack serve o RAG (vetores + corpo lido tarde); o índice serve a
-tab de Pareceres do frontend (numero/assunto/resumo/link, **sem corpo**, copiado para `public/` pelo
+**Acórdãos do TARF** — só **rs**. São **2 passos**: não há sinopse por LLM.
+
+```text
+auli-scraper-rs tarf             → docs/tarf/<slug>.md        (rede; um .md por acórdão INÉDITO,
+                                                               já nasce COM `## resumo`)
+scripts/build-packs.sh rs        → packs/rs-tarf.json + raw/rs-tarf-index.json
+```
+
+O `## resumo` do acórdão é a **fundamentação que o próprio documento traz no cabeçalho**, extraída
+na coleta; sem fundamentação, o fallback é a ementa. Por isso a coleção **não depende de passo LLM**
+— e por isso o `auli-collections <id> sinopse` **não serve para ela**: aquele passo varre só
+`docs/pareceres/`. Um acórdão sem `## resumo` é defeito de parser, não pendência a preencher, e o
+`auli update` recusa a vetorização dizendo exatamente isso.
+
+**Um acervo, dois consumidores.** O pack serve o RAG (vetores + conteúdo lido tarde); o índice serve
+a tab do frontend (numero/assunto/resumo/link, **sem corpo**, copiado para `public/` pelo
 `build-frontend-public.sh`). O `build-packs.sh` deriva os dois da mesma leitura da árvore, de
 propósito: ele já é inevitável depois de qualquer mexida nela (o `docs_hash` muda e o boot recusa até
-ele rodar), então servidor e frontend não têm como divergir de estado.
+ele rodar), então servidor e frontend não têm como divergir de estado. Ele deriva o índice de **toda**
+coleção de jurisprudência presente — `pareceres` e `tarf`.
 
-`auli-collections <id> indice` existe como subcomando avulso — derivação pura, re-rodar nunca faz
-mal — mas no fluxo normal não precisa ser chamado à mão.
+`auli-collections <id> indice [pareceres|tarf]` existe como subcomando avulso — derivação pura,
+re-rodar nunca faz mal — mas no fluxo normal não precisa ser chamado à mão.
+
+> **Estado da coleta do TARF (08/08/2026): 3.800 de ~22.522.** Pausada de propósito, para não mover a
+> árvore enquanto o código evoluía. Retomável (`./target/debug/auli-scraper-rs tarf`, ~5 h a 1 req/s;
+> o cache dos corpos já baixados é reaproveitado). Ao fechar: `build-packs.sh rs`, remover a nota de
+> "coleta em andamento" do `bundle.rs` e da `TarfList.tsx`, e publicar. Registro da fonte e das
+> exceções conhecidas: `docs/REGISTRO-scrapers.md#tarf`.
 
 > **A árvore `.md` É a fonte** (G5b). Não há mais `.txt` intermediário, promoção manual, JSON de
-> contrato nem passo de materialização — o `auli update` lê `docs/pareceres/*.md` direto.
+> contrato nem passo de materialização — o `auli update` lê `docs/<kind>/*.md` direto, nas quatro
+> coleções.
 
 **Incremental de graça:** o scraper grava **só o que é inédito** — arquivo que já existe é pulado,
 sem sequer ser aberto. Re-raspar é barato e **nunca** destrói uma sinopse já gerada. O corolário é
@@ -561,6 +602,17 @@ curl -s localhost:3000/v1/retrieve -H 'Content-Type: application/json' \
   -d '{"question":"crédito de ICMS na aquisição de energia elétrica","entity":"sc","kind":"pareceres","top_k":5}' \
   | python3 -m json.tool
 # kind inválido -> 400; entidade inválida -> 404; entidade sem acervo -> 200 com arrays vazios.
+# kinds válidos: servicos | faqs | pareceres | tarf | notas.
+
+# As QUATRO coleções do rs, e a checagem que importa depois de mexer na árvore ou nos packs:
+# nenhum documento pode voltar degradado ("indisponível") — isso significaria doc_path que não resolve.
+for k in servicos faqs pareceres tarf; do
+  printf '%-10s ' "$k"
+  curl -s localhost:3000/v1/retrieve -H 'Content-Type: application/json' \
+    -d "{\"entity\":\"rs\",\"kind\":\"$k\",\"question\":\"parcelamento de débito\",\"top_k\":3}" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); i=d['pareceres'] or d['hits']; \
+      print(len(i),'hits · degradados:',sum('indisponível' in json.dumps(h,ensure_ascii=False) for h in i))"
+done
 
 # MCP (protocolo completo: initialize -> initialized -> tools/list -> tools/call):
 ./scripts/mcp-smoke.sh http://localhost:3000/mcp
