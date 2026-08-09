@@ -385,13 +385,8 @@ A tabela de PAPÉIS (qual campo do `.md` carrega o quê em cada coleção) vive 
 [`mddoc.rs`](auli-server/crates/auli-contract/src/mddoc.rs) — ao lado do parser que a implementa, que
 é onde ela não envelhece.
 
-> **Por que NÃO um trait de coleção.** O desenho considerado antes era um trait `Colecao` com as três
-> structs de domínio implementando-o, preservando "a doutrina dos irmãos". Ele foi recusado, e o
-> motivo importa para quem cogitar reintroduzi-lo: aquele desenho pressupunha que os dados
-> continuassem em três formas distintas. A unificação do vocabulário das árvores (PR #128) tirou o
-> chão dessa premissa — com um `.md` de formato único, as três structs passaram a descrever a MESMA
-> forma com nomes diferentes, e o polimorfismo virou custo sem contrapartida. Coleção nova hoje é uma
-> variante no `Kind` mais uma projeção; o TARF entrou exatamente assim (PRs #132/#133).
+**Coleção nova** = uma variante no `Kind` + uma projeção para `Documento` (+ struct de borda, se a
+fonte pedir). O TARF entrou exatamente assim (PRs #132/#133).
 
 ---
 

@@ -125,7 +125,7 @@ registry, so this is what makes the new entity appear in the UI. No recompilatio
 decisions) **still requires code**: a variant in the `Kind` enum of `auli-contract` and a
 projection into `Documento`. It is small — the TARF collection went in exactly that way — but it is
 not configuration, and pretending otherwise would waste your time. The design — one struct, one
-enum, and why a trait was rejected — is in [docs/auli_code.md](docs/auli_code.md) §3.13.
+enum — is in [docs/auli_code.md](docs/auli_code.md) §3.13.
 
 **What you will need besides the repo:** an LLM endpoint (any OpenAI-compatible one — see
 [`.env.example`](.env.example)) and ~2 GB of disk for the embedding model, which is downloaded once
