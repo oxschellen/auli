@@ -9,7 +9,7 @@
 //! O que este enum é: as coleções que têm **árvore `docs/<kind>/` e struct de contrato**. Não é a
 //! tabela de parâmetros de recuperação (`auli_core::corpus`, que também carrega `notas` — um kind de
 //! rota sem fonte nem árvore) nem o vocabulário de rótulos do log. É o degrau que o
-//! `ESTUDO-colecoes-trait` pedia: coleção nova = uma variante aqui, e o `match` exaustivo aponta
+//! `docs/auli_code.md` §3.13 descreve: coleção nova = uma variante aqui, e o `match` exaustivo aponta
 //! cada ponto a preencher.
 
 /// Uma coleção de documentos do Auli.

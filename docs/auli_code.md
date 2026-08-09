@@ -122,7 +122,7 @@ vetorial é compartilhado por construção, não por convenção.
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `vector-store`   | `Record<P>`/`CollectionData<P>` (payload genérico; chave JSON em disco continua `document`), `cosine_distance` (fallback `2.0`), IO de arquivo, e a **separação leitura/escrita por tipo**: `ReadStore` (`query_scored`/`list`, imutável) vs `Writer` (`reset`/`upsert`/persistência). Enforcement de dimensão no 1º insert (`Error::DimensionMismatch`). |
 | `auli-core`      | `embed` (`Embedder` BGE-M3, `EMBED_DIM=1024`), `corpus` (`EmbedStrategy`, tabela `Collection`, `parse_blocks*`, `prepare_documents`, `extract_question`, `clean_servico`, `extract_servico_description`), `manifest` (identidade do embedding + schema/validação).                                                                                        |
-| `auli-retrieval` | O **motor de recuperação** (§3.11): `Engine` (embedder + `Collections` + raiz `docs/`) e o núcleo em funções livres — `search_embedded`, `entidades_com`, `parecer_por_numero`, `ler_corpo`, `decode_parecer`, `select_by_proximity`. Depende só de `auli-core`/`vector-store`/`auli-contract`: **sem HTTP, sem LLM, sem anonimizador**, e só enxerga `ReadStore`. |
+| `auli-retrieval` | O **motor de recuperação** (§3.11): `Engine` (embedder + `Collections` + raiz `docs/`) e o núcleo em funções livres — `search_embedded`, `entidades_com`, `documento_por_numero`, `ler_corpo`, `decode_parecer`, `select_by_proximity`. Depende só de `auli-core`/`vector-store`/`auli-contract`: **sem HTTP, sem LLM, sem anonimizador**, e só enxerga `ReadStore`. |
 | `auli-cli`       | `server` (axum, RAG, `/v1/retrieve`, MCP, config, packs) + `update` (vetorizador). Despacho por `clap`.                                                                                                                                                                                                                                                                        |
 
 ### 3.2 Os dois modos (subcomandos)
@@ -360,6 +360,38 @@ Detalhes que o código explicita:
 
 Smoke de protocolo: [`scripts/mcp-smoke.sh`](scripts/mcp-smoke.sh) (initialize → initialized →
 tools/list → tools/call). Conexão de clientes: [docs/auli_operations.md](docs/auli_operations.md) §12.
+
+### 3.13 As quatro coleções: UMA struct, UM enum (ago/2026)
+
+Serviços, FAQs, pareceres e acórdãos do TARF passam por **um caminho de código só**. Duas peças, as
+duas em `auli-contract`:
+
+- **`Kind { Servicos, Faqs, Pareceres, Tarf }`** ([kind.rs](auli-server/crates/auli-contract/src/kind.rs))
+  — o nome da coleção. É o MESMO texto em todos os papéis, de propósito: subdiretório da árvore
+  (`docs/<kind>/`), sufixo da coleção vetorial (`<id>-<kind>`), nome do pack, parâmetro da rota
+  `/v1/{kind}/list`, rótulo do `registry.toml` e argumento da CLI. Antes disso o nome era um literal
+  repetido em oito lugares, e errar um deles compila, roda e só aparece na tela do usuário.
+- **`Documento`** ([lib.rs](auli-server/crates/auli-contract/src/lib.rs)) — `{ kind, trilha, titulo,
+  ementa, resumo, corpo, link, text_to_embed, resumo_info }`, no vocabulário unificado das árvores.
+  `Servico` e `Faq` recuaram para as BORDAS (o `process` e os JSONs do frontend) e se projetam nela
+  por `para_documento()`; quem é vetorizado é a projeção.
+
+O que isso desfez, e é a medida do ganho: **quatro renderizações do bloco RAG viraram uma**
+(`bloco()`), **três funções de leitura de árvore viraram uma** (`preparar`), e o pack passou a
+guardar o mesmo payload leve (`DocumentoPack`) para as quatro — antes, serviços e FAQs carregavam o
+texto integral duplicado, uma cópia na árvore e outra ao lado do vetor.
+
+A tabela de PAPÉIS (qual campo do `.md` carrega o quê em cada coleção) vive no doc de módulo do
+[`mddoc.rs`](auli-server/crates/auli-contract/src/mddoc.rs) — ao lado do parser que a implementa, que
+é onde ela não envelhece.
+
+> **Por que NÃO um trait de coleção.** O desenho considerado antes era um trait `Colecao` com as três
+> structs de domínio implementando-o, preservando "a doutrina dos irmãos". Ele foi recusado, e o
+> motivo importa para quem cogitar reintroduzi-lo: aquele desenho pressupunha que os dados
+> continuassem em três formas distintas. A unificação do vocabulário das árvores (PR #128) tirou o
+> chão dessa premissa — com um `.md` de formato único, as três structs passaram a descrever a MESMA
+> forma com nomes diferentes, e o polimorfismo virou custo sem contrapartida. Coleção nova hoje é uma
+> variante no `Kind` mais uma projeção; o TARF entrou exatamente assim (PRs #132/#133).
 
 ---
 
