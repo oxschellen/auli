@@ -1086,6 +1086,34 @@ Os manuais em `manuais/` estão na mesma situação por decisão explícita e re
 descrição do parâmetro `colecao`, mas **não** um total do TARF, para não publicar um número que muda
 toda semana (#132).
 
+### 35.1 O README na mesma passada — e por que "~30 mil" seria pior que o número exato
+
+O `README.md` também omite o TARF: o cabeçalho descreve o acervo como "services, FAQs, legal
+opinions (_pareceres_) and administrative notes (_notas_)". Ele carrega números em **quatro**
+lugares — cabeçalho (l. 11), linha dos scrapers (l. 222), tabela das coleções (l. 297–299) e linha
+de status (l. 315).
+
+**Conferidos em 09/08/2026: os quatro estão exatos.** 4.205 serviços, 19.780 pareceres e 1.947 FAQs
+somam 25.932; com os `.md` do `tarf` fecham os 30.332 arquivos de `data/*/docs/`, sem sobra. O
+README não está desatualizado — está **incompleto**.
+
+**A armadilha do número redondo.** A tentação natural é trocar os fixos por "~30 mil documentos",
+que é o total de hoje. Mas hoje o `tarf` está pela metade: quando a coleta fechar, o acervo vai a
+**~48.500** — o arredondamento erra por 60% em poucos dias. Arredondar não impede o apodrecimento,
+só o esconde: um número exato e errado alguém corrige, um "~30 mil" vago ninguém audita.
+
+**O que muda de verdade quando a coleta fechar:** com 22.590 acórdãos, o TARF sozinho passa a ser
+maior que **todos os pareceres somados** (19.780). O cabeçalho não ganha um quarto item na lista —
+ganha o **primeiro**.
+
+**Recomendação:** manter a precisão e matar a palavra que apodrece. Hoje se lê "indexed **today**",
+sem data — é isso que envelhece, não o algarismo. Um número exato com data nunca fica errado, só
+fica antigo, e num projeto de dados abertos ele é **verificável**: quem baixa o `.zip` confere.
+
+**Contra gerar do manifesto:** o README é arquivo estático no GitHub. Gerá-lo exigiria script, passo
+de CI e um commit a cada mudança, para um documento que se move poucas vezes por ano. O lugar do
+número vivo é o frontend, que já lê as contagens dos índices em tempo de execução.
+
 ---
 
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
