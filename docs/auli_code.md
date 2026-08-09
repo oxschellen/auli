@@ -40,21 +40,24 @@ O ecossistema tem três partes:
 > **`auli-contract`** (serde-only): a **forma do dado** (`Table<P>`, `Faq`, `Servico`, trait
 > `Embeddable`) compartilhada entre o scraper e o engine. O **`auli-collections` foi movido para
 > dentro do workspace** (`auli-server/crates/auli-collections`, 5º membro). Fluxo: o scraper compila
-> `Table<P>` preenchendo `text_to_embed` → `data/<id>/raw/<id>-<kind>.json`; o `auli update` lê o
-> contrato, embeda `text_to_embed` e armazena `stored_repr` (sem mais parsing de `portal-*.txt`,
-> que viraram só _print_ de auditoria). `STRATEGY_VERSION` foi para **2**. Caminhos `auli-collections/…`
+> `Table<P>` preenchendo `text_to_embed`; desde a G5b o `auli update` lê as **árvores `.md`**, não o
+> contrato JSON, recompõe o `text_to_embed` pelo ponto único e armazena o payload leve
+> (`DocumentoPack`). `STRATEGY_VERSION` está em **2** (pack v2, ago/2026). Caminhos `auli-collections/…`
 > nas seções abaixo vivem hoje em **`auli-server/crates/auli-collections/…`**.
 
 ---
 
 ## 2. Arquitetura e fluxo de dados ponta a ponta
 
-A integração entre os componentes é por uma pasta única **`data/`** na raiz (fonte única),
-não por chamadas diretas nem cópia manual. `data/` tem `registry.toml` (entidades, fonte
-única), `prompts/`, e por estado `data/<id>/{raw, ref, packs}`:
+A integração entre os componentes é por **duas pastas na raiz**, não por chamadas diretas nem cópia
+manual: **`config/`** (catálogo versionado: `registry.toml` + `prompts/`) e **`data/`** (dado
+coletado, gitignored), com `data/<id>/{raw, ref, docs, packs}` por estado:
 
-- `raw/` — saída do scraper (`auli-collections`): o contrato `<id>-<kind>.json`.
-- `ref/` — conteúdo autorado e versionado (pareceres/notas/conteúdos, sem scraper).
+- `raw/` — saída da derivação: contratos, índices e o cache do scraper.
+- `ref/` — conteúdo autorado (notas, conteúdos).
+- `docs/` — **as árvores `.md`, uma por coleção** (`servicos`, `faqs`, `pareceres`, `tarf`). É a
+  FONTE do `auli update` e é lida na query; o manifesto carimba um `docs_hash` sobre ela e o boot
+  recusa se divergir.
 - `packs/` — pacotes vetoriais gerados pelo `auli update`.
 
 O **server** lê os packs de `data/<id>/packs/` e as entidades do registry; o **frontend** tem
@@ -104,7 +107,7 @@ auli-server/                       # workspace único, Cargo.lock compartilhado
     ├── auli-collections/  # DERIVA os artefatos do snapshot (offline) — ver §5
     └── scrapers/          # a frota (compila leve; nunca importa o engine) — ver §5 / SCRAPERS.md
         ├── auli-scraper-kit/    # kit compartilhado: o "como raspar" (cache, agente HTTP, aggregate)
-        └── auli-scraper-<id>/   # um binário por entidade (9): rs sc sp pr mg pe ba rj ce
+        └── auli-scraper-<id>/   # um binário por entidade (27) — ver §5.3
 ```
 
 > **Fase 2 (scrapers em crates próprios).** A coleta saiu do `auli-collections` para **um binário por
@@ -168,28 +171,45 @@ que ausência de quota.
 
 ### 3.4 Caminho RAG ativo (`exec_all_question`)
 
-Acionado por `POST /v1/question`. Assinatura: `exec_all_question(collections, embedder, question, entity)`:
+Acionado por `POST /v1/question`. Assinatura:
+`exec_all_question(engine, anonimizador, question, entity, query_type)`:
 
-1. Resolve a entidade (registry); entidade desconhecida → a própria mensagem de erro é retornada
+1. **Anonimiza a pergunta**, *fail-closed*: em erro usa um placeholder fixo, nunca o texto cru. O
+   `mapping` fica em memória, no escopo da requisição, para restaurar a resposta do LLM — nunca é
+   persistido.
+2. Resolve a entidade (registry); entidade desconhecida → a própria mensagem de erro é retornada
    como resposta, com HTTP 200 (sem panic).
-2. Gera o embedding da pergunta **uma vez**, in-process (`embed_dense`, executado fora da thread
+3. Gera o embedding da pergunta **uma vez**, in-process (`embed_dense`, executado fora da thread
    async via `run_blocking`/`spawn_blocking`); a pergunta já é uma "chave" curta.
-3. Consulta **duas** coleções de forma **concorrente** (`tokio::try_join!`): `<id>-servicos`
-   (`n_results = 10`) e `<id>-faqs` (`n_results = 20`). Cada `query_scored` roda em thread bloqueante
-   e retorna `(texto, distância cosseno)` ordenado do mais próximo ao mais distante.
-4. **Estreitamento por proximidade** (`select_by_proximity`): mantém os `floor` melhores e, além
+4. **O `query_type` decide o caminho** — é o seletor de fonte da caixa de mensagem, que chega como
+   inteiro no campo `type`:
+   - **`ServicosFaqs`** (código 1, o default): consulta **duas** coleções de forma **concorrente**
+     (`tokio::try_join!`), `<id>-servicos` (`n_results = 10`) e `<id>-faqs` (`n_results = 20`).
+   - **`Jurisprudencia(Kind)`** (código 2 = `pareceres`, 3 = `tarf`): uma coleção só,
+     `n_results = 10`. Nos **pareceres** há ainda a expansão por grafo — pareceres que citam os
+     mesmos dispositivos —, exclusiva deles (o `dispositivos-index.json` é derivado da árvore de
+     pareceres).
+
+   Cada `query_scored` roda em thread bloqueante e retorna `(payload, distância cosseno)` ordenado
+   do mais próximo ao mais distante.
+5. **Estreitamento por proximidade** (`select_by_proximity`): mantém os `floor` melhores e, além
    disso, os documentos dentro de `band` (distância acima do melhor) — por kind. **Os defaults são
    `floor=0`, `band=∞`**, ou seja, hoje há _paridade_ com o "take fixo" antigo (nenhum descarte); os
    bandos só passam a filtrar após calibração contra perguntas reais (scores logados em `debug`).
-5. Concatena os documentos como contexto RAG; o system prompt = prompt da entidade (registry) +
-   contexto + delimitador `'''`.
-6. Chama o LLM externo.
-7. Retorna `{ question, answer }` e **anexa o diálogo a `$AULI_LOG_DIR/<timestamp>.txt`** (default
+6. **Monta o bloco de cada documento** (`rag::blocos`): o payload do pack é leve, então o conteúdo é
+   lido da árvore `docs/` na hora, só para os k escolhidos. Conteúdo ilegível degrada (o `resumo`, na
+   jurisprudência; um aviso, em serviços e FAQs) e **nunca** derruba a query.
+7. Envolve cada bloco em `## documento {i}: {rótulo}` e concatena; o system prompt = prompt da
+   entidade **para aquele tipo** (`system_prompt`, `pareceres_prompt` ou `tarf_prompt`) + contexto +
+   delimitador `'''`.
+8. Chama o LLM externo — com a pergunta **anonimizada** se o flag estiver ligado (default), e
+   restaura os placeholders na resposta antes de devolvê-la.
+9. Retorna `{ question, answer }` e **anexa o diálogo a `$AULI_LOG_DIR/<timestamp>.txt`** (default
    `./logs` do CWD; o `start_server.sh` aponta para `<raiz>/logs`).
 
-**Distinção crucial (ativo vs modelado):** apenas `servicos` e `faqs` alimentam as respostas.
-`pareceres` e `notas` possuem listagem, mas **não são consultados** por `exec_all_question` (as
-`Collection`s consultadas são só `SERVICES` — kind `servicos` — e `FAQS`).
+**As QUATRO coleções alimentam respostas.** `servicos` e `faqs` juntas (o chat de atendimento),
+`pareceres` e `tarf` separadamente (o chat do auditor). Só `notas` fica de fora: tem rota de
+listagem, mas não tem fonte struct nem pack — ver §3.13.
 
 ### 3.5 Clientes e adaptadores (embeddings/busca/LLM in-process)
 
@@ -197,7 +217,8 @@ Toda a parte de embeddings/busca vetorial é **in-process** (sem Ollama nem Chro
 
 - **Embedder** (`auli-core::embed`): `fastembed` com **BGE-M3 ONNX INT8** (`Bgem3Model::BGEM3Q`),
   dimensão **1024** (`EMBED_DIM`), apenas a saída _dense_. O modelo fica atrás de um `Mutex` porque
-  `embed` é `&mut self`; `max_length` é **512** (dimensionado à "chave" curta). `embed_dense` é
+  `embed` é `&mut self`; `max_length` é **8192**, o teto do próprio BGE-M3 (`EMBED_MAX_TOKENS`) — era
+  512 até a TAREFA-FAQ-PR, e com 512 a resposta da FAQ era cortada em silêncio. `embed_dense` é
   **bloqueante/CPU-bound** — os chamadores usam `run_blocking`. Construído uma vez no startup (lento;
   baixa o modelo do Hugging Face para `EMBED_CACHE_DIR` no 1º run).
 - **Vector store** (`vector-store`): índice plano **puro-Rust**, in-process. Cada coleção
@@ -250,11 +271,15 @@ N cópias coexistem sem coordenação.
 ### 3.9 Verificação (estado de fato, neste repo)
 
 - **Build/test:** `cargo build --workspace` e `cargo test --workspace` passam **sem warnings**
-  (inclui `clippy -D warnings`); 1 teste e2e fica _gated_ (`packs_smoke`, exige packs + modelo).
-- **Pacotes reais gerados** via `auli update` (kind `servicos`, `strategy_version: 2`): **rs** serviços
-  586 + FAQs 1937, **sc** 208, **sp** 537, **pr** 141, **mg** 148. O manifest confere — `bytes` e `hash` FNV-1a
-  batem com os arquivos (o `packs::load_all` re-hasheia e alerta em divergência); todos os vetores em
-  dim 1024; chave `document` preservada.
+  (inclui `clippy -D warnings`); **9 testes ficam _gated_** por `#[ignore]` — os que exigem packs +
+  modelo real (`manifest_validates_and_query_retrieves`, os dois de `/v1/retrieve`, os três de
+  `embed::testes_ordem`), o golden do RS (`golden_rs_equivalence`, precisa de `AULI_GOLDEN_DATA`) e
+  as duas ferramentas de A/B (`ab_faq_pr`, `dump_pool`).
+- **Pacotes reais gerados** via `auli update` (`strategy_version: 2`): **29.732 documentos** nas 27
+  entidades — 4.205 serviços, 19.780 pareceres, 1.947 FAQs e 3.800 acórdãos do TARF. O manifest
+  confere — `bytes` e `hash` FNV-1a batem com os arquivos (o `packs::load_all` re-hasheia e alerta em
+  divergência); todos os vetores em dim 1024; chave `document` preservada. Distribuição do momento:
+  ver `docs/auli_operations.md` §4.1, que traz o comando que a imprime dos manifestos.
 - **Boot e2e (modelo real):** o server carrega as 27 entidades, valida cada manifest contra a
   identidade local e responde `POST /v1/question` por estado citando os links do próprio catálogo
   (verificado ao vivo em várias, incl. rs/ba/rj/ce).
@@ -283,7 +308,7 @@ verificável é `cargo tree -p auli-retrieval` sem `axum`/`rmcp`/`reqwest`/`auli
 não sobre leveza de build.
 
 **Forma: funções livres + `Engine` delegando (D-MCP-4).** O núcleo são funções sobre
-`&Collections`/`&Path` — `search_embedded`, `entidades_com`, `parecer_por_numero`, `ler_corpo`,
+`&Collections`/`&Path` — `search_embedded`, `entidades_com`, `documento_por_numero`, `ler_corpo`,
 `decode_parecer`, `select_by_proximity` — e os métodos do `Engine` são delegações de uma linha. O
 motivo é testabilidade: `Engine` guarda `Arc<Embedder>`, e construir um carregaria o BGE-M3; com as
 funções livres os testes cobrem o motor inteiro sem tocar o modelo.
@@ -575,34 +600,34 @@ ocorrências nativas** (resolveu o limite multi-classe do modelo antigo). FAQs s
 `servicos/{mod,types}`, `domain/entities`): **não raspa** — lê o snapshot e produz, offline, em
 `data/<id>/raw/`:
 
-- o **contrato** `<id>-faqs.json` / `<id>-servicos.json` (`auli_contract::Table<P>`, com
-  `text_to_embed` materializado) — o que o `auli update` embeda;
+- as **árvores `.md`** `data/<id>/docs/{servicos,faqs}/*.md` — **a fonte que o `auli update` lê**
+  (ele recompõe o `text_to_embed` na leitura, pelo ponto único do contrato);
+- o **contrato** `<id>-faqs.json` / `<id>-servicos.json` (`auli_contract::Table<P>`), hoje artefato
+  de auditoria e de borda — o update NÃO o lê mais desde a G5b;
 - os **prints** `portal-<kind>.txt` (auditoria, nunca relidos);
 - o **`servicos-index.json`** (manifesto de abas) + os JSONs **per-público** (`<slug>.json`).
 
-`text_to_embed`: faqs → breadcrumb `origin` + pergunta (a mesma key do antigo `QuestionKey`);
-serviços → `tipo | classe` + título + início do corpo (fórmula ainda **provisória**, ver
-[docs/auli_pendencias.md](docs/auli_pendencias.md)). A tentativa de raspar por aqui é rejeitada com erro
-explícito ("a coleta agora é feita pelos binários `auli-scraper-*`").
+`text_to_embed` — as três fórmulas vivem no contrato (`compose_*`), e todas são adaptadores da MESMA
+geometria (`trilha → titulo → ementa → resumo`, pulando os vazios): faqs → breadcrumb + `P:` pergunta
++ `R:` resposta (desde a TAREFA-FAQ-PR; antes era cega para a resposta); serviços → `tipo | classe` +
+título + 300 chars do corpo; jurisprudência → número + ementa + resumo. Mudar qualquer uma
+re-vetoriza os packs daquela coleção. A tentativa de raspar por aqui é rejeitada com erro explícito
+("a coleta agora é feita pelos binários `auli-scraper-*`").
 
-`pareceres`/`notas` seguem **autorados** em `data/<id>/ref/` (sem scraper, sem `Table<P>`) — ausentes
-nos packs até serem modelados.
+`pareceres` **tem scraper dedicado** em rs/sc/sp/pr, e `tarf` no rs — os dois emitem `.md` direto na
+árvore, sem passar pelo `auli-collections`. Só `notas` segue autorada e ausente dos packs, por não ter
+fonte struct.
 
 ### 5.5 Cobertura por entidade
 
-| entidade | serviços | FAQs |
-| -------- | -------- | ---- |
-| `rs` | ✅ (API JSON `tudofacil`) | ✅ (AJAX/`ureq`) |
-| `sc` | ✅ (JSON Next.js) | — |
-| `sp` | ✅ (REST SharePoint) | — |
-| `pr` | ✅ (HTML Drupal) | — |
-| `mg` | ✅ (JSON ServiceNow) | — |
-| `pe` | ✅ (HTML SharePoint) | — |
-| `ba` | ✅ (HTML ASP; native-tls) | — |
-| `rj` | ✅ (HTML WordPress) | — |
-| `ce` | ✅ (JSON Sydle ONE) | — |
+**27 entidades com serviços**, cada uma com plataforma e armadilhas próprias (API JSON, Next.js,
+SharePoint, WordPress, ServiceNow, ColdFusion, catálogo hardcoded em bundle JS…). A tabela por
+entidade **não é duplicada aqui**: ela vive em
+[SCRAPERS.md](auli-server/crates/scrapers/SCRAPERS.md), ao lado dos crates, e cada linha aponta a
+âncora do relatório de descoberta em [`docs/REGISTRO-scrapers.md`](docs/REGISTRO-scrapers.md).
 
-`pareceres`/`notas`/`conteudos` não têm scraper (autorados). FAQs hoje só no RS.
+Além de serviços: **FAQs** só no `rs`; **pareceres** em `rs`/`sc`/`sp`/`pr`; **tarf** só no `rs`.
+`notas` e `conteudos` seguem autorados, sem scraper.
 
 ---
 
