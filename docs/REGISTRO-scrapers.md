@@ -1579,7 +1579,7 @@ registra o que a implementação confirmou, decidiu e descobriu depois.
 | `NumeroDoc`, `Termos` | opcionais |
 | `DataInicio` / `DataFim` | opcionais; a SPA envia `.toISOString()` |
 
-```
+```text
 GET /api/PesquisaDocumentos?TamanhoPagina=5&NumeroPagina=1&grupos=14543
 ```
 

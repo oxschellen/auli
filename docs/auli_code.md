@@ -608,8 +608,8 @@ ocorrências nativas** (resolveu o limite multi-classe do modelo antigo). FAQs s
 - o **`servicos-index.json`** (manifesto de abas) + os JSONs **per-público** (`<slug>.json`).
 
 `text_to_embed` — as três fórmulas vivem no contrato (`compose_*`), e todas são adaptadores da MESMA
-geometria (`trilha → titulo → ementa → resumo`, pulando os vazios): faqs → breadcrumb + `P:` pergunta
-+ `R:` resposta (desde a TAREFA-FAQ-PR; antes era cega para a resposta); serviços → `tipo | classe` +
+geometria (`trilha → titulo → ementa → resumo`, pulando os vazios): faqs → breadcrumb + `P:` pergunta +
+`R:` resposta (desde a TAREFA-FAQ-PR; antes era cega para a resposta); serviços → `tipo | classe` +
 título + 300 chars do corpo; jurisprudência → número + ementa + resumo. Mudar qualquer uma
 re-vetoriza os packs daquela coleção. A tentativa de raspar por aqui é rejeitada com erro explícito
 ("a coleta agora é feita pelos binários `auli-scraper-*`").
