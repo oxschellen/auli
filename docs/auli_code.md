@@ -79,7 +79,7 @@ Observações confirmadas no código:
 - O `auli-frontend` lê de `public/<id>/`, **gerado** de `data/` por
   [scripts/build-frontend-public.sh](scripts/build-frontend-public.sh) — não há mais cópia à
   mão entre pastas.
-- O registro de entidades é único (`data/registry.toml`); o frontend mantém um espelho
+- O registro de entidades é único (`config/registry.toml`); o frontend mantém um espelho
   **gerado** (`entities.ts`), não mais divergente (ver §6).
 
 ---
@@ -231,9 +231,10 @@ vira segunda linha de defesa.
 
 ### 3.7 Multi-tenancy (entidades)
 
-As entidades vêm de `data/registry.toml` (fonte única), lido por `auli-cli` e `auli-collections`; o
+As entidades vêm de `config/registry.toml` (fonte única), lido por `auli-cli` e `auli-collections`; o
 frontend gera seu `entities.ts` a partir dele. Cada entidade tem `id`, `name`, prompt e as coleções
-disponíveis. `AULI_DATA_DIR` (default `./data`) é a raiz de `registry.toml`, `prompts/` e
+disponíveis. `AULI_DATA_DIR` (default `./data`) é a raiz dos dados; o catálogo mora na `config/`
+irmã (`AULI_CONFIG_DIR` sobrepõe). A raiz de dados cobre
 `<id>/packs/` — e também o default de `--packs-dir`, então registry e packs compartilham uma raiz por
 construção. Entidades hoje (9, todas ativas no server): `rs` (SEFAZ-RS), `sc` (SEF-SC), `sp`
 (SEFAZ-SP), `pr` (SEFA-PR), `mg` (SEF-MG), `pe` (SEFAZ-PE), `ba` (SEFAZ-BA), `rj` (SEFAZ-RJ) e
@@ -391,7 +392,7 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
 - **Seleção de entidade.** [shared/EntityContext.tsx](auli-frontend/src/shared/EntityContext.tsx)
   guarda a entidade selecionada, persistida em `localStorage` (chave `auli.entity`).
 - **Registro de entidades (frontend).** [shared/entities.ts](auli-frontend/src/shared/entities.ts) é
-  **gerado** de `data/registry.toml` por [scripts/gen-frontend-entities.mjs](scripts/gen-frontend-entities.mjs)
+  **gerado** de `config/registry.toml` por [scripts/gen-frontend-entities.mjs](scripts/gen-frontend-entities.mjs)
   (guardado por `scripts/check-registry-sync.sh`), com **nove** entidades:
   - `rs` = SEFAZ-RS, coleções `["servicos","faqs","pareceres","notas","conteudos"]`.
   - `sc`/`sp`/`pr`/`mg`/`pe`/`ba`/`rj`/`ce` — coleções `["servicos"]`.
@@ -472,7 +473,7 @@ entidades; ambos chamam `selectEntity`.
 - O frontend é **single-tenant em tempo de execução por deploy**: serve os arquivos de uma
   pasta `public/` específica; a seleção de entidade (as 12) muda apenas qual `public/<id>/` é
   consultado. Não há, no código, busca de uma lista de entidades vinda do backend — a lista vem de
-  [shared/entities.ts](auli-frontend/src/shared/entities.ts), **gerado** de `data/registry.toml`
+  [shared/entities.ts](auli-frontend/src/shared/entities.ts), **gerado** de `config/registry.toml`
   (não editado à mão).
 - O frontend **não** consome rotas de gestão de dados do servidor; o único endpoint de backend
   efetivamente chamado é `POST /v1/question` (via `VITE_API_URL`). Não há, no código do
@@ -583,7 +584,7 @@ nos packs até serem modelados.
 > **RESOLVIDO — integração `data/` (Fases 1–4 da unificação).** As divergências históricas entre
 > os domínios duplicados foram **eliminadas** pela fonte única `data/`.
 
-1. **Triplicação do `domain` resolvida.** `data/registry.toml` é a fonte única de entidades, lida
+1. **Triplicação do `domain` resolvida.** `config/registry.toml` é a fonte única de entidades, lida
    por `auli-cli` e `auli-collections`; o frontend gera `entities.ts` dela. O kind vetorial foi
    **unificado para `servicos` ponta a ponta** pela auditoria (PR #4) — não há mais o descasamento
    `services`↔`servicos` (o antigo `services` sobrou só como guarda de regressão — o teste que exige `from_kind("services").is_err()`) nem

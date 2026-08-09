@@ -82,24 +82,56 @@ This is a **monorepo** of four cooperating components plus shared docs.
 | [`auli-server/`](auli-server/)                                                 | **auli workspace**   | The current backend: the `auli` binary in three modes — `auli server` (read-only RAG), `auli update` (vectorizer) and `auli bundle` (download zips). Plus the shared `auli-contract` crate and the scrapers, all in one workspace. | Rust (Axum, Tokio)           |
 | [`auli-frontend/`](auli-frontend/)                                             | **auli-frontend**    | Web UI: state selection (interactive Brazil map), chat, and reference tabs.                                                                                                                      | React 19 + TypeScript + Vite |
 | [`auli-server/crates/auli-collections/`](auli-server/crates/auli-collections/) | **auli-collections** | Offline derivation step: turns a scraper snapshot into the typed `auli-contract` (`Table<P>`) + artifacts. The scraping itself is the per-entity `auli-scraper-<id>` crates (sharing `auli-scraper-kit`). | Rust (synchronous)           |
-| [`data/`](data/)                                                               | **shared data**      | Single source of truth: `registry.toml` (entities/collections), `prompts/`, and per-state `data/<id>/{raw,ref,packs}/`.                                                                          | TOML + JSON/txt              |
-| [`scripts/`](scripts/)                                                         | **tooling**          | `build-packs.sh` (vectorize), `build-frontend-public.sh` + `gen-frontend-entities.mjs` (regen frontend from `data/`), `deploy-frontend.sh` (staged, atomic publish), `update-rs-faqs.sh` (end-to-end re-scrape), CI guards. | Bash + Node                  |
+| [`config/`](config/)                                                           | **catalog**          | **Start here to adapt Auli.** `registry.toml` (entities/collections) and `prompts/` — configuration, versioned, no recompile needed.                                                              | TOML + txt                   |
+| [`data/`](data/)                                                               | **collected data**   | Per-state `data/<id>/{raw,ref,docs,packs}/`. Gitignored: rebuilt by the pipeline.                                                                                                                 | JSON/txt + Markdown          |
+| [`scripts/`](scripts/)                                                         | **tooling**          | `build-packs.sh` (vectorize), `build-frontend-public.sh` + `gen-frontend-entities.mjs` (regen frontend from `config/` + `data/`), `deploy-frontend.sh` (staged, atomic publish), `update-rs-faqs.sh` (end-to-end re-scrape), CI guards. | Bash + Node                  |
 | [`docs/`](docs/)                                                               | **docs**             | Product, technical and operations references (Portuguese).                                                                                                                                       | —                            |
 | [`manuais/`](manuais/)                                                         | **end-user guides**  | How to reach the MCP server from ChatGPT, Claude, GitHub Copilot and Microsoft 365 Copilot. Served in-app by the **MCP** tab.                                                                    | —                            |
 | [`start_server.sh`](start_server.sh)                                           | **runbook script**   | Build (incremental) + run the server + Cloudflare tunnel.                                                                                                                                        | Bash                         |
 
-> **One shared `data/` tree, no manual copies.** Entities/collections live once in
-> [`data/registry.toml`](data/registry.toml); the scraper writes `data/<id>/raw/`, reference content
-> lands in `data/<id>/ref/`, and `auli update` builds `data/<id>/packs/`. The frontend's
-> `entities.ts` and `public/<id>/` are **generated** from `data/` by `scripts/` (the prior
-> hand-copying is gone). See [docs/auli_code.md](docs/auli_code.md) §2.
+> **Catalog and data are separate, on purpose.** Entities/collections live once in
+> [`config/registry.toml`](config/registry.toml); the scraper writes `data/<id>/raw/`, reference
+> content lands in `data/<id>/ref/`, and `auli update` builds `data/<id>/packs/`. The frontend's
+> `entities.ts` and `public/<id>/` are **generated** by `scripts/` (the prior hand-copying is gone).
+> See [docs/auli_code.md](docs/auli_code.md) §2.
 >
-> **The repo holds code + config, not collected data.** Only `data/registry.toml` and
-> `data/prompts/` are versioned. Everything under `data/<id>/**` (ref, raw, packs, scraper cache)
+> **The repo holds code + config, not collected data.** Only `config/` is versioned.
+> Everything under `data/<id>/**` (ref, raw, packs, scraper cache)
 > is **gitignored**: it lives on the collection machine and is rebuilt by the pipeline
 > (scraper → `auli-collections` → `auli update`). A fresh clone therefore has **no** state data —
 > run the pipeline to populate it. Steps per content type, including the pareceres/consultas flow
 > (scrape → sinopse → vectorize), are in [docs/auli_operations.md](docs/auli_operations.md) §4.
+
+---
+
+## Adapting Auli to your organization
+
+**Start at [`config/registry.toml`](config/registry.toml).** That file is the catalog — the point
+where the code's vocabulary meets the inventory in `data/`. It lives in `config/`, not `data/`,
+precisely so you can find it.
+
+**Adding an entity** (another revenue office, another agency) is three steps and **no code**:
+
+1. one `[[entities]]` block in [`config/registry.toml`](config/registry.toml);
+2. `config/prompts/<id>.txt` — the LLM instructions for that entity;
+3. `data/<id>/` with the content. The scrapers live in
+   [`auli-server/crates/scrapers/`](auli-server/crates/scrapers/); the guide for writing a new one
+   is [SCRAPERS.md](auli-server/crates/scrapers/SCRAPERS.md).
+
+Then run `node scripts/gen-frontend-entities.mjs` — the frontend reads a generated mirror of the
+registry, so this is what makes the new entity appear in the UI. No recompilation.
+
+**Adding a collection** (another *kind* of document, beyond services / FAQs / rulings / tribunal
+decisions) **still requires code**: a variant in the `Kind` enum of `auli-contract` and a
+projection into `Documento`. It is small — that was the point of
+[docs/TAREFA-DOCUMENTO.md](docs/TAREFA-DOCUMENTO.md), and the TARF collection went in that way —
+but it is not configuration, and pretending otherwise would waste your time. The roadmap is in
+[docs/ESTUDO-colecoes-trait.md](docs/ESTUDO-colecoes-trait.md).
+
+**What you will need besides the repo:** an LLM endpoint (any OpenAI-compatible one — see
+[`.env.example`](.env.example)) and ~2 GB of disk for the embedding model, which is downloaded once
+and runs locally. Questions are embedded in-process and never leave the machine; only the assembled
+prompt reaches the LLM.
 
 ---
 
@@ -227,7 +259,7 @@ changes) — `build-packs.sh` runs `auli update` over the `.md` trees in `data/<
 and is skipped):
 
 ```bash
-scripts/build-packs.sh rs          # per entity, any of the 27 ids in data/registry.toml
+scripts/build-packs.sh rs          # per entity, any of the 27 ids in config/registry.toml
 ```
 
 A healthy boot logs the loaded entities, a validated manifest, per-collection record counts, the

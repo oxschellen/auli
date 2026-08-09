@@ -70,7 +70,7 @@ cargo build --release --workspace      # ou só o engine: cargo build --release 
 
 ## 4. Dados necessários para servir
 
-Tudo vive na pasta única **`data/`** na raiz (`AULI_DATA_DIR`, default `../data` a partir de
+Os dados vivem na pasta **`data/`** na raiz (`AULI_DATA_DIR`, default `../data` a partir de
 `auli-server/`). O `auli server` lê de lá: `registry.toml`, `prompts/`, os packs por entidade e —
 desde a G3 — a **árvore `data/<id>/docs/pareceres/*.md`**, de onde o corpo das consultas é lido
 **na hora da query** (o pack não carrega mais o corpo).
@@ -79,8 +79,9 @@ desde a G3 — a **árvore `data/<id>/docs/pareceres/*.md`**, de onde o corpo da
 > `docs_hash` e o boot **recusa subir** se a árvore divergir dele. Ao copiar dados entre máquinas,
 > leve `packs/` **e** `docs/` juntos — pack sem árvore não serve.
 
-**O repositório guarda código + config, não dado coletado.** Só `data/registry.toml` e
-`data/prompts/` são versionados; todo o resto de `data/<id>/**` é gitignored e reconstruído pelo
+**O repositório guarda código + config, não dado coletado.** O catálogo versionado é a pasta
+**`config/`** (`registry.toml` + `prompts/`), irmã de `data/`; todo o resto de `data/<id>/**` é
+gitignored e reconstruído pelo
 pipeline. Um clone novo, portanto, **não traz dados** — rode o pipeline para popular.
 
 > ⚠️ **Ao sincronizar a mudança que tirou os dados do git, arquivos locais em `data/<id>/ref/`
@@ -193,11 +194,11 @@ precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
 > raspa mais de um tipo (o RS raspa os três) não mistura nem colide. Para limpar só um tipo:
 > `rm -rf data/<id>/raw/cache/pareceres/`.
 
-### 4.2 Entidades (`data/registry.toml`)
+### 4.2 Entidades (`config/registry.toml`)
 
 A lista de entidades e o caminho do prompt de cada uma vêm do **registro único**
-`data/registry.toml` (não há mais symlink `./entities`). O system prompt é lido de
-`data/prompts/<id>.txt`. Adicionar um estado = uma entrada `[[entities]]` no registry + os dados em
+`config/registry.toml` (não há mais symlink `./entities`). O system prompt é lido de
+`config/prompts/<id>.txt`. Adicionar um estado = uma entrada `[[entities]]` no registry + os dados em
 `data/<id>/`.
 
 ### 4.3 Modelo (`<raiz>/models`)
@@ -317,7 +318,7 @@ atomicamente. Exige a árvore já no disco — quem a cria é o scraper (passo 1
 - **Env**: `SINOPSE_API_URL` / `SINOPSE_API_KEY` / `SINOPSE_API_MODEL`, com **fallback** para os
   `LLM_*`. Isso permite apontar o lote para um **projeto/quota dedicado**, sem competir com o chat do
   RAG.
-- **Prompt**: `data/prompts/sinopse.txt` (versão gravada em `SinopseInfo.prompt_versao`;
+- **Prompt**: `config/prompts/sinopse.txt` (versão gravada em `SinopseInfo.prompt_versao`;
   `SINOPSE_PROMPT_VERSION = 1`). Saída validada: as duas seções
   `### Descrição Resumida do Assunto` + `### Palavras Chave do Tema`, na ordem, descrição ≤ 2000
   chars e ≥ 3 palavras-chave. Falha de validação → **1 re-tentativa**; persistindo, conta como falha
@@ -508,7 +509,7 @@ Variáveis de ambiente para sobrescrever:
 
 ```bash
 PORT=8080 ./start_server.sh                       # outra porta
-AULI_DATA_DIR=/dados ./start_server.sh            # outra raiz de data/ (registry+prompts+packs)
+AULI_DATA_DIR=/dados ./start_server.sh            # outra raiz de data/ (o catálogo vira /config)
 TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 ./start_server.sh --no-tunnel                     # só o servidor local, sem túnel
 ```
@@ -729,7 +730,7 @@ grep -h "aderência" logs/*.txt | sort -t' ' -k4 -n | head   # os piores casos d
 
 | Sintoma                                                                     | Causa / correção                                                                                                                                                                                                                    |
 | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Não foi possível ler o registro de entidades` / `Entidades carregadas: []` | `AULI_DATA_DIR` não aponta para a pasta `data/` (com `registry.toml`). Rode via `start_server.sh` (exporta `../data`).                                                                                                              |
+| `Não foi possível ler o registro de entidades` / `Entidades carregadas: []` | `AULI_DATA_DIR` não aponta para a pasta `data/`, ou a `config/` irmã não existe. Rode via `start_server.sh` (exporta `../data`); para catálogo fora do layout, use `AULI_CONFIG_DIR`.                                                                                                              |
 | `📦 Pacotes carregados de …` (e nada carregado)                             | `--packs-dir`/`AULI_DATA_DIR` aponta para a raiz errada (sem `<id>/packs/`). Sem `--packs-dir`, o server usa `AULI_DATA_DIR` (default `./data`); o `start_server.sh` exporta `../data`.                                             |
 | Rebaixando `model_quantized.onnx` toda vez                                  | Cache não encontrado. Os lançadores já apontam `EMBED_CACHE_DIR=<raiz>/models` (absoluto), então o CWD não importa — confira se os pesos estão em `<raiz>/models`. Em execução manual, exporte `EMBED_CACHE_DIR` para esse caminho. |
 | Erro de cmake / `aws-lc-sys` no build                                       | Sem cmake no PATH ou cmake 4 reclamando de policy. `export PATH="$HOME/.local/bin:$PATH"` e `export CMAKE_POLICY_VERSION_MINIMUM=3.5` (o `start_server.sh` já faz).                                                                 |
@@ -832,7 +833,7 @@ script **depois do upload e antes do rollback automático**.
 ### 11.1 A guarda de entidade vazia
 
 `build-frontend-public.sh` faz `rm -rf` + `mkdir` por entidade. Entidade que está no
-`data/registry.toml` mas **não tem `data/<id>/` nesta máquina** produz um `public/<id>/` **vazio** —
+`config/registry.toml` mas **não tem `data/<id>/` nesta máquina** produz um `public/<id>/` **vazio** —
 e o único sinal é um `(0 arquivos)` no meio do log.
 
 Isso não é hipotético: **Roraima está assim em produção**. Ela aparece no seletor de estados
@@ -843,7 +844,7 @@ erro de carga.
 O deploy **aborta** nesse caso. As duas saídas:
 
 - recuperar/coletar o `data/<id>/` e rodar de novo; ou
-- tirar a entidade do `data/registry.toml` e rodar `node scripts/gen-frontend-entities.mjs`
+- tirar a entidade do `config/registry.toml` e rodar `node scripts/gen-frontend-entities.mjs`
   (o `entities.ts` é **gerado** do registry — não edite à mão).
 
 `--allow-vazias` publica mesmo assim, ciente do que quebra.

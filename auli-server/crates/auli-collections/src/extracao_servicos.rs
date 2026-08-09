@@ -34,7 +34,7 @@ use crate::sinopse::{
 };
 
 /// Versão do prompt (gravada em cada linha). Bump a cada mudança do
-/// `data/prompts/extracao-servicos.txt`. `0` é reservado ao `--fake`.
+/// `config/prompts/extracao-servicos.txt`. `0` é reservado ao `--fake`.
 pub const EXTRACAO_SERVICOS_PROMPT_VERSION: u32 = 1;
 
 /// Um sistema/portal citado, LITERAL como no texto do serviço.

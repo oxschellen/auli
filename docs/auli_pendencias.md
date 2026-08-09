@@ -1177,7 +1177,7 @@ Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **M
   [Home.tsx](auli-frontend/src/pages/home/Home.tsx) ainda lista as abas de forma estática (a barra
   mostra todas), mas cada lista se auto-gateia — logo estados sem uma coleção mostram
   `CollectionEmpty`, não erro.
-- **Prompts `data/prompts/*.txt` — ✅ resolvido (TAREFA-MARCADORES, #129):** a nota da auditoria #14
+- **Prompts `config/prompts/*.txt` — ✅ resolvido (TAREFA-MARCADORES, #129):** a nota da auditoria #14
   registrava que os prompts divergiam no marcador de serviço (`rs.txt` tinha `## servico`;
   `sc/pr/sp.txt` só `## pergunta`). Os quatro invólucros do contexto RAG viraram um só
   (`## documento {i}: {rótulo}`) e os 31 prompts foram alinhados no mesmo commit do código.

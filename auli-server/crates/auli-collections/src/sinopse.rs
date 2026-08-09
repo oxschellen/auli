@@ -23,7 +23,7 @@ use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
 
 /// Versão do prompt (gravada em `ResumoInfo.prompt_versao`). Bump a cada mudança do
-/// `data/prompts/sinopse.txt`. `0` é reservado ao `--fake`.
+/// `config/prompts/sinopse.txt`. `0` é reservado ao `--fake`.
 pub const SINOPSE_PROMPT_VERSION: u32 = 1;
 /// Teto de entrada do corpo (chars). Acima disso, trunca com aviso no log (v1: sem chunking).
 pub(crate) const CORPO_MAX_CHARS: usize = 24_000;
@@ -159,14 +159,11 @@ pub(crate) fn env_com_fallback(primary: &str, fallback: &str) -> Result<String> 
     Err(format!("variável de ambiente ausente: defina {primary} (ou {fallback}).").into())
 }
 
-/// System prompt da sinopse. `data_dir` é `../data/<id>/raw`, logo o prompt cai em
-/// `../data/prompts/sinopse.txt` (dois níveis acima). Erro claro se ausente.
+/// System prompt da sinopse, em `config/prompts/`. O caminho sai do `EntityConfig`
+/// (`prompt_de_passo`), que é o único lugar que sobe do `data_dir` da entidade até a raiz.
+/// Erro claro se ausente.
 fn load_prompt(entity: &EntityConfig) -> Result<String> {
-    let path = Path::new(&entity.data_dir)
-        .parent()
-        .and_then(Path::parent)
-        .ok_or_else(|| format!("data_dir inesperado: {}", entity.data_dir))?
-        .join("prompts/sinopse.txt");
+    let path = entity.prompt_de_passo("sinopse.txt")?;
     std::fs::read_to_string(&path)
         .map_err(|e| format!("prompt de sinopse ausente ({}): {e}", path.display()).into())
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# check-registry-sync.sh — guard-rail: data/registry.toml é a FONTE ÚNICA de entidades.
+# check-registry-sync.sh — guard-rail: config/registry.toml é a FONTE ÚNICA de entidades.
 # Falha (exit 1) se:
 #   1) o frontend (src/shared/entities.ts) estiver fora de sincronia com o registry, ou
 #   2) reaparecer um diretório de definição de entidade fora do registry (a triplicação da §6).
@@ -12,7 +12,7 @@ fail=0
 # 1) entities.ts regenerado bate com o commitado?
 node "$ROOT/scripts/gen-frontend-entities.mjs" >/dev/null
 if ! git -C "$ROOT" diff --quiet -- auli-frontend/src/shared/entities.ts; then
-  echo "❌ auli-frontend/src/shared/entities.ts fora de sincronia com data/registry.toml."
+  echo "❌ auli-frontend/src/shared/entities.ts fora de sincronia com config/registry.toml."
   echo "   Rode: node scripts/gen-frontend-entities.mjs  (e faça commit)."
   fail=1
 fi

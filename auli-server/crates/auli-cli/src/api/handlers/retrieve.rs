@@ -32,7 +32,7 @@ fn jurisprudencia(kind: &str) -> bool {
 
 /// Resolve kind + top_k. Puro E independente do registry de entidades — `corpus::from_kind` é um
 /// vocabulário estático. Separado de propósito: é o que torna estes contratos testáveis sem
-/// `data/registry.toml` (que não existe no ambiente de teste) e sem `Engine` (que carregaria o
+/// `config/registry.toml` (que não existe no ambiente de teste) e sem `Engine` (que carregaria o
 /// BGE-M3).
 fn validar_kind_top_k(
     req: &RetrieveRequest,
@@ -161,7 +161,7 @@ mod tests {
     }
 
     // NOTA: estes testes exercitam `validar_kind_top_k`, não `validar_retrieve`, porque a
-    // resolução de entidade depende de `data/registry.toml` — ausente no ambiente de `cargo test`
+    // resolução de entidade depende de `config/registry.toml` — ausente no ambiente de `cargo test`
     // (o `ENTITIES` é um LazyLock sobre o CWD). Foi exatamente por isso que a validação foi
     // partida em duas: o pedaço independente de runtime fica coberto.
 

@@ -87,7 +87,7 @@ b=$(awk '{print $14+$15}' /proc/$P/stat); echo $((b-a))   # 0 = parado
 
 **Binários de release** são exigidos por `build-packs.sh` (`auli`) e pelo índice de pareceres (`auli-collections`). Sem o segundo, o script apenas avisa e segue.
 
-**`auli-collections` só roda de dentro de `auli-server/`** — resolve `../data/registry.toml` por caminho relativo.
+**`auli-collections` só roda de dentro de `auli-server/`** — resolve `../config/registry.toml` por caminho relativo.
 
 **`auli update` carrega a coleção inteira na memória**: 24,7 GB de RSS no SP (15.605 pareceres). Nesta máquina (60 GB) não aperta; num servidor de 16 GB não passaria. Dívida registrada, não urgente — o remédio é o mesmo padrão do scraper do TARF (lotes).
 

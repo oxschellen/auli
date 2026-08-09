@@ -8,8 +8,9 @@
 # Flags:    --no-build    pula o `cargo build` e sobe o binário já compilado (restart rápido).
 #           --no-tunnel   sobe só o servidor local, sem o túnel Cloudflare.
 #                         (--no-ngrok continua aceito como apelido de --no-tunnel.)
-# Variáveis opcionais: PORT (3000), BIND (0.0.0.0), AULI_DATA_DIR (../data) — raiz de
-#                      registry+prompts+packs, TUNNEL_NAME (auli-api), CARGO_TARGET_DIR (reuso do build).
+# Variáveis opcionais: PORT (3000), BIND (0.0.0.0), AULI_DATA_DIR (../data) — raiz dos dados,
+#                      AULI_CONFIG_DIR (default: a `config/` irmã dela), TUNNEL_NAME (auli-api),
+#                      CARGO_TARGET_DIR (reuso do build).
 set -euo pipefail
 
 NO_BUILD=0
@@ -33,8 +34,10 @@ export CMAKE_POLICY_VERSION_MINIMUM="${CMAKE_POLICY_VERSION_MINIMUM:-3.5}"
 # Reaproveita os artefatos já compilados (fastembed/ort/aws-lc) -> build incremental rápido.
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/auli-server/target}"
 
-# Raiz data/ (registry.toml + prompts/ + <id>/packs/). O server roda em auli-server/, então é ../data.
+# Raiz data/ (<id>/{docs,packs}/). O server roda em auli-server/, então é ../data.
 # `auli server` herda esta raiz para os packs quando --packs-dir é omitido (knob único).
+# O CATÁLOGO (registry.toml + prompts/) NÃO fica aqui: vive na `config/` irmã, derivada desta raiz
+# por convenção — não há env var a exportar (AULI_CONFIG_DIR existe só para sobrepor).
 # Regenere os packs com scripts/build-packs.sh <id>.
 export AULI_DATA_DIR="${AULI_DATA_DIR:-../data}"
 
@@ -53,7 +56,7 @@ BIN="$CARGO_TARGET_DIR/release/auli"
 
 cd "$WS"
 
-# As entidades vêm de $AULI_DATA_DIR/registry.toml (não há mais symlink ./entities).
+# As entidades vêm de config/registry.toml (irmã de $AULI_DATA_DIR).
 
 # Derruba uma instância anterior, se houver, para liberar a porta.
 pkill -f "release/auli server" 2>/dev/null && sleep 1 || true
