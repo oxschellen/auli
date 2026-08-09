@@ -3,20 +3,22 @@
 **Auli** is an open-source, privacy-first **RAG assistant for Brazilian state taxes**. It helps
 tax-office staff answer citizens by turning a natural-language question into a grounded answer
 built from the _official content_ of a given state's revenue secretariat (Secretaria da Fazenda) —
-services, FAQs, legal opinions (_pareceres_) and administrative notes (_notas_) — with links back
-to the source.
+services, FAQs, tax-court rulings (_acórdãos_ of the TARF), legal opinions (_pareceres_) and
+administrative notes (_notas_) — with links back to the source.
 
 The pilot tenant is **SEFAZ-RS** (Rio Grande do Sul); the system is **multi-tenant by state**, so
 one codebase serves many secretariats from isolated data. **All 27 registered states** have their
-service catalog collected — 4.205 serviços, 19.780 pareceres and 1.947 FAQs indexed today.
+service catalog collected. As of 2026-08-09 the corpus is **48.408 documents**: 22.476 acórdãos of
+the TARF, 19.780 pareceres, 4.205 serviços and 1.947 FAQs.
 
 - 🌐 Production: [auli.com.br](https://auli.com.br) · API: `https://api.auli.com.br/v1` ·
   MCP: `https://api.auli.com.br/mcp`
 - 🔒 **Privacy by design** — embeddings run **locally, in-process** (fastembed / BGE-M3 ONNX). No
   external embedding service; question/document text never leaves the process. Only the final
   answer drafting calls an external LLM.
-- 🤖 **Usable from your own AI** — the MCP server exposes the pareceres corpus to ChatGPT, Claude
-  and Copilot; step-by-step guides live in [`manuais/`](manuais/). Prefer your own pipeline? Each
+- 🤖 **Usable from your own AI** — the MCP server exposes the case-law corpora (pareceres and TARF
+  acórdãos, picked with a `colecao` parameter) to ChatGPT, Claude and Copilot; step-by-step guides
+  live in [`manuais/`](manuais/). Prefer your own pipeline? Each
   state's corpus is downloadable as a `.zip` of one `.md` per document.
 - 📄 License: **MIT**
 
@@ -47,7 +49,7 @@ answer + official links
 Official content is **scraped** from each secretariat's portal, **derived into a tree of one
 `.md` per document** (`data/<id>/docs/<kind>/`, frontmatter + body), and **vectorized into
 per-state packs** (`auli update`) that the server loads read-only. That `.md` tree — not the JSON
-contract — is the vectorization source for serviços, FAQs and pareceres; it is also what the
+contract — is the vectorization source for every collection; it is also what the
 download `.zip` ships, so what an external AI reads is byte-for-byte what the engine indexed.
 
 ### Three faces, one engine
@@ -180,7 +182,7 @@ A single-page app (no router; **tab navigation**) built with React 19, Vite, and
 
 - **State selection** with an interactive map of Brazil; choice persisted in `localStorage`.
 - **Chat** against `POST /v1/question` (25 s timeout, friendly errors, copy button, markdown), with
-  a **query-type selector**: serviços+FAQs or pareceres.
+  a **query-type selector**: serviços+FAQs, pareceres or TARF acórdãos.
 - **Reference tabs** — Serviços, FAQs, Pareceres, Notas, Conteúdos — each reading static files from
   `public/<id>/`; "coming soon" placeholders for collections a state doesn't have yet.
 - **Downloads** — every state's corpus as a `.zip`, with document counts, size and last-changed
@@ -218,7 +220,8 @@ serves an incomplete TLS chain that has to be pinned. Each crate documents its p
 [`SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).
 
 - **RS** (`auli-scraper-rs`) — FAQs (portal CMS via AJAX/`ureq`) + serviços (**headless Chrome** for
-  the listing, `ureq` for details).
+  the listing, `ureq` for details) + **TARF**: 22.476 acórdãos from the state tax court, the single
+  largest collection in the project.
 - **SP / PR / SC** — plus **pareceres**: 15.605, 2.060 and 1.743 opinions respectively.
 - On-disk **cache** with an offline `--usecache` mode; **dedup** of services shared across audiences.
 
@@ -254,8 +257,8 @@ cp .env.example .env        # then fill in LLM_API_* (LLM endpoint)
 
 Generate the vector packs the server serves (only needed when content or the embedding strategy
 changes) — `build-packs.sh` runs `auli update` over the `.md` trees in `data/<id>/docs/` into
-`data/<id>/packs/`, and derives the pareceres index the UI reads (`notas` has no struct source yet
-and is skipped):
+`data/<id>/packs/`, and derives the case-law indexes the UI reads — pareceres and TARF (`notas` has
+no struct source yet and is skipped):
 
 ```bash
 scripts/build-packs.sh rs          # per entity, any of the 27 ids in config/registry.toml
@@ -294,16 +297,20 @@ Required variables panic at startup if missing.
 
 | Type          | What it is                                     | Where it appears today                          | Volume |
 | ------------- | ---------------------------------------------- | ----------------------------------------------- | ------ |
+| **TARF**      | Rulings of the state tax court (2nd instance)  | Chat (dedicated query type) + tab + **MCP**     | 22.476 (RS) |
+| **Pareceres** | Legal/technical opinions                       | Chat (dedicated query type) + tab + **MCP**     | 19.780 (SP, PR, SC, RS) |
 | **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab                       | 4.205 across 27 states |
 | **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | 1.947 (RS) |
-| **Pareceres** | Legal/technical opinions                       | Chat (dedicated query type) + tab + **MCP**     | 19.780 (SP, PR, SC, RS) |
 | **Notas**     | Administrative/tax notes                       | Notas tab (reference)                           | RS |
 | **Conteúdos** | Misc reference materials                       | Conteúdos tab (reference)                       | RS |
 
-**Serviços and FAQs** feed the default chat mode. **Pareceres** have their own query type, with
-**graph expansion by co-citation** — opinions citing the same legal provisions as the retrieved
-ones are surfaced as related — and are the corpus exposed over MCP. **Notas and Conteúdos** remain
-reference-only navigation.
+Rows are ordered by volume, and the order is the point: the TARF alone outweighs every parecer
+combined.
+
+**Serviços and FAQs** feed the default chat mode. **Pareceres and TARF acórdãos** each have their
+own query type and are the corpora exposed over MCP; pareceres additionally get **graph expansion
+by co-citation** — opinions citing the same legal provisions as the retrieved ones are surfaced as
+related. **Notas and Conteúdos** remain reference-only navigation.
 
 ---
 
@@ -311,9 +318,9 @@ reference-only navigation.
 
 - **Working today:** RAG chat for the configured state, the full UI (chat, reference tabs,
   downloads, connector guides, state selection with map), local embeddings, an MCP server for
-  external assistants. **All 27 registered states have serviços collected**
-  (4.205), pareceres for four (19.780) and FAQs for RS (1.947). The backend is open (no auth) and
-  database-free — it serves from packs alone.
+  external assistants. **All 27 registered states have serviços collected** (4.205), pareceres for
+  four (19.780), and — for RS — FAQs (1.947) and the TARF acórdãos (22.476, collection closed
+  2026-08-09). The backend is open (no auth) and database-free — it serves from packs alone.
 - **In progress:** FAQs beyond RS, automated scraping of notas, and a controlled vocabulary for the
   legal-provision graph.
 

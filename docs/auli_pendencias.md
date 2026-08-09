@@ -771,30 +771,57 @@ já substitui por id (`vector-store/src/write.rs:45`); o que falta é o id ser *
   Isso pede um teste — vetorizar do zero vs. incremental e comparar byte a byte — que é a única
   garantia real de que o atalho não introduziu deriva.
 
-### 31.1 A outra metade da dívida: a RAM — **remedido em 2026-08-08**
+### 31.1 A RAM: **diagnóstico corrigido em 2026-08-09** — não é o `Vec<Documento>`, é o `colbert`
 
-O tempo é só metade do problema. O `update` carrega a coleção INTEIRA na memória antes de embeddar
-(`preparar` monta um `Vec<Documento>` com o corpo de cada documento; `ingest_items` deriva dele mais
-dois vetores de String). Medido com `/usr/bin/time -v` na migração de pack v2, que re-vetorizou as
-27 entidades:
+> **Correção.** Esta seção afirmava que a RAM vinha do `update` carregar a coleção inteira em
+> memória (`preparar` montando um `Vec<Documento>` com o corpo de cada documento) e concluía que
+> "quem atacar a §31 paga as duas de uma vez". **Ambas as partes estavam erradas**, e a segunda é a
+> mais cara: mandava quem fosse consertar a RAM para dentro do update incremental, que é trabalho de
+> semanas, quando o conserto real são ~10 linhas e não depende da §31 em nada.
+>
+> O `Vec<Documento>` foi medido: **256 MB** para a árvore do RS, 88% dela. Real, desnecessário e
+> irrelevante diante do que segue.
 
-| entidade | documentos | tempo | RSS máximo |
-|---|---|---|---|
-| 22 menores | 15–474 | 2–20 s | ~1,13 GB (é o modelo, não o dado) |
-| sc / pr | ~1.950 / ~2.200 | ~4min30s | ~4,5 GB |
-| rs | 6.705 | 16min21s | 16,4 GB |
-| **sp** | **16.123** | **49min21s** | **35,4 GB** |
+**A causa.** O BGE-M3 é multi-vetor: o ONNX devolve **três** saídas — `dense`, `sparse` e `colbert`
+([`fastembed/bgem3_embedding/init.rs:22`](https://docs.rs/fastembed)). O `embed_dense` usa `out.dense`
+e descarta as outras duas ([embed.rs](../auli-server/crates/auli-core/src/embed.rs)) — **mas só no
+fim**. Dentro do `fastembed`, `all_dense` / `all_sparse` / `all_colbert` acumulam ao longo de todo o
+laço, e o laço percorre a lista que passamos. E passamos a coleção inteira numa chamada só
+([update.rs, `ingest_items`](../auli-server/crates/auli-cli/src/update.rs)).
 
-**O número do SP mudou**: o registro anterior (HANDOFF, 2026-08-08 de manhã) dizia **24,7 GB**. Não
-sei afirmar a causa da diferença — pode ser instrumentação distinta ou crescimento da árvore entre
-as duas medições. O que vale é o dado novo, medido com `time -v` e reproduzível.
+O `colbert` não é um vetor por documento — é **um vetor de 1024 floats por token**
+(`[batch, seq_len-1, 1024]`). Daí a escala:
 
-**Por que isso é a mesma pendência.** O remédio do tempo (processar por documento, re-embeddar só o
-que mudou) é também o remédio da RAM: a unidade de trabalho uniforme que a `Documento` trouxe é o
-que torna o streaming um caminho só, em vez de quatro. Quem atacar a §31 paga as duas de uma vez.
+| coleção | documentos | chars/doc | tokens ≈ | `colbert` previsto | RSS medido |
+|---|---|---|---|---|---|
+| sp pareceres | 15.605 | 1.934 | 483 | **30,9 GB** | **35,4 GB** (`time -v`, 08/08) |
+| rs tarf | 22.476 | 1.349 | 337 | **31,0 GB** | ~46 GB projetado (rodada de 09/08) |
+| rs pareceres | 372 | 1.318 | 330 | 0,5 GB | — |
 
-**Consequência prática hoje.** Nesta máquina (60 GB) o SP passa. Num servidor de 16 GB, não — e é
-esse o teto que a dívida impõe a onde o Auli pode rodar.
+O `dense`, que é o único que usamos, são **0,09 GB** para os 22.476 acórdãos. Construímos 31 GB para
+jogar fora.
+
+**O que a tabela antiga media.** Os números de 08/08 seguem válidos como medição — o que muda é a
+explicação. O modelo acima **prevê 30,9 GB para o SP e o `time -v` mediu 35,4**: é a confirmação de
+que o `colbert` é o termo dominante, e não o corpo dos documentos. (Os 24,7 GB do HANDOFF da manhã
+de 08/08 continuam sem explicação; provavelmente instrumentação distinta.)
+
+**O pico é por coleção, não cumulativo** — o `Bgem3Output` é liberado ao fim de cada `ingest_items`.
+Quem dita o pico é a MAIOR coleção da entidade, não a soma.
+
+**O conserto, e por que não é a §31.** Fatiar a chamada: em vez de um `embed_dense` com N textos,
+lotes de ~256, acumulando só o `dense`. O pico do `colbert` cai de 31 GB para ~360 MB. Os vetores
+saem **bit a bit idênticos** — o `batch_size = 1` interno já processa um texto por vez, então fatiar
+a lista de fora não toca em nada do que a doutrina do lote protege (ver o doc de `embed_dense`).
+O lugar é o `embed_dense` do `auli-core`, não o `update`: toda chamada herda, e a face do servidor
+(uma pergunta por vez) não muda.
+
+Isso é **ortogonal ao update incremental**. A §31 continua valendo pelo tempo — re-embeddar 15.605
+pareceres para produzir 40 vetores novos —, mas a RAM sai antes e sozinha.
+
+**Consequência prática.** Com o conserto, o `update` passa a caber em qualquer máquina: o pico deixa
+de escalar com o acervo. Sem ele, o teto é o tamanho da maior coleção — nesta máquina (60 GB) a
+rodada do RS de 09/08 chegou a **31 GB** com o TARF ainda pela metade.
 
 ---
 
@@ -1066,10 +1093,22 @@ Alavancas reais, se a lentidão incomodar no uso contínuo (nenhuma urgente):
 - **Handshake só na 1ª chamada.** `initialize`/`tools/list` rodam uma vez por sessão; as chamadas
   seguintes reaproveitam. Não é recorrente.
 
-## 35. Página **Sobre** e manuais MCP não mencionam o TARF (aberta — 2026-08-09)
+## 35. Página **Sobre** e manuais MCP não mencionam o TARF — ✅ **resolvida (2026-08-09)**
 
 Achado ao revisar os quatro documentos vivos. Não é afirmação falsa como as da §29 — é **omissão**,
 e ela aparece justamente no texto voltado ao público.
+
+> **Resolvida na mesma tarde em que a coleta fechou.** A decisão que estava travada ("escrever sem
+> número agora ou esperar o fecho") deixou de ser decisão: com 22.476 acórdãos definitivos, o número
+> exato é publicável. Corrigidos os três pontos do `about.md`, o `manuais/README.md` e os manuais do
+> Claude e do ChatGPT.
+>
+> **A varredura achou o que a seção não previa.** Além da omissão, três lugares afirmavam _"o acervo
+> está em coleta e cresce a cada rodada"_ — verdade quando foram escritos, falsa desde hoje. Aviso
+> falso é pior que aviso nenhum: ensina o leitor a desconfiar de um número que já está certo. É a
+> mesma frase que saiu do `TarfList.tsx` (5e3fade) e do README dos zips (4c2fdcc); estes três eram os
+> últimos. Quem for corrigir omissão em documento vivo, faça a varredura pela afirmação temporal
+> também — a omissão está onde se procura, a frase que envelheceu não.
 
 O [about.md](auli-frontend/public/about.md) descreve o acervo em três lugares como "serviços,
 perguntas frequentes e pareceres" (linhas 13, 27 e 39). Os acórdãos do TARF estão no chat como fonte
@@ -1077,21 +1116,28 @@ própria, na aba, no MCP e nos zips de download desde 08/08 — quem lê a pági
 existem. A linha 39, que fala do conector MCP, cita "o acervo de pareceres e respostas a consultas"
 sem o parâmetro `colecao`.
 
-**Por que ainda não corrigi:** o total do TARF muda a cada rodada de coleta (3.800 de ~22.522), e o
-texto do Sobre é do tipo que se escreve uma vez. Corrigir agora significa ou omitir o número — o que
-é aceitável, o Sobre não dá números hoje — ou voltar nele quando a coleta fechar. **Decisão a
-tomar:** escrever sem número agora, ou esperar o fecho da coleta.
+**Por que não corrigi antes:** o total do TARF mudava a cada rodada de coleta (3.800 de ~22.522), e o
+texto do Sobre é do tipo que se escreve uma vez. Corrigir naquele momento significaria ou omitir o
+número — o que era aceitável, o Sobre não dava números — ou voltar nele quando a coleta fechasse. A
+coleta fechou, e a segunda opção deixou de custar uma segunda visita.
 
-Os manuais em `manuais/` estão na mesma situação por decisão explícita e registrada: eles ganharam a
-descrição do parâmetro `colecao`, mas **não** um total do TARF, para não publicar um número que muda
-toda semana (#132).
+Os manuais em `manuais/` estavam na mesma situação por decisão explícita e registrada: eles ganharam
+a descrição do parâmetro `colecao`, mas **não** um total do TARF, para não publicar um número que
+mudava toda semana (#132). Com o acervo fechado, o total entrou na mesma regra dos demais — número
+exato, mantido à mão.
 
-### 35.1 O README na mesma passada — e por que "~30 mil" seria pior que o número exato
+### 35.1 O README na mesma passada — e por que "~30 mil" seria pior que o número exato — ✅ **resolvida (2026-08-09)**
 
 O `README.md` também omite o TARF: o cabeçalho descreve o acervo como "services, FAQs, legal
 opinions (_pareceres_) and administrative notes (_notas_)". Ele carrega números em **quatro**
 lugares — cabeçalho (l. 11), linha dos scrapers (l. 222), tabela das coleções (l. 297–299) e linha
 de status (l. 315).
+
+> **Eram sete, não quatro.** A varredura por `pareceres` no arquivo achou mais três menções que esta
+> seção não tinha contado: a lista de fontes de vetorização (l. 50), o seletor de tipo de consulta do
+> frontend (l. 183) e a linha do `build-packs` que dizia derivar "o índice de pareceres" quando
+> deriva dois. Contar os lugares de um documento pelo que se lembra dele subconta; contar por `grep`
+> não.
 
 **Conferidos em 09/08/2026: os quatro estão exatos.** 4.205 serviços, 19.780 pareceres e 1.947 FAQs
 somam 25.932; com os `.md` do `tarf` fecham os 30.332 arquivos de `data/*/docs/`, sem sobra. O
@@ -1102,13 +1148,24 @@ que é o total de hoje. Mas hoje o `tarf` está pela metade: quando a coleta fec
 **~48.500** — o arredondamento erra por 60% em poucos dias. Arredondar não impede o apodrecimento,
 só o esconde: um número exato e errado alguém corrige, um "~30 mil" vago ninguém audita.
 
+> **A previsão fechou:** 4.205 + 1.947 + 19.780 + 22.476 = **48.408**, contra os "~48.500"
+> projetados. O "~30 mil" teria errado por 61%.
+
 **O que muda de verdade quando a coleta fechar:** com 22.590 acórdãos, o TARF sozinho passa a ser
 maior que **todos os pareceres somados** (19.780). O cabeçalho não ganha um quarto item na lista —
 ganha o **primeiro**.
 
+> Confirmado com 22.476. Os 114 que separam esse número dos 22.590 do portal são **29** sem ementa
+> (19 publicados assim pelo tribunal, 10 que o portal declara `ACÓRDÃO INEXISTENTE` — ver #137) mais
+> **85** descartados antes do parser na própria coleta.
+> A tabela de coleções passou a ser ordenada por volume, com uma linha dizendo que a ordem é o
+> conteúdo: o TARF sozinho pesa mais que todos os pareceres.
+
 **Recomendação:** manter a precisão e matar a palavra que apodrece. Hoje se lê "indexed **today**",
 sem data — é isso que envelhece, não o algarismo. Um número exato com data nunca fica errado, só
 fica antigo, e num projeto de dados abertos ele é **verificável**: quem baixa o `.zip` confere.
+
+> Aplicado: "indexed today" virou "As of 2026-08-09 the corpus is **48.408 documents**".
 
 **Contra gerar do manifesto:** o README é arquivo estático no GitHub. Gerá-lo exigiria script, passo
 de CI e um commit a cada mudança, para um documento que se move poucas vezes por ano. O lugar do

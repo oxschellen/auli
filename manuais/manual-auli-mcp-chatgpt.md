@@ -20,8 +20,8 @@ Hoje o acervo tem **19.780 pareceres** de quatro estados:
 Além dos pareceres, o RS tem os **acórdãos do TARF** — o Tribunal Administrativo de Recursos
 Fiscais, segunda instância do contencioso tributário estadual. Para consultá-los, peça em
 português mesmo (*"o que o TARF já decidiu sobre..."*); por baixo, a busca leva `colecao: "tarf"`.
-São decisões de casos concretos, não interpretação normativa — o acervo está em coleta e cresce a
-cada rodada, então pergunte *quantos acórdãos existem hoje* em vez de confiar num número fixo.
+São decisões de casos concretos, não interpretação normativa. São 22.476 acórdãos — o maior acervo
+do projeto, maior que todos os pareceres somados.
 
 ## Antes de começar
 

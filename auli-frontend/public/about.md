@@ -10,7 +10,7 @@ Trata-se de um projeto piloto desenvolvido com o objetivo de explorar aplicaçõ
 
 A plataforma é multi-órgão: uma mesma instância pode atender diferentes entidades públicas, cada uma com sua própria base de conhecimento e instruções específicas, mantendo os dados completamente isolados.
 
-Os conteúdos utilizados pela Auli são extraídos exclusivamente de informações e documentos públicos disponibilizados nos sites oficiais das administrações tributárias: serviços, perguntas frequentes e pareceres/respostas a consultas tributárias.
+Os conteúdos utilizados pela Auli são extraídos exclusivamente de informações e documentos públicos disponibilizados nos sites oficiais das administrações tributárias: serviços, perguntas frequentes, pareceres/respostas a consultas tributárias e acórdãos do contencioso administrativo fiscal.
 
 ## Aviso importante
 
@@ -24,7 +24,7 @@ A Auli utiliza um sistema avançado de RAG (Retrieval-Augmented Generation) que 
 
 Compreensão da pergunta: A pergunta é convertida em uma representação vetorial (embedding) de forma local, preservando a privacidade.
 
-Busca inteligente: São recuperados os documentos mais relevantes da base de conhecimento da entidade (serviços públicos, FAQs e pareceres).
+Busca inteligente: São recuperados os documentos mais relevantes da base de conhecimento da entidade (serviços públicos, FAQs, pareceres e acórdãos).
 
 Resposta contextualizada: Os documentos recuperados são enviados como contexto para um modelo de linguagem, que gera uma resposta clara, precisa e alinhada às informações oficiais — sempre com os links das fontes.
 
@@ -36,7 +36,7 @@ Além deste portal, o acervo pode ser consultado diretamente de dentro de assist
 
 Na aba **MCP** deste portal há um manual de instalação para cada assistente. Em alguns, o próprio usuário configura em poucos minutos; no Microsoft 365 Copilot, a configuração depende da área de TI da organização.
 
-O conector expõe hoje o acervo de pareceres e respostas a consultas tributárias, e também a consulta de serviços de atendimento e perguntas frequentes — sempre com o link do documento na fonte oficial. Quem preferir levar os dados para a própria ferramenta pode usar a aba **Downloads**, que oferece o conteúdo de cada estado em um arquivo compactado, com um documento por arquivo.
+O conector expõe hoje o acervo de pareceres e respostas a consultas tributárias, os acórdãos do contencioso administrativo fiscal e a consulta de serviços de atendimento e perguntas frequentes — sempre com o link do documento na fonte oficial. Quem preferir levar os dados para a própria ferramenta pode usar a aba **Downloads**, que oferece o conteúdo de cada estado em um arquivo compactado, com um documento por arquivo.
 
 ## Privacidade
 
