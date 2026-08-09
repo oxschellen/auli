@@ -1,8 +1,27 @@
 # ESTUDO-colecoes-trait — Exemplo concreto do trait `Colecao` (fase 3, longo prazo)
 
-**Status:** estudo exploratório, sem decisão de implementação. Companheiro do
-`ESTUDO-TARF-formato.md`. O gatilho combinado para implementar é a chegada da **quarta**
-coleção (súmulas TARF, RFB, leis), com a fase 2 (`Jurisprudencia`) já mergeada.
+> **IMPLANTADO em 08/08/2026** — por outro desenho, e vale registrar a diferença.
+>
+> Este estudo propunha um **trait `Colecao`** com três structs de domínio implementando-o. O que
+> foi mergeado (`TAREFA-DOCUMENTO`, PRs #132 e #133) chegou ao mesmo lugar por um caminho mais
+> simples: **uma struct só** (`Documento`) mais um enum (`Kind`), com `Servico` e `Faq` recuando
+> para as bordas e se projetando nela (`para_documento`). Não há trait de coleção — o único trait
+> que sobrou é o `Embeddable`, que é a fronteira do engine e hoje tem uma implementação só.
+>
+> Por que o desenho mais simples bastou: o estudo assumia que "os DADOS continuam em três structs
+> distintas (a doutrina dos irmãos fica de pé)". Entre a escrita dele e a implementação, a
+> unificação do vocabulário das árvores (`TAREFA-FORMATO-MD`, #128) tirou o chão dessa premissa —
+> com um `.md` de formato único, as três structs passaram a descrever a MESMA forma com nomes
+> diferentes. Aí o polimorfismo virou custo sem contrapartida.
+>
+> O que o estudo previu e se confirmou: o custo marginal de uma coleção nova. O TARF entrou como
+> uma variante do `Kind` e algumas linhas de fiação; súmulas, RFB ou leis entram do mesmo jeito.
+>
+> O exemplo abaixo fica como registro do caminho considerado.
+
+**Status:** ~~estudo exploratório, sem decisão de implementação~~ — **superado pela implementação**
+(ver a nota acima). Companheiro do `ESTUDO-TARF-formato.md`. O gatilho previsto era a chegada da
+**quarta** coleção; ela chegou (TARF) e antecipou a decisão.
 
 **A ideia em uma frase:** os DADOS continuam em três structs de domínio distintas (a doutrina
 dos irmãos fica de pé); o que unifica é o COMPORTAMENTO — o contrato que o encanamento

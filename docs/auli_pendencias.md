@@ -1177,9 +1177,12 @@ Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **M
   [Home.tsx](auli-frontend/src/pages/home/Home.tsx) ainda lista as abas de forma estática (a barra
   mostra todas), mas cada lista se auto-gateia — logo estados sem uma coleção mostram
   `CollectionEmpty`, não erro.
-- **Prompts `data/prompts/*.txt` — aberto (nota da auditoria #14):** os prompts que de fato rodam
-  divergem no marcador de serviço (`rs.txt` tem `## servico`; `sc/pr/sp.txt` só `## pergunta`).
-  Alinhar muda o comportamento do LLM ao vivo — decisão à parte.
+- **Prompts `data/prompts/*.txt` — ✅ resolvido (TAREFA-MARCADORES, #129):** a nota da auditoria #14
+  registrava que os prompts divergiam no marcador de serviço (`rs.txt` tinha `## servico`;
+  `sc/pr/sp.txt` só `## pergunta`). Os quatro invólucros do contexto RAG viraram um só
+  (`## documento {i}: {rótulo}`) e os 31 prompts foram alinhados no mesmo commit do código.
+  Conferido em 08/08/2026: **32 de 32** prompts de RAG citam `## documento`, **nenhum** cita
+  `## servico` (os três de fora — `extracao*.txt`, `sinopse.txt` — não consomem contexto RAG).
 - **Comentário histórico:** [derive_faqs.rs:29](auli-server/crates/auli-collections/src/derive_faqs.rs#L29)
   cita `EmbedStrategy::QuestionKey` (tipo já removido) — referência de lineage, cosmética.
 - **Formato de links/slugs não uniforme — aceito (não corrigir por ora):** FAQs do RS emitem
