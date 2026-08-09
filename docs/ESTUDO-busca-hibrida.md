@@ -132,3 +132,31 @@ responder a pergunta do modelo int8 na §5.
    Um teste de meia hora que decide se a fase custa "somar um vetor" ou "baixar e servir um segundo
    modelo de vários GB".
 2. Rodar (b) — calibragem — como fase independente, que tem valor sozinha.
+
+## 9. Decisão: adiada, com a base sendo acumulada (09/08/2026)
+
+**A calibragem das bandas fica para depois.** O critério do Carlos: observar as respostas por mais
+tempo, até as mudanças de código estabilizarem e haver base empírica de verdade. Escolher o corte
+por intuição é o mesmo erro de estimar sem medir.
+
+A boa notícia é que **a base se acumula sozinha** — não vai ser preciso montar uma campanha de
+perguntas quando a hora chegar. Cada conversa grava um `.txt` em `logs/` com as quatro seções que a
+calibragem precisa:
+
+```text
+----- PERGUNTA (ORIGINAL) / (ANONIMIZADA)
+----- RESPOSTA
+----- ADERÊNCIA (proximidade da pergunta)     ← acórdão tarf 1 · aderência 0.508 · distância 0.492
+----- CONTEXTO RAG (documentos recuperados)
+```
+
+A `ADERÊNCIA` existe desde **02/08/2026**; em 09/08 são **107 logs** com ela, de 307 no total. Como
+guarda o par (pergunta, distância de cada documento) **e** a resposta, dá para separar depois o
+casamento genuíno do enchimento sem ter de re-rodar nada. É exatamente o procedimento que o
+comentário do `rag.rs:29` já prescrevia.
+
+> **Ressalva metodológica — os logs de hoje não servem para calibrar o `tarf`.** A distância
+> pergunta↔documento não depende do tamanho do acervo, mas a distância do **melhor** resultado
+> depende: com 22.590 acórdãos em vez de 3.800, o topo do ranking melhora, e o degrau que separa
+> casamento de enchimento se desloca. A janela de observação que vale para o `tarf` começa quando a
+> coleta fechar. Para `pareceres`, `servicos` e `faqs` — acervos estáveis — os logs já contam.
