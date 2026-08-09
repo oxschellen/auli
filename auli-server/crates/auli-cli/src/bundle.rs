@@ -297,8 +297,8 @@ fn escrever(
 ///
 /// **Vazia desde 08/08/2026.** O `tarf` esteve aqui enquanto a coleta era pausada para a migração
 /// de formato; a decisão passou a ser publicar o que já existe e seguir coletando, com o README da
-/// pasta dizendo que a coleta está em andamento (ver [`nota_tipo`]) — o leitor fica sabendo, que era
-/// o ponto.
+/// pasta dizendo que a coleta estava em andamento — o leitor ficava sabendo, que era o ponto. A
+/// coleta fechou em 09/08/2026 (22.476 acórdãos) e o aviso saiu junto: agora a contagem É o acervo.
 ///
 /// A lista filtra o BUNDLE, não o dado: a árvore segue no disco e dentro do `docs_hash` do
 /// manifesto. Segurar uma coleção movendo o diretório mudaria esse hash e faria o servidor recusar o
@@ -307,25 +307,6 @@ const KINDS_SEGURADOS: &[&str] = &[];
 
 fn kind_segurado(kind: &str) -> bool {
     KINDS_SEGURADOS.contains(&kind)
-}
-
-/// Aviso de coleção em coleta, para o README da pasta. `None` = acervo completo.
-///
-/// Publicar um recorte é uma decisão legítima — o dado parcial já serve a quem quer o formato ou os
-/// documentos recentes. O que não pode é o recorte **passar por acervo**: quem baixa uma pasta
-/// chamada "Acórdãos TARF" com N documentos assume que são os N que existem. Esta linha é a
-/// diferença entre publicar parcial e publicar enganando.
-fn nota_tipo(kind: &str) -> Option<&'static str> {
-    match Kind::parse(kind)? {
-        // O portal do TARF tem ~22,5 mil acórdãos; a coleta corre a 1 req/s e é retomável, então a
-        // pasta cresce a cada rodada. Remover quando ela fechar.
-        Kind::Tarf => Some(
-            "**Coleta em andamento.** O acervo do TARF é maior do que o publicado aqui: a coleta \
-             respeita o ritmo do portal e a pasta cresce a cada rodada. O que está nesta versão é \
-             completo e conferido — só não é tudo.",
-        ),
-        Kind::Servicos | Kind::Faqs | Kind::Pareceres => None,
-    }
 }
 
 /// Rótulo de exibição da pasta. As pastas do bundle vêm do **disco** (`read_dir` sobre `docs/`),
@@ -372,7 +353,6 @@ fn readme_tipo(estado: &EstadoBundle, tipo: &TipoBundle) -> String {
          \n\
          {n} documentos, um por arquivo `.md`. Dados públicos da {nome}; cada arquivo traz no\n\
          frontmatter o link para a fonte oficial.\n\
-         {nota}\
          \n\
          ## Como usar com sua IA\n\
          \n\
@@ -395,7 +375,6 @@ fn readme_tipo(estado: &EstadoBundle, tipo: &TipoBundle) -> String {
         n = tipo.arquivos.len(),
         nome = estado.name,
         schema = schema_tipo(&tipo.kind),
-        nota = nota_tipo(&tipo.kind).map_or(String::new(), |n| format!("\n{n}\n")),
     )
 }
 
@@ -879,17 +858,6 @@ state = "Estado WW"
         // implementação, e some do zip sem deixar rastro se ninguém estiver olhando.
         for k in ["servicos", "faqs", "pareceres", "tarf"] {
             assert!(!kind_segurado(k), "{k} deixou de ser publicado sem aviso");
-        }
-    }
-
-    #[test]
-    fn colecao_em_coleta_avisa_no_readme_da_pasta() {
-        // A diferença entre publicar parcial e publicar enganando: quem baixa "Acórdãos TARF" com N
-        // documentos assume que são os N que existem.
-        let nota = nota_tipo("tarf").expect("tarf está em coleta e precisa do aviso");
-        assert!(nota.contains("Coleta em andamento"));
-        for k in ["servicos", "faqs", "pareceres"] {
-            assert!(nota_tipo(k).is_none(), "{k} é acervo completo, sem aviso");
         }
     }
 
