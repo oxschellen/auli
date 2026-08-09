@@ -24,14 +24,6 @@ export interface Jurisprudencia {
   singular: string;
   /** O plural ("pareceres", "acórdãos") — não derivável do singular em português. */
   plural: string;
-  /**
-   * Aviso curto sob a contagem, quando o acervo publicado é menor que o do portal.
-   *
-   * Publicar um recorte é legítimo; o recorte passar por acervo, não. Quem vê "3.800 acórdãos"
-   * numa aba chamada "Acórdãos TARF" assume que são os 3.800 que existem. Ausente = acervo
-   * completo, e nada é renderizado.
-   */
-  nota?: string;
 }
 
 /**
@@ -47,7 +39,6 @@ export const JurisprudenciaList = ({
   titulo,
   singular,
   plural,
-  nota,
 }: Jurisprudencia) => {
   const entity = useSelectedEntity();
   const available = hasCollection(entity, colecao);
@@ -115,11 +106,6 @@ export const JurisprudenciaList = ({
               {filtered.length} {filtered.length !== 1 ? plural : singular}
               {isSearching ? ` de ${documentos.length}` : ""}
             </Text>
-            {nota && (
-              <Text fontSize="0.75rem" color="fg.muted" pt={1}>
-                {nota}
-              </Text>
-            )}
           </Box>
         )}
       </Box>
