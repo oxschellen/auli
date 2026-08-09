@@ -123,7 +123,7 @@ precisely so you can find it.
 Then run `node scripts/gen-frontend-entities.mjs` — the frontend reads a generated mirror of the
 registry, so this is what makes the new entity appear in the UI. No recompilation.
 
-**Adding a collection** (another *kind* of document, beyond services / FAQs / rulings / tribunal
+**Adding a collection** (another _kind_ of document, beyond services / FAQs / rulings / tribunal
 decisions) **still requires code**: a variant in the `Kind` enum of `auli-contract` and a
 projection into `Documento`. It is small — the TARF collection went in exactly that way — but it is
 not configuration, and pretending otherwise would waste your time. The design — one struct, one

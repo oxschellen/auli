@@ -20,6 +20,8 @@
   "$comment-MD028": "Linha em branco dentro de blockquote: usado para separar parágrafos citados.",
   "MD028": false,
 
+  "$comment-MD049": "Estilo de itálico: fica LIGADA, no modo 'consistent' (o default). Cuidado com a pegadinha: 'consistent' é POR ARQUIVO e decidido pela PRIMEIRA ênfase de cada um — então `auli_operations.md` exige `*asterisco*` e `README.md`/`auli_code.md` exigem `_underscore_`, sem que nada no texto revele isso. Não dá para adivinhar olhando, e contar por grep engana (o `_` de `text_to_embed` não é ênfase em CommonMark, mas casa no regex). Antes de trocar o estilo de uma linha, rode: npx markdownlint-cli2 'docs/*.md' 'README.md' 'manuais/*.md'",
+
   "$comment-MD034": "URL nua: os docs citam HOSTS sem esquema (www.sefaz.ap.gov.br). O --fix envolve em <>, mas sem esquema isso NÃO é autolink válido em CommonMark — renderiza com os sinais visíveis, e ainda diverge do índice, onde o mesmo host aparece dentro de um label de link e não é tocado. Pior que o original.",
   "MD034": false
 }

@@ -896,7 +896,7 @@ O script: autoriza a conta (`~/.cloudflared/cert.pem`), cria o túnel, escreve
 **CNAME proxied** `api.auli.com.br` -> `<uuid>.cfargotunnel.com` (substituindo o CNAME do ngrok).
 Depois disso, **`./start_server.sh` sobe o túnel automaticamente** (`cloudflared tunnel run auli-api`).
 
-No painel Cloudflare, **reative a zona `auli.com.br`** (estava em _pause_) e confira que
+No painel Cloudflare, **reative a zona `auli.com.br`** (estava em *pause*) e confira que
 `api.auli.com.br` está **proxied** (nuvem laranja).
 
 ### 10.2 Regra de rate limiting (no painel Cloudflare)
@@ -961,7 +961,7 @@ Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SM
 > invocava o `auli bundle` do `target/release/` como estivesse no disco. Naquele dia os zips saíram
 > com a frase antiga (`"Coleta em andamento"` no README do `tarf/`) cinco horas depois de ela ter
 > sido removida do código — o binário era anterior ao commit. E saiu em silêncio: o script só
-> reclamava quando o binário estava _ausente_, nunca quando estava _velho_. Nenhum teste pega, e não
+> reclamava quando o binário estava *ausente*, nunca quando estava *velho*. Nenhum teste pega, e não
 > é lacuna de cobertura: a suíte roda contra o código-fonte, e o artefato publicado vem do binário.
 > **Commit em Rust não muda binário nenhum — e o que sobe é o binário.**
 >

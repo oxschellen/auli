@@ -174,7 +174,7 @@ que ausência de quota.
 Acionado por `POST /v1/question`. Assinatura:
 `exec_all_question(engine, anonimizador, question, entity, query_type)`:
 
-1. **Anonimiza a pergunta**, *fail-closed*: em erro usa um placeholder fixo, nunca o texto cru. O
+1. **Anonimiza a pergunta**, _fail-closed_: em erro usa um placeholder fixo, nunca o texto cru. O
    `mapping` fica em memória, no escopo da requisição, para restaurar a resposta do LLM — nunca é
    persistido.
 2. Resolve a entidade (registry); entidade desconhecida → a própria mensagem de erro é retornada
