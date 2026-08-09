@@ -41,6 +41,25 @@
 //! "primeiro parágrafo" e "célula inteira" coincidem (a célula só tem um); no antigo é o que separa
 //! um `assunto` telegráfico (mediana 144 caracteres) de um que arrastaria a fundamentação inteira
 //! (mediana 764, máximo 21.658).
+//!
+//! QUATRO ACIDENTES DE ORIGEM (varredura completa dos 22.590, 09/08/2026). A amostra de 103 não os
+//! continha; abrir os 83 recusados um a um mostrou que **não era um terceiro layout** — eram
+//! defeitos pequenos do export do Word, cada um custando o documento inteiro. Os quatro estão
+//! cobertos por fixture em `tests/fixtures/`, e juntos devolveram **54 acórdãos** à árvore:
+//!
+//! 1. **Rótulo partido pela quebra de linha** — `EMEN-TA:`, `EMEN TA:`, `EMENT A:`, `EMENTA .`.
+//!    Por isso [`e_rotulo_ementa`] compara só as letras, e não uma lista de grafias.
+//! 2. **Célula de margem antes do rótulo** (`<td width="2">&nbsp;</td>`) — o rótulo pode não estar
+//!    na primeira célula da linha.
+//! 3. **Rótulos e valores empilhados** na mesma célula: o k-ésimo rótulo casa com o k-ésimo valor
+//!    (daí [`paragrafos_alinhados`], que preserva os vazios). Sem isso o `496/21` recebia como
+//!    ementa o número do acórdão recorrido.
+//! 4. **Cabeçalho sem tabela nenhuma**, em parágrafos soltos — ver [`extrair_do_cabecalho_solto`],
+//!    restrito ao trecho anterior à primeira seção porque um acórdão que **cita a ementa do STJ**
+//!    no voto teria a citação promovida a ementa própria (o `054/12` fazia exatamente isso).
+//!
+//! O que sobra sem ementa é da fonte, não do parser: 19 acórdãos que o tribunal publicou sem
+//! ementa e 10 que o portal declara `ACÓRDÃO INEXISTENTE`. Lista em `docs/lista-tarf-sem-ementa.md`.
 
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
@@ -514,8 +533,68 @@ static RE_LINHA: LazyLock<Regex> =
 static RE_CELULA: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?is)<t[dh][^>]*>(.*?)</t[dh]>").unwrap());
 static RE_FIM_PARAGRAFO: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?is)</p\s*>").unwrap());
-static RE_ROTULO_EMENTA: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?i)^ementa\s*:?$").unwrap());
+/// Parágrafo solto, para o layout em que o cabeçalho NÃO é tabelado.
+static RE_PARAGRAFO: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?is)<p[^>]*>(.*?)</p>").unwrap());
+/// Tabela inteira, para removê-las e sobrar só o cabeçalho solto.
+static RE_TABELA_TODA: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?is)<table[^>]*>.*?</table>").unwrap());
+/// Rótulo `EMENTA` **embutido** no mesmo bloco do valor: `EMENTA: ICMS. AUDITORIA…`.
+///
+/// `\W{0,3}` entre as letras absorve a hifenização de quebra de linha que o export do Word deixa
+/// no texto (`EMEN-TA:`, `EMEN TA:`, `EMENT A:`) — ver [`e_rotulo_ementa`].
+static RE_ROTULO_EMBUTIDO: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?is)^\s*(e\W{0,3}m\W{0,3}e\W{0,3}n\W{0,3}t\W{0,3}a)\s*[:.]\s*(.+)$").unwrap()
+});
+
+/// Só as letras, sem acento e em caixa alta. Reusa o [`mddoc::slug`] — a dobra de acento já está
+/// testada lá, e duplicá-la aqui criaria duas tabelas para manter em sincronia.
+fn so_letras(s: &str) -> String {
+    mddoc::slug(s)
+        .chars()
+        .filter(char::is_ascii_alphabetic)
+        .map(|c| c.to_ascii_uppercase())
+        .collect()
+}
+
+/// O bloco é o rótulo `EMENTA`, escrito de qualquer jeito?
+///
+/// Comparar só as letras, e não uma lista de grafias, é deliberado: o portal produz o rótulo a
+/// partir de export do Word, e a varredura dos 22.590 acórdãos achou **quatro** grafias
+/// (`EMEN-TA:`, `EMEN TA:`, `EMENT A:`, `EMENTA .`) que são o mesmo acidente — a palavra partida
+/// no fim de uma linha. Enumerar separadores só adiaria o próximo caso.
+fn e_rotulo_ementa(bloco: &str) -> bool {
+    so_letras(bloco) == "EMENTA"
+}
+
+/// O bloco abre uma seção do acórdão? É a fronteira da fundamentação.
+///
+/// Sem isto, no layout de cabeçalho solto a "fundamentação" seguiria pelo relatório e pelo voto
+/// adentro — medido: o `ACÓRDÃO DO PLENO Nº 090/17` produzia 18.869 caracteres de `## resumo`,
+/// contra 943 com a fronteira.
+fn e_secao(bloco: &str) -> bool {
+    matches!(
+        so_letras(bloco).as_str(),
+        "ACORDAO" | "RELATORIO" | "VOTO" | "EOVOTO" | "EORELATORIO"
+    )
+}
+
+/// Os parágrafos da fundamentação: os blocos seguintes, até a primeira seção.
+fn ate_a_secao<'a>(blocos: impl Iterator<Item = &'a String>) -> Vec<String> {
+    blocos
+        .take_while(|b| !e_secao(b))
+        .filter(|b| !b.is_empty())
+        .cloned()
+        .collect()
+}
+
+/// Tira um rótulo que tenha sobrado grudado no valor (`EMENTA: EMENTA: ICMS…` existe no acervo).
+fn sem_rotulo_repetido(valor: &str) -> String {
+    match RE_ROTULO_EMBUTIDO.captures(valor) {
+        Some(c) if e_rotulo_ementa(&c[1]) => c[2].trim().to_string(),
+        _ => valor.trim().to_string(),
+    }
+}
 
 /// O que o cabeçalho do acórdão fornece ao documento: a ementa (vira `assunto`) e a fundamentação
 /// resumida (vira `## resumo`).
@@ -530,6 +609,12 @@ struct Extraido {
 /// `None` = nenhuma linha rotulada `EMENTA` em nenhuma tabela ⇒ anomalia; o chamador não emite
 /// `.md` (documento sem `assunto` não existe) e registra o caso.
 fn extrair(html: &str) -> Option<Extraido> {
+    extrair_de_tabela(html).or_else(|| extrair_do_cabecalho_solto(html))
+}
+
+/// Cabeçalho **tabelado** — os dois layouts históricos e as duas variações achadas na varredura
+/// completa. A âncora é a estrutura; o texto só decide o que é rótulo.
+fn extrair_de_tabela(html: &str) -> Option<Extraido> {
     for tabela in RE_TABELA.captures_iter(html) {
         let linhas: Vec<&str> = RE_LINHA
             .captures_iter(&tabela[1])
@@ -537,35 +622,93 @@ fn extrair(html: &str) -> Option<Extraido> {
             .collect();
         for (i, linha) in linhas.iter().enumerate() {
             let cels = celulas(linha);
-            let Some(rotulo) = cels.first() else {
-                continue;
-            };
-            if !RE_ROTULO_EMENTA.is_match(&texto_de(rotulo)) {
-                continue;
-            }
-            let mut ps: Vec<String> = cels[1..].iter().flat_map(|c| paragrafos(c)).collect();
-            if ps.is_empty() {
-                return None; // rótulo EMENTA com célula vazia — tão inútil quanto não ter o rótulo
-            }
-            let ementa = ps.remove(0);
-            let mut fundamentacao = ps;
-            // Layout moderno: a fundamentação continua nas linhas seguintes de rótulo vazio, até
-            // uma linha com rótulo ou o fim da tabela.
-            for seguinte in &linhas[i + 1..] {
-                let cels = celulas(seguinte);
-                let Some(rotulo) = cels.first() else {
-                    continue;
-                };
-                if !texto_de(rotulo).is_empty() {
-                    break;
+            // O rótulo pode não estar na PRIMEIRA célula: metade dos acórdãos do Pleno recentes tem
+            // uma célula de margem (`<td width="2">&nbsp;</td>`) antes dele.
+            for (n, cel) in cels.iter().enumerate() {
+                let rotulos = paragrafos_alinhados(cel);
+                let valores: Vec<String> = cels[n + 1..]
+                    .iter()
+                    .flat_map(|c| paragrafos_alinhados(c))
+                    .collect();
+
+                // (a) rótulo e valor em células distintas, **alinhados por índice**: uma linha pode
+                // empilhar dois rótulos numa célula e os dois valores na outra, e aí "o próximo
+                // parágrafo" pega o valor do rótulo errado (visto no `ACÓRDÃO 496/21`, que
+                // devolvia o número do acórdão recorrido no lugar da ementa).
+                if let Some(k) = rotulos.iter().position(|r| e_rotulo_ementa(r))
+                    && let Some(ementa) = valores.get(k).filter(|v| !v.is_empty())
+                {
+                    let mut fundamentacao = ate_a_secao(valores.iter().skip(k + 1));
+                    // Layout moderno: a fundamentação continua nas linhas seguintes de rótulo
+                    // vazio, até uma linha com rótulo ou o fim da tabela.
+                    for seguinte in &linhas[i + 1..] {
+                        let cels = celulas(seguinte);
+                        let Some(rotulo) = cels.first() else { continue };
+                        if !texto_de(rotulo).is_empty() {
+                            break;
+                        }
+                        for c in &cels[1..] {
+                            fundamentacao.extend(paragrafos(c));
+                        }
+                    }
+                    return Some(Extraido {
+                        ementa: sem_rotulo_repetido(ementa),
+                        fundamentacao,
+                    });
                 }
-                for c in &cels[1..] {
-                    fundamentacao.extend(paragrafos(c));
+
+                // (b) rótulo EMBUTIDO no mesmo parágrafo do valor.
+                for (k, p) in rotulos.iter().enumerate() {
+                    if let Some(c) = RE_ROTULO_EMBUTIDO.captures(p)
+                        && e_rotulo_ementa(&c[1])
+                    {
+                        let resto = rotulos.iter().skip(k + 1).chain(valores.iter());
+                        return Some(Extraido {
+                            ementa: sem_rotulo_repetido(&c[2]),
+                            fundamentacao: ate_a_secao(resto),
+                        });
+                    }
                 }
             }
+        }
+    }
+    None
+}
+
+/// Cabeçalho **não tabelado** — o acórdão abre em parágrafos soltos, com o rótulo como parágrafo
+/// próprio ou embutido.
+///
+/// A busca para na primeira seção (`ACÓRDÃO`/`RELATÓRIO`/`VOTO`) de propósito: sem esse limite, um
+/// acórdão que **cita a ementa de outro tribunal** no voto teria a citação promovida a ementa
+/// própria — o `ACÓRDÃO DO PLENO Nº 054/12` devolvia `PROCESSUAL CIVIL. RECURSO ESPECIAL`, ementa
+/// do STJ transcrita na fundamentação.
+fn extrair_do_cabecalho_solto(html: &str) -> Option<Extraido> {
+    let fora = RE_TABELA_TODA.replace_all(html, " ");
+    let blocos: Vec<String> = RE_PARAGRAFO
+        .captures_iter(&fora)
+        .map(|c| texto_de(c.get(1).unwrap().as_str()))
+        .collect();
+    let cabecalho = &blocos[..blocos
+        .iter()
+        .position(|b| e_secao(b))
+        .unwrap_or(blocos.len())];
+
+    for (n, bloco) in cabecalho.iter().enumerate() {
+        let resto = || cabecalho.iter().skip(n + 1).filter(|b| !b.is_empty());
+        if e_rotulo_ementa(bloco) {
+            let mut seguintes = resto();
+            let ementa = seguintes.next()?;
             return Some(Extraido {
-                ementa,
-                fundamentacao,
+                ementa: sem_rotulo_repetido(ementa),
+                fundamentacao: seguintes.cloned().collect(),
+            });
+        }
+        if let Some(c) = RE_ROTULO_EMBUTIDO.captures(bloco)
+            && e_rotulo_ementa(&c[1])
+        {
+            return Some(Extraido {
+                ementa: sem_rotulo_repetido(&c[2]),
+                fundamentacao: resto().cloned().collect(),
             });
         }
     }
@@ -592,6 +735,13 @@ fn paragrafos(celula: &str) -> Vec<String> {
         .map(texto_de)
         .filter(|p| !p.is_empty())
         .collect()
+}
+
+/// Idem, mas **preservando os vazios** — é o que permite casar o k-ésimo rótulo de uma célula com
+/// o k-ésimo valor da célula ao lado. Descartar os vazios aqui desalinharia os índices, que é
+/// exatamente o defeito que o alinhamento existe para evitar.
+fn paragrafos_alinhados(celula: &str) -> Vec<String> {
+    RE_FIM_PARAGRAFO.split(celula).map(texto_de).collect()
 }
 
 // ---------------------------------------------------------------------------
@@ -908,5 +1058,84 @@ mod tests {
         assert!(s.is_some_and(|s| !s.trim().is_empty()));
         assert!(corpo.contains("RELATÓRIO"));
         assert_eq!(mddoc::slug(&h.titulo), "acordao-510-24");
+    }
+
+    // -----------------------------------------------------------------------
+    // Os quatro acidentes de origem (varredura completa dos 22.590, 09/08/2026)
+    // -----------------------------------------------------------------------
+    //
+    // Os 83 acórdãos que o extrator recusava não eram um layout novo: eram quatro defeitos
+    // pequenos, cada um achado abrindo um documento concreto. Estes fixtures são esses documentos.
+
+    /// 055/21 — rótulo hifenizado pela quebra de linha do Word (`EMEN-TA:`) **e** célula de margem
+    /// vazia antes dele.
+    const ROTULO_HIFENIZADO: &str = include_str!("../tests/fixtures/tarf-055-21.html");
+    /// 001/17 — rótulo e valor no MESMO parágrafo da célula (`EMENTA: ICMS…`).
+    const ROTULO_EMBUTIDO: &str = include_str!("../tests/fixtures/tarf-001-17.html");
+    /// 090/17 — cabeçalho em parágrafos soltos, sem tabela.
+    const CABECALHO_SOLTO: &str = include_str!("../tests/fixtures/tarf-090-17.html");
+    /// 054/12 — não tem rótulo de ementa, mas **cita a ementa de um acórdão do STJ** no voto.
+    const CITA_OUTRO_TRIBUNAL: &str = include_str!("../tests/fixtures/tarf-054-12.html");
+
+    #[test]
+    fn rotulo_hifenizado_pela_quebra_de_linha_e_reconhecido() {
+        let e = extrair(ROTULO_HIFENIZADO).expect("`EMEN-TA:` é o rótulo, com hífen e tudo");
+        assert!(
+            e.ementa
+                .starts_with("PROCESSUAL. APELO EXTREMO QUE NÃO ATENDE"),
+            "ementa: {}",
+            e.ementa
+        );
+        assert!(
+            !e.fundamentacao.is_empty(),
+            "a fundamentação vem nas linhas seguintes de rótulo vazio"
+        );
+    }
+
+    #[test]
+    fn rotulo_embutido_no_mesmo_paragrafo_do_valor() {
+        let e = extrair(ROTULO_EMBUTIDO).expect("`EMENTA: ICMS…` numa célula só");
+        assert!(
+            e.ementa.starts_with("ICMS"),
+            "o rótulo sai e o valor fica: {}",
+            e.ementa
+        );
+        assert!(
+            !e.ementa.to_uppercase().contains("EMENTA"),
+            "o rótulo não pode sobrar dentro do valor: {}",
+            e.ementa
+        );
+    }
+
+    #[test]
+    fn cabecalho_solto_para_na_primeira_secao() {
+        let e = extrair(CABECALHO_SOLTO).expect("cabeçalho sem tabela também tem ementa");
+        assert!(e.ementa.starts_with("ITCD. TRANSMISSÃO CAUSA MORTIS"));
+        // A fronteira é o que impede o `## resumo` de virar o acórdão inteiro: sem ela este
+        // documento produzia 18.869 caracteres, arrastando o relatório e o voto.
+        let resumo = e.fundamentacao.join("\n\n");
+        assert!(
+            resumo.len() < 2_000,
+            "a fundamentação parou na seção? {} chars",
+            resumo.len()
+        );
+        assert!(
+            !resumo.contains("É o relatório"),
+            "o relatório não pode entrar no resumo"
+        );
+    }
+
+    /// A regressão mais perigosa das quatro: promover a ementa de OUTRO tribunal, citada no voto,
+    /// a ementa deste acórdão. Recusar é a resposta certa — o documento vai para as anomalias.
+    #[test]
+    fn ementa_citada_no_voto_nao_vira_ementa_do_acordao() {
+        assert!(
+            CITA_OUTRO_TRIBUNAL.contains("RECURSO ESPECIAL"),
+            "o fixture precisa conter a citação do STJ para o teste valer"
+        );
+        assert!(
+            extrair(CITA_OUTRO_TRIBUNAL).is_none(),
+            "sem rótulo no cabeçalho, nada é extraído — nem o que está citado adiante"
+        );
     }
 }
