@@ -1,7 +1,9 @@
 # ESTUDO-TARF-formato — Padronização do formato: pareceres + acórdãos TARF
 
 **Data:** 08/08/2026
-**Status:** Estudo aprovado para registro. Nenhuma implementação — companheiro do `DISCOVERY-TARF.md`.
+**Status:** ~~Nenhuma implementação~~ — **implantado** (PRs #127 e #132). O registro da fonte, que
+era o `DISCOVERY-TARF.md`, foi absorvido em `docs/REGISTRO-scrapers.md#tarf` junto com o que a
+implementação decidiu e o que só apareceu ao rodar.
 **Pergunta do estudo:** o formato dos pareceres pode servir aos acórdãos do TARF, de modo que, depois do scraping, o código seja o mesmo até o frontend?
 
 **Resposta:** sim — via struct genérica `Jurisprudencia` + enum `TipoJurisprudencia`, com os acórdãos gravados no formato .md dos pareceres byte a byte, dentro da entidade **rs** (nova coleção, não nova entidade).

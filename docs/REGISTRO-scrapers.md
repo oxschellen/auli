@@ -31,6 +31,7 @@
 - [SE — SEFAZ-SE (Sergipe)](#se)
 - [TO — Carta de Serviços SEFAZ-TO (servicos.to.gov.br)](#to)
 - [RS Pareceres — Portal de Legislação / Consultas Formais Respondidas](#rs-pareceres)
+- [TARF — Tribunal Administrativo de Recursos Fiscais do RS (tarf.sefaz.rs.gov.br)](#tarf)
 
 ---
 
@@ -1534,3 +1535,146 @@ Grava **só o intermediário** `data/rs/ref/rs-pareceres-temp.txt` (numero/assun
 - [x] Ponto crítico (full-form pagination preserva o filtro "Consultas Formais Respondidas"): 372.
 - [x] Detalhe público confirmado (`#DOCContent`).
 - [ ] Estágio de resumo autorado (`-temp.txt` → `rs-portal-pareceres.txt`) — próximo incremento.
+
+---
+
+<a id="tarf"></a>
+
+# Descoberta — TARF / Tribunal Administrativo de Recursos Fiscais (tarf.sefaz.rs.gov.br)
+
+**Discovery:** 08/08/2026. **Implantado:** mesma data (PRs #127 e #132) — o bloco final desta seção
+registra o que a implementação confirmou, decidiu e descobriu depois.
+
+## Fonte
+
+- Ponto de partida: `https://tarf.sefaz.rs.gov.br/pesquisa?termo=&areas=&grupos=14543&assuntos=&dataInicio=&dataFim=`
+- **Angular SPA** chamada internamente **"Legislacao 3.0"** (`<app-root>`, bundles webpack).
+- Sistema **multiárea**: o mesmo backend serve `cage`, `receita`, `tarf` e `tesouro` (rotas
+  `/areas/{area}` no bundle). O mesmo scraper cobriria as outras áreas da legislação da SEFAZ-RS com
+  custo marginal baixo.
+- `robots.txt` bloqueia acesso automatizado genérico; o discovery foi feito por `curl` local,
+  garimpando o `main.bundle.js` — que está **pretty-printed**, o que facilitou ler os services
+  Angular gerados por OpenAPI.
+
+## Método
+
+1. `curl` na URL de pesquisa → HTML de SPA vazio ⇒ os dados vêm por XHR.
+2. Download do `main.bundle.js` + greps para mapear os services do `LegislacaoAPIClient` e as rotas
+   `/api/...`.
+3. Leitura do corpo dos services (assinaturas + montagem de `HttpParams`) para extrair os nomes
+   EXATOS e a capitalização dos parâmetros — que é irregular (ver a tabela abaixo).
+4. Testes de fumaça com `curl` direto.
+
+## Contrato da API
+
+### Listagem — `GET /api/PesquisaDocumentos`
+
+| Parâmetro | Obs |
+|---|---|
+| `TamanhoPagina` | obrigatório |
+| `NumeroPagina` | obrigatório, começa em 1 |
+| `grupos` | **minúsculo**, repetível (`grupos=A&grupos=B`) — é array |
+| `areas` | minúsculo, repetível — é array |
+| `assuntos` | minúsculo, repetível — é array |
+| `NumeroDoc`, `Termos` | opcionais |
+| `DataInicio` / `DataFim` | opcionais; a SPA envia `.toISOString()` |
+
+```
+GET /api/PesquisaDocumentos?TamanhoPagina=5&NumeroPagina=1&grupos=14543
+```
+
+```json
+{
+  "totalItens": 22590,
+  "numeroPagina": 1, "tamanhoPagina": 5, "totalPaginas": 4518,
+  "resultado": [
+    { "titulo": "ACÓRDÃO 510/24", "grupo": "ACÓRDÃOS A PARTIR DE 2005",
+      "grupoId": "b750f7f4-2628-4d5e-a669-1621a14e41d8", "area": "TARF",
+      "numero": 51024, "dataDocumento": "2026-07-17T14:18:52", "ementa": "",
+      "id": "ee87f4bc-12b9-4666-02cb-08dee4034157",
+      "dataCriacao": "…", "dataAtualizacao": "…" }
+  ],
+  "temPaginaPosterior": true
+}
+```
+
+- **Grupo 14543 = "ACÓRDÃOS A PARTIR DE 2005"**, 22.590 itens na data do discovery. O item traz o
+  `grupoId` GUID; o filtro da query usa o id **numérico**.
+- A `ementa` vem **vazia na listagem** — a real está no corpo.
+- `numero` é o número do acórdão achatado (510/24 → `51024`).
+
+### Metadados — `GET /api/Documentos/{id}`
+
+Só metadados (campos da listagem + `assuntos: []`). **Não contém o corpo.**
+
+### Corpo — `GET /api/documentos/{id}/DocumentoHtml`
+
+- `NumeroPagina` (≥1) e `TamanhoPagina` (**entre 10 e 4000**, validado pelo servidor com mensagem
+  explícita) são obrigatórios.
+- Pagina os **dispositivos** do documento, no mesmo envelope da listagem.
+- Cada item tem `id` (GUID do dispositivo) e `texto` (HTML).
+
+O `texto` traz um cabeçalho em `<table>` com campos rotulados: ACÓRDÃO Nº, RECURSO Nº,
+RECORRENTE(S) (com nomes de empresa e de pessoas físicas), RECORRIDA(S), PROCESSO Nº, AUTO DE
+LANÇAMENTO Nº, DECISÃO DE 1ª INSTÂNCIA Nº e **EMENTA** — a ementa em CAIXA ALTA seguida de
+parágrafos de fundamentação. Depois, o corpo do acórdão.
+
+### Endpoints mapeados e não usados
+
+`DocumentoPdf`, `informacao`, `IndiceDocumento`, `MenuDocumento`, `Assuntos`,
+`Assuntos/GetByArea`, `Grupos` (útil se um dia quisermos enumerar grupos em vez de fixar 14543).
+`/api/PesquisaConteudoDocumentos` é a busca DENTRO de um documento aberto (recebe `IdDocumento`),
+não a listagem — descartado.
+
+## Reproduzir o discovery
+
+```bash
+curl -s 'https://tarf.sefaz.rs.gov.br/main.bundle.js' -o /tmp/tarf-main.js
+curl -s 'https://tarf.sefaz.rs.gov.br/api/PesquisaDocumentos?TamanhoPagina=5&NumeroPagina=1&grupos=14543'
+curl -s 'https://tarf.sefaz.rs.gov.br/api/Documentos/ee87f4bc-12b9-4666-02cb-08dee4034157'
+curl -s 'https://tarf.sefaz.rs.gov.br/api/documentos/ee87f4bc-12b9-4666-02cb-08dee4034157/DocumentoHtml?NumeroPagina=1&TamanhoPagina=4000'
+```
+
+## O que a implementação decidiu (08/08/2026)
+
+O discovery fechou com seis pendências "para quando o assunto voltar". Ele voltou no mesmo dia; o
+que ficou decidido:
+
+- **Kind `tarf`** (o discovery cogitava `acordaos-tarf`), árvore `.md` no vocabulário unificado das
+  demais coleções. Constantes em `auli-scraper-rs/src/tarf.rs`: grupo `14543`, página de listagem
+  500, página de dispositivos 4000, lote de gravação 200.
+- **Sem sinopse LLM.** O `## resumo` é a **fundamentação que o próprio acórdão traz no cabeçalho**,
+  extraída na coleta; sem fundamentação, o fallback é a própria ementa. Nada é gerado por modelo —
+  é uma diferença real frente aos pareceres, e é o que faz a coleção não depender de um passo LLM.
+- **Regra do parser, unificada entre os dois layouts de tabela:** varrer TODAS as tabelas atrás da
+  linha rotulada `EMENTA`; a ementa é o **primeiro parágrafo** da célula, e a fundamentação é o
+  resto dela mais as linhas seguintes de rótulo vazio. A alternativa que o enunciado sugeria —
+  "célula inteira" — foi medida e rejeitada: estragaria ~66% do acervo.
+- **Árvore append-only** (`escrever_lote_se_ausente_com_resumo`): "existe ⇒ pula". Isso responde a
+  pendência da mutabilidade — as atualizações (`dataAtualizacao`) são **ignoradas**. Decisão
+  consciente, não omissão: revisitar se aparecer evidência de acórdão materialmente alterado.
+- **Múltiplos dispositivos**: o `DocumentoHtml` é paginado de verdade, não se assume `totalItens=1`.
+
+## O que só apareceu ao rodar
+
+- **A contagem não fecha por identidade.** A varredura completa das 46 páginas achou 22.588 dos
+  22.590 anunciados, e **68 slugs duplicados** — acórdãos distintos cujo número colide no nome de
+  arquivo. A guarda de invariante teve de virar tolerante (três passadas acumulando antes de abortar),
+  senão derrubaria uma coleta de 6h no fim.
+- **Um terceiro layout**, ~1,5% do acervo (~340 acórdãos do Pleno): a ementa vem inline, num
+  `<p><strong>EMENTA</strong>:`, sem âncora para o fim da fundamentação. **Ainda sem regra** — a
+  decisão espera o censo que uma rodada completa produz.
+- **`data/rs/raw/tarf-anomalias.txt`** é o registro dessas exceções, e é reescrito a cada rodada
+  (logo, só vale como censo depois de uma rodada que vá até o fim). Na parcial de 3.800 documentos:
+  68 `SLUG-DUPLICADO`, 18 `SEM-EMENTA`, 2 `FALHA-CORPO`.
+- **Um acórdão com hífen no lugar da barra** (`Acórdão do pleno 100-25`) — não casa com a chave
+  cronológica e vai para o fim da lista da aba, sem data inventada. Um em 3.800.
+- **Dado pessoal no corpo**: nomes de recorrentes (empresas e pessoas físicas), números de processo
+  e de auto de lançamento. São documentos públicos do portal, mas o fato está aqui de propósito,
+  para quem for pensar em exposição ou em geração automática de texto sobre eles.
+
+## Estado
+
+**Coleta pausada em 3.800 de ~22.522** — parada de propósito, para não mover a árvore enquanto o
+código evoluía (`docs_hash` divergente faz o servidor recusar o boot). Retomável: o cache dos corpos
+já baixados é reaproveitado. A ~1 req/s, o acervo completo leva ~6h.
