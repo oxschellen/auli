@@ -32,7 +32,7 @@ use crate::sinopse::{
 };
 
 /// Versão do prompt (gravada em cada linha do JSONL). Bump a cada mudança do
-/// `data/prompts/extracao.txt`. `0` é reservado ao `--fake`.
+/// `config/prompts/extracao.txt`. `0` é reservado ao `--fake`.
 pub const EXTRACAO_PROMPT_VERSION: u32 = 1;
 
 /// Opções do subcomando (parseadas no `main`).
@@ -89,14 +89,10 @@ pub(crate) fn extracao_dir(entity: &EntityConfig) -> Result<PathBuf> {
     Ok(base.join("extracao"))
 }
 
-/// System prompt da extração. Mesmo cálculo de caminho do sinopse: `data_dir` é
-/// `../data/<id>/raw`, logo o prompt cai em `../data/prompts/extracao.txt`.
+/// System prompt da extração, em `config/prompts/`. Mesmo caminho do sinopse — e agora pela
+/// MESMA função (`EntityConfig::prompt_de_passo`), em vez de duas subidas iguais.
 fn load_prompt(entity: &EntityConfig) -> Result<String> {
-    let path = Path::new(&entity.data_dir)
-        .parent()
-        .and_then(Path::parent)
-        .ok_or_else(|| format!("data_dir inesperado: {}", entity.data_dir))?
-        .join("prompts/extracao.txt");
+    let path = entity.prompt_de_passo("extracao.txt")?;
     std::fs::read_to_string(&path)
         .map_err(|e| format!("prompt de extração ausente ({}): {e}", path.display()).into())
 }

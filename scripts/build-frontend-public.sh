@@ -45,13 +45,13 @@ copy_ref() {
 }
 
 # ids das entidades a partir do registry (linhas `id = "xx"`).
-mapfile -t IDS < <(grep -E '^id[[:space:]]*=' "$ROOT/data/registry.toml" | sed -E 's/.*"([^"]+)".*/\1/')
-[ "${#IDS[@]}" -gt 0 ] || { echo "❌ nenhuma entidade em data/registry.toml"; exit 1; }
+mapfile -t IDS < <(grep -E '^id[[:space:]]*=' "$ROOT/config/registry.toml" | sed -E 's/.*"([^"]+)".*/\1/')
+[ "${#IDS[@]}" -gt 0 ] || { echo "❌ nenhuma entidade em config/registry.toml"; exit 1; }
 
 # Argumento opcional: restringe a uma entidade (precisa existir no registry).
 if [ "$#" -gt 0 ]; then
   want="$1"
-  printf '%s\n' "${IDS[@]}" | grep -qx "$want" || { echo "❌ '$want' não está em data/registry.toml (entidades: ${IDS[*]})"; exit 1; }
+  printf '%s\n' "${IDS[@]}" | grep -qx "$want" || { echo "❌ '$want' não está em config/registry.toml (entidades: ${IDS[*]})"; exit 1; }
   IDS=("$want")
 fi
 

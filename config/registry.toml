@@ -1,6 +1,22 @@
 # Auli — registro ÚNICO de entidades e coleções.
 #
-# FONTE DA VERDADE compartilhada (roteiro_integracao_data.md, Fase 2). É lida por:
+# ESTE ARQUIVO É CATÁLOGO, NÃO DADO: o ponto onde o vocabulário do código encontra o inventário de
+# `data/`. Mora em `config/` para o adotante achá-lo — é por aqui que se adapta o Auli para outra
+# organização, sem recompilar nada.
+#
+# ── Adaptando para a sua organização ─────────────────────────────────────────────────────────────
+# ENTIDADE NOVA (outra secretaria, outro órgão) = três passos, zero código:
+#   1. um bloco `[[entities]]` aqui;
+#   2. `config/prompts/<id>.txt` com as instruções do LLM para ela;
+#   3. `data/<id>/` com o conteúdo (o scraper produz; ver crates/scrapers/SCRAPERS.md).
+#   Depois: `node scripts/gen-frontend-entities.mjs` (o frontend lê um espelho gerado daqui).
+#
+# COLEÇÃO NOVA (outro tipo de documento, além de serviços/faqs/pareceres/tarf) ainda EXIGE código —
+# uma variante no enum `Kind` do auli-contract e uma projeção. É pequeno desde a TAREFA-DOCUMENTO
+# (ver docs/ESTUDO-colecoes-trait.md), mas não é configuração. Dizer o contrário aqui seria mentir
+# para quem está avaliando adotar.
+#
+# FONTE DA VERDADE compartilhada. É lida por:
 #   - auli-cli  (server): entidades carregadas + prompt por entidade
 #   - auli-collections (scraper): entidades válidas + diretório de saída
 #   - auli-frontend: gerado por scripts/gen-frontend-entities.mjs -> src/shared/entities.ts
@@ -11,7 +27,7 @@
 #   name        nome exibido (ex.: "SEFAZ-RS")
 #   uf          sigla do estado (ex.: "RS")
 #   state       nome do estado por extenso
-#   prompt      caminho do system prompt, relativo à pasta data/
+#   prompt      caminho do system prompt, relativo A ESTA PASTA (`config/`) — não à `data/`
 #   collections rótulos de coleção da UI. `servicos` é o kind vetorial `servicos` (unificado — não
 #               existe mais `services`); `conteudos` é só de referência (sem kind vetorial, sem scraper).
 

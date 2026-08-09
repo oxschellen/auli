@@ -1,16 +1,17 @@
-// Multi-tenant entity registry (scraper side) — lê o registro ÚNICO `../data/registry.toml`
+// Multi-tenant entity registry (scraper side) — lê o registro ÚNICO `../config/registry.toml`
 // (a mesma fonte que o `auli-cli` usa). Antes havia uma cópia em `./src/entities/<id>/`; agora a
 // lista de entidades vem só do registry.
 //
 // Layout:
-//   - registry:  ../data/registry.toml  (id, name, prompt; campos de UI ignorados aqui)
-//   - prompt:    ../data/<prompt>        (ex.: ../data/prompts/rs.txt)
+//   - registry:  ../config/registry.toml  (id, name, prompt; campos de UI ignorados aqui)
+//   - prompt:    ../config/<prompt>        (ex.: ../config/prompts/rs.txt)
 //   - saída:     ../data/<id>/raw/        (metade GERADA pelo scraper; autorado fica em ref/)
 //
 // Nomes de coleção seguem `<id>-<kind>` (ex.: "rs-faqs"), isolando cada entidade.
 
 use std::collections::HashMap;
 use std::fs;
+use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
 
 use serde::Deserialize;
@@ -72,6 +73,24 @@ impl EntityConfig {
         format!("{}-{}", self.id, kind)
     }
 
+    /// Caminho de um prompt de PASSO (sinopse, extração) — os que não pertencem a uma entidade e
+    /// sim ao pipeline.
+    ///
+    /// O `data_dir` da entidade é `<raiz>/<id>/raw`, então a raiz de dados está dois níveis acima;
+    /// de lá, o `auli-contract` resolve a `config/` irmã. Existe aqui, e num lugar só, porque o
+    /// `sinopse` e o `extracao` faziam esta subida duplicada, com um comentário em um deles dizendo
+    /// "mesmo cálculo do outro" — que é como dois caminhos divergem.
+    pub fn prompt_de_passo(&self, arquivo: &str) -> Result<PathBuf, String> {
+        let raiz = Path::new(&self.data_dir)
+            .parent()
+            .and_then(Path::parent)
+            .ok_or_else(|| format!("data_dir inesperado: {}", self.data_dir))?;
+        Ok(auli_contract::config::prompt_path(
+            raiz,
+            &format!("prompts/{arquivo}"),
+        ))
+    }
+
     // Source file for a given kind, e.g. "../data/rs/raw/portal-faqs.txt"
     pub fn data_file(&self, base_name: &str) -> String {
         format!("{}/{}", self.data_dir, base_name)
@@ -80,10 +99,19 @@ impl EntityConfig {
 
 pub static ENTITIES: LazyLock<HashMap<String, EntityConfig>> = LazyLock::new(load_entities);
 
-/// Parse `../data/registry.toml` (entities in file order). Empty on read/parse error (already
+/// Parse `../config/registry.toml` (entities in file order). Empty on read/parse error (already
 /// logged). Read at startup by both `ENTITIES` and `DEFAULT_ENTITY`.
 fn read_registry() -> Registry {
-    let registry_path = format!("{}/registry.toml", DATA_DIR);
+    // Guarda de migração: resíduo do layout antigo é erro, nunca fallback silencioso (D-CFG-6).
+    if let Err(e) = auli_contract::config::recusar_layout_antigo(Path::new(DATA_DIR)) {
+        eprintln!("❌ {e}");
+        return Registry {
+            entities: Vec::new(),
+        };
+    }
+    let registry_path = auli_contract::config::registry_path(Path::new(DATA_DIR))
+        .display()
+        .to_string();
     let text = match fs::read_to_string(&registry_path) {
         Ok(t) => t,
         Err(e) => {
@@ -111,7 +139,11 @@ fn load_entities() -> HashMap<String, EntityConfig> {
         let system_prompt = if ent.prompt.is_empty() {
             DEFAULT_SYSTEM_PROMPT.to_string()
         } else {
-            fs::read_to_string(format!("{}/{}", DATA_DIR, ent.prompt)).unwrap_or_else(|_| {
+            fs::read_to_string(auli_contract::config::prompt_path(
+                Path::new(DATA_DIR),
+                &ent.prompt,
+            ))
+            .unwrap_or_else(|_| {
                 eprintln!(
                     "⚠️  prompt ausente para '{}' ({}), usando o padrão.",
                     ent.id, ent.prompt

@@ -92,7 +92,7 @@ while read -r id; do
   if [ ! -d "$dir" ] || [ -z "$(ls -A "$dir" 2>/dev/null)" ]; then
     vazias+=("$id")
   fi
-done < <(grep -E '^id[[:space:]]*=' data/registry.toml | sed -E 's/.*"([^"]+)".*/\1/')
+done < <(grep -E '^id[[:space:]]*=' config/registry.toml | sed -E 's/.*"([^"]+)".*/\1/')
 
 if [ "${#vazias[@]}" -gt 0 ]; then
   echo "⚠️  entidades no registry SEM dados em public/: ${vazias[*]}"
@@ -104,7 +104,7 @@ if [ "${#vazias[@]}" -gt 0 ]; then
     echo "❌ deploy abortado. A entidade aparece no seletor de estados (src/shared/entities.ts) e"
     echo "   suas abas falham em produção. Resolva de um dos dois jeitos:"
     echo "     • recupere/colete o data/<id>/ e rode de novo; ou"
-    echo "     • tire a entidade de data/registry.toml e rode scripts/gen-frontend-entities.mjs"
+    echo "     • tire a entidade de config/registry.toml e rode scripts/gen-frontend-entities.mjs"
     echo "   Para publicar assim mesmo, ciente: --allow-vazias"
     exit 1
   fi

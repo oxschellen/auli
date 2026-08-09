@@ -84,7 +84,8 @@ pub async fn run_server(packs_dir: Option<String>, port: u16, bind: String) {
     entities::init();
 
     // Packs live under `<data>/<id>/packs/`. With no `--packs-dir`, fall back to the shared data
-    // root (`AULI_DATA_DIR`, default `./data`) — the same dir the registry/prompts load from — so
+    // root (`AULI_DATA_DIR`, default `./data`) — the data root, sibling of the `config/` the
+    // registry/prompts load from — so
     // the registry and the packs can never resolve to different roots by accident.
     let packs_dir =
         packs_dir.unwrap_or_else(|| entities::data_dir().to_string_lossy().into_owned());

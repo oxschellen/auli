@@ -118,7 +118,7 @@ struct RegistroEntidade {
 /// de cada tipo ordenados por caminho. **A ordenação aqui é a pré-condição do determinismo do zip**
 /// — `read_dir` não promete ordem nenhuma.
 pub fn descobrir(data_root: &Path) -> Result<Vec<EstadoBundle>> {
-    let caminho = data_root.join("registry.toml");
+    let caminho = auli_contract::config::registry_path(data_root);
     let texto = fs::read_to_string(&caminho)
         .map_err(|e| format!("não consegui ler {}: {e}", caminho.display()))?;
     let registro: RegistroRaiz =
@@ -572,12 +572,17 @@ mod tests {
     /// Monta uma `data/` de teste espelhando o layout real e devolve a raiz. Inclui as três
     /// armadilhas do enunciado: entidade sem `docs/`, entidade fora do registry e tipo vazio.
     fn data_de_teste(tag: &str) -> PathBuf {
-        let raiz = std::env::temp_dir().join(format!("auli-bundle-{}-{tag}", std::process::id()));
-        let _ = fs::remove_dir_all(&raiz);
+        // Espelha o layout REAL do repo: `config/` é irmã de `data/`, não filha. Sem os dois
+        // níveis, o teste escreveria o registry no `/tmp` compartilhado — e uma execução
+        // atropelaria a outra.
+        let base = std::env::temp_dir().join(format!("auli-bundle-{}-{tag}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        let raiz = base.join("data");
         fs::create_dir_all(&raiz).unwrap();
+        fs::create_dir_all(base.join("config")).unwrap();
 
         fs::write(
-            raiz.join("registry.toml"),
+            auli_contract::config::registry_path(&raiz),
             r#"
 [[entities]]
 id = "zz"

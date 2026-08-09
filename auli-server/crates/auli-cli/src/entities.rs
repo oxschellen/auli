@@ -1,9 +1,10 @@
-// Multi-tenant entity registry (server side) — lê o registro ÚNICO `data/registry.toml`.
+// Multi-tenant entity registry (server side) — lê o registro ÚNICO `config/registry.toml`.
 //
-// A pasta `data/` vem de `AULI_DATA_DIR` (default `./data`); o server roda em `auli/`, então o
-// `start_server.sh` exporta `AULI_DATA_DIR=../data`. O `registry.toml` lista as entidades; o system
-// prompt de cada uma é lido de `<data>/<prompt>`. Os campos de UI do registry (uf, state,
-// collections) são ignorados aqui (serde descarta chaves desconhecidas) — só interessam ao frontend.
+// O catálogo vive em `config/`, irmã da raiz de dados; quem resolve o caminho é o
+// `auli_contract::config`, e ninguém mais (ver o doc daquele módulo). O `registry.toml` lista as
+// entidades; o system prompt de cada uma é lido de `<config>/<prompt>`. Os campos de UI do registry
+// (uf, state, collections) são ignorados aqui (serde descarta chaves desconhecidas) — só interessam
+// ao frontend.
 //
 // Nomes de coleção vetorial seguem `<id>-<kind>` (ex.: "rs-faqs"), isolando os vetores por entidade.
 
@@ -104,11 +105,11 @@ impl EntityConfig {
     }
 }
 
-/// Root of the shared `data/` dir, from `AULI_DATA_DIR` (default `./data`). Holds
-/// `registry.toml`, `prompts/`, and the per-entity `<id>/packs/` — so the registry and the
-/// vector packs share one root by default. `auli server --packs-dir` overrides the packs root;
-/// when it's omitted the server falls back to this same dir (see `run_server`), so the two never
-/// silently look in different places.
+/// Root of the shared `data/` dir, from `AULI_DATA_DIR` (default `./data`). Holds the per-entity
+/// `<id>/{docs,packs}/`. O CATÁLOGO (`registry.toml`, `prompts/`) NÃO mora aqui: vive na `config/`
+/// irmã, resolvida por `auli_contract::config` — daí esta função continuar sendo só a raiz de dado.
+/// `auli server --packs-dir` overrides the packs root; when it's omitted the server falls back to
+/// this same dir (see `run_server`), so the two never silently look in different places.
 pub fn data_dir() -> PathBuf {
     std::env::var("AULI_DATA_DIR")
         .unwrap_or_else(|_| "./data".to_string())
@@ -120,7 +121,14 @@ pub static ENTITIES: LazyLock<HashMap<String, EntityConfig>> = LazyLock::new(loa
 /// Parse `registry.toml` (entities in file order). Empty on read/parse error (already logged), so
 /// callers degrade gracefully. Read at startup by both `ENTITIES` and `DEFAULT_ENTITY`.
 fn read_registry() -> Registry {
-    let registry_path = data_dir().join("registry.toml");
+    // Guarda de migração: resíduo do layout antigo é erro, nunca fallback silencioso (D-CFG-6).
+    if let Err(e) = auli_contract::config::recusar_layout_antigo(&data_dir()) {
+        eprintln!("❌ {e}");
+        return Registry {
+            entities: Vec::new(),
+        };
+    }
+    let registry_path = auli_contract::config::registry_path(&data_dir());
     let text = match fs::read_to_string(&registry_path) {
         Ok(t) => t,
         Err(e) => {
@@ -141,8 +149,9 @@ fn read_registry() -> Registry {
     })
 }
 
-/// Read a prompt file relative to the data dir, falling back to `default` when the path is empty
-/// (entity didn't configure it) or the file can't be read (missing/unreadable — logged).
+/// Read a prompt file relative to the CONFIG dir (the `base` given), falling back to `default` when
+/// the path is empty (entity didn't configure it) or the file can't be read (missing/unreadable —
+/// logged).
 fn load_prompt(
     base: &std::path::Path,
     id: &str,
@@ -164,7 +173,9 @@ fn load_prompt(
 
 fn load_entities() -> HashMap<String, EntityConfig> {
     let mut map = HashMap::new();
-    let base = data_dir();
+    // Os caminhos de prompt do registry (`prompts/rs.txt`) são relativos à pasta DO REGISTRY, e
+    // sempre foram — por isso a migração não tocou no conteúdo dele.
+    let base = auli_contract::config::config_dir(&data_dir());
 
     for ent in read_registry().entities {
         let system_prompt = load_prompt(

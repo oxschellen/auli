@@ -25,6 +25,7 @@ auli update --entity rs --out ../data/rs/packs [--version 2]
 
 # Serve the API read-only from pre-built packs (validates the manifest at boot):
 # packs live under <packs-dir>/<id>/packs/; --packs-dir defaults to $AULI_DATA_DIR.
+# the catalog (registry.toml + prompts/) lives in config/, sibling of the data root.
 auli server --port 3000 --packs-dir ../data
 ```
 

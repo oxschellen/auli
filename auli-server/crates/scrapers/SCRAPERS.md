@@ -4,7 +4,7 @@ Referência das 9 implementações de scraper da frota Auli. Cada crate é um **
 entidade** que raspa o catálogo de serviços (e, no RS, também FAQs e pareceres) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
-Fonte da verdade das entidades: [`data/registry.toml`](../../../data/registry.toml). Este doc
+Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
 descreve o *como* de cada scraper; a lista de entidades vive lá.
 
 > Última atualização: 2026-07-13 (frota com 27 entidades; + coleta de **pareceres** do RS).
@@ -561,8 +561,8 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
    [`auli-server/Cargo.toml`](../../Cargo.toml) usa o glob `crates/scrapers/*` — **não precisa
    editá-lo** para uma entidade nova.
 2. `cargo test -p auli-scraper-<id>` — o gate verde de verdade.
-3. **Registrar em [`data/registry.toml`](../../../data/registry.toml)** (bloco `[[entities]]`) +
-   criar `data/prompts/<id>.txt`. ⚠️ Passo fácil de esquecer — sem ele, `auli-collections <id>`
+3. **Registrar em [`config/registry.toml`](../../../config/registry.toml)** (bloco `[[entities]]`) +
+   criar `config/prompts/<id>.txt`. ⚠️ Passo fácil de esquecer — sem ele, `auli-collections <id>`
    falha com "Entidade desconhecida".
 4. `node scripts/gen-frontend-entities.mjs` → regenera `auli-frontend/src/shared/entities.ts`
    (validar com `scripts/check-registry-sync.sh`).
