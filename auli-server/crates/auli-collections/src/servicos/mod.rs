@@ -270,7 +270,6 @@ fn write_servicos_index(data_dir: &str, id: &str, ordem: &[auli_contract::Public
 #[cfg(test)]
 mod tests {
     use super::*;
-    use auli_contract::Embeddable;
 
     #[test]
     fn text_to_embed_is_breadcrumb_title_and_body_start() {
@@ -385,7 +384,7 @@ mod tests {
     }
 
     #[test]
-    fn contract_servico_stored_repr_matches_print_block() {
+    fn contract_servico_bloco_matches_print_block() {
         // descricao já é o CORPO (sem o header tipo/classe/titulo), como gravado no contrato.
         let s = auli_contract::Servico {
             id: 1,
@@ -398,7 +397,10 @@ mod tests {
             text_to_embed: "Empresas | ICMS\nEmitir guia\nPassos para emitir a guia.".into(),
         };
         let expected = "## pergunta\nEmpresas | ICMS\nEmitir guia\n\n## resposta\nPassos para emitir a guia.\nLink: https://x/svc/1";
-        assert_eq!(s.stored_repr(), expected);
+        // Desde a B5 o serviço não renderiza bloco sozinho: ele se projeta no `Documento`, e quem
+        // renderiza é o `bloco` único do contrato. O literal esperado NÃO mudou — é o mesmo bloco.
+        let d = s.para_documento();
+        assert_eq!(auli_contract::bloco(&d.pack(), &d.corpo), expected);
     }
 
     /// Equivalência golden (D-F2.7) — inerte sem `AULI_GOLDEN_DATA` (raiz do `data/` do repo). Lê os

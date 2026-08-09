@@ -55,11 +55,17 @@ impl<P> Table<P> {
     }
 }
 
-/// O que o engine precisa de cada registro `P`, sem conhecer seus campos: a key a embeddar e a
-/// representação textual a armazenar (servida ao LLM no contexto do RAG).
+/// O que o engine precisa de cada registro, sem conhecer seus campos: a key a embeddar e o payload
+/// a armazenar ao lado do vetor.
 ///
-/// `text_to_embed` é um campo **materializado pelo scraper** — aqui só o expomos; o engine não o
-/// recalcula. `stored_repr` é derivado dos campos do registro.
+/// `text_to_embed` é um campo **materializado** — aqui só o expomos; o engine não o recalcula.
+/// `stored_repr` é derivado dos campos do registro.
+///
+/// **Implementado só pelo [`Documento`] desde a B5.** [`Faq`] e [`Servico`] o implementavam para
+/// entrar direto na vetorização, cada um com o próprio bloco pré-renderizado; hoje eles se projetam
+/// no `Documento` ([`Faq::para_documento`], [`Servico::para_documento`]) e quem é vetorizado é a
+/// projeção. O trait continua genérico porque é a fronteira do engine, não porque haja duas
+/// implementações — é ele que mantém `auli-core` sem saber o que é um parecer.
 pub trait Embeddable {
     /// A key vetorizada (preenchida na origem pelo scraper).
     fn text_to_embed(&self) -> &str;
@@ -109,27 +115,6 @@ impl Faq {
     }
 }
 
-impl Embeddable for Faq {
-    fn text_to_embed(&self) -> &str {
-        &self.text_to_embed
-    }
-
-    /// Reproduz o bloco `## pergunta` / `## resposta` (mesma forma do antigo `portal-faqs.txt`),
-    /// para o contexto do RAG continuar coerente.
-    fn stored_repr(&self) -> String {
-        let mut s = String::from("## pergunta\n");
-        if !self.origin.is_empty() {
-            s.push_str(&self.origin);
-            s.push('\n');
-        }
-        s.push_str(&self.pergunta);
-        s.push_str("\n\n## resposta\n");
-        s.push_str(&self.resposta);
-        s.push_str(&format!("\nLink: {}", self.url));
-        s
-    }
-}
-
 /// Um registro da tabela `servicos`. Campos do serviço raspado, mais a key materializada.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Servico {
@@ -170,21 +155,6 @@ impl Servico {
             text_to_embed: self.text_to_embed.clone(),
             resumo_info: None,
         }
-    }
-}
-
-impl Embeddable for Servico {
-    fn text_to_embed(&self) -> &str {
-        &self.text_to_embed
-    }
-
-    /// Reproduz o bloco `## pergunta` / `## resposta` no mesmo formato dos demais kinds: breadcrumb
-    /// `tipo | classe` + título no `## pergunta`, descrição + link no `## resposta`.
-    fn stored_repr(&self) -> String {
-        format!(
-            "## pergunta\n{} | {}\n{}\n\n## resposta\n{}\nLink: {}",
-            self.tipo, self.classe, self.titulo, self.descricao, self.link
-        )
     }
 }
 
@@ -483,7 +453,7 @@ pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str, resposta: &str) -
 /// que aparece é o conteúdo integral).
 ///
 /// Substitui quatro renderizações que eram a mesma coisa escrita quatro vezes: os `stored_repr` de
-/// [`Faq`] e [`Servico`] e o [`render_consulta_block`] da jurisprudência. A equivalência é verificada
+/// [`Faq`] e [`Servico`] e o `render_consulta_block` da jurisprudência. A equivalência é verificada
 /// byte a byte nos testes, contra reimplementações literais dos formatos antigos.
 pub fn bloco(d: &DocumentoPack, conteudo: &str) -> String {
     let pergunta = [d.trilha.as_str(), d.titulo.as_str(), d.ementa.as_str()]
@@ -539,32 +509,10 @@ mod tests {
         assert_eq!(back.items[0].pergunta, "Como emitir nota?");
     }
 
-    #[test]
-    fn embeddable_exposes_key_and_renders_block() {
-        let faq = sample_faq();
-        assert_eq!(faq.text_to_embed(), "Como emitir nota?");
-        let block = faq.stored_repr();
-        assert!(block.starts_with("## pergunta\nInicial | FAQ\nComo emitir nota?"));
-        assert!(block.contains("## resposta\nAcesse o portal."));
-        assert!(block.contains("Link: https://exemplo/faq/1"));
-    }
-
-    #[test]
-    fn servico_block_has_breadcrumb_and_link() {
-        let s = Servico {
-            id: 1,
-            tipo: "Empresas".into(),
-            classe: "ICMS".into(),
-            orgao: "SEFAZ".into(),
-            link: "https://exemplo/svc/1".into(),
-            titulo: "Emitir guia".into(),
-            descricao: "Passos para emitir a guia.".into(),
-            text_to_embed: "Empresas | ICMS Emitir guia".into(),
-        };
-        let block = s.stored_repr();
-        assert!(block.starts_with("## pergunta\nEmpresas | ICMS\nEmitir guia"));
-        assert!(block.contains("Link: https://exemplo/svc/1"));
-    }
+    // NOTA: `embeddable_exposes_key_and_renders_block` e `servico_block_has_breadcrumb_and_link`
+    // saíram na B5, junto com os `stored_repr` que testavam. Não foram enfraquecidos: as travas de
+    // projeção (`a_projecao_da_faq_reproduz_o_bloco_dela` e a irmã dos serviços) cobrem o mesmo
+    // byte a byte, contra as cópias literais dos formatos antigos, e em mais casos de canto.
 
     /// Reimplementação LITERAL dos três formatos de BLOCO como estavam antes da D-B3 — os dois
     /// `stored_repr` (Faq, Servico) e o `render_consulta_block`. Copiados à mão, sem chamar nada do
@@ -814,7 +762,7 @@ mod tests {
             let d = f.para_documento();
             assert_eq!(
                 bloco(&d.pack(), &d.corpo),
-                f.stored_repr(),
+                blocos_antigos::faq(origin, pergunta, resposta, &f.url),
                 "divergiu em {pergunta:?}"
             );
             // A key atravessa a projeção intacta — ela é materializada, não recomposta aqui.
@@ -846,7 +794,7 @@ mod tests {
             let d = s.para_documento();
             assert_eq!(
                 bloco(&d.pack(), &d.corpo),
-                s.stored_repr(),
+                blocos_antigos::servico(tipo, classe, titulo, descricao, &s.link),
                 "divergiu em {titulo:?}"
             );
             assert_eq!(d.text_to_embed, s.text_to_embed);

@@ -30,8 +30,8 @@ use serde::Serialize;
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
 
-/// Uma entrada do índice. Espelha o `ConsultaPackPayload` do contrato menos o `doc_path` (que só
-/// interessa ao servidor) — o navegador não tem como ler a árvore.
+/// Uma entrada do índice. É o `DocumentoPack` do contrato menos o `doc_path` e o `kind` (que só
+/// interessam ao servidor) — o navegador não tem como ler a árvore.
 ///
 /// Os nomes dos campos são os do vocabulário ANTIGO (`numero`/`assunto`) de propósito: este JSON é
 /// contrato com o frontend, não com a árvore. Renomeá-los quebraria a tab sem ganho nenhum — e no
