@@ -16,7 +16,22 @@ técnica do código, ver [docs/auli_code.md](docs/auli_code.md) (§3 cobre o wor
 
 ## 1. O que sobe
 
-O binário único `auli` tem dois modos:
+**Um comando faz tudo:**
+
+```bash
+scripts/publicar.sh              # compila, publica o frontend, sobe a API
+scripts/publicar.sh --packs rs   # + re-vetoriza o rs antes (caro: ~72 min, ~42 GB de RAM)
+scripts/publicar.sh --dry-run    # o local inteiro; nada sai da máquina
+```
+
+Ele compila **uma vez** e passa os binários prontos aos scripts de baixo via `AULI_BIN` /
+`AULI_COLLECTIONS_BIN`, que sabem pular a própria compilação. É o que garante que packs, zips e API
+saem do MESMO código — ver a §11 para o acidente que motivou isso. O resto desta seção é o mapa por
+baixo dele; os scripts individuais continuam servindo para rodar uma etapa isolada.
+
+### Os binários
+
+O binário único `auli` tem **três** modos:
 
 - **`auli server`** — sobe a API HTTP (axum) em `:3000`, **somente leitura**: carrega os pacotes
   de vetores, valida o manifesto e responde perguntas (RAG). Embeda só a pergunta; nunca escreve.
@@ -24,6 +39,27 @@ O binário único `auli` tem dois modos:
   fonte desde a G5b; o contrato JSON saiu do caminho), embeda o `text_to_embed` de cada registro e
   escreve os **pacotes** (`<id>-<kind>.json` + `<id>.manifest.json`). É o **único do engine** que
   escreve dados.
+- **`auli bundle`** — empacota as árvores `.md` nos `.zip` de download por estado, com README e
+  manifesto. Não toca em vetor nenhum.
+
+Ao lado dele há mais um binário e uma família:
+
+- **`auli-collections`** — deriva artefatos das árvores (`indice`, `process`, `sinopse`). É quem
+  gera o `<id>-<colecao>-index.json` que as abas de jurisprudência leem.
+- **`auli-scraper-<uf>`** (28 crates) — a coleta. Só entram quando se busca conteúdo novo do portal;
+  nunca no caminho de publicação.
+
+### As sequências, e o que cada uma custa
+
+| sequência | o que faz | custo |
+|---|---|---|
+| coleta (`auli-scraper-<uf>`) | portal → `data/<id>/docs/` | horas, depende de rede |
+| `build-packs.sh` | árvore → packs + índices | 72 min e ~42 GB no `rs` |
+| `deploy-frontend.sh` | `public/` + zips + build + upload | minutos |
+| `start_server.sh` | API + túnel | minutos, **fica em primeiro plano** |
+
+O `start_server.sh` não daemoniza: ele segura o terminal para o `trap` derrubar o `cloudflared` no
+Ctrl+C. Por isso é sempre o **último** passo — o `publicar.sh` termina com `exec` nele.
 
 Embeddings (fastembed/BGE-M3) e busca vetorial rodam **in-process** — não há Ollama, ChromaDB nem
 serviço de embedding para subir à parte.
