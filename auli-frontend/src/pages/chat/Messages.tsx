@@ -25,7 +25,14 @@ export const Messages = ({ messages, setPrompt }: MessagesProps) => {
         if (item.from === "user") {
           return <UserMessage key={key} messageText={messageText} setPrompt={setPrompt} />;
         } else {
-          return <SystemMessage key={key} messageText={messageText} showButton={item.showButton} />;
+          return (
+            <SystemMessage
+              key={key}
+              messageText={messageText}
+              showButton={item.showButton}
+              logId={item.logId}
+            />
+          );
         }
       })}
     </Flex>

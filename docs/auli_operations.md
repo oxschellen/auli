@@ -655,7 +655,7 @@ Há **três** destinos distintos:
 
 | Tipo                    | Onde                                                                   | Conteúdo                                                                                                                                                                                                                |
 | ----------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Q&A do RAG** ⚠️ PII    | `logs/<AAAA-MM-DD_HH-MM-SS>.txt` na raiz do repo (um arquivo por pergunta) | Cinco seções: `PERGUNTA (ORIGINAL)` — **texto cru, com PII** —, `PERGUNTA (ANONIMIZADA)`, `RESPOSTA` (**restaurada**, PII de volta), `ADERÊNCIA` (ver §7.2) e `CONTEXTO RAG`. Ver **§7.0**. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `$AULI_LOG_DIR` (default `./logs` do CWD). O `start_server.sh` exporta `AULI_LOG_DIR=<raiz>/logs` (absoluto), então caem na **raiz do repo**, não em `auli-server/`. |
+| **Q&A do RAG** ⚠️ PII    | `logs/<AAAA-MM-DD_HH-MM-SS>_<uuid>.txt` na raiz do repo (um arquivo por pergunta) | Cinco seções: `PERGUNTA (ORIGINAL)` — **texto cru, com PII** —, `PERGUNTA (ANONIMIZADA)`, `RESPOSTA` (**restaurada**, PII de volta), `ADERÊNCIA` (ver §7.2) e `CONTEXTO RAG`. Ver **§7.0**. Gravado por [rag.rs](auli-server/crates/auli-cli/src/rag.rs) em `$AULI_LOG_DIR` (default `./logs` do CWD). O `start_server.sh` exporta `AULI_LOG_DIR=<raiz>/logs` (absoluto), então caem na **raiz do repo**, não em `auli-server/`. |
 | **Chamadas MCP** ⚠️ PII  | o **mesmo** `logs/…` acima                                              | Mesmo formato, **sem a seção `RESPOSTA`** (não há LLM neste caminho) e com `tipo: mcp:<ferramenta>` no cabeçalho. Só as três ferramentas que recebem pergunta; `listar_entidades` não gera registro. O `obter_parecer` também não traz `ADERÊNCIA` — acha pelo número, não por vetor. Ver §7.0, §7.2 e §12. |
 | **cloudflared**         | `/tmp/auli-cloudflared.log`                                            | saída do túnel Cloudflare (redirecionada pelo `start_server.sh`).                                                                                                                                                       |
 | **Console (`tracing`)** | **stdout/stderr** do terminal (não vai a arquivo)                      | boot, scores, `info/debug/warn`. Controlado por `RUST_LOG`.                                                                                                                                                             |
@@ -690,6 +690,28 @@ Controles compensatórios:
 | Versionamento | `**/logs/` está no `.gitignore` — nunca vai ao GitHub. Confira com `git check-ignore -v logs/`. |
 | Retenção | **manual** (ver abaixo). Não há expurgo automático. ⚠️ **Desde 2026-08-02 o MCP também grava**, e o regime de volume é outro: o chat é ~1 arquivo por interação humana, enquanto um assistente faz **várias** chamadas por conversa. Reavaliar a periodicidade do expurgo — a doutrina de retenção não mudou, o volume sim. |
 | Cópia/compartilhamento | Quem lê o diretório lê PII. Não colar trecho de log em issue, PR ou chat sem revisar. |
+| Leitura pela rede | `GET /v1/log/{uuid}` (desde 09/08/2026) serve **um** registro por vez a quem tem o UUID dele — ver 7.0.1. Não existe rota que liste, conte ou enumere. |
+
+#### 7.0.1 O acesso pela rota, e por que ele não afrouxa o 7.0
+
+O ícone do chat abre o log **daquela** resposta. A porta é uma *capability*: o UUID v7 nasce no
+`log_question`, volta no campo `log_id` da resposta e, portanto, só chega a quem fez a pergunta.
+Sem ele não há caminho — não há listagem, e adivinhar esbarra em 74 bits de aleatoriedade.
+
+A premissa do 7.0 continua de pé porque **o que mudou foi o alcance, não o conteúdo**: antes o log
+só era legível por quem tinha o filesystem da máquina; agora também por quem possui o UUID de uma
+consulta. Cada um lê apenas o que ele mesmo digitou, mais mecânica sobre acervo público (contexto
+RAG, distâncias, tempos). O registro sai **como está**, incluindo o par original/anonimizada — ver o
+mascaramento funcionando é prova de privacidade para o autor, não vazamento.
+
+Três consequências operacionais:
+
+- **os arquivos são servidos da máquina do Desktop Server**, um por vez e sob demanda; nada é
+  copiado para o VPS, e o deploy do estático não muda;
+- **logs anteriores a 09/08/2026 não têm UUID no nome e são inalcançáveis pela rota** — sem
+  migração retroativa, por decisão (D-LOG-1);
+- o **expurgo** abaixo segue valendo tal como está: um log podado responde `404` com a mesma
+  mensagem de um que nunca existiu, de propósito.
 
 Retenção — o expurgo é seu, e não roda sozinho:
 

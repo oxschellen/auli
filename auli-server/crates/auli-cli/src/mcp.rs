@@ -132,8 +132,15 @@ impl AuliMcp {
     /// de acesso e retenção.
     ///
     /// Falha de gravação **não derruba a chamada**: é uma API pública somente-leitura, e recusar
-    /// uma consulta porque o disco falhou seria pior que perder um registro. Diverge aqui do chat
-    /// (que propaga o erro) de propósito.
+    /// uma consulta porque o disco falhou seria pior que perder um registro. Desde 09/08/2026 o
+    /// chat segue a MESMA regra (D-LOG-2) — antes ele propagava o erro, e a divergência, que este
+    /// comentário registrava como deliberada, acabava entregando o texto do erro de I/O ao usuário
+    /// como se fosse a resposta do assistente.
+    ///
+    /// O UUID que o `log_question` devolve é ignorado aqui: o MCP não tem por onde entregá-lo a
+    /// quem chamou (D-LOG-2 o mantém fora do escopo). O que importa nesta face é o outro efeito de
+    /// D-LOG-1 — o nome de arquivo único, que impede duas chamadas do mesmo segundo de se
+    /// misturarem num só registro.
     ///
     /// `aderencia` é a seção de proximidade já montada (vazia quando a chamada não fez busca
     /// vetorial — só o `obter_parecer`, que vai pelo número).
