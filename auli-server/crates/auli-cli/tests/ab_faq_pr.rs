@@ -122,13 +122,14 @@ fn ab_faq_pr() {
         println!("═══ {}", c.texto);
         for (rotulo, hits) in [("ANTES", &ta), ("NOVO ", &tn)] {
             for (i, (dist, doc)) in hits.iter().enumerate() {
-                // A 1ª linha do `stored_repr` é `## pergunta`; a 2ª/3ª identificam o item.
-                let titulo: String = doc
-                    .lines()
-                    .skip(1)
-                    .take(2)
-                    .collect::<Vec<_>>()
-                    .join(" / ")
+                // Pack v2 (B4): o payload é o `DocumentoPack` em JSON. `trilha / titulo` é o que
+                // identifica o item aqui — o mesmo par que a 2ª e a 3ª linha do bloco antigo
+                // mostravam, agora lido do campo em vez de fatiado do texto.
+                let titulo: String =
+                    match serde_json::from_str::<auli_contract::DocumentoPack>(doc) {
+                        Ok(p) => format!("{} / {}", p.trilha, p.titulo),
+                        Err(_) => doc.to_string(),
+                    }
                     .chars()
                     .take(120)
                     .collect();

@@ -8,27 +8,15 @@ use std::path::PathBuf;
 use auli_core::embed::Embedder;
 use vector_store::ReadStore;
 
-/// Extrai `numero` (1ª linha após `## pergunta`) e `assunto` (2ª) do `stored_repr` para exibição.
+/// Rótulo curto de um documento do pack, para exibição: `(titulo, ementa)`.
+///
+/// Desde o pack v2 (B4) o payload é o `DocumentoPack` em JSON, não o bloco renderizado — daí a
+/// desserialização em vez do fatiamento por linha que havia aqui. Payload que não desserializa vira
+/// o cru no segundo campo, que é o que se quer ver quando algo está errado.
 fn resumo_doc(doc: &str) -> (String, String) {
-    let linhas: Vec<&str> = doc.lines().collect();
-    let idx = linhas
-        .iter()
-        .position(|l| l.trim_start().starts_with("## pergunta"));
-    match idx {
-        Some(i) => {
-            let numero = linhas
-                .get(i + 1)
-                .map(|s| s.trim())
-                .unwrap_or("")
-                .to_string();
-            let assunto = linhas
-                .get(i + 2)
-                .map(|s| s.trim())
-                .unwrap_or("")
-                .to_string();
-            (numero, assunto)
-        }
-        None => (String::new(), linhas.first().unwrap_or(&"").to_string()),
+    match serde_json::from_str::<auli_contract::DocumentoPack>(doc) {
+        Ok(p) => (p.titulo, p.ementa),
+        Err(_) => (String::new(), doc.chars().take(120).collect()),
     }
 }
 

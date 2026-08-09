@@ -22,7 +22,7 @@
 
 use std::path::Path;
 
-use auli_contract::{Consulta, Kind, mddoc};
+use auli_contract::{Documento, Kind, mddoc};
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -56,11 +56,11 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
     // que a G4 aposentou — mas a regra é do produtor, e este é o produtor).
     let mut vistos = std::collections::HashSet::with_capacity(items.len());
     for c in &items {
-        if !vistos.insert(c.numero.as_str()) {
+        if !vistos.insert(c.titulo.as_str()) {
             return Err(format!(
                 "numero duplicado em {}: {:?} — viola a identidade da listagem.",
                 ref_path.display(),
-                c.numero
+                c.titulo
             )
             .into());
         }
@@ -77,7 +77,7 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         .iter()
         .map(|c| {
             (
-                mddoc::cabecalho_jurisprudencia(&c.numero, &c.assunto, &c.link),
+                mddoc::cabecalho_jurisprudencia(&c.titulo, &c.ementa, &c.link),
                 c.corpo.clone(),
             )
         })
@@ -105,8 +105,8 @@ fn strip_label<'a>(line: &'a str, label: &str) -> Option<&'a str> {
     Some(rest.strip_prefix(':')?.trim())
 }
 
-/// Quebra o texto em blocos por `// N` e converte cada um em `Consulta` (blocos vazios são descartados).
-pub(crate) fn parse_pareceres(content: &str) -> Vec<Consulta> {
+/// Quebra o texto em blocos por `// N` e converte cada um em `Documento` (blocos vazios são descartados).
+pub(crate) fn parse_pareceres(content: &str) -> Vec<Documento> {
     let mut records: Vec<Vec<&str>> = Vec::new();
     let mut current: Option<Vec<&str>> = None;
     for line in content.lines() {
@@ -129,9 +129,9 @@ pub(crate) fn parse_pareceres(content: &str) -> Vec<Consulta> {
         .collect()
 }
 
-/// Monta um `Consulta` das linhas de um bloco. `## pergunta:` guarda os rótulos + resumo; `## resposta:`
+/// Monta um `Documento` das linhas de um bloco. `## pergunta:` guarda os rótulos + resumo; `## resposta:`
 /// separa o corpo integral. Devolve `None` se o bloco não tem conteúdo aproveitável.
-fn parecer_from_lines(lines: &[&str]) -> Option<Consulta> {
+fn parecer_from_lines(lines: &[&str]) -> Option<Documento> {
     let resp_idx = lines
         .iter()
         .position(|l| l.trim_start().starts_with("## resposta"))?;
@@ -171,16 +171,18 @@ fn parecer_from_lines(lines: &[&str]) -> Option<Consulta> {
     // resumo autorado que dispensam sinopse).
     let text_to_embed = crate::sinopse::compose_text_to_embed(&numero, &assunto, &resumo);
 
-    Some(Consulta {
+    Some(Documento {
         // Este bootstrap ingere o `.txt` legado de `ref/` — que só existiu para pareceres.
         kind: Kind::Pareceres,
-        numero,
-        assunto,
+        // O `.txt` legado não tinha trilha, e pareceres não têm navegação de portal.
+        trilha: String::new(),
+        titulo: numero,
+        ementa: assunto,
         resumo,
         corpo,
         link,
         text_to_embed,
-        sinopse_info: None,
+        resumo_info: None,
     })
 }
 
@@ -216,8 +218,8 @@ Corpo do 25091.
         assert_eq!(items.len(), 2);
 
         let p = &items[0];
-        assert_eq!(p.numero, "PARECER Nº 25148");
-        assert_eq!(p.assunto, "ICMS – crédito fiscal na cesta básica");
+        assert_eq!(p.titulo, "PARECER Nº 25148");
+        assert_eq!(p.ementa, "ICMS – crédito fiscal na cesta básica");
         assert_eq!(
             p.resumo,
             "### Descrição Resumida\nAnalisa o crédito fiscal."
@@ -235,7 +237,7 @@ Corpo do 25091.
     fn record_without_resumo_usa_numero_e_assunto_na_key() {
         let items = parse_pareceres(SAMPLE);
         let p = &items[1];
-        assert_eq!(p.numero, "PARECER Nº 25091");
+        assert_eq!(p.titulo, "PARECER Nº 25091");
         assert_eq!(p.resumo, "");
         assert_eq!(p.corpo, "Corpo do 25091.");
         // Sem resumo, a key ainda indexa numero + assunto.

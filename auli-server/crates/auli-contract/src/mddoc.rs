@@ -515,11 +515,14 @@ pub fn nome_servico_de(titulo: &str, link: &str) -> String {
 /// `link + "\n" + titulo`. A identidade real está no hash, que cobre o par `(url, pergunta)`,
 /// porque a url sozinha não distingue perguntas da mesma página.
 pub fn nome_faq(h: &DocHeader) -> String {
-    nome_com_hash(
-        &h.titulo,
-        MAX_SLUG_FAQ,
-        format!("{}\n{}", h.link, h.titulo).as_bytes(),
-    )
+    nome_faq_de(&h.titulo, &h.link)
+}
+
+/// [`nome_faq`] a partir dos campos crus, para quem precisa do nome de arquivo sem ter um cabeçalho
+/// montado — o mesmo motivo do [`nome_servico_de`]. Sem isto, chamadores montavam um `DocHeader`
+/// descartável só para pedir o nome.
+pub fn nome_faq_de(titulo: &str, link: &str) -> String {
+    nome_com_hash(titulo, MAX_SLUG_FAQ, format!("{link}\n{titulo}").as_bytes())
 }
 
 /// Miolo das duas nomeações: slug truncado + hash8 do que identifica o documento.

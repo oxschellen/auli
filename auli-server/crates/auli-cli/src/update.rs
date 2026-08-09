@@ -23,7 +23,7 @@
 
 use std::path::{Path, PathBuf};
 
-use auli_contract::{Embeddable, Kind};
+use auli_contract::{Documento, Embeddable, Kind};
 use auli_core::embed::{EMBED_DIM, EMBED_MAX_TOKENS, Embedder};
 use auli_core::manifest::{self, CollectionEntry, Manifest};
 use vector_store::Writer;
@@ -50,52 +50,22 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
         .parent()
         .ok_or_else(|| format!("diretório de packs sem pai: {}", out.display()))?
         .join("docs");
-    // faqs: a FONTE é a árvore `docs/faqs/*.md` (TAREFA-FAQS-MD), regenerada do zero a cada
-    // `process` — faqs mudam no portal. Entidade sem árvore -> pulada (só o RS tem faqs hoje).
-    if let Some(faqs) = preparar_faqs(&docs_dir)? {
-        avisar_faqs_truncadas(&embedder, &faqs)?;
-        println!("🔢 faqs: {} registros → vetorizando...", faqs.len());
-        entries.push(ingest_items(
-            &embedder,
-            &writer,
-            &entity,
-            Kind::Faqs,
-            &faqs,
-            &out,
-        )?);
-    }
-    // servicos: a FONTE é a árvore `docs/servicos/*.md` (TAREFA-SERVICOS-MD), regenerada do zero a
-    // cada `process` — serviços mudam no portal. Entidade sem árvore -> pulada.
-    if let Some(servicos) = preparar_servicos(&docs_dir)? {
-        println!("🔢 servicos: {} registros → vetorizando...", servicos.len());
-        entries.push(ingest_items(
-            &embedder,
-            &writer,
-            &entity,
-            Kind::Servicos,
-            &servicos,
-            &out,
-        )?);
-    }
-    // jurisprudência: a FONTE é a árvore `docs/<kind>/*.md` (G5b) — o JSON saiu do caminho. Os
-    // produtores (scrapers) criam um `.md` por documento inédito; nos pareceres o passo
-    // `auli-collections <entity> sinopse` preenche o `## resumo`, no TARF a própria coleta extrai a
-    // fundamentação; aqui só lemos e vetorizamos. Entidade sem árvore -> pulada.
+    // **UM caminho de código para as quatro coleções** (D-B2). A fonte é sempre a árvore
+    // `docs/<kind>/*.md`, o registro é sempre um `Documento`, e o que difere — como o `.md` vira
+    // struct, e se há guarda de resumo — está dentro do `preparar`. Coleção sem árvore é pulada.
     //
     // **Um pack POR coleção** (D-A2): `<id>-pareceres` e `<id>-tarf` nunca se misturam. São acervos
     // de natureza diferente (interpretação da lei × julgamento de recurso) e o usuário escolhe qual
     // consultar; fundi-los tiraria essa escolha dele e diluiria as duas buscas.
-    for kind in Kind::TODOS.into_iter().filter(|k| k.exige_resumo()) {
-        if let Some(consultas) = preparar_jurisprudencia(&entity, &docs_dir, kind)? {
-            println!(
-                "🔢 {}: {} registros → vetorizando...",
-                kind,
-                consultas.len()
-            );
-            entries.push(ingest_items(
-                &embedder, &writer, &entity, kind, &consultas, &out,
-            )?);
-        }
+    for kind in Kind::TODOS {
+        let Some(docs) = preparar(&entity, &docs_dir, kind)? else {
+            continue;
+        };
+        avisar_truncados(&embedder, kind, &docs)?;
+        println!("🔢 {}: {} registros → vetorizando...", kind, docs.len());
+        entries.push(ingest_items(
+            &embedder, &writer, &entity, kind, &docs, &out,
+        )?);
     }
     // notas: sem fonte struct por ora (autoradas) — ausentes até serem modeladas.
 
@@ -123,209 +93,128 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
     Ok(())
 }
 
-/// Avisa quais faqs batem no teto de tokens do encoder e portanto vão ao índice **truncadas**.
+/// Avisa quais documentos batem no teto de tokens do encoder e portanto vão ao índice **truncados**.
 ///
 /// Aviso, não erro (D-FAQPR-5 revisada): o item ainda vetoriza, com o excedente descartado pelo
 /// tokenizer. O que não pode é isso acontecer em silêncio — daí a contagem pelo tokenizer REAL e o
-/// nome do `.md` de cada vítima, recomputado do par `(url, pergunta)` que dá o nome do arquivo.
-/// Amostra de até 5, no padrão dos outros relatórios do update.
-fn avisar_faqs_truncadas(embedder: &Embedder, faqs: &[auli_contract::Faq]) -> Result<()> {
-    let mut truncadas: Vec<String> = Vec::new();
-    for f in faqs {
-        if embedder.conta_tokens(&f.text_to_embed)? >= EMBED_MAX_TOKENS {
-            truncadas.push(format!(
-                "{}.md",
-                auli_contract::mddoc::nome_faq(&auli_contract::mddoc::DocHeader {
-                    titulo: f.pergunta.clone(),
-                    trilha: f.origin.clone(),
-                    ementa: String::new(),
-                    link: f.url.clone(),
-                    orgao: None,
-                    resumo_info: None,
-                })
-            ));
+/// nome do `.md` de cada vítima. Amostra de até 5, no padrão dos outros relatórios do update.
+///
+/// Vale para as QUATRO coleções desde a B4 (antes só as faqs eram conferidas). O TARF é quem mais
+/// pede: a `## resumo` dele é a fundamentação inteira do acórdão, que chega a 27 mil caracteres —
+/// duas ordens de grandeza acima da sinopse curta de um parecer.
+fn avisar_truncados(embedder: &Embedder, kind: Kind, docs: &[Documento]) -> Result<()> {
+    let mut truncados: Vec<String> = Vec::new();
+    for d in docs {
+        if embedder.conta_tokens(&d.text_to_embed)? >= EMBED_MAX_TOKENS {
+            // O `doc_path` já É o nome do arquivo pela regra da coleção — nada a recomputar.
+            truncados.push(d.doc_path());
         }
     }
-    if !truncadas.is_empty() {
-        let amostra = truncadas
+    if !truncados.is_empty() {
+        let amostra = truncados
             .iter()
             .take(5)
             .cloned()
             .collect::<Vec<_>>()
             .join(", ");
-        let reticencias = if truncadas.len() > 5 { ", …" } else { "" };
+        let reticencias = if truncados.len() > 5 { ", …" } else { "" };
         println!(
-            "⚠️  {} faq(s) acima de {EMBED_MAX_TOKENS} tokens — o excedente NÃO entra no vetor: {amostra}{reticencias}",
-            truncadas.len()
+            "⚠️  {} de {} acima de {EMBED_MAX_TOKENS} tokens — o excedente NÃO entra no vetor: {amostra}{reticencias}",
+            truncados.len(),
+            kind
         );
     }
     Ok(())
 }
 
-/// Lê a árvore `docs/faqs/*.md` — **a FONTE** (TAREFA-FAQS-MD) — e devolve as faqs prontas para
-/// vetorizar, ou `None` se a entidade não tem árvore — nesse caso a coleção é simplesmente pulada
-/// (o fallback para o JSON legado não existe mais: a árvore é a fonte).
+/// Os `.md` de um diretório, em ordem de NOME. `None` se o diretório não existe ou está vazio —
+/// nos dois casos a coleção é pulada, o que é melhor que gerar um pack vazio.
 ///
-/// `Faq` não tem `id`: a rematerialização é só a struct + o `text_to_embed`, recomposto aqui pelo
-/// ponto único do contrato. Ordem = nome de arquivo, para o pack ser reproduzível.
-fn preparar_faqs(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Faq>>> {
-    let dir = docs_dir.join(Kind::Faqs.as_str());
+/// A ordem é estável de propósito: os `id-N` do pack derivam dela e não podem depender do
+/// `read_dir` do sistema de arquivos, ou o pack deixa de ser reproduzível entre rodadas.
+fn arquivos_md(dir: &Path) -> Result<Option<Vec<PathBuf>>> {
     if !dir.exists() {
         return Ok(None);
     }
-    let mut caminhos: Vec<std::path::PathBuf> = std::fs::read_dir(&dir)?
+    let mut caminhos: Vec<PathBuf> = std::fs::read_dir(dir)?
         .filter_map(|e| e.ok().map(|e| e.path()))
         .filter(|p| p.is_file() && p.extension().is_some_and(|e| e == "md"))
         .collect();
     caminhos.sort();
-    if caminhos.is_empty() {
-        return Ok(None);
-    }
-
-    let mut faqs = Vec::with_capacity(caminhos.len());
-    for caminho in &caminhos {
-        let texto = std::fs::read_to_string(caminho)?;
-        let (header, _resumo, corpo) = auli_contract::mddoc::parse_doc(&texto)
-            .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
-        faqs.push(auli_contract::Faq {
-            // `&corpo` antes do move para `resposta`: a ordem dos campos no literal é a de avaliação.
-            text_to_embed: auli_contract::compose_faq_text_to_embed(
-                &header.trilha,
-                &header.titulo,
-                &corpo,
-            ),
-            pergunta: header.titulo,
-            resposta: corpo,
-            origin: header.trilha,
-            url: header.link,
-        });
-    }
-
-    println!("📄 docs: {} faqs lidas de {}", faqs.len(), dir.display());
-    Ok(Some(faqs))
+    Ok((!caminhos.is_empty()).then_some(caminhos))
 }
 
-/// Lê a árvore `docs/servicos/*.md` — **a FONTE** (TAREFA-SERVICOS-MD) — e devolve os serviços
-/// prontos para vetorizar, ou `None` se a entidade não tem árvore — nesse caso a coleção é
-/// simplesmente pulada (o fallback para o JSON legado não existe mais: a árvore é a fonte).
+/// Lê a árvore `docs/<kind>/*.md` — **a FONTE** — e devolve os documentos prontos para vetorizar,
+/// ou `None` se a entidade não tem essa coleção.
 ///
-/// `id` sequencial e `text_to_embed` são **rematerializados aqui**, em ordem de nome de arquivo —
-/// pack reproduzível, mesma doutrina dos pareceres. O `.md` não guarda nenhum dos dois: eles são
-/// função da árvore, não do arquivo.
-fn preparar_servicos(docs_dir: &Path) -> Result<Option<Vec<auli_contract::Servico>>> {
-    let dir = docs_dir.join(Kind::Servicos.as_str());
-    if !dir.exists() {
-        return Ok(None);
-    }
-    let mut caminhos: Vec<std::path::PathBuf> = std::fs::read_dir(&dir)?
-        .filter_map(|e| e.ok().map(|e| e.path()))
-        .filter(|p| p.is_file() && p.extension().is_some_and(|e| e == "md"))
-        .collect();
-    caminhos.sort();
-    if caminhos.is_empty() {
-        return Ok(None);
-    }
-
-    let mut servicos = Vec::with_capacity(caminhos.len());
-    for (i, caminho) in caminhos.iter().enumerate() {
-        let texto = std::fs::read_to_string(caminho)?;
-        let (header, _resumo, corpo) = auli_contract::mddoc::parse_doc(&texto)
-            .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
-        // A trilha vem pré-composta da árvore; `tipo`/`classe` da struct de domínio são as partes.
-        let (tipo, classe) = auli_contract::partes_trilha_servico(&header.trilha);
-        servicos.push(auli_contract::Servico {
-            id: i + 1,
-            text_to_embed: auli_contract::compose_servico_text_to_embed(
-                tipo,
-                classe,
-                &header.titulo,
-                &corpo,
-            ),
-            tipo: tipo.to_string(),
-            classe: classe.to_string(),
-            orgao: header.orgao.unwrap_or_default(),
-            link: header.link,
-            titulo: header.titulo,
-            descricao: corpo,
-        });
-    }
-
-    println!(
-        "📄 docs: {} serviços lidos de {}",
-        servicos.len(),
-        dir.display()
-    );
-    Ok(Some(servicos))
-}
-
-/// Lê a árvore `docs/<kind>/*.md` de UMA coleção de jurisprudência — **a fonte** (G5b) — e devolve
-/// as consultas prontas para vetorizar, ou `None` se a entidade não tem essa árvore.
-///
-/// Um caminho só para pareceres e acórdãos: desde a unificação do vocabulário (#128) o `.md` das
-/// duas tem exatamente o mesmo formato, e o que difere é só o diretório e o rótulo do relatório. O
-/// que NÃO se compartilha é o pack — o `kind` viaja no registro e decide o `docs/<kind>/` do
-/// `doc_path` gravado nele.
-///
-/// O JSON saiu do caminho: cada `.md` carrega tudo que o índice precisa (frontmatter dá
-/// `titulo`/`ementa`/`link`, a seção `## resumo` dá o `resumo`, `## corpo` dá o corpo). O
-/// `text_to_embed` é recomposto aqui pelo ponto único (`compose_text_to_embed`), então todos os
-/// registros seguem a mesma fórmula, independentemente de quando foram produzidos.
-///
-/// Ordem estável: os arquivos são lidos em ordem de nome, para o pack ser reproduzível — os `id-N`
-/// da coleção não podem dançar entre rodadas.
-fn preparar_jurisprudencia(
-    entity: &str,
-    docs_dir: &Path,
-    kind: auli_contract::Kind,
-) -> Result<Option<Vec<auli_contract::Consulta>>> {
-    debug_assert!(kind.exige_resumo(), "só jurisprudência passa por aqui");
+/// **Um caminho para as quatro** (D-B2). O que muda entre elas é só qual fórmula compõe a key, e
+/// isso vive em [`documento_de`]. O `text_to_embed` é sempre RECOMPOSTO aqui, pelo ponto único do
+/// contrato: assim todos os registros seguem a mesma fórmula, independentemente de quando o `.md`
+/// foi produzido.
+fn preparar(entity: &str, docs_dir: &Path, kind: Kind) -> Result<Option<Vec<Documento>>> {
     let dir = docs_dir.join(kind.as_str());
-    if !dir.exists() {
-        return Ok(None); // entidade sem esta coleção
-    }
-    let mut caminhos: Vec<std::path::PathBuf> = std::fs::read_dir(&dir)?
-        .filter_map(|e| e.ok().map(|e| e.path()))
-        .filter(|p| p.is_file() && p.extension().is_some_and(|e| e == "md"))
-        .collect();
-    caminhos.sort();
-    if caminhos.is_empty() {
+    let Some(caminhos) = arquivos_md(&dir)? else {
         return Ok(None);
-    }
+    };
 
-    let mut consultas = Vec::with_capacity(caminhos.len());
+    let mut docs = Vec::with_capacity(caminhos.len());
     let mut pendentes: Vec<String> = Vec::new();
     for caminho in &caminhos {
         let texto = std::fs::read_to_string(caminho)?;
         let (header, resumo, corpo) = auli_contract::mddoc::parse_doc(&texto)
             .map_err(|e| format!("`{}` não parseia ({e})", caminho.display()))?;
         let resumo = resumo.unwrap_or_default();
-        if resumo.trim().is_empty() {
+        if kind.exige_resumo() && resumo.trim().is_empty() {
             pendentes.push(header.titulo.clone());
         }
-        consultas.push(auli_contract::Consulta {
-            kind,
-            text_to_embed: auli_contract::compose_text_to_embed(
-                &header.titulo,
-                &header.ementa,
-                &resumo,
-            ),
-            numero: header.titulo,
-            assunto: header.ementa,
-            link: header.link,
-            sinopse_info: header.resumo_info,
-            resumo,
-            corpo,
-        });
+        docs.push(documento_de(kind, header, resumo, corpo));
     }
 
     println!(
         "📄 docs: {} {} lidos de {}",
-        consultas.len(),
+        docs.len(),
         kind.plural(),
         dir.display()
     );
     recusar_jurisprudencia_sem_resumo(entity, kind, &pendentes)?;
-    Ok(Some(consultas))
+    Ok(Some(docs))
+}
+
+/// Um `.md` lido vira [`Documento`]. A única coisa que difere por coleção é a fórmula da key — o
+/// resto do mapeamento é o vocabulário unificado caindo 1:1.
+///
+/// As três fórmulas continuam sendo as do contrato, congeladas: mudar qualquer uma re-vetoriza os
+/// packs daquela coleção.
+fn documento_de(
+    kind: Kind,
+    header: auli_contract::mddoc::DocHeader,
+    resumo: String,
+    corpo: String,
+) -> Documento {
+    let text_to_embed = match kind {
+        Kind::Faqs => {
+            auli_contract::compose_faq_text_to_embed(&header.trilha, &header.titulo, &corpo)
+        }
+        Kind::Servicos => {
+            // A trilha vem pré-composta da árvore; `tipo`/`classe` são as partes dela.
+            let (tipo, classe) = auli_contract::partes_trilha_servico(&header.trilha);
+            auli_contract::compose_servico_text_to_embed(tipo, classe, &header.titulo, &corpo)
+        }
+        Kind::Pareceres | Kind::Tarf => {
+            auli_contract::compose_text_to_embed(&header.titulo, &header.ementa, &resumo)
+        }
+    };
+    Documento {
+        kind,
+        text_to_embed,
+        trilha: header.trilha,
+        titulo: header.titulo,
+        ementa: header.ementa,
+        link: header.link,
+        resumo_info: header.resumo_info,
+        resumo,
+        corpo,
+    }
 }
 
 /// Recusa vetorizar quando algum `.md` de **jurisprudência** está sem a seção `## resumo`: embedar
@@ -477,21 +366,19 @@ mod tests {
     fn le_a_arvore_como_fonte_sem_json_nenhum() {
         // O CORAÇÃO DA G5b: não existe JSON no cenário — tudo vem dos `.md`.
         let docs = arvore("fonte", &[("CONSULTA Nº 1/26", Some("SINOPSE UM"))]);
-        let consultas = preparar_jurisprudencia("xx", &docs, Kind::Pareceres)
-            .unwrap()
-            .unwrap();
+        let consultas = preparar("xx", &docs, Kind::Pareceres).unwrap().unwrap();
         assert_eq!(consultas.len(), 1);
         let c = &consultas[0];
-        assert_eq!(c.numero, "CONSULTA Nº 1/26");
-        assert_eq!(c.assunto, "assunto de CONSULTA Nº 1/26");
+        assert_eq!(c.titulo, "CONSULTA Nº 1/26");
+        assert_eq!(c.ementa, "assunto de CONSULTA Nº 1/26");
         assert_eq!(c.link, "http://x/CONSULTA Nº 1/26");
         assert_eq!(c.resumo, "SINOPSE UM");
         assert_eq!(c.corpo, "corpo de CONSULTA Nº 1/26");
-        assert_eq!(c.sinopse_info.as_ref().unwrap().modelo, "m");
+        assert_eq!(c.resumo_info.as_ref().unwrap().modelo, "m");
         // `text_to_embed` recomposto pelo ponto único: numero + assunto + sinopse.
         assert_eq!(
             c.text_to_embed,
-            auli_contract::compose_text_to_embed(&c.numero, &c.assunto, &c.resumo)
+            auli_contract::compose_text_to_embed(&c.titulo, &c.ementa, &c.resumo)
         );
     }
 
@@ -503,7 +390,7 @@ mod tests {
     /// montar o contexto RAG o corpo não é achado, degradando para o resumo sem nenhum erro visível.
     #[test]
     fn tarf_le_a_propria_arvore_e_grava_o_doc_path_dela() {
-        use auli_contract::{ConsultaPackPayload, Embeddable};
+        use auli_contract::{DocumentoPack, Embeddable};
 
         let docs = arvore_de(
             Kind::Tarf,
@@ -512,28 +399,24 @@ mod tests {
         );
         // A árvore montada é a do TARF: pedir `pareceres` no mesmo `docs_dir` não acha nada.
         assert!(
-            preparar_jurisprudencia("rs", &docs, Kind::Pareceres)
-                .unwrap()
-                .is_none(),
+            preparar("rs", &docs, Kind::Pareceres).unwrap().is_none(),
             "cada coleção lê SÓ o próprio diretório"
         );
 
-        let acordaos = preparar_jurisprudencia("rs", &docs, Kind::Tarf)
-            .unwrap()
-            .unwrap();
+        let acordaos = preparar("rs", &docs, Kind::Tarf).unwrap().unwrap();
         assert_eq!(acordaos.len(), 1);
         let a = &acordaos[0];
         assert_eq!(a.kind, Kind::Tarf);
-        assert_eq!(a.numero, "ACÓRDÃO 510/24");
+        assert_eq!(a.titulo, "ACÓRDÃO 510/24");
         assert_eq!(a.resumo, "FUNDAMENTAÇÃO");
 
         // O payload que vai ao pack aponta para `docs/tarf/`, não para `docs/pareceres/`.
-        let payload: ConsultaPackPayload = serde_json::from_str(&a.stored_repr()).unwrap();
+        let payload: DocumentoPack = serde_json::from_str(&a.stored_repr()).unwrap();
         assert_eq!(payload.doc_path, "docs/tarf/acordao-510-24.md");
         // E o `text_to_embed` é o mesmo compose de sempre — nenhuma fórmula nova nesta coleção.
         assert_eq!(
             a.text_to_embed,
-            auli_contract::compose_text_to_embed(&a.numero, &a.assunto, &a.resumo)
+            auli_contract::compose_text_to_embed(&a.titulo, &a.ementa, &a.resumo)
         );
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
     }
@@ -543,9 +426,7 @@ mod tests {
         // O passo `sinopse` varre só `docs/pareceres/`: sugeri-lo aqui manda o operador para um
         // comando que roda, não faz nada e não explica por quê.
         let docs = arvore_de(Kind::Tarf, "tarf-pend", &[("ACÓRDÃO 1/24", None)]);
-        let err = preparar_jurisprudencia("rs", &docs, Kind::Tarf)
-            .unwrap_err()
-            .to_string();
+        let err = preparar("rs", &docs, Kind::Tarf).unwrap_err().to_string();
         assert!(err.contains("`tarf`"), "nomeia a coleção: {err}");
         // A palavra "sinopse" APARECE — dizendo que aquele passo não existe aqui, que é a informação
         // útil. O que não pode aparecer é o COMANDO, que é o que o operador copiaria e colaria.
@@ -560,7 +441,7 @@ mod tests {
     #[test]
     fn documento_sem_sinopse_recusa_a_vetorizacao() {
         let docs = arvore("pend", &[("A 1", Some("tem")), ("B 2", None)]);
-        let err = preparar_jurisprudencia("xx", &docs, Kind::Pareceres)
+        let err = preparar("xx", &docs, Kind::Pareceres)
             .unwrap_err()
             .to_string();
         assert!(err.contains("1 documento(s)"), "erro: {err}");
@@ -582,7 +463,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(&base);
         std::fs::create_dir_all(&base).unwrap();
         assert!(
-            preparar_jurisprudencia("xx", &base.join("docs"), Kind::Pareceres)
+            preparar("xx", &base.join("docs"), Kind::Pareceres)
                 .unwrap()
                 .is_none()
         );
@@ -591,11 +472,7 @@ mod tests {
     #[test]
     fn arvore_vazia_e_pulada_em_vez_de_gerar_pack_vazio() {
         let docs = arvore("semdocs", &[]);
-        assert!(
-            preparar_jurisprudencia("xx", &docs, Kind::Pareceres)
-                .unwrap()
-                .is_none()
-        );
+        assert!(preparar("xx", &docs, Kind::Pareceres).unwrap().is_none());
     }
 
     #[test]
@@ -605,10 +482,8 @@ mod tests {
             "ordem",
             &[("C 3", Some("s")), ("A 1", Some("s")), ("B 2", Some("s"))],
         );
-        let consultas = preparar_jurisprudencia("xx", &docs, Kind::Pareceres)
-            .unwrap()
-            .unwrap();
-        let numeros: Vec<&str> = consultas.iter().map(|c| c.numero.as_str()).collect();
+        let consultas = preparar("xx", &docs, Kind::Pareceres).unwrap().unwrap();
+        let numeros: Vec<&str> = consultas.iter().map(|c| c.titulo.as_str()).collect();
         assert_eq!(
             numeros,
             vec!["A 1", "B 2", "C 3"],
@@ -653,19 +528,19 @@ mod tests {
                 ("a-faq", "Primeira", "Inicial | FAQ"),
             ],
         );
-        let faqs = preparar_faqs(&docs).unwrap().unwrap();
+        let faqs = preparar("xx", &docs, Kind::Faqs).unwrap().unwrap();
         assert_eq!(faqs.len(), 2);
-        let perguntas: Vec<&str> = faqs.iter().map(|f| f.pergunta.as_str()).collect();
+        let perguntas: Vec<&str> = faqs.iter().map(|f| f.titulo.as_str()).collect();
         assert_eq!(
             perguntas,
             vec!["Primeira", "Segunda"],
             "ordem = nome de arquivo"
         );
         let f = &faqs[0];
-        assert_eq!(f.origin, "Inicial | FAQ");
-        assert_eq!(f.url, "https://x/Primeira");
+        assert_eq!(f.trilha, "Inicial | FAQ");
+        assert_eq!(f.link, "https://x/Primeira");
         assert_eq!(
-            f.resposta, "resposta de Primeira",
+            f.corpo, "resposta de Primeira",
             "resposta == corpo do `.md`"
         );
         // `text_to_embed` recomposto pelo ponto único do contrato — com a RESPOSTA (D-FAQPR-1).
@@ -674,7 +549,7 @@ mod tests {
             "Inicial | FAQ\nP: Primeira\nR: resposta de Primeira"
         );
         assert_eq!(
-            faqs[1].origin, "",
+            faqs[1].trilha, "",
             "origin vazio sobrevive ao round-trip pela árvore"
         );
         assert_eq!(faqs[1].text_to_embed, "P: Segunda\nR: resposta de Segunda");
@@ -688,10 +563,14 @@ mod tests {
             std::env::temp_dir().join(format!("auli-update-faq-vazio-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         std::fs::create_dir_all(&base).unwrap();
-        assert!(preparar_faqs(&base.join("docs")).unwrap().is_none());
+        assert!(
+            preparar("xx", &base.join("docs"), Kind::Faqs)
+                .unwrap()
+                .is_none()
+        );
         // Árvore existente porém vazia também é `None` — melhor que gerar um pack vazio.
         let docs = arvore_faqs("semdocs", &[]);
-        assert!(preparar_faqs(&docs).unwrap().is_none());
+        assert!(preparar("xx", &docs, Kind::Faqs).unwrap().is_none());
         let _ = std::fs::remove_dir_all(&base);
     }
 
@@ -727,7 +606,7 @@ mod tests {
         // Gravados fora de ordem alfabética: a leitura tem que reordenar, porque os `id-N` do pack
         // derivam dela e não podem depender do `read_dir` do SO.
         let docs = arvore_servicos("ordem", &[("b-svc", "Segundo"), ("a-svc", "Primeiro")]);
-        let servicos = preparar_servicos(&docs).unwrap().unwrap();
+        let servicos = preparar("xx", &docs, Kind::Servicos).unwrap().unwrap();
         assert_eq!(servicos.len(), 2);
         let titulos: Vec<&str> = servicos.iter().map(|s| s.titulo.as_str()).collect();
         assert_eq!(
@@ -735,29 +614,22 @@ mod tests {
             vec!["Primeiro", "Segundo"],
             "ordem = nome de arquivo"
         );
-        // `id` rematerializado 1..N na ordem da árvore.
-        assert_eq!(
-            servicos.iter().map(|s| s.id).collect::<Vec<_>>(),
-            vec![1, 2]
-        );
         let s = &servicos[0];
-        assert_eq!(s.tipo, "Cidadãos");
-        assert_eq!(s.classe, "IPVA");
-        assert_eq!(s.orgao, "Receita Estadual");
+        // A trilha vem PRÉ-COMPOSTA da árvore. `id` e `orgao` não atravessam para o `Documento`:
+        // são campos de borda (D-B2), e nem a key nem o bloco os usam — quem precisa deles olha o
+        // `Servico`, no `process`.
+        assert_eq!(s.trilha, "Cidadãos | IPVA");
         assert_eq!(s.link, "https://x/Primeiro");
         assert_eq!(
-            s.descricao, "descrição de Primeiro",
-            "descricao == corpo do `.md`"
+            s.corpo, "descrição de Primeiro",
+            "corpo == `## corpo` do `.md`"
         );
-        // `text_to_embed` recomposto pelo ponto único do contrato.
+        assert_eq!(s.kind, Kind::Servicos);
+        // `text_to_embed` recomposto pelo ponto único do contrato, com as partes da trilha.
+        let (tipo, classe) = auli_contract::partes_trilha_servico(&s.trilha);
         assert_eq!(
             s.text_to_embed,
-            auli_contract::compose_servico_text_to_embed(
-                &s.tipo,
-                &s.classe,
-                &s.titulo,
-                &s.descricao
-            )
+            auli_contract::compose_servico_text_to_embed(tipo, classe, &s.titulo, &s.corpo)
         );
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
     }
@@ -769,10 +641,14 @@ mod tests {
             std::env::temp_dir().join(format!("auli-update-svc-vazio-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         std::fs::create_dir_all(&base).unwrap();
-        assert!(preparar_servicos(&base.join("docs")).unwrap().is_none());
+        assert!(
+            preparar("xx", &base.join("docs"), Kind::Servicos)
+                .unwrap()
+                .is_none()
+        );
         // Árvore existente porém vazia também é `None` — melhor que gerar um pack vazio.
         let docs = arvore_servicos("semdocs", &[]);
-        assert!(preparar_servicos(&docs).unwrap().is_none());
+        assert!(preparar("xx", &docs, Kind::Servicos).unwrap().is_none());
         let _ = std::fs::remove_dir_all(&base);
     }
 
@@ -782,9 +658,7 @@ mod tests {
         // houvesse pareceres, e a árvore de serviços ficaria fora da guarda de boot.
         let docs = arvore_servicos("hash", &[("a-svc", "Um")]);
         assert!(
-            preparar_jurisprudencia("xx", &docs, Kind::Pareceres)
-                .unwrap()
-                .is_none(),
+            preparar("xx", &docs, Kind::Pareceres).unwrap().is_none(),
             "sem pareceres"
         );
         assert!(
@@ -798,7 +672,7 @@ mod tests {
     fn documento_ilegivel_e_erro_alto() {
         let docs = arvore("ruim", &[("A 1", Some("s"))]);
         std::fs::write(docs.join("pareceres/ruim.md"), "sem frontmatter").unwrap();
-        let err = preparar_jurisprudencia("xx", &docs, Kind::Pareceres)
+        let err = preparar("xx", &docs, Kind::Pareceres)
             .unwrap_err()
             .to_string();
         assert!(err.contains("não parseia"), "erro: {err}");
