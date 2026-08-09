@@ -73,6 +73,10 @@ echo "▶ 2/7  zips de download por estado (public/downloads/)"
 # arrastar ~70 MB de zip junto. Tem de vir ANTES do build, porque o Vite copia public/ para dist/ —
 # é assim que os zips sobem, sem caminho de publicação próprio. O bundle é determinístico: quando o
 # conteúdo não muda, ele nem reescreve os arquivos.
+# ⚠️ Este passo usa o binário COMO ESTÁ no disco — este script nunca compila. Mudou o `bundle.rs`?
+# Rode `cargo build --release -p auli-cli` ANTES, ou os zips saem do código velho, sem aviso. Foi o
+# que aconteceu em 09/08/2026: README do `tarf/` publicado com "Coleta em andamento" cinco horas
+# depois de a frase ter sido removida do código. Ver auli_operations.md §11.
 BUNDLE_BIN="${AULI_BIN:-$ROOT/auli-server/target/release/auli}"
 if [ -x "$BUNDLE_BIN" ]; then
   "$BUNDLE_BIN" bundle --data-root "$ROOT/data" --out "$FRONT/public/downloads"

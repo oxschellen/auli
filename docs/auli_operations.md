@@ -887,6 +887,39 @@ scripts/deploy-frontend.sh               # publica
 Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SMOKE_HOST`,
 `SMOKE_ORIGIN`, `SMOKE_BASE`); os padrões apontam para o VPS de produção. Ver o cabeçalho do script.
 
+> ### ⚠️ Mexeu em Rust? Recompile ANTES de publicar
+>
+> O diagrama acima tem uma **quarta origem** que ele não mostra, e ela não é um arquivo do repo — é
+> um binário compilado:
+>
+> ```text
+> auli-server/crates/auli-cli/src/bundle.rs  →  target/release/auli  →  public/downloads/*.zip
+>                                            cargo build --release    deploy-frontend.sh (passo 2/7)
+> ```
+>
+> **O `deploy-frontend.sh` nunca compila.** O passo 2/7 invoca o `auli bundle` do
+> `target/release/` como ele estiver no disco. Se o binário for anterior à sua mudança, os zips saem
+> do código velho — e o script **não avisa**: ele só reclama quando o binário está *ausente*
+> (`⚠️ não encontrado`), nunca quando está *velho*.
+>
+> **Como isso aparece:** silenciosamente. Em 09/08/2026 os zips foram regerados com o `bundle.rs` já
+> corrigido no `main` e saíram com a frase antiga (`"Coleta em andamento"` no README do `tarf/`)
+> porque o binário era de cinco horas antes. Só apareceu porque alguém abriu o `.zip` e conferiu o
+> texto. Nenhum teste pega: a suíte roda contra o código-fonte, e o artefato publicado vem do binário.
+>
+> ```bash
+> cargo build --release -p auli-cli   # antes de deploy-frontend.sh, sempre que bundle.rs mudar
+> ```
+>
+> Vale para tudo que o deploy consome pronto, não só o `bundle`. A regra curta: **commit em Rust não
+> muda binário nenhum** — e o que sobe é o binário.
+>
+> **Conferir depois** custa dois comandos e é o único jeito de ter certeza de que o texto certo subiu:
+>
+> ```bash
+> unzip -p auli-frontend/public/downloads/rs.zip tarf/README.md | head -5
+> ```
+
 **O smoke test mede a ORIGEM, não a borda.** Ele conecta direto no IP da VPS (`SMOKE_ORIGIN`,
 derivado do `DEPLOY_HOST`) mandando o SNI de `SMOKE_HOST` (`auli.com.br`), via `curl --resolve`. Os
 dois motivos:
