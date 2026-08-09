@@ -8,7 +8,8 @@
 # Flags:    --no-build    pula o `cargo build` e sobe o binário já compilado (restart rápido).
 #           --no-tunnel   sobe só o servidor local, sem o túnel Cloudflare.
 #                         (--no-ngrok continua aceito como apelido de --no-tunnel.)
-# Variáveis opcionais: PORT (3000), BIND (0.0.0.0), AULI_DATA_DIR (../data) — raiz dos dados,
+# Variáveis opcionais: PORT (3000), BIND (127.0.0.1 — só loopback; use 0.0.0.0 para expor na rede),
+#                      AULI_DATA_DIR (../data) — raiz dos dados,
 #                      AULI_CONFIG_DIR (default: a `config/` irmã dela), TUNNEL_NAME (auli-api),
 #                      CARGO_TARGET_DIR (reuso do build).
 set -euo pipefail
@@ -50,7 +51,12 @@ export EMBED_CACHE_DIR="${EMBED_CACHE_DIR:-$ROOT/models}"
 export AULI_LOG_DIR="${AULI_LOG_DIR:-$ROOT/logs}"
 
 PORT="${PORT:-3000}"
-BIND="${BIND:-0.0.0.0}"   # multi-instância atrás de reverse proxy: BIND=127.0.0.1
+# Loopback por padrão: o túnel roda NESTA máquina e o ingress do cloudflared aponta para
+# `http://localhost:3000` (~/.cloudflared/config.yml), então ninguém precisa alcançar a porta pela
+# rede. Com `0.0.0.0` — o default até 09/08/2026 — a :3000 ficava aberta a qualquer máquina da rede
+# local, que assim falaria com a API contornando o Cloudflare e, com ele, o rate limiting.
+# Para expor de propósito (testar de outro aparelho, reverse proxy em outra máquina): BIND=0.0.0.0.
+BIND="${BIND:-127.0.0.1}"
 TUNNEL_NAME="${TUNNEL_NAME:-auli-api}"
 BIN="$CARGO_TARGET_DIR/release/auli"
 

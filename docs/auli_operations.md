@@ -582,6 +582,30 @@ exporta `AULI_DATA_DIR=../data`, derruba uma instância anterior na porta, compi
 encerra os dois (um `trap` derruba o cloudflared junto). O túnel precisa ter sido configurado 1× com
 `./setup-cloudflared.sh` (ver §10); sem isso, sobe só o servidor local.
 
+**Escuta só em loopback** (`BIND=127.0.0.1`, default desde 09/08/2026). O cloudflared roda nesta
+mesma máquina e seu ingress aponta para `http://localhost:3000`, então nada precisa alcançar a porta
+pela rede. Com o `0.0.0.0` de antes, qualquer máquina da rede local falava com a API **contornando o
+Cloudflare** — e o rate limiting junto, que mora lá (§10.2). Para expor de propósito — testar de um
+celular, reverse proxy em outra máquina — `BIND=0.0.0.0 ./start_server.sh`.
+
+### Liberar o terminal
+
+O server é foreground **por desenho**: é o que permite ao `trap` derrubar o cloudflared no Ctrl+C.
+Para recuperar o prompt sem perder isso:
+
+```bash
+tmux new -s auli -d './start_server.sh'   # recomendado
+tmux attach -t auli                       # ver ao vivo; Ctrl+B D sai sem matar
+```
+
+O `tmux` é melhor que `nohup ... &` porque o **Ctrl+C continua disponível de verdade**: você reata,
+interrompe limpo e o `trap` derruba o túnel junto. Com `nohup` você depende de acertar o sinal no
+`kill`, e um `kill -9` deixa o cloudflared órfão.
+
+```bash
+nohup ./start_server.sh > /tmp/auli-server.log 2>&1 &   # alternativa sem tmux
+```
+
 Variáveis de ambiente para sobrescrever:
 
 ```bash
@@ -606,7 +630,7 @@ TUNNEL_NAME=outro-tunel ./start_server.sh         # outro túnel cloudflared
 📦 sc-servicos — 208 registros
 🔎 Manifesto de 'mg' validado contra a identidade local.
 📦 mg-servicos — 148 registros
-✅ Server started successfully at 0.0.0.0:3000
+✅ Server started successfully at 127.0.0.1:3000
 ```
 
 ### Sem o script (comando direto)
