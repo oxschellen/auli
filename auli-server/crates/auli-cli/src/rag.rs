@@ -995,7 +995,7 @@ mod tests {
     // única verificação de paridade seria o diff manual de log. Se um destes asserts falhar num
     // refactor futuro, o contexto do RAG mudou — o que muda a resposta do modelo.
     //
-    // Os literais mudaram em 2026-08, deliberadamente (TAREFA-MARCADORES): os quatro invólucros
+    // Os literais mudaram em 2026-08, deliberadamente (TAREFA-MARCADORES, PR #129): os quatro invólucros
     // viraram `## documento {i}: {rótulo}`. As travas impedem mudança ACIDENTAL, não decidida — por
     // isso foram reescritas no mesmo commit do código, à mão, e não regeradas pela função sob teste.
 

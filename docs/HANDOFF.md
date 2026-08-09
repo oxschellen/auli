@@ -109,7 +109,7 @@ Nenhuma é bug; todas estão travadas por teste para não virarem descoberta fut
 
 **Compose de serviço com `titulo` vazio.** A fórmula antiga deixava linha em branco; a nova pula o slot. Esse estado não existe na árvore — o título é a identidade e a origem do nome do arquivo. Teste: `compose_de_servico_com_titulo_vazio_e_a_unica_divergencia_conhecida`.
 
-**Prefixos `P:`/`R:` do embed de FAQ.** A `TAREFA-FORMATO-MD` descrevia a fórmula errada (a pré-`TAREFA-FAQ-PR`). A vigente tem os prefixos e a resposta dentro. Resolvido pondo os prefixos no **valor** dos slots, não na fórmula — quando o gate P5 os remover, some o mapeamento, não o compose.
+**Prefixos `P:`/`R:` do embed de FAQ.** A `TAREFA-FORMATO-MD` (PR #128) descrevia a fórmula errada (a pré-`TAREFA-FAQ-PR`). A vigente tem os prefixos e a resposta dentro. Resolvido pondo os prefixos no **valor** dos slots, não na fórmula — quando o gate P5 os remover, some o mapeamento, não o compose.
 
 **Um acórdão em 22.522 usa hífen** no número (`Acórdão do pleno 100-25`). Vai para o fim da lista sem data inventada, que é o comportamento projetado da `chave_cronologica`.
 
@@ -119,4 +119,6 @@ Nenhuma é bug; todas estão travadas por teste para não virarem descoberta fut
 
 **`KINDS_SEGURADOS` está vazio**, mas o mecanismo permanece em `bundle.rs`: a próxima coleção incompleta vai precisar dele.
 
-**Documentos de decisão** em `docs/`: `DISCOVERY-TARF`, `ESTUDO-TARF-formato`, `TAREFA-TARF-SCRAPER`, `TAREFA-FORMATO-MD`, `TAREFA-MARCADORES`, `ESTUDO-colecoes-trait`, `PEDIDO-verificacoes-TARF`. O `PEDIDO` **não foi executado** — é leitura de código e relatório, reservado a uma sessão separada, e não bloqueia nada.
+**Documentos de decisão** ainda em `docs/`: `DISCOVERY-TARF`, `ESTUDO-TARF-formato`, `ESTUDO-colecoes-trait`, `TAREFA-DOCUMENTO`.
+
+As TAREFAs `TARF-SCRAPER` (#127), `FORMATO-MD` (#128) e `MARCADORES` (#129) foram apagadas depois de implantadas — o commit de merge de cada uma é o registro, e o histórico do git tem o texto. O `PEDIDO-verificacoes-TARF` também saiu, mas por outro motivo: as três perguntas dele foram respondidas pela implementação, com mais evidência do que o relatório teria produzido — o nome `Consulta` não vazava em snapshot (virou `Documento` na #133), a ementa longa e em caixa alta do TARF está em produção, e o kind `pareceres` hardcoded virou o enum `Kind` (#132), com critério de grep provando que não sobrou string solta.
