@@ -568,6 +568,13 @@ congelada no plano.
 > (`TAREFA-SERVICOS-MD`, `TAREFA-FAQS-MD`, `TAREFA-FAQ-PR`, `TAREFA-EXTRACAO`, `TAREFA-CANONIZADOR`)
 > em ~20 lugares. Os arquivos não existem mais — **é esta seção que os substitui**. As citações são
 > linhagem deliberada, não links quebrados.
+>
+> **Segunda leva, apagada em 08/08/2026.** Mesmo tratamento, mas com um ponteiro melhor: cada uma
+> tem o número do PR, e a mensagem de merge dele carrega o raciocínio. `TAREFA-TARF-SCRAPER`
+> (#127), `TAREFA-FORMATO-MD` (#128), `TAREFA-MARCADORES` (#129), `TAREFA-DOCUMENTO` (#132/#133/#134)
+> e `TAREFA-CONFIG` (#135). O `PEDIDO-verificacoes-TARF` saiu por outro motivo: as três perguntas
+> dele foram respondidas pela implementação. A arquitetura que a `TAREFA-DOCUMENTO` entregou está
+> descrita em [docs/auli_code.md](docs/auli_code.md) §3.13 — não aqui.
 
 ### TAREFA-SERVICOS-MD (PR #107) e TAREFA-FAQS-MD (PR #108) — ✅ entregues
 
@@ -992,8 +999,10 @@ local — 483 testes, os três `--ignored` do embedder contra o modelo real, e `
 ## MCP v2 (aberta — o que a v1 deliberadamente deixou de fora)
 
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) subiu com três ferramentas e rate
-limit; a quarta (`consultar_servicos_faqs`) entrou depois — ver o item riscado abaixo. O que ficou
-registrado como próximo passo:
+limit; a quarta (`consultar_servicos_faqs`) entrou depois — ver o item riscado abaixo. Em 08/08/2026
+as duas de jurisprudência ganharam o parâmetro opcional `colecao` (`pareceres`, o padrão, ou `tarf`),
+com compatibilidade byte a byte para quem não o manda (#132). O que ficou registrado como próximo
+passo:
 
 - **Auth opcional no `/mcp` (D-MCP-9).** Hoje sem autenticação: é conteúdo público e somente-leitura,
   atrás do tunnel e com rate limit próprio (10 req/s, burst 30). Uma API key por header
@@ -1020,7 +1029,10 @@ registrado como próximo passo:
   a paridade com o comportamento antigo de "pega tudo até o teto"). Agora que o `/v1/retrieve`
   **expõe os scores**, dá para calibrar com dados reais: rodar os ~10 testes do SC, ler os arrays
   de distância e baixar cada banda para logo acima de onde os matches genuínos se separam do
-  enchimento. É a pendência com maior efeito sobre a qualidade da resposta. (Ao mexer nelas, rodar
+  enchimento. É a pendência com maior efeito sobre a qualidade da resposta, e ganhou um argumento
+  novo em 08/08/2026: com as bandas em infinito, uma busca que não acha NADA devolve `n_results`
+  distratores ao LLM em vez de contexto vazio — medido em
+  [docs/ESTUDO-busca-hibrida.md](docs/ESTUDO-busca-hibrida.md) §3. (Ao mexer nelas, rodar
   `scripts/parity-replay.py` — ver `docs/auli_operations.md` §6.1 — para ver EXATAMENTE quais documentos
   mudam de contexto.)
 
@@ -1054,11 +1066,33 @@ Alavancas reais, se a lentidão incomodar no uso contínuo (nenhuma urgente):
 - **Handshake só na 1ª chamada.** `initialize`/`tools/list` rodam uma vez por sessão; as chamadas
   seguintes reaproveitam. Não é recorrente.
 
+## 35. Página **Sobre** e manuais MCP não mencionam o TARF (aberta — 2026-08-09)
+
+Achado ao revisar os quatro documentos vivos. Não é afirmação falsa como as da §29 — é **omissão**,
+e ela aparece justamente no texto voltado ao público.
+
+O [about.md](auli-frontend/public/about.md) descreve o acervo em três lugares como "serviços,
+perguntas frequentes e pareceres" (linhas 13, 27 e 39). Os acórdãos do TARF estão no chat como fonte
+própria, na aba, no MCP e nos zips de download desde 08/08 — quem lê a página conclui que não
+existem. A linha 39, que fala do conector MCP, cita "o acervo de pareceres e respostas a consultas"
+sem o parâmetro `colecao`.
+
+**Por que ainda não corrigi:** o total do TARF muda a cada rodada de coleta (3.800 de ~22.522), e o
+texto do Sobre é do tipo que se escreve uma vez. Corrigir agora significa ou omitir o número — o que
+é aceitável, o Sobre não dá números hoje — ou voltar nele quando a coleta fechar. **Decisão a
+tomar:** escrever sem número agora, ou esperar o fecho da coleta.
+
+Os manuais em `manuais/` estão na mesma situação por decisão explícita e registrada: eles ganharam a
+descrição do parâmetro `colecao`, mas **não** um total do TARF, para não publicar um número que muda
+toda semana (#132).
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
 `"SEF-MG"` em [`auli-scraper-mg/src/mg.rs:222`](auli-server/crates/scrapers/auli-scraper-mg/src/mg.rs#L222)
-(o `registry.toml` já usa `SEF-MG`; confirmado 148/148 no snapshot). Muda bytes do snapshot MG →
+(o `registry.toml` já usa `SEF-MG`; confirmado em todos os itens do snapshot — 149 na coleta atual). Muda bytes do snapshot MG →
 **recoleta verificada + commit de dados próprio**, na próxima vez que o MG for tocado.
 
 ---
