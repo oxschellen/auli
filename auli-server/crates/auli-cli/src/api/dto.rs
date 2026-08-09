@@ -29,6 +29,16 @@ pub struct EntityQuery {
 pub struct Answer {
     pub question: String,
     pub answer: String,
+    /// Identidade do registro de auditoria desta resposta (D-LOG-2), e ao mesmo tempo a
+    /// *capability* que abre `GET /v1/log/{uuid}` — só volta a quem perguntou, e não há rota que
+    /// liste ou conte logs.
+    ///
+    /// **Ausente quando a gravação falhou**, e é assim que o frontend sabe não desenhar o ícone:
+    /// não existe log para abrir. Campo novo e opcional ⇒ cliente antigo não quebra; `Option<T>`
+    /// no serde já aceita a chave ausente na desserialização. `skip_serializing_if` para o JSON
+    /// sair sem a chave em vez de com `null`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub log_id: Option<String>,
 }
 
 /// Corpo do POST /v1/retrieve. `kind` usa o vocabulário único de `corpus::from_kind`.

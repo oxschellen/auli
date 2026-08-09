@@ -14,6 +14,7 @@ use auli_contract::{DocumentoPack, Kind, bloco, conteudo_indisponivel};
 use auli_core::corpus::{self, FAQS, SERVICES};
 use auli_retrieval::{Engine, Hit};
 use tracing::{debug, error, info, trace, warn};
+use uuid::Uuid;
 
 use crate::config::config;
 use crate::entities::get_entity;
@@ -291,7 +292,7 @@ pub async fn exec_all_question(
     question: String,
     entity: Option<String>,
     query_type: QueryType,
-) -> Result<String> {
+) -> Result<(String, Option<Uuid>)> {
     debug!("Executando consulta: {}", question);
 
     let t_total = Instant::now();
@@ -320,7 +321,9 @@ pub async fn exec_all_question(
         Ok(cfg) => cfg,
         Err(e) => {
             warn!("{}", e);
-            return Ok(e);
+            // Sem `log_id`: este atalho sai antes de qualquer gravação. O ícone do log não aparece
+            // porque de fato não há registro — mesma regra dos outros retornos precoces.
+            return Ok((e, None));
         }
     };
     info!("Entidade: {} ({})", cfg.id, cfg.name);
@@ -396,9 +399,13 @@ pub async fn exec_all_question(
             // Coleção não vetorizada para esta entidade — avisa em vez de mandar o LLM responder com
             // contexto vazio (que é convite a alucinação).
             if hits.is_empty() {
-                return Ok(format!(
-                    "A consulta de {} ainda não está disponível para esta entidade.",
-                    kind.titulo()
+                // Idem: sai antes do `log_question`, logo sem `log_id`.
+                return Ok((
+                    format!(
+                        "A consulta de {} ainda não está disponível para esta entidade.",
+                        kind.titulo()
+                    ),
+                    None,
                 ));
             }
 
@@ -509,7 +516,13 @@ pub async fn exec_all_question(
         "tempos da consulta"
     );
 
-    log_question(&RegistroConsulta {
+    // Gravação NÃO-FATAL (D-LOG-2). Até 09/08/2026 esta linha terminava em `?`: o erro subia, e o
+    // handler converte qualquer `Err` em texto de resposta — com o disco cheio, o usuário recebia
+    // "Permission denied (os error 13)" no lugar da resposta, depois de o LLM já ter rodado e sido
+    // pago. Perder o registro é ruim; perder a resposta que já custou é pior. Agora o erro vai ao
+    // tracing e a consulta segue sem `log_id` — que é exatamente o sinal de "não há log para abrir"
+    // que o frontend usa para não desenhar o ícone.
+    let log_id = log_question(&RegistroConsulta {
         entidade: &cfg.id,
         tipo: query_type.label(),
         original: &question,
@@ -518,9 +531,11 @@ pub async fn exec_all_question(
         aderencia: &montar_aderencia(&itens_aderencia),
         rag: &rag,
         tempos,
-    })?;
+    })
+    .inspect_err(|e| warn!("falha ao gravar o log da consulta: {e}"))
+    .ok();
 
-    Ok(answer)
+    Ok((answer, log_id))
 }
 
 /// Uma consulta a registrar no log de auditoria — tudo que entra no arquivo, menos o carimbo de
@@ -618,13 +633,25 @@ fn format_log_record(stamp: &str, reg: &RegistroConsulta) -> String {
     )
 }
 
+/// Diretório de logs configurável; default `./logs` (relativo ao CWD). O `start_server.sh` aponta
+/// para a raiz do repo (`$ROOT/logs`) para não depender de onde o binário é lançado.
+///
+/// Compartilhado com o handler de `GET /v1/log/{uuid}`, que precisa procurar no MESMO lugar onde
+/// se grava — duas cópias desta linha divergiriam no dia em que a variável mudasse de nome.
+pub(crate) fn log_dir() -> String {
+    std::env::var("AULI_LOG_DIR").unwrap_or_else(|_| "./logs".to_string())
+}
+
 /// `pub(crate)` porque a face MCP grava pelo MESMO caminho — mesmo diretório, mesmas permissões
 /// (0700/0600), mesmo formato. Duplicar o gravador criaria dois lugares para acertar a doutrina de
 /// §7.0 do `auli_operations.md`; `answer: None` é a única diferença (o MCP não chama LLM).
-pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<()> {
-    // Diretório de logs configurável; default `./logs` (relativo ao CWD). O start_server.sh aponta
-    // para a raiz do repo (`$ROOT/logs`) para não depender de onde o binário é lançado.
-    let log_dir = std::env::var("AULI_LOG_DIR").unwrap_or_else(|_| "./logs".to_string());
+///
+/// **Devolve o UUID v7 do registro** (D-LOG-1), que é a identidade do arquivo e a *capability* da
+/// rota `GET /v1/log/{uuid}`: quem o possui lê aquele log, e não há como enumerar os demais. É aqui
+/// que ele nasce — e não no handler do chat — porque é aqui que se sabe se a gravação deu certo, e
+/// porque assim as DUAS faces ganham nome único (ver a colisão descrita abaixo).
+pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<Uuid> {
+    let log_dir = log_dir();
     fs::create_dir_all(&log_dir)?;
     // O conteúdo é DELIBERADAMENTE íntegro (ver `format_log_record`), então a proteção é de
     // ACESSO: diretório 0700, arquivos 0600. `create_dir_all` não reaplica modo num diretório que
@@ -636,26 +663,39 @@ pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<()> {
         fs::set_permissions(&log_dir, fs::Permissions::from_mode(0o700))?;
     }
     let agora = chrono::Local::now();
-    let path = format!("{}/{}.txt", log_dir, agora.format("%Y-%m-%d_%H-%M-%S"));
+    // O prefixo de data continua na frente porque é para HUMANOS: `ls logs/` segue cronológico e
+    // legível. O UUID v7 vai de sufixo e desempata o que o prefixo não distingue — dois registros
+    // no mesmo segundo —, porque seus 48 bits mais significativos são o timestamp em ms.
+    let id = Uuid::now_v7();
+    let path = format!("{}/{}_{id}.txt", log_dir, agora.format("%Y-%m-%d_%H-%M-%S"));
     let stamp = agora.format("%Y-%m-%d %H:%M:%S").to_string();
     let content = format_log_record(&stamp, reg);
     let mut opts = OpenOptions::new();
-    opts.create(true).append(true);
+    // `create_new`, não `create().append()`. Antes o nome era só o timestamp em SEGUNDOS e o
+    // arquivo abria em append — duas consultas no mesmo segundo (o rate limit tem burst 2, IPs
+    // distintos não competem entre si, e o MCP faz várias chamadas por conversa) gravavam no MESMO
+    // arquivo, podendo intercalar sob `O_APPEND`. Com a rota `GET /v1/log/{uuid}` isso deixaria de
+    // ser bagunça e viraria vazamento: o glob de um UUID devolveria a pergunta de outra pessoa,
+    // com a PII dela. Aqui a unicidade vira INVARIANTE VERIFICADA — se um dia colidir, o open
+    // falha, o erro é registrado e a consulta segue sem `log_id` (nunca dois registros num arquivo).
+    opts.create_new(true).write(true);
     #[cfg(unix)]
     {
         use std::os::unix::fs::OpenOptionsExt;
-        opts.mode(0o600); // só vale na CRIAÇÃO; o nome tem timestamp, então todo arquivo é novo
+        opts.mode(0o600); // só vale na CRIAÇÃO — e com `create_new` toda abertura é criação
     }
     let mut file = opts.open(&path)?;
     debug!("Log da consulta gravado em {}", path);
-    writeln!(file, "{}", content)
+    writeln!(file, "{}", content)?;
+    Ok(id)
 }
 
 #[cfg(test)]
 mod tests {
     use super::{
-        QueryType, RegistroConsulta, TemposConsulta, aderencia, bloco_documento, envolver,
-        format_log_record, montar_aderencia, montar_rag_jurisprudencia, montar_rag_servicos_faqs,
+        QueryType, RegistroConsulta, TemposConsulta, Uuid, aderencia, bloco_documento, envolver,
+        format_log_record, log_question, montar_aderencia, montar_rag_jurisprudencia,
+        montar_rag_servicos_faqs,
     };
     use auli_contract::{DocumentoPack, Kind, mddoc};
     use std::path::Path;
@@ -1076,5 +1116,81 @@ mod tests {
             montar_rag_jurisprudencia(Kind::Pareceres, &blocos, &rel),
             "\n## documento 1: Parecer\nBLOCO UM\n\n## documento 1: Parecer relacionado\nBLOCO REL\n"
         );
+    }
+
+    // ---- Gravação: identidade e unicidade do arquivo (D-LOG-1) ----
+
+    /// `AULI_LOG_DIR` é global do processo e os testes rodam em paralelo: uma escrita só, garantida
+    /// pelo `LazyLock`. Nenhum outro teste desta crate chama o `log_question`.
+    static DIR_DE_TESTE: std::sync::LazyLock<std::path::PathBuf> = std::sync::LazyLock::new(|| {
+        let dir = std::env::temp_dir().join(format!("auli-rag-log-{}", Uuid::now_v7()));
+        std::fs::create_dir_all(&dir).unwrap();
+        unsafe { std::env::set_var("AULI_LOG_DIR", &dir) };
+        dir
+    });
+
+    fn registro_de_teste() -> RegistroConsulta<'static> {
+        RegistroConsulta {
+            entidade: "rs",
+            tipo: "pareceres",
+            original: "pergunta",
+            sanitizada: "pergunta",
+            answer: Some("resposta"),
+            aderencia: "",
+            rag: "contexto",
+            tempos: TemposConsulta::default(),
+        }
+    }
+
+    /// O UUID devolvido é o que nomeia o arquivo — é o contrato inteiro do `log_id`: o que volta ao
+    /// cliente tem de abrir aquele registro, e não outro.
+    #[test]
+    fn log_question_devolve_o_uuid_que_nomeia_o_arquivo() {
+        let dir = &*DIR_DE_TESTE;
+        let id = log_question(&registro_de_teste()).unwrap();
+
+        let achado = std::fs::read_dir(dir)
+            .unwrap()
+            .flatten()
+            .map(|e| e.file_name().to_string_lossy().into_owned())
+            .find(|n| n.ends_with(&format!("_{id}.txt")));
+
+        assert!(achado.is_some(), "nenhum arquivo termina em _{id}.txt");
+    }
+
+    /// **A regressão que a D-LOG-1 existe para impedir.** Antes o nome era só o timestamp em
+    /// SEGUNDOS e o arquivo abria em `append`: duas consultas no mesmo segundo viravam UM arquivo
+    /// com dois registros. Com a rota `GET /v1/log/{uuid}` isso serviria a pergunta — e a PII — de
+    /// outra pessoa a quem pedisse o próprio log.
+    ///
+    /// Duas gravações em sequência imediata caem no mesmo segundo (e quase sempre no mesmo
+    /// milissegundo), que é justamente o caso que colidia.
+    #[test]
+    fn duas_gravacoes_seguidas_nao_se_misturam_num_arquivo() {
+        let dir = &*DIR_DE_TESTE;
+        let a = log_question(&registro_de_teste()).unwrap();
+        let b = log_question(&registro_de_teste()).unwrap();
+
+        assert_ne!(a, b, "dois registros não podem compartilhar identidade");
+
+        for id in [a, b] {
+            let arquivo = std::fs::read_dir(dir)
+                .unwrap()
+                .flatten()
+                .map(|e| e.path())
+                .find(|p| {
+                    p.file_name()
+                        .and_then(|n| n.to_str())
+                        .is_some_and(|n| n.ends_with(&format!("_{id}.txt")))
+                })
+                .unwrap_or_else(|| panic!("arquivo de {id} não existe"));
+
+            let conteudo = std::fs::read_to_string(&arquivo).unwrap();
+            assert_eq!(
+                conteudo.matches("PERGUNTA (ORIGINAL)").count(),
+                1,
+                "{arquivo:?} tem mais de um registro — a colisão voltou"
+            );
+        }
     }
 }

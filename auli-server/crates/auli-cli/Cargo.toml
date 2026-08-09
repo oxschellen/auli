@@ -42,6 +42,11 @@ toml = "1.1.2" # parse config/registry.toml
 derive_more = { version = "2.1.1", features = ["from", "display"] }
 dotenvy = "0.15.7"
 chrono = { version = "0.4.44", features = ["serde"] }
+# Identidade do registro de auditoria (D-LOG-1). **v7** e não v4: os 48 bits mais significativos
+# são o timestamp em ms, então o nome do arquivo ordena cronologicamente até o milissegundo e
+# desempata dentro do mesmo segundo. Já vinha no lockfile por `rmcp`/`tower-http` — aqui só vira
+# dependência direta com a feature.
+uuid = { version = "1.24.0", features = ["v7"] }
 
 # Error Handling:
 thiserror = "2.0.18"
@@ -59,3 +64,5 @@ sha2 = "0.10.9"
 
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }
+# `tests/log_api.rs` monta UUIDs válidos para exercitar a rota do log.
+uuid = { version = "1.24.0", features = ["v7"] }

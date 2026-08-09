@@ -17,7 +17,7 @@ pub mod ratelimit;
 
 use crate::state::AppState;
 
-use handlers::{health_handler, list_handler, question_handler, retrieve_handler};
+use handlers::{health_handler, list_handler, log_handler, question_handler, retrieve_handler};
 use ratelimit::SharedLimiter;
 
 // Rota pública sem estado: health-check.
@@ -103,6 +103,25 @@ const MCP_ALLOWED_HOSTS: [&str; 5] = [
     "api.auli.com.br",
     "auli.com.br",
 ];
+
+/// `GET /v1/log/{uuid}` — o registro de auditoria de UMA consulta, para quem tem o UUID dela
+/// (D-LOG-3). Sem estado: o handler só lê o diretório de logs.
+///
+/// **Compartilha o limiter do `/v1/question`** — mas por um motivo diferente do dele. Lá a cota
+/// protege o LLM e o embedder (D-MCP-6); aqui não há nem um nem outro, só a leitura de um arquivo.
+/// A cota serve a outra coisa: é o freio de quem chuta UUIDs em volume. Não é ela que torna a rota
+/// segura (74 bits de aleatoriedade no v7 já põem a força bruta fora de alcance) — é uma segunda
+/// tranca barata, e reusar o limiter em vez de criar um novo evita dobrar a cota efetiva por IP.
+///
+/// Não existe rota que liste, conte ou enumere logs, e é de propósito: o UUID é a única porta.
+pub fn log_routes(limiter: SharedLimiter) -> Router {
+    Router::new()
+        .route("/v1/log/{uuid}", get(log_handler))
+        .layer(middleware::from_fn_with_state(
+            limiter,
+            ratelimit::rate_limit,
+        ))
+}
 
 // Rota de listagem de dados (somente leitura), genérica por `{kind}`. Pública.
 // A ingestão NÃO é uma rota — é o `auli update`.

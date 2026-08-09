@@ -25,7 +25,8 @@ pub mod update;
 mod util;
 
 use crate::api::{
-    cors_routes, data_routes, mcp_routes, public_routes, question_routes, retrieve_routes,
+    cors_routes, data_routes, log_routes, mcp_routes, public_routes, question_routes,
+    retrieve_routes,
 };
 use crate::config::config;
 use crate::state::AppState;
@@ -61,7 +62,8 @@ pub fn app(state: Arc<AppState>) -> Router {
     Router::new()
         .merge(public_routes())
         .merge(question_routes(state.clone(), embed_limiter.clone()))
-        .merge(retrieve_routes(state.clone(), embed_limiter))
+        .merge(retrieve_routes(state.clone(), embed_limiter.clone()))
+        .merge(log_routes(embed_limiter))
         .merge(data_routes(state.clone()))
         .merge(mcp_routes(state))
         .layer(cors_routes())
