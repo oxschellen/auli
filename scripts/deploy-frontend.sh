@@ -21,6 +21,9 @@
 #   SMOKE_ORIGIN  onde o smoke CONECTA          (padrão: o host de DEPLOY_HOST)
 #   SMOKE_BASE    URL base do smoke test        (padrão: https://$SMOKE_HOST)
 #   SMOKE_INSECURE=1  ignora o certificado no smoke (padrão: 0)
+#   AULI_BIN      binário do `auli` a usar nos zips (padrão: compila `target/release/auli`).
+#                 Definir a variável PULA a compilação do passo 1 — manter o binário em dia passa a
+#                 ser sua responsabilidade.
 #
 # O smoke conecta DIRETO na origem (`SMOKE_ORIGIN`, a VPS) e manda o SNI de `SMOKE_HOST` — via
 # `curl --resolve`. Assim ele valida a cadeia TLS de verdade E continua testando o servidor, não a
@@ -64,30 +67,50 @@ remoto() {
   fi
 }
 
-echo "▶ 1/7  public/ a partir de data/"
+echo "▶ 1/8  compilar o auli (release)"
+# Primeiro passo de propósito: erro de compilação tem que parar o deploy ANTES de ele gerar
+# artefato nenhum.
+#
+# O passo 3/8 consome o `auli` do `target/release/` COMO ESTIVER no disco. Até 09/08/2026 este
+# script nunca compilava, e o resultado foi silencioso: os zips saíram com "Coleta em andamento" no
+# README do `tarf/` cinco horas depois de a frase ter sido removida do código, porque o binário era
+# anterior ao commit. Nenhum teste pega — a suíte roda contra o fonte, o artefato publicado vem do
+# binário. Commit em Rust não muda binário nenhum, e o que sobe é o binário.
+#
+# Quem decide se precisa recompilar é o cargo, não este script: ele resolve por fingerprint do grafo
+# inteiro, o que também cobre mudança de dependência no Cargo.lock — um bump de `ort` altera os
+# vetores sem tocar num `.rs` (ver auli_pendencias.md §34.2), e comparar data de arquivo não veria.
+# Quando já está fresco isso é um no-op de menos de um segundo.
+if [ -n "${AULI_BIN:-}" ]; then
+  echo "   AULI_BIN definido ($AULI_BIN) — pulando: o binário é seu, e mantê-lo atual também."
+else
+  (cd "$ROOT/auli-server" && cargo build --release -p auli-cli)
+  echo "✅ auli em dia"
+fi
+
+echo
+echo "▶ 2/8  public/ a partir de data/"
 scripts/build-frontend-public.sh
 
 echo
-echo "▶ 2/7  zips de download por estado (public/downloads/)"
+echo "▶ 3/8  zips de download por estado (public/downloads/)"
 # Aqui, e não no build-frontend-public.sh: aquele é rodado sozinho com frequência e não deve
 # arrastar ~70 MB de zip junto. Tem de vir ANTES do build, porque o Vite copia public/ para dist/ —
 # é assim que os zips sobem, sem caminho de publicação próprio. O bundle é determinístico: quando o
 # conteúdo não muda, ele nem reescreve os arquivos.
-# ⚠️ Este passo usa o binário COMO ESTÁ no disco — este script nunca compila. Mudou o `bundle.rs`?
-# Rode `cargo build --release -p auli-cli` ANTES, ou os zips saem do código velho, sem aviso. Foi o
-# que aconteceu em 09/08/2026: README do `tarf/` publicado com "Coleta em andamento" cinco horas
-# depois de a frase ter sido removida do código. Ver auli_operations.md §11.
+# O binário vem do passo 1/8, que garante que ele está em dia. O ramo do `else` só sobra para quem
+# passou um `AULI_BIN` que não existe — com o padrão, o cargo já teria falhado antes de chegar aqui.
 BUNDLE_BIN="${AULI_BIN:-$ROOT/auli-server/target/release/auli}"
 if [ -x "$BUNDLE_BIN" ]; then
   "$BUNDLE_BIN" bundle --data-root "$ROOT/data" --out "$FRONT/public/downloads"
 else
   echo "⚠️  $BUNDLE_BIN não encontrado — os zips NÃO foram regerados."
-  echo "   Compile (cargo build --release -p auli-cli) e rode de novo, ou publique ciente de que"
-  echo "   public/downloads/ vai com o conteúdo da última geração (ou vazio, na primeira vez)."
+  echo "   Aponte o AULI_BIN para um binário que exista, ou tire a variável para o script compilar."
+  echo "   Seguindo: public/downloads/ vai com o conteúdo da última geração (ou vazio, na 1ª vez)."
 fi
 
 echo
-echo "▶ 3/7  guarda: toda entidade do registry precisa de public/<id>/ com arquivos"
+echo "▶ 4/8  guarda: toda entidade do registry precisa de public/<id>/ com arquivos"
 # O furo que deixou Roraima quebrada em produção: `rm -rf` + `mkdir` por entidade cria o diretório
 # mesmo sem fonte, e o `(0 arquivos)` no log passa despercebido. Aqui isso para o deploy.
 vazias=()
@@ -117,7 +140,7 @@ fi
 echo "✅ guarda ok"
 
 echo
-echo "▶ 4/7  build do app"
+echo "▶ 5/8  build do app"
 (cd "$FRONT" && npm run build)
 
 # Sanidade do que vai subir: sem isso, um build parcial substituiria o site inteiro.
@@ -126,7 +149,7 @@ echo "▶ 4/7  build do app"
 echo "✅ dist/ ok ($(du -sh "$FRONT/dist" | cut -f1))"
 
 echo
-echo "▶ 5/7  upload para o staging ($STAGING)"
+echo "▶ 6/8  upload para o staging ($STAGING)"
 remoto "rm -rf '$STAGING' && mkdir -p '$STAGING'"
 if [ "$DRY_RUN" = 1 ]; then
   echo "   [dry-run] scp: dist/* -> $DEPLOY_HOST:$STAGING/"
@@ -143,12 +166,12 @@ echo "   preservando dotfiles do webroot atual (ex.: .htaccess)"
 remoto "find '$WEBROOT' -maxdepth 1 -name '.*' ! -name '.' ! -name '..' -exec cp -a {} '$STAGING'/ \; 2>/dev/null || true"
 
 echo
-echo "▶ 6/7  troca atômica"
+echo "▶ 7/8  troca atômica"
 remoto "rm -rf '$ANTIGO' && mv '$WEBROOT' '$ANTIGO' && mv '$STAGING' '$WEBROOT'"
 echo "✅ publicado (versão anterior preservada em $ANTIGO)"
 
 echo
-echo "▶ 7/7  smoke test"
+echo "▶ 8/8  smoke test"
 if [ "$DRY_RUN" = 1 ]; then
   echo "   [dry-run] pulado"
   echo

@@ -887,34 +887,43 @@ scripts/deploy-frontend.sh               # publica
 Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SMOKE_HOST`,
 `SMOKE_ORIGIN`, `SMOKE_BASE`); os padrões apontam para o VPS de produção. Ver o cabeçalho do script.
 
-> ### ⚠️ Mexeu em Rust? Recompile ANTES de publicar
+> ### A quarta origem: o binário — fechada no passo 1/8
 >
-> O diagrama acima tem uma **quarta origem** que ele não mostra, e ela não é um arquivo do repo — é
-> um binário compilado:
+> O diagrama acima mostra três estágios e esconde uma **quarta origem**, que não é arquivo do
+> repositório e sim um binário compilado:
 >
 > ```text
 > auli-server/crates/auli-cli/src/bundle.rs  →  target/release/auli  →  public/downloads/*.zip
->                                            cargo build --release    deploy-frontend.sh (passo 2/7)
+>                                            cargo build --release    deploy-frontend.sh (passo 3/8)
 > ```
 >
-> **O `deploy-frontend.sh` nunca compila.** O passo 2/7 invoca o `auli bundle` do
-> `target/release/` como ele estiver no disco. Se o binário for anterior à sua mudança, os zips saem
-> do código velho — e o script **não avisa**: ele só reclama quando o binário está *ausente*
-> (`⚠️ não encontrado`), nunca quando está *velho*.
+> **Por que isso é uma armadilha.** Até 09/08/2026 o script nunca compilava: o passo dos zips
+> invocava o `auli bundle` do `target/release/` como estivesse no disco. Naquele dia os zips saíram
+> com a frase antiga (`"Coleta em andamento"` no README do `tarf/`) cinco horas depois de ela ter
+> sido removida do código — o binário era anterior ao commit. E saiu em silêncio: o script só
+> reclamava quando o binário estava _ausente_, nunca quando estava _velho_. Nenhum teste pega, e não
+> é lacuna de cobertura: a suíte roda contra o código-fonte, e o artefato publicado vem do binário.
+> **Commit em Rust não muda binário nenhum — e o que sobe é o binário.**
 >
-> **Como isso aparece:** silenciosamente. Em 09/08/2026 os zips foram regerados com o `bundle.rs` já
-> corrigido no `main` e saíram com a frase antiga (`"Coleta em andamento"` no README do `tarf/`)
-> porque o binário era de cinco horas antes. Só apareceu porque alguém abriu o `.zip` e conferiu o
-> texto. Nenhum teste pega: a suíte roda contra o código-fonte, e o artefato publicado vem do binário.
+> **Hoje o `deploy-frontend.sh` compila sozinho**, no passo 1/8, antes de gerar qualquer artefato.
+> Não há mais o que lembrar antes de publicar.
 >
-> ```bash
-> cargo build --release -p auli-cli   # antes de deploy-frontend.sh, sempre que bundle.rs mudar
-> ```
+> **Quem decide se precisa recompilar é o cargo**, e não uma comparação de datas. Ele resolve por
+> fingerprint do grafo inteiro, o que cobre também mudança de dependência no `Cargo.lock` — um bump
+> de `ort` altera os vetores sem tocar num `.rs` (§34.2 das pendências), e mtime não veria. Quando já
+> está em dia, é um no-op de menos de um segundo.
 >
-> Vale para tudo que o deploy consome pronto, não só o `bundle`. A regra curta: **commit em Rust não
-> muda binário nenhum** — e o que sobe é o binário.
+> **A escotilha:** definir `AULI_BIN` pula a compilação. Existe para quem aponta para um binário
+> pré-compilado de propósito — e aí manter o binário atual volta a ser responsabilidade de quem
+> definiu a variável.
 >
-> **Conferir depois** custa dois comandos e é o único jeito de ter certeza de que o texto certo subiu:
+> **Os outros scripts continuam sem essa guarda.** `build-packs.sh`, `atualizar-servicos.sh` e
+> `update-rs-faqs.sh` também consomem binários prontos (`auli`, `auli-collections`,
+> `auli-scraper-<id>`) e só checam se existem. O caso do `build-packs.sh` é o mais traiçoeiro dos
+> três: com o binário velho, ele grava packs com estratégia antiga e um `docs_hash` que **passa** na
+> validação de boot, porque o hash é da árvore e não do código.
+>
+> **Conferir o que de fato saiu** continua barato, e é o único jeito de ter certeza:
 >
 > ```bash
 > unzip -p auli-frontend/public/downloads/rs.zip tarf/README.md | head -5
