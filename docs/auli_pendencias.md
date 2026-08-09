@@ -893,6 +893,31 @@ já substitui por id (`vector-store/src/write.rs:45`); o que falta é o id ser *
 **Relação com a §30.** Com o incremental no lugar, a discussão de GPU perde o pouco de motivação que
 lhe restava: o `update` típico deixaria de ser uma operação de dezenas de minutos.
 
+### 31.1 A outra metade da dívida: a RAM — **remedido em 2026-08-08**
+
+O tempo é só metade do problema. O `update` carrega a coleção INTEIRA na memória antes de embeddar
+(`preparar` monta um `Vec<Documento>` com o corpo de cada documento; `ingest_items` deriva dele mais
+dois vetores de String). Medido com `/usr/bin/time -v` na migração de pack v2, que re-vetorizou as
+27 entidades:
+
+| entidade | documentos | tempo | RSS máximo |
+|---|---|---|---|
+| 22 menores | 15–474 | 2–20 s | ~1,13 GB (é o modelo, não o dado) |
+| sc / pr | ~1.950 / ~2.200 | ~4min30s | ~4,5 GB |
+| rs | 6.705 | 16min21s | 16,4 GB |
+| **sp** | **16.123** | **49min21s** | **35,4 GB** |
+
+**O número do SP mudou**: o registro anterior (HANDOFF, 2026-08-08 de manhã) dizia **24,7 GB**. Não
+sei afirmar a causa da diferença — pode ser instrumentação distinta ou crescimento da árvore entre
+as duas medições. O que vale é o dado novo, medido com `time -v` e reproduzível.
+
+**Por que isso é a mesma pendência.** O remédio do tempo (processar por documento, re-embeddar só o
+que mudou) é também o remédio da RAM: a unidade de trabalho uniforme que a `Documento` trouxe é o
+que torna o streaming um caminho só, em vez de quatro. Quem atacar a §31 paga as duas de uma vez.
+
+**Consequência prática hoje.** Nesta máquina (60 GB) o SP passa. Num servidor de 16 GB, não — e é
+esse o teto que a dívida impõe a onde o Auli pode rodar.
+
 ---
 
 ## 32. Redesenho do frontend, entrega 3: botão "Entrar" no cabeçalho (aberta — 2026-08-02)

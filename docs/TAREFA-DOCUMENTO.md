@@ -24,8 +24,9 @@
 >   e um número que muda a cada rodada é pior que mandar consultar `listar_entidades`.
 
 **Revisão de 08/08/2026 (noite)** — substitui a v1, refletindo o que os PRs #130/#131 e o
-HANDOFF.md já entregaram. **Leitura prévia:** `docs/ESTUDO-colecoes-trait.md` (Adendos 1–3) e
-`HANDOFF.md`.
+HANDOFF.md já entregaram. **Leitura prévia:** `docs/ESTUDO-colecoes-trait.md` (Adendos 1–3).
+(O `HANDOFF.md` citado abaixo foi apagado depois de implantada esta TAREFA — envelheceu; os números
+de RSS que ele registrava vivem agora em `docs/auli_pendencias.md` §31.1, remedidos.)
 
 **O que esta TAREFA fecha:** ao final, o contrato tem UMA struct `Documento`
 (`chave, kind, link, doc_path, titulo, trilha, ementa, resumo`), UM compose (já existe:
