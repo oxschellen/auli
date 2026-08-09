@@ -153,7 +153,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   — só o VIEWSTATE não basta, ou o servidor volta à busca padrão (26 pareceres em 367 docs mistos);
   full-form → **372** (pareceres+informações). Detalhe `DocumentView.aspx?inpKey=N` (público, `#DOCContent`).
   Grava o intermediário `data/rs/ref/rs-pareceres-temp.txt` (sem `resumo` — estágio autorado posterior).
-  Descoberta em `docs/descobertas.md#rs-pareceres`.
+  Descoberta em `docs/REGISTRO-scrapers.md#rs-pareceres`.
 - 586 serviços, 5 públicos (Cidadãos/Empresas/Fornecedores/Agentes/Servidores). `ServicoRaw`
   direto. 5 testes (+ testes de parse/form/charset dos pareceres).
 
@@ -319,7 +319,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   — atributo, ignorado como faceta. Identidade = `id`; `link` absolutiza relativos e tira `?profile=`.
   **Escopo: só a listagem** (resumo curto); o conteúdo rico do detalhe ficou de fora por decisão.
 - 278 serviços, 423 ocorrências, 3 públicos (PF 147 / PJ 210 / Órgãos 66). 9 testes. `ServicoRaw` direto.
-  Links: 239 detalhe / 34 externo / 4 submenu / 1 interno. Detalhes de descoberta em `docs/descobertas.md#am`.
+  Links: 239 detalhe / 34 externo / 4 submenu / 1 interno. Detalhes de descoberta em `docs/REGISTRO-scrapers.md#am`.
 
 ### pa — SEFA-PA (Pará)
 
@@ -334,7 +334,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   página do serviço no paradigital (`…/servico/{id}`). Órgão "SEFA-PA".
 - **Primeira entidade com UA institucional `AuliBot`** (não o UA Firefox do kit) + **rate-limit ≥1s**
   entre GETs — mitigações da decisão de desconsiderar robots (D-PA-ROBOTS). O portal candidato
-  `portal-digital.sefa.pa.gov.br` estava fora do ar (522) e o Joomla foi extinto — ver `docs/descobertas.md#pa`.
+  `portal-digital.sefa.pa.gov.br` estava fora do ar (522) e o Joomla foi extinto — ver `docs/REGISTRO-scrapers.md#pa`.
 - 34 serviços, 54 ocorrências, 3 públicos (Cidadão 21 / Empresa 30 / Estado 3). 8 testes. `ServicoRaw` direto.
   O paradigital cobre **63 órgãos** com o mesmo contrato → oportunidade de scraper genérico (D-PA-ACERVO).
 
@@ -353,7 +353,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   **AuliBot** + ≥1s (D-PA-ROBOTS, ES = 2º caso). O X-Via tem 48 órgãos sob a mesma API → D-PA-ACERVO
   ganha 2º caso.
 - 45 serviços, 60 ocorrências, 2 públicos (Cidadão 43 / Empresa 17). 8 testes. `ServicoRaw` direto.
-  Detalhes de descoberta em `docs/descobertas.md#es`.
+  Detalhes de descoberta em `docs/REGISTRO-scrapers.md#es`.
 
 ### ro — SEFIN-RO (Rondônia)
 
@@ -362,7 +362,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   `sydleone.sefin.ro.gov.br` (tenant por **host**, sem header de conta como o CE). Listagem = **`GET
   _search`** (ES, `?_body=` url-encoded) na classe de conteúdo `5cd32901…` (compartilhada com o PI),
   filtrando o catálogo **"Serviços"** (`parent._id 662c1875…`). O CE (geração antiga) usa `getChildren`
-  → dá 400 no RO; a prova está em `docs/descobertas.md#ro`.
+  → dá 400 no RO; a prova está em `docs/REGISTRO-scrapers.md#ro`.
 - **Cenário A** (como CE/PI): `tags` null e `classification` 403 anon → público único "Serviços", classe
   "Geral". Identidade = `_id`; `link` = `…/catalogo-servicos+{identifier}+{_id}`. **Escopo = só "Serviços"**
   (194); "Temas" (42) e "Conteúdos" (28) são informativos, fora. Invariante `únicos == total ES`.
@@ -384,7 +384,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   = `lblTxtServicoGrupo`. `link` = a própria página de detalhe. UA institucional AuliBot + cortesia 500ms
   (D-PA-ROBOTS, 3º caso).
 - 45 serviços, 79 ocorrências, 4 públicos (Cidadão 35 / Empresa 38 / Órgão Público 5 / Servidor 1),
-  2 classes. 8 testes. `ServicoRaw` direto. Descoberta em `docs/descobertas.md#to`. Portal multi-órgão →
+  2 classes. 8 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#to`. Portal multi-órgão →
   3ª ocorrência de D-PA-ACERVO (mas em ASP.NET/HTML).
 
 ### ma — SEFAZ-MA (Maranhão)
@@ -403,7 +403,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **público** = `flgTipoServico` mapeado (COMPANY→Empresa, CITIZEN→Cidadão, PUBLIC_AGENCY→Órgão Público,
   CERTIFICATE→Certidões); `classe` = "Geral" (sem categoria). `link` = `linkExterno` / página de conteúdo.
 - 38 serviços, 4 públicos (Empresa 22 / Cidadão 10 / Órgão Público 2 / Certidões 4). 6 testes.
-  `ServicoRaw` direto. Descoberta em `docs/descobertas.md#ma`.
+  `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#ma`.
 
 ### ap — SEFAZ-AP (Amapá)
 
@@ -418,7 +418,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - 5 categorias = **classe** (Cadastro 10 / ICMS 15 / ITCMD 2 / Regime Especial 5 / Veículos 17);
   público único "Serviços". `link` = `…/#/categorias/{slug}/{route}`; identidade = link. É a **fonte mais
   frágil da frota** (parse de JS webpack), mas as chaves estáveis a tornam robusta na prática.
-- 49 serviços. 4 testes. `ServicoRaw` direto. Descoberta em `docs/descobertas.md#ap`.
+- 49 serviços. 4 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#ap`.
 
 ### ac — SEFAZ-AC (Acre)
 
@@ -435,7 +435,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   `openssl s_client -showcerts` mostra o intermediário que não bate com o issuer do leaf.
 - **classe** = categoria; público único "Serviços"; `link` = `…/?p={post}`; identidade = o post.
 - 17 serviços, 4 classes (Geral 6 / Notas Fiscais 3 / Cadastros 4 / IPVA 4). 4 testes. `ServicoRaw`
-  direto. Descoberta em `docs/descobertas.md#ac`.
+  direto. Descoberta em `docs/REGISTRO-scrapers.md#ac`.
 
 ---
 
@@ -455,7 +455,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **público** = `codTipoPessoa`: Cidadão (6/22, 168 svc) e Empresa (7/8, 304 svc); **classe** =
   subcategoria; `link` = a URL absoluta do `servico.cfm` (única por serviço); identidade = `codServico`.
 - 472 serviços, 142 classes, descrição rica (~893). 4 testes. `ServicoRaw` direto. Descoberta em
-  `docs/descobertas.md#df`.
+  `docs/REGISTRO-scrapers.md#df`.
 
 ---
 
@@ -472,7 +472,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - `titulo`/`Matéria`/categoria vêm com entidades HTML → `html_to_text` (html5ever). `link` = `acf.link`
   (absolutizado se relativo; permalink do card quando `acf.link=false`); identidade = o link; público
   único "Serviços"; classe = categoria WP (`Finanças e Impostos` em 12/15). UA institucional AuliBot.
-- 15 serviços, 4 classes. 4 testes. `ServicoRaw` direto. Descoberta em `docs/descobertas.md#rn`.
+- 15 serviços, 4 classes. 4 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#rn`.
 
 ---
 
@@ -490,7 +490,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   mais próximo que não é rótulo de público); `link` = `saibamais.php?id=N` (identidade). `ocorrencias` =
   público × classe.
 - 101 serviços, 164 ocorrências, 51 classes, descrição rica (~1584). 4 testes. `ServicoRaw` direto.
-  UA AuliBot. Descoberta em `docs/descobertas.md#pb`.
+  UA AuliBot. Descoberta em `docs/REGISTRO-scrapers.md#pb`.
 
 ---
 
@@ -513,7 +513,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   (`&lt;b&gt;`) → `html_to_text` faz strip **antes e depois** do decode; o público fallback é
   **"Contribuinte"** (nunca "Serviços", cujo slug `servicos` colidiria com o arquivo agregado).
 - 60 serviços, 166 ocorrências, 7 públicos, 3 classes, descrição rica (~1030). 6 testes. `ServicoRaw`
-  direto. UA AuliBot + 500 ms. Descoberta/validação em `docs/descobertas.md#al`.
+  direto. UA AuliBot + 500 ms. Descoberta/validação em `docs/REGISTRO-scrapers.md#al`.
 
 ---
 
@@ -535,7 +535,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   encerra a conexão de um jeito que o rustls rejeita mas o curl tolera) → coleta via `get_via_curl`
   (curl no PATH), como o GO/DF (mas por EOF, não por JA3).
 - 91 serviços, 8 classes (Cadastro 33 / ICMS 17 / IPVA 10 / Gerais 9 / Contencioso 8 / Simples 6 / DFe 4
-  / ITCMD 4), descrição rica (~900). 4 testes. `ServicoRaw` direto. Descoberta em `docs/descobertas.md#se`.
+  / ITCMD 4), descrição rica (~900). 4 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#se`.
 
 ---
 
@@ -551,7 +551,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   transacionais, sem detalhe); **público**=`category` (Cidadão/Empresa); `classe`="Serviços" (sem eixo de
   tema); `link`=`href` (identidade). O FAQ (`faq-chat.php`) é um matcher, não catálogo → fora de escopo.
 - 16 serviços, 20 ocorrências (Empresa 14 / Cidadão 6), 2 públicos. 3 testes. `ServicoRaw` direto.
-  UA AuliBot. Descoberta em `docs/descobertas.md#rr`.
+  UA AuliBot. Descoberta em `docs/REGISTRO-scrapers.md#rr`.
 
 ---
 

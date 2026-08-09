@@ -1,9 +1,18 @@
-# Relatórios de Descoberta — auli
+# REGISTRO-scrapers — como cada portal foi investigado
 
-> Consolidação dos relatórios de descoberta: 14 de **serviços** por entidade (antes arquivos
-> `descoberta-*.md` separados) + 1 de **pareceres** (RS). Cada seção documenta como o portal foi
-> investigado. Referenciado por `SCRAPERS.md`, `docs/auli_pendencias.md` e comentários nos crates
-> (âncoras `docs/descobertas.md#<uf>` e `#rs-pareceres`).
+> **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
+> entidade + 1 de **pareceres** (RS). Cada seção registra como o portal foi investigado, o que ele
+> tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
+> não estão documentadas em lugar nenhum do lado de lá.
+>
+> É o que se lê quando um scraper quebra: a cadeia TLS incompleta do AC, o WAF que só passa por
+> `curl` no GO e no DF, o RSC flight do Next.js no AM, o catálogo hardcoded dentro do bundle JS no
+> AP e no RR. Recuperar isto significaria refazer a investigação portal a portal, contra sites que
+> já podem ter mudado.
+>
+> Referenciado por `SCRAPERS.md` (uma âncora por entidade), `docs/auli_pendencias.md` e comentários
+> nos crates — âncoras `docs/REGISTRO-scrapers.md#<uf>` e `#rs-pareceres`. Renomeado de
+> `descobertas.md` em 08/08/2026, para o nome dizer o que ele é.
 
 ## Índice
 
@@ -1239,7 +1248,7 @@ canônico do snapshot é a página da Agência Virtual (`catalogo-servicos+…`)
    conta). Prós de parametrizar PI/RO: um crate, N estados; contras: acoplar dois estados a um contrato
    de terceiros que evolui. **NÃO decidir/refatorar aqui.** (O "3º tenant PA/portal-digital" do enunciado
    ficou **inconclusivo**: na descoberta do PA aquele host estava fora do ar (522) e usamos o
-   paradigital/Prodepa — outra plataforma; ver `docs/descobertas.md#pa`.)
+   paradigital/Prodepa — outra plataforma; ver `docs/REGISTRO-scrapers.md#pa`.)
 2. **Escopo dos tipos** — só `catalogo-servicos` (194), como o CE. Temas/Conteúdos fora.
 3. **Id canônico** — `_id` (24-hex) estável; `identifier` (slug) estável. Link usa ambos
    (`{identifier}+{_id}`). Igual CE/PI.
