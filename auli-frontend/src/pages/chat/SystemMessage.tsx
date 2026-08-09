@@ -1,13 +1,17 @@
 import { Flex, Button, Box } from "@chakra-ui/react";
+import { useState } from "react";
 import { Tooltip } from "./ui/tooltip";
-import { MdCopyAll } from "react-icons/md";
+import { MdCopyAll, MdOutlineReceiptLong } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { utilsCopyTextToClipboard } from "./utils/utils";
 import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
+import { LogModal } from "./LogModal";
 
 interface SystemMessageProps {
   messageText: string;
   showButton: boolean;
+  /** Quando presente, oferece o ícone que abre o registro de auditoria desta resposta. */
+  logId?: string;
 }
 
 /** Aviso exibido no rodapé de toda resposta gerada (não aparece na saudação,
@@ -17,7 +21,9 @@ const DISCLAIMER =
   "automaticamente, podem variar e conter imprecisões, e têm caráter apenas informativo — " +
   "confira sempre as fontes e os links indicados.";
 
-export const SystemMessage = ({ messageText, showButton }: SystemMessageProps) => {
+export const SystemMessage = ({ messageText, showButton, logId }: SystemMessageProps) => {
+  const [logAberto, setLogAberto] = useState(false);
+
   return (
     <Flex px={3} py={2} w="100%">
       <Flex
@@ -57,7 +63,27 @@ export const SystemMessage = ({ messageText, showButton }: SystemMessageProps) =
         )}
 
         {showButton && (
-          <Flex justify="flex-end" mt={0}>
+          <Flex justify="flex-end" mt={0} gap={1}>
+            {/* Só existe quando o backend devolveu `log_id` — sem registro gravado não há o que
+                abrir, e o ícone some em vez de levar a um 404. Isso já o exclui da saudação. */}
+            {logId && (
+              <Tooltip content="Ver o log desta resposta" bg="bg.inverted">
+                <Button
+                  borderRadius="full"
+                  aria-label="Ver o log de auditoria desta resposta"
+                  size="xs"
+                  minW="22px"
+                  h="22px"
+                  color="fg.muted"
+                  bg="transparent"
+                  _hover={{ bg: "bg.overlay" }}
+                  transition="all 0.15s ease"
+                  onClick={() => setLogAberto(true)}
+                >
+                  <MdOutlineReceiptLong size={13} color="var(--chakra-colors-fg-muted)" />
+                </Button>
+              </Tooltip>
+            )}
             <Tooltip content="Copiar resposta" bg="bg.inverted">
               <Button
                 borderRadius="full"
@@ -79,6 +105,8 @@ export const SystemMessage = ({ messageText, showButton }: SystemMessageProps) =
           </Flex>
         )}
       </Flex>
+
+      {logAberto && logId && <LogModal logId={logId} onClose={() => setLogAberto(false)} />}
     </Flex>
   );
 };

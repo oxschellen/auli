@@ -19,6 +19,9 @@ interface CallServerAPIArgs {
 
 interface QuestionResponse {
   answer?: string;
+  /** UUID do registro de auditoria (D-LOG-2). **Ausente quando a gravação falhou** — o chat não
+   *  falha por causa do log, só deixa de oferecer o ícone. */
+  log_id?: string;
 }
 
 /** Abort the request if the server hasn't responded within this window. */
@@ -85,6 +88,7 @@ export const callServerAPI = async ({
       from: "server",
       text: serverMessage,
       showButton: true,
+      logId: res.data?.log_id,
     });
 
     setPrompt("");

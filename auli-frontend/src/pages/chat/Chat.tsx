@@ -11,11 +11,9 @@ import { isPromptValid } from "./utils/prompt";
 import { SelectQuestionType } from "./SelectQuestionType";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { SIDEBAR_WIDTH } from "../../shared/layout";
-
-// Override per environment with VITE_API_URL (e.g. a staging endpoint); falls
-// back to production so the app works with no .env present.
-const API_URL =
-  import.meta.env.VITE_API_URL ?? "https://api.auli.com.br/v1/question";
+// O `API_URL` saiu daqui para `utils/api.ts` quando o modal do log passou a precisar da MESMA
+// base — ver `logUrl`, que é derivada dele justamente para não divergir.
+import { API_URL } from "./utils/api";
 
 export const Chat = () => {
   const entity = useSelectedEntity();

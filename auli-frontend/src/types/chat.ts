@@ -9,6 +9,10 @@ export interface Message {
   from: MessageSender;
   text: string;
   showButton: boolean;
+  /** UUID do registro de auditoria desta resposta (`log_id` do backend), quando houve gravação.
+   *  Ausente na saudação, nas mensagens do usuário e quando o log falhou — e é essa ausência que
+   *  esconde o ícone: não existe registro para abrir. */
+  logId?: string;
 }
 
 /** Setter returned by `usePrompt`, matching React's `useState<string>` setter. */
