@@ -46,8 +46,11 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
 
 - Resposta a perguntas em **português, em linguagem natural**, fundamentada nos conteúdos
   oficiais do estado selecionado.
-- Recuperação semântica combinando, hoje, **Serviços** e **Perguntas Frequentes (FAQs)** como
-  contexto da resposta.
+- **Quatro fontes, e o usuário escolhe qual consultar** no seletor da caixa de mensagem:
+  **Serviços+FAQs** juntos (o atendimento — "como faço para…"), **Pareceres** (a interpretação da
+  legislação pela Receita Estadual) e **Acórdãos TARF** (as decisões do tribunal administrativo em
+  recursos de contribuintes). Cada fonte tem prompt próprio; o seletor só mostra o que aquela
+  entidade tem.
 - Respostas com **links oficiais** para o serviço/página de origem.
 - Cada estado tem seu **prompt de sistema próprio**, que define o comportamento e o tom do
   assistente para aquela secretaria.
@@ -61,9 +64,9 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
   separadas por estado, de modo que uma pergunta nunca mistura conteúdo de estados diferentes.
 - **Adicionar um novo estado** é uma operação de configuração + dados (cadastrar a entidade e
   ingerir seus conteúdos), sem reescrever a aplicação.
-- Estados ativos hoje (chat/RAG + abas de referência): **RS (SEFAZ-RS)** — Serviços + FAQs —,
-  **SC (SEF-SC)**, **SP (SEFAZ-SP)** e **PR (SEFA-PR)** — Serviços. Os quatro respondem no chat
-  com contexto do seu próprio catálogo e citam os links oficiais.
+- Estados ativos hoje: **27 secretarias**, todas com Serviços. Além disso: **Pareceres** em RS, SC,
+  SP e PR; **FAQs** e **Acórdãos TARF** no RS. Todas respondem no chat com contexto do próprio
+  catálogo e citam os links oficiais.
 
 ### 3.3 Privacidade: embeddings locais
 
@@ -80,20 +83,25 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
   trocada pelo cabeçalho.
 - **Chat conversacional** com balões diferenciados para usuário e assistente, mensagem de
   "pensando", **botão de copiar** mensagens e **timeout amigável** (25s) quando a API demora.
-- **Navegação por abas** (sem recarga de página): Chat, Serviços, FAQs, Pareceres, Notas,
-  Conteúdos e Sobre — com o estado de cada aba preservado ao alternar.
+- **Navegação por abas** (sem recarga de página), em três grupos: **Acervo** (Serviços, FAQs,
+  Pareceres, Acórdãos TARF, Notas, Conteúdos), **Integrações** (Conectar sua IA, Downloads) e o
+  Chat, mais o Sobre no rodapé — com o estado de cada aba preservado ao alternar. Aba de coleção que
+  a entidade não tem some.
 - **Páginas de referência** por estado, com **busca no cliente**:
   - **Serviços** — agrupados por classe, em acordeões, com abas por público.
   - **FAQs** — árvore navegável de perguntas e respostas.
-  - **Pareceres** e **Notas** — conteúdo textual com links.
-  - **Conteúdos** — categorias de materiais de referência.
+  - **Pareceres** e **Acórdãos TARF** — lista pesquisável por número, ementa e resumo, do mais
+    recente ao mais antigo, com link para a fonte oficial.
+  - **Notas** e **Conteúdos** — materiais de referência.
+  - **Downloads** — o acervo de cada estado em `.md`, um arquivo por documento, para apontar a
+    própria IA para a pasta.
 - Seções **sem dados** para o estado mostram um aviso amigável de "em breve".
 - **Modo claro/escuro** que respeita a preferência do sistema e persiste a escolha.
 - Layout **mobile-first**, com ajuste ao teclado virtual em celulares.
 
 ### 3.5 Ingestão e gestão de conteúdo (backend)
 
-- A **vetorização** dos conteúdos (Serviços, FAQs, Pareceres, Notas) é feita por um comando
+- A **vetorização** dos conteúdos (Serviços, FAQs, Pareceres, Acórdãos TARF) é feita por um comando
   dedicado — `auli update` —, que lê os arquivos do estado e gera **pacotes de vetores +
   manifesto** prontos para o servidor. O servidor é **somente leitura**: carrega os pacotes,
   valida o manifesto e atende; ele não escreve dados (apenas expõe a **listagem** do que está
@@ -106,23 +114,26 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
 - Além do chat, o acervo pode ser consultado **como serviço**: uma rota HTTP de **recuperação pura**
   (`/v1/retrieve`) devolve os documentos com a distância de proximidade, **sem** redigir resposta e
   **sem** chamar LLM externo.
-- A mesma busca é exposta por **MCP** (Model Context Protocol) em `/mcp`, o que permite que a IA de
-  um auditor use o acervo como **ferramenta**: listar as UFs com pareceres, buscar por tema e ler o
-  parecer integral pelo número.
+- A mesma busca é exposta por **MCP** (Model Context Protocol) em `/mcp`, com **quatro
+  ferramentas**: listar as UFs e seus acervos, buscar na jurisprudência por tema (com o parâmetro
+  `colecao`: pareceres ou acórdãos do TARF), ler um documento integral pelo número, e consultar
+  serviços+FAQs de uma UF — esta última devolvendo o MESMO bloco de contexto que o chat usa.
 - Como não há LLM nesses caminhos, a pergunta **não sai do processo** — e o registro guarda só
   metadados (UF, tipo, nº de resultados), nunca o texto perguntado.
-- **É v1 e tem limites conhecidos:** só pareceres (serviços/FAQs ficam para depois), uma UF por
-  chamada, e sem autenticação — o conteúdo é público e somente-leitura, protegido por limite de
-  requisições.
+- **Limites conhecidos:** uma UF por chamada e sem autenticação — o conteúdo é público e
+  somente-leitura, protegido por limite de requisições.
 
 ### 3.7 Coleta de conteúdo (scrapers por estado)
 
 - Um **scraper por secretaria** (um binário por estado), sobre um **kit compartilhado** (cache,
   agente HTTP, agregação), gravando todos a mesma fronteira: o **snapshot** tipado que o passo de
   derivação transforma nos arquivos padronizados (JSON estruturado + texto pronto para indexação).
-- Suporta **plataformas de portal bem diferentes** com a mesma forma de saída: **RS** (CMS, via
-  headless Chrome), **SC** (API JSON Next.js), **SP** (REST SharePoint, JSON) e **PR** (HTML Drupal
-  server-side).
+- Suporta **plataformas de portal bem diferentes** com a mesma forma de saída, e **sem navegador
+  headless em nenhuma**: APIs JSON, Next.js, SharePoint, WordPress, ServiceNow, ColdFusion, Angular,
+  e até catálogos embutidos no bundle JavaScript. O inventário por entidade, com as armadilhas de
+  cada portal, está em
+  [SCRAPERS.md](auli-server/crates/scrapers/SCRAPERS.md) e em
+  [docs/REGISTRO-scrapers.md](docs/REGISTRO-scrapers.md).
 - **Cache em disco** das páginas coletadas e **modo offline** (reconstrói as saídas a partir
   do cache, sem acessar a rede), para reprocessar sem sobrecarregar o portal.
 - **Deduplicação** de serviços que aparecem em vários públicos, evitando conteúdo repetido na
@@ -132,17 +143,18 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
 
 ## 4. Tipos de conteúdo
 
-| Tipo          | O que é                                           | Onde aparece hoje                     |
-| ------------- | ------------------------------------------------- | ------------------------------------- |
-| **Serviços**  | Carta de serviços da secretaria, por público-alvo | Resposta do chat (RAG) + aba Serviços |
-| **FAQs**      | Perguntas frequentes oficiais                     | Resposta do chat (RAG) + aba FAQs     |
-| **Pareceres** | Pareceres jurídicos/técnicos                      | Aba Pareceres (referência)            |
-| **Notas**     | Notas administrativas/tributárias                 | Aba Notas (referência)                |
-| **Conteúdos** | Materiais de referência diversos                  | Aba Conteúdos (referência)            |
+| Tipo | O que é | Onde aparece hoje |
+| --- | --- | --- |
+| **Serviços** | Carta de serviços da secretaria, por público-alvo | Chat (fonte Serviços+FAQs) + aba + downloads |
+| **FAQs** | Perguntas frequentes oficiais | Chat (fonte Serviços+FAQs) + aba + downloads |
+| **Pareceres** | Interpretação da legislação pela Receita Estadual | Chat (fonte própria) + aba + MCP + downloads |
+| **Acórdãos TARF** | Decisões do tribunal administrativo em recursos | Chat (fonte própria) + aba + MCP + downloads |
+| **Notas** | Notas administrativas/tributárias | Aba Notas (referência) |
+| **Conteúdos** | Materiais de referência diversos | Aba Conteúdos (referência) |
 
-Observação de produto: hoje **Serviços e FAQs** alimentam diretamente as respostas do
-assistente; **Pareceres, Notas e Conteúdos** estão disponíveis como navegação/consulta de
-referência na interface.
+Observação de produto: **quatro dos seis tipos alimentam respostas** — serviços e FAQs juntos, no
+atendimento; pareceres e acórdãos separadamente, no uso do auditor. **Notas e Conteúdos** seguem só
+como navegação de referência: não têm fonte estruturada e por isso não são indexados.
 
 ---
 
@@ -150,23 +162,28 @@ referência na interface.
 
 | Componente                  | Papel no produto                                                                                                                                                                                         |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **auli-server** (workspace) | Cérebro: o binário `auli` em dois modos — `auli server` recebe a pergunta, busca o contexto e gera a resposta (somente leitura); `auli update` vetoriza os conteúdos em pacotes. Três crates em camadas. |
+| **auli-server** (workspace) | Cérebro: o binário `auli` em dois modos — `auli server` recebe a pergunta, busca o contexto e gera a resposta (somente leitura); `auli update` vetoriza os conteúdos em pacotes. |
 | **auli-frontend**           | Experiência do usuário: seleção de estado, chat e navegação pelos conteúdos                                                                                                                              |
 | **scrapers + auli-collections** | Abastecimento: os **scrapers por estado** coletam do portal (gravam o snapshot) e o **auli-collections** deriva o contrato padronizado que alimenta a busca                                            |
 
-> O backend é o workspace **auli-server** (`vector-store` ← `auli-core` ← `auli-cli`); ver
-> [docs/auli_code.md](docs/auli_code.md) §3.
+> O backend é o workspace **auli-server**, em camadas estritas
+> (`vector-store` ← `auli-core` ← `auli-retrieval` ← `auli-cli`), mais o `auli-contract` (a forma do
+> dado, compartilhada com os scrapers); ver [docs/auli_code.md](docs/auli_code.md) §3.
 
 ---
 
 ## 6. Estado atual e direção
 
-- **Funcionando hoje:** chat com RAG para os **cinco estados** configurados (RS, SC, SP, PR, MG),
-  interface completa (chat + abas de referência + seleção de estado com mapa), coleta de Serviços
-  (RS, SC, SP, PR, MG) e FAQs (RS) e embeddings locais. (O servidor é público, sem auth nem banco —
-  expõe só `/v1/health`, `/v1/question` e `/v1/{kind}/list`.)
-- **Em evolução:** FAQs para SC/SP/PR/MG, coleta automatizada de Pareceres/Notas, e uso desses tipos
-  também nas respostas do assistente.
+- **Funcionando hoje:** chat com RAG nas **27 secretarias**, com quatro fontes selecionáveis;
+  interface completa (chat + abas de acervo + seleção de estado com mapa + downloads do acervo em
+  `.md`); acervo como serviço por `/v1/retrieve` e por MCP; e embeddings locais. **29.732 documentos
+  indexados** — 4.205 serviços, 19.780 pareceres, 1.947 FAQs e 3.800 acórdãos. (O servidor é
+  público, sem auth nem banco — expõe `/v1/health`, `/v1/question`, `/v1/retrieve`,
+  `/v1/{kind}/list` e `/mcp`.)
+- **Em evolução:** fechar a coleta do TARF (3.800 de ~22.522); FAQs além do RS; e busca híbrida
+  (densa + léxica), medida em [docs/ESTUDO-busca-hibrida.md](docs/ESTUDO-busca-hibrida.md) — hoje uma
+  palavra rara solta não volta bem, e o estudo diz por quê.
 
-Para o que é apenas modelado/planejado versus efetivamente ativo no código (rotas, fluxos de
-autenticação, divergências entre os repositórios), consulte [docs/auli_code.md](docs/auli_code.md).
+Para o detalhamento técnico — rotas, o caminho RAG passo a passo, a arquitetura das coleções —
+consulte [docs/auli_code.md](docs/auli_code.md). Para operar (coletar, vetorizar, publicar),
+[docs/auli_operations.md](docs/auli_operations.md).
