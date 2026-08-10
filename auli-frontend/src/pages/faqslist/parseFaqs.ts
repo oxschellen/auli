@@ -29,6 +29,19 @@ export interface FaqSearchHit {
   ancestors: FaqNode[];
 }
 
+/**
+ * Quantas PERGUNTAS a árvore tem — a unidade do acervo, e o que vira documento e vetor.
+ *
+ * Conta os `faq_items` da árvore crua em vez das folhas da árvore convertida, porque as duas
+ * respostas diferem: no RS há 25 páginas de menu sem filho nenhum, que são folhas mas não são
+ * perguntas (1.972 folhas para 1.947 perguntas). Somar `faq_items` não tem essa ambiguidade.
+ */
+export function contarPerguntas(json: RawFaqNode): number {
+  let total = json.faq_items?.length ?? 0;
+  for (const child of json.children || []) total += contarPerguntas(child);
+  return total;
+}
+
 let _id = 0;
 
 function makeId(): string {

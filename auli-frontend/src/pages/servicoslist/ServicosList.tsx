@@ -6,6 +6,7 @@ import {
   getDefaultTipoServicos,
   empresaPrimeiro,
   filterServicoGroups,
+  contarServicosDistintos,
   type Servico,
   type TipoServico,
   type ServicoGroup,
@@ -43,15 +44,32 @@ export function ServicosList() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Default to the first tab once the manifest (or fallback) is known.
-  const activeTipo =
-    tipoServicos.find((ts) => ts.tipo === active) ?? tipoServicos[0];
+  const activeIndex = Math.max(
+    0,
+    tipoServicos.findIndex((ts) => ts.tipo === active),
+  );
   // The tab currently rendered as selected (falls back to the first tab before any click).
-  const activeName = activeTipo?.tipo ?? "";
+  const activeName = tipoServicos[activeIndex]?.tipo ?? "";
 
-  const { data: activeServicos = [], error, isLoading: loading } = useSWR(
-    available && activeTipo ? entityPath(entity.id, `${activeTipo.filename}.json`) : null,
-    jsonFetcher<Servico[]>,
-    SWR_OPTS
+  // TODAS as abas de uma vez, não só a ativa: o contador em repouso é o tamanho da coleção
+  // inteira, e sem as outras abas não há como saber quem se repete entre públicos. O custo é
+  // pequeno — 413 KB no SP, 580 KB no RS, contra os 33 MB do índice de pareceres da aba vizinha —,
+  // e trocar de aba passa a ser instantâneo, porque o dado já está aqui.
+  const { data: abas, error, isLoading: loading } = useSWR(
+    available && tipoServicos.length > 0
+      ? ["servicos", entity.id, ...tipoServicos.map((ts) => ts.filename)]
+      : null,
+    ([, id, ...filenames]: string[]) =>
+      Promise.all(
+        filenames.map((f) => jsonFetcher<Servico[]>(entityPath(id, `${f}.json`))),
+      ),
+    SWR_OPTS,
+  );
+  // Memoizado porque o `?? []` devolveria um array novo a cada render, e ele alimenta o `grouped`.
+  const activeServicos = useMemo(() => abas?.[activeIndex] ?? [], [abas, activeIndex]);
+  const totalDistintos = useMemo(
+    () => (abas ? contarServicosDistintos(abas) : 0),
+    [abas],
   );
 
   function selectTipo(tipo: string) {
@@ -138,10 +156,16 @@ export function ServicosList() {
           placeholder="Pesquisar serviços..."
         />
 
-        {isSearching && (
+        {totalDistintos > 0 && (
           <Box pt={2}>
             <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
-              {totalResults} resultado{totalResults !== 1 ? "s" : ""} encontrado{totalResults !== 1 ? "s" : ""}
+              {isSearching
+                ? // O denominador é a ABA, não a coleção: a busca só varre a aba aberta, e dizer
+                  // "de 518" no SP contaria 145 serviços que ninguém pesquisou. O nome da aba
+                  // explica por que o número encolheu em relação ao de repouso — e some quando a
+                  // entidade tem público único, porque aí não há nada a explicar.
+                  `${totalResults} de ${activeServicos.length}${tipoServicos.length > 1 ? ` em ${activeName}` : ""}`
+                : `${totalDistintos} ${totalDistintos !== 1 ? "serviços" : "serviço"}`}
             </Text>
           </Box>
         )}
