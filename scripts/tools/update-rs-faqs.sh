@@ -46,21 +46,36 @@ echo "🕸️  scrapeando faqs do RS…"
 echo "🔧 compilando binários release…"
 ( cd "$SERVER" && cargo build --release -p auli-cli -p auli-collections )
 
-# 4. Deriva os artefatos do snapshot — inclusive a árvore `docs/faqs/*.md`, que é a FONTE que o
-#    `auli update` lê (TAREFA-FAQS-MD). Sem este passo o build-packs re-vetorizaria a árvore ANTIGA
-#    e o scrape novo não chegaria ao índice. O process resolve `data/` pelo CWD, daí o subshell.
+# Exporta os caminhos para os passos 5 e 6: eles compilam por conta própria se não receberem isto,
+# e seriam duas invocações a mais do cargo para o mesmo alvo. Como o build acabou de rodar aqui, os
+# binários estão em dia por construção — que é a garantia que essas variáveis normalmente dispensam.
+export AULI_BIN="$SERVER/target/release/auli"
+export AULI_COLLECTIONS_BIN="$SERVER/target/release/auli-collections"
+
+# 4. Deriva os artefatos do snapshot. Sem argumento, o `auli-collections <id>` refaz TODOS os
+#    artefatos da entidade — a árvore `docs/faqs/*.md` (a FONTE que o `auli update` lê,
+#    TAREFA-FAQS-MD) e também os de serviços. É derivação pura e determinística, então refazer os de
+#    serviços não muda um byte; só não se surpreenda com as linhas de `rs-servicos*` no log.
+#    Sem este passo o build-packs re-vetorizaria a árvore ANTIGA e o scrape novo não chegaria ao
+#    índice. O process resolve `data/` pelo CWD, daí o subshell.
 echo "🌳 derivando artefatos do snapshot (árvore docs/faqs)…"
-( cd "$SERVER" && ./target/release/auli-collections rs )
+( cd "$SERVER" && "$AULI_COLLECTIONS_BIN" rs )
 
 # 5. Re-vetoriza os packs a partir da árvore recém-derivada (muda o docs_hash;
 #    o boot do servidor recusa subir até os packs baterem — daí ser obrigatório).
+#
+# ⏳ ATENÇÃO AO CUSTO. O `auli update` re-vetoriza a entidade INTEIRA, não só a coleção que mudou:
+# desde que a coleta do TARF fechou (09/08/2026, 22.476 acórdãos), atualizar as FAQs do RS custa
+# ~72 min e pico de ~42 GB de RAM — e ~99% disso é re-embeddar acórdãos que não mudaram. Antes do
+# TARF eram ~16 min. É o caso de uso que mais pede o update incremental (auli_pendencias.md §31).
 echo "📦 re-vetorizando os packs do RS…"
+echo "   ⏳ a entidade inteira, não só as faqs: ~72 min, pico de ~42 GB de RAM."
 "$ROOT/scripts/build-packs.sh" rs
 
-# 6. Sobe o servidor (recompila + serve na 3000).
+# 6. Sobe o servidor. `--no-build`: o passo 3 já compilou o mesmo binário no mesmo target.
 if [ "$SERVE" -eq 1 ]; then
   echo "🚀 subindo o servidor…"
-  ( cd "$ROOT" && ./start_server.sh )
+  ( cd "$ROOT" && ./start_server.sh --no-build )
 else
   echo "✅ pronto (--no-serve). Suba quando quiser: ./start_server.sh"
 fi

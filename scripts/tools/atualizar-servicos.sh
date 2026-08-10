@@ -33,13 +33,24 @@ atualizar() {
   cd "$SERVER" || return 1
 
   echo "════════ $ID: backup em $BK"
-  rm -rf "$BK"; mkdir -p "$BACKUP_DIR"; cp -a "$ROOT/data/$ID" "$BK"
+  rm -rf "$BK"; mkdir -p "$BACKUP_DIR"
+  # Checado: este script roda sem `set -e` (o laço lá embaixo é quem trata a falha), então um `cp`
+  # que falhasse seguiria adiante — o scrape sobrescreveria `data/<id>` e a instrução de rollback
+  # apontaria para um backup inexistente. É o pior desfecho possível aqui, e o mais silencioso.
+  cp -a "$ROOT/data/$ID" "$BK" || { echo "❌ $ID: backup falhou — abortando ANTES de tocar em data/"; return 1; }
 
   echo "════════ $ID: build do scraper + auli-collections"
   # O `auli-collections` entra junto: o passo `process` logo abaixo usa o binário do
   # `target/release/` como estiver, e compilar só o scraper deixava o derivador para trás — a
   # árvore `docs/servicos/*.md` sairia do código antigo, sem aviso. Ver auli_operations.md §11.
-  cargo build --release -p "auli-scraper-$ID" -p auli-collections 2>&1 | tail -1
+  #
+  # Com log em arquivo, e não `| tail -1`: sem `set -e`, o pipe engolia a falha de compilação e o
+  # script seguia para rodar o binário ANTIGO. Mesmo formato do scrape logo abaixo — silencioso
+  # quando dá certo, com as últimas linhas quando não dá.
+  if ! cargo build --release -p "auli-scraper-$ID" -p auli-collections > "/tmp/$ID-build.log" 2>&1; then
+    echo "❌ $ID: build falhou — últimas linhas:"; tail -15 "/tmp/$ID-build.log"; return 1
+  fi
+  tail -1 "/tmp/$ID-build.log"
 
   echo "════════ $ID: scrape (rede)"
   if ! "./target/release/auli-scraper-$ID" servicos > "/tmp/$ID-scrape.log" 2>&1; then
@@ -60,7 +71,9 @@ atualizar() {
   [ "$mudou" -eq 0 ] && echo "  ✅ todos idênticos — o portal não mudou"
 
   echo "════════ $ID: build-packs"
-  "$ROOT/scripts/build-packs.sh" "$ID" 2>&1 | grep -E "docs:|⚠️|✅|📝"
+  # O `❌` entra no filtro: sem ele, uma falha do build-packs (binário ausente, árvore sumida) era
+  # descartada pelo grep e o usuário via só o "🛑 PAROU" no fim, sem o motivo.
+  "$ROOT/scripts/build-packs.sh" "$ID" 2>&1 | grep -E "docs:|⚠️|❌|✅|📝"
 }
 
 for id in "$@"; do
