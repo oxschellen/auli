@@ -1,31 +1,44 @@
 #!/usr/bin/env bash
-# publicar.sh [--packs <id>] [--dry-run] [--no-tunnel] [--sim] — compila tudo, publica o frontend
-# e sobe a API, nesta ordem, com UMA compilação no começo.
+# publicar.sh [--packs <id>] [--dry-run] [--no-tunnel] [--sim]
 #
-# Existe porque o repositório tem UM binário (`auli`) com TRÊS modos (`server`, `update`, `bundle`),
-# chamados por três scripts diferentes que tinham três políticas de compilação diferentes — e um
-# segundo binário (`auli-collections`) que nenhum script compilava. O resultado era publicar artefato
-# gerado por código velho sem aviso: em 09/08/2026 os zips saíram com uma frase que já tinha sido
-# removida do código cinco horas antes (ver auli_operations.md §11).
+# Compila tudo, publica o frontend e sobe a API — nesta ordem, com UMA compilação no começo.
+#
+# ─── QUEM ELE CHAMA ────────────────────────────────────────────────────────────────────────────
+#   passo 1  (nenhum script)              cargo build --release -p auli-cli -p auli-collections
+#   passo 2  scripts/build-packs.sh       só com --packs; re-vetoriza uma entidade
+#   portão   scripts/resumo-packs.py      só imprime o resumo; não altera nada
+#   passo 3  scripts/deploy-frontend.sh   que por sua vez chama scripts/build-frontend-public.sh
+#   passo 4  ./start_server.sh            na RAIZ do repo, não em scripts/
+#
+# Sem --packs são 3 passos (o 2 some e os demais renumeram).
+#
+# ─── POR QUE ESTE SCRIPT EXISTE ────────────────────────────────────────────────────────────────
+# O repositório tem UM binário (`auli`) com TRÊS modos (`server`, `update`, `bundle`), chamados por
+# três scripts diferentes que tinham três políticas de compilação diferentes — e um segundo binário
+# (`auli-collections`) que nenhum script compilava. O resultado era publicar artefato gerado por
+# código velho, sem aviso: em 09/08/2026 os zips saíram com uma frase removida do código cinco horas
+# antes (ver auli_operations.md §11).
 #
 # Aqui a compilação acontece UMA vez, no passo 1, e os scripts de baixo recebem os caminhos prontos
-# em AULI_BIN / AULI_COLLECTIONS_BIN. Eles já sabem respeitar essas variáveis e pulam a própria
-# compilação — então não há binário velho possível, e também não se compila quatro vezes.
+# em AULI_BIN / AULI_COLLECTIONS_BIN. Eles honram essas variáveis e pulam a própria compilação —
+# então não há binário velho possível, e também não se compila quatro vezes.
 #
-# Uso:
+# ─── USO ───────────────────────────────────────────────────────────────────────────────────────
 #   scripts/publicar.sh                    # compila, publica o frontend, sobe a API
-#   scripts/publicar.sh --packs rs         # + re-vetoriza o rs antes (72 min, ~42 GB de RAM)
+#   scripts/publicar.sh --packs rs         # + re-vetoriza o rs antes (~72 min, pico ~42 GB)
 #                                          #   a entidade é obrigatória: não há modo "todas"
 #   scripts/publicar.sh --dry-run          # local inteiro; nada sai da máquina, API não sobe
 #   scripts/publicar.sh --sim              # sem o portão de confirmação (para automação)
+#   scripts/publicar.sh --no-tunnel        # sobe a API só em localhost, sem o túnel Cloudflare
 #
-# O que este script NÃO faz, de propósito:
-#   • coleta (`auli-scraper-<uf>`) — bate em portal externo, leva horas, não pertence a publicação;
-#   • re-vetorizar sem você pedir — daí o `--packs` ser opt-in.
-#
-# O passo 4 usa `exec`: o `start_server.sh` fica em primeiro plano (ele segura o terminal para o
-# `trap` derrubar o `cloudflared` no Ctrl+C), então ele é necessariamente o último.
+# ─── O QUE ELE NÃO FAZ, DE PROPÓSITO ───────────────────────────────────────────────────────────
+#   • coleta (`auli-scraper-<uf>`) — bate em portal externo e leva horas; não pertence a publicação
+#   • re-vetorizar sem você pedir — daí o `--packs` ser opt-in
 set -euo pipefail
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+# PREPARO — argumentos, caminhos e a contagem de passos. Nada acontece com o sistema aqui.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
 
 PACKS=0
 PACKS_ID=""
@@ -59,36 +72,71 @@ TARGET="${CARGO_TARGET_DIR:-$ROOT/auli-server/target}"
 BIN_AULI="$TARGET/release/auli"
 BIN_COLLECTIONS="$TARGET/release/auli-collections"
 
+# O passo 2 (packs) é opcional, então o denominador muda: 4 passos com --packs, 3 sem.
 TOTAL=4
 [ "$PACKS" = 1 ] || TOTAL=3
+PASSO=1
 
-echo "═══ 1/$TOTAL  compilar (release): auli + auli-collections"
-# Os dois de uma vez: o cargo resolve o grafo comum uma única vez, e é o cargo — não uma comparação
-# de datas — quem decide se há o que recompilar. Fingerprint cobre também mudança no Cargo.lock, que
-# um teste de mtime não veria (um bump de `ort` altera os vetores sem tocar num `.rs`; §34.2).
-# Com tudo em dia isso leva menos de um segundo.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+# PASSO 1 — COMPILAR
+#
+#   Chama:  cargo (nenhum script).
+#   Produz: target/release/auli e target/release/auli-collections.
+#
+# Primeiro de propósito: erro de compilação tem que parar o deploy ANTES de ele gerar artefato
+# nenhum. Se falhar aqui, nada foi tocado — nem public/, nem os zips, nem o servidor.
+#
+# Os dois pacotes numa chamada só: o cargo resolve o grafo comum uma única vez. E é o CARGO — não
+# uma comparação de datas de arquivo — quem decide se há o que recompilar: ele usa fingerprint do
+# grafo inteiro, o que cobre também mudança no Cargo.lock. Isso importa: um bump de `ort` altera os
+# vetores sem tocar num único `.rs` (auli_pendencias.md §34.2), e mtime não veria.
+#
+# Com tudo em dia, leva menos de um segundo.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+echo "═══ $PASSO/$TOTAL  INICIANDO — compilar (release): auli + auli-collections"
 (cd "$ROOT/auli-server" && cargo build --release -p auli-cli -p auli-collections)
 [ -x "$BIN_AULI" ]        || { echo "❌ $BIN_AULI não existe depois do build" >&2; exit 1; }
 [ -x "$BIN_COLLECTIONS" ] || { echo "❌ $BIN_COLLECTIONS não existe depois do build" >&2; exit 1; }
-echo "✅ binários em dia"
+echo "✅  $PASSO/$TOTAL  CONCLUÍDO — binários em dia"
+PASSO=$((PASSO + 1))
 
-# A partir daqui NINGUÉM compila de novo: os scripts de baixo honram estas variáveis e pulam o
-# próprio passo de build. É isto que garante que os quatro artefatos saem do MESMO código.
+# A partir daqui NINGUÉM compila de novo. Os scripts de baixo honram estas duas variáveis e pulam o
+# próprio passo de build — é isto que garante que packs, zips e API saem do MESMO código.
 export AULI_BIN="$BIN_AULI"
 export AULI_COLLECTIONS_BIN="$BIN_COLLECTIONS"
 
-PASSO=2
-
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+# PASSO 2 — RE-VETORIZAR   (opcional: só com --packs <id>)
+#
+#   Chama:  scripts/build-packs.sh <id>
+#   Produz: data/<id>/packs/ (vetores + manifesto) e os índices das abas de jurisprudência.
+#
+# É CARO: o `auli update` re-vetoriza a entidade inteira, não a coleção que mudou. No rs isso são
+# ~72 min e pico de ~42 GB de RAM. Por isso é opt-in e nunca roda sozinho.
+#
+# Quando é obrigatório: sempre que a árvore `data/<id>/docs/` mudar. O manifesto carimba um
+# `docs_hash` sobre ela e o servidor RECUSA subir se divergir — então pular este passo depois de
+# mexer na árvore não dá erro sutil, dá boot recusado.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
 if [ "$PACKS" = 1 ]; then
   echo
-  echo "═══ $PASSO/$TOTAL  re-vetorizar $PACKS_ID"
-  echo "   ⏳ caro: ~72 min e pico de ~42 GB de RAM só para o rs (o TARF é 22.476 documentos)."
+  echo "═══ $PASSO/$TOTAL  INICIANDO — re-vetorizar '$PACKS_ID'   →  scripts/build-packs.sh"
+  echo "    ⏳ caro: a entidade INTEIRA. No rs, ~72 min e pico de ~42 GB (o TARF são 22.476 docs)."
   scripts/build-packs.sh "$PACKS_ID"
+  echo "✅  $PASSO/$TOTAL  CONCLUÍDO — packs e índices de '$PACKS_ID' regerados"
   PASSO=$((PASSO + 1))
 fi
 
-# ── Portão: daqui para frente sai da máquina ──────────────────────────────────────────────────
-# O `--dry-run` não precisa de portão: ele não envia nada. O `--sim` existe para automação.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+# PORTÃO — a última chance de desistir
+#
+#   Chama:  scripts/resumo-packs.py  (só lê e imprime; não altera nada)
+#
+# Daqui para frente as ações SAEM DA MÁQUINA. O portão mostra o que vai subir — versão do frontend
+# e contagem por coleção de cada pack — para a decisão ser informada, e não confiante.
+#
+# Não aparece com --dry-run (nada é enviado, não há o que confirmar) nem com --sim (automação).
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
 if [ "$DRY_RUN" = 0 ] && [ "$SIM" = 0 ]; then
   echo
   echo "──────────────────────────────────────────────────────────────"
@@ -103,8 +151,22 @@ if [ "$DRY_RUN" = 0 ] && [ "$SIM" = 0 ]; then
   case "$resposta" in [sS]|[sS][iI][mM]) ;; *) echo "Cancelado — nada foi enviado."; exit 0 ;; esac
 fi
 
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+# PASSO 3 — PUBLICAR O FRONTEND
+#
+#   Chama:  scripts/deploy-frontend.sh  →  que internamente chama scripts/build-frontend-public.sh
+#   Produz: o site novo em produção; a versão anterior fica preservada em /var/www/html.antigo.
+#
+# São 8 sub-passos com numeração própria: os `═══` abaixo são deste script, os `▶ n/8` são de lá.
+# Em resumo, o que ele faz: regenera public/ a partir de data/, monta os 27 zips de download,
+# confere que nenhuma entidade do registry ficou sem dados, builda o app, sobe para um staging
+# remoto, troca por `mv` (atômico) e roda o smoke. Se o smoke falhar, ele mesmo desfaz a troca.
+#
+# O `deploy-frontend.sh` compila sozinho quando rodado à mão; aqui ele recebe AULI_BIN e pula,
+# porque o passo 1 já garantiu o binário.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
 echo
-echo "═══ $PASSO/$TOTAL  publicar o frontend"
+echo "═══ $PASSO/$TOTAL  INICIANDO — publicar o frontend   →  scripts/deploy-frontend.sh"
 # Array, não expansão condicional. Duas armadilhas evitadas aqui, as duas silenciosas:
 #   • `[ x = y ] && arr+=(...)` como ÚLTIMO comando retorna 1 quando o teste falha e, com `set -e`,
 #     derruba o script no caso normal. Por isso o `if`.
@@ -113,20 +175,37 @@ echo "═══ $PASSO/$TOTAL  publicar o frontend"
 deploy_flags=()
 if [ "$DRY_RUN" = 1 ]; then deploy_flags+=(--dry-run); fi
 scripts/deploy-frontend.sh ${deploy_flags[@]+"${deploy_flags[@]}"}
+echo "✅  $PASSO/$TOTAL  CONCLUÍDO — frontend publicado"
 PASSO=$((PASSO + 1))
 
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+# PASSO 4 — SUBIR A API
+#
+#   Chama:  ./start_server.sh --no-build   (na RAIZ do repo, não em scripts/)
+#   Produz: `auli server` na :3000 + o túnel do Cloudflare publicando api.auli.com.br.
+#
+# É o ÚLTIMO por construção, não por gosto: o `start_server.sh` não daemoniza. Ele fica em primeiro
+# plano para que o `trap` dele consiga derrubar o cloudflared no Ctrl+C. Usamos `exec`, então este
+# script é SUBSTITUÍDO pelo servidor — nada roda depois daquela linha, e é por isso que a mensagem
+# de conclusão deste passo vem ANTES dela, e não depois.
+#
+# `--no-build` porque o passo 1 já compilou o mesmo binário, no mesmo target.
+#
+# Para não perder o terminal, rode o publicar.sh inteiro sob `nohup ... &` — ver
+# auli_operations.md §5.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
 echo
-echo "═══ $PASSO/$TOTAL  subir a API"
+echo "═══ $PASSO/$TOTAL  INICIANDO — subir a API   →  ./start_server.sh"
 if [ "$DRY_RUN" = 1 ]; then
-  echo "   [dry-run] pulado — a API não é derrubada nem subida."
+  echo "    [dry-run] pulado — a API não é derrubada nem subida."
+  echo "✅  $PASSO/$TOTAL  CONCLUÍDO — (dry-run: nada foi feito neste passo)"
   echo
   echo "✅ dry-run completo: compilou, gerou tudo localmente, não enviou nada."
   exit 0
 fi
 
-# `exec`: o start_server.sh não daemoniza (fica vivo para o trap derrubar o cloudflared no Ctrl+C),
-# então ele é o último passo por construção. `--no-build` porque o passo 1 já compilou o mesmo
-# binário, no mesmo target — recompilar aqui seria só um no-op ruidoso.
 server_flags=(--no-build)
 if [ "$NO_TUNNEL" = 1 ]; then server_flags+=(--no-tunnel); fi
+echo "✅  $PASSO/$TOTAL  entregando o terminal ao servidor — Ctrl+C encerra API e túnel juntos"
+echo
 exec ./start_server.sh "${server_flags[@]}"
