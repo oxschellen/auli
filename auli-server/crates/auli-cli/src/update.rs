@@ -26,7 +26,7 @@ use std::path::{Path, PathBuf};
 use auli_contract::{Documento, Embeddable, Kind};
 use auli_core::embed::{EMBED_DIM, EMBED_MAX_TOKENS, Embedder};
 use auli_core::manifest::{self, CollectionEntry, Manifest};
-use vector_store::Writer;
+use vector_store::{Record, Writer};
 
 use crate::error::Result;
 
@@ -83,6 +83,7 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
         embed_model_id: manifest::EMBED_MODEL_ID.to_string(),
         embed_dim: EMBED_DIM,
         strategy_version: manifest::STRATEGY_VERSION,
+        pack_format: manifest::PACK_FORMAT,
         collections: entries,
         docs_hash,
     };
@@ -268,30 +269,69 @@ fn recusar_jurisprudencia_sem_resumo(
     .into())
 }
 
-/// Ingest one contract table into the entity's `<entity>-<kind>` vector collection.
+/// Casa cada documento com o vetor dele e monta o record que vai ao pack.
+///
+/// Função à parte, e não um `map` embutido no [`ingest_items`], porque é aqui que moram as duas
+/// afirmações da Fase 1 — o id é o `doc_path`, e o `key_hash` é da KEY — e testá-las não pode exigir
+/// carregar o modelo de 2 GB. Os comprimentos já foram conferidos pelo chamador.
+fn montar_records(items: &[Documento], embeddings: Vec<Vec<f32>>) -> Vec<Record<String>> {
+    items
+        .iter()
+        .zip(embeddings)
+        .map(|(doc, embedding)| Record {
+            id: doc.doc_path(),
+            embedding,
+            payload: doc.stored_repr(),
+            // FNV-1a sobre a KEY, não sobre o arquivo: o `.md` carrega o `resumo_gerada_em`, que
+            // muda a cada regeneração de sinopse sem mudar uma vírgula do que é embedado. Hashear o
+            // arquivo invalidaria o cache inteiro dos pareceres a cada rodada de sinopse.
+            key_hash: Some(manifest::hash_hex(doc.text_to_embed().as_bytes())),
+        })
+        .collect()
+}
+
+/// Ingest one collection into the entity's `<entity>-<kind>` vector collection.
 ///
 /// Núcleo do ingest: embeda `text_to_embed`, guarda `stored_repr` e devolve a entrada de manifesto.
-/// Separado de [`ingest`] porque pareceres não vêm mais direto do arquivo — passam pela hidratação
-/// da árvore (G4) e chegam aqui em memória.
-fn ingest_items<P>(
+///
+/// **A identidade do registro é o `doc_path`** (D-INC-1), não mais o `id-N` posicional. O id
+/// posicional tornava o upsert incremental impossível por construção: inserir um documento no meio
+/// da ordem alfabética deslocava a identidade de todos os seguintes, e por isso o `reset` era
+/// obrigatório. O `doc_path` é único nas quatro coleções, derivado e nunca digitado — e É o nome do
+/// arquivo na árvore, então o pack passa a ser navegável contra ela a olho nu.
+///
+/// **Cada record carrega o `key_hash`** (D-INC-2): o hash da key que produziu aquele vetor. Nada
+/// nesta fase o lê — o caminho continua sendo `reset` + reescrita total. Ele existe para a Fase 3,
+/// que compara o hash gravado com o da árvore e só re-embeda o que difere. Sem gravá-lo agora, essa
+/// comparação nunca teria um lado esquerdo.
+fn ingest_items(
     embedder: &Embedder,
     writer: &Writer,
     entity: &str,
     kind: Kind,
-    items: &[P],
+    items: &[Documento],
     out: &Path,
-) -> Result<CollectionEntry>
-where
-    P: Embeddable,
-{
+) -> Result<CollectionEntry> {
     let to_embed: Vec<String> = items
         .iter()
         .map(|it| it.text_to_embed().to_string())
         .collect();
-    let stored: Vec<String> = items.iter().map(|it| it.stored_repr()).collect();
 
     let name = format!("{}-{}", entity, kind.as_str());
     let embeddings = embedder.embed_dense(to_embed)?;
+    // O `zip` abaixo casaria com o MENOR dos dois e descartaria o resto em silêncio. Este é o ponto
+    // onde o descasamento pode nascer — o embedder é quem devolve a outra ponta —, e é por isso que
+    // a conferência mora aqui e não na store: lá, `Vec<Record>` já torna o descasamento
+    // inexpressável (D-INC-14).
+    if embeddings.len() != items.len() {
+        return Err(crate::error::Error::Custom(format!(
+            "embedder devolveu {} vetores para {} documentos em '{}' — abortado antes de gravar, \
+             porque casar os dois truncaria o acervo em silêncio",
+            embeddings.len(),
+            items.len(),
+            name
+        )));
+    }
     // The manifest stamps `dim = EMBED_DIM` (a constant). If the model ever produces a different
     // real width without an `EMBED_MODEL_ID` bump, the manifest would lie and boot validation
     // (which checks the identity triple, not the file width) wouldn't catch it. Fail loudly here.
@@ -305,10 +345,11 @@ where
             name
         )));
     }
-    let ids: Vec<String> = (1..=stored.len()).map(|i| format!("id-{}", i)).collect();
 
-    writer.reset::<String>(&name)?; // clean reload: no orphan id-(N+1)..
-    let total = writer.upsert(&name, &ids, embeddings, &stored)?;
+    let records = montar_records(items, embeddings);
+
+    writer.reset::<String>(&name)?; // reescrita total: a Fase 1 não muda comportamento
+    let total = writer.upsert(&name, records)?;
 
     // Stamp this collection in the manifest (count + integrity hash of the written file).
     let file_name = format!("{}.json", name);
@@ -666,6 +707,71 @@ mod tests {
             "mas com hash"
         );
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+    }
+
+    /// **O coração da Fase 1**: o id do record é o `doc_path`, que É o nome do `.md` na árvore.
+    ///
+    /// O que isto impede é o defeito que tornava o incremental impossível: com `id-N` posicional,
+    /// inserir um documento no meio da ordem alfabética renomeava a identidade de todos os
+    /// seguintes, e o pack só podia ser reescrito inteiro.
+    #[test]
+    fn o_id_do_record_e_o_nome_do_arquivo_na_arvore() {
+        let docs = arvore(
+            "ids",
+            &[("A 1", Some("s")), ("B 2", Some("s")), ("C 3", Some("s"))],
+        );
+        let items = preparar("xx", &docs, Kind::Pareceres).unwrap().unwrap();
+        let embeddings = vec![vec![1.0]; items.len()];
+        let records = montar_records(&items, embeddings);
+
+        let ids: Vec<&str> = records.iter().map(|r| r.id.as_str()).collect();
+        assert_eq!(
+            ids,
+            vec![
+                "docs/pareceres/a-1.md",
+                "docs/pareceres/b-2.md",
+                "docs/pareceres/c-3.md"
+            ]
+        );
+        // E o nome no id existe MESMO na árvore — o pack é navegável contra ela.
+        for r in &records {
+            let nome = r.id.rsplit('/').next().unwrap();
+            assert!(
+                docs.join("pareceres").join(nome).exists(),
+                "id `{}` deveria nomear um arquivo da árvore",
+                r.id
+            );
+        }
+        let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+    }
+
+    #[test]
+    fn o_key_hash_e_da_key_e_nao_do_arquivo() {
+        // A distinção que decide se o cache da Fase 3 funciona: o `.md` guarda `resumo_gerada_em`,
+        // que muda a cada regeneração de sinopse sem mudar o que é embedado. Hash do ARQUIVO
+        // invalidaria o acervo inteiro dos pareceres a cada rodada; hash da KEY, nenhum registro.
+        let docs = arvore("hash", &[("A 1", Some("sinopse"))]);
+        let items = preparar("xx", &docs, Kind::Pareceres).unwrap().unwrap();
+        let records = montar_records(&items, vec![vec![1.0]]);
+
+        assert_eq!(
+            records[0].key_hash.as_deref(),
+            Some(manifest::hash_hex(items[0].text_to_embed().as_bytes())).as_deref()
+        );
+
+        // Mesma key ⇒ mesmo hash (é o que permite reaproveitar o vetor).
+        let iguais = montar_records(&items, vec![vec![9.0]]);
+        assert_eq!(records[0].key_hash, iguais[0].key_hash);
+
+        // Sinopse diferente ⇒ key diferente ⇒ hash diferente (é o que força o re-embed).
+        let outros = arvore("hash2", &[("A 1", Some("OUTRA sinopse"))]);
+        let mudados = preparar("xx", &outros, Kind::Pareceres).unwrap().unwrap();
+        let mudados = montar_records(&mudados, vec![vec![1.0]]);
+        assert_ne!(records[0].key_hash, mudados[0].key_hash);
+        assert_eq!(records[0].id, mudados[0].id, "mas a identidade é a mesma");
+
+        let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+        let _ = std::fs::remove_dir_all(outros.parent().unwrap());
     }
 
     #[test]

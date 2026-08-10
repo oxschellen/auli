@@ -63,6 +63,27 @@ pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 /// porque o espaço vetorial mudou; a re-ingestão é obrigatória do mesmo jeito.
 pub const STRATEGY_VERSION: u32 = 2;
 
+/// Versão do **FORMATO do arquivo de pack** — deliberadamente separada do [`STRATEGY_VERSION`]
+/// (D-INC-7). A fronteira entre os dois é o que impede um reembed desnecessário:
+///
+/// - **estratégia** = "o que entra no vetor mudou" ⇒ os vetores estão errados ⇒ **reembed
+///   obrigatório**;
+/// - **formato** = "como o arquivo é escrito mudou" ⇒ os vetores continuam certos ⇒ **migração,
+///   nunca reembed**.
+///
+/// Fundi-los custaria 72 minutos de GPU para reescrever um campo de texto, e apagaria a distinção
+/// da qual a §34.2 depende.
+///
+/// **1** — ids posicionais `id-1..id-N`, sem `key_hash`. **2** (Fase 1 da TAREFA-UPDATE-INCREMENTAL)
+/// — o id é o `doc_path` do documento, e cada record carrega o `key_hash` da key que o vetorizou.
+/// Manifesto sem o campo **é** formato 1: foi escrito antes de ele existir.
+pub const PACK_FORMAT: u32 = 2;
+
+/// O formato de quem não declara. Ver [`PACK_FORMAT`].
+fn pack_format_padrao() -> u32 {
+    1
+}
+
 /// The triple that must match between the packs and the running server.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EmbedIdentity {
@@ -99,6 +120,9 @@ pub struct Manifest {
     pub embed_model_id: String,
     pub embed_dim: usize,
     pub strategy_version: u32,
+    /// Formato do arquivo de pack (D-INC-7). Ver [`PACK_FORMAT`]. Ausente ⇒ 1.
+    #[serde(default = "pack_format_padrao")]
+    pub pack_format: u32,
     pub collections: Vec<CollectionEntry>,
     /// Hash agregado da árvore `docs/` (fonte `.md` dos pareceres), quando ela existe. Validado no
     /// boot junto dos hashes de pack: a árvore é fonte de conteúdo servido, então divergir dela é
@@ -233,8 +257,22 @@ pub fn read_manifest(path: impl AsRef<Path>) -> Result<Manifest> {
 /// Read the manifest at `path` and check its embedding identity equals `expected`. A divergence in
 /// model, dimension, or strategy version is a hard error: the server should refuse to serve rather
 /// than answer from a vector space that doesn't match its query encoder.
+///
+/// O **formato do pack** é conferido com a mesma igualdade, e por contrato explícito (D-INC-7).
+/// Um servidor novo lendo um pack formato 1 desserializaria sem erro — os ids `id-N` são `String`
+/// como qualquer outra e o `key_hash` ausente vira `None` —, então a incompatibilidade passaria em
+/// silêncio até alguém notar retrieval estranho. Depender da tolerância do serde funcionaria por
+/// acidente; esta comparação é o contrato.
 pub fn validate_manifest(path: impl AsRef<Path>, expected: &EmbedIdentity) -> Result<Manifest> {
     let manifest = read_manifest(path)?;
+    if manifest.pack_format != PACK_FORMAT {
+        return Err(Error::from(format!(
+            "Formato de pack incompatível para '{}': pacote é formato {}, servidor espera {}. \
+             O ESPAÇO VETORIAL não mudou — só o arquivo —, então isto é migração, não re-embedding: \
+             rode a migração da TAREFA-UPDATE-INCREMENTAL (ou `auli update` para reconstruir do zero).",
+            manifest.entity, manifest.pack_format, PACK_FORMAT,
+        )));
+    }
     let got = manifest.embed_identity();
     if &got != expected {
         return Err(Error::from(format!(
@@ -281,6 +319,7 @@ mod tests {
             embed_model_id: EMBED_MODEL_ID.into(),
             embed_dim: EMBED_DIM,
             strategy_version: STRATEGY_VERSION + 1, // wrong
+            pack_format: PACK_FORMAT,
             collections: vec![],
             docs_hash: None,
         };
@@ -354,6 +393,7 @@ mod tests {
             embed_model_id: EMBED_MODEL_ID.into(),
             embed_dim: EMBED_DIM,
             strategy_version: STRATEGY_VERSION,
+            pack_format: PACK_FORMAT,
             collections: vec![],
             docs_hash: Some(h),
         };
@@ -372,6 +412,49 @@ mod tests {
         // Manifesto sem docs_hash (entidade sem árvore / pacote antigo) ⇒ nada a validar.
         m.docs_hash = None;
         assert!(validate_docs_hash(&d, &m).is_ok());
+    }
+
+    #[test]
+    fn validate_recusa_formato_de_pack_antigo() {
+        // D-INC-7: um pack formato 1 DESSERIALIZA sem erro num servidor novo (os `id-N` são String
+        // como qualquer outra, o `key_hash` ausente vira `None`), então sem esta comparação a
+        // incompatibilidade passaria em silêncio.
+        let dir = std::env::temp_dir().join(format!("auli-packfmt-test-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = manifest_path(&dir, "rs");
+        let mut m = Manifest {
+            entity: "rs".into(),
+            version: "1".into(),
+            built_at: "now".into(),
+            embed_model_id: EMBED_MODEL_ID.into(),
+            embed_dim: EMBED_DIM,
+            strategy_version: STRATEGY_VERSION,
+            pack_format: 1, // formato antigo, identidade de embedding CERTA
+            collections: vec![],
+            docs_hash: None,
+        };
+        write_manifest(&path, &m).unwrap();
+        let e = validate_manifest(&path, &identity())
+            .unwrap_err()
+            .to_string();
+        assert!(e.contains("Formato de pack"), "erro: {e}");
+        // A mensagem tem de mandar MIGRAR, não re-embeddar: os vetores estão certos.
+        assert!(e.contains("migração"), "erro: {e}");
+
+        m.pack_format = PACK_FORMAT;
+        write_manifest(&path, &m).unwrap();
+        assert!(validate_manifest(&path, &identity()).is_ok());
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn manifesto_sem_pack_format_e_formato_1() {
+        // Quem não declara foi escrito antes do campo existir — logo, é o formato 1.
+        let json = r#"{"entity":"rs","version":"1","built_at":"now","embed_model_id":"m",
+                       "embed_dim":1024,"strategy_version":2,"collections":[]}"#;
+        let m: Manifest = serde_json::from_str(json).unwrap();
+        assert_eq!(m.pack_format, 1);
     }
 
     #[test]

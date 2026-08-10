@@ -106,6 +106,26 @@ senão carimbamos o hash da árvore nova ao lado do vetor do conteúdo velho, e 
 mentindo**. Logo: **validar o `docs_hash` antes de migrar e recusar se divergir.** Guard-rail de uma
 linha; se esquecido, o defeito é silencioso e de nascença.
 
+**D-INC-14 — `upsert` recebe `Vec<Record<P>>`, não um quarto slice paralelo (divergência decidida por
+Carlos, 10/08/2026).** A versão anterior desta TAREFA dizia apenas que o `Record` ganha `key_hash` e
+que a store "só o carrega", o que na prática levaria a passar `key_hashes` como quarto slice ao lado de
+`ids`/`embeddings`/`payloads`. Isso **agravaria** o problema que a guarda `ArityMismatch` existe para
+cobrir (um `zip` silencioso truncando para o menor). Passando `Vec<Record<P>>`, o descasamento fica
+**inexpressável pelo tipo** em vez de detectável em tempo de execução — e é a assinatura para onde a
+Fase 3 vai de qualquer modo (`apply(upserts, removes)`). Consequências, todas dentro do escopo da
+Fase 1:
+
+- **A guarda muda de lugar, não desaparece.** O `zip` sai da store e vai para o `update.rs`, que monta
+  os records a partir de `items` e do retorno do `embed_dense`. Ali o descasamento é genuinamente
+  possível (embedder devolvendo contagem diferente da de textos), e é ali que a conferência de
+  comprimento passa a viver. Na store, ele deixa de existir.
+- **Órfãos da própria mudança** (CLAUDE.md §3): a variante `Error::ArityMismatch` fica morta e os
+  testes que provavam "batch rejeitado não persiste" **pela via da aridade** perdem o objeto. Remover
+  os dois.
+- **`DimensionMismatch` FICA.** Ela é sobre largura do vetor, não sobre contagem de itens, e nada no
+  tipo a torna impossível — continua sendo a guarda que transforma degradação silenciosa em erro de
+  escrita.
+
 ---
 
 ## Fases
@@ -123,8 +143,9 @@ Ainda **sem** caminho incremental: `reset` + reescrita total, como hoje. Só o f
   payload)` e a promessa continua válida: o campo é opaco).
 - `write_collection_file` passa a gravar em `.tmp` + `rename` (D-INC-5).
 - Escrita ordena os records por `id` (D-INC-4).
-- `update.rs`: `ids` deixam de ser `id-N` e passam a ser `doc.doc_path()`; calcula o `key_hash` do
-  `text_to_embed`.
+- `upsert` passa a receber `Vec<Record<P>>` (D-INC-14); `ArityMismatch` e seus testes de aridade saem.
+- `update.rs`: monta os `Record` com `id = doc.doc_path()` (os `id-N` morrem) e o `key_hash` do
+  `text_to_embed`, conferindo uma única vez que o `embed_dense` devolveu tantos vetores quantos textos.
 - `manifest.rs`: `pack_format` (D-INC-7), carimbado como 2.
 - Boot: valida `pack_format` com a **mesma igualdade** do triplo de identidade. Depender da tolerância
   do serde a campo desconhecido funcionaria, mas é robustez por acidente, não por contrato.

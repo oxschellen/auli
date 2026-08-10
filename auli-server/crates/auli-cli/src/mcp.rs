@@ -547,6 +547,7 @@ mod tests {
                 id: format!("id-{i}"),
                 embedding: vec![1.0, 0.0],
                 payload: p.to_string(),
+                key_hash: None,
             })
             .collect();
         Arc::new(ReadStore::from_records(records))

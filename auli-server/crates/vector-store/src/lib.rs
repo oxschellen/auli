@@ -30,7 +30,7 @@ pub use error::{Error, Result};
 pub use read::ReadStore;
 pub use write::Writer;
 
-/// One stored record: a sequential id, its embedding, and an opaque payload.
+/// One stored record: a stable id, its embedding, an opaque payload, and an opaque change key.
 ///
 /// `P` is whatever the caller stores alongside the vector (today: the document text). The store
 /// never inspects it. Renamed from the old `document` field to `payload` to make the genericity
@@ -42,6 +42,15 @@ pub struct Record<P> {
     pub embedding: Vec<f32>,
     #[serde(rename = "document")]
     pub payload: P,
+    /// Hash of whatever the caller embedded to produce `embedding` (D-INC-2). **Opaque here**: the
+    /// store neither computes nor interprets it — it only carries it, exactly like `payload`. What
+    /// it enables lives one layer up: `auli update` compares it against the current key to decide
+    /// whether a vector can be reused instead of re-embedded.
+    ///
+    /// `Option` because a pack written before this field exists deserializes as `None`, which the
+    /// caller reads as "unknown ⇒ re-embed" — degrading to today's behavior instead of breaking.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub key_hash: Option<String>,
 }
 
 /// A whole collection: just its records. Persisted verbatim as `{ "records": [...] }`.
@@ -73,6 +82,12 @@ pub fn read_collection_file<P: DeserializeOwned>(
 
 /// Write a collection file, creating parent directories as needed. The whole file is rewritten on
 /// every call — O(n), fine for the small corpora here (see the README tradeoff note).
+///
+/// **Atomic: serialize to `<name>.json.tmp`, then `rename` over the target** (D-INC-5). A crash
+/// mid-`write` used to be theoretical — one `auli update` a month, and the boot hash would catch
+/// the truncated file anyway. It stops being theoretical once writes are frequent, and "the server
+/// refuses to boot" is a bad way to find out. The temp file is a sibling on purpose: `rename` is
+/// only atomic within a filesystem.
 pub fn write_collection_file<P: Serialize>(
     path: impl AsRef<Path>,
     data: &CollectionData<P>,
@@ -81,7 +96,9 @@ pub fn write_collection_file<P: Serialize>(
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
-    fs::write(path, serde_json::to_vec(data)?)?;
+    let tmp = path.with_extension("json.tmp");
+    fs::write(&tmp, serde_json::to_vec(data)?)?;
+    fs::rename(&tmp, path)?;
     Ok(())
 }
 
@@ -177,6 +194,7 @@ mod tests {
                 id: "id-1".into(),
                 embedding: vec![0.1, 0.2],
                 payload: "hello".to_string(),
+                key_hash: Some("h".into()),
             }],
         };
         let json = serde_json::to_string(&data).unwrap();
@@ -192,16 +210,19 @@ mod tests {
                 id: "id-1".into(),
                 embedding: vec![1.0, 0.0],
                 payload: "a".to_string(),
+                key_hash: None,
             },
             Record {
                 id: "id-2".into(),
                 embedding: vec![0.0, 1.0],
                 payload: "b".to_string(),
+                key_hash: None,
             },
             Record {
                 id: "id-3".into(),
                 embedding: vec![-1.0, 0.0],
                 payload: "c".to_string(),
+                key_hash: None,
             },
         ];
         let out = scan(&recs, &[1.0, 0.0], 2);
