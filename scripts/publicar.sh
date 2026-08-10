@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# publicar.sh [--packs [<id>]] [--dry-run] [--no-tunnel] [--sim] — compila tudo, publica o frontend
+# publicar.sh [--packs <id>] [--dry-run] [--no-tunnel] [--sim] — compila tudo, publica o frontend
 # e sobe a API, nesta ordem, com UMA compilação no começo.
 #
 # Existe porque o repositório tem UM binário (`auli`) com TRÊS modos (`server`, `update`, `bundle`),
@@ -15,6 +15,7 @@
 # Uso:
 #   scripts/publicar.sh                    # compila, publica o frontend, sobe a API
 #   scripts/publicar.sh --packs rs         # + re-vetoriza o rs antes (72 min, ~42 GB de RAM)
+#                                          #   a entidade é obrigatória: não há modo "todas"
 #   scripts/publicar.sh --dry-run          # local inteiro; nada sai da máquina, API não sobe
 #   scripts/publicar.sh --sim              # sem o portão de confirmação (para automação)
 #
@@ -36,14 +37,17 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --packs)
       PACKS=1
-      # `--packs` sozinho vale para todas as entidades; `--packs rs` só para uma. O argumento é
-      # opcional, daí o teste: só consome o próximo se ele não for outra flag.
-      case "${2:-}" in -*|"") ;; *) PACKS_ID="$2"; shift ;; esac
+      # A entidade é OBRIGATÓRIA: o `build-packs.sh` vetoriza uma por vez e não tem modo "todas".
+      # Nem deveria — re-vetorizar o acervo inteiro passa de duas horas (só o SP são ~49 min).
+      case "${2:-}" in
+        -*|"") echo "❌ --packs exige a entidade: --packs rs" >&2; exit 1 ;;
+        *) PACKS_ID="$2"; shift ;;
+      esac
       ;;
     --dry-run)   DRY_RUN=1 ;;
     --no-tunnel) NO_TUNNEL=1 ;;
     --sim)       SIM=1 ;;
-    *) echo "❌ opção desconhecida: $1 (use --packs [<id>] | --dry-run | --no-tunnel | --sim)" >&2; exit 1 ;;
+    *) echo "❌ opção desconhecida: $1 (use --packs <id> | --dry-run | --no-tunnel | --sim)" >&2; exit 1 ;;
   esac
   shift
 done
@@ -77,9 +81,9 @@ PASSO=2
 
 if [ "$PACKS" = 1 ]; then
   echo
-  echo "═══ $PASSO/$TOTAL  re-vetorizar ${PACKS_ID:-todas as entidades}"
+  echo "═══ $PASSO/$TOTAL  re-vetorizar $PACKS_ID"
   echo "   ⏳ caro: ~72 min e pico de ~42 GB de RAM só para o rs (o TARF é 22.476 documentos)."
-  scripts/build-packs.sh ${PACKS_ID:+"$PACKS_ID"}
+  scripts/build-packs.sh "$PACKS_ID"
   PASSO=$((PASSO + 1))
 fi
 
