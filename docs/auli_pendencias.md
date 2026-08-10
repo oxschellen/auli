@@ -755,7 +755,12 @@ acima.
 
 ---
 
-## 31. `update` incremental — a maior alavanca de performance (aberta; estudada em 2026-08-09)
+## 31. `update` incremental — a maior alavanca de performance (aberta; especificada em 2026-08-10)
+
+> **A especificação vigente é a [docs/TAREFA-UPDATE-INCREMENTAL.md](TAREFA-UPDATE-INCREMENTAL.md).**
+> Ela fecha as decisões (`D-INC-1..13`) e as cinco fases, e **manda sobre o estudo de 09/08** onde os
+> dois divergirem. Se você veio procurar o próximo passo, comece por ela — o resumo abaixo continua
+> valendo como contexto, com as duas conclusões que caíram marcadas no lugar.
 
 O custo **não está em embeddar devagar, está em re-embeddar o que não mudou**.
 
@@ -821,14 +826,23 @@ já substitui por id (`vector-store/src/write.rs:45`); o que falta é o id ser *
 > foi consumida — o vetor É ela"), então hoje não há como saber se um documento mudou sem
 > re-embeddá-lo. São 8 ou 16 bytes por registro.
 >
-> **Antes de escrever código:** medir a taxa de mudança real entre duas coletas. Hoje ela é estimada
+> ~~**Antes de escrever código:** medir a taxa de mudança real entre duas coletas. Hoje ela é estimada
 > por data de publicação e **nunca foi observada**. Grava-se o `key_hash` numa coleta, confere-se na
-> seguinte, e o número sai em uma rodada. Acima de ~5%, o desenho merece revisão.
+> seguinte, e o número sai em uma rodada. Acima de ~5%, o desenho merece revisão.~~
+> **Cancelado como portão pelo `D-INC-12`.** A medição existia para decidir _se_ o desenho valia; a
+> pergunta se esvaziou quando serviços e faqs saíram do incremental por doutrina (`D-INC-8`) e sobrou
+> a jurisprudência, append-only e com re-edição medida em 0,30%. Vira subproduto: o primeiro update
+> incremental real imprime quantos vetores reaproveitou.
 >
-> **O risco que mais preocupa** não é o incremental errar o vetor — é o diff de remoção. Uma falha de
+> ~~**O risco que mais preocupa** não é o incremental errar o vetor — é o diff de remoção. Uma falha de
 > scraper que devolva a árvore pela metade vira "remover 11 mil acórdãos", e **o `docs_hash` não
 > protege**: ele valida o pack contra a árvore, e a árvore já estaria errada. O estudo propõe um teto
-> que recuse deltas de remoção acima de um limiar sem confirmação explícita.
+> que recuse deltas de remoção acima de um limiar sem confirmação explícita.~~
+> **O risco é real, mas o teto foi dissolvido pelo `D-INC-9`.** Órfão na jurisprudência **nunca** é
+> removido automaticamente: vira linha num log regenerado a cada rodada, e a aplicação exige um
+> subcomando deliberado (`D-INC-10`), não uma flag — que acabaria dentro do `update-*.sh` e apagaria
+> o portão humano sem ninguém decidir apagá-lo. Sem remoção automática não há X% a calibrar, e o caso
+> degenerado "árvore vazia" vira um log que ninguém aprovaria.
 
 **Riscos e pontos a resolver:**
 
