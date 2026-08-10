@@ -755,7 +755,7 @@ acima.
 
 ---
 
-## 31. `update` incremental — a maior alavanca de performance do sistema (aberta — 2026-08-02)
+## 31. `update` incremental — a maior alavanca de performance (aberta; estudada em 2026-08-09)
 
 O custo **não está em embeddar devagar, está em re-embeddar o que não mudou**.
 
@@ -788,11 +788,54 @@ já substitui por id (`vector-store/src/write.rs:45`); o que falta é o id ser *
 3. **Remoções.** Documento que sumiu da árvore = id presente no pack e ausente no disco; hoje o
    `reset` resolve por construção, no incremental vira um diff explícito de conjuntos de id.
 
+> ### Estudo de 09/08/2026 — o esboço acima virou proposta, e duas coisas mudaram
+>
+> **[docs/ESTUDO-identidade-e-update-incremental.md](ESTUDO-identidade-e-update-incremental.md)**
+> mediu a árvore inteira (48.408 documentos) e fechou as três perguntas abertas do esboço. O que
+> vale ler lá está resumido aqui; o que **contradiz** esta seção está marcado.
+>
+> **A identidade é o `doc_path`, e não a URL.** A pergunta que motivou o estudo era se a URL serviria
+> de chave. Não serve: em `pr/pareceres` e `rs/faqs` ela aponta para o **contêiner** — um PDF com um
+> ano de consultas (180 numa URL), uma página temática com 30 perguntas. São 4.007 documentos, 8,3%
+> do acervo, e não é conserto de scraper: nesses portais o documento não tem endereço próprio. O
+> `doc_path` já cobre os sete casos, é 100% único, e **já está dentro do `DocumentoPack`**.
+>
+> **⚠️ CORRIGE o item 4 dos riscos abaixo: a migração NÃO precisa re-embeddar.** Cada registro do
+> pack é `{id, embedding, document}`, e o `document` traz o `doc_path`. Trocar `id-N` por `doc_path`
+> é reescrever um campo a partir do payload que já está no arquivo — verificado em `rr-servicos` e
+> `sc-pareceres`, 100% presente, único e na ordem alfabética da árvore. O `key_hash` exige reler a
+> árvore e recompor a key: I/O e string, não inferência. **A ironia registrada abaixo não se aplica**,
+> e com ela cai a barreira que travava a decisão (não há "o SP some por uma hora").
+>
+> **Os documentos não são imutáveis.** 68 dos 22.590 acórdãos do TARF são republicações do mesmo
+> número — 0,30%, medido no `tarf-anomalias.txt`, e o `dedup_por_slug` já resolve mantendo a data
+> mais recente. Isso obriga a escolher entre duas identidades: o GUID da URL identifica a **revisão**
+> (re-edição vira documento novo, a anterior vira órfã); o `slug(numero)` identifica o **acórdão**
+> (re-edição é o mesmo documento com corpo novo). A árvore usa a segunda, que é a certa aqui — mas
+> transforma "imutável" em **estável na chave, mutável no conteúdo**.
+>
+> **O ganho, com número.** 680–1.020 acórdãos novos por ano no TARF; ~1.000 pareceres/ano no SP. Uma
+> re-coleta mensal toca ~0,6% do acervo e re-vetoriza 100% dele: **72 minutos para ~140 vetores**.
+>
+> **A peça que falta é uma só:** o `key_hash` no pack. O `pack()` descarta a key de propósito ("já
+> foi consumida — o vetor É ela"), então hoje não há como saber se um documento mudou sem
+> re-embeddá-lo. São 8 ou 16 bytes por registro.
+>
+> **Antes de escrever código:** medir a taxa de mudança real entre duas coletas. Hoje ela é estimada
+> por data de publicação e **nunca foi observada**. Grava-se o `key_hash` numa coleta, confere-se na
+> seguinte, e o número sai em uma rodada. Acima de ~5%, o desenho merece revisão.
+>
+> **O risco que mais preocupa** não é o incremental errar o vetor — é o diff de remoção. Uma falha de
+> scraper que devolva a árvore pela metade vira "remover 11 mil acórdãos", e **o `docs_hash` não
+> protege**: ele valida o pack contra a árvore, e a árvore já estaria errada. O estudo propõe um teto
+> que recuse deltas de remoção acima de um limiar sem confirmação explícita.
+
 **Riscos e pontos a resolver:**
 
-- Trocar o esquema de id **muda o formato do pack** ⇒ um reembed geral de migração (uma vez só) ou
+- ~~Trocar o esquema de id **muda o formato do pack** ⇒ um reembed geral de migração (uma vez só) ou
   um caminho de compatibilidade. Ironia registrada: para nunca mais re-embeddar tudo, re-embedda-se
-  tudo uma última vez.
+  tudo uma última vez.~~ **Derrubado pelo estudo de 09/08/2026** (ver o bloco acima): o `doc_path` já
+  está no payload de cada registro, então a migração reescreve o campo `id` sem tocar num vetor.
 - O `docs_hash` do manifesto (`manifest::validate_docs_hash`) cobre a árvore inteira e protege o boot
   contra pack/árvore divergentes. Ele **continua valendo como está** — é ortogonal ao incremental —,
   mas convém reconferir a interação antes de mexer.
