@@ -771,7 +771,7 @@ já substitui por id (`vector-store/src/write.rs:45`); o que falta é o id ser *
   Isso pede um teste — vetorizar do zero vs. incremental e comparar byte a byte — que é a única
   garantia real de que o atalho não introduziu deriva.
 
-### 31.1 A RAM: **diagnóstico corrigido em 2026-08-09** — não é o `Vec<Documento>`, é o `colbert`
+### 31.1 A RAM — ✅ **resolvida em 2026-08-09** (diagnóstico corrigido e conserto aplicado)
 
 > **Correção.** Esta seção afirmava que a RAM vinha do `update` carregar a coleção inteira em
 > memória (`preparar` montando um `Vec<Documento>` com o corpo de cada documento) e concluía que
@@ -810,18 +810,36 @@ de 08/08 continuam sem explicação; provavelmente instrumentação distinta.)
 Quem dita o pico é a MAIOR coleção da entidade, não a soma.
 
 **O conserto, e por que não é a §31.** Fatiar a chamada: em vez de um `embed_dense` com N textos,
-lotes de ~256, acumulando só o `dense`. O pico do `colbert` cai de 31 GB para ~360 MB. Os vetores
-saem **bit a bit idênticos** — o `batch_size = 1` interno já processa um texto por vez, então fatiar
-a lista de fora não toca em nada do que a doutrina do lote protege (ver o doc de `embed_dense`).
-O lugar é o `embed_dense` do `auli-core`, não o `update`: toda chamada herda, e a face do servidor
-(uma pergunta por vez) não muda.
+lotes de `FATIA = 256`, acumulando só o `dense` e deixando o `sparse`/`colbert` de cada fatia morrer
+no fim da volta. O lugar é o `embed_dense` do `auli-core`, não o `update`: toda chamada herda, e a
+face do servidor (uma pergunta por vez) não muda. **Seis linhas.**
 
 Isso é **ortogonal ao update incremental**. A §31 continua valendo pelo tempo — re-embeddar 15.605
-pareceres para produzir 40 vetores novos —, mas a RAM sai antes e sozinha.
+pareceres para produzir 40 vetores novos —, mas a RAM saiu antes e sozinha.
 
-**Consequência prática.** Com o conserto, o `update` passa a caber em qualquer máquina: o pico deixa
-de escalar com o acervo. Sem ele, o teto é o tamanho da maior coleção — nesta máquina (60 GB) a
-rodada do RS de 09/08 chegou a **31 GB** com o TARF ainda pela metade.
+#### Aplicado e medido (09/08/2026)
+
+| | pico de RSS |
+|---|---|
+| `sc` (1.951 docs) **antes** | 4,50 GB |
+| `sc` (1.951 docs) **depois** | **1,64 GB** |
+
+Descontando o modelo, que sozinho ocupa ~1,1 GB: **o dado passou de 3,4 GB para ~0,5 GB**. E esse
+meio giga é o transitório de UMA fatia — não cresce mais com o tamanho da coleção, que era a
+propriedade que faltava.
+
+**Os vetores não mudaram**, verificado de três formas independentes:
+
+1. `fatiar_a_entrada_nao_muda_um_unico_vetor` (novo, `#[ignore]`) — compara uma chamada única contra
+   fatias de 1, 2 e 3 sobre cinco textos de comprimentos desiguais, exigindo igualdade **bit a bit**,
+   não cosseno;
+2. os dois testes antigos da doutrina do lote seguem passando contra o modelo real;
+3. `build-packs.sh` re-rodado em `rr` e `sc` — os três `.json` de pack saíram **byte a byte
+   idênticos** aos anteriores.
+
+**Consequência prática.** O `update` passa a caber em qualquer máquina: o pico deixou de escalar com
+o acervo. Antes, o teto era o tamanho da maior coleção — a rodada do RS de 09/08 chegou a **42,5 GB**
+numa máquina de 60, e um servidor de 16 GB não daria conta do SP.
 
 ---
 

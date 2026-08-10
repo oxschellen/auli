@@ -30,6 +30,18 @@ pub const EMBED_DIM: usize = 1024;
 /// resposta — com 512 a maioria das respostas seria cortada em silêncio.
 pub const EMBED_MAX_TOKENS: usize = 8192;
 
+/// Quantos textos vão por chamada ao `fastembed` em [`Embedder::embed_dense`]. **Teto de memória,
+/// não de lote**: o `batch_size` do modelo continua 1, e fatiar não altera nenhum vetor.
+///
+/// O que a fatia limita é o `colbert`/`sparse` que o fastembed acumula e nós descartamos — ~1,4 MB
+/// por documento no acervo do TARF. Com 256, o transitório fica em ~360 MB em vez dos ~31 GB de uma
+/// coleção inteira de uma vez.
+///
+/// O valor não é crítico: qualquer coisa entre dezenas e alguns milhares troca memória por um número
+/// irrelevante de chamadas a mais. 256 dá folga confortável mesmo se um lote inteiro bater no teto de
+/// 8.192 tokens (256 × 8.192 × 1024 × 4 B ≈ 8,6 GB no pior caso teórico, que o corpus real não tem).
+const FATIA: usize = 256;
+
 pub struct Embedder {
     inner: Mutex<Bgem3Embedding>,
 }
@@ -63,13 +75,32 @@ impl Embedder {
     /// Com `Some(1)` cada texto é padded ao próprio tamanho: cosseno 1,000000 entre execuções, em
     /// qualquer ordem ou composição. E sai **~2,9× mais rápido** na prática, porque o padding ao maior
     /// do lote desperdiçava compute com textos de comprimento muito desigual.
+    ///
+    /// **A entrada é fatiada em [`FATIA`] textos por chamada — por MEMÓRIA, não por velocidade.**
+    /// O BGE-M3 é multi-vetor: cada passada devolve `dense`, `sparse` **e** `colbert`, e o fastembed
+    /// acumula os três ao longo de toda a lista que recebe. Usamos só o `dense`, mas o descarte só
+    /// acontece no fim — então uma chamada com a coleção inteira constrói tudo antes de jogar fora.
+    ///
+    /// O `colbert` não é um vetor por documento: é **um vetor de 1024 floats por token**
+    /// (`[batch, seq_len-1, 1024]`). Medido no acervo do TARF — 22.476 acórdãos, ~337 tokens de média
+    /// — dá ~1,4 MB por documento e **~31 GB** no total, contra 0,09 GB do `dense`. É o que explicava
+    /// o pico de 42,5 GB de RSS do `auli update` (auli_pendencias.md §31.1).
+    ///
+    /// Fatiar por fora é **numericamente inócuo**: o `batch_size = 1` interno já processa um texto
+    /// por vez, então o tamanho da fatia não toca em nada que a doutrina acima protege. É o que o
+    /// teste `fatiar_a_entrada_nao_muda_um_unico_vetor` fixa.
     pub fn embed_dense(&self, texts: Vec<String>) -> Result<Vec<Vec<f32>>> {
         let mut model = self
             .inner
             .lock()
             .map_err(|_| Error::from("embedder mutex poisoned"))?;
-        let out = model.embed(&texts, Some(1))?;
-        Ok(out.dense)
+        let mut dense = Vec::with_capacity(texts.len());
+        for fatia in texts.chunks(FATIA) {
+            // `out` morre no fim de cada volta, e com ele o `sparse` e o `colbert` da fatia.
+            let out = model.embed(fatia, Some(1))?;
+            dense.extend(out.dense);
+        }
+        Ok(dense)
     }
 
     /// Quantos tokens deste texto o encoder REALMENTE consome — pelo tokenizer do próprio modelo,
@@ -137,6 +168,48 @@ mod testes_ordem {
                 "{rotulo}: cosseno {s:.6} ≠ 1 — o vetor mudou com a composição do lote. \
                  Se `embed_dense` deixar de usar batch_size=1, o padding volta a vazar."
             );
+        }
+    }
+
+    /// INVARIANTE do fatiamento: partir a entrada em pedaços não pode mudar NADA.
+    ///
+    /// O `embed_dense` fatia em [`FATIA`] textos por chamada para não deixar o fastembed acumular o
+    /// `colbert` da coleção inteira (~31 GB no TARF). Isso é seguro porque o `batch_size = 1` interno
+    /// já processa um texto por vez — mas "é seguro porque eu raciocinei" não é garantia, e esta é a
+    /// função onde um engano custa re-vetorizar tudo. Aqui a igualdade é medida.
+    ///
+    /// O teste força fatias de tamanho 1, 2 e 3 sobre 5 textos comparando com uma chamada só, e
+    /// exige igualdade BIT A BIT — não cosseno. Se um dia o fatiamento passar a interferir, a
+    /// primeira coisa a checar é se o `Some(1)` ainda está lá.
+    #[test]
+    #[ignore = "carrega o modelo BGE-M3 (lento); rode com --ignored"]
+    fn fatiar_a_entrada_nao_muda_um_unico_vetor() {
+        let cache = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "../models".into());
+        let e = Embedder::new(cache.into(), 4).expect("embedder");
+        // Comprimentos deliberadamente desiguais: é a desigualdade que fazia o padding vazar.
+        let textos: Vec<String> = vec![
+            "ICMS".into(),
+            "PARECER Nº 42 — crédito de energia elétrica no processo produtivo".into(),
+            "a".repeat(3000),
+            "IPVA – isenção para pessoa com deficiência".into(),
+            "ACÓRDÃO 118/22 — redução da base de cálculo, café torrado e moído".into(),
+        ];
+
+        let inteiro = e.embed_dense(textos.clone()).unwrap();
+
+        for fatia in [1usize, 2, 3] {
+            let mut picado: Vec<Vec<f32>> = Vec::new();
+            for pedaco in textos.chunks(fatia) {
+                picado.extend(e.embed_dense(pedaco.to_vec()).unwrap());
+            }
+            assert_eq!(picado.len(), inteiro.len(), "fatia {fatia}: contagem mudou");
+            for (i, (a, b)) in inteiro.iter().zip(&picado).enumerate() {
+                assert_eq!(
+                    a, b,
+                    "fatia {fatia}, texto {i}: o vetor mudou ao fatiar a entrada. \
+                     O `batch_size = 1` do `embed_dense` ainda está lá?"
+                );
+            }
         }
     }
 
