@@ -18,6 +18,28 @@ export interface Servico {
 export type ServicoGroup = [string, Servico[]];
 
 /**
+ * Quantos serviços DISTINTOS a entidade tem, somando as abas de público.
+ *
+ * Somar `length` das abas conta duas vezes quem atende mais de um público — no RS são 41 serviços
+ * (627 entradas para 586 serviços), no SP a diferença passa de 600. A chave de identidade é o par
+ * `(titulo, link)`, não o `link` sozinho: medido contra a árvore de documentos das 27 entidades, o
+ * link isolado erra em duas (RJ conta 87 para 91; SP conta 373 para 518, porque o portal repete a
+ * mesma URL de formulário em serviços diferentes), e o par bate em todas.
+ *
+ * Não é coincidência: esse par É o `doc_path` da coleção (`slug(titulo)` + hash do `link`), então o
+ * número exibido é exatamente o número de documentos que a entidade tem no acervo.
+ */
+export function contarServicosDistintos(abas: Servico[][]): number {
+  const vistos = new Set<string>();
+  for (const aba of abas) {
+    // Separador NUL: não ocorre em título nem em URL, então nenhum par diferente colide na
+    // concatenação (com um espaço, "A B"+"C" e "A"+"B C" viram a mesma chave).
+    for (const s of aba) vistos.add(`${s.titulo}\u0000${s.link}`);
+  }
+  return vistos.size;
+}
+
+/**
  * Filtra os grupos pela query, preservando a regra da lista: se a **classe** casa, o grupo inteiro
  * entra (sem filtrar itens); senão, entram só os itens cujo **título** casa. Busca via `textSearch`
  * (acentos + multi-termo, E entre termos). Query vazia devolve `grouped` intacto (mesma referência).

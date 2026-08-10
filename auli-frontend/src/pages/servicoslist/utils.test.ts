@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  contarServicosDistintos,
   empresaPrimeiro,
   filterServicoGroups,
   getDefaultTipoServicos,
@@ -134,5 +135,38 @@ describe("empresaPrimeiro", () => {
   it("o fallback sem índice também abre em Empresas", () => {
     // getDefaultTipoServicos mantém a ordem do DADO (Cidadãos first); quem exibe passa por aqui.
     expect(rotulos(empresaPrimeiro(getDefaultTipoServicos()))[0]).toBe("Empresas");
+  });
+});
+
+describe("contarServicosDistintos", () => {
+  function s(titulo: string, link: string): Servico {
+    return { id: `${titulo}|${link}`, classe: "Geral", titulo, link };
+  }
+
+  it("não conta duas vezes o serviço que atende mais de um público", () => {
+    const cidadao = [s("Consulta de débitos", "http://x/deb"), s("Emissão de guia", "http://x/guia")];
+    const empresa = [s("Consulta de débitos", "http://x/deb"), s("Credenciamento", "http://x/cred")];
+    expect(contarServicosDistintos([cidadao, empresa])).toBe(3);
+  });
+
+  it("distingue serviços que compartilham a URL — o caso do SP", () => {
+    // 30 links do SP servem mais de um serviço: a página do CADIN é a mesma para "Logon",
+    // "Consulta Inscritos" e "Consulta Comunicados". Contar por link daria 1 para 3 documentos.
+    const aba = [
+      s("Logon", "http://x/cadin"),
+      s("Consulta Inscritos CADIN", "http://x/cadin"),
+      s("Consulta Comunicados", "http://x/cadin"),
+    ];
+    expect(contarServicosDistintos([aba])).toBe(3);
+  });
+
+  it("não junta pares diferentes que colidiriam se o separador fosse espaço", () => {
+    const aba = [s("A B", "C"), s("A", "B C")];
+    expect(contarServicosDistintos([aba])).toBe(2);
+  });
+
+  it("devolve 0 sem abas e ignora aba vazia", () => {
+    expect(contarServicosDistintos([])).toBe(0);
+    expect(contarServicosDistintos([[], [s("Único", "http://x/1")]])).toBe(1);
   });
 });

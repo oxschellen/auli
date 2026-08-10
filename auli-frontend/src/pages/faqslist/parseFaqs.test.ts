@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   buildNodesFromJson,
+  contarPerguntas,
   searchNodes,
   getEffectiveUrl,
   buildAnswerMap,
@@ -145,5 +146,26 @@ describe("buildPageTypeMap", () => {
     expect(map.get("https://portal/impostos")).toBe("Menu");
     expect(map.get("https://portal/icms")).toBe("Faq");
     expect(map.get("https://portal/contato")).toBe("Geral");
+  });
+});
+
+describe("contarPerguntas", () => {
+  it("soma os faq_items da árvore inteira", () => {
+    expect(contarPerguntas(sampleJson)).toBe(2);
+  });
+
+  it("não conta página sem pergunta, mesmo sendo folha", () => {
+    // "Contato" é folha da árvore convertida, mas não é uma pergunta — contar folhas daria 3.
+    // No RS a diferença é de 25 páginas (1.972 folhas para 1.947 perguntas).
+    const folhas = buildNodesFromJson(sampleJson).flatMap(function contar(n): unknown[] {
+      return n.children.length === 0 ? [n] : n.children.flatMap(contar);
+    });
+    expect(folhas).toHaveLength(3);
+    expect(contarPerguntas(sampleJson)).toBe(2);
+  });
+
+  it("devolve 0 para árvore vazia", () => {
+    expect(contarPerguntas({})).toBe(0);
+    expect(contarPerguntas({ children: [] })).toBe(0);
   });
 });

@@ -1,8 +1,15 @@
 import { useState, useMemo, useRef, useDeferredValue } from 'react'
-import { Box, Flex } from '@chakra-ui/react'
+import { Box, Flex, Text } from '@chakra-ui/react'
 import useSWR from 'swr'
 import { FaqsAccordion } from './FaqsAccordion'
-import { buildNodesFromJson, buildAnswerMap, buildPageTypeMap, type RawFaqNode } from './parseFaqs'
+import {
+  buildNodesFromJson,
+  buildAnswerMap,
+  buildPageTypeMap,
+  contarPerguntas,
+  searchNodes,
+  type RawFaqNode,
+} from './parseFaqs'
 import { jsonFetcher, SWR_OPTS, entityPath } from '../../shared/fetchers'
 import { SearchInput } from '../../shared/SearchInput'
 import { AsyncContent } from '../../shared/AsyncContent'
@@ -21,11 +28,20 @@ export function FaqsList() {
   const nodes = useMemo(() => (data ? buildNodesFromJson(data) : []), [data])
   const answerMap = useMemo(() => (data ? buildAnswerMap(data) : new Map<string, string>()), [data])
   const pageTypeMap = useMemo(() => (data ? buildPageTypeMap(data) : new Map<string, string>()), [data])
+  const totalPerguntas = useMemo(() => (data ? contarPerguntas(data) : 0), [data])
   const [searchQuery, setSearchQuery] = useState('')
   // Keep the input instant, but let React run the full-tree search (over the
   // large FAQ dataset) against a deferred value so typing doesn't jank.
   const deferredQuery = useDeferredValue(searchQuery)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // A busca roda AQUI, e não no acordeão, porque o contador da barra fixa e a lista de resultados
+  // precisam do mesmo número — computar nos dois lugares varreria a árvore duas vezes por tecla.
+  const results = useMemo(
+    () => (deferredQuery.trim() ? searchNodes(nodes, deferredQuery.trim()) : []),
+    [nodes, deferredQuery],
+  )
+  const isSearching = deferredQuery.trim().length > 0
 
   function clearSearch() {
     setSearchQuery('')
@@ -54,6 +70,17 @@ export function FaqsList() {
           onClear={clearSearch}
           placeholder="Pesquisar FAQs..."
         />
+        {totalPerguntas > 0 && (
+          <Box pt={2}>
+            <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
+              {isSearching
+                ? // Sem "de N": um acerto pode ser uma pergunta OU o título de uma página/menu,
+                  // então não há denominador honesto — as duas unidades não são a mesma coisa.
+                  `${results.length} resultado${results.length !== 1 ? 's' : ''}`
+                : `${totalPerguntas} pergunta${totalPerguntas !== 1 ? 's' : ''}`}
+            </Text>
+          </Box>
+        )}
       </Box>
 
       {/* Scrollable content */}
@@ -64,7 +91,7 @@ export function FaqsList() {
           loadingText="Aguarde enquanto as FAQs são carregadas…"
           errorDescription="Aconteceu um erro ao carregar as FAQs."
         >
-          <FaqsAccordion nodes={nodes} searchQuery={deferredQuery} answerMap={answerMap} pageTypeMap={pageTypeMap} />
+          <FaqsAccordion nodes={nodes} searchQuery={deferredQuery} results={results} answerMap={answerMap} pageTypeMap={pageTypeMap} />
         </AsyncContent>
       </Box>
     </Flex>

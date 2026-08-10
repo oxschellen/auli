@@ -4,7 +4,7 @@ import { Box, Flex, Text, chakra } from '@chakra-ui/react'
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { MdExpandMore, MdExpandLess, MdOpenInNew, MdContentCopy } from 'react-icons/md'
 import ReactMarkdown from 'react-markdown'
-import { searchNodes, getEffectiveUrl, type FaqNode } from './parseFaqs'
+import { getEffectiveUrl, type FaqNode, type FaqSearchHit } from './parseFaqs'
 import { compactMarkdownComponents, markdownPlugins } from '../../shared/markdown'
 import { Highlight } from '../../shared/highlight'
 import { parseQuery } from '../../shared/textSearch'
@@ -29,6 +29,8 @@ interface SearchResultProps {
 interface FaqsAccordionProps {
   nodes: FaqNode[]
   searchQuery: string
+  /** Acertos da busca, calculados pelo `FaqsList` — que também os conta na barra fixa. */
+  results: FaqSearchHit[]
   answerMap: Map<string, string>
   pageTypeMap: Map<string, string>
 }
@@ -232,12 +234,7 @@ function SearchResult({ node, ancestors, terms }: SearchResultProps) {
   )
 }
 
-export function FaqsAccordion({ nodes, searchQuery, answerMap, pageTypeMap }: FaqsAccordionProps) {
-  const results = useMemo(() => {
-    if (!searchQuery.trim()) return []
-    return searchNodes(nodes, searchQuery.trim())
-  }, [nodes, searchQuery])
-
+export function FaqsAccordion({ nodes, searchQuery, results, answerMap, pageTypeMap }: FaqsAccordionProps) {
   // Uma vez por query, não por resultado: `parseQuery` devolve array novo a cada chamada.
   const terms = useMemo(() => parseQuery(searchQuery), [searchQuery])
 
@@ -253,11 +250,8 @@ export function FaqsAccordion({ nodes, searchQuery, answerMap, pageTypeMap }: Fa
     }
     return (
       <Box>
-        <Box px={4} py={2} borderBottom="1px solid var(--chakra-colors-border)" bg="bg.subtle">
-          <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
-            {results.length} resultado{results.length !== 1 ? 's' : ''} encontrado{results.length !== 1 ? 's' : ''}
-          </Text>
-        </Box>
+        {/* O "N resultados" ficava aqui; subiu para a barra fixa do `FaqsList`, ao lado do total
+            da coleção — os dois números pertencem à mesma linha. */}
         {results.map(({ node, ancestors }) => (
           <SearchResult
             key={`${ancestors.map(a => a.id).join('/')}/${node.id}`}
