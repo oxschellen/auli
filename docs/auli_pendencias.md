@@ -557,7 +557,7 @@ Portal `www.sefaz.rr.gov.br` = site custom sem catálogo server-rendered. Descob
   acumulando o outro público). O FAQ (`faq-chat.php`) é matcher, não catálogo → fora de escopo.
 - 16 serviços, 20 ocorrências (Empresa 14 / Cidadão 6), 2 públicos. 3 testes.
 
-## 27. Resíduos das TAREFAs concluídas — os `TAREFA-*.md` foram apagados (2026-07-25)
+## 27. Resíduos das TAREFAs concluídas — os `TAREFA-*.md` foram apagados (2026-07-25, 08/08, 09/08)
 
 As cinco especificações abaixo foram entregues e mergeadas, e os arquivos saíram da raiz do repo.
 Esta seção guarda **só o que não está no código**: o que ficou em aberto, e os pontos em que a spec
@@ -645,6 +645,38 @@ reasoning e estourava o teto sem emitir o JSON.
   que falta para os temas virarem faceta confiável no grafo, em vez de texto livre do LLM.
 - **Outros estados** — a tabela de aliases de norma (K5) é hardcoded em `ricms-rs`. Rodar SC/PR/SP
   exige a tabela do regulamento de cada um; o resto do pipeline generaliza.
+
+### TAREFA-LOG-DA-PERGUNTA (PR #136) — ✅ entregue, apagada em 09/08/2026
+
+O ícone no chat que abre o log de auditoria daquela resposta. **As seis decisões `D-LOG-1..6` são
+citadas em ~10 lugares do código** (`rag.rs`, `mcp.rs`, `api/handlers/log.rs`, `api/mod.rs`,
+`tests/log_api.rs`) — as citações são linhagem, não links quebrados, e o raciocínio de cada uma está
+no doc-comment do ponto que a implementa. O resumo:
+
+- **D-LOG-1 — UUID v7 no nome do arquivo**, gerado dentro do `log_question`, nas duas faces (chat e
+  MCP). Foi revisto durante a execução: era v4. O v7 carrega o timestamp em ms nos 48 bits mais
+  significativos, então o nome ordena cronologicamente **até o milissegundo**. Custa entropia (74
+  bits contra 122) — irrelevante para uma capability, e o instante que ele revela já está no nome.
+  Logs antigos ficam sem UUID e não são linkáveis; nenhuma migração retroativa.
+- **D-LOG-2 — a gravação passa a ser não-fatal.** Descoberto durante a execução que **o chat
+  FALHAVA por causa do log**: o `rag.rs` fazia `log_question(…)?` e o handler convertia o `Err` em
+  texto de resposta — com o disco cheio, o usuário recebia "Permission denied (os error 13)" como se
+  fosse a resposta, depois de o LLM já ter rodado. MCP e `/v1/retrieve` ficaram fora do escopo.
+- **D-LOG-3 — `GET /v1/log/{uuid}`.** A validação estrita do formato UUID **é** a defesa contra path
+  traversal, por construção: entrada que não é UUID é 400, sem sanitizar caminho. Não existe rota
+  que liste, conte ou enumere. O 404 usa a MESMA mensagem para nunca-existiu e para podado pela
+  retenção, sem vazar qual dos dois.
+- **D-LOG-4/5 — o conteúdo é mostrado COMO ESTÁ**, inclusive o par pergunta original / anonimizada.
+  Mostrar o mascaramento funcionando é privacidade visível, não vazamento: o leitor é o próprio
+  autor da pergunta.
+- **D-LOG-6 — retenção inalterada.**
+
+**A colisão que a D-LOG-1 consertou de tabela.** O nome do log tinha resolução de SEGUNDO e o
+arquivo era aberto em `append`: duas perguntas no mesmo segundo viravam **um arquivo com dois
+registros**, podendo intercalar sob `O_APPEND`. Sem o conserto, a rota nova serviria a pergunta e a
+PII de outra pessoa. O teste `rag.rs` que fixa isso aponta para cá.
+
+**Aberto:** nada. O portão humano (L3) passou em 09/08/2026.
 
 ---
 
