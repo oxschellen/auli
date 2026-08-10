@@ -1,6 +1,6 @@
 # ESTUDO — Identidade de documento e o `update` incremental
 
-**Data:** 09/08/2026 · **Escopo:** só análise; nenhuma linha de código proposta para escrever agora.
+**Data:** 09/08/2026 · **Escopo:** análise (§1–8) e proposta de implementação (§9). Nenhum código escrito.
 **Pergunta de partida (Carlos):** *"Os pareceres e o TARF são imutáveis (mas podem ser reeditados) —
 conseguimos um identificador único para cada URL?"*
 
@@ -123,15 +123,16 @@ fechar eram 16 min. **A §31 deixou de ser otimização e virou bloqueio operaci
 
 ## 6. O desenho que os dados sustentam
 
-Não é proposta de implementação — é o que as medições acima permitem afirmar.
+As afirmações que as medições acima sustentam. A proposta de implementação em si é o §9.
 
 1. **Id do pack = `doc_path`.** Já é único, já é estável, já está no pack. Não inventar chave nova.
 2. **Guardar o hash do `text_to_embed`** por registro. Diferente ⇒ re-embeddar; igual ⇒ reaproveitar
    o vetor. É o único jeito de detectar a re-edição do §3 sem pagar o embedding.
 3. **Remoção = diff de conjuntos de id.** Hoje o `reset` resolve por construção; no incremental vira
    explícito, e é o ponto onde um erro apaga documento bom.
-4. **A troca de esquema de id muda o formato do pack** ⇒ um reembed geral de migração, uma vez.
-   Ironia já registrada na §31: para nunca mais re-embeddar tudo, re-embedda-se tudo uma última vez.
+4. **A troca de esquema de id muda o formato do pack** ⇒ uma migração, uma vez — mas **sem
+   re-embeddar**. A §31 registra a ironia de "para nunca mais re-embeddar tudo, re-embedda-se tudo
+   uma última vez"; ela não se aplica aqui, e o §9.0 mostra por quê.
 
 **O que NÃO muda:** o `docs_hash` do manifesto continua cobrindo a árvore inteira e recusando o boot
 na divergência — é ortogonal. E a guarda `recusar_pareceres_sem_sinopse` tem de continuar rodando
@@ -213,9 +214,113 @@ Honestamente, três coisas — e a primeira é a que eu mediria antes de escreve
 
 ---
 
+## 9. A proposta de implementação
+
+### 9.0 A notícia boa: a migração NÃO precisa re-embeddar
+
+A §31 registra uma ironia — *"para nunca mais re-embeddar tudo, re-embedda-se tudo uma última vez"*.
+**Ela está errada, e dá para provar pelo formato do pack.**
+
+Cada registro é `{id, embedding, document}`, e o `document` é o `DocumentoPack` serializado — que
+**já contém o `doc_path`**:
+
+```json
+{"id":"id-1","embedding":[…],"document":"{…,\"doc_path\":\"docs/servicos/alteracao-de-senha-802e672c.md\"}"}
+```
+
+Verificado em duas coleções (`rr-servicos`, `sc-pareceres`): `doc_path` presente em 100% dos
+registros, único, e na mesma ordem alfabética da árvore. Então trocar `id-N` por `doc_path` é
+**reescrever o campo `id` a partir do payload que já está no arquivo** — sem tocar num vetor.
+
+O `key_hash` precisa do `text_to_embed`, que exige ler a árvore `.md` e recompor a key pelo ponto
+único — mas isso é I/O e string, não inferência. Custa segundos, não horas.
+
+**Consequência:** a migração é uma reescrita local de ~50 MB de JSON por entidade. Não há reembed de
+migração, e portanto não há a barreira de "some o SP por uma hora" que travava a decisão.
+
+### 9.1 O que muda, em quatro peças
+
+| # | onde | mudança |
+| --- | --- | --- |
+| 1 | `vector-store` | `upsert` passa a casar por id de verdade (hoje já substitui por id — só falta o id ser estável) e ganha `remove(&[id])` |
+| 2 | `auli-contract` | `DocumentoPack` ganha `key_hash: String` — o hash do `text_to_embed`, não do arquivo |
+| 3 | `auli-cli/update.rs` | `ingest_items` deixa de fazer `reset` + `1..=n`: lê o pack atual, compara `key_hash` por `doc_path`, embedda só a diferença, e remove o que sumiu |
+| 4 | manifesto | um campo de **versão de formato do pack**, distinto do `strategy_version` |
+
+Sobre a peça 4, que é a menos óbvia: `strategy_version` significa *"o que entra no vetor mudou"* e
+obriga reembed. Aqui o vetor **não** muda — muda o esquema do arquivo. Misturar os dois forçaria um
+reembed desnecessário e apagaria a distinção que a §34.2 depende. São conceitos diferentes e
+precisam de campos diferentes.
+
+**O `id` não é lido por nada em produção** — verificado: `id-N` só aparece no ponto que o gera
+(`update.rs:308`) e em testes de `vector-store`. Trocar o esquema não quebra o servidor, o MCP nem o
+retrieve.
+
+### 9.2 As fases, na ordem em que reduzem risco
+
+**Fase 0 — medir a taxa de mudança real.** Antes de qualquer código de produção: gravar o
+`key_hash` de cada documento numa coleta, conferir na seguinte, e publicar o número. É o §8.1 do
+estudo, e é barato. Se a taxa vier acima de ~5%, o ganho encolhe e o desenho merece revisão. Sem
+este número, tudo abaixo é aposta.
+
+**Fase 1 — formato do pack: `doc_path` como id + `key_hash`.** Ainda com `reset` + reescrita total,
+ou seja **sem mudança de comportamento**. Entrega: packs no formato novo, migração sem reembed, e a
+prova de que `auli server`, MCP e retrieve não notaram diferença.
+Verificação: os vetores saem byte a byte idênticos aos de hoje (mesmo teste que validou o
+fatiamento), e a suíte inteira passa.
+
+**Fase 2 — o caminho incremental.** `ingest_items` passa a ler o pack anterior, casar por
+`doc_path`, e embeddar só quem tem `key_hash` diferente ou ausente. Sem remoções ainda: documento
+que sumiu da árvore continua no pack (regressão temporária e conhecida, coberta por um teste que a
+declara).
+Verificação: os sete cenários do §7.1, com o pack final comparado byte a byte ao de um update do
+zero.
+
+**Fase 3 — remoções.** O diff de conjuntos, que é onde um erro apaga documento bom. Fecha a
+regressão da fase 2.
+Verificação: o cenário "documento removido" do §7.1 passa a exigir igualdade, e um teste de
+propriedade — aplicar N mutações aleatórias à árvore e exigir que incremental == do zero.
+
+**Fase 4 — desligar o atalho quando a identidade muda.** `STRATEGY_VERSION` ou `EMBED_MODEL_ID`
+diferentes do manifesto ⇒ **ignorar o cache inteiro** e re-embeddar tudo. É a guarda mais importante
+das quatro fases e a mais fácil de esquecer, porque **passa em todos os outros testes**: um pack com
+vetores de estratégia antiga e `key_hash` correto parece perfeitamente saudável.
+
+### 9.3 O que pode dar errado, em ordem de gravidade
+
+1. **Reaproveitar vetor de estratégia antiga.** Silencioso, e degrada a recuperação sem erro em
+   lugar nenhum. Mitigação: a fase 4, mais um teste que muda o `STRATEGY_VERSION` e exige reembed
+   total.
+2. **Apagar documento bom no diff de remoção.** Uma falha do scraper que devolva a árvore pela
+   metade viraria "remover 11 mil acórdãos". Mitigação: um teto de segurança — recusar um delta que
+   remova mais que X% do acervo sem confirmação explícita. O `docs_hash` **não** protege disso: ele
+   valida o pack contra a árvore, e a árvore já estaria errada.
+3. **`doc_path` colidir numa entidade nova.** Hoje é fato observado, não invariante. Mitigação: o
+   teste do §7.3, que é barato e deveria entrar já na fase 1.
+4. **Hash sobre o arquivo em vez de sobre a key.** Invalidaria o cache a cada regeneração de sinopse
+   (o `resumo_gerada_em` muda). Mitigação: o teste do §7.4.
+
+### 9.4 Custo e retorno
+
+O trabalho é **das fases 1 a 3**, e a peça difícil é a 3 — as outras são mecânicas. Não arrisco
+estimativa de horas; o que dá para afirmar é o retorno, com os números do §5:
+
+| | hoje | depois |
+| --- | ---: | ---: |
+| re-coleta mensal do TARF | ~72 min | segundos |
+| `update-rs-faqs.sh` | ~72 min | ~1 min |
+| coleta de entidade nova | inalterada | inalterada |
+
+E a §31 pode ser fechada — ela é a última pendência de performance com ordem de grandeza em jogo.
+
+---
+
 ## Apêndice — como cada número foi obtido
 
 ```bash
+# doc_path presente, único e alinhado com a árvore (§9.0)
+python3 -c "import json;print([json.loads(r['document'])['doc_path'] for r in json.load(open('data/rr/packs/rr-servicos.json'))['records']][:2])"
+
 # links por coleção (§1)
 grep -h "^link:" data/<ent>/docs/<col>/*.md | sed 's/^link: *//' | sort -u | wc -l
 
