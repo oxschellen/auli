@@ -434,7 +434,9 @@ mod tests {
             docs_hash: None,
         };
         write_manifest(&path, &m).unwrap();
-        let e = validate_manifest(&path, &identity()).unwrap_err().to_string();
+        let e = validate_manifest(&path, &identity())
+            .unwrap_err()
+            .to_string();
         assert!(e.contains("Formato de pack"), "erro: {e}");
         // A mensagem tem de mandar MIGRAR, não re-embeddar: os vetores estão certos.
         assert!(e.contains("migração"), "erro: {e}");
