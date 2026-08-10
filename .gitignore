@@ -24,6 +24,12 @@ target/
 **/target/
 .cargo/
 
+# ── Python (os scripts de apoio em scripts/) ──────────────────────────────────
+# O `python3 -m py_compile` cria __pycache__/ ao lado do .py; dois .pyc chegaram a ser
+# commitados em 09/08/2026 por um `git add scripts/` logo depois de um syntax-check.
+__pycache__/
+*.pyc
+
 # ── Node / frontend ───────────────────────────────────────────────────────────
 node_modules/
 **/node_modules/

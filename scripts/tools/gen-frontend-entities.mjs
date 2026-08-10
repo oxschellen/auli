@@ -3,7 +3,7 @@
 //
 // O frontend deixa de manter sua própria lista de entidades (4ª cópia da §6): a fonte da verdade é
 // config/registry.toml. Rode após editar o registry:
-//   node scripts/gen-frontend-entities.mjs
+//   node scripts/tools/gen-frontend-entities.mjs
 //
 // Zero dependências: parser TOML mínimo, suficiente para o schema do registry (array de tabelas
 // `[[entities]]` com strings e um array `collections`).
@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const REGISTRY = join(ROOT, "config", "registry.toml");
 const OUT = join(ROOT, "auli-frontend", "src", "shared", "entities.ts");
 
@@ -63,8 +63,8 @@ const body = entities
   .join("\n");
 
 const out = `/**
- * GERADO de config/registry.toml por scripts/gen-frontend-entities.mjs — NÃO EDITE À MÃO.
- * Rode \`node scripts/gen-frontend-entities.mjs\` após mudar o registry.
+ * GERADO de config/registry.toml por scripts/tools/gen-frontend-entities.mjs — NÃO EDITE À MÃO.
+ * Rode \`node scripts/tools/gen-frontend-entities.mjs\` após mudar o registry.
  *
  * Cada entidade é uma secretaria estadual da fazenda. O app é escopo de uma entidade por vez,
  * escolhida na landing de seleção de estado e persistida no localStorage. Os dados são servidos

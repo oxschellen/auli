@@ -27,4 +27,4 @@ jobs:
         with:
           node-version: "22"
       - name: registry sync guard
-        run: bash scripts/check-registry-sync.sh
+        run: bash scripts/tools/check-registry-sync.sh

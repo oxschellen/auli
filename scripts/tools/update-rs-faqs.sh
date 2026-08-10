@@ -6,12 +6,12 @@
 # bail vs. rede). Então "re-scrape de verdade" = apagar o cache de faqs antes,
 # para que toda página seja MISS e volte da rede. É o que este script faz.
 #
-# Uso:   scripts/update-rs-faqs.sh              # scrape fresco + rebuild + sobe servidor
-#        scripts/update-rs-faqs.sh --keep-cache # NÃO apaga o cache (roda cache-first)
-#        scripts/update-rs-faqs.sh --no-serve   # para antes de subir o servidor
+# Uso:   scripts/tools/update-rs-faqs.sh              # scrape fresco + rebuild + sobe servidor
+#        scripts/tools/update-rs-faqs.sh --keep-cache # NÃO apaga o cache (roda cache-first)
+#        scripts/tools/update-rs-faqs.sh --no-serve   # para antes de subir o servidor
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"   # raiz do repo
+ROOT="$(cd "$(dirname "$(readlink -f "$0")")/../.." && pwd)"   # raiz do repo
 SERVER="$ROOT/auli-server"
 FAQS_CACHE="$ROOT/data/rs/raw/cache/faqs"
 

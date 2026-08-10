@@ -5,7 +5,7 @@
 # É o degrau 1 da verificação do G4 (os degraus 2 e 3 usam clientes MCP de verdade — Claude Code
 # em localhost e o conector remoto via tunnel).
 #
-# Uso: ./scripts/mcp-smoke.sh [http://localhost:3000/mcp]
+# Uso: ./scripts/tools/mcp-smoke.sh [http://localhost:3000/mcp]
 set -euo pipefail
 URL="${1:-http://localhost:3000/mcp}"
 H=(-H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream')

@@ -10,7 +10,7 @@
 # Barato: só grep, não compila Rust (fastembed/ort são pesados). Bom para CI ou pre-commit.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+ROOT="$(cd "$(dirname "$(readlink -f "$0")")/../.." && pwd)"
 CRATES="$ROOT/auli-server/crates"
 
 # Referências ao kit (módulo ou crate) em código/manifesto FORA de crates/scrapers/.

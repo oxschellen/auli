@@ -86,7 +86,8 @@ This is a **monorepo** of four cooperating components plus shared docs.
 | [`auli-server/crates/auli-collections/`](auli-server/crates/auli-collections/) | **auli-collections** | Offline derivation step: turns a scraper snapshot into the typed `auli-contract` (`Table<P>`) + artifacts. The scraping itself is the per-entity `auli-scraper-<id>` crates (sharing `auli-scraper-kit`). | Rust (synchronous)           |
 | [`config/`](config/)                                                           | **catalog**          | **Start here to adapt Auli.** `registry.toml` (entities/collections) and `prompts/` — configuration, versioned, no recompile needed.                                                              | TOML + txt                   |
 | [`data/`](data/)                                                               | **collected data**   | Per-state `data/<id>/{raw,ref,docs,packs}/`. Gitignored: rebuilt by the pipeline.                                                                                                                 | JSON/txt + Markdown          |
-| [`scripts/`](scripts/)                                                         | **tooling**          | `build-packs.sh` (vectorize), `build-frontend-public.sh` + `gen-frontend-entities.mjs` (regen frontend from `config/` + `data/`), `deploy-frontend.sh` (staged, atomic publish), `update-rs-faqs.sh` (end-to-end re-scrape), CI guards. | Bash + Node                  |
+| [`scripts/`](scripts/)                                                         | **operation**        | Everything needed to publish and serve: `publicar.sh` (one command for the lot), `deploy-frontend.sh` (staged, atomic publish), `build-frontend-public.sh`, `build-packs.sh` (vectorize).                                            | Bash + Python                |
+| [`scripts/tools/`](scripts/tools/)                                             | **occasional tools** | What is _not_ in the operation path: re-scraping (`atualizar-servicos.sh`, `update-rs-faqs.sh`), codegen (`gen-frontend-entities.mjs`), verification (`mcp-smoke.sh`, `parity-replay.py`) and the CI guards.                          | Bash + Node + Python         |
 | [`docs/`](docs/)                                                               | **docs**             | Product, technical and operations references (Portuguese).                                                                                                                                       | —                            |
 | [`manuais/`](manuais/)                                                         | **end-user guides**  | How to reach the MCP server from ChatGPT, Claude, GitHub Copilot and Microsoft 365 Copilot. Served in-app by the **MCP** tab.                                                                    | —                            |
 | [`start_server.sh`](start_server.sh)                                           | **runbook script**   | Build (incremental) + run the server + Cloudflare tunnel.                                                                                                                                        | Bash                         |
@@ -120,7 +121,7 @@ precisely so you can find it.
    [`auli-server/crates/scrapers/`](auli-server/crates/scrapers/); the guide for writing a new one
    is [SCRAPERS.md](auli-server/crates/scrapers/SCRAPERS.md).
 
-Then run `node scripts/gen-frontend-entities.mjs` — the frontend reads a generated mirror of the
+Then run `node scripts/tools/gen-frontend-entities.mjs` — the frontend reads a generated mirror of the
 registry, so this is what makes the new entity appear in the UI. No recompilation.
 
 **Adding a collection** (another _kind_ of document, beyond services / FAQs / rulings / tribunal
@@ -227,7 +228,7 @@ serves an incomplete TLS chain that has to be pinned. Each crate documents its p
 
 The cache is **cache-first always** — `--usecache` only changes what a miss does (bail vs. network).
 A genuine re-scrape therefore means deleting that collection's cache first, which is what
-`scripts/update-rs-faqs.sh` does before running the six-step scrape → derive → vectorize chain.
+`scripts/tools/update-rs-faqs.sh` does before running the six-step scrape → derive → vectorize chain.
 
 ```bash
 cd auli-server

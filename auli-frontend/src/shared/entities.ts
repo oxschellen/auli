@@ -1,6 +1,6 @@
 /**
- * GERADO de config/registry.toml por scripts/gen-frontend-entities.mjs — NÃO EDITE À MÃO.
- * Rode `node scripts/gen-frontend-entities.mjs` após mudar o registry.
+ * GERADO de config/registry.toml por scripts/tools/gen-frontend-entities.mjs — NÃO EDITE À MÃO.
+ * Rode `node scripts/tools/gen-frontend-entities.mjs` após mudar o registry.
  *
  * Cada entidade é uma secretaria estadual da fazenda. O app é escopo de uma entidade por vez,
  * escolhida na landing de seleção de estado e persistida no localStorage. Os dados são servidos

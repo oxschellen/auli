@@ -21,7 +21,7 @@ Uso:
       ./auli-server/target/release/auli server --port 3111 --bind 127.0.0.1
 
     # 2. compare (o -u mostra o progresso ao vivo; sem ele o Python bufferiza)
-    python3 -u scripts/parity-replay.py logs /tmp/parity-logs http://localhost:3111
+    python3 -u scripts/tools/parity-replay.py logs /tmp/parity-logs http://localhost:3111
 
 Saída: uma linha por log e um resumo. Exit 0 se tudo idêntico, 1 se houver divergência (com o
 primeiro diff impresso).

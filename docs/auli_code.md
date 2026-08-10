@@ -383,7 +383,7 @@ Detalhes que o código explicita:
 > produção. O que cobre isso é o teste `mcp_allowed_hosts_inclui_o_hostname_publico` (`api/mod.rs`)
 > e, no runbook, o smoke apontado para a **URL pública** ([docs/auli_operations.md](docs/auli_operations.md) §12.1).
 
-Smoke de protocolo: [`scripts/mcp-smoke.sh`](scripts/mcp-smoke.sh) (initialize → initialized →
+Smoke de protocolo: [`scripts/tools/mcp-smoke.sh`](scripts/tools/mcp-smoke.sh) (initialize → initialized →
 tools/list → tools/call). Conexão de clientes: [docs/auli_operations.md](docs/auli_operations.md) §12.
 
 ### 3.13 As quatro coleções: UMA struct, UM enum (ago/2026)
@@ -444,8 +444,8 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
 - **Seleção de entidade.** [shared/EntityContext.tsx](auli-frontend/src/shared/EntityContext.tsx)
   guarda a entidade selecionada, persistida em `localStorage` (chave `auli.entity`).
 - **Registro de entidades (frontend).** [shared/entities.ts](auli-frontend/src/shared/entities.ts) é
-  **gerado** de `config/registry.toml` por [scripts/gen-frontend-entities.mjs](scripts/gen-frontend-entities.mjs)
-  (guardado por `scripts/check-registry-sync.sh`), com **nove** entidades:
+  **gerado** de `config/registry.toml` por [scripts/tools/gen-frontend-entities.mjs](scripts/tools/gen-frontend-entities.mjs)
+  (guardado por `scripts/tools/check-registry-sync.sh`), com **nove** entidades:
   - `rs` = SEFAZ-RS, coleções `["servicos","faqs","pareceres","notas","conteudos"]`.
   - `sc`/`sp`/`pr`/`mg`/`pe`/`ba`/`rj`/`ce` — coleções `["servicos"]`.
     `hasCollection(entity, collection)` dirige os estados "em breve".

@@ -6,14 +6,14 @@
 # Barato (node + git; não compila Rust). Bom para CI ou pre-commit.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+ROOT="$(cd "$(dirname "$(readlink -f "$0")")/../.." && pwd)"
 fail=0
 
 # 1) entities.ts regenerado bate com o commitado?
-node "$ROOT/scripts/gen-frontend-entities.mjs" >/dev/null
+node "$ROOT/scripts/tools/gen-frontend-entities.mjs" >/dev/null
 if ! git -C "$ROOT" diff --quiet -- auli-frontend/src/shared/entities.ts; then
   echo "❌ auli-frontend/src/shared/entities.ts fora de sincronia com config/registry.toml."
-  echo "   Rode: node scripts/gen-frontend-entities.mjs  (e faça commit)."
+  echo "   Rode: node scripts/tools/gen-frontend-entities.mjs  (e faça commit)."
   fail=1
 fi
 

@@ -16,12 +16,12 @@
 # O passo 4 é o gate de leitura humana: o que ele acusa é mudança do PORTAL, porque o re-processamento
 # em si não altera conteúdo. Vale ler o que mudou antes de dar a entidade por atualizada.
 #
-# Uso:   scripts/atualizar-servicos.sh sc
-#        scripts/atualizar-servicos.sh mg pe ba      # para na primeira que falhar
-#        BACKUP_DIR=/var/tmp/auli scripts/atualizar-servicos.sh sp
+# Uso:   scripts/tools/atualizar-servicos.sh sc
+#        scripts/tools/atualizar-servicos.sh mg pe ba      # para na primeira que falhar
+#        BACKUP_DIR=/var/tmp/auli scripts/tools/atualizar-servicos.sh sp
 set -uo pipefail
 
-ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+ROOT="$(cd "$(dirname "$(readlink -f "$0")")/../.." && pwd)"
 SERVER="$ROOT/auli-server"
 BACKUP_DIR="${BACKUP_DIR:-/tmp/auli-atualizacao}"
 [ $# -gt 0 ] || { echo "uso: atualizar-servicos.sh <id>..."; exit 1; }

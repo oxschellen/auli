@@ -564,8 +564,8 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 3. **Registrar em [`config/registry.toml`](../../../config/registry.toml)** (bloco `[[entities]]`) +
    criar `config/prompts/<id>.txt`. ⚠️ Passo fácil de esquecer — sem ele, `auli-collections <id>`
    falha com "Entidade desconhecida".
-4. `node scripts/gen-frontend-entities.mjs` → regenera `auli-frontend/src/shared/entities.ts`
-   (validar com `scripts/check-registry-sync.sh`).
+4. `node scripts/tools/gen-frontend-entities.mjs` → regenera `auli-frontend/src/shared/entities.ts`
+   (validar com `scripts/tools/check-registry-sync.sh`).
 5. `cargo run -p auli-scraper-<id> -- servicos` → grava o snapshot.
 6. `cargo run -p auli-collections -- <id>` → deriva `data/<id>/raw/*`.
 7. `cargo build --release` → `scripts/build-packs.sh <id>` (BGE-M3) → `scripts/build-frontend-public.sh <id>`.

@@ -581,14 +581,14 @@ congelada no plano.
 Serviços e FAQs viraram árvores `.md` (`data/<id>/docs/{servicos,faqs}/*.md`), a FONTE do
 `auli update`, irmãs da de pareceres. As 27 entidades migraram na campanha de jul/2026 — cada
 migração exigiu **re-raspar**, porque a árvore deriva do snapshot e as entidades materializadas antes
-dessa fronteira não tinham um (daí o `migrar-arvore-servicos.sh`, hoje [scripts/atualizar-servicos.sh](scripts/atualizar-servicos.sh)).
+dessa fronteira não tinham um (daí o `migrar-arvore-servicos.sh`, hoje [scripts/tools/atualizar-servicos.sh](scripts/tools/atualizar-servicos.sh)).
 A campanha rendeu um efeito colateral: 13 das 25 entidades voltaram com o catálogo corrigido, porque
 os portais tinham mudado desde a coleta anterior.
 
 **✅ Fechado em 02/08/2026 — os dois fallbacks de transição (D9) saíram do
 [update.rs](auli-server/crates/auli-cli/src/update.rs).**
 
-1. **`servicos`** — o portal do Amapá voltou (200) e o `scripts/atualizar-servicos.sh ap` (então
+1. **`servicos`** — o portal do Amapá voltou (200) e o `scripts/tools/atualizar-servicos.sh ap` (então
    `migrar-arvore-servicos.sh`) migrou a última entidade: 49 serviços em `data/ap/docs/servicos/`.
    O gate do diff passou limpo — todos os artefatos de `raw/` idênticos ao backup, ou seja, o portal
    não mudou desde a coleta de 06/07 e a migração foi só troca de fonte.
@@ -1060,7 +1060,7 @@ passo:
   novo em 08/08/2026: com as bandas em infinito, uma busca que não acha NADA devolve `n_results`
   distratores ao LLM em vez de contexto vazio — medido em
   [docs/ESTUDO-busca-hibrida.md](docs/ESTUDO-busca-hibrida.md) §3. (Ao mexer nelas, rodar
-  `scripts/parity-replay.py` — ver `docs/auli_operations.md` §6.1 — para ver EXATAMENTE quais documentos
+  `scripts/tools/parity-replay.py` — ver `docs/auli_operations.md` §6.1 — para ver EXATAMENTE quais documentos
   mudam de contexto.)
 
 ### Latência percebida no chat via MCP (medido 2026-07-21)

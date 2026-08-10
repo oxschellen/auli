@@ -203,7 +203,7 @@ precisa rodar de novo quando o conteúdo ou a estratégia de embedding mudar.**
 > com 512 a resposta seria cortada em silêncio. Texto acima do teto é truncado **com aviso** no
 > `auli update`, nomeando os `.md` afetados — no acervo do RS nenhum item chega lá.
 
-> **Re-raspar os serviços de uma entidade**: **`scripts/atualizar-servicos.sh <id>...`**, que faz o
+> **Re-raspar os serviços de uma entidade**: **`scripts/tools/atualizar-servicos.sh <id>...`**, que faz o
 > ciclo inteiro (backup → scrape → process → diff de `raw/` → build-packs) e para na primeira
 > entidade que falhar.
 >
@@ -671,7 +671,7 @@ for k in servicos faqs pareceres tarf; do
 done
 
 # MCP (protocolo completo: initialize -> initialized -> tools/list -> tools/call):
-./scripts/mcp-smoke.sh http://localhost:3000/mcp
+./scripts/tools/mcp-smoke.sh http://localhost:3000/mcp
 ```
 
 ### 6.1 Paridade do contexto RAG (após mexer na recuperação)
@@ -681,7 +681,7 @@ montagem do contexto — vale conferir que **os documentos recuperados e a ordem
 mudaram. Nenhum teste unitário cobre isso: os de `montar_rag_*` pinam o formato e os de
 `bloco_parecer` pinam a leitura do corpo, mas o conjunto/ordem só aparece em consulta real.
 
-O `scripts/parity-replay.py` reenvia as perguntas dos logs de auditoria já existentes e compara o
+O `scripts/tools/parity-replay.py` reenvia as perguntas dos logs de auditoria já existentes e compara o
 `CONTEXTO RAG` que o próprio servidor grava:
 
 ```bash
@@ -690,7 +690,7 @@ AULI_DATA_DIR=./data EMBED_CACHE_DIR=./models AULI_LOG_DIR=/tmp/parity-logs \
   ./auli-server/target/release/auli server --port 3111 --bind 127.0.0.1
 
 # 2. compara (o -u mostra progresso ao vivo; sem ele o Python bufferiza e parece travado)
-python3 -u scripts/parity-replay.py logs /tmp/parity-logs http://localhost:3111
+python3 -u scripts/tools/parity-replay.py logs /tmp/parity-logs http://localhost:3111
 ```
 
 O 2º argumento **tem que ser o mesmo `AULI_LOG_DIR`** do servidor — é lá que o script procura o
@@ -1016,7 +1016,7 @@ erro de carga.
 O deploy **aborta** nesse caso. As duas saídas:
 
 - recuperar/coletar o `data/<id>/` e rodar de novo; ou
-- tirar a entidade do `config/registry.toml` e rodar `node scripts/gen-frontend-entities.mjs`
+- tirar a entidade do `config/registry.toml` e rodar `node scripts/tools/gen-frontend-entities.mjs`
   (o `entities.ts` é **gerado** do registry — não edite à mão).
 
 `--allow-vazias` publica mesmo assim, ciente do que quebra.
@@ -1084,7 +1084,7 @@ Quatro ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer` e
 ### 12.1 Teste de protocolo (antes de qualquer cliente)
 
 ```bash
-./scripts/mcp-smoke.sh http://localhost:3000/mcp
+./scripts/tools/mcp-smoke.sh http://localhost:3000/mcp
 ```
 
 Faz `initialize` → `notifications/initialized` → `tools/list` → `tools/call` e imprime as três
@@ -1093,7 +1093,7 @@ ferramentas com seus schemas, os resultados reais e o erro de UF sem acervo.
 **Depois do deploy, rode também contra a URL pública** — não só localhost:
 
 ```bash
-./scripts/mcp-smoke.sh https://api.auli.com.br/mcp
+./scripts/tools/mcp-smoke.sh https://api.auli.com.br/mcp
 ```
 
 > ⚠️ **Por que os dois.** O rmcp valida o header `Host` como guarda de DNS rebinding, e o default

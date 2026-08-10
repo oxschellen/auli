@@ -91,7 +91,7 @@ pub fn mcp_routes(state: Arc<AppState>) -> Router {
 /// `api.auli.com.br`, então **a lista precisa incluir o hostname público** ou o endpoint só
 /// funciona em localhost.
 ///
-/// Mantém o loopback: é o que o `scripts/mcp-smoke.sh` e o `claude mcp add ... localhost:3000` usam.
+/// Mantém o loopback: é o que o `scripts/tools/mcp-smoke.sh` e o `claude mcp add ... localhost:3000` usam.
 /// Entrada sem porta casa com qualquer porta (o smoke roda em portas alternativas).
 ///
 /// Hardcoded como as origens do CORS logo abaixo — mesma natureza (a identidade pública do
