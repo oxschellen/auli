@@ -111,8 +111,10 @@ def main() -> int:
             print(f"  ❌ {p.name} [{entidade} {tipo}] DIVERGE "
                   f"(antes {len(antes)} / depois {len(depois)})", flush=True)
             difs.append((p.name, antes, depois))
-        # >1s: respeita o limiter (1 req/s) E evita colisão de nome de log (timestamp por segundo,
-        # aberto em modo append — dois logs no mesmo segundo virariam um arquivo só).
+        # >1s para respeitar o limiter (1 req/s) do `/v1/question`. A segunda razão que estava aqui
+        # — colisão de nome de log, quando o nome era só o timestamp por segundo e o arquivo era
+        # aberto em append — deixou de existir em 09/08/2026: o nome ganhou um UUID v7 e o arquivo
+        # passou a `create_new`. O sleep fica pelo limiter.
         time.sleep(1.3)
 
     print(f"\n{'=' * 60}\nRESUMO: {iguais} idênticos · {len(difs)} divergentes · {len(pulados)} pulados")

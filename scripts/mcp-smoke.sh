@@ -88,6 +88,34 @@ print("numero:", p["numero"])
 print("corpo: ", len(corpo), "chars —", repr(corpo[:90]))'
 
 echo
+echo "== tools/call buscar_pareceres (colecao=tarf) — a 2ª coleção de jurisprudência =="
+# O parâmetro `colecao` entrou na #132: sem ele a busca vai nos pareceres; com "tarf", nos acórdãos
+# do TARF (só rs). É caminho distinto no servidor — a coleção é outra —, então precisa de smoke
+# próprio: sem isto, um erro que só afetasse o TARF passaria com os quatro degraus verdes.
+rpc '{"jsonrpc":"2.0","id":7,"method":"tools/call",
+      "params":{"name":"buscar_pareceres","arguments":{
+        "uf":"rs","colecao":"tarf","pergunta":"glosa de créditos de ICMS","top_k":3}}}' \
+  | python3 -c 'import sys,json
+ps = json.loads(json.load(sys.stdin)["result"]["content"][0]["text"])
+print(len(ps), "acórdãos:")
+for p in ps:
+    print("  - [%.4f] %s" % (p["score"], p["numero"]))
+    assert "corpo" not in p, "corpo NUNCA vai na busca"
+assert ps, "o acervo do TARF tem 22.476 acórdãos — resultado vazio é falha"'
+
+echo
+echo "== tools/call consultar_servicos_faqs (rs) =="
+# Entrou na #115 e ficou fora deste smoke até 09/08/2026: era a única das quatro ferramentas sem
+# cobertura de protocolo aqui.
+rpc '{"jsonrpc":"2.0","id":8,"method":"tools/call",
+      "params":{"name":"consultar_servicos_faqs","arguments":{
+        "uf":"rs","pergunta":"como emitir certidão negativa","top_k":3}}}' \
+  | python3 -c 'import sys,json
+r = json.load(sys.stdin)["result"]["content"][0]["text"]
+print(r[:300].replace(chr(10), " | "))
+assert r.strip(), "resposta vazia"'
+
+echo
 echo "== tools/call buscar_pareceres (UF sem acervo) — erro guiando ao listar_entidades =="
 rpc '{"jsonrpc":"2.0","id":6,"method":"tools/call",
       "params":{"name":"buscar_pareceres","arguments":{"uf":"zz","pergunta":"x"}}}' \

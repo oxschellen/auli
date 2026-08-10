@@ -35,8 +35,11 @@ atualizar() {
   echo "════════ $ID: backup em $BK"
   rm -rf "$BK"; mkdir -p "$BACKUP_DIR"; cp -a "$ROOT/data/$ID" "$BK"
 
-  echo "════════ $ID: build do scraper"
-  cargo build --release -p "auli-scraper-$ID" 2>&1 | tail -1
+  echo "════════ $ID: build do scraper + auli-collections"
+  # O `auli-collections` entra junto: o passo `process` logo abaixo usa o binário do
+  # `target/release/` como estiver, e compilar só o scraper deixava o derivador para trás — a
+  # árvore `docs/servicos/*.md` sairia do código antigo, sem aviso. Ver auli_operations.md §11.
+  cargo build --release -p "auli-scraper-$ID" -p auli-collections 2>&1 | tail -1
 
   echo "════════ $ID: scrape (rede)"
   if ! "./target/release/auli-scraper-$ID" servicos > "/tmp/$ID-scrape.log" 2>&1; then

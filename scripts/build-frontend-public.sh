@@ -4,7 +4,11 @@
 # Substitui a CÓPIA MANUAL (propensa a drift) que abastecia o frontend (roteiro Fase 3). O frontend
 # continua servindo conteúdo de referência ESTÁTICO do seu próprio origin (Apache + cache do
 # Cloudflare); só a *origem* muda: de cópia à mão para regeneração determinística a partir da fonte
-# única em data/. Rode após mudar data/ (e depois faça commit do public/).
+# única em data/. Rode após mudar data/.
+#
+# NÃO se commita o resultado: `auli-frontend/.gitignore` ignora `public/*/` desde que a geração
+# passou a ser determinística — o que sobe para produção é o `dist/`, montado no deploy a partir
+# daqui. (O cabeçalho pedia "faça commit do public/" até 09/08/2026, de quando a cópia era manual.)
 #
 # Sem argumento, regenera TODAS as entidades do registry. Com `<id>` (ex.: `build-frontend-public.sh
 # rs`), regenera só aquela — útil quando o data/ das outras não está fresco (evita sobrescrevê-las).

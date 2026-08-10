@@ -218,6 +218,10 @@ verificar() { # <caminho> <content-type esperado (substring)>
 verificar "/" "text/html"
 verificar "/rs/rs-servicos-index.json" "application/json"
 verificar "/rs/rs-pareceres-index.json" "application/json"
+# O do TARF entra pelo mesmo motivo dos outros dois, e com mais razão: com 22.476 acórdãos ele é o
+# MAIOR arquivo do site (35 MB, contra 0,6 MB do de pareceres). Se um upload truncar, é o candidato
+# número um — e sem esta linha o smoke passaria verde com a aba quebrada em produção.
+verificar "/rs/rs-tarf-index.json" "application/json"
 
 # O bundle que o index.html RECÉM-PUBLICADO referencia precisa existir. É a checagem que pega o modo
 # de falha mais traiçoeiro: index.html e assets/ fora de sincronia deixam a app branca no navegador.
