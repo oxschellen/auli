@@ -1,7 +1,7 @@
 import { Flex, Button, Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { Tooltip } from "./ui/tooltip";
-import { MdCopyAll, MdOutlineReceiptLong } from "react-icons/md";
+import { MdCopyAll, MdHistory } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { utilsCopyTextToClipboard } from "./utils/utils";
 import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
@@ -63,7 +63,7 @@ export const SystemMessage = ({ messageText, showButton, logId }: SystemMessageP
         )}
 
         {showButton && (
-          <Flex justify="flex-end" mt={0} gap={1}>
+          <Flex justify="flex-end" mt={0} gap={2}>
             {/* Só existe quando o backend devolveu `log_id` — sem registro gravado não há o que
                 abrir, e o ícone some em vez de levar a um 404. Isso já o exclui da saudação. */}
             {logId && (
@@ -72,15 +72,15 @@ export const SystemMessage = ({ messageText, showButton, logId }: SystemMessageP
                   borderRadius="full"
                   aria-label="Ver o log de auditoria desta resposta"
                   size="xs"
-                  minW="22px"
-                  h="22px"
+                  minW="26px"
+                  h="26px"
                   color="fg.muted"
                   bg="transparent"
                   _hover={{ bg: "bg.overlay" }}
                   transition="all 0.15s ease"
                   onClick={() => setLogAberto(true)}
                 >
-                  <MdOutlineReceiptLong size={13} color="var(--chakra-colors-fg-muted)" />
+                  <MdHistory size={16} color="var(--chakra-colors-fg-muted)" />
                 </Button>
               </Tooltip>
             )}
@@ -89,8 +89,8 @@ export const SystemMessage = ({ messageText, showButton, logId }: SystemMessageP
                 borderRadius="full"
                 aria-label="Copiar resposta para a área de transferência"
                 size="xs"
-                minW="22px"
-                h="22px"
+                minW="26px"
+                h="26px"
                 color="fg.muted"
                 bg="transparent"
                 _hover={{ bg: "bg.overlay" }}
@@ -99,7 +99,7 @@ export const SystemMessage = ({ messageText, showButton, logId }: SystemMessageP
                   utilsCopyTextToClipboard(messageText, "A resposta foi copiada para a área de transferência");
                 }}
               >
-                <MdCopyAll size={13} color="var(--chakra-colors-fg-muted)" />
+                <MdCopyAll size={16} color="var(--chakra-colors-fg-muted)" />
               </Button>
             </Tooltip>
           </Flex>

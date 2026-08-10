@@ -39,8 +39,8 @@ export const UserMessage = ({ messageText, setPrompt }: UserMessageProps) => {
               borderRadius="full"
               aria-label="Copiar a pergunta para a área de entrada"
               size="xs"
-              minW="22px"
-              h="22px"
+              minW="26px"
+              h="26px"
               color="fg.muted"
               bg="transparent"
               _hover={{ bg: "bg.overlay" }}
@@ -53,7 +53,7 @@ export const UserMessage = ({ messageText, setPrompt }: UserMessageProps) => {
                 );
               }}
             >
-              <MdCopyAll size={13} color="var(--chakra-colors-fg-muted)" />
+              <MdCopyAll size={16} color="var(--chakra-colors-fg-muted)" />
             </Button>
           </Tooltip>
         </Flex>
