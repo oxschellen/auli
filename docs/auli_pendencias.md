@@ -782,7 +782,8 @@ grandeza — e, pela saturação acima, nenhum hardware chega perto disso.
 meio desloca o id de todos os seguintes, e sem o `reset` sobrariam órfãos `id-(N+1)..`. O `upsert`
 já substitui por id (`vector-store/src/write.rs:45`); o que falta é o id ser **estável**.
 
-**Esboço** (não é decisão fechada — a pendência é justamente decidir):
+**Esboço** — **os três já foram decididos** na TAREFA (`D-INC-1`, `D-INC-2` e `D-INC-9`/`D-INC-10`);
+fica como história de onde a decisão saiu:
 
 1. **Id estável e derivado do conteúdo.** O candidato natural já existe: o `mddoc::slug` usado na
    materialização e no `doc_path` dos pareceres. Trocar `id-N` pelo slug torna o id independente de
