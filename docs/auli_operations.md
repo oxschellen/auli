@@ -926,11 +926,14 @@ O frontend é **estático e independente do servidor da API**: build Vite servid
 com Cloudflare na frente. Não fala com nada em build time — as abas de conteúdo leem arquivos do
 próprio origin (`/<id>/<id>-<arquivo>`), e só o chat chama a API.
 
-O dado percorre três estágios até a tela:
+O dado percorre três estágios até a tela — e os zips de download entram pelo segundo, porque o Vite
+copia `public/` inteiro para o `dist/`; eles não têm caminho de publicação próprio (é também por
+isso que o `dist/` pesa ~253 MB):
 
 ```text
-data/<id>/{raw,ref}/   →   auli-frontend/public/<id>/   →   auli-frontend/dist/   →   /var/www/html/
-      (fonte)           build-frontend-public.sh        npm run build          deploy-frontend.sh
+data/<id>/{raw,ref}/  →  auli-frontend/public/<id>/  →  auli-frontend/dist/  →  /var/www/html/
+      (fonte)          build-frontend-public.sh       npm run build         deploy-frontend.sh
+                            + `auli bundle` ⇢ public/downloads/*.zip
 ```
 
 **Um comando faz os três:**
@@ -939,6 +942,10 @@ data/<id>/{raw,ref}/   →   auli-frontend/public/<id>/   →   auli-frontend/di
 scripts/deploy-frontend.sh --dry-run     # roda a parte local inteira; imprime os comandos remotos
 scripts/deploy-frontend.sh               # publica
 ```
+
+Para publicar **e** subir a API na mesma passada, é o `scripts/publicar.sh` (§1). A ordem de chamada
+completa — quem chama quem, e onde a operação para — está em
+[scripts/README.md](../scripts/README.md).
 
 Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SMOKE_HOST`,
 `SMOKE_ORIGIN`, `SMOKE_BASE`); os padrões apontam para o VPS de produção. Ver o cabeçalho do script.
@@ -973,11 +980,15 @@ Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SM
 > pré-compilado de propósito — e aí manter o binário atual volta a ser responsabilidade de quem
 > definiu a variável.
 >
-> **Os outros scripts continuam sem essa guarda.** `build-packs.sh`, `atualizar-servicos.sh` e
-> `update-rs-faqs.sh` também consomem binários prontos (`auli`, `auli-collections`,
-> `auli-scraper-<id>`) e só checam se existem. O caso do `build-packs.sh` é o mais traiçoeiro dos
-> três: com o binário velho, ele grava packs com estratégia antiga e um `docs_hash` que **passa** na
-> validação de boot, porque o hash é da árvore e não do código.
+> **Fechado em todos os scripts (09/08/2026, mais tarde no mesmo dia).** A guarda começou aqui e se
+> espalhou: hoje **todo script que usa `auli`, `auli-collections` ou um `auli-scraper-<id>` ou
+> compila antes, ou recebe o caminho pronto de quem compilou**.
+>
+> O `build-packs.sh` era o mais traiçoeiro dos que faltavam, e por um motivo específico: com binário
+> velho ele gravava packs de estratégia antiga com um `docs_hash` que **passa** na validação de boot,
+> porque o hash é da árvore e não do código. Vetores errados, nenhum erro em lugar nenhum. O
+> `atualizar-servicos.sh` tinha um furo diferente e pior: `cargo build … | tail -1` descartava o
+> status, e um build QUEBRADO deixava o ciclo seguir com o binário anterior.
 >
 > **Conferir o que de fato saiu** continua barato, e é o único jeito de ter certeza:
 >
@@ -1024,8 +1035,9 @@ O deploy **aborta** nesse caso. As duas saídas:
 ### 11.2 Troca atômica e rollback
 
 O upload vai para `<webroot>.novo` e a publicação é um `mv`. Motivo: esvaziar o webroot durante um
-upload de ~50 MB não só derruba o site como deixa um `index.html` em cache apontando para um bundle
-`assets/*.js` que acabou de ser apagado — app branca até o cache expirar.
+upload de **~253 MB** (eram ~50 MB antes de o TARF fechar; os zips vão dentro do `dist/`) não só
+derruba o site como deixa um `index.html` em cache apontando para um bundle `assets/*.js` que acabou
+de ser apagado — app branca até o cache expirar.
 
 A versão anterior fica em `<webroot>.antigo`. Rollback:
 
@@ -1041,9 +1053,14 @@ ssh -p 22 root@<host> "rm -rf /var/www/html.novo && mv /var/www/html /var/www/ht
 
 ### 11.3 Smoke test
 
-Roda sozinho no fim; **se falhar, reverte**. Verifica `/`, os dois índices JSON do RS e — o caso mais
-traiçoeiro — que o bundle `/assets/*.js` referenciado pelo `index.html` recém-publicado existe de
-fato. "O site responde 200" não pega dessincronia entre `index.html` e `assets/`.
+Roda sozinho no fim; **se falhar, reverte**. Verifica `/`, os **três** índices JSON do RS (serviços,
+pareceres e TARF) e — o caso mais traiçoeiro — que o bundle `/assets/*.js` referenciado pelo
+`index.html` recém-publicado existe de fato. "O site responde 200" não pega dessincronia entre
+`index.html` e `assets/`.
+
+> O do TARF entrou em 09/08/2026 e é o que mais justifica a checagem: com 22.476 acórdãos ele tem
+> 35 MB, contra 0,6 MB do de pareceres — se um upload truncar, é o candidato número um, e sem essa
+> linha o smoke passaria verde com a aba quebrada em produção.
 
 Manualmente, o teste que distingue arquivo servido de fallback do SPA é o **content-type**:
 
@@ -1087,8 +1104,13 @@ Quatro ferramentas: `listar_entidades`, `buscar_pareceres`, `obter_parecer` e
 ./scripts/tools/mcp-smoke.sh http://localhost:3000/mcp
 ```
 
-Faz `initialize` → `notifications/initialized` → `tools/list` → `tools/call` e imprime as três
+Faz `initialize` → `notifications/initialized` → `tools/list` → `tools/call` e imprime as
 ferramentas com seus schemas, os resultados reais e o erro de UF sem acervo.
+
+Desde 09/08/2026 ele exercita **as quatro** — antes só três, porque a `consultar_servicos_faqs`
+entrou na #115 e nunca chegou ao smoke — e também a busca com `colecao: "tarf"`, que é caminho
+distinto no servidor (outra coleção). Sem essas duas, uma quebra em qualquer um dos dois passava com
+o smoke inteiro verde.
 
 **Depois do deploy, rode também contra a URL pública** — não só localhost:
 
