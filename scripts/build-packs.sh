@@ -29,8 +29,8 @@ echo "📂 origem ($ID): $(for d in "$DOCS"/*/; do [ -d "$d" ] && printf '%s=%s 
 #
 # Quem decide se há o que recompilar é o cargo, por fingerprint do grafo — inclusive mudança no
 # Cargo.lock, que data de arquivo não veria. Em dia, é um no-op de menos de um segundo.
-# Cada binário é pulado se veio pronto por variável (é o que o publicar.sh faz: compila uma vez lá
-# em cima e exporta os dois).
+# Cada binário é pulado se veio pronto por variável — é o que o `tools/update-rs-faqs.sh` faz:
+# compila uma vez no começo do ciclo e exporta os dois.
 pkgs=()
 [ -n "${AULI_BIN:-}" ]             || pkgs+=(-p auli-cli)
 [ -n "${AULI_COLLECTIONS_BIN:-}" ] || pkgs+=(-p auli-collections)

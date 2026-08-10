@@ -11,8 +11,8 @@
 #   passo 7  ssh                                    troca atômica (dois `mv`)
 #   passo 8  curl                                   smoke na origem; falhou, reverte sozinho
 #
-# Normalmente é chamado pelo `scripts/publicar.sh`, que compila antes e passa o AULI_BIN pronto —
-# mas roda sozinho sem problema: aí o passo 1 compila.
+# Publica SÓ o frontend. A API é independente e sobe pelo `./start_server.sh`, na raiz do repo —
+# o site é estático e serve as abas do próprio origin; só o chat fala com a API.
 #
 # ─── POR QUE ELE EXISTE ────────────────────────────────────────────────────────────────────────
 # Substitui a sequência manual (build-frontend-public → npm run build → rm -rf remoto → scp), que
@@ -25,7 +25,8 @@
 #
 # ─── USO ───────────────────────────────────────────────────────────────────────────────────────
 #   scripts/deploy-frontend.sh --dry-run     # local completo; mostra o que rodaria no servidor
-#   scripts/deploy-frontend.sh               # deploy de verdade
+#   scripts/deploy-frontend.sh               # deploy de verdade (pergunta antes de começar)
+#   scripts/deploy-frontend.sh --sim         # sem a confirmação (automação)
 #
 # ─── AJUSTE POR AMBIENTE (variáveis) ───────────────────────────────────────────────────────────
 #   DEPLOY_HOST   destino ssh/scp           (padrão: root@novoauli.vps-kinghost.net)
@@ -65,11 +66,13 @@ ANTIGO="$WEBROOT.antigo"
 
 DRY_RUN=0
 ALLOW_VAZIAS=0
+SIM=0
 for arg in "$@"; do
   case "$arg" in
     --dry-run) DRY_RUN=1 ;;
     --allow-vazias) ALLOW_VAZIAS=1 ;;
-    *) echo "❌ opção desconhecida: $arg (use --dry-run | --allow-vazias)"; exit 1 ;;
+    --sim) SIM=1 ;;
+    *) echo "❌ opção desconhecida: $arg (use --dry-run | --allow-vazias | --sim)"; exit 1 ;;
   esac
 done
 
@@ -85,6 +88,52 @@ remoto() {
     ssh -p "$DEPLOY_PORT" "$DEPLOY_HOST" "$@"
   fi
 }
+
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+# PORTÃO — a confirmação, ANTES de qualquer trabalho
+#
+# Fica aqui, e não junto do passo 6 (o primeiro que sai da máquina), por uma razão prática: entre
+# aqui e lá são vários minutos de compilação, zips e build. Perguntar no começo deixa você responder
+# e sair de perto; perguntar no meio obrigaria a ficar de babá esperando a pergunta.
+#
+# Mora NESTE script, e não num invólucro acima, porque quem publica é este. Portão em invólucro
+# protege pela metade: quem chama o script de baixo direto — o caminho normal — não passa por ele.
+#
+# Não aparece com --dry-run (nada é enviado, não há o que confirmar) nem com --sim (automação).
+#
+# O resumo é python inline por heredoc com delimitador ENTRE ASPAS (`<<'PY'`): o shell não expande
+# nada lá dentro, então as aspas são só do python. A primeira versão disto era um `python3 -c "..."`
+# e precisava de três níveis de aspas aninhadas, quebrando a cada ajuste.
+# ═══════════════════════════════════════════════════════════════════════════════════════════════
+if [ "$DRY_RUN" = 0 ] && [ "$SIM" = 0 ]; then
+  echo "──────────────────────────────────────────────────────────────"
+  echo " Isto PUBLICA EM PRODUÇÃO ($DEPLOY_HOST:$WEBROOT)."
+  echo " A troca é atômica e a versão anterior fica em $ANTIGO; se o smoke falhar, reverte sozinho."
+  echo
+  echo "   frontend: v$(grep -m1 '"version"' auli-frontend/package.json | sed -E 's/.*"([^"]+)".*/\1/')"
+  # Só lê. Manifesto ilegível vira uma linha dizendo isso, não um traceback: o portão existe para
+  # informar a decisão, e um erro de leitura aqui não é motivo para abortar o deploy.
+  python3 - <<'PY' || echo "   (resumo dos packs indisponível)"
+import json
+import pathlib
+
+manifestos = sorted(pathlib.Path("data").glob("*/packs/*.manifest.json"))
+if not manifestos:
+    print("   packs: nenhum manifesto em data/*/packs/")
+for m in manifestos:
+    entidade = m.parent.parent.name
+    try:
+        d = json.loads(m.read_text(encoding="utf-8"))
+        partes = " ".join(f"{c['kind']}={c['count']}" for c in d["collections"])
+        print(f"   packs {entidade}: {partes} · {d['built_at'][:10]}")
+    except (OSError, ValueError, KeyError) as e:
+        print(f"   packs {entidade}: ilegível ({type(e).__name__})")
+PY
+  echo "──────────────────────────────────────────────────────────────"
+  read -r -p " Publicar? [s/N] " resposta
+  case "$resposta" in [sS]|[sS][iI][mM]) ;; *) echo "Cancelado — nada foi feito."; exit 0 ;; esac
+  echo
+fi
 
 # ═══════════════════════════════════════════════════════════════════════════════════════════════
 # PASSO 1/8 — COMPILAR O `auli`

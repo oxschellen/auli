@@ -16,18 +16,26 @@ técnica do código, ver [docs/auli_code.md](docs/auli_code.md) (§3 cobre o wor
 
 ## 1. O que sobe
 
-**Um comando faz tudo:**
+**Dois comandos, em dois terminais:**
 
 ```bash
-scripts/publicar.sh              # compila, publica o frontend, sobe a API
-scripts/publicar.sh --packs rs   # + re-vetoriza o rs antes (caro: ~72 min, ~42 GB de RAM)
-scripts/publicar.sh --dry-run    # o local inteiro; nada sai da máquina
+./start_server.sh              # terminal 1 — a API (ocupa o terminal; Ctrl+C derruba com o túnel)
+scripts/deploy-frontend.sh     # terminal 2 — o site (pergunta antes de começar)
 ```
 
-Ele compila **uma vez** e passa os binários prontos aos scripts de baixo via `AULI_BIN` /
-`AULI_COLLECTIONS_BIN`, que sabem pular a própria compilação. É o que garante que packs, zips e API
-saem do MESMO código — ver a §11 para o acidente que motivou isso. O resto desta seção é o mapa por
-baixo dele; os scripts individuais continuam servindo para rodar uma etapa isolada.
+São independentes: o site é estático e serve as abas de referência do próprio origin; só o chat fala
+com a API. Com a API fora do ar, suba ela primeiro — volta em minutos, enquanto o deploy sobe
+~253 MB por `scp`. A ordem de chamada de dentro do deploy está em
+[scripts/README.md](../scripts/README.md).
+
+Cada um compila o que precisa, então rodar separado **não** reintroduz o risco de publicar artefato
+de código velho — ver a §11 para o acidente que motivou essa guarda.
+
+> Houve um `scripts/publicar.sh` que encadeava os dois num comando só. Ele nasceu quando o
+> `build-packs.sh` e o `deploy-frontend.sh` ainda não compilavam, e a compilação única no topo era a
+> garantia. Assim que os dois passaram a compilar sozinhos (09/08/2026), o que sobrou dele foi um
+> `read` de confirmação — que foi para dentro do `deploy-frontend.sh`, onde vale sempre e não só
+> para quem entra pela porta de cima.
 
 ### Os binários
 
@@ -59,7 +67,7 @@ Ao lado dele há mais um binário e uma família:
 | `start_server.sh` | API + túnel | minutos, **fica em primeiro plano** |
 
 O `start_server.sh` não daemoniza: ele segura o terminal para o `trap` derrubar o `cloudflared` no
-Ctrl+C. Por isso é sempre o **último** passo — o `publicar.sh` termina com `exec` nele.
+Ctrl+C. É por isso que ele mora num terminal só dele, e o deploy roda em outro.
 
 Embeddings (fastembed/BGE-M3) e busca vetorial rodam **in-process** — não há Ollama, ChromaDB nem
 serviço de embedding para subir à parte.
@@ -943,9 +951,8 @@ scripts/deploy-frontend.sh --dry-run     # roda a parte local inteira; imprime o
 scripts/deploy-frontend.sh               # publica
 ```
 
-Para publicar **e** subir a API na mesma passada, é o `scripts/publicar.sh` (§1). A ordem de chamada
-completa — quem chama quem, e onde a operação para — está em
-[scripts/README.md](../scripts/README.md).
+A API sobe à parte, pelo `./start_server.sh` (§1 e §5). A ordem de chamada de dentro deste script —
+quem chama quem, e onde a operação para — está em [scripts/README.md](../scripts/README.md).
 
 Destino e afins saem de variáveis (`DEPLOY_HOST`, `DEPLOY_PORT`, `WEBROOT`, `SMOKE_HOST`,
 `SMOKE_ORIGIN`, `SMOKE_BASE`); os padrões apontam para o VPS de produção. Ver o cabeçalho do script.
