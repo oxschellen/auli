@@ -590,21 +590,17 @@ celular, reverse proxy em outra máquina — `BIND=0.0.0.0 ./start_server.sh`.
 
 ### Liberar o terminal
 
-O server é foreground **por desenho**: é o que permite ao `trap` derrubar o cloudflared no Ctrl+C.
-Para recuperar o prompt sem perder isso:
+O server é foreground por desenho: é o que permite ao `trap` derrubar o cloudflared no Ctrl+C. Para
+recuperar o prompt:
 
 ```bash
-tmux new -s auli -d './start_server.sh'   # recomendado
-tmux attach -t auli                       # ver ao vivo; Ctrl+B D sai sem matar
+nohup ./start_server.sh > /tmp/auli-server.log 2>&1 &
+tail -f /tmp/auli-server.log     # acompanhar o boot; Ctrl+C sai do tail, não do servidor
 ```
 
-O `tmux` é melhor que `nohup ... &` porque o **Ctrl+C continua disponível de verdade**: você reata,
-interrompe limpo e o `trap` derruba o túnel junto. Com `nohup` você depende de acertar o sinal no
-`kill`, e um `kill -9` deixa o cloudflared órfão.
-
-```bash
-nohup ./start_server.sh > /tmp/auli-server.log 2>&1 &   # alternativa sem tmux
-```
+Para derrubar depois, **`kill` no PID** (o que o `&` imprimiu, ou `pgrep -f start_server.sh`) — não
+`kill -9`: o `trap` só roda com sinal capturável, e sem ele o cloudflared fica órfão segurando o
+túnel. Se acontecer, `pkill cloudflared`.
 
 Variáveis de ambiente para sobrescrever:
 
