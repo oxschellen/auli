@@ -6,7 +6,6 @@
 # ─── QUEM ELE CHAMA ────────────────────────────────────────────────────────────────────────────
 #   passo 1  (nenhum script)              cargo build --release -p auli-cli -p auli-collections
 #   passo 2  scripts/build-packs.sh       só com --packs; re-vetoriza uma entidade
-#   portão   scripts/resumo-packs.py      só imprime o resumo; não altera nada
 #   passo 3  scripts/deploy-frontend.sh   que por sua vez chama scripts/build-frontend-public.sh
 #   passo 4  ./start_server.sh            na RAIZ do repo, não em scripts/
 #
@@ -130,12 +129,17 @@ fi
 # ═══════════════════════════════════════════════════════════════════════════════════════════════
 # PORTÃO — a última chance de desistir
 #
-#   Chama:  scripts/resumo-packs.py  (só lê e imprime; não altera nada)
+#   Chama:  nada — o resumo dos packs é um python inline logo abaixo.
 #
 # Daqui para frente as ações SAEM DA MÁQUINA. O portão mostra o que vai subir — versão do frontend
 # e contagem por coleção de cada pack — para a decisão ser informada, e não confiante.
 #
 # Não aparece com --dry-run (nada é enviado, não há o que confirmar) nem com --sim (automação).
+#
+# O resumo já morou em `scripts/resumo-packs.py`, extraído porque a primeira versão era um
+# `python3 -c "..."` e precisava de três níveis de aspas aninhadas (bash → python → f-string),
+# quebrando ao menor ajuste. O heredoc com delimitador ENTRE ASPAS (`<<'PY'`) resolve isso na raiz:
+# o shell não expande nada lá dentro, então o python é literal e as aspas são só do python.
 # ═══════════════════════════════════════════════════════════════════════════════════════════════
 if [ "$DRY_RUN" = 0 ] && [ "$SIM" = 0 ]; then
   echo
@@ -145,7 +149,24 @@ if [ "$DRY_RUN" = 0 ] && [ "$SIM" = 0 ]; then
   echo "   • derruba a API que estiver rodando e sobe a nova$([ "$NO_TUNNEL" = 1 ] && echo " (sem túnel)" || echo " + túnel Cloudflare")"
   echo
   echo "   frontend: v$(grep -m1 '"version"' auli-frontend/package.json | sed -E 's/.*"([^"]+)".*/\1/')"
-  python3 scripts/resumo-packs.py 2>/dev/null || echo "   (resumo dos packs indisponível)"
+  # Só lê. Manifesto ilegível vira uma linha dizendo isso, não um traceback: o portão existe para
+  # informar a decisão, e um erro de leitura aqui não é motivo para abortar o deploy.
+  python3 - <<'PY' || echo "   (resumo dos packs indisponível)"
+import json
+import pathlib
+
+manifestos = sorted(pathlib.Path("data").glob("*/packs/*.manifest.json"))
+if not manifestos:
+    print("   packs: nenhum manifesto em data/*/packs/")
+for m in manifestos:
+    entidade = m.parent.parent.name
+    try:
+        d = json.loads(m.read_text(encoding="utf-8"))
+        partes = " ".join(f"{c['kind']}={c['count']}" for c in d["collections"])
+        print(f"   packs {entidade}: {partes} · {d['built_at'][:10]}")
+    except (OSError, ValueError, KeyError) as e:
+        print(f"   packs {entidade}: ilegível ({type(e).__name__})")
+PY
   echo "──────────────────────────────────────────────────────────────"
   read -r -p " Publicar? [s/N] " resposta
   case "$resposta" in [sS]|[sS][iI][mM]) ;; *) echo "Cancelado — nada foi enviado."; exit 0 ;; esac
