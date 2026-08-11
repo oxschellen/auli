@@ -185,7 +185,11 @@ fn arquivos_md(dir: &Path) -> Result<Option<Vec<PathBuf>>> {
 /// isso vive em [`documento_de`]. O `text_to_embed` é sempre RECOMPOSTO aqui, pelo ponto único do
 /// contrato: assim todos os registros seguem a mesma fórmula, independentemente de quando o `.md`
 /// foi produzido.
-fn preparar(entity: &str, docs_dir: &Path, kind: Kind) -> Result<Option<Vec<Documento>>> {
+pub(crate) fn preparar(
+    entity: &str,
+    docs_dir: &Path,
+    kind: Kind,
+) -> Result<Option<Vec<Documento>>> {
     let dir = docs_dir.join(kind.as_str());
     let Some(caminhos) = arquivos_md(&dir)? else {
         return Ok(None);
@@ -219,7 +223,7 @@ fn preparar(entity: &str, docs_dir: &Path, kind: Kind) -> Result<Option<Vec<Docu
 ///
 /// As três fórmulas continuam sendo as do contrato, congeladas: mudar qualquer uma re-vetoriza os
 /// packs daquela coleção.
-fn documento_de(
+pub(crate) fn documento_de(
     kind: Kind,
     header: auli_contract::mddoc::DocHeader,
     resumo: String,
@@ -369,6 +373,104 @@ fn vetores_reaproveitaveis(
     Ok(reaproveitaveis)
 }
 
+/// Os **órfãos** de uma coleção: registros no pack sem `.md` correspondente na árvore.
+///
+/// Devolve `(doc_path, titulo, link)` por órfão, em ordem de `doc_path`. O título e o link saem do
+/// payload do próprio pack — é a única fonte que ainda descreve um documento que já sumiu da árvore.
+/// Payload ilegível não derruba a rodada: entra no log com os campos vazios, porque a informação que
+/// importa (a chave) está no `id`, e recusar aqui seria bloquear a limpeza por causa do lixo que ela
+/// vai limpar.
+pub(crate) fn orfaos_do_pack(
+    caminho_do_pack: &Path,
+    ids_na_arvore: &std::collections::HashSet<String>,
+) -> Result<Vec<(String, String, String)>> {
+    let atual: CollectionData<String> = vector_store::read_collection_file(caminho_do_pack)?;
+    let mut orfaos: Vec<(String, String, String)> = atual
+        .records
+        .iter()
+        .filter(|r| !ids_na_arvore.contains(&r.id))
+        .map(|r| {
+            let pack: Option<auli_contract::DocumentoPack> = serde_json::from_str(&r.payload).ok();
+            match pack {
+                Some(p) => (r.id.clone(), p.titulo, p.link),
+                None => (r.id.clone(), String::new(), String::new()),
+            }
+        })
+        .collect();
+    orfaos.sort();
+    Ok(orfaos)
+}
+
+/// Caminho do log de remoções pendentes de uma coleção. Vive ao lado do pack que ele descreve.
+pub(crate) fn caminho_log_remocoes(out: &Path, name: &str) -> PathBuf {
+    out.join(format!("{name}-remocoes-pendentes.tsv"))
+}
+
+/// Regenera o log de remoções pendentes a partir do diff da rodada (D-INC-9).
+///
+/// **Regenerado, não acumulado**: documento que reaparecer na árvore sai do log sozinho, sem
+/// ninguém para lembrar de tirá-lo. Sem órfãos, o arquivo é APAGADO — log velho que sobrevive ao
+/// problema é pior que log nenhum, porque alguém vai aprová-lo depois achando que está atual.
+///
+/// TSV com cabeçalho `#`, no mesmo idioma do `tarf-anomalias.txt`: legível por máquina e por gente,
+/// e editável à mão — é o que habilita a aprovação seletiva por linha do D-INC-10.
+pub(crate) fn escrever_log_remocoes(
+    out: &Path,
+    name: &str,
+    entity: &str,
+    orfaos: &[(String, String, String)],
+) -> Result<()> {
+    let caminho = caminho_log_remocoes(out, name);
+    if orfaos.is_empty() {
+        if caminho.exists() {
+            std::fs::remove_file(&caminho)?;
+            println!("🧹 {name}: nenhum órfão — log de remoções pendentes apagado");
+        }
+        return Ok(());
+    }
+    let mut texto = format!(
+        "# doc_path\ttitulo\tlink — ÓRFÃOS de `{name}`: estão no pack e não estão mais na árvore.\n\
+         # NADA foi removido. Gerado por `auli update` a cada rodada; a decisão é humana.\n\
+         # Para autorizar: APAGUE as linhas que NÃO quer remover e rode\n\
+         #   auli remover --entity {entity} --out <dir-dos-packs>\n\
+         # O `remover` CONSOME este arquivo. Linha não aprovada volta no próximo `auli update` —\n\
+         # não aprovar hoje é \"não agora\", não uma decisão permanente.\n"
+    );
+    for (doc_path, titulo, link) in orfaos {
+        texto.push_str(&format!("{doc_path}\t{titulo}\t{link}\n"));
+    }
+    std::fs::write(&caminho, texto)?;
+    println!(
+        "📋 {name}: {} órfão(s) no pack sem `.md` na árvore — NADA foi removido. Revise {}",
+        orfaos.len(),
+        caminho.display()
+    );
+    Ok(())
+}
+
+/// Carimba uma coleção no manifesto: contagem, tamanho e hash de integridade do arquivo escrito.
+///
+/// Extraída do `run_update` porque o subcomando de remoção (D-INC-11) escreve o mesmo pack e precisa
+/// recarimbar do mesmo jeito. Duas cópias divergentes de um carimbo de integridade é exatamente o
+/// tipo de coisa que só aparece quando o boot recusa e ninguém sabe por quê.
+pub(crate) fn carimbar_colecao(
+    out: &Path,
+    kind: Kind,
+    name: &str,
+    total: u64,
+) -> Result<CollectionEntry> {
+    let file_name = format!("{name}.json");
+    let written = std::fs::read(out.join(&file_name))?;
+    Ok(CollectionEntry {
+        kind: kind.as_str().to_string(),
+        count: total as usize,
+        dim: EMBED_DIM,
+        file: file_name,
+        bytes: written.len() as u64,
+        hash: manifest::hash_hex(&written),
+    })
+}
+
 /// Ingest one collection into the entity's `<entity>-<kind>` vector collection.
 ///
 /// Núcleo do ingest: embeda `text_to_embed`, guarda `stored_repr` e devolve a entrada de manifesto.
@@ -465,25 +567,25 @@ fn ingest_items(
         .collect();
     let records = montar_records(items, vetores);
 
+    // O log de órfãos é lido do pack ANTES da escrita, porque depois dela os documentos da árvore já
+    // teriam sido aplicados por cima. Só no caminho incremental: na reescrita total o `reset` abaixo
+    // apaga tudo o que não está na árvore, e aí não há órfão a relatar — é rebuild, não diff.
+    if incremental {
+        let na_arvore: std::collections::HashSet<String> =
+            items.iter().map(|d| d.doc_path()).collect();
+        let orfaos = orfaos_do_pack(&writer.path_for(&name), &na_arvore)?;
+        escrever_log_remocoes(out, &name, entity, &orfaos)?;
+    }
+
     // Reescrita total continua sendo `reset` + aplicação; no incremental o `reset` sairia caro e
-    // erraria: apagaria os órfãos, que por doutrina (D-INC-9) só saem por decisão humana na Fase 4.
+    // erraria: apagaria os órfãos, que por doutrina (D-INC-9) só saem por decisão humana.
     if !incremental {
         writer.reset::<String>(&name)?;
     }
     let total = writer.apply(&name, records, &[])?;
 
-    // Stamp this collection in the manifest (count + integrity hash of the written file).
-    let file_name = format!("{}.json", name);
-    let written = std::fs::read(out.join(&file_name))?;
     println!("✅ {} → {} registros", name, total);
-    Ok(CollectionEntry {
-        kind: kind.as_str().to_string(),
-        count: total as usize,
-        dim: EMBED_DIM,
-        file: file_name,
-        bytes: written.len() as u64,
-        hash: manifest::hash_hex(&written),
-    })
+    carimbar_colecao(out, kind, &name, total)
 }
 
 #[cfg(test)]
