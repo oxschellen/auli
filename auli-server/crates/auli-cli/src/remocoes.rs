@@ -51,6 +51,15 @@ struct Relatorio {
     reapareceram: Vec<String>,
 }
 
+/// Aplica as remoções aprovadas de uma entidade. A regra e o portão estão no doc do módulo.
+///
+/// **Não há atomicidade entre o pack e o manifesto.** São dois arquivos: cada um é escrito de forma
+/// atômica (D-INC-5), os dois juntos não. Morrer na janela entre as duas escritas deixa o pack novo
+/// com o manifesto velho, e o boot recusa por hash de pack divergente — sem meio de adivinhar que a
+/// causa foi esta. A recuperação é `auli update`: ele reconstrói o pack a partir da árvore e
+/// recarimba tudo. As remoções já aplicadas **permanecem**, porque os órfãos não estão na árvore de
+/// qualquer forma; e o log, consumido antes da falha, é regenerado por lá com os órfãos que
+/// sobraram (D-INC-9). Recuperável e limpo, portanto — mas só para quem sabe disto.
 pub fn run_remover(entity: String, out: PathBuf) -> Result<()> {
     let docs_dir = out
         .parent()
@@ -67,6 +76,27 @@ pub fn run_remover(entity: String, out: PathBuf) -> Result<()> {
              Rode `auli update` antes — remover sem recarimbar deixaria o boot recusando.",
             mpath.display()
         )
+    })?;
+
+    // A árvore tem de estar em sincronia com o pack ANTES de qualquer escrita. Se ela andou desde o
+    // último `auli update` — um acórdão novo do scraper, por exemplo —, o pack não viu o que chegou:
+    // decidir remoções aqui seria decidir sobre o diff errado, o mesmo raciocínio do `ids_na_arvore`
+    // logo abaixo. E recarimbar o manifesto no fim faria pior que isso: apagaria o `docs_hash` que
+    // faz o boot recusar um pack atrasado, deixando o documento novo ausente do índice em silêncio.
+    // Por isso a recusa vem antes de escrever pack, manifesto ou de consumir log.
+    //
+    // **Esta guarda e a preservação do `docs_hash` lá embaixo defendem cenários DISJUNTOS.** Nenhuma
+    // das duas é redundante, e é por isso que os dois testes existem — a mutação derruba exatamente
+    // um cada:
+    //
+    // - `docs_hash: Some(h)` com árvore divergente ⇒ **só a guarda** pega. Recalcular seria
+    //   inofensivo aqui, porque ela já garantiu que a árvore hasheia exatamente `h`;
+    // - `docs_hash: None` com árvore em disco ⇒ **só a preservação** pega. A guarda passa por
+    //   construção (`validate_docs_hash` devolve `Ok` quando o campo é `None`), e recalcular ali
+    //   LIGARIA a proteção com um hash que o pack nunca ganhou — pior que carimbo inventado, é
+    //   cimentar a divergência num estado que passa no boot.
+    manifest::validate_docs_hash(&docs_dir, &manifesto).map_err(|e| {
+        format!("{e}\nA árvore está à frente do pack: rode `auli update` antes do `remover`.")
     })?;
 
     let mut mexeu = false;
@@ -137,9 +167,11 @@ pub fn run_remover(entity: String, out: PathBuf) -> Result<()> {
         return Ok(());
     }
 
-    // O `docs_hash` cobre a árvore, que não mudou aqui; recalculá-lo é barato e evita que este
-    // caminho seja o único que deixa o manifesto pela metade.
-    manifesto.docs_hash = manifest::hash_docs_tree(&docs_dir)?;
+    // O `docs_hash` lido é escrito de volta INTACTO. O `remover` não toca a árvore, e recalculá-lo
+    // aqui seria carimbar um estado que o pack não viu — exatamente a staleness que o campo existe
+    // para impedir. A guarda no início garante que o carimbo preservado descreve a árvore atual —
+    // menos no caso `None`, que ela deixa passar de propósito e que só esta linha defende (a
+    // partição das duas está documentada na guarda).
     manifest::write_manifest(&mpath, &manifesto)?;
     println!("📝 Manifesto recarimbado em {:?}", mpath);
     Ok(())
@@ -246,16 +278,7 @@ mod tests {
         };
 
         for numero in na_arvore {
-            let header = mddoc::cabecalho_jurisprudencia(
-                numero,
-                &format!("assunto de {numero}"),
-                &format!("http://x/{numero}"),
-            );
-            std::fs::write(
-                docs.join(format!("{}.md", mddoc::slug(numero))),
-                mddoc::render_doc(&header, Some("resumo"), &format!("corpo de {numero}")),
-            )
-            .unwrap();
+            escrever_md(&docs, numero);
         }
 
         let records: Vec<Record<String>> = no_pack
@@ -297,6 +320,30 @@ mod tests {
         };
         manifest::write_manifest(manifest::manifest_path(&packs, "ent"), &m).unwrap();
         (packs, "ent".to_string())
+    }
+
+    /// Escreve na árvore o `.md` de um número de documento, como o scraper o materializaria.
+    fn escrever_md(docs: &Path, numero: &str) {
+        let header = mddoc::cabecalho_jurisprudencia(
+            numero,
+            &format!("assunto de {numero}"),
+            &format!("http://x/{numero}"),
+        );
+        std::fs::write(
+            docs.join(format!("{}.md", mddoc::slug(numero))),
+            mddoc::render_doc(&header, Some("resumo"), &format!("corpo de {numero}")),
+        )
+        .unwrap();
+    }
+
+    /// Carimba no manifesto o `docs_hash` da árvore como ela está agora — é o que o `auli update`
+    /// deixa para trás quando termina em sincronia.
+    fn carimbar_docs_hash(packs: &Path) {
+        let p = manifest::manifest_path(packs, "ent");
+        let mut m = manifest::read_manifest(&p).unwrap();
+        m.docs_hash = manifest::hash_docs_tree(packs.parent().unwrap().join("docs")).unwrap();
+        assert!(m.docs_hash.is_some());
+        manifest::write_manifest(&p, &m).unwrap();
     }
 
     fn ids_do_pack(packs: &Path) -> Vec<String> {
@@ -394,6 +441,86 @@ mod tests {
         assert!(!log_de(&packs).exists());
         run_remover(ent, packs.clone()).unwrap();
         assert_eq!(ids_do_pack(&packs).len(), 2, "sem aprovação, nada sai");
+        let _ = std::fs::remove_dir_all(packs.parent().unwrap());
+    }
+
+    #[test]
+    fn recusa_quando_a_arvore_esta_a_frente_do_pack() {
+        // O cenário que o `docs_hash` existe para pegar: o pack está carimbado com a árvore de
+        // ontem, o scraper trouxe um documento novo, e o boot HOJE recusaria por hash divergente.
+        // Se o `remover` rodasse e recarimbasse, o boot passaria a aceitar um pack que não tem esse
+        // documento — a proteção apagada justamente pelo subcomando que só devia apagar registro.
+        let (packs, ent) = cenario("frente", &["A 1"], &["A 1", "B 2"]);
+        carimbar_docs_hash(&packs);
+        aprovar(&packs, &["docs/pareceres/b-2.md"]);
+        escrever_md(
+            &packs.parent().unwrap().join("docs").join("pareceres"),
+            "C 3",
+        );
+
+        let pack_antes = std::fs::read(packs.join("ent-pareceres.json")).unwrap();
+        let manifesto_antes = std::fs::read(manifest::manifest_path(&packs, "ent")).unwrap();
+
+        let e = run_remover(ent, packs.clone()).unwrap_err().to_string();
+        assert!(e.contains("à frente do pack"), "erro: {e}");
+        assert!(
+            e.contains("auli update"),
+            "o erro tem de trazer o remédio: {e}"
+        );
+
+        assert_eq!(
+            std::fs::read(packs.join("ent-pareceres.json")).unwrap(),
+            pack_antes,
+            "a recusa vem ANTES de escrever o pack"
+        );
+        assert_eq!(
+            std::fs::read(manifest::manifest_path(&packs, "ent")).unwrap(),
+            manifesto_antes,
+            "a recusa vem ANTES de escrever o manifesto"
+        );
+        assert!(
+            log_de(&packs).exists(),
+            "rodada recusada não consome o log — a aprovação continua valendo depois do `update`"
+        );
+        let _ = std::fs::remove_dir_all(packs.parent().unwrap());
+    }
+
+    #[test]
+    fn docs_hash_e_preservado_nao_recalculado() {
+        // O caso que DISCRIMINA é o manifesto sem `docs_hash` (escrito antes do campo existir, com
+        // árvore em disco): recalcular ali inventaria um carimbo que o pack nunca ganhou. Com a
+        // guarda de entrada, um `Some(h)` que passou é por definição igual ao recálculo, então é o
+        // `None` que prova que a linha saiu.
+        let (packs, ent) = cenario("hash-none", &["A 1"], &["A 1", "B 2"]);
+        aprovar(&packs, &["docs/pareceres/b-2.md"]);
+        let mpath = manifest::manifest_path(&packs, "ent");
+        assert_eq!(manifest::read_manifest(&mpath).unwrap().docs_hash, None);
+
+        run_remover(ent, packs.clone()).unwrap();
+
+        assert_eq!(
+            ids_do_pack(&packs),
+            vec!["docs/pareceres/a-1.md"],
+            "a rodada não foi inócua"
+        );
+        assert_eq!(
+            manifest::read_manifest(&mpath).unwrap().docs_hash,
+            None,
+            "o `remover` não carimba árvore que não tocou"
+        );
+        let _ = std::fs::remove_dir_all(packs.parent().unwrap());
+
+        // E o caminho normal, com carimbo em dia: passa pela guarda e sai idêntico ao que entrou.
+        let (packs, ent) = cenario("hash-some", &["A 1"], &["A 1", "B 2"]);
+        carimbar_docs_hash(&packs);
+        aprovar(&packs, &["docs/pareceres/b-2.md"]);
+        let mpath = manifest::manifest_path(&packs, "ent");
+        let antes = manifest::read_manifest(&mpath).unwrap().docs_hash;
+
+        run_remover(ent, packs.clone()).unwrap();
+
+        assert_eq!(ids_do_pack(&packs), vec!["docs/pareceres/a-1.md"]);
+        assert_eq!(manifest::read_manifest(&mpath).unwrap().docs_hash, antes);
         let _ = std::fs::remove_dir_all(packs.parent().unwrap());
     }
 
