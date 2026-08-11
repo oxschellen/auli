@@ -1,8 +1,9 @@
-//! The `auli` binary — a thin clap dispatcher over three modes, `server`, `update` and `bundle`.
+//! The `auli` binary — a thin clap dispatcher over four modes: `server`, `update`, `remover` and `bundle`.
 //!
 //! Subcommands (not flags) so each mode has its own exclusive options:
 //!   auli server  --port <p> [--bind <addr>] [--packs-dir <dir>]   (--packs-dir defaults to $AULI_DATA_DIR or ./data)
 //!   auli update  --entity <id> --out <dir> [--version <v>]   (fonte: as árvores `<dir>/../docs/`)
+//!   auli remover --entity <id> --out <dir>                   (aplica o log de órfãos aprovado)
 //!   auli bundle  [--data-root <dir>] [--out <dir>]
 
 use std::path::PathBuf;
@@ -43,6 +44,17 @@ enum Command {
         #[arg(long)]
         version: Option<String>,
     },
+    /// Aplica as remoções que um humano aprovou no log de órfãos. NADA é removido sem isto.
+    ///
+    /// O `auli update` só ESCREVE o log (`<id>-<kind>-remocoes-pendentes.tsv`); apagar exige este
+    /// subcomando, de propósito — é a única parte do pipeline que tira documento do acervo.
+    Remover {
+        #[arg(long)]
+        entity: String,
+        /// Diretório dos packs, o mesmo do `auli update`.
+        #[arg(long)]
+        out: PathBuf,
+    },
     /// Empacota as árvores `.md` de cada estado num `<id>.zip` + `downloads.json`, para download.
     Bundle {
         /// Raiz do `data/` (onde ficam o `registry.toml` e os `<id>/docs/`).
@@ -73,6 +85,12 @@ async fn main() {
             // Synchronous, CPU-bound work — runs to completion on the async entrypoint thread.
             if let Err(e) = auli_cli::run_update(entity, out, version) {
                 eprintln!("Erro no update: {e}");
+                std::process::exit(1);
+            }
+        }
+        Command::Remover { entity, out } => {
+            if let Err(e) = auli_cli::run_remover(entity, out) {
+                eprintln!("Erro ao remover: {e}");
                 std::process::exit(1);
             }
         }

@@ -20,6 +20,7 @@ pub mod llm;
 pub mod mcp;
 pub mod packs;
 pub mod rag;
+pub mod remocoes;
 pub mod state;
 pub mod update;
 mod util;
@@ -32,6 +33,7 @@ use crate::config::config;
 use crate::state::AppState;
 
 pub use bundle::run_bundle;
+pub use remocoes::run_remover;
 pub use update::run_update;
 
 /// Timestamp das linhas do `tracing` no fuso local (America/Sao_Paulo nesta máquina), para casar
