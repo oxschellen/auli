@@ -248,7 +248,11 @@ fn save<C: Serialize>(
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
     }
-    std::fs::write(&path, serde_json::to_string_pretty(&snapshot)?)?;
+    // Atômico: o snapshot é o hand-off de TODA coleta da frota, e refazê-lo tem custo externo —
+    // exige bater de novo no portal do estado, com as pausas de cortesia que a doutrina manda
+    // respeitar. Um truncamento aqui falha alto (erro de parse no header), mas custa uma coleta
+    // inteira; e é este o arquivo que uma cópia por hardlink alcançaria pelo inode compartilhado.
+    crate::arquivo::escrever_atomico(&path, &serde_json::to_string_pretty(&snapshot)?)?;
     println!("Wrote {} (snapshot)", path.display());
     Ok(())
 }
@@ -401,6 +405,46 @@ mod tests {
             nome: "test".into(),
             versao: "0".into(),
         }
+    }
+
+    /// **O teste que descreve o defeito**, e não a implementação: com `fs::write` direto, escrever
+    /// pelo caminho B de um hardlink escreve no inode compartilhado e altera o A junto. Foi assim
+    /// que uma rodada isolada por hardlinks alcançou um arquivo de produção.
+    ///
+    /// O snapshot é o hand-off de toda coleta da frota, e refazê-lo custa uma coleta inteira — por
+    /// isso a proteção vale aqui, e por isso o teste é este. O do `.tmp` já vive no helper.
+    #[test]
+    fn escrever_snapshot_atraves_de_hardlink_nao_altera_o_original() {
+        let dir = tmp_data_dir("hardlink");
+        let _ = std::fs::remove_dir_all(dir.parent().unwrap());
+        let data_dir = dir.to_string_lossy().to_string();
+
+        write_servicos("rs", &data_dir, &scraper(), vec![], vec![]).unwrap();
+        let original = snapshot_path("rs", &data_dir, "servicos");
+        let antes = std::fs::read(&original).unwrap();
+
+        // A cópia barata de um diretório de dados: mesmo inode, dois nomes.
+        let copia_raw = dir.parent().unwrap().join("copia").join("raw");
+        std::fs::create_dir_all(&copia_raw).unwrap();
+        let copia_dir = copia_raw.to_string_lossy().to_string();
+        std::fs::hard_link(&original, snapshot_path("rs", &copia_dir, "servicos")).unwrap();
+
+        // Uma coleta rodando contra a CÓPIA, com conteúdo diferente.
+        write_servicos(
+            "rs",
+            &copia_dir,
+            &scraper(),
+            vec![],
+            vec![svc("https://exemplo/svc/novo")],
+        )
+        .unwrap();
+
+        assert_eq!(
+            std::fs::read(&original).unwrap(),
+            antes,
+            "escrever no diretório da cópia NÃO pode alcançar o snapshot original"
+        );
+        let _ = std::fs::remove_dir_all(dir.parent().unwrap());
     }
 
     fn faq(pergunta: &str) -> FaqRaw {

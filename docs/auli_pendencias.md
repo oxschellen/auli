@@ -1306,6 +1306,28 @@ número vivo é o frontend, que já lê as contagens dos índices em tempo de ex
 
 ---
 
+## 36. Cache dos scrapers: o remédio é **validação na leitura**, não atomicidade (aberta — 2026-08-11)
+
+Levantada pela auditoria de escrita não atômica do item 7 (PR #143), e deliberadamente **não
+corrigida ali** — a correção óbvia resolveria o sintoma menor e deixaria o maior de pé.
+
+O [`cache::write`](auli-server/crates/scrapers/auli-scraper-kit/src/cache.rs) grava HTML por URL com
+`fs::write` direto. Uma queda no meio deixa HTML **parcial** — que **parseia**, produzindo coleta
+silenciosamente incompleta a partir de um arquivo que ninguém suspeita. Mas tornar a escrita atômica
+não resolve o caso maior: um cache **válido porém obsoleto** passa em qualquer verificação de
+integridade estrutural, e nenhum `rename` o pega.
+
+Há um segundo argumento contra a atomicidade aqui, do desenho do próprio kit: o `write` é
+_best-effort_ por contrato — se falha, loga e a coleta segue. Escrita atômica só mudaria o modo de
+falha de "arquivo pela metade" para "arquivo ausente", e **ausente o `read` já sabe tratar** (ele
+devolve `None` para arquivo vazio ou ilegível, e o scraper refaz a requisição).
+
+**O desenho, se virar TAREFA:** validação de completude na LEITURA — um sentinela escrito por último,
+ou tamanho/hash no nome do arquivo. E merece **medição antes**: com que frequência o cache é lido
+depois de uma interrupção? Se for raro, a dívida pode ficar registrada e não ser paga.
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

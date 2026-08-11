@@ -10,9 +10,10 @@
 //! (init do layout é determinístico, sem PRNG externo) — re-rodar produz o mesmo `grafo.json`.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
-use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
+
+use auli_contract::arquivo::escrever_atomico;
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -101,14 +102,6 @@ fn familia(key: &str) -> &'static str {
         "in" | "in-drp" | "in-re" => "Instrução Normativa",
         _ => "Outros",
     }
-}
-
-/// Escrita atômica (`.tmp` + rename) — saída derivada, reescrita inteira a cada rodada.
-fn escrever_atomico(path: &Path, conteudo: &str) -> Result<()> {
-    let tmp = PathBuf::from(format!("{}.tmp", path.display()));
-    std::fs::write(&tmp, conteudo)?;
-    std::fs::rename(&tmp, path)?;
-    Ok(())
 }
 
 pub fn run(entity: &EntityConfig) -> Result<()> {
@@ -517,6 +510,8 @@ pub(crate) fn layout(
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
     use super::*;
 
     fn temp_entity(tag: &str) -> (EntityConfig, PathBuf) {
