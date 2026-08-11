@@ -27,8 +27,11 @@ impl Writer {
         self.base_path.join(format!("{name}.json"))
     }
 
-    /// Drop every record in a collection (write an empty file). Used for clean full reloads so
-    /// re-ingesting fewer blocks than before leaves no orphan `id-(N+1)..` records.
+    /// Drop every record in a collection (write an empty file). Used by the **total-rewrite**
+    /// collections (D-INC-8): there, whatever is no longer in the tree must not survive the round,
+    /// and clearing first is what makes the pack equal the tree instead of accumulating it. The
+    /// incremental path never calls this — a `reset` there would delete the orphans that only a
+    /// human may remove (D-INC-9).
     pub fn reset<P: Serialize>(&self, name: &str) -> Result<()> {
         write_collection_file(self.path_for(name), &CollectionData::<P>::default())
     }
@@ -279,7 +282,7 @@ mod tests {
     }
 
     #[test]
-    fn upsert_rejects_mismatched_dimension() {
+    fn apply_rejects_mismatched_dimension() {
         let dir = std::env::temp_dir().join(format!("vs-dim-test-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         let w = Writer::new(&dir);

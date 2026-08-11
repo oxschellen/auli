@@ -127,6 +127,32 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
     Ok(())
 }
 
+/// O que o caminho de ingestão usa do embedder — e **nada além disso**.
+///
+/// A costura existe por um motivo só: sem ela o [`ingest_items`] só roda com o `Embedder` real, e o
+/// teste que decide a Fase 3 — "o incremental e a reescrita total produzem o MESMO arquivo, byte a
+/// byte" — exigiria carregar 2 GB de modelo num teste unitário, ou seja, não existiria. A
+/// propriedade passava a valer só por construção, que é precisamente o que um teste defende contra
+/// regressão futura.
+///
+/// **Não é uma abstração de embedder**: é o recorte mínimo que torna este caminho testável, com os
+/// dois métodos que ele chama e mais nenhum. Por isso mora aqui, ao lado de quem o usa, e não em
+/// `auli-core` — lá viraria interface pública de um conceito que só tem uma implementação real.
+pub(crate) trait Vetorizador {
+    fn embed_dense(&self, textos: Vec<String>) -> Result<Vec<Vec<f32>>>;
+    fn conta_tokens(&self, texto: &str) -> Result<usize>;
+}
+
+impl Vetorizador for Embedder {
+    fn embed_dense(&self, textos: Vec<String>) -> Result<Vec<Vec<f32>>> {
+        Ok(Embedder::embed_dense(self, textos)?)
+    }
+
+    fn conta_tokens(&self, texto: &str) -> Result<usize> {
+        Ok(Embedder::conta_tokens(self, texto)?)
+    }
+}
+
 /// Avisa quais documentos batem no teto de tokens do encoder e portanto vão ao índice **truncados**.
 ///
 /// Aviso, não erro (D-FAQPR-5 revisada): o item ainda vetoriza, com o excedente descartado pelo
@@ -136,7 +162,7 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
 /// Vale para as QUATRO coleções desde a B4 (antes só as faqs eram conferidas). O TARF é quem mais
 /// pede: a `## resumo` dele é a fundamentação inteira do acórdão, que chega a 27 mil caracteres —
 /// duas ordens de grandeza acima da sinopse curta de um parecer.
-fn avisar_truncados(embedder: &Embedder, kind: Kind, docs: &[&Documento]) -> Result<()> {
+fn avisar_truncados(embedder: &dyn Vetorizador, kind: Kind, docs: &[&Documento]) -> Result<()> {
     let mut truncados: Vec<String> = Vec::new();
     for d in docs {
         if embedder.conta_tokens(&d.text_to_embed)? >= EMBED_MAX_TOKENS {
@@ -164,8 +190,12 @@ fn avisar_truncados(embedder: &Embedder, kind: Kind, docs: &[&Documento]) -> Res
 /// Os `.md` de um diretório, em ordem de NOME. `None` se o diretório não existe ou está vazio —
 /// nos dois casos a coleção é pulada, o que é melhor que gerar um pack vazio.
 ///
-/// A ordem é estável de propósito: os `id-N` do pack derivam dela e não podem depender do
-/// `read_dir` do sistema de arquivos, ou o pack deixa de ser reproduzível entre rodadas.
+/// A ordem é estável de propósito, e o motivo mudou na Fase 1: o id não é mais posicional, é o
+/// `doc_path`, então trocar dois documentos de lugar aqui não renomeia registro nenhum. O que a
+/// ordenação sustenta hoje é a **ordem canônica de escrita** (D-INC-4) — o pack é gravado ordenado
+/// por `id`, e como o `id` É o nome do arquivo, ler a árvore em ordem de nome é o que faz aquela
+/// ordenação ser um no-op em vez de um reembaralhamento por rodada. Fora do pack, é o que mantém
+/// determinístico o que o `update` imprime e a ordem em que os documentos são embedados.
 fn arquivos_md(dir: &Path) -> Result<Option<Vec<PathBuf>>> {
     if !dir.exists() {
         return Ok(None);
@@ -347,6 +377,17 @@ fn montar_records(items: &[Documento], embeddings: Vec<Vec<f32>>) -> Vec<Record<
 /// Casa por `(id, key_hash)`: o id diz que é o mesmo documento, o `key_hash` diz que a key dele não
 /// mudou. Record sem `key_hash` — o pack do formato 1 — nunca casa, então um pack antigo degrada
 /// para reescrita total em vez de quebrar.
+///
+/// **O payload é DESCARTADO na desserialização** (`IgnoredAny`): esta função usa só
+/// `(id, key_hash, embedding)`, e no TARF o payload é o `stored_repr` com a fundamentação inteira do
+/// acórdão — até 27 mil caracteres por registro. Materializá-lo aqui é o pack inteiro em memória
+/// para nada.
+///
+/// **Não é daqui que vem o pico de RSS do `update`**, e a medição do RS diz isso: 10,72 GiB antes e
+/// 10,72 GiB depois desta mudança. O pico é do `apply` — que precisa do payload — somado à árvore
+/// inteira viva em `items`; o que esta linha corta é lixo transitório, liberado bem antes. Numa
+/// REGENERAÇÃO ela nem chega a ler o arquivo: com o cache desligado a função retorna na primeira
+/// linha. A dívida de memória do RS é outra, e é assunto de outra TAREFA.
 fn vetores_reaproveitaveis(
     writer: &Writer,
     name: &str,
@@ -356,8 +397,11 @@ fn vetores_reaproveitaveis(
     if !habilitado {
         return Ok(HashMap::new());
     }
-    let atual: CollectionData<String> = vector_store::read_collection_file(writer.path_for(name))?;
-    let mut por_id: HashMap<&str, &Record<String>> = HashMap::with_capacity(atual.records.len());
+    type SemPayload = serde::de::IgnoredAny;
+    let atual: CollectionData<SemPayload> =
+        vector_store::read_collection_file(writer.path_for(name))?;
+    let mut por_id: HashMap<&str, &Record<SemPayload>> =
+        HashMap::with_capacity(atual.records.len());
     for r in &atual.records {
         por_id.insert(r.id.as_str(), r);
     }
@@ -414,6 +458,10 @@ pub(crate) fn caminho_log_remocoes(out: &Path, name: &str) -> PathBuf {
 ///
 /// TSV com cabeçalho `#`, no mesmo idioma do `tarf-anomalias.txt`: legível por máquina e por gente,
 /// e editável à mão — é o que habilita a aprovação seletiva por linha do D-INC-10.
+///
+/// Escrito com a mesma disciplina do pack (D-INC-5): `.tmp` + `rename`. O log não é lido no boot,
+/// então um truncamento não derrubaria o servidor — mas este é o arquivo que AUTORIZA apagar
+/// documento, e meia linha nele é confusão exatamente onde ela custa mais caro.
 pub(crate) fn escrever_log_remocoes(
     out: &Path,
     name: &str,
@@ -439,7 +487,9 @@ pub(crate) fn escrever_log_remocoes(
     for (doc_path, titulo, link) in orfaos {
         texto.push_str(&format!("{doc_path}\t{titulo}\t{link}\n"));
     }
-    std::fs::write(&caminho, texto)?;
+    let tmp = caminho.with_extension("tsv.tmp");
+    std::fs::write(&tmp, texto)?;
+    std::fs::rename(&tmp, &caminho)?;
     println!(
         "📋 {name}: {} órfão(s) no pack sem `.md` na árvore — NADA foi removido. Revise {}",
         orfaos.len(),
@@ -488,7 +538,7 @@ pub(crate) fn carimbar_colecao(
 /// **Duas políticas, um formato** (D-INC-8): a jurisprudência reaproveita vetor por `key_hash`;
 /// serviços e faqs são reescritos por inteiro, sempre. Quem decide é o `Kind`, não uma flag.
 fn ingest_items(
-    embedder: &Embedder,
+    embedder: &dyn Vetorizador,
     writer: &Writer,
     entity: &str,
     kind: Kind,
@@ -601,24 +651,28 @@ mod tests {
         let dir = base.join("docs").join(kind.as_str());
         std::fs::create_dir_all(&dir).unwrap();
         for (numero, sinopse) in docs {
-            let mut header = mddoc::cabecalho_jurisprudencia(
-                numero,
-                &format!("assunto de {numero}"),
-                &format!("http://x/{numero}"),
-            );
-            header.resumo_info = sinopse.map(|_| ResumoInfo {
-                modelo: "m".into(),
-                prompt_versao: 1,
-                gerada_em: "2026-07-20T00:00:00Z".into(),
-            });
-            let corpo = format!("corpo de {numero}");
-            std::fs::write(
-                dir.join(format!("{}.md", mddoc::slug(numero))),
-                mddoc::render_doc(&header, *sinopse, &corpo),
-            )
-            .unwrap();
+            escrever_doc(&dir, numero, *sinopse);
         }
         base.join("docs")
+    }
+
+    /// Escreve (ou sobrescreve) o `.md` de um documento de jurisprudência na árvore `dir`.
+    fn escrever_doc(dir: &Path, numero: &str, sinopse: Option<&str>) {
+        let mut header = mddoc::cabecalho_jurisprudencia(
+            numero,
+            &format!("assunto de {numero}"),
+            &format!("http://x/{numero}"),
+        );
+        header.resumo_info = sinopse.map(|_| ResumoInfo {
+            modelo: "m".into(),
+            prompt_versao: 1,
+            gerada_em: "2026-07-20T00:00:00Z".into(),
+        });
+        std::fs::write(
+            dir.join(format!("{}.md", mddoc::slug(numero))),
+            mddoc::render_doc(&header, sinopse, &format!("corpo de {numero}")),
+        )
+        .unwrap();
     }
 
     /// Atalho para a coleção que a maioria dos testes exercita.
@@ -741,7 +795,7 @@ mod tests {
 
     #[test]
     fn ordem_e_estavel_por_nome_de_arquivo() {
-        // Os `id-N` do pack derivam da ordem; ela não pode depender do read_dir do SO.
+        // A ordem casa com a canônica do pack (D-INC-4); ela não pode depender do read_dir do SO.
         let docs = arvore(
             "ordem",
             &[("C 3", Some("s")), ("A 1", Some("s")), ("B 2", Some("s"))],
@@ -867,8 +921,8 @@ mod tests {
 
     #[test]
     fn preparar_servicos_le_arvore_em_ordem() {
-        // Gravados fora de ordem alfabética: a leitura tem que reordenar, porque os `id-N` do pack
-        // derivam dela e não podem depender do `read_dir` do SO.
+        // Gravados fora de ordem alfabética: a leitura tem que reordenar, para casar com a ordem
+        // canônica do pack (D-INC-4) e não depender do `read_dir` do SO.
         let docs = arvore_servicos("ordem", &[("b-svc", "Segundo"), ("a-svc", "Primeiro")]);
         let servicos = preparar("xx", &docs, Kind::Servicos).unwrap().unwrap();
         assert_eq!(servicos.len(), 2);
@@ -1086,6 +1140,152 @@ mod tests {
         assert!(Kind::Tarf.pack_incremental());
         assert!(!Kind::Servicos.pack_incremental());
         assert!(!Kind::Faqs.pack_incremental());
+    }
+
+    /// Embedder determinístico: o vetor é função pura do texto. É essa pureza que permite exigir
+    /// igualdade byte a byte entre os dois caminhos — no real ela vem do modelo, que é exatamente o
+    /// que não cabe num teste unitário.
+    struct EmbedderFalso;
+
+    impl Vetorizador for EmbedderFalso {
+        fn embed_dense(&self, textos: Vec<String>) -> Result<Vec<Vec<f32>>> {
+            Ok(textos
+                .iter()
+                .map(|t| vec![(manifest::fnv1a64(t.as_bytes()) % 10_000) as f32 / 1e4; EMBED_DIM])
+                .collect())
+        }
+
+        fn conta_tokens(&self, texto: &str) -> Result<usize> {
+            Ok(texto.chars().count())
+        }
+    }
+
+    /// Uma rodada de ingestão de `pareceres`: lê a árvore `docs` e escreve o pack em `out`.
+    fn ingerir(out: &Path, docs: &Path, cache_valido: bool) {
+        let items = preparar("xx", docs, Kind::Pareceres).unwrap().unwrap();
+        ingest_items(
+            &EmbedderFalso,
+            &Writer::new(out),
+            "xx",
+            Kind::Pareceres,
+            &items,
+            out,
+            cache_valido,
+        )
+        .unwrap();
+    }
+
+    fn bytes_do_pack(out: &Path) -> Vec<u8> {
+        std::fs::read(out.join("xx-pareceres.json")).unwrap()
+    }
+
+    /// A divergência entre dois packs, se houver — em vez de um `assert_eq` que despejaria dezenas
+    /// de milhares de bytes de JSON no console e não diria nada.
+    fn diferenca(a: &[u8], b: &[u8]) -> Option<String> {
+        if a == b {
+            return None;
+        }
+        let i = a
+            .iter()
+            .zip(b)
+            .position(|(x, y)| x != y)
+            .unwrap_or(a.len().min(b.len()));
+        Some(format!(
+            "{} vs {} bytes, primeira divergência no byte {i}",
+            a.len(),
+            b.len()
+        ))
+    }
+
+    fn ids_do_pack(out: &Path) -> Vec<String> {
+        let d: CollectionData<String> =
+            vector_store::read_collection_file(out.join("xx-pareceres.json")).unwrap();
+        d.records.into_iter().map(|r| r.id).collect()
+    }
+
+    /// **O teste que decide a Fase 3**: chegar a um estado por rodadas incrementais produz o MESMO
+    /// arquivo que reescrevê-lo do zero — byte a byte, não "equivalente".
+    ///
+    /// A propriedade vale por construção (a escrita ordena por `id`, o conjunto de records é o
+    /// mesmo, e o vetor do cache é bit-idêntico ao que seria recalculado), e "por construção" é
+    /// precisamente o que um teste defende contra regressão futura: qualquer coisa que passe a
+    /// entrar no pack só num dos caminhos quebra aqui.
+    #[test]
+    fn incremental_e_reescrita_total_produzem_o_mesmo_arquivo() {
+        /// O que acontece com a árvore entre o pack de ontem e a rodada de hoje.
+        type Mutacao = fn(&Path);
+        let cenarios: [(&str, Mutacao); 4] = [
+            ("nada-muda", |_| {}),
+            ("doc-novo", |dir| escrever_doc(dir, "C 3", Some("s"))),
+            ("resumo-novo", |dir| {
+                escrever_doc(dir, "B 2", Some("OUTRA sinopse"))
+            }),
+            ("os-dois", |dir| {
+                escrever_doc(dir, "C 3", Some("s"));
+                escrever_doc(dir, "B 2", Some("OUTRA sinopse"));
+            }),
+        ];
+
+        for (tag, mudar_a_arvore) in cenarios {
+            let docs = arvore(
+                &format!("equiv-{tag}"),
+                &[("A 1", Some("s")), ("B 2", Some("s"))],
+            );
+            let base = docs.parent().unwrap().to_path_buf();
+            let (inc, zero) = (base.join("packs-inc"), base.join("packs-zero"));
+
+            ingerir(&inc, &docs, false); // o pack de ontem
+            mudar_a_arvore(&docs.join("pareceres"));
+            ingerir(&inc, &docs, true); // a rodada incremental de hoje
+            ingerir(&zero, &docs, false); // o mesmo estado, reescrito do zero
+
+            if let Some(d) = diferenca(&bytes_do_pack(&inc), &bytes_do_pack(&zero)) {
+                panic!("cenário `{tag}`: os dois caminhos têm de convergir byte a byte — {d}");
+            }
+            let _ = std::fs::remove_dir_all(&base);
+        }
+    }
+
+    /// O caso de borda que a igualdade acima **não** cobre, e que é comportamento correto: com
+    /// órfão os dois caminhos DIVERGEM.
+    ///
+    /// A reescrita total apaga o que sumiu da árvore; o incremental o preserva e escreve o log para
+    /// um humano decidir (D-INC-9). Nomear a divergência aqui é o que impede alguém de "consertar"
+    /// a assimetria depois, achando que o incremental está deixando lixo para trás.
+    #[test]
+    fn com_orfao_os_dois_caminhos_divergem_e_isso_e_correto() {
+        let docs = arvore("orfao", &[("A 1", Some("s")), ("B 2", Some("s"))]);
+        let base = docs.parent().unwrap().to_path_buf();
+        let (inc, zero) = (base.join("packs-inc"), base.join("packs-zero"));
+
+        ingerir(&inc, &docs, false);
+        std::fs::remove_file(docs.join("pareceres/b-2.md")).unwrap(); // B sai da árvore
+        ingerir(&inc, &docs, true);
+        ingerir(&zero, &docs, false);
+
+        assert!(
+            diferenca(&bytes_do_pack(&inc), &bytes_do_pack(&zero)).is_some(),
+            "com órfão a igualdade byte a byte NÃO vale — e não deve valer"
+        );
+        assert_eq!(
+            ids_do_pack(&inc),
+            vec!["docs/pareceres/a-1.md", "docs/pareceres/b-2.md"],
+            "o incremental PRESERVA o órfão: só um humano pode removê-lo"
+        );
+        assert_eq!(
+            ids_do_pack(&zero),
+            vec!["docs/pareceres/a-1.md"],
+            "a reescrita total apaga o que não está na árvore — é rebuild, não diff"
+        );
+        // E a divergência não fica muda: o incremental deixa o órfão registrado para revisão.
+        let log = std::fs::read_to_string(caminho_log_remocoes(&inc, "xx-pareceres")).unwrap();
+        assert!(log.contains("docs/pareceres/b-2.md"), "log: {log}");
+        assert!(
+            !caminho_log_remocoes(&zero, "xx-pareceres").exists(),
+            "na reescrita total não há órfão a relatar"
+        );
+
+        let _ = std::fs::remove_dir_all(&base);
     }
 
     #[test]

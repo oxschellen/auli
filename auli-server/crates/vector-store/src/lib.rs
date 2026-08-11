@@ -12,7 +12,7 @@
 //!
 //! **Read and write are separate types by design** (the load-bearing correctness property):
 //! - [`ReadStore`] opens a collection read-only and exposes `query_scored`/`list`.
-//! - [`Writer`] does `reset`/`upsert` and persists.
+//! - [`Writer`] does `reset`/`apply` and persists.
 //!
 //! A consumer that only reads (the `auli server`) links [`ReadStore`] and **cannot construct a
 //! [`Writer`]** — it is incapable of writing by construction, not by discipline.

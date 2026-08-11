@@ -243,9 +243,27 @@ pub fn validate_docs_hash(docs_dir: impl AsRef<Path>, manifest: &Manifest) -> Re
     }
 }
 
+/// Escreve o manifesto **atomicamente**: `.tmp` irmão + `rename`, a mesma disciplina que o
+/// `write_collection_file` do `vector-store` já aplicava ao pack (D-INC-5). O temporário é irmão de
+/// propósito — `rename` só é atômico dentro do mesmo sistema de arquivos.
+///
+/// A assimetria anterior (pack atômico, manifesto não) não era teórica: ela se manifestou numa
+/// rodada de medição isolada por *hardlinks*, onde os packs sobreviveram pelo `rename` e o manifesto
+/// de produção foi escrito **através** do link. O boot depende dos dois arquivos; só um estava
+/// protegido. O que muda com isto:
+///
+/// - fecha a janela do "manifesto pela metade", que o doc do `run_remover` só podia mencionar como
+///   possibilidade;
+/// - a não-atomicidade que resta — a que existe **entre** pack e manifesto, dois arquivos sem
+///   transação — passa a ser uma janela entre **dois estados válidos**, e não entre um estado válido
+///   e um arquivo truncado. É o que faz a recuperação por `auli update` ser confiável;
+/// - torna a isolação por hardlink uma técnica segura para o diretório de packs inteiro.
 pub fn write_manifest(path: impl AsRef<Path>, manifest: &Manifest) -> Result<()> {
+    let path = path.as_ref();
     let bytes = serde_json::to_vec_pretty(manifest)?;
-    std::fs::write(path, bytes)?;
+    let tmp = path.with_extension("json.tmp");
+    std::fs::write(&tmp, bytes)?;
+    std::fs::rename(&tmp, path)?;
     Ok(())
 }
 
@@ -445,6 +463,70 @@ mod tests {
         write_manifest(&path, &m).unwrap();
         assert!(validate_manifest(&path, &identity()).is_ok());
 
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// Um manifesto qualquer, válido, para os testes de escrita.
+    fn manifesto(entity: &str) -> Manifest {
+        Manifest {
+            entity: entity.into(),
+            version: "1".into(),
+            built_at: "now".into(),
+            embed_model_id: EMBED_MODEL_ID.into(),
+            embed_dim: EMBED_DIM,
+            strategy_version: STRATEGY_VERSION,
+            pack_format: PACK_FORMAT,
+            collections: vec![],
+            docs_hash: None,
+        }
+    }
+
+    #[test]
+    fn escrita_do_manifesto_e_atomica_e_nao_deixa_tmp_para_tras() {
+        // Espelha o `escrita_e_atomica_e_nao_deixa_tmp_para_tras` do `vector-store`: o arquivo final
+        // aparece por `rename`, e o temporário não sobrevive à escrita.
+        let dir = std::env::temp_dir().join(format!("auli-mtmp-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = manifest_path(&dir, "rs");
+
+        write_manifest(&path, &manifesto("rs")).unwrap();
+
+        assert!(path.exists());
+        assert!(
+            !dir.join("rs.manifest.json.tmp").exists(),
+            "o temporário tem de sumir no rename"
+        );
+        assert_eq!(read_manifest(&path).unwrap().entity, "rs");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn escrever_atraves_de_hardlink_nao_altera_o_arquivo_original() {
+        // O teste que descreve o DEFEITO, e não a implementação: com `fs::write` direto, escrever no
+        // caminho B de um hardlink escreve no inode compartilhado e altera o A junto. Foi assim que
+        // uma rodada de medição isolada por hardlinks alcançou o manifesto de produção.
+        let dir = std::env::temp_dir().join(format!("auli-mlink-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("copia")).unwrap();
+
+        let original = manifest_path(&dir, "rs");
+        write_manifest(&original, &manifesto("rs")).unwrap();
+        let antes = std::fs::read(&original).unwrap();
+
+        // A cópia barata: mesmo inode, dois nomes.
+        let link = manifest_path(dir.join("copia"), "rs");
+        std::fs::hard_link(&original, &link).unwrap();
+
+        // Uma rodada qualquer escrevendo no NOME da cópia.
+        write_manifest(&link, &manifesto("OUTRA")).unwrap();
+
+        assert_eq!(
+            std::fs::read(&original).unwrap(),
+            antes,
+            "escrever pelo nome da cópia NÃO pode alcançar o original"
+        );
+        assert_eq!(read_manifest(&link).unwrap().entity, "OUTRA");
         let _ = std::fs::remove_dir_all(&dir);
     }
 
