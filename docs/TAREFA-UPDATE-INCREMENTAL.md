@@ -9,8 +9,9 @@ embedding não mudou têm o **vetor reaproveitado** do pack anterior. Hoje o TAR
 acórdãos para incorporar os poucos do dia.
 
 **Escopo:** `crates/vector-store`, `crates/auli-core/manifest.rs`, `crates/auli-cli/src/update.rs`,
-e uma ferramenta de migração descartável em `tools/`. **Nada no servidor muda de comportamento**
-(além de validar um campo novo do manifesto). O frontend não é tocado.
+~~e uma ferramenta de migração descartável em `tools/`~~ — a migração foi cancelada (ver Fase 2).
+**Nada no servidor muda de comportamento** (além de validar um campo novo do manifesto). O frontend
+não é tocado.
 
 ---
 
@@ -134,7 +135,20 @@ Ordem escolhida para que cada fase seja verificável sozinha e nenhuma deixe o r
 funciona pela metade. **Portão humano entre fases** (padrão TAREFA): não siga para a próxima sem
 revisão.
 
-### Fase 1 — formato do pack (`doc_path` como id + `key_hash`)
+**Estado em 10/08/2026:**
+
+| fase | estado |
+| --- | --- |
+| 1 — formato do pack | **feita** (PR #139) e em produção: as 27 entidades regeneradas, 48.408 vetores idênticos |
+| 2 — migração | **cancelada** pelo próprio Passo 0 (ver abaixo) |
+| 3 — caminho incremental | **feita** (PR #140) |
+| 4 — remoções com portão humano | **aberta — a única que resta** |
+| 5 — invalidação por identidade | **feita** (PR #140, junto da 3) |
+
+As fases 3 e 5 foram entregues **no mesmo pacote**, e isso é decisão: a 5 é a guarda que invalida o
+cache, e entregá-la depois deixaria uma janela em que o cache existe sem ela.
+
+### Fase 1 — formato do pack (`doc_path` como id + `key_hash`) — **FEITA**
 
 Ainda **sem** caminho incremental: `reset` + reescrita total, como hoje. Só o formato muda.
 
@@ -171,7 +185,7 @@ O que **não** se perdeu com o cancelamento: o `D-INC-13` continua valendo como 
 de `docs_hash` antes de carimbar `key_hash` é o que a Fase 3 vai precisar quando reaproveitar
 vetores. Só não há mais um migrador para aplicá-la.
 
-### Fase 3 — caminho incremental (jurisprudência)
+### Fase 3 — caminho incremental (jurisprudência) — **FEITA**
 
 - `update.rs`: para `Kind` de família jurisprudência, lê o pack atual (`read_collection_file` já é
   pública), monta `id → key_hash`, e parte em três conjuntos:
@@ -188,7 +202,25 @@ que chega ao mesmo estado lógico produzem arquivos **byte a byte idênticos**. 
 graças ao `batch_size=1` da correção v4; a ordenação canônica garante o resto. Cenários mínimos:
 nenhuma mudança; um documento novo; um documento com sinopse nova; combinação dos dois.
 
-### Fase 4 — remoções com portão humano
+> **FEITA (PR #140).** Os quatro cenários passaram byte a byte, com o binário real sobre 30 pareceres
+> do SC, cada um comparado a uma reescrita total do mesmo estado. No cenário da sinopse, **exatamente
+> 1** documento foi re-vetorizado — o `key_hash` ser da KEY e não do arquivo funcionando na prática:
+> o `resumo_gerada_em` também mudou naquele `.md` e não invalidou nada.
+>
+> **O ganho, medido em entidades reais**, com o pack resultante byte-idêntico ao de produção:
+>
+> | entidade | antes | depois | | reaproveitados |
+> | --- | ---: | ---: | ---: | --- |
+> | `sc` | 279 s | **9,6 s** | 29× | 1.743 de 1.951 |
+> | `rs` | 4.291 s | **297 s** | 14,5× | 22.848 de 25.381 |
+>
+> **⚠️ Corrige a expectativa da §31 e do ESTUDO.** A projeção era "72 minutos para ~140 vetores", como
+> se o incremental levasse a rodada a segundos. O ganho real no RS é **72 min → 5 min**, não segundos,
+> porque serviços e faqs (2.533 registros) são re-vetorizados toda rodada por doutrina (D-INC-8) e são
+> um piso que o incremental não toca. O que ele elimina é o TARF: 22.476 acórdãos que custavam ~70
+> minutos e passam a custar zero quando nada mudou.
+
+### Fase 4 — remoções com portão humano — **A ÚNICA ABERTA**
 
 É a fase onde um erro apaga documento bom. Nada aqui roda sem revisão.
 
@@ -200,13 +232,25 @@ nenhuma mudança; um documento novo; um documento com sinopse nova; combinação
 **Verificação:** aplicar um log aprovado remove exatamente os ids aprovados; rodar duas vezes não faz
 mal; documento que reapareceu na árvore não é removido e é relatado.
 
-### Fase 5 — desligar o atalho quando a identidade muda
+### Fase 5 — desligar o atalho quando a identidade muda — **FEITA**
 
 `STRATEGY_VERSION` ou `EMBED_MODEL_ID` diferente ⇒ o cache é **inteiramente** invalidado, mesmo com
 `key_hash` igual. É a guarda que passa por cima de todas as outras: reaproveitar vetor de outro modelo
 é o pior defeito possível deste desenho, porque é silencioso e contamina o acervo todo.
 
 **Verificação:** bump artificial de `STRATEGY_VERSION` força re-embed de 100% dos registros.
+
+> **FEITA (PR #140), no mesmo pacote da Fase 3** — e isso é decisão, não conveniência: entregá-la
+> depois deixaria uma janela em que o cache existe sem a guarda que o invalida.
+>
+> O argumento, que agora vive também no comentário do `run_update`: trocar o `EMBED_MODEL_ID` **não
+> altera o `text_to_embed`**, então a key bate, o `key_hash` bate, e o cache serviria vetores de dois
+> modelos misturados no mesmo pack — sem que a `DimensionMismatch` pegue nada, porque modelos
+> diferentes com 1024 dimensões são o caso comum, não a exceção.
+>
+> A comparação implementada é do **triplo de identidade inteiro**, não só do modelo: estratégia
+> diferente está igualmente errada. Verificado com o `strategy_version` do manifesto bumpado à mão:
+> `0 reaproveitados de 32`. Sem manifesto anterior, o cache também nasce desligado.
 
 ---
 

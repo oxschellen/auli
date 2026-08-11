@@ -755,14 +755,14 @@ acima.
 
 ---
 
-## 31. `update` incremental — a maior alavanca de performance (Fase 1 EM PRODUÇÃO; próxima é a 3)
+## 31. `update` incremental — FEITO, menos as remoções (Fase 4 é a única aberta)
 
 > **A especificação vigente é a [docs/TAREFA-UPDATE-INCREMENTAL.md](TAREFA-UPDATE-INCREMENTAL.md).**
 > Ela fecha as decisões (`D-INC-1..14`) e as fases, e **manda sobre o estudo de 09/08** onde os dois
 > divergirem. O resumo abaixo continua valendo como contexto, com as duas conclusões que caíram
 > marcadas no lugar.
 >
-> **Onde a coisa está, em 10/08/2026:**
+> **Onde a coisa está, em 10/08/2026 — o essencial está FEITO:**
 >
 > - **Fase 1 — feita e no ar** (PR #139). O `id` do pack é o `doc_path`, cada record carrega o
 >   `key_hash` da key que o vetorizou, a escrita é atômica e ordenada, e o `pack_format` é validado
@@ -770,8 +770,18 @@ acima.
 > - **Fase 2 — CANCELADA.** O pré-flight mediu 27/27 entidades em sincronia, e sem divergências a
 >   migração não comprava nada sobre re-embeddar. Registro em
 >   [TAREFA-FASE-2-MIGRACAO.md](TAREFA-FASE-2-MIGRACAO.md).
-> - **Fase 3 é o próximo passo** — o caminho incremental. Note o resíduo deixado de propósito: o
->   `key_hash` está gravado nos 27 packs e **não é lido por ninguém** até a Fase 3 existir.
+> - **Fases 3 e 5 — feitas** (PR #140), no mesmo pacote: a 5 é a guarda que invalida o cache quando a
+>   identidade de embedding muda, e entregá-la depois deixaria uma janela em que o cache existe sem
+>   ela. O `key_hash` deixou de ser um resíduo gravado e não lido — é ele que decide, documento a
+>   documento, o que é re-vetorizado.
+> - **Fase 4 — a única aberta:** remoções com portão humano. O `apply` da store já recebe `removes` e
+>   a mecânica está testada; falta o log de órfãos e o subcomando de aplicação.
+>
+> **⚠️ O ganho real corrige o número projetado abaixo.** Medido nas duas entidades, com o pack
+> resultante byte-idêntico ao de produção: `sc` 279 s → **9,6 s** (29×) e `rs` 4.291 s → **297 s**
+> (14,5×). Não é "segundos", como a projeção sugeria: serviços e faqs são re-vetorizados toda rodada
+> por doutrina (D-INC-8) e formam um piso de 2.533 registros no RS. O que o incremental elimina é o
+> TARF — 22.476 acórdãos que custavam ~70 minutos e passam a custar zero quando nada mudou.
 
 O custo **não está em embeddar devagar, está em re-embeddar o que não mudou**.
 
@@ -834,7 +844,8 @@ fica como história de onde a decisão saiu:
 > **O ganho, com número.** 680–1.020 acórdãos novos por ano no TARF; ~1.000 pareceres/ano no SP. Uma
 > re-coleta mensal toca ~0,6% do acervo e re-vetoriza 100% dele: **72 minutos para ~140 vetores**.
 >
-> **A peça que falta é uma só:** o `key_hash` no pack. O `pack()` descarta a key de propósito ("já
+> ~~**A peça que falta é uma só:** o `key_hash` no pack.~~ **Feito** (PR #139/#140): ele é gravado e
+> lido. O texto abaixo fica como registro de por que ele não existia. O `pack()` descarta a key de propósito ("já
 > foi consumida — o vetor É ela"), então hoje não há como saber se um documento mudou sem
 > re-embeddá-lo. São 8 ou 16 bytes por registro.
 >
