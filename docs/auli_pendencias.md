@@ -755,14 +755,14 @@ acima.
 
 ---
 
-## 31. `update` incremental — FEITO, menos as remoções (Fase 4 é a única aberta)
+## 31. `update` incremental — FEITO E FECHADO (2026-08-10)
 
 > **A especificação vigente é a [docs/TAREFA-UPDATE-INCREMENTAL.md](TAREFA-UPDATE-INCREMENTAL.md).**
 > Ela fecha as decisões (`D-INC-1..14`) e as fases, e **manda sobre o estudo de 09/08** onde os dois
 > divergirem. O resumo abaixo continua valendo como contexto, com as duas conclusões que caíram
 > marcadas no lugar.
 >
-> **Onde a coisa está, em 10/08/2026 — o essencial está FEITO:**
+> **Encerrada em 10/08/2026. Nenhuma fase aberta.**
 >
 > - **Fase 1 — feita e no ar** (PR #139). O `id` do pack é o `doc_path`, cada record carrega o
 >   `key_hash` da key que o vetorizou, a escrita é atômica e ordenada, e o `pack_format` é validado
@@ -774,8 +774,11 @@ acima.
 >   identidade de embedding muda, e entregá-la depois deixaria uma janela em que o cache existe sem
 >   ela. O `key_hash` deixou de ser um resíduo gravado e não lido — é ele que decide, documento a
 >   documento, o que é re-vetorizado.
-> - **Fase 4 — a única aberta:** remoções com portão humano. O `apply` da store já recebe `removes` e
->   a mecânica está testada; falta o log de órfãos e o subcomando de aplicação.
+> - **Fase 4 — feita** (PR #141): o `auli update` escreve um log de órfãos e **nunca remove**; apagar
+>   exige `auli remover`, subcomando e não flag, que aplica `aprovados ∩ órfãos_atuais`. A
+>   implementação corrigiu a própria especificação: o subcomando **consome** o log em vez de
+>   regenerá-lo, porque o log É a aprovação — reescrevê-lo com os não aprovados devolveria ao arquivo
+>   as linhas que o humano apagou, e a próxima rodada as leria como "sim".
 >
 > **⚠️ O ganho real corrige o número projetado abaixo.** Medido nas duas entidades, com o pack
 > resultante byte-idêntico ao de produção: `sc` 279 s → **9,6 s** (29×) e `rs` 4.291 s → **297 s**

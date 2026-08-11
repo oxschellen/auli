@@ -89,6 +89,12 @@ a aplicação); recusa apenas remover o que não foi lido. É **idempotente**. E
 seletiva por linha**: o humano apaga do log as linhas que não quer autorizar; elas voltam no log da
 próxima rodada, porque não aprovar hoje é "não agora", não uma decisão permanente.
 
+> **Precisão que a implementação exigiu (PR #141):** "permanecem no log" acima é o EFEITO, não a
+> mecânica — e implementá-lo ao pé da letra cria um defeito. O subcomando **consome** o log; quem o
+> regenera é o `auli update`, do diff da rodada seguinte. Se o subcomando reescrevesse o log com os
+> órfãos não aprovados, ele devolveria ao arquivo justamente as linhas que o humano apagou para NÃO
+> aprovar — e a invocação seguinte as leria como aprovação. O "não" viraria "sim" sozinho.
+
 **D-INC-11 — O subcomando recarimba o manifesto.** Ele escreve o pack, logo tem de atualizar
 `CollectionEntry` (count/bytes/hash) e o `docs_hash` pela **mesma função** que o `update` usa. Sem
 isso o boot recusa corretamente e o operador não descobre por quê. Extrair o carimbo do `run_update`
@@ -142,11 +148,13 @@ revisão.
 | 1 — formato do pack | **feita** (PR #139) e em produção: as 27 entidades regeneradas, 48.408 vetores idênticos |
 | 2 — migração | **cancelada** pelo próprio Passo 0 (ver abaixo) |
 | 3 — caminho incremental | **feita** (PR #140) |
-| 4 — remoções com portão humano | **aberta — a única que resta** |
+| 4 — remoções com portão humano | **feita** (PR #141) — o `auli remover` |
 | 5 — invalidação por identidade | **feita** (PR #140, junto da 3) |
 
 As fases 3 e 5 foram entregues **no mesmo pacote**, e isso é decisão: a 5 é a guarda que invalida o
 cache, e entregá-la depois deixaria uma janela em que o cache existe sem ela.
+
+**Com a Fase 4 merjada, esta TAREFA está encerrada.**
 
 ### Fase 1 — formato do pack (`doc_path` como id + `key_hash`) — **FEITA**
 
@@ -220,7 +228,7 @@ nenhuma mudança; um documento novo; um documento com sinopse nova; combinação
 > um piso que o incremental não toca. O que ele elimina é o TARF: 22.476 acórdãos que custavam ~70
 > minutos e passam a custar zero quando nada mudou.
 
-### Fase 4 — remoções com portão humano — **A ÚNICA ABERTA**
+### Fase 4 — remoções com portão humano — **FEITA**
 
 É a fase onde um erro apaga documento bom. Nada aqui roda sem revisão.
 
@@ -231,6 +239,32 @@ nenhuma mudança; um documento novo; um documento com sinopse nova; combinação
 
 **Verificação:** aplicar um log aprovado remove exatamente os ids aprovados; rodar duas vezes não faz
 mal; documento que reapareceu na árvore não é removido e é relatado.
+
+> **FEITA (PR #141).** O ciclo, verificado com o binário real sobre pareceres do SC:
+>
+> ```text
+> 2 documentos somem   → update NÃO remove, escreve log com 2 órfãos
+> humano aprova 1      → só o aprovado sai; o não aprovado FICA no pack
+> remover de novo      → nada acontece (log consumido) — idempotente
+> o não aprovado volta → update regenera o log com ele, e não com o já removido
+> aprovar quem voltou  → NÃO removido, relatado como "deixou de ser órfão"
+> manifesto            → count e hash conferem com o arquivo real
+> ```
+>
+> **⚠️ Um defeito de desenho que só a execução pegou, e que vale ficar escrito.** A especificação
+> acima diz que o órfão não aprovado "permanece no log", e eu implementei isso literalmente: o
+> `remover` regenerava o log com os que sobraram. Mas **o log É a aprovação** — então as linhas que o
+> humano tinha apagado de propósito voltavam ao arquivo e, na invocação seguinte, eram aplicadas. O
+> "não" virava "sim" sozinho.
+>
+> A correção mantém a doutrina e troca quem faz o quê: **o `remover` CONSOME o log; quem regenera é o
+> `update`**, do diff da rodada seguinte. O órfão não aprovado volta por lá — que é o que faz "não
+> aprovar hoje" significar "não agora". Foi o cenário "rodar duas vezes não faz mal" que falhou e
+> expôs a confusão entre *lista de pendências* e *aprovação*.
+>
+> **Assimetria que ficou registrada no código:** numa reescrita total (serviços e faqs por doutrina,
+> ou jurisprudência com identidade de embedding diferente) o `reset` apaga o que não está na árvore
+> **sem log e sem portão**. É rebuild, não diff — e quem bumpou a estratégia pediu por isso.
 
 ### Fase 5 — desligar o atalho quando a identidade muda — **FEITA**
 
