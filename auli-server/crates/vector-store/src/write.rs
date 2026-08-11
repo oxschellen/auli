@@ -1,5 +1,6 @@
 //! Write face of the store. Only `auli update` links this; the server cannot construct it.
 
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 use serde::Serialize;
@@ -8,8 +9,8 @@ use serde::de::DeserializeOwned;
 use crate::{CollectionData, Error, Record, Result, read_collection_file, write_collection_file};
 
 /// Writes `<name>.json` collection files under a base directory. Each operation reads the current
-/// file, applies the change, and rewrites it — the clean-reload pattern (`reset` then `upsert`)
-/// used by ingestion. Single-writer by design: there is exactly one `auli update` process.
+/// file, applies the change, and rewrites it. Single-writer by design: there is exactly one
+/// `auli update` process.
 pub struct Writer {
     base_path: PathBuf,
 }
@@ -32,8 +33,18 @@ impl Writer {
         write_collection_file(self.path_for(name), &CollectionData::<P>::default())
     }
 
-    /// Upsert whole records (replace by id, else append) and persist. Returns the total record
-    /// count after the write.
+    /// Aplica um lote de alterações numa operação só — upserts (substitui por id, senão acrescenta)
+    /// e remoções por id — e persiste. Devolve a contagem final de registros.
+    ///
+    /// **Uma escrita, não duas** (D-INC-5). Antes eram `reset` + `upsert`, dois read-modify-write do
+    /// arquivo inteiro. Com update mensal, falhar entre os dois era hipótese teórica; com escrita
+    /// frequente deixa de ser, e o `write_collection_file` atômico só protege cada escrita
+    /// isoladamente — não a sequência de duas.
+    ///
+    /// Na Fase 3 `removes` chega **sempre vazio**: órfão (id no pack sem `.md` na árvore) NÃO é
+    /// removido automaticamente, por doutrina (D-INC-9). O parâmetro existe porque a Fase 4 vai
+    /// alimentá-lo a partir de um log aprovado por humano, e porque remover numa operação separada
+    /// traria de volta a janela que o D-INC-5 fecha.
     ///
     /// **Takes `Record`s, not parallel slices.** It used to take `(ids, embeddings, payloads)` as
     /// three positional slices, guarded by an arity check because a length mismatch would `zip` to
@@ -50,7 +61,7 @@ impl Writer {
     /// into a loud write-time error, so `cosine_distance`'s `2.0` fallback is left to cover only
     /// *legitimate* anti-correlation at query time. It stays a runtime check because it is about
     /// **width**, which no type here constrains.
-    pub fn upsert<P>(&self, name: &str, records: Vec<Record<P>>) -> Result<u64>
+    pub fn apply<P>(&self, name: &str, upserts: Vec<Record<P>>, removes: &[String]) -> Result<u64>
     where
         P: Serialize + DeserializeOwned,
     {
@@ -63,8 +74,8 @@ impl Writer {
             .records
             .first()
             .map(|r| r.embedding.len())
-            .or_else(|| records.first().map(|r| r.embedding.len()))
-            && let Some(bad) = records.iter().find(|r| r.embedding.len() != expected)
+            .or_else(|| upserts.first().map(|r| r.embedding.len()))
+            && let Some(bad) = upserts.iter().find(|r| r.embedding.len() != expected)
         {
             return Err(Error::DimensionMismatch {
                 expected,
@@ -72,10 +83,28 @@ impl Writer {
             });
         }
 
-        for rec in records {
-            match data.records.iter_mut().find(|r| r.id == rec.id) {
-                Some(existing) => *existing = rec,
-                None => data.records.push(rec),
+        // Remoções ANTES do índice: retirar depois invalidaria as posições registradas nele.
+        if !removes.is_empty() {
+            let fora: HashSet<&str> = removes.iter().map(String::as_str).collect();
+            data.records.retain(|r| !fora.contains(r.id.as_str()));
+        }
+
+        // Índice `id → posição` no lugar do `iter_mut().find` (D-INC-6). O find era O(n) por
+        // registro: na reescrita total do TARF, 22,5 mil registros contra 22,5 mil já presentes são
+        // ~250 milhões de comparações de string por rodada.
+        let mut posicao: HashMap<String, usize> = data
+            .records
+            .iter()
+            .enumerate()
+            .map(|(i, r)| (r.id.clone(), i))
+            .collect();
+        for rec in upserts {
+            match posicao.get(&rec.id) {
+                Some(&i) => data.records[i] = rec,
+                None => {
+                    posicao.insert(rec.id.clone(), data.records.len());
+                    data.records.push(rec);
+                }
             }
         }
 
@@ -109,19 +138,20 @@ mod tests {
     }
 
     #[test]
-    fn reset_then_upsert_writes_records() {
+    fn reset_then_apply_writes_records() {
         let dir = std::env::temp_dir().join(format!("vs-writer-test-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         let w = Writer::new(&dir);
 
         w.reset::<String>("rs-faqs").unwrap();
         let total = w
-            .upsert(
+            .apply(
                 "rs-faqs",
                 vec![
                     rec("a.md", vec![0.1, 0.2], "alpha"),
                     rec("b.md", vec![0.3, 0.4], "beta"),
                 ],
+                &[],
             )
             .unwrap();
         assert_eq!(total, 2);
@@ -135,7 +165,7 @@ mod tests {
 
         // Upsert by existing id replaces in place (no duplicate, count stable).
         let total = w
-            .upsert("rs-faqs", vec![rec("a.md", vec![9.0, 9.0], "ALPHA")])
+            .apply("rs-faqs", vec![rec("a.md", vec![9.0, 9.0], "ALPHA")], &[])
             .unwrap();
         assert_eq!(total, 2);
         let data: CollectionData<String> = read_collection_file(w.path_for("rs-faqs")).unwrap();
@@ -154,13 +184,14 @@ mod tests {
         let w = Writer::new(&dir);
         w.reset::<String>("c").unwrap();
 
-        w.upsert(
+        w.apply(
             "c",
             vec![
                 rec("c.md", vec![1.0], "c"),
                 rec("a.md", vec![1.0], "a"),
                 rec("b.md", vec![1.0], "b"),
             ],
+            &[],
         )
         .unwrap();
         let data: CollectionData<String> = read_collection_file(w.path_for("c")).unwrap();
@@ -168,10 +199,52 @@ mod tests {
         assert_eq!(ids, vec!["a.md", "b.md", "c.md"]);
 
         // Um record novo inserido depois entra no LUGAR dele, não no fim.
-        w.upsert("c", vec![rec("ab.md", vec![1.0], "ab")]).unwrap();
+        w.apply("c", vec![rec("ab.md", vec![1.0], "ab")], &[])
+            .unwrap();
         let data: CollectionData<String> = read_collection_file(w.path_for("c")).unwrap();
         let ids: Vec<&str> = data.records.iter().map(|r| r.id.as_str()).collect();
         assert_eq!(ids, vec!["a.md", "ab.md", "b.md", "c.md"]);
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn apply_remove_e_insere_na_mesma_operacao() {
+        // A Fase 3 sempre passa `removes` vazio (D-INC-9: órfão não sai sozinho). O parâmetro é da
+        // Fase 4, e a mecânica dele se testa agora, enquanto é barato.
+        let dir = std::env::temp_dir().join(format!("vs-remove-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let w = Writer::new(&dir);
+        w.reset::<String>("c").unwrap();
+        w.apply(
+            "c",
+            vec![
+                rec("a.md", vec![1.0], "a"),
+                rec("b.md", vec![1.0], "b"),
+                rec("c.md", vec![1.0], "c"),
+            ],
+            &[],
+        )
+        .unwrap();
+
+        // Remover e inserir de uma vez: o `b` sai, o `d` entra, e o arquivo sai ordenado.
+        let total = w
+            .apply(
+                "c",
+                vec![rec("d.md", vec![1.0], "d")],
+                &["b.md".to_string()],
+            )
+            .unwrap();
+        assert_eq!(total, 3);
+        let data: CollectionData<String> = read_collection_file(w.path_for("c")).unwrap();
+        let ids: Vec<&str> = data.records.iter().map(|r| r.id.as_str()).collect();
+        assert_eq!(ids, vec!["a.md", "c.md", "d.md"]);
+
+        // Remover o que não existe não é erro nem mexe em nada (a Fase 4 é idempotente).
+        let total = w
+            .apply::<String>("c", vec![], &["nao-existe.md".into()])
+            .unwrap();
+        assert_eq!(total, 3);
 
         let _ = std::fs::remove_dir_all(&dir);
     }
@@ -183,7 +256,8 @@ mod tests {
         let _ = std::fs::remove_dir_all(&dir);
         let w = Writer::new(&dir);
         w.reset::<String>("c").unwrap();
-        w.upsert("c", vec![rec("a.md", vec![1.0], "a")]).unwrap();
+        w.apply("c", vec![rec("a.md", vec![1.0], "a")], &[])
+            .unwrap();
 
         assert!(w.path_for("c").exists());
         assert!(
@@ -212,12 +286,12 @@ mod tests {
         w.reset::<String>("c").unwrap();
 
         // First insert fixes width = 3.
-        w.upsert("c", vec![rec("a.md", vec![1.0, 2.0, 3.0], "a")])
+        w.apply("c", vec![rec("a.md", vec![1.0, 2.0, 3.0], "a")], &[])
             .unwrap();
 
         // A later width-2 vector is rejected, and nothing is written.
         let err = w
-            .upsert("c", vec![rec("b.md", vec![1.0, 2.0], "b")])
+            .apply("c", vec![rec("b.md", vec![1.0, 2.0], "b")], &[])
             .unwrap_err();
         assert!(matches!(
             err,
@@ -232,12 +306,13 @@ mod tests {
         // A mismatched width WITHIN the first batch (into an empty collection) is also caught.
         w.reset::<String>("d").unwrap();
         let err = w
-            .upsert(
+            .apply(
                 "d",
                 vec![
                     rec("a.md", vec![1.0, 2.0], "a"),
                     rec("b.md", vec![1.0, 2.0, 3.0], "b"),
                 ],
+                &[],
             )
             .unwrap_err();
         assert!(matches!(

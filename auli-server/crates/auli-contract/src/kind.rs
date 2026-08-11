@@ -97,6 +97,29 @@ impl Kind {
         }
     }
 
+    /// O pack desta coleção é atualizado **incrementalmente** (só o que mudou é re-vetorizado), ou
+    /// reescrito por inteiro a cada rodada? (D-INC-8)
+    ///
+    /// A política acompanha a doutrina de árvore que a coleção já segue, e por isso mora aqui e não
+    /// numa flag de operação: entidade nova herda a política certa pela coleção, sem ninguém para
+    /// errar o parâmetro.
+    ///
+    /// | família | árvore | pack |
+    /// | --- | --- | --- |
+    /// | jurisprudência (`pareceres`, `tarf`) | append-only | **incremental** |
+    /// | mutáveis (`servicos`, `faqs`) | delete + rebuild | **reset + total, sempre** |
+    ///
+    /// Serviços e faqs são rescrapeados e reconstruídos por inteiro a cada rodada: são poucos
+    /// registros, mudam muito no portal, e detectar com segurança o que foi RETIRADO de lá é
+    /// complexo. Reconstruir do zero é mais simples e mais seguro que diferenciar — a mesma razão
+    /// pela qual a árvore delas já é delete + rebuild.
+    pub fn pack_incremental(self) -> bool {
+        match self {
+            Kind::Pareceres | Kind::Tarf => true,
+            Kind::Servicos | Kind::Faqs => false,
+        }
+    }
+
     /// `None` para nome desconhecido — o chamador erra alto em vez de adivinhar a coleção.
     pub fn parse(s: &str) -> Option<Self> {
         Kind::TODOS.into_iter().find(|k| k.as_str() == s)

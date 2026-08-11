@@ -2,9 +2,17 @@
 //!
 //! For each content kind it reads the `.md` tree in `<out>/../docs/<kind>/`, embeds each record's
 //! `text_to_embed()` and stores its `stored_repr()` — via `auli-core::embed`, the SAME encoder the
-//! server uses on the query — assigns sequential `id-1..id-N`, and `Writer::reset` + `upsert` into
+//! server uses on the query — identifies each record by its `doc_path`, and applies the batch into
 //! `<out>/<entity>-<kind>.json`. Finally writes `<out>/<entity>.manifest.json` stamping the
 //! embedding identity, so the server can validate it at boot.
+//!
+//! **A jurisprudência não é re-vetorizada por inteiro a cada rodada** (Fase 3 da
+//! TAREFA-UPDATE-INCREMENTAL): cada record guarda o `key_hash` da key que o produziu, e o documento
+//! cuja key não mudou tem o vetor **reaproveitado** do pack anterior. Serviços e faqs seguem em
+//! reescrita total, por doutrina (D-INC-8) — quem decide é o `Kind`, não uma flag.
+//!
+//! O cache inteiro é descartado quando a identidade de embedding muda (Fase 5): a key não sabe qual
+//! modelo a vetorizou, então sem essa guarda o pack misturaria dois espaços vetoriais em silêncio.
 //!
 //! `servicos` is one vocabulary end-to-end: the pack/kind is `<entity>-servicos`. **A fonte é a
 //! árvore `docs/servicos/*.md` (TAREFA-SERVICOS-MD)**, regenerada a cada
@@ -21,12 +29,13 @@
 //! Does NOT use the server `Config` (no LLM vars needed for ingestion) — only the embedder
 //! settings, read directly from the environment with defaults.
 
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use auli_contract::{Documento, Embeddable, Kind};
 use auli_core::embed::{EMBED_DIM, EMBED_MAX_TOKENS, Embedder};
 use auli_core::manifest::{self, CollectionEntry, Manifest};
-use vector_store::{Record, Writer};
+use vector_store::{CollectionData, Record, Writer};
 
 use crate::error::Result;
 
@@ -50,6 +59,26 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
         .parent()
         .ok_or_else(|| format!("diretório de packs sem pai: {}", out.display()))?
         .join("docs");
+    // FASE 5 — a guarda que passa por cima de todas as outras (D-INC-2 + Fase 5 da TAREFA).
+    //
+    // O cache do incremental casa por `key_hash`, que é hash do `text_to_embed`. Trocar de MODELO
+    // não muda o `text_to_embed`: a key bate, o hash bate, e o cache serviria vetores de dois
+    // espaços vetoriais misturados no mesmo pack. A `DimensionMismatch` da store não pega isso se a
+    // dimensão coincidir — e modelos diferentes com 1024 dimensões são o caso comum, não a exceção.
+    // É o único defeito deste desenho que nasce silencioso e contamina o acervo inteiro.
+    //
+    // Daí a comparação ser do TRIPLO de identidade completo, e não só do modelo: `STRATEGY_VERSION`
+    // muda o que entra no vetor, e um pack embedado sob outra estratégia está igualmente errado.
+    let cache_valido = manifest::read_manifest(manifest::manifest_path(&out, &entity))
+        .map(|anterior| anterior.embed_identity() == manifest::identity())
+        .unwrap_or(false); // sem manifesto anterior (ou ilegível) não há cache em que confiar
+    if !cache_valido {
+        println!(
+            "🧊 Cache de vetores DESLIGADO — não há manifesto anterior, ou a identidade de \
+             embedding mudou. Tudo será re-vetorizado."
+        );
+    }
+
     // **UM caminho de código para as quatro coleções** (D-B2). A fonte é sempre a árvore
     // `docs/<kind>/*.md`, o registro é sempre um `Documento`, e o que difere — como o `.md` vira
     // struct, e se há guarda de resumo — está dentro do `preparar`. Coleção sem árvore é pulada.
@@ -61,10 +90,14 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
         let Some(docs) = preparar(&entity, &docs_dir, kind)? else {
             continue;
         };
-        avisar_truncados(&embedder, kind, &docs)?;
-        println!("🔢 {}: {} registros → vetorizando...", kind, docs.len());
         entries.push(ingest_items(
-            &embedder, &writer, &entity, kind, &docs, &out,
+            &embedder,
+            &writer,
+            &entity,
+            kind,
+            &docs,
+            &out,
+            cache_valido,
         )?);
     }
     // notas: sem fonte struct por ora (autoradas) — ausentes até serem modeladas.
@@ -103,7 +136,7 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
 /// Vale para as QUATRO coleções desde a B4 (antes só as faqs eram conferidas). O TARF é quem mais
 /// pede: a `## resumo` dele é a fundamentação inteira do acórdão, que chega a 27 mil caracteres —
 /// duas ordens de grandeza acima da sinopse curta de um parecer.
-fn avisar_truncados(embedder: &Embedder, kind: Kind, docs: &[Documento]) -> Result<()> {
+fn avisar_truncados(embedder: &Embedder, kind: Kind, docs: &[&Documento]) -> Result<()> {
     let mut truncados: Vec<String> = Vec::new();
     for d in docs {
         if embedder.conta_tokens(&d.text_to_embed)? >= EMBED_MAX_TOKENS {
@@ -269,11 +302,25 @@ fn recusar_jurisprudencia_sem_resumo(
     .into())
 }
 
+/// O hash da key de um documento — a chave do cache de vetores.
+///
+/// FNV-1a sobre a KEY, não sobre o arquivo: o `.md` carrega o `resumo_gerada_em`, que muda a cada
+/// regeneração de sinopse sem mudar uma vírgula do que é embedado. Hashear o arquivo invalidaria o
+/// cache inteiro dos pareceres a cada rodada de sinopse.
+fn key_hash(doc: &Documento) -> String {
+    manifest::hash_hex(doc.text_to_embed().as_bytes())
+}
+
 /// Casa cada documento com o vetor dele e monta o record que vai ao pack.
 ///
 /// Função à parte, e não um `map` embutido no [`ingest_items`], porque é aqui que moram as duas
 /// afirmações da Fase 1 — o id é o `doc_path`, e o `key_hash` é da KEY — e testá-las não pode exigir
 /// carregar o modelo de 2 GB. Os comprimentos já foram conferidos pelo chamador.
+///
+/// **O payload é SEMPRE reconstruído da árvore** (D-INC-3), mesmo quando o vetor vem do cache. Há
+/// campos no payload que não entram na key — o `link` da jurisprudência é o caso concreto —, então
+/// um portal que reorganize URLs sem mudar conteúdo faria o `key_hash` bater com um `link` morto ao
+/// lado. Reaproveitar payload seria uma classe inteira de staleness silenciosa; só o VETOR é cache.
 fn montar_records(items: &[Documento], embeddings: Vec<Vec<f32>>) -> Vec<Record<String>> {
     items
         .iter()
@@ -282,12 +329,44 @@ fn montar_records(items: &[Documento], embeddings: Vec<Vec<f32>>) -> Vec<Record<
             id: doc.doc_path(),
             embedding,
             payload: doc.stored_repr(),
-            // FNV-1a sobre a KEY, não sobre o arquivo: o `.md` carrega o `resumo_gerada_em`, que
-            // muda a cada regeneração de sinopse sem mudar uma vírgula do que é embedado. Hashear o
-            // arquivo invalidaria o cache inteiro dos pareceres a cada rodada de sinopse.
-            key_hash: Some(manifest::hash_hex(doc.text_to_embed().as_bytes())),
+            key_hash: Some(key_hash(doc)),
         })
         .collect()
+}
+
+/// Os vetores do pack atual que ainda servem: `doc_path → embedding` para os documentos cuja key
+/// não mudou desde a última rodada.
+///
+/// Devolve vazio quando o cache está desligado (Fase 5) ou a coleção é de política total (D-INC-8);
+/// nesses casos o chamador re-embeda tudo, sem nenhum outro ramo de código.
+///
+/// Casa por `(id, key_hash)`: o id diz que é o mesmo documento, o `key_hash` diz que a key dele não
+/// mudou. Record sem `key_hash` — o pack do formato 1 — nunca casa, então um pack antigo degrada
+/// para reescrita total em vez de quebrar.
+fn vetores_reaproveitaveis(
+    writer: &Writer,
+    name: &str,
+    items: &[Documento],
+    habilitado: bool,
+) -> Result<HashMap<String, Vec<f32>>> {
+    if !habilitado {
+        return Ok(HashMap::new());
+    }
+    let atual: CollectionData<String> = vector_store::read_collection_file(writer.path_for(name))?;
+    let mut por_id: HashMap<&str, &Record<String>> = HashMap::with_capacity(atual.records.len());
+    for r in &atual.records {
+        por_id.insert(r.id.as_str(), r);
+    }
+    let mut reaproveitaveis = HashMap::new();
+    for doc in items {
+        let id = doc.doc_path();
+        if let Some(r) = por_id.get(id.as_str())
+            && r.key_hash.as_deref() == Some(key_hash(doc).as_str())
+        {
+            reaproveitaveis.insert(id, r.embedding.clone());
+        }
+    }
+    Ok(reaproveitaveis)
 }
 
 /// Ingest one collection into the entity's `<entity>-<kind>` vector collection.
@@ -300,10 +379,12 @@ fn montar_records(items: &[Documento], embeddings: Vec<Vec<f32>>) -> Vec<Record<
 /// obrigatório. O `doc_path` é único nas quatro coleções, derivado e nunca digitado — e É o nome do
 /// arquivo na árvore, então o pack passa a ser navegável contra ela a olho nu.
 ///
-/// **Cada record carrega o `key_hash`** (D-INC-2): o hash da key que produziu aquele vetor. Nada
-/// nesta fase o lê — o caminho continua sendo `reset` + reescrita total. Ele existe para a Fase 3,
-/// que compara o hash gravado com o da árvore e só re-embeda o que difere. Sem gravá-lo agora, essa
-/// comparação nunca teria um lado esquerdo.
+/// **Cada record carrega o `key_hash`** (D-INC-2): o hash da key que produziu aquele vetor. É o que
+/// permite, na rodada seguinte, saber que um documento não mudou **sem re-embeddá-lo** — a única
+/// forma de responder essa pergunta antes desta fase era pagar o embedding para descobrir.
+///
+/// **Duas políticas, um formato** (D-INC-8): a jurisprudência reaproveita vetor por `key_hash`;
+/// serviços e faqs são reescritos por inteiro, sempre. Quem decide é o `Kind`, não uma flag.
 fn ingest_items(
     embedder: &Embedder,
     writer: &Writer,
@@ -311,24 +392,50 @@ fn ingest_items(
     kind: Kind,
     items: &[Documento],
     out: &Path,
+    cache_valido: bool,
 ) -> Result<CollectionEntry> {
-    let to_embed: Vec<String> = items
+    let name = format!("{}-{}", entity, kind.as_str());
+    let incremental = kind.pack_incremental() && cache_valido;
+    let reaproveitados = vetores_reaproveitaveis(writer, &name, items, incremental)?;
+
+    // Os documentos que sobraram — os que mudaram, os inéditos, e todos quando não há cache.
+    let a_embedar: Vec<&Documento> = items
         .iter()
-        .map(|it| it.text_to_embed().to_string())
+        .filter(|d| !reaproveitados.contains_key(&d.doc_path()))
         .collect();
 
-    let name = format!("{}-{}", entity, kind.as_str());
-    let embeddings = embedder.embed_dense(to_embed)?;
+    println!(
+        "🔢 {}: {} registros — {} reaproveitados, {} a vetorizar{}",
+        kind,
+        items.len(),
+        reaproveitados.len(),
+        a_embedar.len(),
+        if incremental {
+            ""
+        } else {
+            " (reescrita total)"
+        }
+    );
+    // Só o DELTA é tokenizado: o aviso de truncamento custa uma passada de tokenizer por documento,
+    // e no TARF eram 22,5 mil por rodada para avisar sobre os poucos que mudaram.
+    avisar_truncados(embedder, kind, &a_embedar)?;
+
+    let embeddings = embedder.embed_dense(
+        a_embedar
+            .iter()
+            .map(|d| d.text_to_embed().to_string())
+            .collect(),
+    )?;
     // O `zip` abaixo casaria com o MENOR dos dois e descartaria o resto em silêncio. Este é o ponto
     // onde o descasamento pode nascer — o embedder é quem devolve a outra ponta —, e é por isso que
     // a conferência mora aqui e não na store: lá, `Vec<Record>` já torna o descasamento
     // inexpressável (D-INC-14).
-    if embeddings.len() != items.len() {
+    if embeddings.len() != a_embedar.len() {
         return Err(crate::error::Error::Custom(format!(
             "embedder devolveu {} vetores para {} documentos em '{}' — abortado antes de gravar, \
              porque casar os dois truncaria o acervo em silêncio",
             embeddings.len(),
-            items.len(),
+            a_embedar.len(),
             name
         )));
     }
@@ -346,10 +453,24 @@ fn ingest_items(
         )));
     }
 
-    let records = montar_records(items, embeddings);
+    // Recompõe a ordem da árvore: cada documento pega o vetor do cache ou o recém-calculado. O
+    // `novos` é consumido na ordem em que foi embedado, que é a de `a_embedar`.
+    let mut novos = embeddings.into_iter();
+    let vetores: Vec<Vec<f32>> = items
+        .iter()
+        .map(|d| match reaproveitados.get(&d.doc_path()) {
+            Some(v) => v.clone(),
+            None => novos.next().expect("um vetor por documento a embedar"),
+        })
+        .collect();
+    let records = montar_records(items, vetores);
 
-    writer.reset::<String>(&name)?; // reescrita total: a Fase 1 não muda comportamento
-    let total = writer.upsert(&name, records)?;
+    // Reescrita total continua sendo `reset` + aplicação; no incremental o `reset` sairia caro e
+    // erraria: apagaria os órfãos, que por doutrina (D-INC-9) só saem por decisão humana na Fase 4.
+    if !incremental {
+        writer.reset::<String>(&name)?;
+    }
+    let total = writer.apply(&name, records, &[])?;
 
     // Stamp this collection in the manifest (count + integrity hash of the written file).
     let file_name = format!("{}.json", name);
@@ -772,6 +893,97 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
         let _ = std::fs::remove_dir_all(outros.parent().unwrap());
+    }
+
+    /// Escreve um pack no formato 2 direto em disco, para exercitar o cache sem carregar o modelo.
+    fn pack_com(dir: &Path, name: &str, entradas: &[(&Documento, &str, f32)]) -> Writer {
+        let w = Writer::new(dir);
+        let records: Vec<Record<String>> = entradas
+            .iter()
+            .map(|(doc, kh, v)| Record {
+                id: doc.doc_path(),
+                embedding: vec![*v],
+                payload: doc.stored_repr(),
+                key_hash: Some((*kh).to_string()),
+            })
+            .collect();
+        vector_store::write_collection_file(w.path_for(name), &CollectionData { records }).unwrap();
+        w
+    }
+
+    #[test]
+    fn o_cache_so_reaproveita_quem_tem_a_mesma_key() {
+        let docs = arvore("cache", &[("A 1", Some("s")), ("B 2", Some("s"))]);
+        let items = preparar("xx", &docs, Kind::Pareceres).unwrap().unwrap();
+        let dir = std::env::temp_dir().join(format!("auli-cache-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+
+        // O primeiro tem a key de hoje; o segundo tem a de uma rodada anterior.
+        let w = pack_com(
+            &dir,
+            "xx-pareceres",
+            &[
+                (&items[0], &key_hash(&items[0]), 1.0),
+                (&items[1], "hash-de-ontem", 2.0),
+            ],
+        );
+
+        let cache = vetores_reaproveitaveis(&w, "xx-pareceres", &items, true).unwrap();
+        assert_eq!(cache.len(), 1, "só o de key inalterada entra");
+        assert_eq!(cache.get(&items[0].doc_path()), Some(&vec![1.0]));
+        assert!(
+            !cache.contains_key(&items[1].doc_path()),
+            "key mudou ⇒ o vetor tem de ser recalculado, não reaproveitado"
+        );
+
+        // Desligado (Fase 5, ou coleção de política total) ⇒ nada é reaproveitado, sem outro ramo.
+        assert!(
+            vetores_reaproveitaveis(&w, "xx-pareceres", &items, false)
+                .unwrap()
+                .is_empty()
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+        let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+    }
+
+    #[test]
+    fn pack_do_formato_1_nunca_casa_e_degrada_para_reescrita_total() {
+        // Record sem `key_hash` é o do formato 1. Ele não pode casar por acidente: o vetor dele pode
+        // ter vindo de outra estratégia, e reaproveitá-lo seria o defeito silencioso da Fase 5.
+        let docs = arvore("fmt1", &[("A 1", Some("s"))]);
+        let items = preparar("xx", &docs, Kind::Pareceres).unwrap().unwrap();
+        let dir = std::env::temp_dir().join(format!("auli-fmt1-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let w = Writer::new(&dir);
+        vector_store::write_collection_file(
+            w.path_for("xx-pareceres"),
+            &CollectionData {
+                records: vec![Record {
+                    id: items[0].doc_path(),
+                    embedding: vec![9.0],
+                    payload: items[0].stored_repr(),
+                    key_hash: None, // formato 1
+                }],
+            },
+        )
+        .unwrap();
+
+        assert!(
+            vetores_reaproveitaveis(&w, "xx-pareceres", &items, true)
+                .unwrap()
+                .is_empty()
+        );
+        let _ = std::fs::remove_dir_all(&dir);
+        let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+    }
+
+    #[test]
+    fn a_politica_de_pack_e_por_familia_de_colecao() {
+        // D-INC-8: serviços e faqs são reescritos por inteiro, sempre — quem decide é o `Kind`.
+        assert!(Kind::Pareceres.pack_incremental());
+        assert!(Kind::Tarf.pack_incremental());
+        assert!(!Kind::Servicos.pack_incremental());
+        assert!(!Kind::Faqs.pack_incremental());
     }
 
     #[test]
