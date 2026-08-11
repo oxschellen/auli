@@ -511,6 +511,14 @@ fn reiniciar_anomalias(descartes: &[String]) -> Result<()> {
 
 /// Acrescenta anomalias encontradas durante a coleta, para que uma rodada interrompida ainda deixe
 /// registro do que já achou.
+///
+/// **Este arquivo NÃO é escrito atomicamente, e é decisão, não esquecimento.** A pergunta óbvia —
+/// "por que ele não usa o `escrever_atomico` como o resto do pipeline?" — tem três respostas que só
+/// valem juntas: (1) o `append` acima existe de propósito, para que uma rodada interrompida deixe
+/// registro, e append **não se protege com `rename`**; (2) proteger só o [`reiniciar_anomalias`]
+/// daria falsa sensação de segurança sobre um arquivo cuja outra metade continua exposta; (3) o
+/// consumidor é humano e o custo de refazer é ~46 requisições — quem lê um arquivo de anomalias
+/// truncado percebe, e refazê-lo é barato. Mudar isso é decidir sobre o PAR, não sobre uma linha.
 fn anexar_anomalias(novas: &[String]) -> Result<()> {
     use std::io::Write;
     let mut f = std::fs::OpenOptions::new().append(true).open(ANOMALIAS)?;

@@ -384,6 +384,8 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
         buf.push_str(&serde_json::to_string(s).map_err(|e| format!("serializando saída: {e}"))?);
         buf.push('\n');
     }
+    // As duas saídas são reescritas INTEIRAS a cada rodada, e re-rodar produz bytes idênticos (K8) —
+    // por isso a forma certa aqui é substituir o arquivo, não editá-lo. A atomicidade é do helper.
     escrever_atomico(&dir.join("dispositivos.jsonl"), &buf)?;
 
     let index_out: BTreeMap<String, IndiceEntrada> = index

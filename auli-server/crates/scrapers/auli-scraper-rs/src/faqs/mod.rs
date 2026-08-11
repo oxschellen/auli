@@ -61,8 +61,15 @@ pub fn run(source: &FaqSource) -> Result<()> {
     // A árvore (page_type/children) que a aba de FAQs do frontend consome — o snapshot achatado a
     // perde, então persistimos o nó-raiz aqui, ao lado do snapshot. Prefixado por `<id>-` como os
     // demais artefatos de `raw/`.
+    // Atômico, e por um motivo mais forte que o do snapshot: este arquivo **não tem outra fonte no
+    // repositório**. O snapshot não o reconstrói — o achatamento para `Vec<FaqRaw>` perde a
+    // hierarquia que a aba consome —, e ele é o único artefato de coleta que o frontend lê direto,
+    // sem passar por pack. Truncá-lo custa uma nova raspagem do portal.
     let tree_path = format!("{}/{}-faqs-tree.json", source.data_dir, source.id);
-    std::fs::write(&tree_path, serde_json::to_string_pretty(&tree)?)?;
+    auli_contract::arquivo::escrever_atomico(
+        std::path::Path::new(&tree_path),
+        &serde_json::to_string_pretty(&tree)?,
+    )?;
     println!("Wrote {} (árvore de FAQ p/ o frontend)", tree_path);
 
     auli_contract::snapshot::write_faqs(

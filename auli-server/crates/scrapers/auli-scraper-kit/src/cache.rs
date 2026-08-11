@@ -31,6 +31,14 @@ pub fn read(data_dir: &str, kind: &str, url: &str) -> Option<String> {
 
 /// Writes `content` to the `kind` cache for `url`, creating the directory as needed.
 /// Best-effort: failures are logged, not propagated, so caching never breaks a scrape.
+///
+/// **Não é escrita atômica, e isso foi decidido, não esquecido** (auli_pendencias §36). Uma queda no
+/// meio deixa HTML parcial — que *parseia*, e por isso é pior que arquivo ausente. Mas `rename` não
+/// é o remédio: um cache válido porém OBSOLETO passa em qualquer verificação estrutural, e esse é o
+/// caso maior. Some-se que o contrato desta função é best-effort — atomicidade só trocaria "arquivo
+/// pela metade" por "arquivo ausente", e ausente o [`read`] já trata (devolve `None`, o scraper
+/// refaz a requisição). O desenho certo é validação de completude na LEITURA, e merece medição
+/// antes: com que frequência o cache é lido depois de uma interrupção?
 pub fn write(data_dir: &str, kind: &str, url: &str, content: &str) {
     let path = cache_path(data_dir, kind, url);
     if let Some(parent) = path.parent()
