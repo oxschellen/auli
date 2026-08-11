@@ -16,10 +16,11 @@
 //! se público/classe fossem ao prompt, os temas ecoariam a taxonomia do portal.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
+use auli_contract::arquivo::escrever_atomico;
 use auli_contract::mddoc;
 
 use crate::domain::entities::EntityConfig;
@@ -96,14 +97,6 @@ struct Grafo {
     meta: Meta,
     nodes: Vec<Node>,
     edges: Vec<Edge>,
-}
-
-/// Escrita atômica (`.tmp` + rename) — saída derivada, reescrita inteira a cada rodada.
-fn escrever_atomico(path: &Path, conteudo: &str) -> Result<()> {
-    let tmp = PathBuf::from(format!("{}.tmp", path.display()));
-    std::fs::write(&tmp, conteudo)?;
-    std::fs::rename(&tmp, path)?;
-    Ok(())
 }
 
 /// Lê a árvore `docs/servicos` e devolve `titulo -> públicos` (o mesmo serviço é ofertado a mais de
@@ -436,6 +429,8 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
     use super::*;
 
     fn temp_entity(tag: &str) -> (EntityConfig, PathBuf) {

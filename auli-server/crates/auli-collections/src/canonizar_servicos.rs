@@ -22,11 +22,12 @@
 //! `sistemas-index.json` (semente do grafo: `chave → {display, ocorrencias, variantes, servicos}`).
 
 use std::collections::{BTreeMap, BTreeSet};
-use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
 
 use regex::Regex;
 use serde::{Deserialize, Serialize};
+
+use auli_contract::arquivo::escrever_atomico;
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -210,14 +211,6 @@ fn canonizar_sistema(texto: &str) -> Option<String> {
             .map(|k| (*k).to_string())
             .unwrap_or(s),
     )
-}
-
-/// Escrita atômica (`.tmp` + rename) — saída derivada, reescrita inteira a cada rodada.
-fn escrever_atomico(path: &Path, conteudo: &str) -> Result<()> {
-    let tmp = PathBuf::from(format!("{}.tmp", path.display()));
-    std::fs::write(&tmp, conteudo)?;
-    std::fs::rename(&tmp, path)?;
-    Ok(())
 }
 
 pub fn run(entity: &EntityConfig) -> Result<()> {

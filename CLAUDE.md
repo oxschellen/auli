@@ -55,6 +55,8 @@ Transform tasks into verifiable goals:
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 - "Refactor X" → "Ensure tests pass before and after"
 
+**Verify by mutation:** put the defect back and confirm the test fails. A test that describes the implementation can pass with the broken code still in place.
+
 For multi-step tasks, state a brief plan:
 
 ```text

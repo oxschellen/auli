@@ -350,11 +350,9 @@ fn escrever_se_ausente_interno(
         return Ok(false);
     }
     std::fs::create_dir_all(dir)?;
-    // Escrita atômica (`.tmp` + rename), como o resto do pipeline: uma queda no meio nunca deixa um
-    // `.md` truncado — que o parser rejeitaria e travaria o passo seguinte.
-    let tmp = destino.with_extension("md.tmp");
-    std::fs::write(&tmp, render_doc(header, resumo, corpo))?;
-    std::fs::rename(&tmp, &destino)?;
+    // Escrita atômica, como o resto do pipeline: uma queda no meio nunca deixa um `.md` truncado —
+    // que o parser rejeitaria e travaria o passo seguinte.
+    crate::arquivo::escrever_atomico(&destino, &render_doc(header, resumo, corpo))?;
     Ok(true)
 }
 

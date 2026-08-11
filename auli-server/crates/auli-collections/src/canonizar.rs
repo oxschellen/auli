@@ -14,11 +14,12 @@
 //! pareceres}`). Derivação pura e idempotente: re-rodar produz bytes idênticos (K8).
 
 use std::collections::{BTreeMap, BTreeSet};
-use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
 
 use regex::Regex;
 use serde::{Deserialize, Serialize};
+
+use auli_contract::arquivo::escrever_atomico;
 
 use crate::domain::entities::EntityConfig;
 use crate::errors::Result;
@@ -327,14 +328,6 @@ fn canonizar_texto(texto: &str) -> Option<Canon> {
     };
 
     Some(Canon { key, display })
-}
-
-/// Escrita atômica (`.tmp` + rename): a saída é derivada e reescrita inteira a cada rodada (K8).
-fn escrever_atomico(path: &Path, conteudo: &str) -> Result<()> {
-    let tmp = PathBuf::from(format!("{}.tmp", path.display()));
-    std::fs::write(&tmp, conteudo)?;
-    std::fs::rename(&tmp, path)?;
-    Ok(())
 }
 
 pub fn run(entity: &EntityConfig) -> Result<()> {
