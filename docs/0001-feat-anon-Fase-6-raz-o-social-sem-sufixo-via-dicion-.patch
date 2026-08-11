@@ -1,0 +1,583 @@
+From 90939d98f9e27ad61db3a1859cdc9ee99ba56c63 Mon Sep 17 00:00:00 2001
+From: Carlos + Claude <dev@auli.local>
+Date: Tue, 4 Aug 2026 22:49:44 +0000
+Subject: [PATCH] =?UTF-8?q?feat(anon):=20Fase=206=20=E2=80=94=20raz=C3=A3o?=
+ =?UTF-8?q?=20social=20sem=20sufixo=20via=20dicion=C3=A1rio=20de=20segment?=
+ =?UTF-8?q?os?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- data/segmentos_razao.txt: ~120 substantivos de ramo curados (adjetivos
+  Comercial/Industrial excluídos de propósito; comentários '#' no arquivo)
+- RazaoSegmentoRecognizer (auli_razao_segmento_v1, Custom("razao_social"),
+  0.65): sequência Titlecase com termo de segmento + nome distintivo;
+  armadilhas institucionais locais (Federação, Câmara, Distrito, Terminal…)
+- comum::normaliza promovida do nome_dicionario para reuso
+- fixture 21 (Anderle Transportes sem Ltda), 3 controles institucionais e
+  2 travas de convivência (sufixo vence segmento por span; segmento 0.65
+  vence prenome 0.6 por confiança no empate de span)
+- 88 unit + 10 fixtures verdes; clippy -D warnings limpo
+---
+ .../crates/auli-anon/data/segmentos_razao.txt | 132 ++++++++++
+ auli-server/crates/auli-anon/src/lib.rs       |   3 +
+ .../auli-anon/src/reconhecedores/comum.rs     |  19 ++
+ .../auli-anon/src/reconhecedores/mod.rs       |   2 +
+ .../src/reconhecedores/nome_dicionario.rs     |  23 +-
+ .../src/reconhecedores/razao_segmento.rs      | 228 ++++++++++++++++++
+ .../crates/auli-anon/tests/fixtures.rs        |  43 ++++
+ 7 files changed, 429 insertions(+), 21 deletions(-)
+ create mode 100644 auli-server/crates/auli-anon/data/segmentos_razao.txt
+ create mode 100644 auli-server/crates/auli-anon/src/reconhecedores/razao_segmento.rs
+
+diff --git a/auli-server/crates/auli-anon/data/segmentos_razao.txt b/auli-server/crates/auli-anon/data/segmentos_razao.txt
+new file mode 100644
+index 0000000..6dc7ff3
+--- /dev/null
++++ b/auli-server/crates/auli-anon/data/segmentos_razao.txt
+@@ -0,0 +1,132 @@
++# Termos de segmento empresarial — porteiro do RazaoSegmentoRecognizer (Fase 6).
++# Curado à mão: SUBSTANTIVOS de ramo de atividade que aparecem dentro de razão
++# social de pequeno contribuinte ("Anderle Transportes", "Padaria do Vale").
++# Adjetivos (Comercial, Industrial, Atacadista) ficam DE FORA de propósito:
++# a densidade de armadilha ("Código Comercial", "Distrito Industrial") supera
++# o ganho — o caso com sufixo societário já é coberto pelo RazaoSocialRecognizer.
++# Formato: ASCII maiúsculo sem acento (contrato de comum::normaliza), um por
++# linha; '#' comenta. A ordenação é feita no carregamento.
++ACADEMIA
++ACOUGUE
++AGROINDUSTRIA
++AGROPECUARIA
++ALIMENTOS
++ARMARINHOS
++ARMAZENS
++ASSESSORIA
++ATACADO
++AUTOPECAS
++BAZAR
++BEBIDAS
++BORRACHARIA
++BRINQUEDOS
++CALCADOS
++CERVEJARIA
++CHURRASCARIA
++CLINICA
++COLCHOES
++COMERCIO
++CONFECCOES
++CONFEITARIA
++CONSERVACAO
++CONSTRUTORA
++CONSULTORIA
++CONTABILIDADE
++CORRETORA
++COSMETICOS
++CURTUME
++DEDETIZADORA
++DEPOSITO
++DISTRIBUIDORA
++DROGARIA
++EDITORA
++ELETRODOMESTICOS
++ELETRONICOS
++EMBALAGENS
++EMPREENDIMENTOS
++ENGENHARIA
++ESQUADRIAS
++ESTACIONAMENTO
++ESTOFADOS
++EXPORTADORA
++FARMACIA
++FERRAGENS
++FERRAMENTAS
++FIACAO
++FLORICULTURA
++FRETES
++FRIGORIFICO
++FUNDICAO
++FUNILARIA
++GRAFICA
++GUINCHOS
++HORTIFRUTI
++HOTEL
++IMOBILIARIA
++IMPORTADORA
++INCORPORADORA
++INDUSTRIA
++INDUSTRIAS
++INFORMATICA
++JARDINAGEM
++JOALHERIA
++LABORATORIO
++LANCHONETE
++LATICINIOS
++LAVANDERIA
++LIVRARIA
++LOCACOES
++LOCADORA
++LOGISTICA
++LUBRIFICANTES
++MADEIREIRA
++MALHARIA
++MARCENARIA
++MARMORARIA
++MATERIAIS
++MECANICA
++MERCADO
++MERCEARIA
++METALURGICA
++MOVEIS
++MUDANCAS
++OFICINA
++OTICA
++PADARIA
++PADARIAS
++PANIFICADORA
++PAPELARIA
++PARTICIPACOES
++PAVIMENTACAO
++PEIXARIA
++PERFUMARIA
++PETSHOP
++PIZZARIA
++PLASTICOS
++PNEUS
++POUSADA
++PRESENTES
++RECAPAGEM
++REFRIGERACAO
++RESTAURANTE
++RETIFICA
++SERRALHERIA
++SERRARIA
++SORVETERIA
++SUPERMERCADO
++SUPERMERCADOS
++TECELAGEM
++TECNOLOGIA
++TELECOMUNICACOES
++TERRAPLENAGEM
++TINTAS
++TRANSPORTADORA
++TRANSPORTES
++TURISMO
++USINAGEM
++UTILIDADES
++VETERINARIA
++VIAGENS
++VIDRACARIA
++VIGILANCIA
++VINICOLA
+diff --git a/auli-server/crates/auli-anon/src/lib.rs b/auli-server/crates/auli-anon/src/lib.rs
+index 6356817..2835a2c 100644
+--- a/auli-server/crates/auli-anon/src/lib.rs
++++ b/auli-server/crates/auli-anon/src/lib.rs
+@@ -25,6 +25,8 @@
+ //!   e nome de pessoa ancorado em gatilho.
+ //! - **Fase 5, dicionário de prenomes** (IBGE Censo 2010, confiança 0.6): nome de pessoa **solto**,
+ //!   sem gatilho, com guarda de municípios compostos. Ver `nome_dicionario.rs`.
++//! - **Fase 6, dicionário de segmentos** (curado, confiança 0.65): razão social **sem sufixo
++//!   societário** via substantivo de ramo de atividade. Ver `razao_segmento.rs`.
+ 
+ use cloakrs_core::{Locale, PromptMapping, PromptSanitizer};
+ use cloakrs_locales::default_registry;
+@@ -80,6 +82,7 @@ impl Anonimizador {
+             .recognizer(reconhecedores::EnderecoRecognizer::novo())
+             .recognizer(reconhecedores::NomePessoaRecognizer::novo())
+             .recognizer(reconhecedores::NomeDicionarioRecognizer::novo())
++            .recognizer(reconhecedores::RazaoSegmentoRecognizer::novo())
+             .build()
+             .map_err(|e| AnonError::Construcao(e.to_string()))?;
+         Ok(Self {
+diff --git a/auli-server/crates/auli-anon/src/reconhecedores/comum.rs b/auli-server/crates/auli-anon/src/reconhecedores/comum.rs
+index af65000..747c172 100644
+--- a/auli-server/crates/auli-anon/src/reconhecedores/comum.rs
++++ b/auli-server/crates/auli-anon/src/reconhecedores/comum.rs
+@@ -100,6 +100,25 @@ pub(super) fn titlecase(token: &str) -> bool {
+     chars.next().is_some_and(char::is_uppercase) && chars.any(char::is_lowercase)
+ }
+ 
++/// Normaliza para o contrato do dicionário: caixa alta ASCII, sem acento (espelho da função
++/// `normaliza` de `tools/gera_prenomes.py`). Caracteres fora do alfabeto pt-BR passam inalterados — não
++/// casarão com o dicionário, que é o comportamento certo.
++pub(super) fn normaliza(texto: &str) -> String {
++    texto
++        .chars()
++        .map(|c| match c {
++            'á' | 'à' | 'â' | 'ã' | 'ä' | 'Á' | 'À' | 'Â' | 'Ã' | 'Ä' => 'A',
++            'é' | 'è' | 'ê' | 'ë' | 'É' | 'È' | 'Ê' | 'Ë' => 'E',
++            'í' | 'ì' | 'î' | 'ï' | 'Í' | 'Ì' | 'Î' | 'Ï' => 'I',
++            'ó' | 'ò' | 'ô' | 'õ' | 'ö' | 'Ó' | 'Ò' | 'Ô' | 'Õ' | 'Ö' => 'O',
++            'ú' | 'ù' | 'û' | 'ü' | 'Ú' | 'Ù' | 'Û' | 'Ü' => 'U',
++            'ç' | 'Ç' => 'C',
++            'ñ' | 'Ñ' => 'N',
++            _ => c.to_ascii_uppercase(),
++        })
++        .collect()
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+diff --git a/auli-server/crates/auli-anon/src/reconhecedores/mod.rs b/auli-server/crates/auli-anon/src/reconhecedores/mod.rs
+index 600f21a..559c70d 100644
+--- a/auli-server/crates/auli-anon/src/reconhecedores/mod.rs
++++ b/auli-server/crates/auli-anon/src/reconhecedores/mod.rs
+@@ -13,6 +13,7 @@ mod nome_dicionario;
+ mod nome_pessoa;
+ mod placa;
+ mod protocolo;
++mod razao_segmento;
+ mod razao_social;
+ mod renavam;
+ mod telefone;
+@@ -27,6 +28,7 @@ pub use nome_dicionario::NomeDicionarioRecognizer;
+ pub use nome_pessoa::NomePessoaRecognizer;
+ pub use placa::PlacaRecognizer;
+ pub use protocolo::ProtocoloRecognizer;
++pub use razao_segmento::RazaoSegmentoRecognizer;
+ pub use razao_social::RazaoSocialRecognizer;
+ pub use renavam::RenavamRecognizer;
+ pub use telefone::TelefoneBrRecognizer;
+diff --git a/auli-server/crates/auli-anon/src/reconhecedores/nome_dicionario.rs b/auli-server/crates/auli-anon/src/reconhecedores/nome_dicionario.rs
+index 68f8109..530a243 100644
+--- a/auli-server/crates/auli-anon/src/reconhecedores/nome_dicionario.rs
++++ b/auli-server/crates/auli-anon/src/reconhecedores/nome_dicionario.rs
+@@ -58,33 +58,14 @@ static TOPONIMOS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
+     v
+ });
+ 
+-/// Normaliza para o contrato do dicionário: caixa alta ASCII, sem acento (espelho da função
+-/// `normaliza` do gerador Python). Caracteres fora do alfabeto pt-BR passam inalterados — não
+-/// casarão com o dicionário, que é o comportamento certo.
+-fn normaliza(texto: &str) -> String {
+-    texto
+-        .chars()
+-        .map(|c| match c {
+-            'á' | 'à' | 'â' | 'ã' | 'ä' | 'Á' | 'À' | 'Â' | 'Ã' | 'Ä' => 'A',
+-            'é' | 'è' | 'ê' | 'ë' | 'É' | 'È' | 'Ê' | 'Ë' => 'E',
+-            'í' | 'ì' | 'î' | 'ï' | 'Í' | 'Ì' | 'Î' | 'Ï' => 'I',
+-            'ó' | 'ò' | 'ô' | 'õ' | 'ö' | 'Ó' | 'Ò' | 'Ô' | 'Õ' | 'Ö' => 'O',
+-            'ú' | 'ù' | 'û' | 'ü' | 'Ú' | 'Ù' | 'Û' | 'Ü' => 'U',
+-            'ç' | 'Ç' => 'C',
+-            'ñ' | 'Ñ' => 'N',
+-            _ => c.to_ascii_uppercase(),
+-        })
+-        .collect()
+-}
+-
+ fn e_prenome(token: &str) -> bool {
+-    PRENOMES.binary_search(&normaliza(token).as_str()).is_ok()
++    PRENOMES.binary_search(&comum::normaliza(token).as_str()).is_ok()
+ }
+ 
+ fn e_toponimo(candidato: &str) -> bool {
+     let norm = candidato
+         .split_whitespace()
+-        .map(normaliza)
++        .map(comum::normaliza)
+         .collect::<Vec<_>>()
+         .join(" ");
+     TOPONIMOS.binary_search(&norm.as_str()).is_ok()
+diff --git a/auli-server/crates/auli-anon/src/reconhecedores/razao_segmento.rs b/auli-server/crates/auli-anon/src/reconhecedores/razao_segmento.rs
+new file mode 100644
+index 0000000..511e482
+--- /dev/null
++++ b/auli-server/crates/auli-anon/src/reconhecedores/razao_segmento.rs
+@@ -0,0 +1,228 @@
++//! Reconhecedor de **razão social por termo de segmento** — Fase 6, o complemento do
++//! [`razao_social`](super::razao_social) para a razão **sem sufixo societário**.
++//!
++//! `Anderle Transportes` sem o `Ltda` vazava: o porteiro daquele reconhecedor é o sufixo. Aqui o
++//! porteiro é um **substantivo de ramo de atividade** ([`data/segmentos_razao.txt`]) dentro da
++//! sequência capitalizada: `Transportes`, `Padaria`, `Distribuidora`, `Metalúrgica`… É o formato
++//! do pequeno contribuinte — o que de fato aparece nas perguntas do NAVI — e não depende de lista
++//! de empresas (os dados abertos do CNPJ têm dezenas de milhões de razões; inviável embutir, e as
++//! "maiores do país" colidem com o português comum: Vale, Oi, Azul).
++//!
++//! Guardas além das da família (Titlecase, stoplist, boundaries):
++//! - exige ao menos um token Titlecase que **não** seja termo de segmento (o nome distintivo);
++//! - [`ARMADILHAS`]: tokens institucionais que formam bigramas legítimos com termo de segmento
++//!   (`Secretaria dos Transportes` cai na stoplist; `Federação das Indústrias`, `Câmara de
++//!   Comércio`, `Distrito`, `Terminal`… caem aqui). Lista local, não na stoplist global, para não
++//!   mudar o comportamento das Fases 4–5 (há sobrenomes legítimos como `Câmara`).
++//!
++//! Confiança **0.65**: acima do dicionário de prenomes (0.6) de propósito — em `Rosa Transportes`,
++//! o termo de segmento é sinal mais forte de empresa do que o prenome é de pessoa, e no empate de
++//! span quem decide é a confiança.
++
++use std::sync::LazyLock;
++
++use cloakrs_core::{Confidence, EntityType, Locale, PiiEntity, Recognizer, Span};
++use regex::Regex;
++
++use super::comum;
++
++const RECOGNIZER_ID: &str = "auli_razao_segmento_v1";
++const LOCALES_BR: &[Locale] = &[Locale::BR];
++
++/// Sequência candidata: 2–5 tokens Titlecase com conectores.
++static RE_SEQ: LazyLock<Regex> = LazyLock::new(|| {
++    Regex::new(r"\p{Lu}\p{L}+(?:\s+(?:d[aeo]s?\s+|e\s+)?\p{Lu}\p{L}+){1,4}")
++        .expect("regex de sequência capitalizada é válida")
++});
++
++/// Termos de segmento, normalizados e ordenados no carregamento (o arquivo é curado à mão e
++/// aceita comentários `#`, então a ordenação não é pré-condição dele).
++static SEGMENTOS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
++    let mut v: Vec<&str> = include_str!("../../data/segmentos_razao.txt")
++        .lines()
++        .map(str::trim)
++        .filter(|l| !l.is_empty() && !l.starts_with('#'))
++        .collect();
++    v.sort_unstable();
++    v
++});
++
++/// Tokens institucionais que formam bigramas legítimos com termo de segmento. Normalizados.
++const ARMADILHAS: &[&str] = &[
++    "ASSOCIACAO",
++    "AVENIDA",
++    "CAMARA",
++    "CENTRAL",
++    "CENTRO",
++    "CODIGO",
++    "CONFEDERACAO",
++    "CONSELHO",
++    "DEPARTAMENTO",
++    "DIREITO",
++    "DISTRITO",
++    "FEDERACAO",
++    "FEIRA",
++    "FUNDO",
++    "MINISTERIO",
++    "PARQUE",
++    "PLANO",
++    "POLO",
++    "PROGRAMA",
++    "RUA",
++    "SETOR",
++    "SINDICATO",
++    "SISTEMA",
++    "TERMINAL",
++    "ZONA",
++];
++
++fn e_segmento(token: &str) -> bool {
++    SEGMENTOS
++        .binary_search(&comum::normaliza(token).as_str())
++        .is_ok()
++}
++
++fn e_armadilha(token: &str) -> bool {
++    ARMADILHAS.contains(&comum::normaliza(token).as_str())
++}
++
++/// Reconhecedor de razão social por segmento. Sem estado — construir com [`Self::novo`].
++pub struct RazaoSegmentoRecognizer;
++
++impl RazaoSegmentoRecognizer {
++    #[must_use]
++    pub fn novo() -> Self {
++        Self
++    }
++
++    fn valida_candidato(candidato: &str) -> bool {
++        let tokens: Vec<&str> = candidato.split_whitespace().collect();
++        if tokens.iter().any(|t| e_armadilha(t)) || comum::tem_stop(candidato) {
++            return false;
++        }
++        let titulos: Vec<&&str> = tokens.iter().filter(|t| comum::titlecase(t)).collect();
++        let segmentos = titulos.iter().filter(|t| e_segmento(t)).count();
++        // Um termo de segmento E um nome distintivo, ambos Titlecase.
++        segmentos >= 1 && titulos.len() - segmentos >= 1
++    }
++}
++
++impl Recognizer for RazaoSegmentoRecognizer {
++    fn id(&self) -> &str {
++        RECOGNIZER_ID
++    }
++
++    fn entity_type(&self) -> EntityType {
++        EntityType::Custom("razao_social".into())
++    }
++
++    fn supported_locales(&self) -> &[Locale] {
++        LOCALES_BR
++    }
++
++    fn scan(&self, text: &str) -> Vec<PiiEntity> {
++        let mut achados = Vec::new();
++
++        for m in RE_SEQ.find_iter(text) {
++            if !comum::limites_ok(text, m.start(), m.end()) {
++                continue;
++            }
++            if !Self::valida_candidato(m.as_str()) {
++                continue;
++            }
++            achados.push(PiiEntity {
++                entity_type: self.entity_type(),
++                span: Span::new(m.start(), m.end()),
++                text: m.as_str().to_string(),
++                confidence: Confidence::new(0.65).expect("confiança válida"),
++                recognizer_id: RECOGNIZER_ID.to_string(),
++            });
++        }
++
++        achados
++    }
++
++    fn validate(&self, candidate: &str) -> bool {
++        RE_SEQ
++            .find(candidate)
++            .is_some_and(|m| m.as_str() == candidate)
++            && Self::valida_candidato(candidate)
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn achados(text: &str) -> Vec<String> {
++        RazaoSegmentoRecognizer::novo()
++            .scan(text)
++            .into_iter()
++            .map(|e| e.text)
++            .collect()
++    }
++
++    #[test]
++    fn razao_sem_sufixo() {
++        // O caso que motivou a fase.
++        assert_eq!(
++            achados("a Anderle Transportes não consegue emitir o MDF-e"),
++            ["Anderle Transportes"]
++        );
++        assert_eq!(achados("compras na Padaria do Vale caem no crédito?"), ["Padaria do Vale"]);
++        assert_eq!(
++            achados("a Metalúrgica Gaúcha atrasou o recolhimento"),
++            ["Metalúrgica Gaúcha"]
++        );
++        // Segmento no meio: o span é a sequência inteira.
++        assert_eq!(
++            achados("dívida da Silva Comércio de Bebidas"),
++            ["Silva Comércio de Bebidas"]
++        );
++    }
++
++    #[test]
++    fn acento_no_termo_de_segmento() {
++        // `Metalúrgica`/`Ótica` (com acento) casam com METALURGICA/OTICA (sem).
++        assert_eq!(achados("na Ótica Andrade desde 2019"), ["Ótica Andrade"]);
++    }
++
++    #[test]
++    fn segmento_sozinho_nao_casa() {
++        // Falta o nome distintivo.
++        assert!(achados("o setor de Transportes cresceu").is_empty());
++        assert!(achados("Padaria aberta aos domingos").is_empty());
++    }
++
++    #[test]
++    fn armadilhas_institucionais_nao_casam() {
++        assert!(achados("a Federação das Indústrias apresentou a pauta").is_empty());
++        assert!(achados("a Câmara de Comércio local promoveu o evento").is_empty());
++        assert!(achados("no Distrito das Indústrias de Gravataí").is_empty());
++        assert!(achados("o Terminal de Mudanças fechou").is_empty());
++    }
++
++    #[test]
++    fn stoplist_continua_valendo() {
++        // `Secretaria` está na stoplist global.
++        assert!(achados("a Secretaria dos Transportes autorizou").is_empty());
++    }
++
++    #[test]
++    fn minusculas_nao_casam() {
++        assert!(achados("os transportes rodoviários intermunicipais").is_empty());
++    }
++
++    #[test]
++    fn respeita_boundaries() {
++        assert!(achados("xAnderle Transportes").is_empty());
++    }
++
++    #[test]
++    fn tipo_e_confianca_corretos() {
++        let e = &RazaoSegmentoRecognizer::novo().scan("a Anderle Transportes pediu")[0];
++        assert_eq!(e.entity_type, EntityType::Custom("razao_social".into()));
++        assert_eq!(e.confidence.value(), 0.65);
++        assert_eq!(e.recognizer_id, RECOGNIZER_ID);
++    }
++}
+diff --git a/auli-server/crates/auli-anon/tests/fixtures.rs b/auli-server/crates/auli-anon/tests/fixtures.rs
+index b03829e..3c16383 100644
+--- a/auli-server/crates/auli-anon/tests/fixtures.rs
++++ b/auli-server/crates/auli-anon/tests/fixtures.rs
+@@ -189,6 +189,14 @@ const FIXTURES: &[Fx] = &[
+         pergunta: "O dependente nasceu em 14/03/1998 e precisa constar na declaração do ITCD.",
+         segredos: &["14/03/1998"],
+     },
++    Fx {
++        id: "21",
++        categoria: "Razão social sem sufixo (segmento)",
++        classe: Classe::NomeRazaoEndereco,
++        coberto: true,
++        pergunta: "A Anderle Transportes não consegue gerar o QR Code do Trânsito Livre. O cadastro está suspenso?",
++        segredos: &["Anderle Transportes"],
++    },
+     Fx {
+         id: "20",
+         categoria: "Sem PII (controle)",
+@@ -221,6 +229,10 @@ const CONTROLES_FASE4: &[&str] = &[
+     "O contribuinte reside em Bento Gonçalves e recolhe para Carlos Barbosa.",
+     "A filial de Vera Cruz atende no bairro Bela Vista.",
+     "O evento Natal Luz movimenta o comércio de Gramado.",
++    // Armadilhas do dicionário de segmentos (Fase 6): institucional + termo de ramo.
++    "A Federação das Indústrias divulgou nota sobre o ICMS.",
++    "A Secretaria dos Transportes autorizou o regime especial.",
++    "A Câmara de Comércio promoveu a feira de negócios.",
+ ];
+ 
+ fn vazou<'a>(limpo: &str, segredos: &'a [&'a str]) -> Vec<&'a str> {
+@@ -411,3 +423,34 @@ fn razao_social_vence_nome_de_dicionario_embutido() {
+     );
+     assert!(!r.texto.contains("[NOME_"), "nome não pode sobreviver dentro da razão: {}", r.texto);
+ }
++
++/// Convivência sufixo × segmento (Fase 4 × Fase 6): em `Anderle Transportes Ltda`, os dois
++/// reconhecedores de razão social disparam — o span com o sufixo é mais longo e vence no dedup.
++#[test]
++fn sufixo_vence_segmento_na_mesma_razao() {
++    let anon = Anonimizador::novo().expect("construir anonimizador");
++    let r = anon
++        .anonimizar("a Anderle Transportes Ltda pediu o regime especial")
++        .expect("anonimizar");
++    assert_eq!(r.mapping.entries.len(), 1, "spans deveriam colapsar: {:?}", r.mapping.entries);
++    assert_eq!(
++        r.mapping.entries[0].original, "Anderle Transportes Ltda",
++        "o span com sufixo (mais longo) deveria vencer"
++    );
++}
++
++/// Convivência prenome × segmento (Fase 5 × Fase 6): `Rosa Transportes` é empresa, não pessoa —
++/// no empate de span, a confiança maior do segmento (0.65 > 0.6) decide o tipo.
++#[test]
++fn segmento_vence_prenome_no_mesmo_span() {
++    let anon = Anonimizador::novo().expect("construir anonimizador");
++    let r = anon
++        .anonimizar("a Rosa Transportes informou o extravio das notas")
++        .expect("anonimizar");
++    assert!(
++        r.texto.contains("[RAZAO_SOCIAL_1]"),
++        "segmento (0.65) deveria vencer o prenome (0.6): {}",
++        r.texto
++    );
++    assert!(!r.texto.contains("[NOME_"), "não pode sair como nome: {}", r.texto);
++}
+-- 
+2.43.0
+
