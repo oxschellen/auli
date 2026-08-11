@@ -154,19 +154,22 @@ Ainda **sem** caminho incremental: `reset` + reescrita total, como hoje. Só o f
 não muda de resultado (o `scan` nunca leu o `id` — confirmado por grep: `ReadStore` só expõe payloads);
 `cargo test` verde.
 
-### Fase 2 — migração (`tools/`)
+### ~~Fase 2 — migração (`tools/`)~~ — **CANCELADA em 10/08/2026, e executada de outro jeito**
 
-`tools/` é, pelo próprio `Cargo.toml`, o lugar de "código que existe para uma migração e sai de cena
-depois dela" — habitante perfeito.
+Ver [TAREFA-FASE-2-MIGRACAO.md](TAREFA-FASE-2-MIGRACAO.md) para o registro completo. Em resumo: o
+pré-flight do Passo 0 mediu **27/27 entidades com a árvore em sincronia com o pack**, e com isso a
+migração perdeu a razão de existir — ela valia a pena para evitar `auli update` em entidades
+divergentes, e não havia nenhuma. O Carlos escolheu o re-embed completo; o migrador nunca foi
+escrito.
 
-- Lê o pack formato 1, extrai o `doc_path` de cada payload, reescreve o `id`, calcula o `key_hash` a
-  partir da árvore, carimba `pack_format: 2`.
-- **Recusa se o `docs_hash` do manifesto divergir da árvore** (D-INC-13).
-- Não re-embeda nada. Os vetores são copiados verbatim.
+As 27 foram regeneradas em 128 minutos, e **48.408 vetores saíram idênticos aos anteriores**, um a
+um, conferidos contra um backup do formato 1. A verificação que esta fase prometia ("migrado ==
+reconstruído, numa entidade") acabou sendo substituída por uma mais forte: "vetor a vetor idêntico
+ao anterior, no acervo inteiro".
 
-**Verificação:** pack migrado byte-idêntico a um rebuild total feito pela Fase 1 (é o teste que prova
-que a migração não perdeu nem inventou nada). Se não for byte-idêntico, a ordenação canônica
-(D-INC-4) ou o cálculo do `key_hash` está divergindo — investigar antes de seguir.
+O que **não** se perdeu com o cancelamento: o `D-INC-13` continua valendo como doutrina — a guarda
+de `docs_hash` antes de carimbar `key_hash` é o que a Fase 3 vai precisar quando reaproveitar
+vetores. Só não há mais um migrador para aplicá-la.
 
 ### Fase 3 — caminho incremental (jurisprudência)
 

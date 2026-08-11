@@ -755,12 +755,23 @@ acima.
 
 ---
 
-## 31. `update` incremental — a maior alavanca de performance (aberta; especificada em 2026-08-10)
+## 31. `update` incremental — a maior alavanca de performance (Fase 1 EM PRODUÇÃO; próxima é a 3)
 
 > **A especificação vigente é a [docs/TAREFA-UPDATE-INCREMENTAL.md](TAREFA-UPDATE-INCREMENTAL.md).**
-> Ela fecha as decisões (`D-INC-1..13`) e as cinco fases, e **manda sobre o estudo de 09/08** onde os
-> dois divergirem. Se você veio procurar o próximo passo, comece por ela — o resumo abaixo continua
-> valendo como contexto, com as duas conclusões que caíram marcadas no lugar.
+> Ela fecha as decisões (`D-INC-1..14`) e as fases, e **manda sobre o estudo de 09/08** onde os dois
+> divergirem. O resumo abaixo continua valendo como contexto, com as duas conclusões que caíram
+> marcadas no lugar.
+>
+> **Onde a coisa está, em 10/08/2026:**
+>
+> - **Fase 1 — feita e no ar** (PR #139). O `id` do pack é o `doc_path`, cada record carrega o
+>   `key_hash` da key que o vetorizou, a escrita é atômica e ordenada, e o `pack_format` é validado
+>   no boot. As 27 entidades foram regeneradas: **48.408 vetores idênticos aos anteriores**, um a um.
+> - **Fase 2 — CANCELADA.** O pré-flight mediu 27/27 entidades em sincronia, e sem divergências a
+>   migração não comprava nada sobre re-embeddar. Registro em
+>   [TAREFA-FASE-2-MIGRACAO.md](TAREFA-FASE-2-MIGRACAO.md).
+> - **Fase 3 é o próximo passo** — o caminho incremental. Note o resíduo deixado de propósito: o
+>   `key_hash` está gravado nos 27 packs e **não é lido por ninguém** até a Fase 3 existir.
 
 O custo **não está em embeddar devagar, está em re-embeddar o que não mudou**.
 
