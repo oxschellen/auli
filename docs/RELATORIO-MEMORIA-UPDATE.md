@@ -141,12 +141,16 @@ custa os 17,7 GiB.
 > depois do teto de 6.000 caracteres da TAREFA-TETO, o `FATIA` passa a ser **candidato ao maior
 > termo**, e este relatório é o documento que alguém vai consultar antes de mexer nesse parâmetro.
 >
-> O que motiva a nota: o `rs-tarf` com o teto aplicado pica em **3,1 GiB**, e a lei deste relatório
-> não explica o número. Base (~1,05) + quadrático em 6.000 chars (`1,5×10⁻⁵ × 6.000²` ≈ 0,54) dão
-> ~1,6 GiB — sobram **~1,5 GiB** sem dono. Um termo proporcional ao `FATIA` é o candidato natural, e
-> a aritmética é sugestiva: `256 × 1.024 × 4 bytes` é **exatamente 1 MiB**, então um colbert alocado
-> por fatia custa, em MiB, o próprio comprimento em tokens — e 1,5 GiB corresponde a ~1.500 tokens,
-> que é o que 6.000 caracteres dão a ~3,9 chars/token. Bate.
+> O que motiva a nota: o `rs-tarf` com o teto aplicado pica em **3.531 MiB** (a corrida terminou
+> depois desta nota ser escrita — eu tinha anotado 3,1 GiB da corrida em andamento), e a lei deste
+> relatório não explica o número. Base (1.091, medida na própria corrida) + quadrático em 6.000 chars
+> (`1,5×10⁻⁵ × 6.000²` ≈ 540) dão ~1.631 MiB — sobram **~1.900 MiB** sem dono. Um termo proporcional
+> ao `FATIA` é o candidato natural, e a aritmética é sugestiva: `256 × 1.024 × 4 bytes` é
+> **exatamente 1 MiB**, então um colbert alocado por fatia custa, em MiB, o próprio comprimento em
+> tokens. E agora esse comprimento é medido, não estimado: o `conta_tokens` sobre as 22.476 keys
+> cortadas dá **máximo de 1.774 tokens** (6.000 chars a 3,38 chars/token). O termo previsto é 1.774
+> MiB contra 1.900 medidos — **7% de erro**, com a razão chars/token vinda de contagem real e não do
+> ~3,9 que eu tinha suposto.
 >
 > **Mas duas medições deste relatório impedem de fechar a conta**, e por isso isto é hipótese e não
 > conclusão:
@@ -154,10 +158,10 @@ custa os 17,7 GiB.
 > - aplicado ao regime PRÉ-teto, o mesmo termo estoura. O `sp-pareceres` tem fatia de máximo 10.240
 >   chars (~2.600 tokens), o que preveria ~2,6 GiB só de colbert — mais que o `Δ` **total** medido
 >   dele, que foi 2.057 MiB. Então "256 × o maior da fatia" não pode estar certo como está;
-> - o `rs-tarf` com teto (máximo 6.000) custa praticamente o mesmo que o `sp-pareceres` sem teto
->   (máximo 10.240): ~2,06 GiB de `Δ` nos dois. Se o máximo mandasse sozinho, não custariam igual —
->   o TARF tem 22.476 documentos contra 15.605, e 404 deles exatamente no teto. **A composição das
->   fatias entra, não só o maior texto do acervo.**
+> - o `rs-tarf` com teto (máximo 6.000 chars, 1.774 tokens) custa **mais** que o `sp-pareceres` sem
+>   teto (máximo 10.240 chars, ~2.600 tokens): `Δ` de 2.440 contra 2.057 MiB. Se o maior texto
+>   mandasse sozinho, a ordem seria a inversa — o TARF tem 22.476 documentos contra 15.605, e 404
+>   deles exatamente no teto. **A composição das fatias entra, não só o maior texto do acervo.**
 >
 > **O teste decisivo é barato e não foi rodado:** `FATIA = 128` deve cortar aproximadamente metade do
 > resíduo se o termo for mesmo proporcional à fatia, e não mudar nada se não for. Até lá, o que este
