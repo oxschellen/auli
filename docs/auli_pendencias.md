@@ -768,8 +768,8 @@ acima.
 >   `key_hash` da key que o vetorizou, a escrita é atômica e ordenada, e o `pack_format` é validado
 >   no boot. As 27 entidades foram regeneradas: **48.408 vetores idênticos aos anteriores**, um a um.
 > - **Fase 2 — CANCELADA.** O pré-flight mediu 27/27 entidades em sincronia, e sem divergências a
->   migração não comprava nada sobre re-embeddar. Registro em
->   [TAREFA-FASE-2-MIGRACAO.md](TAREFA-FASE-2-MIGRACAO.md).
+>   migração não comprava nada sobre re-embeddar. O registro vivia em `TAREFA-FASE-2-MIGRACAO.md`,
+>   removida em 12/08/2026 com as demais TAREFAs executadas — está no git.
 > - **Fases 3 e 5 — feitas** (PR #140), no mesmo pacote: a 5 é a guarda que invalida o cache quando a
 >   identidade de embedding muda, e entregá-la depois deixaria uma janela em que o cache existe sem
 >   ela. O `key_hash` deixou de ser um resíduo gravado e não lido — é ele que decide, documento a
@@ -820,8 +820,8 @@ fica como história de onde a decisão saiu:
 
 > ### Estudo de 09/08/2026 — o esboço acima virou proposta, e duas coisas mudaram
 >
-> **[docs/ESTUDO-identidade-e-update-incremental.md](ESTUDO-identidade-e-update-incremental.md)**
-> mediu a árvore inteira (48.408 documentos) e fechou as três perguntas abertas do esboço. O que
+> O **`ESTUDO-identidade-e-update-incremental.md`** — removido em 12/08/2026 por estar superado, e
+> com várias conclusões corrigidas depois; recuperável pelo git — mediu a árvore inteira (48.408 documentos) e fechou as três perguntas abertas do esboço. O que
 > vale ler lá está resumido aqui; o que **contradiz** esta seção está marcado.
 >
 > **A identidade é o `doc_path`, e não a URL.** A pergunta que motivou o estudo era se a URL serviria

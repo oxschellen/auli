@@ -178,7 +178,8 @@ não muda de resultado (o `scan` nunca leu o `id` — confirmado por grep: `Read
 
 ### ~~Fase 2 — migração (`tools/`)~~ — **CANCELADA em 10/08/2026, e executada de outro jeito**
 
-Ver [TAREFA-FASE-2-MIGRACAO.md](TAREFA-FASE-2-MIGRACAO.md) para o registro completo. Em resumo: o
+O registro completo vivia em `TAREFA-FASE-2-MIGRACAO.md`, **removida em 12/08/2026** junto com as
+demais TAREFAs executadas — a decisão está no git. Em resumo: o
 pré-flight do Passo 0 mediu **27/27 entidades com a árvore em sincronia com o pack**, e com isso a
 migração perdeu a razão de existir — ela valia a pena para evitar `auli update` em entidades
 divergentes, e não havia nenhuma. O Carlos escolheu o re-embed completo; o migrador nunca foi
