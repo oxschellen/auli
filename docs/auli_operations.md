@@ -396,20 +396,20 @@ cd auli-server
 | `--force <numero>` | re-gera a sinopse de um documento específico (ignora a existente)         |
 | `--fake`           | dev-only: preenche resumo sintético, sem tocar rede                       |
 
-**Fonte e destino são os `.md`**: pendente = arquivo **sem a seção `## sinopse`**. O passo lê cada
-documento, gera o que falta e **regrava o próprio `.md`** (frontmatter `sinopse_*` + seção),
+**Fonte e destino são os `.md`**: pendente = arquivo **sem a seção `## resumo`**. O passo lê cada
+documento, gera o que falta e **regrava o próprio `.md`** (frontmatter `resumo_*` + seção),
 atomicamente. Exige a árvore já no disco — quem a cria é o scraper (passo 1); sem ela, erro claro.
 
 - **Env**: `SINOPSE_API_URL` / `SINOPSE_API_KEY` / `SINOPSE_API_MODEL`, com **fallback** para os
   `LLM_*`. Isso permite apontar o lote para um **projeto/quota dedicado**, sem competir com o chat do
   RAG.
-- **Prompt**: `config/prompts/sinopse.txt` (versão gravada em `SinopseInfo.prompt_versao`;
+- **Prompt**: `config/prompts/sinopse.txt` (versão gravada em `ResumoInfo.prompt_versao`;
   `SINOPSE_PROMPT_VERSION = 1`). Saída validada: as duas seções
   `### Descrição Resumida do Assunto` + `### Palavras Chave do Tema`, na ordem, descrição ≤ 2000
   chars e ≥ 3 palavras-chave. Falha de validação → **1 re-tentativa**; persistindo, conta como falha
   e o lote segue.
 - **Entrada truncada** em `CORPO_MAX_CHARS = 24_000` chars (v1 sem chunking; avisa no log).
-- **Idempotente**: documento que já tem `## sinopse` é **pulado** (zero chamadas). Re-rodar é seguro
+- **Idempotente**: documento que já tem `## resumo` é **pulado** (zero chamadas). Re-rodar é seguro
   e barato; é assim que se retoma um lote interrompido — a retomada é implícita, sem estado externo.
 - **Grava documento a documento** (proteção contra queda): escrita atômica (`.tmp` + rename) no
   próprio `.md`. Uma queda perde no máximo o documento em voo.
@@ -467,8 +467,8 @@ scripts/build-packs.sh <id>
 
 - **A fonte é a árvore** (G5b): o `auli update` lê `docs/pareceres/*.md` em ordem de nome de arquivo
   (estável, para os `id-N` do pack não dançarem entre rodadas) e monta o registro dali — frontmatter,
-  `## sinopse` e `## corpo`. Não há JSON de pareceres no caminho.
-- **Guarda de ingestão:** **recusa** vetorizar se **qualquer** documento estiver sem `## sinopse`,
+  `## resumo` e `## corpo`. Não há JSON de pareceres no caminho.
+- **Guarda de ingestão:** **recusa** vetorizar se **qualquer** documento estiver sem `## resumo`,
   listando os números. A árvore em si segue válida — pendência é estado legal dela; só a vetorização
   é barrada.
 - **O que é embedado** (`text_to_embed`): `numero` + `assunto` + `resumo` (a sinopse), unidos por
