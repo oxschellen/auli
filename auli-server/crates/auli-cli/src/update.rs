@@ -33,7 +33,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use auli_contract::{Documento, Embeddable, Kind};
-use auli_core::embed::{EMBED_DIM, EMBED_MAX_TOKENS, Embedder};
+use auli_core::embed::{EMBED_DIM, Embedder};
 use auli_core::manifest::{self, CollectionEntry, Manifest};
 use vector_store::{CollectionData, Record, Writer};
 
@@ -135,56 +135,47 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
 /// propriedade passava a valer só por construção, que é precisamente o que um teste defende contra
 /// regressão futura.
 ///
-/// **Não é uma abstração de embedder**: é o recorte mínimo que torna este caminho testável, com os
-/// dois métodos que ele chama e mais nenhum. Por isso mora aqui, ao lado de quem o usa, e não em
-/// `auli-core` — lá viraria interface pública de um conceito que só tem uma implementação real.
+/// **Não é uma abstração de embedder**: é o recorte mínimo que torna este caminho testável, com o
+/// único método que ele chama. Por isso mora aqui, ao lado de quem o usa, e não em `auli-core` — lá
+/// viraria interface pública de um conceito que só tem uma implementação real.
+///
+/// (Tinha dois métodos até a TAREFA-TETO: o `conta_tokens` servia ao aviso de truncamento do
+/// encoder, que deixou de ser alcançável quando a key ganhou teto no contrato.)
 pub(crate) trait Vetorizador {
     fn embed_dense(&self, textos: Vec<String>) -> Result<Vec<Vec<f32>>>;
-    fn conta_tokens(&self, texto: &str) -> Result<usize>;
 }
 
 impl Vetorizador for Embedder {
     fn embed_dense(&self, textos: Vec<String>) -> Result<Vec<Vec<f32>>> {
         Ok(Embedder::embed_dense(self, textos)?)
     }
-
-    fn conta_tokens(&self, texto: &str) -> Result<usize> {
-        Ok(Embedder::conta_tokens(self, texto)?)
-    }
 }
 
-/// Avisa quais documentos batem no teto de tokens do encoder e portanto vão ao índice **truncados**.
+/// Quantas keys da coleção bateram no teto do contrato — **estatística da rodada, não alarme**.
 ///
-/// Aviso, não erro (D-FAQPR-5 revisada): o item ainda vetoriza, com o excedente descartado pelo
-/// tokenizer. O que não pode é isso acontecer em silêncio — daí a contagem pelo tokenizer REAL e o
-/// nome do `.md` de cada vítima. Amostra de até 5, no padrão dos outros relatórios do update.
+/// Até a TAREFA-TETO isto avisava quem passava dos `EMBED_MAX_TOKENS` do encoder: evento raro, e por
+/// isso o aviso significava "aconteceu algo excepcional". Com o teto de
+/// [`TETO_TEXT_TO_EMBED`](auli_contract::TETO_TEXT_TO_EMBED) caracteres no contrato, cortar é o
+/// caminho **normal** de ~2% do TARF a cada rodada — um alarme ali viraria ruído que ninguém lê.
 ///
-/// Vale para as QUATRO coleções desde a B4 (antes só as faqs eram conferidas). O TARF é quem mais
-/// pede: a `## resumo` dele é a fundamentação inteira do acórdão, que chega a 27 mil caracteres —
-/// duas ordens de grandeza acima da sinopse curta de um parecer.
-fn avisar_truncados(embedder: &dyn Vetorizador, kind: Kind, docs: &[&Documento]) -> Result<()> {
-    let mut truncados: Vec<String> = Vec::new();
-    for d in docs {
-        if embedder.conta_tokens(&d.text_to_embed)? >= EMBED_MAX_TOKENS {
-            // O `doc_path` já É o nome do arquivo pela regra da coleção — nada a recomputar.
-            truncados.push(d.doc_path());
-        }
-    }
-    if !truncados.is_empty() {
-        let amostra = truncados
-            .iter()
-            .take(5)
-            .cloned()
-            .collect::<Vec<_>>()
-            .join(", ");
-        let reticencias = if truncados.len() > 5 { ", …" } else { "" };
+/// E o aviso antigo ficou **impossível por construção**: 6.000 caracteres são ~1.500 a 2.000 tokens,
+/// bem abaixo dos 8.192 do modelo, então o encoder não trunca mais nada. Alarme que não pode
+/// disparar é código morto (CLAUDE.md §3), e por isso a checagem saiu junto com o tokenizer.
+///
+/// Cobre TODOS os documentos da coleção, não só o delta a vetorizar: sem tokenizer, contar é de
+/// graça, e o número que interessa é o da coleção.
+fn relatar_teto(kind: Kind, items: &[Documento]) {
+    let cortadas = items
+        .iter()
+        .filter(|d| d.text_to_embed().chars().count() >= auli_contract::TETO_TEXT_TO_EMBED)
+        .count();
+    if cortadas > 0 {
         println!(
-            "⚠️  {} de {} acima de {EMBED_MAX_TOKENS} tokens — o excedente NÃO entra no vetor: {amostra}{reticencias}",
-            truncados.len(),
-            kind
+            "✂️  {kind}: {cortadas} de {} keys no teto de {} chars — a cauda não entra no vetor",
+            items.len(),
+            auli_contract::TETO_TEXT_TO_EMBED
         );
     }
-    Ok(())
 }
 
 /// Os `.md` de um diretório, em ordem de NOME. `None` se o diretório não existe ou está vazio —
@@ -568,9 +559,7 @@ fn ingest_items(
             " (reescrita total)"
         }
     );
-    // Só o DELTA é tokenizado: o aviso de truncamento custa uma passada de tokenizer por documento,
-    // e no TARF eram 22,5 mil por rodada para avisar sobre os poucos que mudaram.
-    avisar_truncados(embedder, kind, &a_embedar)?;
+    relatar_teto(kind, items);
 
     let embeddings = embedder.embed_dense(
         a_embedar
@@ -1153,10 +1142,6 @@ mod tests {
                 .iter()
                 .map(|t| vec![(manifest::fnv1a64(t.as_bytes()) % 10_000) as f32 / 1e4; EMBED_DIM])
                 .collect())
-        }
-
-        fn conta_tokens(&self, texto: &str) -> Result<usize> {
-            Ok(texto.chars().count())
         }
     }
 

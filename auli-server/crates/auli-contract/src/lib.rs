@@ -336,13 +336,40 @@ pub fn compose_text_to_embed(numero: &str, assunto: &str, resumo: &str) -> Strin
 /// preenchem trilha/titulo/resumo. Os adaptadores por coleção ([`compose_text_to_embed`],
 /// [`compose_servico_text_to_embed`], [`compose_faq_text_to_embed`]) só decidem o que vai em cada
 /// slot — a fórmula é esta, e mudá-la re-vetoriza TUDO.
+///
+/// **A key é limitada a [`TETO_TEXT_TO_EMBED`] caracteres**, cortando pelo fim. A ordem acima é o
+/// que torna o corte seguro: título e ementa — que já são resumo por natureza — ficam sempre
+/// inteiros, e o que se descarta é a cauda da fundamentação, onde mora a repetição.
 pub fn compose_unificado(trilha: &str, titulo: &str, ementa: &str, resumo: &str) -> String {
     [trilha, titulo, ementa, resumo]
         .into_iter()
         .filter(|s| !s.is_empty())
         .collect::<Vec<_>>()
         .join("\n")
+        .chars()
+        .take(TETO_TEXT_TO_EMBED)
+        .collect()
 }
+
+/// Teto de comprimento da key, em **caracteres** (nunca bytes — cortar UTF-8 no meio de um caractere
+/// quebraria a key; é a mesma disciplina do [`snippet`], que os serviços já praticam com 300).
+///
+/// **O motivo é densidade do vetor, não memória.** A key precisa ser longa o bastante para conter o
+/// texto que responde à busca, e curta o bastante para que esse texto seja bem representado por 1024
+/// floats. A medição que escolheu o número (`RELATORIO-FASE0-TETO.md`) mostrou que, para documentos
+/// entre 6.000 e 8.000 caracteres, o vetor dos primeiros 6.000 tem **cosseno 0,978** com o vetor do
+/// documento inteiro: o conteúdo além daí quase não move o vetor. Guardá-lo não compra representação.
+///
+/// A queda de memória é consequência, e é grande: o pico do `auli update` é **quadrático no maior
+/// texto da coleção**, então cortar paga ao quadrado — de 17,7 GiB para uma previsão de ~2 GiB.
+///
+/// **Corte em caracteres é aproximado de propósito.** O exato seria em tokens, mas o tokenizer vive
+/// no `auli-core` e a key nasce aqui: depender dele inverteria a direção entre as camadas. A ~3–4
+/// chars/token em texto jurídico, 6.000 caracteres ficam bem abaixo dos 8.192 tokens do modelo — o
+/// truncamento do encoder deixou de ser alcançável por construção.
+///
+/// Mudar este número muda vetores ⇒ **bump obrigatório de `STRATEGY_VERSION`**.
+pub const TETO_TEXT_TO_EMBED: usize = 6_000;
 
 /// Key de embedding de um serviço: breadcrumb `tipo | classe` + título + snippet
 /// da descrição (300 chars). Vive no contrato porque os DOIS lados precisam dela:
@@ -552,6 +579,14 @@ mod tests {
         pub fn jurisprudencia(numero: &str, assunto: &str, corpo: &str, link: &str) -> String {
             format!("## pergunta\n{numero}\n{assunto}\n\n## resposta\n{corpo}\nLink: {link}")
         }
+    }
+
+    /// A referência congelada **aparada no teto**: é contra isto que o compose é medido desde que a
+    /// key ganhou [`TETO_TEXT_TO_EMBED`]. A doutrina não mudou — a fórmula continua congelada —,
+    /// mudou o alcance dela: equivalência byte a byte **até o teto**, corte acima dele. Uma única
+    /// expressão afirma os dois regimes, e é por isso que os casos longos abaixo importam.
+    fn ate_o_teto(s: String) -> String {
+        s.chars().take(TETO_TEXT_TO_EMBED).collect()
     }
 
     /// Reimplementação LITERAL das três fórmulas de KEY como estavam antes da unificação (D-FMT-6).
@@ -848,6 +883,37 @@ mod tests {
         assert!(!b.contains("P: ") && !b.contains("R: "), "bloco: {b}");
     }
 
+    /// O teto corta em CARACTERES, não em bytes — cortar UTF-8 no meio de um caractere quebraria a
+    /// key. E corta pelo FIM, preservando os slots densos: título e ementa saem inteiros.
+    #[test]
+    fn o_teto_corta_em_chars_pelo_fim_e_preserva_os_slots_densos() {
+        let titulo = "ACÓRDÃO Nº 1428/11";
+        let ementa = "ICMS. Omissão de saídas.";
+        // Caractere de 2 bytes: se o corte fosse em bytes, cairia no meio de um deles.
+        let resumo = "ç".repeat(TETO_TEXT_TO_EMBED);
+        let key = compose_text_to_embed(titulo, ementa, &resumo);
+
+        assert_eq!(key.chars().count(), TETO_TEXT_TO_EMBED, "o teto é em chars");
+        assert!(
+            key.len() > TETO_TEXT_TO_EMBED,
+            "e não em bytes: {}",
+            key.len()
+        );
+        assert!(key.starts_with(titulo), "o título sobrevive inteiro");
+        assert!(key.contains(ementa), "a ementa sobrevive inteira");
+        assert!(
+            !key.ends_with('\u{fffd}'),
+            "nenhum caractere partido ao meio"
+        );
+
+        // Determinismo: mesma entrada, mesma key, sempre (pré-condição do pack reproduzível).
+        assert_eq!(key, compose_text_to_embed(titulo, ementa, &resumo));
+
+        // Abaixo do teto, nada é tocado.
+        let curta = compose_text_to_embed(titulo, ementa, "resumo curto");
+        assert!(curta.ends_with("resumo curto"));
+    }
+
     #[test]
     fn compose_unificado_reproduz_a_formula_de_jurisprudencia_byte_a_byte() {
         let casos = [
@@ -856,11 +922,17 @@ mod tests {
             ("PARECER Nº 2", "só assunto", ""),
             ("PARECER Nº 3", "", ""),
         ];
+        let fundamentacao_longa = "á".repeat(TETO_TEXT_TO_EMBED * 2);
+        let casos = casos.iter().copied().chain([(
+            "ACÓRDÃO Nº 1428/11",
+            "ICMS. Omissão de saídas.",
+            fundamentacao_longa.as_str(),
+        )]);
         for (numero, assunto, resumo) in casos {
             assert_eq!(
                 compose_text_to_embed(numero, assunto, resumo),
-                formulas_antigas::jurisprudencia(numero, assunto, resumo),
-                "divergiu em {numero:?}/{assunto:?}/{resumo:?}"
+                ate_o_teto(formulas_antigas::jurisprudencia(numero, assunto, resumo)),
+                "divergiu em {numero:?}/{assunto:?}"
             );
         }
     }
@@ -879,7 +951,7 @@ mod tests {
         for (tipo, classe, titulo, descricao) in casos {
             assert_eq!(
                 compose_servico_text_to_embed(tipo, classe, titulo, descricao),
-                formulas_antigas::servico(tipo, classe, titulo, descricao),
+                ate_o_teto(formulas_antigas::servico(tipo, classe, titulo, descricao)),
                 "divergiu em {tipo:?}/{classe:?}/{titulo:?}"
             );
         }
@@ -898,11 +970,17 @@ mod tests {
                 " Acesse\no portal. ",
             ), // colapso
         ];
+        let resposta_longa = "é".repeat(TETO_TEXT_TO_EMBED * 2);
+        let casos = casos.iter().copied().chain([(
+            "Inicial | PIT",
+            "Atualização da legislação?",
+            resposta_longa.as_str(),
+        )]);
         for (origin, pergunta, resposta) in casos {
             assert_eq!(
                 compose_faq_text_to_embed(origin, pergunta, resposta),
-                formulas_antigas::faq(origin, pergunta, resposta),
-                "divergiu em {origin:?}/{pergunta:?}/{resposta:?}"
+                ate_o_teto(formulas_antigas::faq(origin, pergunta, resposta)),
+                "divergiu em {origin:?}/{pergunta:?}"
             );
         }
     }
