@@ -1,0 +1,18 @@
+[package]
+name = "anon-tarf"
+version = "0.1.0"
+edition = "2024"
+
+# Programa ONE-SHOT que roda o `auli-anon` sobre o acervo do TARF-RS e mede.
+#
+# Vive em `tools/`, fora de `crates/`, pela mesma razão do `converter-fmt-md`: não é código de
+# produção, existe para uma janela de medição e some do caminho depois dela. Fica no workspace só
+# para herdar o Cargo.lock único.
+#
+# NÃO depende de `cloakrs-core`, de propósito: é o teste da fronteira de reuso. Tudo o que ele lê
+# das detecções sai de campos `String`/`f64` do mapping, sem nomear um tipo da biblioteca de baixo.
+[dependencies]
+auli-anon = { path = "../../crates/auli-anon" }
+auli-contract = { path = "../../crates/auli-contract" }
+anyhow = "1"
+regex = "1"
