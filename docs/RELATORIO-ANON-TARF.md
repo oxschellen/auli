@@ -42,6 +42,27 @@ Todas as 18 detecções são, além disso, **falsos positivos**: são quantidade
 processo que passam no Luhn. `CREDIT_CARD` deu 78 detecções em 51 documentos e não há cartão de
 crédito em acórdão de ICMS.
 
+### 1.1 O contorno local: **medido, e a condição não se verifica**
+
+A instrução era acrescentar contorno local se o defeito afetasse algum caminho nosso. **Não afeta**,
+e o número que decide é este: das **334 perguntas reais de analista** que temos arquivadas
+(`data/eval/log-strategy-{1,2}/`, `log-sem-aderencia/` e o `logs/` corrente), **zero** contêm corrida
+de 13 a 19 dígitos válida no Luhn. O defeito é **latente no nosso caminho de produção**, na mesma
+acepção do defeito do `dedup_por_slug` na §2.4 do consolidado.
+
+Isso importa porque o contorno **não é neutro**. As formas de aplicá-lo — tirar o
+`CreditCardRecognizer` do registry, ou filtrar por `recognizer_id` — desligam a detecção de cartão de
+crédito de verdade numa pergunta de contribuinte. Seria trocar um risco **medido em zero** por um
+risco de vazamento de PII **diferente de zero**. Não vale.
+
+**Recomendação: reportar upstream e não contornar**, com a medição registrada como a razão de não
+agir — e com o gatilho nomeado, para que a decisão possa ser revista sem refazer a análise: se um dia
+uma pergunta real disparar `CREDIT_CARD`, a condição passou a valer.
+
+O rascunho do issue está em `UPSTREAM-cloakrs-credit-card-span.md`, **não publicado** — enviar a um
+repositório de terceiros é ação para fora, e é decisão do Carlos.
+
+
 ---
 
 ## 2 — (d) O saneamento na fonte foi **abandonado em 2016**
