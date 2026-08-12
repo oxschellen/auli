@@ -297,7 +297,7 @@ pub fn validate_manifest(path: impl AsRef<Path>, expected: &EmbedIdentity) -> Re
         return Err(Error::from(format!(
             "Formato de pack incompatível para '{}': pacote é formato {}, servidor espera {}. \
              O ESPAÇO VETORIAL não mudou — só o arquivo —, então isto é migração, não re-embedding: \
-             rode a migração da TAREFA-UPDATE-INCREMENTAL (ou `auli update` para reconstruir do zero).",
+             migre o pacote ou rode `auli update` para reconstruir do zero.",
             manifest.entity, manifest.pack_format, PACK_FORMAT,
         )));
     }

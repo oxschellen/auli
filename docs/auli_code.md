@@ -250,6 +250,50 @@ que `prepare_documents`/`parse_*` mudarem (muda _o que_ é embedado), transforma
 re-gerar os pacotes" em **erro de boot**, não em retrieval ruim. O fallback `2.0` do `cosine_distance`
 vira segunda linha de defesa.
 
+### 3.6.1 Formato 2 do pack e update incremental — as catorze decisões (D-INC-*)
+
+O manifesto carrega **dois** números de versão, e a fronteira entre eles é o que separa migração de
+re-embed: `strategy_version` = "o que entra no vetor mudou" ⇒ **reembed obrigatório**; `pack_format` =
+"como o arquivo é escrito mudou" ⇒ **migração, nunca reembed**.
+
+As catorze decisões vinham da `TAREFA-UPDATE-INCREMENTAL.md`, removida em 12/08/2026 depois de
+executada (PRs #139–#143). Resumidas aqui porque são o registro de *por que* o pack tem a forma que
+tem — sem elas, "por que `id = doc_path`?" e "por que o `upsert` recebe `Vec<Record>`?" viram
+arqueologia. Texto integral no git.
+
+| | decisão | por quê, em uma linha |
+|---|---|---|
+| **D-INC-1** | identidade do registro é o `doc_path` | com `id-1..id-N` posicional, inserir um documento no meio da ordem alfabética desloca a identidade de todos os seguintes, e upsert incremental fica impossível |
+| **D-INC-2** | `key_hash` ao lado do vetor | hash do `text_to_embed`; igual ⇒ reaproveita, diferente ou ausente ⇒ re-embeda. Opcional no serde, então pack antigo degrada para "tudo alterado" em vez de quebrar |
+| **D-INC-3** | só o **vetor** é cache; o payload é sempre reconstruído da árvore | há campo no payload fora da key (o `link` da jurisprudência): reaproveitá-lo seria uma classe inteira de staleness silenciosa |
+| **D-INC-4** | ordenação canônica por `id` na escrita | é o que permite exigir igualdade **byte a byte** entre rebuild total e incremental; como `id` é o nome do arquivo, preserva a ordem de antes |
+| **D-INC-5** | `apply(upserts, removes)` numa operação, com `tmp` + `rename` | eram duas escritas do arquivo inteiro; com escrita frequente, crash no meio deixa de ser hipótese |
+| **D-INC-6** | índice `HashMap<id, usize>` no lugar de `iter_mut().find` | o find era O(n) por registro — ~250 M comparações de string no rebuild do TARF |
+| **D-INC-7** | `pack_format: u32` separado do `strategy_version` | é a fronteira do parágrafo acima; `serde(default = 1)` faz manifesto sem o campo **ser** o formato 1 |
+| **D-INC-8** | política por **família** de coleção, não por flag | jurisprudência (append-only) é incremental; serviços/faqs (delete + rebuild) são reset total sempre. Formato único, duas políticas, e o lugar da política é um método em `Kind` — entidade nova herda a certa |
+| **D-INC-9** | remoções **nunca** automáticas na jurisprudência | órfão vira linha num log regenerado a cada rodada, não exclusão; dissolve a discussão de teto percentual, porque nada sai sem aprovação |
+| **D-INC-10** | aprovação por **subcomando**, não por flag | uma flag acabaria dentro do `update-*.sh` "para não rodar duas vezes", e o portão humano sumiria sem ninguém decidir removê-lo. Aplica `aprovados ∩ órfãos_atuais`, é idempotente e permite aprovação seletiva por linha |
+| **D-INC-11** | o subcomando recarimba o manifesto | ele escreve o pack, logo atualiza `CollectionEntry` e `docs_hash` pela **mesma** função do `update`; sem isso o boot recusa corretamente e ninguém descobre por quê |
+| **D-INC-12** | Fase 0 do estudo cancelada como portão | as decisões posteriores esvaziaram a pergunta que ela responderia; a medição ficou como subproduto — o update imprime quantos vetores reaproveitou |
+| **D-INC-13** | migração sem reembed, com guarda de `docs_hash` | o `doc_path` já está no payload, então migrar é reescrever o `id`; mas carimbar `key_hash` com a árvore fora de sincronia faz o cache **nascer mentindo** |
+| **D-INC-14** | `upsert` recebe `Vec<Record<P>>`, não um quarto slice paralelo | com slices paralelos o descasamento é detectável em runtime (`ArityMismatch`); com `Vec<Record>` ele é **inexpressável pelo tipo** |
+
+**Uma precisão do D-INC-10 que a implementação exigiu (PR #141):** "os não aprovados permanecem no
+log" é o **efeito**, não a mecânica. O subcomando **consome** o log; quem o regenera é o `auli update`
+da rodada seguinte. Se o subcomando o reescrevesse com os órfãos não aprovados, devolveria ao arquivo
+exatamente as linhas que o humano apagou para **não** aprovar — e a invocação seguinte as leria como
+aprovação. O "não" viraria "sim" sozinho.
+
+**Três fatos de escrita que a execução deixou** (relatórios de execução removidos em 12/08/2026):
+
+- **`write_manifest` é atômico** (`.tmp` + `rename`), como todo o resto do pipeline. O que o motivou:
+  escrever por cima de um arquivo **hardlinkado** altera o original — foi assim que uma árvore de
+  teste modificou o manifesto de produção;
+- **pack e manifesto não são atômicos ENTRE SI.** Cada um se escreve inteiro ou não se escreve; uma
+  queda entre os dois deixa estado misto, que o `docs_hash` no boot detecta e recusa;
+- **a guarda de `docs_hash` no `remover` e a não-recarimbagem defendem cenários disjuntos** — a guarda
+  cobre árvore à frente do pack; não recalcular o hash cobre o pack ficar à frente da árvore.
+
 ### 3.7 Multi-tenancy (entidades)
 
 As entidades vêm de `config/registry.toml` (fonte única), lido por `auli-cli` e `auli-collections`; o

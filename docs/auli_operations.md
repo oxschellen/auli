@@ -155,6 +155,24 @@ pipeline. Um clone novo, portanto, **não traz dados** — rode o pipeline para 
 
 ### 4.1 Pacotes de vetores (`data/<id>/packs/`)
 
+> **Regenerar as 27 — três coisas aprendidas na operação de 12/08/2026** (relatório de execução
+> removido; a operação está no git):
+>
+> - **é tudo-ou-nada.** O `packs::load_all` percorre **todas** as entidades do registry e falha duro na
+>   primeira divergente. Com 26 regeneradas e 1 faltando, **nenhum** binário sobe: o novo tropeça na
+>   que ficou para trás, o antigo nas 26 que já avançaram. A janela sem servidor reiniciável abre no
+>   primeiro pack e só fecha no vigésimo sétimo;
+> - **"o servidor antigo tolera pack novo" é falso.** O `validate_manifest` exige **igualdade** do trio
+>   nos dois sentidos. O que existe é outra coisa: o servidor carrega os packs **uma vez, no boot**, e
+>   nunca mais os relê — então regenerar com ele no ar é seguro **enquanto ele não reiniciar**;
+> - **deixe o `build-packs.sh` recompilar em cada entidade.** O `cargo build` é no-op de menos de um
+>   segundo quando está em dia, e é a guarda que o próprio script chama de caso mais traiçoeiro do
+>   repositório: binário velho grava vetores de fórmula antiga que **passam** na validação de boot.
+>
+> Ordem recomendada: crescente por tamanho, com `sp` e `rs` no fim — se algo estiver errado, aparece
+> em segundos e não depois de 70 minutos. **Backup dos packs antes**, que é a única parte irreversível.
+
+
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
 
 1. **Raspar** (rede, **sem headless**) → grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (v3):

@@ -757,10 +757,12 @@ acima.
 
 ## 31. `update` incremental — FEITO E FECHADO (2026-08-10)
 
-> **A especificação vigente é a [docs/TAREFA-UPDATE-INCREMENTAL.md](TAREFA-UPDATE-INCREMENTAL.md).**
-> Ela fecha as decisões (`D-INC-1..14`) e as fases, e **manda sobre o estudo de 09/08** onde os dois
-> divergirem. O resumo abaixo continua valendo como contexto, com as duas conclusões que caíram
-> marcadas no lugar.
+> **As catorze decisões (`D-INC-1..14`) estão resumidas na §3.6.1 do
+> [auli_code.md](auli_code.md#361-formato-2-do-pack-e-update-incremental--as-catorze-decisões-d-inc-).**
+> A `TAREFA-UPDATE-INCREMENTAL.md`, que era a especificação vigente, foi removida em 12/08/2026
+> depois de executada (PRs #139–#143) — texto integral no git. Ela mandava sobre o estudo de 09/08
+> onde os dois divergiam. O resumo abaixo continua valendo como contexto, com as duas conclusões que
+> caíram marcadas no lugar.
 >
 > **Encerrada em 10/08/2026. Nenhuma fase aberta.**
 >
