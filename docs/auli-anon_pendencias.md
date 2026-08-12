@@ -367,36 +367,47 @@ O RS chega a substituir o nome por um literal (`XYZ vem formular consulta de seu
 PR e SP usam o papel (`A consulente indaga`, `A Consulente informa`). **Para o acervo de hoje, não
 há o que anonimizar.**
 
-> **Correção (2026-08-12) — a frase acima vale para os PARECERES e é falsa para o TARF.**
+> **Correção (2026-08-12) — a frase acima vale para os PARECERES, e no TARF o saneamento de origem
+> CESSOU.**
 >
 > A conclusão original **não errou sobre o que mediu**; errou em generalizar de quatro coleções de
-> pareceres para "o acervo". A tabela acima não inclui a jurisprudência do TARF, que é o maior
-> corpus indexado (22.476 documentos) e **nomeia as partes em quase metade dos casos**.
+> pareceres para "o acervo". A tabela acima não inclui a jurisprudência do TARF, que é o maior corpus
+> indexado (22.476 documentos) — e lá o saneamento não é uma taxa, é uma **prática descontinuada**.
 >
-> Medição sobre os 22.454 valores de `RECORRENTE` extraídos das linhas rotuladas do `## corpo`:
+> | era | redigido `(...)` | só Fazenda/anafórico | **com nome real** | % com nome |
+> |---|---:|---:|---:|---:|
+> | 2005–2015 | 12.592 | 1.984 | **20** | **0,1%** |
+> | 2016 | 30 | 78 | 788 | 87,9% |
+> | 2017–2026 | **0** | 648 | **6.314** | **90,7%** |
+> | **total** | 12.622 | 2.710 | **7.122** | 31,7% |
 >
-> | | n | % |
-> |---|---:|---:|
-> | redigido na fonte, com o literal `(...)` | 12.568 | 56,0% |
-> | **nome real presente** | **7.212** | **32,1%** |
-> | — pessoa jurídica (sufixo ou termo de segmento) | 5.545 | 24,7% |
-> | — sem sufixo (candidato a pessoa física) | 1.667 | 7,4% |
-> | só `FAZENDA ESTADUAL` / `AS MESMAS` | 2.674 | 11,9% |
+> **Em onze anos, de 2005 a 2015, o TARF publicou 20 acórdãos com o nome da parte** — dois por ano. O
+> que não vinha com `(...)` vinha com `FAZENDA ESTADUAL` sozinha no polo recorrente. Em 2016 a
+> prática colapsa, e **de 2017 em diante nenhum acórdão é redigido**: 90,7% nomeiam a parte, e a
+> proporção nunca mais desce.
 >
-> **Os 44% que não são saneados na fonte são exposição real que ninguém tinha contado.** O
-> saneamento de origem existe no TARF, como nos pareceres — só que parcial.
+> **A frase certa é "o saneamento de origem cessou", não "cobre 56%".** Os 56% são a média do acervo,
+> e a média esconde exatamente o que decide: um regime que acabou e outro que começou. Registro assim
+> porque a minha primeira leitura desta medição foi a média — tratei saneamento como propriedade
+> estática do corpus, e ela é temporal.
+>
+> **Três consequências:**
+>
+> - **a exposição prospectiva é 100%.** Todo acórdão novo nomeia as partes, e o acervo só cresce
+>   nesse regime — o problema deixa de ser passivo histórico e passa a ser operação corrente;
+> - **a era antiga não estava parcialmente protegida — estava protegida quase por inteiro.** A razão
+>   entre as duas eras é **~355×**, não a piora gradual que uma taxa média sugere;
+> - **o total acumulado de exposição real é 7.122 documentos.** Não 9.832: contar como exposto tudo o
+>   que não é `(...)` soma os 2.710 casos de Fazenda, que não é contribuinte e não tem PII a
+>   proteger. É o total que alguém vai citar, e é este.
 >
 > **E o marcador difere por coleção:** `XYZ` nos pareceres do RS, `(...)` no TARF. Qualquer
-> verificação futura de "isto já vem saneado?" precisa de um **inventário de marcadores** por
-> fonte, não de um literal — procurar `XYZ` no TARF acharia zero e concluiria o oposto do
-> verdadeiro.
+> verificação futura de "isto já vem saneado?" precisa de um **inventário de marcadores** por fonte,
+> não de um literal — procurar `XYZ` no TARF acharia zero e concluiria o oposto do verdadeiro. E
+> precisa ser feita **por época**: uma amostra tirada só de documentos antigos daria a resposta certa
+> sobre um regime que não vale mais.
 >
-> Números apurados em `RELATORIO-PRE-ANON-TARF.md`, antes de o `tools/anon-tarf` existir.
-
-Isso reposiciona a seção: o alvo não é o acervo existente, é **verificar se a mesma prática vale
-para as fontes novas**. Saneamento na origem é convenção do publicador, não garantia contratual —
-pode variar por UF, por época e por formato (o PDF antigo digitalizado é o suspeito natural). A
-amostra nova serve para confirmar a regra e, principalmente, para achar a exceção.
+> Números, método e tabela completa em `RELATORIO-ANON-TARF.md` §2.
 
 ### 6.2 A estrutura observada (amostra pequena, a confirmar)
 

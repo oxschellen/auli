@@ -45,9 +45,17 @@ static RE_PJ: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"(?i)\b(ltda|s/?a\b|s\.a\b|eireli|me\b|epp\b|cia\b|com[ée]rcio|ind[úu]stria|transportes?|distribuidora|supermercado|servi[çc]os)")
         .unwrap()
 });
-/// Partes que não são PII: a Fazenda é sempre uma das partes, e os anafóricos referem a outra linha.
+/// Partes que não são PII: a Fazenda é sempre uma das partes, os anafóricos referem outra linha, e
+/// `OUTROS` é referência coletiva a partes que a fonte não nomeou. Sem `OUTROS` no filtro, 14 dos
+/// 9.273 nomes do gold set eram a própria palavra — 0,15%, achado pela conferência do Fable.
 static RE_NAO_PII: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)^(fazenda estadual|as mesmas|o mesmo|a mesma|os mesmos)").unwrap()
+    // Casamento por PREFIXO, não pela parte inteira: o valor costuma trazer o processo entre
+    // parênteses (`FAZENDA ESTADUAL (Proc. nº 18745-1400/11-0)`). Ancorar no fim derrubaria o filtro
+    // para a maioria das ocorrências da Fazenda — foi o que aconteceu na primeira tentativa.
+    Regex::new(
+        r"(?i)^(fazenda (estadual|p[úu]blica)|as mesmas|o mesmo|a mesma|os mesmos|outros?)\b",
+    )
+    .unwrap()
 });
 
 /// Uma detecção, achatada para `String`/`usize`/`f64`. **Nenhum tipo do `cloakrs` é nomeado aqui**
@@ -240,7 +248,11 @@ struct Medidas {
     /// Token → nº de valores DISTINTOS que o contêm (metade de mineração). Termo de segmento é o
     /// que aparece em muitos nomes diferentes; nome próprio aparece em poucos.
     tokens: HashMap<String, BTreeSet<String>>,
-    ano_saneado: BTreeMap<String, (usize, usize)>,
+    /// ano → (redigido na fonte, só Fazenda/anafórico, com nome real). **"Exposto" não é o
+    /// complemento de "redigido"**: um acórdão cujo `RECORRENTE` é só `FAZENDA ESTADUAL` não tem PII
+    /// a proteger. Foi a conferência do Fable que separou os três — a primeira tabela somava os dois
+    /// últimos e inflava a exposição em 27%.
+    ano: BTreeMap<String, (usize, usize, usize)>,
 }
 
 impl Medidas {
@@ -282,8 +294,7 @@ impl Medidas {
         } else {
             "??".to_string()
         };
-        let a = self.ano_saneado.entry(ano).or_default();
-        a.1 += 1;
+        let a = self.ano.entry(ano).or_default();
 
         if rot.saneado {
             self.saneados += 1;
@@ -299,6 +310,11 @@ impl Medidas {
             return;
         }
 
+        if rot.entidades.is_empty() {
+            a.1 += 1;
+        } else {
+            a.2 += 1;
+        }
         for ent in &rot.entidades {
             let coorte = if RE_PJ.is_match(ent) {
                 "pessoa jurídica"
@@ -407,14 +423,32 @@ impl Medidas {
         for (t, n) in ordenar(&self.fp_rotulado).iter().take(25) {
             writeln!(r, "  {n:>5}×  {t}")?;
         }
-        writeln!(r, "\nSANEADO POR ANO (saneados / total)")?;
-        for (ano, (s, t)) in &self.ano_saneado {
+        writeln!(
+            r,
+            "\nPOR ANO — redigido na fonte / só FAZENDA-anafórico / COM NOME REAL"
+        )?;
+        writeln!(
+            r,
+            "  ano      redigido   só Fazenda   com nome   % com nome"
+        )?;
+        let (mut tr, mut tf, mut tn) = (0, 0, 0);
+        for (ano, (red, faz, nome)) in &self.ano {
+            let t = red + faz + nome;
+            tr += red;
+            tf += faz;
+            tn += nome;
             writeln!(
                 r,
-                "  {ano:<6}{s:>6}/{t:<6} = {:>5.1}%",
-                100.0 * *s as f64 / *t as f64
+                "  {ano:<8}{red:>8}{faz:>13}{nome:>11}{:>12.1}%",
+                100.0 * *nome as f64 / t as f64
             )?;
         }
+        writeln!(
+            r,
+            "  {:<8}{tr:>8}{tf:>13}{tn:>11}{:>12.1}%",
+            "TOTAL",
+            100.0 * tn as f64 / (tr + tf + tn) as f64
+        )?;
         if !self.parse_falhou.is_empty() {
             writeln!(r, "\nPARSE FALHOU: {}", self.parse_falhou.len())?;
         }

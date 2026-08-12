@@ -117,18 +117,56 @@ mod tests {
         assert!(!r.mapping.entries.is_empty(), "nenhuma entidade detectada");
     }
 
+    /// O ciclo é **identidade**, não "o valor reaparece em algum lugar".
+    ///
+    /// A asserção era `contains` até 12/08/2026, e por isso não podia pegar a classe de defeito que
+    /// o `tools/anon-tarf` encontrou em 34 documentos reais: quando o `span` de uma detecção cobre
+    /// um caractere que o valor guardado não tem (o `credit_card_luhn_v1` do `cloakrs` grava o span
+    /// com o separador final e o texto com `trim()`), a restauração devolve o valor **e come o
+    /// separador**. Com `contains`, o texto ainda "contém" o valor e o teste passa; com igualdade,
+    /// não passa. Um teste mais fraco que a propriedade que ele guarda é um teste que mente.
     #[test]
     fn ciclo_restore_recupera_o_original() {
         let anon = Anonimizador::novo().expect("construir");
-        let r = anon
-            .anonimizar("A empresa de CNPJ 11.222.333/0001-81 pode compensar?")
-            .expect("anonimizar");
-        // O LLM ecoa o placeholder na resposta; o restore devolve o valor original.
-        let restaurado = anon.restaurar(&r.texto, &r.mapping);
-        assert!(
-            restaurado.contains("11.222.333/0001-81"),
-            "restore falhou: {restaurado}"
+        let original = "A empresa de CNPJ 11.222.333/0001-81 pode compensar?";
+        let r = anon.anonimizar(original).expect("anonimizar");
+        assert_ne!(
+            r.texto, original,
+            "nada foi mascarado — a fixture perdeu o sentido"
         );
+        // O LLM ecoa o placeholder na resposta; o restore devolve o texto EXATO de entrada.
+        assert_eq!(
+            anon.restaurar(&r.texto, &r.mapping),
+            original,
+            "o ciclo anonimizar → restaurar não é identidade"
+        );
+    }
+
+    /// **Reprodução mínima de um defeito de terceiro, VERMELHA de propósito.**
+    ///
+    /// `cloakrs-patterns 0.3.0`, `src/credit_card.rs:41-45`: o `span` da detecção cobre o separador
+    /// final do casamento (o regex `\b(?:\d[ -.]?){13,19}\b` permite terminar em espaço, ponto ou
+    /// hífen) e o `text` guardado é o `trim()` dele. A restauração devolve o valor sem o separador
+    /// num vão que o tinha, e **come um caractere**, em silêncio:
+    ///
+    /// ```text
+    /// orig : … 300 ML 27101932 6910 12 UN
+    /// volta: … 300 ML 27101932 6910 1️2UN
+    /// ```
+    ///
+    /// Encontrado pelo `tools/anon-tarf` em **34 documentos reais** — 18 acórdãos do TARF e 16
+    /// pareceres —, sempre onde há corrida de 13 a 19 dígitos: quantidades, números de processo e
+    /// tabelas CEST/NCM, todas falsos positivos do Luhn.
+    ///
+    /// Fica `#[ignore]` porque a correção é upstream e não está no nosso cronograma. **Quando o
+    /// `cloakrs` corrigir, tirar o `ignore`**: ela vira a regressão que impede a volta.
+    #[test]
+    #[ignore = "defeito upstream em cloakrs-patterns 0.3.0 — vermelha até a correção"]
+    fn round_trip_quebra_quando_o_span_passa_do_valor() {
+        let anon = Anonimizador::novo().expect("construir");
+        let original = "Produto: ROST OFF WURTH 300 ML 27101932 6910 12 UN";
+        let r = anon.anonimizar(original).expect("anonimizar");
+        assert_eq!(anon.restaurar(&r.texto, &r.mapping), original);
     }
 
     #[test]
