@@ -17,8 +17,23 @@ O pipeline atual é 100% determinístico, in-process, sem rede, fail-closed, com
 |---|---|---|---|
 | 1 | 14 identificadores estruturados (CPF, CNPJ inclusive alfanumérico, e-mail, telefone, IE, protocolo, GA, RENAVAM, placa, CEP, data nasc.) | DV/formato + contexto | recall **100%**, 0 FP |
 | 4 | Razão social **com sufixo**; endereço logradouro+número; nome **após gatilho** | heurística ancorada | 0.7 |
-| 5 | Nome **solto** iniciado por prenome do Censo IBGE (18.938 prenomes + guarda de 2.462 municípios compostos) | dicionário | 0.6 |
-| 6 | Razão social **sem sufixo** com termo de segmento (~120 substantivos de ramo) | dicionário | 0.65 |
+| ~~5~~ | ~~Nome **solto** iniciado por prenome do Censo IBGE~~ | — | **não existe** |
+| ~~6~~ | ~~Razão social **sem sufixo** com termo de segmento~~ | — | **não existe** |
+
+> **Correção (2026-08-12) — as Fases 5 e 6 nunca entraram; a baseline são as Fases 1–4.**
+>
+> As duas linhas riscadas descreviam os **patches**, não o código. Verificado: `reconhecedores/` não
+> tem `nome_dicionario.rs` nem `razao_segmento.rs`, e o registro do `lib.rs` monta doze
+> reconhecedores — `CnpjAlfanumerico`, `TelefoneBr`, `InscricaoEstadual`, `Cep`, `Protocolo`, `Ga`,
+> `Renavam`, `Placa`, `DataNascimento`, `RazaoSocial`, `Endereco`, `NomePessoa`. A Fase 5 foi
+> **medida e reprovada** (397 falsos positivos no acervo) e a 6 caiu por empilhar sobre ela; os dois
+> patches estão em `docs/`, com o diagnóstico, e o `auli-anon_pendencias` §5 e §7 são a fonte certa.
+>
+> **A direção do erro é contraintuitiva, e por isso vale registrar em vez de só apagar.** Uma
+> baseline superestimada faz o ganho marginal do NER parecer **menor** do que é; e a lista de
+> lacunas do §2, escrita como "o que sobra depois das Fases 5–6", **subestima** o que de fato sobra.
+> Os dois efeitos empurram para o mesmo lado: **este estudo, como estava, subestimava o que o NER
+> acrescentaria.** O gate 1 (falso positivo zero em `C-dec`) é absoluto e não é afetado.
 
 Travas vigentes: `recall_estruturado_fase1` (100%), `recall_nao_estruturado_fase4`,
 controles com **zero falso positivo** (a regra de ouro: precisão vence recall), travas de
@@ -34,6 +49,16 @@ Lacunas **nomeadas e assumidas** nos módulos (todas documentadas em código):
 3. **Gatilho distante do nome** — `o contribuinte, que já esteve aqui, João Silva`.
 4. **Homônimo de município composto** — pessoa chamada `Carlos Barbosa` (custo da guarda).
 5. **Razão social sem sufixo E sem termo de segmento** — `a Anderle não emitiu a nota`.
+
+> **Leia esta lista com a correção do §1.** Ela foi escrita como "o que sobra **depois** das Fases
+> 5 e 6", que não existem. Sobre a baseline real (Fases 1–4), cada lacuna é **maior** do que a
+> redação sugere: a 1 e a 2 são casos particulares de "**todo** nome solto vaza, com ou sem prenome
+> de dicionário"; a 4 não existe como lacuna, porque a guarda de topônimo que a criava não está no
+> código; e a 5 é "razão social **sem sufixo**", sem a segunda condição.
+>
+> Há um número medido para a 5, e é o primeiro: nas linhas rotuladas do TARF, **1.667 de 7.212
+> nomes reais (23%) não têm sufixo societário nem termo de segmento** — ver a §6.1 do
+> `auli-anon_pendencias`. Deixou de ser lacuna assumida.
 
 **A pergunta do estudo:** o volume real dessas sobras nas perguntas do NAVI justifica um
 modelo, dado o custo permanente que ele introduz? Isso é uma pergunta de medição, não de
