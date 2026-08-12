@@ -66,14 +66,24 @@ antes da comparação**, e nenhum vetor mudou sem estar cortado.
 
 ### 2.1 — `tools/anon-tarf` (o programa one-shot sobre o TARF)
 
-Base: `TAREFA-ANON-TARF.md` + `RELATORIO-PRE-ANON-TARF.md`. A apuração prévia derrubou uma premissa
-minha e refinou o desenho; **o que segue substitui a TAREFA onde divergir.**
+**✅ EXECUTADO (PR #147), e o resultado está em `RELATORIO-ANON-TARF.md`** — que é o documento a ler.
+A `TAREFA-ANON-TARF.md` e o `RELATORIO-PRE-ANON-TARF.md`, que eram a base, foram removidos em
+12/08/2026: a TAREFA por executada, a apuração prévia por ter sido **corrigida** pela execução. Texto
+integral no git. Os sete refinamentos abaixo ficam como o registro do desenho — eles governaram o
+programa e continuam explicando por que ele mede assim.
+
+> **Os números deste parágrafo estão superados; ficam pelo raciocínio, não pelas cifras.** A leitura
+> de "56% saneados" tratava saneamento como propriedade estática do acervo, e a execução mostrou que
+> é uma **prática que acabou em 2016**: 20 acórdãos com nome de parte em onze anos até 2015, contra
+> 7.099 nos onze seguintes. E "exposto" não é o complemento de "redigido" — somava os 2.710 casos de
+> `FAZENDA ESTADUAL`, que não têm PII. Exposição real: **7.122**, não 9.832. Ver `RELATORIO-ANON-TARF`
+> §2 e a §6.1 do `auli-anon_pendencias`.
 
 **A premissa que caiu:** eu escrevi que "o TARF nomeia as partes", a partir de **dois** acórdãos. A
-medição diz **56% vêm saneados na fonte** (`(...)`), 32,1% têm nome real (7.212, dos quais 5.545
-pessoa jurídica e 1.667 sem sufixo), 11,9% são só `FAZENDA ESTADUAL`/`AS MESMAS`. Nenhum dos cinco
-motivos morre; o terceiro inverte de sinal — deixa de ser "confirmar que o TARF é exceção à §6.1" e
-passa a ser "medir quanto do TARF a fonte já protege".
+apuração prévia media **56% saneados na fonte** (`(...)`), 32,1% com nome real e 11,9% só
+`FAZENDA ESTADUAL`/`AS MESMAS`. Nenhum dos cinco motivos morre; o terceiro inverte de sinal — deixa
+de ser "confirmar que o TARF é exceção à §6.1" e passa a ser "medir quanto do TARF a fonte já
+protege".
 
 **Refinamentos de desenho, todos obrigatórios:**
 
