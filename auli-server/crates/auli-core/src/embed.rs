@@ -104,7 +104,6 @@ impl Embedder {
         }
         Ok(dense)
     }
-
 }
 
 #[cfg(test)]
