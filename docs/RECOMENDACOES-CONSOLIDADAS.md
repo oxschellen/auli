@@ -231,7 +231,15 @@ para o resultado determinístico — nunca o pipeline inteiro atrás da rede. O 
 
 ## 3 — Guardado para quando a Fase 5 for retomada
 
-Do patch lido em `docs/0001-feat-anon-Fase-5-*.patch` (a branch é local, o remoto tem só `main`):
+Do patch lido em `docs/0001-feat-anon-Fase-5-*.patch`.
+
+> **Atualização (12/08): o `.patch` é agora a única cópia, e isso é deliberado.** A branch
+> `feat/anon-fase5` foi apagada depois de conferido que o patch em `docs/` é byte a byte o mesmo
+> conteúdo — o commit dela (`569e758`) sobrevive como objeto solto, **alcançável por nenhuma ref**,
+> até o próximo `gc`. Verificado: `git log --all` sobre `nome_dicionario`, `razao_segmento` e
+> `prenomes.txt` volta vazio; nada das Fases 5 e 6 jamais entrou em `main`. Os dois `.patch`
+> (`e3fedc1`) são o que resta, e é a forma melhor — branch guarda o código e esquece o motivo; o
+> patch ao lado da §5 do pendencias guarda os dois.
 
 - **A guarda de topônimo por contenção sobre a sequência inteira**, não igualdade sobre o candidato
   recortado. O defeito está visível no código: `valida_candidato` chama `e_toponimo(candidato)` — no

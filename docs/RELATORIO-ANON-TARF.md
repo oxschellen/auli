@@ -265,12 +265,30 @@ Daí as 78 detecções de cartão de crédito num acervo de ICMS. **Esta segunda
 produção** — uma pergunta com número de processo pode virar `[CREDIT_CARD_1]` e o número não chega ao
 LLM. É o que justifica um contorno local, declarado como temporário e amarrado ao issue upstream.
 
-**Os números não reconciliam com a §5.6 do `auli-anon_pendencias`, e fica registrado assim.** Ela
-traz `CREDIT_CARD 1×`, `URL 3447×`, `IP_ADDRESS 58×`; este scan dá **43**, **2.953** e **212**. URL
-menor e IP maior descarta a hipótese de subconjunto simples. A explicação mais provável é que aquela
-varredura mediu a **key** ou o payload do pack, e não o `## corpo` — a key dos pareceres é
-`numero + assunto + resumo`, que **não inclui o corpo**, e é no corpo que as tabelas CEST vivem. Não
-verifiquei; registro como **não reconciliado** em vez de escolher a explicação menos ruim.
+**Reconciliação com a §5.6 do `auli-anon_pendencias` — a hipótese da key se confirma no ponto que
+importa, e só nele.** Ela traz `CREDIT_CARD 1×`, `URL 3447×`, `IP_ADDRESS 58×`; o scan do `## corpo`
+dá 43, 2.953 e 212. Rodei então o mesmo anonimizador sobre a **key** dos 19.780 pareceres
+(`numero + assunto + resumo`, que **não inclui o corpo**):
+
+| | §5.6 | key | `## corpo` |
+|---|---:|---:|---:|
+| `CREDIT_CARD` | **1** | **1** | 43 |
+| `IP_ADDRESS` | 58 | 88 | 212 |
+| `URL` | 3.447 | 22 | 2.953 |
+
+**O `CREDIT_CARD` bate exatamente**, e a detecção é identificável: um número de **TTD** (`TTD nº …`)
+num `## resumo` de consulta da COPAT-SC, mascarado como cartão de crédito. Mesmo reconhecedor, mesma
+classe de falso positivo.
+
+**Mas não é o mesmo defeito, e a diferença é boa notícia:** o scan da key deu **zero falhas de
+round-trip**. O defeito exige que o casamento termine em separador, o que acontece nas tabelas
+CEST/NCM e nas listas de quantidade — todas no `## corpo`. E **o corpo não é embedado, nem
+anonimizado em produção**: o único caminho de produção do anonimizador é a **pergunta**. Isso limita
+o defeito a perguntas que contenham corrida de 13 a 19 dígitos terminada em espaço, ponto ou hífen.
+
+`URL` e `IP_ADDRESS` continuam sem reconciliar — 3.447 não sai nem da key nem do corpo, então o
+escopo daquela varredura era outro (provavelmente incluía serviços e FAQs, cheios de link). Fica
+registrado como aberto, sem escolher a explicação menos ruim.
 
 ### 11.2 A exposição cresce em volume, não só em proporção
 

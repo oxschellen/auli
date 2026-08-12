@@ -386,6 +386,33 @@ há o que anonimizar.**
 > **Os 44% que não são saneados na fonte são exposição real que ninguém tinha contado.** O
 > saneamento de origem existe no TARF, como nos pareceres — só que parcial.
 >
+> ---
+>
+> **Segunda correção (12/08, depois da execução do `anon-tarf`) — os 56% não são uma taxa, são uma
+> prática que acabou.** A tabela acima está certa e a leitura que eu fiz dela estava errada: tratei
+> saneamento como propriedade estática do acervo. A tabulação por ano diz outra coisa.
+>
+> | era | proporção exposta | expostos/ano | total do período |
+> |---|---:|---:|---:|
+> | 2005–2015 | 9 a 20% | ~180 | 2.004 |
+> | **2016** | **96,7%** | — | 866 |
+> | **2017–2026** | **100%** | ~780 | 6.959 |
+>
+> Até 2015 o TARF publicava com o nome substituído em ~87% dos casos. Em 2016 a prática colapsa, e
+> **de 2017 em diante nenhum acórdão é saneado** — zero, sem exceção, em dez anos. Os 56% são o peso
+> da era antiga no acervo.
+>
+> **Duas consequências que mudam a natureza do problema:**
+>
+> - **a exposição prospectiva é 100%**, não 44%. Todo acórdão novo nomeia as partes, e o acervo só
+>   cresce nesse regime;
+> - **ela cresce em volume, não só em proporção**: 3,9× mais documentos expostos na era nova
+>   (2.004 → 7.825) **enquanto o acervo encolhia por ano** (1.916 acórdãos em 2013 contra 539 em
+>   2024). A exposição quadruplicou com a produção caindo pela metade.
+>
+> Isto deixa de ser passivo histórico e passa a ser **operação corrente descoberta** — o que é a
+> diferença entre arquivar e agir. Números e método em `RELATORIO-ANON-TARF.md` §2 e §11.2.
+>
 > **E o marcador difere por coleção:** `XYZ` nos pareceres do RS, `(...)` no TARF. Qualquer
 > verificação futura de "isto já vem saneado?" precisa de um **inventário de marcadores** por
 > fonte, não de um literal — procurar `XYZ` no TARF acharia zero e concluiria o oposto do
