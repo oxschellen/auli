@@ -60,10 +60,23 @@ Detalhes:
 - um teste: o log escrito carrega o `strategy_version` corrente, e um log sem o campo desserializa
   sem erro.
 
+> **Refutado na execução (#144) — não há DTO.** O log **não é serde**: é texto plano montado pelo
+> `format_log_record`, e nada o desserializa. Logo não existe `serde(default)` a acrescentar, e "um
+> log antigo falha ao desserializar" não é um risco que exista. O carimbo virou uma linha no
+> cabeçalho, na disciplina de grep da linha `TEMPOS`:
+> `EMBED · modelo: bge-m3-q-int8 · dim: 1024 · strategy: 3`. O teste que restou afirma o formato, que
+> os valores casam com o `manifest::identity()` corrente, e que a linha fica antes da régua.
+> **Não leia os bullets acima como especificação do formato do log.**
+
 **Cuidado com a rota de leitura:** a rota `GET /v1/log/{uuid}` serve o conteúdo íntegro ao modal. O
 campo novo aparecerá lá. Isso é aceitável — não é dado sensível —, mas confira se o modal quebra com
 um campo desconhecido no DTO do frontend, e reporte antes de mexer no frontend. Se quebrar, é
 conversa antes de código.
+
+> **Refutado na execução (#144) — o modal não pode quebrar.** Não há DTO no frontend tampouco: o
+> `LogModal.tsx` renderiza `r.text()` **verbatim**, por doutrina (D-LOG-5, "sem filtrar, resumir ou
+> reformatar"), e a rota devolve o arquivo cru. Nenhuma mudança no frontend foi necessária, e a
+> conferência pedida aqui se responde sozinha.
 
 ---
 
