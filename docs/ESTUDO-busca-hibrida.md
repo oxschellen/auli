@@ -160,3 +160,39 @@ comentário do `rag.rs:29` já prescrevia.
 > depende: com 22.590 acórdãos em vez de 3.800, o topo do ranking melhora, e o degrau que separa
 > casamento de enchimento se desloca. A janela de observação que vale para o `tarf` começa quando a
 > coleta fechar. Para `pareceres`, `servicos` e `faqs` — acervos estáveis — os logs já contam.
+
+---
+
+## 10. O problema é ~9× maior do que este estudo supôs — e é estrutural (11/08/2026)
+
+Levantado de raspão pela Fase 0 da `TAREFA-TETO-TEXT-TO-EMBED`, ao medir onde o termo cai dentro do
+`text_to_embed`. Dois números, os dois verificáveis hoje:
+
+| onde | acórdãos com "conluio" |
+|---|---:|
+| no `text_to_embed` (= `[numero, assunto, resumo]`, o que é embedado E indexado) | **40** |
+| no arquivo `.md`, em qualquer lugar | **364** |
+
+Os 324 restantes têm a palavra **exclusivamente na seção `## corpo`** — o texto integral do acórdão,
+que **não é embedado nem entra no índice da aba**. Para esses documentos, "conluio" nunca esteve
+buscável, nem pela busca densa do chat nem pela busca literal do frontend.
+
+**Isso reposiciona o diagnóstico deste estudo.** A §2 atribui o "não veio nada" ao ponto fraco da
+busca densa com termo raro solto, e isso continua verdadeiro para os 40. Mas a maior parte do acervo
+que contém a palavra está fora do alcance das **duas** buscas por uma razão anterior: o que se indexa
+é a síntese, não o documento. Nenhuma calibragem de banda e nenhuma busca híbrida alcança conteúdo
+que não está no índice.
+
+**O que NÃO muda:** o teto de 6.000 caracteres da TAREFA-TETO não causa nem agrava isto. Dos 40
+documentos que a busca pode ver, o teto corta 6 e apenas **1** perde todas as ocorrências do termo —
+a primeira ocorrência tem mediana no caractere 492, porque o termo vive no começo.
+
+**Consequência para a §6 (opções):** indexar o corpo — por chunking ou por um índice léxico sobre o
+`## corpo` — passa a ser uma opção de natureza diferente das outras, porque é a única que ataca os
+324. As demais disputam a ordenação dos 40.
+
+> **Nota de procedência.** A abertura deste estudo diz "69 acórdãos". Esse número **não se reproduz**
+> em 11/08/2026: o `rs-tarf-index.json` que a aba consome tem 40, e a recomposição independente do
+> `text_to_embed` a partir da árvore deu 40 também. Dois métodos independentes concordam; o 69 fica
+> registrado como número sem procedência conhecida, e não foi substituído por uma explicação
+> inventada.
