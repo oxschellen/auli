@@ -112,3 +112,49 @@ coisas — mas isso é desenho, é seu, e é outra TAREFA.
 
 O harness da 0.a está fora do repositório e é reaproveitável para qualquer N que você queira medir
 antes de decidir.
+
+---
+
+## 6 — Os 23, enumerados por `doc_path` (acrescentado em 12/08)
+
+**Dívida paga com atraso.** Você pediu a enumeração como conjunto nomeado e o relatório original
+trouxe só a contagem e três exemplos. A lista existe para o A/B de retrieval: são os documentos cujo
+vetor o teto de fato move (cosseno mediano 0,66), e a pergunta que o A/B responde é se eles pioraram.
+
+Recomposição do `text_to_embed` **sem o teto**, pela fórmula do contrato — `compose_text_to_embed`
+para a jurisprudência e `compose_faq_text_to_embed` para as FAQs. Validada contra os três valores já
+publicados na §1 deste relatório (26.987, 32.722 e 28.780), que batem exatamente.
+
+| # | chars | `doc_path` |
+|---:|---:|---|
+| 1 | 32.722 | `docs/tarf/acordao-no-1428-11.md` |
+| 2 | 31.279 | `docs/tarf/acordao-no-286-14.md` |
+| 3 | 29.526 | `docs/tarf/acordao-326-20.md` |
+| 4 | 28.781 | `docs/tarf/acordao-481-20.md` |
+| 5 | 28.780 | `docs/tarf/acordao-483-20.md` |
+| 6 | 28.778 | `docs/tarf/acordao-482-20.md` |
+| 7 | 28.417 | `docs/tarf/acordao-no-1194-10.md` |
+| 8 | 28.037 | `docs/tarf/acordao-no-436-11.md` |
+| 9 | 27.686 | `docs/tarf/acordao-no-932-10.md` |
+| 10 | 27.534 | `docs/tarf/acordao-443-20.md` |
+| 11 | 26.987 | `docs/tarf/acordao-654-19.md` |
+| 12 | 26.987 | `docs/tarf/acordao-653-19.md` |
+| 13 | 26.987 | `docs/tarf/acordao-652-19.md` |
+| 14 | 26.987 | `docs/tarf/acordao-651-19.md` |
+| 15 | 26.981 | `docs/tarf/acordao-737-19.md` |
+| 16 | 25.120 | `docs/faqs/7-atualizacao-da-legislacao-do-pit-07abbe50.md` |
+| 17 | 24.341 | `docs/tarf/acordao-738-20.md` |
+| 18 | 23.984 | `docs/tarf/acordao-no-355-14.md` |
+| 19 | 23.138 | `docs/tarf/acordao-do-pleno-no-057-09.md` |
+| 20 | 21.707 | `docs/tarf/acordao-no-420-05.md` |
+| 21 | 21.676 | `docs/tarf/acordao-no-421-05.md` |
+| 22 | 21.519 | `docs/tarf/acordao-no-257-11.md` |
+| 23 | 21.209 | `docs/tarf/acordao-457-21.md` |
+
+**Vinte e dois dos 23 são acórdãos; uma única FAQ entra** — a nº 16, que é o documento removido no
+teste de falseamento da TAREFA-MEMORIA e sozinho respondia por 35% do pico das FAQs.
+
+**Quatro deles têm o comprimento idêntico** (11 a 14: `651` a `654-19`, 26.987 chars) e um quinto
+quase (`737-19`, 26.981). São acórdãos irmãos com a mesma fundamentação — o que importa para o A/B:
+eles não são cinco evidências independentes, são uma repetida cinco vezes, e uma amostra que os trate
+como cinco superestima a confiança em qualquer conclusão sobre eles.
