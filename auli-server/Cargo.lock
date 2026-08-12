@@ -97,6 +97,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "anon-tarf"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "auli-anon",
+ "auli-contract",
+ "regex",
+]
+
+[[package]]
 name = "anstream"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
