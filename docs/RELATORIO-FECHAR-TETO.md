@@ -5,7 +5,8 @@
 contrário ao que ela prescreve**, e corretamente, porque você mesmo reverteu a instrução depois de ler
 a medição. O que restava era a §2, e está preparada: backup feito, binário provado, ordem proposta.
 
-**Não rodei as 27.**
+**As 27 foram rodadas depois**, por decisão do Carlos, e o resultado está na §7 — que é a parte deste
+relatório que vale ler primeiro. As §§2(a)–(e) ficam como o registro do que foi preparado antes.
 
 ---
 
@@ -31,7 +32,7 @@ fato entrega as ~1.500 tokens pretendidas.
 
 ---
 
-## 2 — As 27 entidades: preparado, não rodado
+## 2 — As 27 entidades: a preparação (a execução está na §7)
 
 ### (a) O binário
 
