@@ -175,3 +175,56 @@ tensão, não como hipótese promissora.
 árvores **não é um parâmetro** — é derivado como `<--out>/../docs`. Apontar `--out` para um diretório
 qualquer não dá erro; produz um manifesto vazio e nenhum pack, em silêncio. É o motivo de o ensaio do
 `rn` ter sido montado como `<dir>/docs` + `<dir>/packs`.
+
+---
+
+## 7 — A execução das 27 (12/08, 07:37 → 09:26)
+
+Rodada em ordem crescente, uma entidade por vez, com verificação contra o backup logo depois de cada
+uma. **27/27 concluídas**, 1 h 49 min.
+
+### O resultado, em uma tabela
+
+| | entidades | vetores alterados |
+|---|---:|---:|
+| só `servicos` (23) | `rn ac rr mt pi pa pe ma to es ap al rj se go pb mg ro ba ms am ce df` | **0** |
+| com `pareceres`, sem cauda | `sc` (1.743), `pr` (2.060) | **0** |
+| com um documento longo | `sp` (15.605 pareceres) | **1** |
+| a única com cauda | `rs` (25.381) | **418** (14 faqs + 404 tarf) |
+| **acervo inteiro** | **27** | **419** |
+
+**Em 50.000 documentos, 419 vetores mudaram — e cada um deles é um documento que a linha `✂️` tinha
+anunciado antes de a comparação rodar.** Nenhum vetor mudou sem estar cortado, em nenhuma entidade.
+
+### O que a execução acrescentou ao que já se sabia
+
+**A `sc` e a `pr` não têm cauda.** Duas coleções de pareceres com 3.803 documentos somados, e nenhum
+acima de 6.000 caracteres. O conjunto afetado do acervo é menor do que a Fase 0 sugeria: só `sp` e
+`rs` têm documentos longos, e a `sp` tem **um**.
+
+**A `sp` deu a confirmação mais limpa da lei quadrática que apareceu até agora.** Cortar **um**
+documento em 15.605 derrubou o pico de **3.145** para **2.218 MiB** — quase 1 GiB a menos por causa
+de um único registro, 0,006% da coleção. É o mesmo experimento do falseamento da TAREFA-MEMORIA
+(remover o maior documento das FAQs), repetido sem intenção e com o mesmo resultado.
+
+**Os tempos.** `rs` 3.153 s, `sp` 2.730 s, `pr` 242 s, `sc` 273 s; as 23 restantes somam menos de 3
+minutos, dominadas pela carga do modelo (~2 s cada). Duas entidades respondem por 90% da operação.
+
+### O boot, provado antes de tocar em produção
+
+Subi o binário do `HEAD` numa porta descartável (3999), com a mesma raiz de dados:
+
+```text
+🔎 Manifesto de '<id>' validado contra a identidade local.   × 27
+✅ Server started successfully at 127.0.0.1:3999
+```
+
+As 27 validações passam e o servidor sobe. **A janela tudo-ou-nada está fechada** — o servidor de
+produção pode reiniciar.
+
+Os cinco índices de jurisprudência do frontend foram regerados junto (`sc`, `pr`, `sp`, `rs`
+pareceres e `rs` tarf), pelo passo que o `build-packs.sh` faz no fim — é a proteção contra o defeito
+de 09/08, em que a aba mostrava 3.800 acórdãos e o chat respondia de 22.476.
+
+O backup em `data_backup-strategy2-20260812/` continua intacto e é o que permite refazer qualquer
+comparação depois.
