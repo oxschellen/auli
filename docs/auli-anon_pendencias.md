@@ -367,6 +367,32 @@ O RS chega a substituir o nome por um literal (`XYZ vem formular consulta de seu
 PR e SP usam o papel (`A consulente indaga`, `A Consulente informa`). **Para o acervo de hoje, não
 há o que anonimizar.**
 
+> **Correção (2026-08-12) — a frase acima vale para os PARECERES e é falsa para o TARF.**
+>
+> A conclusão original **não errou sobre o que mediu**; errou em generalizar de quatro coleções de
+> pareceres para "o acervo". A tabela acima não inclui a jurisprudência do TARF, que é o maior
+> corpus indexado (22.476 documentos) e **nomeia as partes em quase metade dos casos**.
+>
+> Medição sobre os 22.454 valores de `RECORRENTE` extraídos das linhas rotuladas do `## corpo`:
+>
+> | | n | % |
+> |---|---:|---:|
+> | redigido na fonte, com o literal `(...)` | 12.568 | 56,0% |
+> | **nome real presente** | **7.212** | **32,1%** |
+> | — pessoa jurídica (sufixo ou termo de segmento) | 5.545 | 24,7% |
+> | — sem sufixo (candidato a pessoa física) | 1.667 | 7,4% |
+> | só `FAZENDA ESTADUAL` / `AS MESMAS` | 2.674 | 11,9% |
+>
+> **Os 44% que não são saneados na fonte são exposição real que ninguém tinha contado.** O
+> saneamento de origem existe no TARF, como nos pareceres — só que parcial.
+>
+> **E o marcador difere por coleção:** `XYZ` nos pareceres do RS, `(...)` no TARF. Qualquer
+> verificação futura de "isto já vem saneado?" precisa de um **inventário de marcadores** por
+> fonte, não de um literal — procurar `XYZ` no TARF acharia zero e concluiria o oposto do
+> verdadeiro.
+>
+> Números apurados em `RELATORIO-PRE-ANON-TARF.md`, antes de o `tools/anon-tarf` existir.
+
 Isso reposiciona a seção: o alvo não é o acervo existente, é **verificar se a mesma prática vale
 para as fontes novas**. Saneamento na origem é convenção do publicador, não garantia contratual —
 pode variar por UF, por época e por formato (o PDF antigo digitalizado é o suspeito natural). A
