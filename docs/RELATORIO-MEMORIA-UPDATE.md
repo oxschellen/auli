@@ -135,6 +135,35 @@ está na ordem de grandeza certa por coincidência aritmética, não pelo mecani
 menos do que parece: o maior acórdão passa **logo abaixo** de 8.192 tokens, e é justamente ele que
 custa os 17,7 GiB.
 
+> ### Nota posterior (12/08) — "não é o termo dominante" ≠ "é irrelevante"
+>
+> **Leia a afirmação acima com a data dela.** Ela é verdadeira no regime medido, com a cauda intacta;
+> depois do teto de 6.000 caracteres da TAREFA-TETO, o `FATIA` passa a ser **candidato ao maior
+> termo**, e este relatório é o documento que alguém vai consultar antes de mexer nesse parâmetro.
+>
+> O que motiva a nota: o `rs-tarf` com o teto aplicado pica em **3,1 GiB**, e a lei deste relatório
+> não explica o número. Base (~1,05) + quadrático em 6.000 chars (`1,5×10⁻⁵ × 6.000²` ≈ 0,54) dão
+> ~1,6 GiB — sobram **~1,5 GiB** sem dono. Um termo proporcional ao `FATIA` é o candidato natural, e
+> a aritmética é sugestiva: `256 × 1.024 × 4 bytes` é **exatamente 1 MiB**, então um colbert alocado
+> por fatia custa, em MiB, o próprio comprimento em tokens — e 1,5 GiB corresponde a ~1.500 tokens,
+> que é o que 6.000 caracteres dão a ~3,9 chars/token. Bate.
+>
+> **Mas duas medições deste relatório impedem de fechar a conta**, e por isso isto é hipótese e não
+> conclusão:
+>
+> - aplicado ao regime PRÉ-teto, o mesmo termo estoura. O `sp-pareceres` tem fatia de máximo 10.240
+>   chars (~2.600 tokens), o que preveria ~2,6 GiB só de colbert — mais que o `Δ` **total** medido
+>   dele, que foi 2.057 MiB. Então "256 × o maior da fatia" não pode estar certo como está;
+> - o `rs-tarf` com teto (máximo 6.000) custa praticamente o mesmo que o `sp-pareceres` sem teto
+>   (máximo 10.240): ~2,06 GiB de `Δ` nos dois. Se o máximo mandasse sozinho, não custariam igual —
+>   o TARF tem 22.476 documentos contra 15.605, e 404 deles exatamente no teto. **A composição das
+>   fatias entra, não só o maior texto do acervo.**
+>
+> **O teste decisivo é barato e não foi rodado:** `FATIA = 128` deve cortar aproximadamente metade do
+> resíduo se o termo for mesmo proporcional à fatia, e não mudar nada se não for. Até lá, o que este
+> relatório afirma sobre o `FATIA` vale **para o corpus com cauda**; para o corpus cortado, está em
+> aberto.
+
 **Um limite útil que sai daí.** Com o teto de 8.192 tokens em vigor, o pico máximo alcançável é
 ~1,5×10⁻⁵ × (8.192 × 4,3)² ≈ **18,6 GiB acima da base**. O `rs-tarf`, em 16,6 GiB, já está a 89%
 desse teto: **não pode piorar muito sem mudar o teto — e também não vai melhorar sozinho.**
