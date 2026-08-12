@@ -135,38 +135,45 @@ está na ordem de grandeza certa por coincidência aritmética, não pelo mecani
 menos do que parece: o maior acórdão passa **logo abaixo** de 8.192 tokens, e é justamente ele que
 custa os 17,7 GiB.
 
-> ### Nota posterior (12/08) — "não é o termo dominante" ≠ "é irrelevante"
+> ### Nota posterior (12/08) — o mecanismo do quadrático se confirma; o do `FATIA` se refuta
 >
-> **Leia a afirmação acima com a data dela.** Ela é verdadeira no regime medido, com a cauda intacta;
-> depois do teto de 6.000 caracteres da TAREFA-TETO, o `FATIA` passa a ser **candidato ao maior
-> termo**, e este relatório é o documento que alguém vai consultar antes de mexer nesse parâmetro.
+> **Leia a afirmação acima com a data dela.** Ela é verdadeira no regime medido, com a cauda intacta.
+> Depois do teto de 6.000 caracteres da TAREFA-TETO o quadro muda, mas **não** no sentido em que uma
+> versão anterior desta nota apostava: eu tinha escrito que o `FATIA` viraria o maior termo. Com a
+> razão chars/token medida, a fórmula que sustentava essa aposta **está refutada como enunciada**.
 >
-> O que motiva a nota: o `rs-tarf` com o teto aplicado pica em **3.531 MiB** (a corrida terminou
-> depois desta nota ser escrita — eu tinha anotado 3,1 GiB da corrida em andamento), e a lei deste
-> relatório não explica o número. Base (1.091, medida na própria corrida) + quadrático em 6.000 chars
-> (`1,5×10⁻⁵ × 6.000²` ≈ 540) dão ~1.631 MiB — sobram **~1.900 MiB** sem dono. Um termo proporcional
-> ao `FATIA` é o candidato natural, e a aritmética é sugestiva: `256 × 1.024 × 4 bytes` é
-> **exatamente 1 MiB**, então um colbert alocado por fatia custa, em MiB, o próprio comprimento em
-> tokens. E agora esse comprimento é medido, não estimado: o `conta_tokens` sobre as 22.476 keys
-> cortadas dá **máximo de 1.774 tokens** (6.000 chars a 3,38 chars/token). O termo previsto é 1.774
-> MiB contra 1.900 medidos — **7% de erro**, com a razão chars/token vinda de contagem real e não do
-> ~3,9 que eu tinha suposto.
+> **A medição que mudou tudo.** A contagem de tokens sobre as 25.381 keys do `rs` já cortadas dá
+> **2,17 chars/token no pior caso** — não os ~3,9 que eu vinha usando. Todo cálculo desta nota que
+> converte caracteres em tokens foi refeito com 2,17.
 >
-> **Mas duas medições deste relatório impedem de fechar a conta**, e por isso isto é hipótese e não
-> conclusão:
+> **O termo quadrático deixa de ser hipótese e passa a ter mecanismo.** Se a atenção aloca
+> `16 cabeças × seq² × 4 bytes`, então em caracteres isso é `16 × 4 / 2,17²` bytes por char², ou
+> **1,3×10⁻⁵ MiB/char²** — contra o coeficiente medido de 1,46 a 1,96×10⁻⁵. A lei empírica deste
+> relatório e a aritmética do transformer se encontram, e a razão de conversão medida é o que fecha
+> a ponte entre as duas.
 >
-> - aplicado ao regime PRÉ-teto, o mesmo termo estoura. O `sp-pareceres` tem fatia de máximo 10.240
->   chars (~2.600 tokens), o que preveria ~2,6 GiB só de colbert — mais que o `Δ` **total** medido
->   dele, que foi 2.057 MiB. Então "256 × o maior da fatia" não pode estar certo como está;
-> - o `rs-tarf` com teto (máximo 6.000 chars, 1.774 tokens) custa **mais** que o `sp-pareceres` sem
->   teto (máximo 10.240 chars, ~2.600 tokens): `Δ` de 2.440 contra 2.057 MiB. Se o maior texto
->   mandasse sozinho, a ordem seria a inversa — o TARF tem 22.476 documentos contra 15.605, e 404
->   deles exatamente no teto. **A composição das fatias entra, não só o maior texto do acervo.**
+> **O termo do `FATIA`, ao contrário, não sobrevive ao próprio teste.** A fórmula candidata era:
+> `256 × 1.024 × 4 bytes` é exatamente 1 MiB, logo um colbert alocado por fatia custaria, em MiB, o
+> comprimento em tokens do maior texto da fatia. Aplicada ao `rs-tarf` com teto (1.774 tokens) ela
+> prevê 1.774 MiB e o resíduo sem dono é ~1.900 — parece boa. Aplicada ao `sp-pareceres`, que rodou
+> **sem** teto, ela prevê `10.240 / 2,17 ≈ 4.719` tokens ⇒ **~4,7 GiB só de colbert**, contra um `Δ`
+> **total** medido de **2.057 MiB**. A fórmula prevê mais que o dobro do consumo inteiro da coleção.
+> Isso não é imprecisão: é refutação.
 >
-> **O teste decisivo é barato e não foi rodado:** `FATIA = 128` deve cortar aproximadamente metade do
-> resíduo se o termo for mesmo proporcional à fatia, e não mudar nada se não for. Até lá, o que este
-> relatório afirma sobre o `FATIA` vale **para o corpus com cauda**; para o corpus cortado, está em
-> aberto.
+> Um segundo sinal aponta na mesma direção: o `rs-tarf` **com** teto (máximo 1.774 tokens) custa
+> **mais** que o `sp-pareceres` **sem** teto (~4.719 tokens) — `Δ` de 2.440 contra 2.057 MiB. Se o
+> maior texto da fatia mandasse sozinho, a ordem seria a inversa.
+>
+> **O resíduo tem candidato mais barato que o `FATIA`: o pipeline de pack.** Este relatório já o
+> mediu em ~620 MiB para o TARF — e naquela rodada o TARF *não vetorizou nada*. Numa re-vetorização
+> integral ele é maior: os 22.476 registros ficam em memória com payload e depois viram 311 MB de
+> JSON serializado. Não fecha a conta sozinho (620 é cerca de um terço de 1.900), mas é um termo
+> **medido** que já existe, e explicar o resíduo com ele exige menos invenção do que com um
+> mecanismo que a própria evidência contraria.
+>
+> **Consequência prática:** o teste do `FATIA = 128`, que eu tinha chamado de decisivo e barato,
+> perdeu o alvo — a hipótese que ele confirmaria já está contrariada por um dado que temos. A
+> decisão de não medir segue valendo, agora com um motivo a mais.
 
 **Um limite útil que sai daí.** Com o teto de 8.192 tokens em vigor, o pico máximo alcançável é
 ~1,5×10⁻⁵ × (8.192 × 4,3)² ≈ **18,6 GiB acima da base**. O `rs-tarf`, em 16,6 GiB, já está a 89%

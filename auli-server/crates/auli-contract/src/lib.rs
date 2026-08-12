@@ -361,12 +361,20 @@ pub fn compose_unificado(trilha: &str, titulo: &str, ementa: &str, resumo: &str)
 /// documento inteiro: o conteúdo além daí quase não move o vetor. Guardá-lo não compra representação.
 ///
 /// A queda de memória é consequência, e é grande: o pico do `auli update` é **quadrático no maior
-/// texto da coleção**, então cortar paga ao quadrado — de 17,7 GiB para uma previsão de ~2 GiB.
+/// texto da coleção**, então cortar paga ao quadrado — de 17,7 para 3,5 GiB, medido no `rs`.
 ///
 /// **Corte em caracteres é aproximado de propósito.** O exato seria em tokens, mas o tokenizer vive
-/// no `auli-core` e a key nasce aqui: depender dele inverteria a direção entre as camadas. A ~3–4
-/// chars/token em texto jurídico, 6.000 caracteres ficam bem abaixo dos 8.192 tokens do modelo — o
-/// truncamento do encoder deixou de ser alcançável por construção.
+/// no `auli-core` e a key nasce aqui: depender dele inverteria a direção entre as camadas.
+///
+/// **A razão de conversão está medida, e é 2,17 chars/token no pior caso** — não os ~3–4 que a
+/// intuição sugere. Contagem pelo tokenizer do próprio BGE-M3 sobre as 25.381 keys do `rs` já
+/// cortadas: a mais longa dá 2.769 tokens (numa FAQ), com P99 de ~1.460. Duas consequências para
+/// quem for mexer neste número:
+///
+/// - o truncamento do encoder só voltaria a ser alcançável com um teto acima de **~17.800
+///   caracteres** (`8.192 × 2,17`). Abaixo disso ele é inalcançável por construção;
+/// - para mirar um comprimento em tokens, divida por 2,17 e não por 3,9. Um teto de ~3.300
+///   caracteres é o que dá as ~1.500 tokens que os 6.000 aparentavam dar.
 ///
 /// Mudar este número muda vetores ⇒ **bump obrigatório de `STRATEGY_VERSION`**.
 pub const TETO_TEXT_TO_EMBED: usize = 6_000;
