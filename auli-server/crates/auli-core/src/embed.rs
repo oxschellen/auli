@@ -105,23 +105,6 @@ impl Embedder {
         Ok(dense)
     }
 
-    /// Quantos tokens deste texto o encoder REALMENTE consome — pelo tokenizer do próprio modelo,
-    /// já com a truncagem em [`EMBED_MAX_TOKENS`] aplicada. Por isso o resultado nunca passa do
-    /// teto, e **igual ao teto significa que o texto bateu nele** (o excedente foi descartado).
-    ///
-    /// É o que permite ao `update` avisar quais itens foram cortados sem estimar por chars — a
-    /// razão chars/token varia demais entre idiomas para servir de guarda.
-    pub fn conta_tokens(&self, texto: &str) -> Result<usize> {
-        let model = self
-            .inner
-            .lock()
-            .map_err(|_| Error::from("embedder mutex poisoned"))?;
-        let enc = model
-            .tokenizer
-            .encode(texto, true)
-            .map_err(|e| Error::from(format!("tokenizer: {e}")))?;
-        Ok(enc.len())
-    }
 }
 
 #[cfg(test)]
@@ -213,21 +196,6 @@ mod testes_ordem {
                 );
             }
         }
-    }
-
-    /// O detector de truncamento: `conta_tokens` bate no teto exatamente quando o texto passa dele.
-    /// É o que sustenta o aviso do `update` — se um dia o `max_length` deixar de ser aplicado ao
-    /// tokenizer, o aviso viraria silêncio e este teste falha.
-    #[test]
-    #[ignore = "carrega o modelo BGE-M3 (lento); rode com --ignored"]
-    fn conta_tokens_bate_no_teto_so_quando_o_texto_estoura() {
-        let cache = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "../models".into());
-        let e = Embedder::new(cache.into(), 4).expect("embedder");
-        let curto = e.conta_tokens("Como emitir a guia de IPVA?").unwrap();
-        assert!(curto > 0 && curto < 32, "texto curto: {curto} tokens");
-        // Bem acima do teto: o excedente é descartado, então a contagem PARA no teto.
-        let gigante = "palavra ".repeat(EMBED_MAX_TOKENS);
-        assert_eq!(e.conta_tokens(&gigante).unwrap(), EMBED_MAX_TOKENS);
     }
 
     /// Guarda o outro lado do invariante: a mesma entrada, embedada duas vezes, dá o MESMO vetor

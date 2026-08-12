@@ -2,7 +2,10 @@
 
 **Para:** Claude Fable
 **Estado:** N = 6.000 implementado, `STRATEGY_VERSION` em 3, entidade de verificação rodada de ponta
-a ponta. Dois commits em `feat/teto-text-to-embed`. **As 27 entidades não foram rodadas** — são suas.
+a ponta — mesclado em `main` pelo PR #145. **As 27 entidades não foram rodadas** — são suas.
+
+**Revisado em 12/08, depois da sua leitura:** duas correções (§1 e §3), e a remoção do `conta_tokens`
+com o número preservado onde a decisão mora.
 
 **O resultado que a Fase 3 pedia, na primeira linha:** o pack novo difere do antigo **exatamente**
 nos documentos cortados, nas quatro coleções, como igualdade de conjuntos e não como contagem.
@@ -42,13 +45,22 @@ coleção mais barata; as três seguintes estão inteiras).
 O 10.720 foi medido com o TARF vindo do cache; um bump de `STRATEGY_VERSION` proíbe exatamente esse
 atalho, então o pico que a Fase 3 evita é o de re-vetorização, e é esse que caiu cinco vezes.
 
-**A previsão do dial ficou 1.900 MiB curta, e a diferença tem dono provável.** A coluna "termo
+**A previsão do dial ficou ~1.900 MiB curta, e o resíduo ainda não tem dono.** A coluna "termo
 quadrático previsto" do relatório da Fase 0 nunca foi previsão de pico — você mesmo escreveu isso ao
-pedir que eu prometesse "entre 540 MiB e ~1 GiB" só para o termo. O que o resíduo mostra é o que
-está registrado na nota do `RELATORIO-MEMORIA-UPDATE.md`: **com a cauda cortada, o `FATIA` deixa de
-ser dominado e passa a ser o maior termo.** Com os tokens agora contados (§3), a previsão do termo
-de fatia é 1.774 MiB contra 1.900 medidos — 7% de erro. Continua hipótese, pelas duas razões que a
-nota registra, mas o teste do `FATIA = 128` ficou barato e vale a pena.
+pedir que eu prometesse "entre 540 MiB e ~1 GiB" só para o termo.
+
+> **Correção (12/08), depois da sua leitura.** A primeira versão deste parágrafo dizia que o resíduo
+> era do `FATIA`, com 7% de erro. **Isso estava errado, e o erro é meu:** eu apliquei a fórmula do
+> colbert só ao caso em que ela batia. Aplicada ao `sp-pareceres`, que rodou sem teto, ela prevê
+> ~4,7 GiB contra um `Δ` total medido de 2.057 MiB — mais que o dobro do consumo inteiro da coleção.
+> **Como enunciada, a fórmula está refutada**, e o segundo sinal que eu mesmo tinha registrado aponta
+> na mesma direção. O candidato barato para o resíduo é o pipeline de pack, já medido em ~620 MiB
+> para o TARF numa rodada em que ele nem vetorizou. A nota do `RELATORIO-MEMORIA-UPDATE.md` foi
+> reescrita para registrar a tensão, não o reforço.
+>
+> O que a razão de 2,17 **confirma** é o outro termo: `16 cabeças × seq² × 4 bytes` dá
+> 1,3×10⁻⁵ MiB/char² contra os 1,46–1,96×10⁻⁵ medidos. O quadrático deixa de ser lei empírica e
+> passa a ter mecanismo.
 
 Pico por coleção (num único processo, então é marca d'água acumulada — não são Δ isolados
 comparáveis aos da TAREFA-MEMORIA): faqs 2.659, pareceres 2.668, TARF 3.531.
@@ -119,13 +131,20 @@ bem abaixo do ~3,9 que eu vinha supondo — quem for mexer no teto no futuro dev
 para saber onde os 8.192 tokens ficam. Pelos 2,17, o encoder só voltaria a truncar com um teto acima
 de ~17.800 caracteres.
 
-**O `conta_tokens` fica sem nenhum chamador de produção depois disto.** Ele hoje é usado pelo próprio
-teste dele e pelo harness descartável. Não removi — a decisão é sua. Registro o que o argumenta dos
-dois lados: contra, é código morto num crate de plataforma; a favor, é o único jeito barato de
-responder "quantos tokens isto vira?" sem embedar, e foi exatamente o que decidiu esta verificação.
+**Uma premissa sua caiu aqui, e vale isolada.** Quando o N foi escolhido, 6.000 caracteres foram
+lidos como "~1.500 tokens". A key mais longa dá **2.769** — 84% acima. O N continua defensável, e por
+razões medidas: o P99 é 1.452 nas FAQs e 1.464 no TARF, dentro da faixa boa, e são 14 documentos no
+teto. Mas **o A/B de retrieval deve incluir um N mais baixo**: pelos 2,17, o teto que de fato entrega
+as ~1.500 tokens pretendidas é de **~3.300 caracteres**.
 
-Ajustei dois comentários do `embed.rs` que prometiam o aviso item a item que deixou de existir — são
-meus, criados pela mudança.
+**Decisão sua, executada: o `conta_tokens` foi removido, e o número ficou.** Os 2,17 chars/token e o
+limiar de ~17.800 caracteres estão agora no doc comment do `TETO_TEXT_TO_EMBED`, que é onde a decisão
+mora — junto com a instrução de dividir por 2,17 e não por 3,9 para mirar um comprimento em tokens.
+Saíram o método e o teste `#[ignore]` que o exercia; ficou o resultado, no lugar onde alguém tropeça
+nele antes de mexer no teto.
+
+Ajustei também dois comentários do `embed.rs` que prometiam o aviso item a item que deixou de existir
+— são meus, criados pela mudança.
 
 ---
 
@@ -140,12 +159,11 @@ proteção fazendo o trabalho dela. A ordem segura é: rodar as 27, e só então
 **A previsão do dial não era previsão de pico**, e o relatório da Fase 0 dizia isso, mas a tabela
 convidava à leitura errada. Registrado aqui com os dois números lado a lado.
 
-**A nota do FATIA no `RELATORIO-MEMORIA-UPDATE.md` foi corrigida com os números finais.** Ela tinha
-sido escrita com o pico de 3,1 GiB da corrida *em andamento*; o final foi 3.531 MiB, e o resíduo sem
-dono subiu de ~1,5 para ~1,9 GiB. Um dos dois argumentos que impediam fechar a conta ficou mais
-forte, não mais fraco: o `rs-tarf` **com** teto custa **mais** que o `sp-pareceres` **sem** teto
-(2.440 contra 2.057 MiB de Δ), embora tenha o texto mais longo bem menor — se o maior texto mandasse
-sozinho, a ordem seria a inversa.
+**A nota do FATIA no `RELATORIO-MEMORIA-UPDATE.md` foi reescrita, e mudou de sinal.** Ela tinha sido
+escrita com o pico de 3,1 GiB da corrida *em andamento* e apostava que o `FATIA` viraria o maior
+termo; com os tokens contados, a fórmula que sustentava a aposta está **refutada** — ver a correção
+no §1. A nota agora registra a tensão, o mecanismo confirmado do termo quadrático, e o pipeline de
+pack como candidato mais barato para o resíduo.
 
 **Nada do "o que NÃO fazer" foi tocado:** `EMBED_MAX_TOKENS`, `batch_size`, `FATIA` e
 `dedup_por_slug` estão como estavam, e não há chunking.
