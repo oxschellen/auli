@@ -153,6 +153,50 @@ por caixa alta.
 
 ---
 
+## 4.1 — O viés do gold set, e por que ele não é o que parece
+
+**O gold set é quase inteiramente moderno: 99,7%.** Ele existe onde há nome real, e nome real só
+existe depois de 2016 — então o corte temporal da §2 se propaga direto para cá:
+
+| era | documentos | entidades |
+|---|---:|---:|
+| ≤2015 | **23** | **25** |
+| ≥2016 | 7.099 | 9.180 |
+
+Vinte e três documentos e vinte e cinco entidades em onze anos de acervo. Não é 80/20: é 99,7/0,3.
+
+**Primeira consequência — o dicionário minerado reflete nomenclatura recente**, e isso vale para os
+247 termos de segmento e para qualquer lista de sobrenomes que saia daqui. Razão social muda de moda:
+`EIRELI` só existe desde 2011 e foi extinta em 2021, `MEI` é de 2008, e formas antigas
+(`Cia.`, `S/A` por extenso) estão sub-representadas por construção. Quem usar estes termos para
+reconhecer texto **antigo** está usando um dicionário calibrado noutro regime.
+
+**Segunda consequência — mas aqui o susto é menor do que parece, e a distinção importa: era não é
+layout.** A transição de layout (valor na mesma linha → valor após quebra) e o fim do saneamento
+acontecem por volta do mesmo ano, mas não são a mesma fronteira. O layout antigo **sobreviveu à
+virada do saneamento**, e é isso que salva a cobertura:
+
+| ano | documentos do gold set com o layout antigo |
+|---|---:|
+| 2005–2015 | 20 |
+| **2016** | **771** |
+| **2017** | **523** |
+| **2018** | **397** |
+| 2019 | 180 |
+| 2020–2021 | 3 |
+| **total** | **1.894** |
+
+**A extração no layout antigo está testada em 1.894 documentos — 26,6% do gold set —, não em 20.**
+Os anos de 2016 a 2019 publicavam no formato velho e já nomeavam as partes, e é essa sobreposição de
+quatro anos que exercita o ramo "valor na mesma linha" com rótulo para conferir.
+
+**O que fica de fato sem teste é a ERA antiga, não o layout dela:** convenções de nomenclatura,
+vocabulário de cabeçalho e variações de OCR anteriores a 2016 são conferidas contra **25 entidades**.
+Para extração, isso é pouco mas suficiente, porque o mecanismo é o mesmo. Para **vocabulário**, é
+insuficiente, e é a primeira consequência acima.
+
+---
+
 ## 5 — (e) Os dois dicionários
 
 **Termos de segmento — 247 termos** (contra ~120 curados à mão na Fase 6), minerados só na metade 0
@@ -165,6 +209,9 @@ de ramo; nome próprio aparece em poucos. Topo: `ltda.` (1.008 nomes distintos),
 são termos de segmento. O critério de frequência não distingue "palavra comum em razão social" de
 "termo que indica ramo" — a curadoria continua necessária, só que sobre 247 candidatos ordenados em
 vez de sobre o vazio.
+
+**E vem com data de validade:** 99,7% dos nomes que o alimentaram são de 2016 em diante (§4.1). O
+dicionário descreve a nomenclatura corrente, não a histórica.
 
 **Stop-list do domínio — 32 entradas**, semeada com `FAZENDA ESTADUAL` e `AS MESMAS` (as duas
 armadilhas mais frequentes: multi-token, capitalizadas, em posição rotulada, milhares de ocorrências,
