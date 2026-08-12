@@ -10,8 +10,9 @@
 //! Embedding strategy: we embed a *key* — não o documento inteiro —, mas a key deixou de ser
 //! sempre curta: desde a TAREFA-FAQ-PR a das FAQs carrega a RESPOSTA junto (assunto + `P:` + `R:`).
 //! Por isso o `max_length` é o teto do próprio modelo ([`EMBED_MAX_TOKENS`]), e não um valor
-//! dimensionado à key: cortar por baixo dos panos é o que não pode acontecer. Quem estoura o teto é
-//! detectável por [`Embedder::conta_tokens`] — o `update` avisa, item a item.
+//! dimensionado à key: cortar por baixo dos panos é o que não pode acontecer. Desde a TAREFA-TETO
+//! ninguém chega perto dele: a key é cortada em `TETO_TEXT_TO_EMBED` caracteres antes de chegar
+//! aqui, e a mais longa das 25.381 do `rs` conta 2.769 tokens.
 
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -25,9 +26,10 @@ use crate::error::{Error, Result};
 pub const EMBED_DIM: usize = 1024;
 
 /// Teto de tokens do BGE-M3 — e o `max_length` com que o encoder é construído. Texto acima disto é
-/// truncado PELO TOKENIZER (o excedente não chega ao modelo): é o comportamento aceito, com aviso no
-/// `update`, não um erro. Era 512 até a TAREFA-FAQ-PR, quando a key das FAQs passou a incluir a
-/// resposta — com 512 a maioria das respostas seria cortada em silêncio.
+/// truncado PELO TOKENIZER (o excedente não chega ao modelo). Era 512 até a TAREFA-FAQ-PR, quando a
+/// key das FAQs passou a incluir a resposta — com 512 a maioria das respostas seria cortada em
+/// silêncio. Desde a TAREFA-TETO este caminho é inalcançável por construção: o corte em caracteres
+/// acontece antes, e o teto que vale na prática é o `TETO_TEXT_TO_EMBED`, não este.
 pub const EMBED_MAX_TOKENS: usize = 8192;
 
 /// Quantos textos vão por chamada ao `fastembed` em [`Embedder::embed_dense`]. **Teto de memória,

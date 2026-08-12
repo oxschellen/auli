@@ -61,7 +61,17 @@ pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 /// **Os VETORES não mudam neste bump.** Nenhuma fórmula de `text_to_embed` foi tocada — o que mudou
 /// é só o que viaja ao lado do vetor. O bump existe porque pack e servidor mudam em lockstep, não
 /// porque o espaço vetorial mudou; a re-ingestão é obrigatória do mesmo jeito.
-pub const STRATEGY_VERSION: u32 = 2;
+///
+/// **3 (TAREFA-TETO, ago/2026) — a key ganhou teto de 6.000 caracteres**
+/// (`auli_contract::TETO_TEXT_TO_EMBED`), cortando pelo fim no compose único. Aqui os VETORES mudam
+/// de verdade, e só os dos documentos cortados: 1,8% do TARF e 0,7% das FAQs; nenhum parecer.
+///
+/// O motivo é **densidade**, não memória: a medição (`RELATORIO-FASE0-TETO.md`) mostrou cosseno
+/// 0,978 entre o vetor do documento inteiro e o dos seus primeiros 6.000 caracteres na faixa de
+/// 6–8 mil, ou seja, a cauda quase não move o vetor e não compra representação. A queda de memória
+/// — pico de regeneração de 17,7 GiB para ~2 — é consequência, porque o custo é quadrático no maior
+/// texto da coleção.
+pub const STRATEGY_VERSION: u32 = 3;
 
 /// Versão do **FORMATO do arquivo de pack** — deliberadamente separada do [`STRATEGY_VERSION`]
 /// (D-INC-7). A fronteira entre os dois é o que impede um reembed desnecessário:
