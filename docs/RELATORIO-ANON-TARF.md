@@ -243,3 +243,58 @@ Não implementei nada além do programa, e estas são recomendações, não deci
    que a §2 deste relatório torna mais urgente, porque o fluxo novo é 100% não saneado.
 3. **A lacuna 5 tem número** (1.800 de 9.296) e a fonte de sobrenomes que a Fase 5 precisava está
    nos 1.800 — mas nada disso adianta enquanto o porteiro de forma barrar o caminho antes.
+
+---
+
+## 11 — Duas medições posteriores (12/08), a pedido do Fable
+
+### 11.1 O defeito do `credit_card_luhn_v1` aparece **duas vezes**, em corpora independentes
+
+O mesmo programa rodou sobre os **19.780 pareceres** das quatro entidades (`rs`, `sc`, `pr`, `sp`),
+montados numa árvore separada: **16 falhas de round-trip, todas `CREDIT_CARD`**, e com assinatura
+diferente da do TARF — tabelas CEST/NCM, do tipo `20.054.00 8214.10.00 Espátulas`. **Códigos fiscais
+pontuados passam no Luhn.** Duas famílias de documento, dois padrões de texto, o mesmo defeito.
+
+**Qual é exatamente o defeito, já que a pergunta se repete:** não é falso positivo, nem falso
+negativo, nem pânico. É `span` e `text` discordarem, e o efeito é **perda silenciosa de um
+caractere** na restauração — o valor volta menor que o vão que ocupava. Não estoura, não avisa, e o
+texto restaurado passa por íntegro.
+
+A limitação de projeto é outra coisa, e convive: o Luhn valida **qualquer** corrida de 13–19 dígitos.
+Daí as 78 detecções de cartão de crédito num acervo de ICMS. **Esta segunda parte nos afeta em
+produção** — uma pergunta com número de processo pode virar `[CREDIT_CARD_1]` e o número não chega ao
+LLM. É o que justifica um contorno local, declarado como temporário e amarrado ao issue upstream.
+
+**Os números não reconciliam com a §5.6 do `auli-anon_pendencias`, e fica registrado assim.** Ela
+traz `CREDIT_CARD 1×`, `URL 3447×`, `IP_ADDRESS 58×`; este scan dá **43**, **2.953** e **212**. URL
+menor e IP maior descarta a hipótese de subconjunto simples. A explicação mais provável é que aquela
+varredura mediu a **key** ou o payload do pack, e não o `## corpo` — a key dos pareceres é
+`numero + assunto + resumo`, que **não inclui o corpo**, e é no corpo que as tabelas CEST vivem. Não
+verifiquei; registro como **não reconciliado** em vez de escolher a explicação menos ruim.
+
+### 11.2 A exposição cresce em volume, não só em proporção
+
+A §2 mostra que o saneamento acabou em 2016. Em números absolutos:
+
+| era | proporção exposta | expostos/ano | total no período |
+|---|---:|---:|---:|
+| 2005–2015 (com saneamento) | 9 a 20% | ~180 | **2.004** |
+| 2016–2026 (sem saneamento) | 97 a 100% | ~780 | **7.825** |
+
+**3,9× mais documentos expostos na era nova** — e o detalhe que fecha o argumento: **o acervo
+encolheu por ano** no mesmo período (1.916 acórdãos em 2013, 539 em 2024). A exposição quadruplicou
+enquanto a produção caía pela metade. Não é passivo histórico crescendo por acumulação; é **operação
+corrente inteiramente descoberta**.
+
+### 11.3 O escopo da correção: a unidade é o valor rotulado, não o bloco
+
+Registrado porque é onde a discussão parou. Tornar os reconhecedores insensíveis a caixa
+**globalmente** é onde os falsos positivos moram — texto institucional é feito de caixa alta
+(títulos, rótulos, siglas). O escopo natural é o bloco de identificação, onde a posição já diz que
+ali há uma parte.
+
+**Mas o bloco sozinho não basta:** a `FAZENDA ESTADUAL` está dentro dele, em caixa alta, em **14,6%**
+dos casos, e é a coisa que jamais pode ser mascarada. A posição diz que ali *há* uma parte; não diz
+*quais tokens* são a parte. A unidade correta é **o valor da linha rotulada, menos a Fazenda e os
+anafóricos** — que é exatamente o que o extrator deste programa faz, e a razão de o gold set ter
+9.296 entidades e não 22.454. **A stop-list continua necessária mesmo dentro do bloco.**
