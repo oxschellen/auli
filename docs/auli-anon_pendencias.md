@@ -270,6 +270,41 @@ A exposição hoje ainda é baixa: só **1 das 236** perguntas contém alguma da
 - Pendências menores do patch: `cargo fmt --check` reprova em 6 pontos (gate do CI; o commit cita
   clippy, não fmt) e nenhuma atualização de documentação, ao contrário das fases anteriores.
 
+#### 5.5.1 A fonte de sobrenomes que faltava existe — e é o TARF (2026-08-12)
+
+O bullet acima registra a mudança de maior alavanca como bloqueada por um insumo: *"exige uma fonte
+de sobrenomes — a do patch só tem prenomes"*. **Esse insumo passou a existir.**
+
+As linhas `RECORRENTE(S):` dos acórdãos do TARF, nos casos de pessoa física, trazem **nomes
+completos reais** — logo, milhares de sobrenomes brasileiros em uso, colhidos do próprio domínio em
+vez de importados de uma lista genérica. O programa de anonimização do TARF, portanto, não é só
+medição: **ele fabrica o artefato que a Fase 5 precisa para ser retomada.**
+
+E dá o segundo insumo de graça: o corpo dos acórdãos é a **bancada de falso positivo** que o gate
+obrigatório exige, em escala **7× maior** que a medição original — 22.476 documentos contra os
+~3.000 do acervo de pareceres. Os dois insumos que decidem a Fase 5 saem do mesmo trabalho.
+
+#### 5.5.2 Três achados menores da releitura do patch (2026-08-12)
+
+Nenhum é a razão da reprovação; são armadilhas para quem retomar.
+
+- **`debug_assert!(v.is_sorted())` deixa a busca binária sem verificação em release.** As duas
+  listas são consultadas por `binary_search`, cuja correção depende da ordenação — e a asserção
+  some no build de produção. Funciona hoje porque os arquivos são ASCII maiúsculo e a ordem do
+  Python coincide com a de bytes do Rust; é **coincidência não testada**, não invariante.
+- **`normaliza()` é a segunda implementação de um contrato que já existe no gerador Python**, sem
+  teste de concordância. O teste barato que fecha isso: exigir que cada linha de `prenomes.txt`
+  seja **ponto fixo** de `normaliza` — se as duas divergirem, alguma entrada deixa de ser
+  encontrável e ninguém percebe.
+- **`scan()` e `validate()` divergem.** O `scan` aceita o prenome em **qualquer posição** da
+  sequência (é como `Doutor João Silva` emite `João Silva`); o `validate` exige que o prenome seja
+  o **primeiro** token. Um candidato emitido pelo `scan` pode ser recusado pelo `validate`.
+
+**Detalhe de implementação para a guarda de topônimo por contenção** (primeiro bullet da §5.5): no
+ponto do `scan` em que a guarda falha, a sequência inteira ainda está em mão como `m.as_str()`.
+São duas mudanças, não uma — o **texto** avaliado (a sequência, não o candidato recortado) e a
+**comparação** (contenção, não a igualdade exata do `binary_search`).
+
 ### 5.6 Achado lateral — os reconhecedores nativos em texto longo
 
 Na varredura do acervo apareceram também `URL` 3447×, `IP_ADDRESS` 58× e `CREDIT_CARD` 1× — todos
@@ -288,6 +323,26 @@ nome em texto livre não distingue `Aliomar Baleeiro` — doutrinador citado, qu
 — do nome do consulente, que **deve** sair. Os dois são nomes de pessoa; o que os separa não é a
 forma, é **onde estão no documento**. Estrutura resolve o que a heurística lexical não resolve: em
 vez de perguntar "isto parece nome?", passa a perguntar "isto está no bloco de identificação?".
+
+> **Refinamento (2026-08-12) — o NER resolveria a maior parte dos 397, e mesmo assim o argumento
+> acima fica mais forte, não mais fraco.**
+>
+> Uma versão anterior deste raciocínio dizia que um NER falharia "pelo mesmo motivo" que a Fase 5.
+> **É grosseiro demais, e a tabela da §5.2 refuta.** Olhando os falsos positivos um a um —
+> `Franca de Manaus`, `Coleta de Carga`, `Marinha Mercante`, `Vida Gerador de Benefício Livre`,
+> `Laudo Médico`, `Não Incidência` —, **nenhum é nome de pessoa**. Um modelo de NER não chamaria
+> "Zona Franca" de pessoa: ele provavelmente elimina ~89% dos 397.
+>
+> **O que sobra, porém, é pior.** O único falso positivo que é de fato nome de pessoa é o
+> `Aliomar Baleeiro`, 44× — e um NER o detecta com **mais** confiança, não menos. Como o gate é
+> falso positivo **zero**, o NER troca 397 detecções erradas por ~44 detecções **corretas e
+> indesejadas**: ele acerta que é nome de pessoa, e é exatamente por acertar que mascara o
+> doutrinador citado.
+>
+> É aí que o diagnóstico forma × posição morde inteiro. Contra o ruído lexical, o NER ajuda muito;
+> contra o caso que decide o gate, ele não tem como ajudar, porque a informação que separa
+> doutrinador de parte **não está no nome** — está em onde o nome aparece. Só a anonimização
+> estrutural resolve, e nem reconhecedor lexical nem modelo substituem a linha rotulada.
 
 Muda também o **ponto do pipeline**: tudo no `auli-anon` hoje roda sobre a **pergunta**, em
 `auli-cli`. Anonimizar documento é na **ingestão** (scraper/`auli-collections`), antes de o texto
