@@ -592,6 +592,14 @@ fn format_log_record(stamp: &str, reg: &RegistroConsulta) -> String {
         tempos,
     } = reg;
     let tempos = tempos.linha();
+    // A IDENTIDADE DO ESPAÇO VETORIAL em que estas distâncias foram medidas. Sem ela, uma mudança
+    // de fórmula (bump de `STRATEGY_VERSION`) exigia LEMBRAR de arquivar o log — e esquecer não dá
+    // erro, dá análise silenciosamente errada, misturando distâncias de dois espaços. É a mesma
+    // classe de defeito que o `docs_hash` fecha no boot. Com o carimbo, separar eras é `grep`.
+    //
+    // O trio vem do `manifest::identity()`, a MESMA fonte que o manifesto usa para decidir se pack
+    // e servidor combinam — três formulações de uma identidade só aparecem quando duas divergem.
+    let id = auli_core::manifest::identity();
     let regua = "=".repeat(64);
     let secao = |titulo: &str| -> String {
         let base = format!("----- {titulo} ");
@@ -620,6 +628,7 @@ fn format_log_record(stamp: &str, reg: &RegistroConsulta) -> String {
         "{regua}\n\
          CONSULTA · {stamp} · entidade: {entidade} · tipo: {tipo}\n\
          TEMPOS · {tempos}\n\
+         EMBED · modelo: {} · dim: {} · strategy: {}\n\
          {regua}\n\n\
          {}\n{original}\n\n\
          {}\n{sanitizada}\n\n\
@@ -627,6 +636,9 @@ fn format_log_record(stamp: &str, reg: &RegistroConsulta) -> String {
          {aderencia}\
          {}\n{rag}\n\
          {regua}",
+        id.embed_model_id,
+        id.embed_dim,
+        id.strategy_version,
         secao("PERGUNTA (ORIGINAL)"),
         secao("PERGUNTA (ANONIMIZADA)"),
         secao("CONTEXTO RAG (documentos recuperados)"),
@@ -854,6 +866,53 @@ mod tests {
             t.linha(),
             "embed: 1 ms · retrieve+montagem: 2 ms · llm: 3 ms · total: 6 ms"
         );
+    }
+
+    /// O log carrega a identidade do espaço vetorial que produziu aquelas distâncias, para que
+    /// separar eras seja `grep` e não memória de quem arquivou a pasta na hora certa.
+    #[test]
+    fn o_log_carimba_a_identidade_do_espaco_vetorial() {
+        let rec = format_log_record("2026-08-11 10:00:00", &registro_minimo());
+        let id = auli_core::manifest::identity();
+
+        assert!(
+            rec.contains(&format!(
+                "EMBED · modelo: {} · dim: {} · strategy: {}",
+                id.embed_model_id, id.embed_dim, id.strategy_version
+            )),
+            "carimbo ausente ou fora do formato: {rec}"
+        );
+        // Contrato de grep, como o da linha TEMPOS: `grep -l "strategy: N" logs/*.txt` é o filtro
+        // que substitui mover pasta.
+        assert!(rec.contains(&format!("strategy: {}", id.strategy_version)));
+
+        // O carimbo entra no CABEÇALHO, antes da régua — não no meio das seções.
+        let i_embed = rec.find("EMBED ·").expect("linha EMBED");
+        let i_regua = rec[i_embed..].find("====").map(|d| i_embed + d);
+        let i_secao = rec.find("-----").expect("primeira seção");
+        assert!(
+            i_regua.is_some_and(|r| r < i_secao),
+            "EMBED deve preceder a régua e as seções"
+        );
+    }
+
+    /// Um registro mínimo, para os testes que olham só o cabeçalho.
+    fn registro_minimo() -> RegistroConsulta<'static> {
+        RegistroConsulta {
+            entidade: "rs",
+            tipo: "pareceres",
+            original: "p",
+            sanitizada: "p",
+            answer: Some("r"),
+            aderencia: "",
+            rag: "",
+            tempos: TemposConsulta {
+                embed_ms: 1,
+                retrieve_ms: 1,
+                llm_ms: 1,
+                total_ms: 3,
+            },
+        }
     }
 
     #[test]
