@@ -48,28 +48,51 @@ crédito em acórdão de ICMS.
 
 A apuração prévia disse "56% do TARF vem saneado". Está certo, e é **a leitura errada do número**. A
 tabulação por ano — que você pediu no refinamento 6, e que eu esperava que apenas enfraquecesse um
-receio — mostra outra coisa:
+receio — mostra outra coisa.
 
-| ano | saneados | ano | saneados |
-|---|---:|---|---:|
-| 2005 | 84,6% | 2013 | 80,1% |
-| 2006 | 88,5% | 2014 | 87,2% |
-| 2007 | 90,6% | 2015 | **90,9%** |
-| 2008 | 89,8% | **2016** | **3,3%** |
-| 2009 | 92,2% | 2017 | **0,0%** |
-| 2010 | 80,3% | 2018–2026 | **0,0%** |
-| 2011 | 86,9% | | |
-| 2012 | 84,2% | | |
+> **Republicada em 12/08, depois da conferência do Fable.** A primeira versão desta tabela tinha uma
+> coluna "expostos" que era o complemento de "redigido", e portanto **somava os acórdãos cujo
+> `RECORRENTE` é só `FAZENDA ESTADUAL`** — que não têm PII a proteger. A tabela abaixo separa os três
+> estados, e a correção **fortalece o achado em duas ordens de grandeza**: a razão entre as eras não
+> é 3,9×, é ~355×.
 
-**Não é uma taxa: é uma prática que acabou.** Até 2015 o TARF publicava com o nome substituído por
-`(...)` em ~87% dos casos; a partir de 2017, **nenhum acórdão é saneado**. Os 56% são o peso da era
-antiga no acervo, não uma propriedade do que a fonte publica hoje.
+| ano | redigido na fonte | só Fazenda/anafórico | **com nome real** |
+|---|---:|---:|---:|
+| 2005 | 763 | 137 | **2** |
+| 2006 | 862 | 111 | **1** |
+| 2007 | 900 | 93 | **0** |
+| 2008 | 1.124 | 126 | **2** |
+| 2009 | 1.399 | 117 | **1** |
+| 2010 | 1.170 | 285 | **2** |
+| 2011 | 1.356 | 203 | **1** |
+| 2012 | 1.600 | 296 | **5** |
+| 2013 | 1.535 | 379 | **2** |
+| 2014 | 1.141 | 164 | **3** |
+| 2015 | 742 | 73 | **1** |
+| **2016** | **30** | **78** | **788** |
+| 2017 | 0 | 58 | **557** |
+| 2018 | 0 | 48 | **606** |
+| 2019 | 0 | 60 | **959** |
+| 2020 | 0 | 92 | **828** |
+| 2021 | 0 | 89 | **691** |
+| 2022 | 0 | 98 | **725** |
+| 2023 | 0 | 69 | **748** |
+| 2024 | 0 | 67 | **472** |
+| 2025 | 0 | 62 | **619** |
+| 2026 | 0 | 5 | **106** |
+| **total** | **12.622** | **2.710** | **7.122** |
+
+**Não é uma taxa: é um interruptor.** Em onze anos, de 2005 a 2015, o TARF publicou **20 acórdãos**
+com o nome da parte — 0,1% a 0,3% ao ano. O que não vinha com `(...)` vinha com `FAZENDA ESTADUAL`
+sozinha no polo recorrente. A partir de 2016 a proporção salta para 88–95% e **nunca mais desce**:
+**7.099 acórdãos** com nome real em onze anos.
+
+**A razão entre as eras é ~355×**, e não os 3,9× que eu havia reportado antes de separar o bucket da
+Fazenda. A leitura antiga descrevia uma piora; a correta descreve uma **inversão de regime**.
 
 **Consequência que reordena a §6 do `auli-anon_pendencias`:** a exposição prospectiva é **100%**, não
-44%. Cada acórdão novo nomeia as partes, e o acervo cresce só nesse regime. O trabalho de
-anonimização estrutural deixa de ser sobre um passivo de 44% e passa a ser sobre todo o fluxo futuro.
-
----
+44%. E a exposição real acumulada é de **7.122 documentos**, não 9.832 — a diferença de 27% é
+exatamente a Fazenda, que não é contribuinte. **É o total que alguém vai citar, e é este.**
 
 ## 3 — (b) Recall por coorte: **o reconhecedor não vê a forma em que o TARF escreve**
 
@@ -77,9 +100,9 @@ Medido sobre 22.454 valores de `RECORRENTE`, com as duas taxas separadas:
 
 | coorte | posição | recall |
 |---|---|---:|
-| pessoa jurídica | linha rotulada | 336/7.505 = **4,5%** |
+| pessoa jurídica | linha rotulada | 336/7.504 = **4,5%** |
 | pessoa jurídica | texto livre | 189/1.817 = **10,4%** |
-| sem sufixo | linha rotulada | 27/1.800 = **1,5%** |
+| sem sufixo | linha rotulada | 27/1.733 = **1,6%** |
 | sem sufixo | texto livre | 124/1.336 = **9,3%** |
 
 **A causa não é calibração — é incompatibilidade de forma, e ela é medível.** O
@@ -111,18 +134,18 @@ certa.
 **Detecções fundidas** (uma cobrindo duas entidades do mesmo rótulo): **13**. A regra aplicada, que a
 TAREFA pedia explícita: cada entidade esperada conta como coberta se **alguma** detecção intersecta
 sua ocorrência; uma detecção que cobre duas conta para as duas **e** é somada à parte. Com 13 casos
-em 9.296 entidades, a escolha da regra não move nenhum número.
+em 9.237 entidades, a escolha da regra não move nenhum número.
 
 ---
 
 ## 4 — (c) O tamanho da lacuna 5
 
-Dos 9.296 nomes reais extraídos das linhas rotuladas:
+Dos 9.237 nomes reais extraídos das linhas rotuladas:
 
 | | n | % |
 |---|---:|---:|
-| com sufixo societário ou termo de segmento | 7.505 | 80,7% |
-| **sem nenhum dos dois** — a lacuna 5 | **1.800** | **19,3%** |
+| com sufixo societário ou termo de segmento | 7.504 | 81,2% |
+| **sem nenhum dos dois** — a lacuna 5 | **1.733** | **18,8%** |
 
 É a primeira medição direta de uma lacuna que era "nomeada e assumida". E ela é **maior** do que a
 tabela sugere isoladamente, porque a §3 mostra que a Fase 4 não pega nem os 80,7% que deveria pegar,
@@ -241,8 +264,8 @@ Não implementei nada além do programa, e estas são recomendações, não deci
    (`titlecase → comeca_maiuscula` inundaria de FP: em caixa alta, *toda* palavra passa). Ou o
    reconhecedor ganha um modo específico para blocos em caixa alta, ou a resposta é estrutural — o
    que a §2 deste relatório torna mais urgente, porque o fluxo novo é 100% não saneado.
-3. **A lacuna 5 tem número** (1.800 de 9.296) e a fonte de sobrenomes que a Fase 5 precisava está
-   nos 1.800 — mas nada disso adianta enquanto o porteiro de forma barrar o caminho antes.
+3. **A lacuna 5 tem número** (1.733 de 9.237) e a fonte de sobrenomes que a Fase 5 precisava está
+   nos 1.733 — mas nada disso adianta enquanto o porteiro de forma barrar o caminho antes.
 
 ---
 
@@ -292,17 +315,24 @@ registrado como aberto, sem escolher a explicação menos ruim.
 
 ### 11.2 A exposição cresce em volume, não só em proporção
 
-A §2 mostra que o saneamento acabou em 2016. Em números absolutos:
+> **Republicado em 12/08 pela conferência do Fable.** A primeira versão desta seção contava como
+> "exposto" tudo o que não era `(...)`, e portanto somava os acórdãos cujo `RECORRENTE` é só
+> `FAZENDA ESTADUAL` — que não têm PII a proteger. Com o bucket separado (§2), os números mudam de
+> escala, **para pior**.
 
-| era | proporção exposta | expostos/ano | total no período |
-|---|---:|---:|---:|
-| 2005–2015 (com saneamento) | 9 a 20% | ~180 | **2.004** |
-| 2016–2026 (sem saneamento) | 97 a 100% | ~780 | **7.825** |
+| era | com nome real/ano | total do período |
+|---|---:|---:|
+| 2005–2015 | ~2 | **20** |
+| 2016–2026 | ~645 | **7.099** |
 
-**3,9× mais documentos expostos na era nova** — e o detalhe que fecha o argumento: **o acervo
-encolheu por ano** no mesmo período (1.916 acórdãos em 2013, 539 em 2024). A exposição quadruplicou
-enquanto a produção caía pela metade. Não é passivo histórico crescendo por acumulação; é **operação
-corrente inteiramente descoberta**.
+**Vinte acórdãos com nome de parte em onze anos, contra 7.099 nos onze seguintes: ~355×.** O detalhe
+que fecha o argumento continua valendo, e agora com mais força: **o acervo encolheu por ano** no mesmo
+período (1.916 acórdãos em 2013, 539 em 2024). A exposição multiplicou por 355 enquanto a produção
+caía pela metade.
+
+Não é passivo histórico crescendo por acumulação, e a era antiga **não estava parcialmente
+protegida** — estava protegida quase por inteiro. É **inversão de regime**, e o que veio depois é
+operação corrente inteiramente descoberta.
 
 ### 11.3 O escopo da correção: a unidade é o valor rotulado, não o bloco
 
@@ -315,4 +345,4 @@ ali há uma parte.
 dos casos, e é a coisa que jamais pode ser mascarada. A posição diz que ali *há* uma parte; não diz
 *quais tokens* são a parte. A unidade correta é **o valor da linha rotulada, menos a Fazenda e os
 anafóricos** — que é exatamente o que o extrator deste programa faz, e a razão de o gold set ter
-9.296 entidades e não 22.454. **A stop-list continua necessária mesmo dentro do bloco.**
+9.237 entidades e não 22.454. **A stop-list continua necessária mesmo dentro do bloco.**

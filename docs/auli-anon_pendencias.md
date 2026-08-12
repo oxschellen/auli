@@ -390,25 +390,29 @@ há o que anonimizar.**
 >
 > **Segunda correção (12/08, depois da execução do `anon-tarf`) — os 56% não são uma taxa, são uma
 > prática que acabou.** A tabela acima está certa e a leitura que eu fiz dela estava errada: tratei
-> saneamento como propriedade estática do acervo. A tabulação por ano diz outra coisa.
+> saneamento como propriedade estática do acervo. A tabulação por ano diz outra coisa — e a
+> classificação precisa de **três** estados, não dois, porque um acórdão cujo `RECORRENTE` é só
+> `FAZENDA ESTADUAL` não tem PII a proteger:
 >
-> | era | proporção exposta | expostos/ano | total do período |
+> | era | redigido `(...)` | só Fazenda/anafórico | **com nome real** |
 > |---|---:|---:|---:|
-> | 2005–2015 | 9 a 20% | ~180 | 2.004 |
-> | **2016** | **96,7%** | — | 866 |
-> | **2017–2026** | **100%** | ~780 | 6.959 |
+> | 2005–2015 | 12.592 | 1.984 | **20** |
+> | 2016–2026 | 30 | 726 | **7.099** |
+> | **total** | **12.622** | **2.710** | **7.122** |
 >
-> Até 2015 o TARF publicava com o nome substituído em ~87% dos casos. Em 2016 a prática colapsa, e
-> **de 2017 em diante nenhum acórdão é saneado** — zero, sem exceção, em dez anos. Os 56% são o peso
-> da era antiga no acervo.
+> **Em onze anos, de 2005 a 2015, o TARF publicou 20 acórdãos com o nome da parte.** O que não vinha
+> com `(...)` vinha com a Fazenda sozinha. A partir de 2016 a proporção salta para 88–95% e nunca
+> mais desce: **7.099 acórdãos** com nome real. A razão entre as eras é **~355×**.
 >
-> **Duas consequências que mudam a natureza do problema:**
+> **Três consequências que mudam a natureza do problema:**
 >
-> - **a exposição prospectiva é 100%**, não 44%. Todo acórdão novo nomeia as partes, e o acervo só
->   cresce nesse regime;
-> - **ela cresce em volume, não só em proporção**: 3,9× mais documentos expostos na era nova
->   (2.004 → 7.825) **enquanto o acervo encolhia por ano** (1.916 acórdãos em 2013 contra 539 em
->   2024). A exposição quadruplicou com a produção caindo pela metade.
+> - **a exposição prospectiva é 100%**: todo acórdão novo nomeia as partes, e o acervo só cresce
+>   nesse regime;
+> - **a era antiga não estava parcialmente protegida — estava protegida quase por inteiro.** Não é
+>   piora gradual, é inversão de regime;
+> - **o total acumulado de exposição real é 7.122 documentos**, não os 9.832 que sairiam de contar
+>   como exposto tudo o que não é `(...)`. A diferença de 27% é a Fazenda, e é o total que alguém vai
+>   citar.
 >
 > Isto deixa de ser passivo histórico e passa a ser **operação corrente descoberta** — o que é a
 > diferença entre arquivar e agir. Números e método em `RELATORIO-ANON-TARF.md` §2 e §11.2.
