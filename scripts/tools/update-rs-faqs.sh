@@ -14,6 +14,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$(readlink -f "$0")")/../.." && pwd)"   # raiz do repo
 SERVER="$ROOT/auli-server"
 FAQS_CACHE="$ROOT/data/rs/raw/cache/faqs"
+SNAPSHOT="$ROOT/data/rs/rs-faqs-snapshot.json"
 
 FRESH=1
 SERVE=1
@@ -24,6 +25,11 @@ for arg in "$@"; do
     *) echo "❌ argumento desconhecido: $arg"; exit 1 ;;
   esac
 done
+
+# Quantas FAQs o snapshot atual tem — lido ANTES de qualquer coisa ser sobrescrita. É a linha de
+# base do guard do passo 3; sem snapshot anterior (primeira coleta) não há com o que comparar.
+ANTES=0
+[ -f "$SNAPSHOT" ] && ANTES="$(jq '.coleta.items | length' "$SNAPSHOT")"
 
 # 1. Cache fresco — apaga só o cache de faqs (serviços/pareceres ficam intactos).
 if [ "$FRESH" -eq 1 ]; then
@@ -42,7 +48,24 @@ fi
 echo "🕸️  scrapeando faqs do RS…"
 ( cd "$SERVER" && cargo run --release -p auli-scraper-rs -- faqs )
 
-# 3. Binários release que os passos seguintes exigem (auli + auli-collections).
+# 3. Guard de completude. O walker NÃO falha quando uma página cai: erro ao caminhar vira
+#    `eprintln!` e o laço segue (`faqs/mod.rs`, `Error walking …`), e falha no AJAX devolve o nó
+#    VAZIO. Como o portal é uma árvore de menus, uma página de menu que caia leva junto a subárvore
+#    inteira — dezenas de FAQs somem de uma vez. Daí em diante tudo é derivação fiel: a árvore
+#    encolhe, o pack encolhe, o boot valida e o servidor sobe servindo menos do que existe. O
+#    `set -e` não pega nada disso, então o portão é aqui.
+DEPOIS="$(jq '.coleta.items | length' "$SNAPSHOT")"
+echo "🔢 FAQs no snapshot: $DEPOIS (antes: $ANTES)"
+if [ "$ANTES" -gt 0 ] && [ "$DEPOIS" -lt "$ANTES" ]; then
+  echo "❌ o snapshot ENCOLHEU ($ANTES → $DEPOIS). FAQ some do acervo por duas razões — o portal"
+  echo "   tirou do ar, ou a coleta falhou —, e o snapshot não distingue as duas."
+  echo "   Procure 'Error walking' / 'Error fetching body' no log acima e rode de novo (o cache"
+  echo "   agora está quente: só o que faltou volta à rede). Se a queda for real, siga com"
+  echo "   --keep-cache."
+  exit 1
+fi
+
+# 4. Binários release que os passos seguintes exigem (auli + auli-collections).
 echo "🔧 compilando binários release…"
 ( cd "$SERVER" && cargo build --release -p auli-cli -p auli-collections )
 
@@ -52,7 +75,7 @@ echo "🔧 compilando binários release…"
 export AULI_BIN="$SERVER/target/release/auli"
 export AULI_COLLECTIONS_BIN="$SERVER/target/release/auli-collections"
 
-# 4. Deriva os artefatos do snapshot. Sem argumento, o `auli-collections <id>` refaz TODOS os
+# 5. Deriva os artefatos do snapshot. Sem argumento, o `auli-collections <id>` refaz TODOS os
 #    artefatos da entidade — a árvore `docs/faqs/*.md` (a FONTE que o `auli update` lê,
 #    TAREFA-FAQS-MD) e também os de serviços. É derivação pura e determinística, então refazer os de
 #    serviços não muda um byte; só não se surpreenda com as linhas de `rs-servicos*` no log.
@@ -61,18 +84,19 @@ export AULI_COLLECTIONS_BIN="$SERVER/target/release/auli-collections"
 echo "🌳 derivando artefatos do snapshot (árvore docs/faqs)…"
 ( cd "$SERVER" && "$AULI_COLLECTIONS_BIN" rs )
 
-# 5. Re-vetoriza os packs a partir da árvore recém-derivada (muda o docs_hash;
+# 6. Re-vetoriza os packs a partir da árvore recém-derivada (muda o docs_hash;
 #    o boot do servidor recusa subir até os packs baterem — daí ser obrigatório).
 #
-# ⏳ ATENÇÃO AO CUSTO. O `auli update` re-vetoriza a entidade INTEIRA, não só a coleção que mudou:
-# desde que a coleta do TARF fechou (09/08/2026, 22.476 acórdãos), atualizar as FAQs do RS custa
-# ~72 min e pico de ~42 GB de RAM — e ~99% disso é re-embeddar acórdãos que não mudaram. Antes do
-# TARF eram ~16 min. É o caso de uso que mais pede o update incremental (auli_pendencias.md §31).
+# O custo NÃO é mais o da entidade inteira. Até o PR #140 era: atualizar as FAQs re-embeddava os
+# 22.476 acórdãos do TARF que não tinham mudado, ~72 min e pico de ~42 GB de RAM. Com o update
+# incremental, `pareceres` e `tarf` reaproveitam o vetor de quem tem a mesma key, e sobram as
+# reescritas totais por doutrina (D-INC-8): `faqs` + `servicos`. O log imprime quantos vetores
+# reaproveitou — é a linha a conferir se a rodada parecer cara demais.
 echo "📦 re-vetorizando os packs do RS…"
-echo "   ⏳ a entidade inteira, não só as faqs: ~72 min, pico de ~42 GB de RAM."
+echo "   ⏳ ~2.500 vetores novos; a jurisprudência (22.848) é reaproveitada do pack anterior."
 "$ROOT/scripts/build-packs.sh" rs
 
-# 6. Sobe o servidor. `--no-build`: o passo 3 já compilou o mesmo binário no mesmo target.
+# 7. Sobe o servidor. `--no-build`: o passo 4 já compilou o mesmo binário no mesmo target.
 if [ "$SERVE" -eq 1 ]; then
   echo "🚀 subindo o servidor…"
   ( cd "$ROOT" && ./start_server.sh --no-build )
