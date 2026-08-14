@@ -193,7 +193,7 @@ pretendidos, o teto seria ~3.300.
 
 > **Correção (12/08):** este item dava a enumeração dos 23 como existente — *"estão enumerados por
 > `doc_path` como conjunto nomeado"*. **Não estavam**; o relatório da Fase 0 trazia a contagem e três
-> exemplos. A dívida era minha e foi paga: a lista está agora na **§6 do `RELATORIO-FASE0-TETO.md`**.
+> exemplos. A dívida era minha e foi paga: a lista está agora na **§6 do `RELATORIO-TETO.md`**.
 >
 > Ela traz um detalhe que muda o desenho do A/B: **quatro dos 23 têm comprimento idêntico** (`651` a
 > `654-19`, 26.987 chars) e um quinto quase — são acórdãos irmãos com a mesma fundamentação. Tratá-los

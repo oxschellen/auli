@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # build-packs.sh <entity> — vetoriza os pacotes de uma entidade a partir de data/<id>/docs/.
 #
-# `auli update` lê as ÁRVORES `data/<id>/docs/{servicos,faqs,pareceres,tarf}/*.md` — um `.md` por
-# documento —, embedda o campo `text_to_embed` de cada registro e escreve os packs em
-# data/<id>/packs/. Coleção sem árvore é pulada.
+# `auli update` lê as ÁRVORES `data/<id>/docs/{servicos,faqs,legislacao,pareceres,tarf}/*.md` — um
+# `.md` por documento (a de legislação tem uma subpasta por lei) —, embedda o campo `text_to_embed`
+# de cada registro e escreve os packs em data/<id>/packs/. Coleção sem árvore é pulada.
 #
-# Este script, ao final, também deriva de cada árvore de jurisprudência o `<id>-<colecao>-index.json`
+# Este script, ao final, também deriva de cada árvore com índice leve o `<id>-<colecao>-index.json`
 # que a tab do frontend consome (ver o bloco no fim do arquivo).
 # `notas` ainda não tem fonte struct — o `update` a encontra ausente e simplesmente a pula.
 #
@@ -58,7 +58,10 @@ echo "✅ packs de '$ID' em $DATA/packs"
 # 22.476), e nada no boot pega — o `docs_hash` cobre packs×árvore, não índice×árvore.
 COLLECTIONS="${AULI_COLLECTIONS_BIN:-$ROOT/auli-server/target/release/auli-collections}"
 [ -x "$COLLECTIONS" ] || { echo "❌ $COLLECTIONS não encontrado (AULI_COLLECTIONS_BIN aponta para algo que não existe?)"; exit 1; }
-for COLECAO in pareceres tarf; do
+# `legislacao` entra na mesma lista: o índice dela tem shape e ordenação próprios (D-LEG-11/12),
+# mas o subcomando é o mesmo e o motivo de estar aqui também — árvore mexida sem índice derivado
+# deixa a aba lendo o artefato velho, e nada no boot pega isso.
+for COLECAO in pareceres tarf legislacao; do
   [ -d "$DATA/docs/$COLECAO" ] || continue
   # O auli-collections resolve `data/` relativo ao CWD, daí o subshell em auli-server/.
   (cd "$ROOT/auli-server" && "$COLLECTIONS" "$ID" indice "$COLECAO")

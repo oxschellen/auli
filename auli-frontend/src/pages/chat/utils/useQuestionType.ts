@@ -4,12 +4,12 @@ import { hasCollection } from "../../../shared/entities";
 
 /**
  * O tipo de consulta enviado com a pergunta do chat: "1" = Serviços+FAQs (padrão), "2" = Pareceres,
- * "3" = Acórdãos TARF.
+ * "3" = Acórdãos TARF, "4" = Legislação.
  *
  * Os valores são **contrato com o backend** (`QueryType::from_code` no `rag.rs`) e não podem ser
  * reordenados: "2" é pareceres desde a primeira versão da tab do auditor.
  */
-export type QuestionType = "1" | "2" | "3";
+export type QuestionType = "1" | "2" | "3" | "4";
 
 const STORAGE_KEY = "auli.questionType";
 const DEFAULT_TYPE: QuestionType = "1";
@@ -26,6 +26,7 @@ const COLECAO_DO_TIPO: Record<QuestionType, Collection | null> = {
   "1": null,
   "2": "pareceres",
   "3": "tarf",
+  "4": "legislacao",
 };
 
 /** Os tipos que fazem sentido para esta entidade, na ordem de exibição. */
@@ -37,7 +38,7 @@ export function tiposDisponiveis(entity: Entity): QuestionType[] {
 }
 
 function isQuestionType(value: string | null): value is QuestionType {
-  return value === "1" || value === "2" || value === "3";
+  return value === "1" || value === "2" || value === "3" || value === "4";
 }
 
 /** Lê o tipo persistido (cai no padrão se ausente/desconhecido). */

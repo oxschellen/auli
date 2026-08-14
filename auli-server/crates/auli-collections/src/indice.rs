@@ -106,7 +106,7 @@ pub fn run(entity: &EntityConfig, colecao: Kind) -> Result<()> {
             // Inalcançável: `run` só é chamado com coleção de jurisprudência (a guarda está no
             // `main.rs`, que recusa qualquer `Kind` sem `exige_resumo`). O braço existe porque o
             // `match` é exaustivo, e é ele que vai apontar aqui se um dia isso mudar.
-            Kind::Servicos | Kind::Faqs => println!(
+            Kind::Servicos | Kind::Faqs | Kind::Legislacao => println!(
                 "⚠️  {} não é coleção de jurisprudência — o `## resumo` não se aplica.",
                 colecao
             ),
@@ -130,7 +130,7 @@ pub fn run(entity: &EntityConfig, colecao: Kind) -> Result<()> {
 ///
 /// Local, e não o `sinopse::docs_dir`, porque aquele é — corretamente — fixo em `pareceres`: o passo
 /// de sinopse só existe para a coleção que precisa de LLM.
-fn docs_dir(entity: &EntityConfig, colecao: Kind) -> Result<std::path::PathBuf> {
+pub(crate) fn docs_dir(entity: &EntityConfig, colecao: Kind) -> Result<std::path::PathBuf> {
     let base = Path::new(&entity.data_dir)
         .parent()
         .ok_or_else(|| format!("data_dir sem pai: {}", entity.data_dir))?;

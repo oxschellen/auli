@@ -66,7 +66,7 @@ pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
 /// (`auli_contract::TETO_TEXT_TO_EMBED`), cortando pelo fim no compose único. Aqui os VETORES mudam
 /// de verdade, e só os dos documentos cortados: 1,8% do TARF e 0,7% das FAQs; nenhum parecer.
 ///
-/// O motivo é **densidade**, não memória: a medição (`RELATORIO-FASE0-TETO.md`) mostrou cosseno
+/// O motivo é **densidade**, não memória: a medição (`RELATORIO-TETO.md`) mostrou cosseno
 /// 0,978 entre o vetor do documento inteiro e o dos seus primeiros 6.000 caracteres na faixa de
 /// 6–8 mil, ou seja, a cauda quase não move o vetor e não compra representação. A queda de memória
 /// — pico de regeneração de 17,7 GiB para ~2 — é consequência, porque o custo é quadrático no maior

@@ -6,6 +6,7 @@ const ROTULOS: Record<QuestionType, string> = {
   "1": "Serviços+FAQs",
   "2": "Pareceres",
   "3": "Acórdãos TARF",
+  "4": "Legislação",
 };
 
 interface SelectQuestionTypeProps {

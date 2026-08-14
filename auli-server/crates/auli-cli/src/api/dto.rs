@@ -10,8 +10,9 @@ pub struct Question {
     // Target entity (state) id. Missing/empty -> default entity ("rs").
     #[serde(default)]
     pub entity: Option<String>,
-    // Query type sent by the UI: 1 = Serviços+FAQs (default), 2 = Pareceres. Missing/unknown ->
-    // default (see `QueryType::from_code`). `type` is a Rust keyword, hence the rename.
+    // Query type sent by the UI: 1 = Serviços+FAQs (default), 2 = Pareceres, 3 = Acórdãos TARF,
+    // 4 = Legislação. Missing/unknown -> default (see `QueryType::from_code`). `type` is a Rust
+    // keyword, hence the rename.
     #[serde(default, rename = "type")]
     pub query_type: Option<u8>,
 }

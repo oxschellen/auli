@@ -42,9 +42,14 @@ copy_raw() {
 # `<id>-pareceres-index.json` (vem de raw/, derivado da árvore por `auli-collections <id> indice`).
 # O `.txt` continua em data/<id>/ref/ como fonte de bootstrap do `auli-collections <id> pareceres`,
 # mas não é mais servido — eram 176 MB de corpo integral em public/, 147 deles só do SP.
+#
+# Pelo mesmo motivo pula os `<id>-*-texto-vigente.md`: são os textos integrais das leis, insumo de
+# origem dos pares P/R de `docs/legislacao/` (a lei é pública, mas o corpo servido é o do par, e o
+# integral seriam centenas de KB mortos em cada deploy). O sufixo marca a família — virão CF, CTN e
+# Kandir. Ficam em ref/, não em docs/, porque a árvore docs/ é "um .md = uma unidade vetorizável".
 copy_ref() {
   local base; base="$(basename "$1")"
-  case "$base" in "$3-portal-pareceres.txt") return 1 ;; esac
+  case "$base" in "$3-portal-pareceres.txt"|"$3"-*-texto-vigente.md) return 1 ;; esac
   cp "$1" "$2/$base"
 }
 

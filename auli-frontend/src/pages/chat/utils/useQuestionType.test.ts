@@ -15,8 +15,8 @@ const entidade = (collections: Entity["collections"]): Entity => ({
   collections,
 });
 
-/** O acervo completo de hoje — o do RS, que é a única entidade com TARF. */
-const COMPLETA = entidade(["servicos", "faqs", "pareceres", "tarf"]);
+/** O acervo completo de hoje — o do RS, única entidade com TARF e com legislação. */
+const COMPLETA = entidade(["servicos", "faqs", "pareceres", "tarf", "legislacao"]);
 /** Só serviços: o caso de mg/rr, onde não há o que escolher. */
 const SO_SERVICOS = entidade(["servicos"]);
 
@@ -28,9 +28,11 @@ describe("tiposDisponiveis", () => {
   it("liga cada tipo à coleção do registry", () => {
     // A regra que impede a interface de oferecer um caminho que só pode voltar como
     // "não está disponível para esta entidade".
-    expect(tiposDisponiveis(COMPLETA)).toEqual(["1", "2", "3"]);
+    expect(tiposDisponiveis(COMPLETA)).toEqual(["1", "2", "3", "4"]);
     expect(tiposDisponiveis(entidade(["servicos", "pareceres"]))).toEqual(["1", "2"]);
     expect(tiposDisponiveis(SO_SERVICOS)).toEqual(["1"]);
+    // Legislação sem pareceres nem TARF: o seletor mostra só o padrão e ela.
+    expect(tiposDisponiveis(entidade(["servicos", "legislacao"]))).toEqual(["1", "4"]);
   });
 
   it("o tipo padrão existe mesmo sem coleção nenhuma", () => {
@@ -64,6 +66,21 @@ describe("useQuestionType", () => {
     act(() => result.current.updateQuestionType("3"));
     expect(result.current.questionType).toBe("3");
     expect(localStorage.getItem(STORAGE_KEY)).toBe("3");
+  });
+
+  it("aceita a legislação onde a entidade tem a coleção", () => {
+    const { result } = renderHook(() => useQuestionType(COMPLETA));
+    act(() => result.current.updateQuestionType("4"));
+    expect(result.current.questionType).toBe("4");
+    expect(localStorage.getItem(STORAGE_KEY)).toBe("4");
+  });
+
+  it("a legislação é recusada onde a entidade não a tem", () => {
+    // Hoje é o caso das outras 26: a coleção existe no código e não no acervo delas.
+    const { result } = renderHook(() => useQuestionType(entidade(["servicos", "faqs"])));
+    act(() => result.current.updateQuestionType("4"));
+    expect(result.current.questionType).toBe("1");
+    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
 
   it("ignores an unknown stored value and falls back to the default", () => {

@@ -9,6 +9,7 @@ import {
   MdOutlineBalance,
   MdOutlineStickyNote2,
   MdOutlineLibraryBooks,
+  MdOutlineMenuBook,
   MdOutlineFileDownload,
   MdOutlinePower,
   MdInfoOutline,
@@ -21,6 +22,7 @@ import { ServicosList } from "../servicoslist/ServicosList";
 import { FaqsList } from "../faqslist/FaqsList";
 import { PareceresList } from "../parecereslist/PareceresList";
 import { TarfList } from "../parecereslist/TarfList";
+import { LegislacaoList } from "../legislacaolist/LegislacaoList";
 import { NotasList } from "../notaslist/NotasList";
 import { ConteudosList } from "../conteudoslist/ConteudosList";
 import { DownloadsList } from "../downloadslist/DownloadsList";
@@ -51,6 +53,7 @@ const TABS: {
   { id: "faqs", label: "FAQs", Component: FaqsList, collection: "faqs", grupo: "acervo", Icone: MdHelpOutline },
   { id: "pareceres", label: "Pareceres", Component: PareceresList, collection: "pareceres", grupo: "acervo", Icone: MdOutlineGavel },
   { id: "tarf", label: "Acórdãos TARF", Component: TarfList, collection: "tarf", grupo: "acervo", Icone: MdOutlineBalance },
+  { id: "legislacao", label: "Legislação", Component: LegislacaoList, collection: "legislacao", grupo: "acervo", Icone: MdOutlineMenuBook },
   { id: "notas", label: "Notas", Component: NotasList, collection: "notas", grupo: "acervo", Icone: MdOutlineStickyNote2 },
   { id: "conteudos", label: "Conteúdos", Component: ConteudosList, collection: "conteudos", grupo: "acervo", Icone: MdOutlineLibraryBooks },
   { id: "mcp", label: "Conectar sua IA", Component: McpList, collection: null, grupo: "integracoes", Icone: MdOutlinePower },

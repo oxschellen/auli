@@ -207,9 +207,10 @@ Acionado por `POST /v1/question`. Assinatura:
 9. Retorna `{ question, answer }` e **anexa o diálogo a `$AULI_LOG_DIR/<timestamp>.txt`** (default
    `./logs` do CWD; o `start_server.sh` aponta para `<raiz>/logs`).
 
-**As QUATRO coleções alimentam respostas.** `servicos` e `faqs` juntas (o chat de atendimento),
-`pareceres` e `tarf` separadamente (o chat do auditor). Só `notas` fica de fora: tem rota de
-listagem, mas não tem fonte struct nem pack — ver §3.13.
+**As CINCO coleções alimentam respostas.** `servicos` e `faqs` juntas (o chat de atendimento),
+`pareceres`, `tarf` e `legislacao` separadamente — uma coleção por consulta, cada uma com o próprio
+prompt de sistema. Só `notas` fica de fora: tem rota de listagem, mas não tem fonte struct nem
+pack — ver §3.13.
 
 ### 3.5 Clientes e adaptadores (embeddings/busca/LLM in-process)
 
@@ -361,7 +362,9 @@ funções livres os testes cobrem o motor inteiro sem tocar o modelo.
 `spawn_blocking`, como o `rag.rs` já fazia.
 
 **Semântica de erro — importa mais do que parece.** Com o `packs::load_all` atual, **toda entidade
-registrada tem os quatro kinds no mapa**: arquivo ausente vira store **vazio**, não ausência. Logo
+registrada tem TODOS os kinds no mapa**: arquivo ausente vira store **vazio**, não ausência. (É o
+que faz uma coleção nova entrar sem tocar nas outras 26 entidades: elas sobem servindo zero
+registros dela, em vez de recusar o boot.) Logo
 `Error::ColecaoAusente` só dispara para coleção realmente fora do mapa (entidade não registrada), e
 store vazio é **sucesso com zero hits**. Quem precisa distinguir "tem acervo de verdade" usa
 `entidades_com`, que exige store não-vazio — é a guarda correta das ferramentas MCP (§3.12), onde
@@ -430,12 +433,12 @@ Detalhes que o código explicita:
 Smoke de protocolo: [`scripts/tools/mcp-smoke.sh`](scripts/tools/mcp-smoke.sh) (initialize → initialized →
 tools/list → tools/call). Conexão de clientes: [docs/auli_operations.md](docs/auli_operations.md) §12.
 
-### 3.13 As quatro coleções: UMA struct, UM enum (ago/2026)
+### 3.13 As cinco coleções: UMA struct, UM enum (ago/2026)
 
-Serviços, FAQs, pareceres e acórdãos do TARF passam por **um caminho de código só**. Duas peças, as
-duas em `auli-contract`:
+Serviços, FAQs, legislação, pareceres e acórdãos do TARF passam por **um caminho de código só**.
+Duas peças, as duas em `auli-contract`:
 
-- **`Kind { Servicos, Faqs, Pareceres, Tarf }`** ([kind.rs](auli-server/crates/auli-contract/src/kind.rs))
+- **`Kind { Servicos, Faqs, Legislacao, Pareceres, Tarf }`** ([kind.rs](auli-server/crates/auli-contract/src/kind.rs))
   — o nome da coleção. É o MESMO texto em todos os papéis, de propósito: subdiretório da árvore
   (`docs/<kind>/`), sufixo da coleção vetorial (`<id>-<kind>`), nome do pack, parâmetro da rota
   `/v1/{kind}/list`, rótulo do `registry.toml` e argumento da CLI. Antes disso o nome era um literal
@@ -447,15 +450,28 @@ duas em `auli-contract`:
 
 O que isso desfez, e é a medida do ganho: **quatro renderizações do bloco RAG viraram uma**
 (`bloco()`), **três funções de leitura de árvore viraram uma** (`preparar`), e o pack passou a
-guardar o mesmo payload leve (`DocumentoPack`) para as quatro — antes, serviços e FAQs carregavam o
-texto integral duplicado, uma cópia na árvore e outra ao lado do vetor.
+guardar o mesmo payload leve (`DocumentoPack`) para todas — antes, serviços e FAQs carregavam o
+texto integral duplicado, uma cópia na árvore e outra ao lado do vetor. A prova de que o caminho
+único pegou: a quinta coleção entrou sem nenhuma renderização, leitura ou payload novos.
 
 A tabela de PAPÉIS (qual campo do `.md` carrega o quê em cada coleção) vive no doc de módulo do
 [`mddoc.rs`](auli-server/crates/auli-contract/src/mddoc.rs) — ao lado do parser que a implementa, que
 é onde ela não envelhece.
 
 **Coleção nova** = uma variante no `Kind` + uma projeção para `Documento` (+ struct de borda, se a
-fonte pedir). O TARF entrou exatamente assim (PRs #132/#133).
+fonte pedir). O TARF entrou exatamente assim (PRs #132/#133), e a **legislação** depois dele
+(TAREFA-LEGISLACAO) — esta trazendo duas primeiras vezes que valem nota:
+
+- **A primeira árvore com subpastas.** `docs/legislacao/<lei>/*.md`, uma pasta por lei, porque uma
+  entidade tem N leis. A recursão é **política do `Kind`** (`arvore_com_subpastas()`), não flag de
+  operação: quem lê a árvore pergunta ao enum e acerta sem parâmetro para errar, e as outras quatro
+  seguem planas. O nome da pasta é o **1º segmento da `trilha`**, e o `preparar` recusa o `.md` cujo
+  `doc_path` derivado não seja o caminho de onde ele foi lido — sem essa guarda, trilha errada
+  produz um caminho que não existe e o corpo some na query, sem erro em lugar nenhum.
+- **A primeira coleção solitária que não é jurisprudência.** Por isso o `QueryType::Jurisprudencia`
+  virou `QueryType::ColecaoUnica(Kind)`: as duas ideias — "consultada sozinha" e "tem `## resumo`" —
+  coincidiam até aqui. A legislação é a primeira sem resumo e sem expansão por grafo, e o chat a
+  atende no **tipo 4**, com prompt próprio (citar dispositivo e link, não extrapolar o texto legal).
 
 ---
 

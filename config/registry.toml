@@ -29,7 +29,8 @@
 #   state       nome do estado por extenso
 #   prompt      caminho do system prompt, relativo A ESTA PASTA (`config/`) — não à `data/`
 #   collections rótulos de coleção da UI. `servicos` é o kind vetorial `servicos` (unificado — não
-#               existe mais `services`); `conteudos` é só de referência (sem kind vetorial, sem scraper).
+#               existe mais `services`); `conteudos` é só de referência (sem kind vetorial, sem
+#               scraper); `legislacao` é a única cuja árvore tem subpastas — uma por lei.
 
 [[entities]]
 id = "rs"
@@ -45,11 +46,20 @@ prompt_pareceres = "prompts/rs-pareceres.txt"
 # igual. O texto próprio existe para dizer o que só vale ali: um acórdão decide um caso concreto, não
 # é norma geral.
 prompt_tarf = "prompts/rs-tarf.txt"
+# Prompt das consultas de legislação (query type=4). Opcional: sem ele, a entidade cai no default
+# GLOBAL de legislação — e não no `prompt_pareceres` dela, como faz o TARF. O motivo é que acórdão
+# sem prompt próprio ainda é jurisprudência, e legislação não é: cair no de pareceres mandaria o
+# modelo citar "o número do parecer" sobre um texto de lei.
+prompt_legislacao = "prompts/rs-legislacao.txt"
 # `tarf` é a coleção dos acórdãos do Tribunal Administrativo de Recursos Fiscais. Ela dirige DUAS
 # coisas: a aba de listagem (que lê o `rs-tarf-index.json`) e a fonte "Acórdãos TARF" do chat (que lê
 # o pack vetorial `rs-tarf`).
 # Esta linha é o interruptor das duas: tirá-la daqui (e rodar gen-frontend-entities.mjs) as desliga.
-collections = ["servicos", "faqs", "pareceres", "notas", "conteudos", "tarf"]
+#
+# `legislacao` é a coleção dos pares pergunta/resposta sobre o texto das leis, e é o mesmo tipo de
+# interruptor: liga a aba de listagem e a fonte "Legislação" do chat (pack vetorial `rs-legislacao`).
+# É a primeira coleção com árvore em subpastas — uma por lei.
+collections = ["servicos", "faqs", "pareceres", "notas", "conteudos", "tarf", "legislacao"]
 
 [[entities]]
 id = "sc"
