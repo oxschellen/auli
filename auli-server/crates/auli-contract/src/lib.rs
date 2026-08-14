@@ -356,7 +356,7 @@ pub fn compose_unificado(trilha: &str, titulo: &str, ementa: &str, resumo: &str)
 ///
 /// **O motivo é densidade do vetor, não memória.** A key precisa ser longa o bastante para conter o
 /// texto que responde à busca, e curta o bastante para que esse texto seja bem representado por 1024
-/// floats. A medição que escolheu o número (`RELATORIO-FASE0-TETO.md`) mostrou que, para documentos
+/// floats. A medição que escolheu o número (`RELATORIO-TETO.md`) mostrou que, para documentos
 /// entre 6.000 e 8.000 caracteres, o vetor dos primeiros 6.000 tem **cosseno 0,978** com o vetor do
 /// documento inteiro: o conteúdo além daí quase não move o vetor. Guardá-lo não compra representação.
 ///
