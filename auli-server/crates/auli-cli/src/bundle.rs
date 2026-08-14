@@ -339,6 +339,13 @@ fn schema_tipo(kind: &str) -> &'static str {
              de navegação no portal, do tipo `Inicial | Tema | Subtema`), `ementa` (vazia nas\n\
              perguntas) e `link`. A resposta é o corpo do arquivo, sob `## corpo`."
         }
+        Kind::Legislacao => {
+            "Frontmatter YAML entre `---`, com os campos `titulo` (a pergunta), `trilha` (a\n\
+             hierarquia da lei, do tipo `Lei | Título | Capítulo`, cujo primeiro segmento é\n\
+             também o nome da subpasta), `ementa` (o dispositivo — ex.: `Art. 21, I`) e `link`\n\
+             (a página oficial da lei). A resposta é o corpo do arquivo, sob `## corpo`.\n\
+             Esta é a única coleção cuja pasta tem um nível a mais: uma subpasta por lei."
+        }
         Kind::Pareceres | Kind::Tarf => {
             "Frontmatter YAML entre `---`, com os campos `titulo` (o número do documento),\n\
              `trilha` (vazia aqui), `ementa` (o assunto) e `link`. O corpo traz duas seções:\n\

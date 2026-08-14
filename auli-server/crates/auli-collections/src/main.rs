@@ -9,6 +9,7 @@ mod extracao_servicos;
 mod grafo;
 mod grafo_servicos;
 mod indice;
+mod indice_legislacao;
 mod process;
 mod servicos;
 mod sinopse;
@@ -76,20 +77,30 @@ fn dispatch(positional: Vec<String>, flags: Vec<String>) -> errors::Result<()> {
         "pareceres" => derive_pareceres::run(entity)?,
         // OFFLINE: preenche as sinopses pendentes na árvore `docs/pareceres/*.md` (G4).
         "sinopse" => sinopse::run(entity, parse_sinopse_flags(&flags)?)?,
-        // OFFLINE: deriva o índice leve de uma coleção de jurisprudência para o frontend
+        // OFFLINE: deriva o índice leve de uma coleção para o frontend
         // (árvore -> raw/<id>-<colecao>-index.json). Sem o 3º argumento, `pareceres` — o default
         // preserva quem já roda `auli-collections <id> indice`.
         "indice" => {
             let nome = positional.get(2).map(String::as_str).unwrap_or("pareceres");
-            // Duas condições, não uma: o nome tem que ser uma coleção conhecida E de jurisprudência.
-            // `servicos` passa no `parse` e é recusado aqui — só quem promete `## resumo` tem índice
-            // leve (o `resumo` é justamente a coluna que a aba do frontend mostra).
+            // Duas condições, não uma: o nome tem que ser uma coleção conhecida E ter índice leve.
+            // `servicos` e `faqs` passam no `parse` e são recusados aqui — o frontend lê as duas do
+            // artefato do `process`, não de um índice derivado da árvore.
+            //
+            // O teste deixou de ser `exige_resumo()` com a chegada da legislação: ela não promete
+            // `## resumo` e mesmo assim tem índice (D-LEG-11), com shape e ordenação próprios — daí
+            // o despacho abaixo, e não um terceiro parâmetro no `indice::run`.
             let colecao = auli_contract::Kind::parse(nome)
-                .filter(|k| k.exige_resumo())
+                .filter(|k| k.exige_resumo() || *k == auli_contract::Kind::Legislacao)
                 .ok_or_else(|| {
-                    format!("coleção desconhecida para o índice: '{nome}'. Use: pareceres | tarf")
+                    format!(
+                        "coleção desconhecida para o índice: '{nome}'. \
+                         Use: pareceres | tarf | legislacao"
+                    )
                 })?;
-            indice::run(entity, colecao)?
+            match colecao {
+                auli_contract::Kind::Legislacao => indice_legislacao::run(entity)?,
+                _ => indice::run(entity, colecao)?,
+            }
         }
         // OFFLINE (+LLM): extrai metadados de grafo da árvore `.md` -> JSONL (não toca nos `.md`).
         "extrair" => extracao::run(entity, parse_extracao_flags(&flags)?)?,

@@ -51,6 +51,24 @@ const DEFAULT_PARECERES_PROMPT: &str = r#"
 ### Se a pergunta não puder ser respondida com os pareceres disponíveis, responda que não é possível responder.
 "#;
 
+// Fallback prompt for legislação queries (type=4) when an entity has no `prompt_legislacao` file.
+//
+// O fallback é GLOBAL, e não o `prompt_pareceres` da entidade (como faz o TARF): acórdão sem prompt
+// próprio ainda é jurisprudência e as instruções de citar número e link continuam certas, mas
+// legislação não é jurisprudência nenhuma — cair no prompt de pareceres mandaria o modelo citar
+// "o número do parecer" sobre um texto de lei.
+const DEFAULT_LEGISLACAO_PROMPT: &str = r#"
+'''
+### Instructions
+### Responda sempre no idioma português do brasil, usando exclusivamente os documentos de legislação apresentados abaixo.
+### Cite sempre o dispositivo (ex.: art. 28; art. 11, § 3º) e a lei a que ele pertence, e apresente o link https correspondente.
+### Cada documento inicia com o marcador: ## documento (seguido do número e do tipo — Legislação); a hierarquia da lei, a pergunta e o dispositivo vêm após ## pergunta, e a resposta após ## resposta.
+### NÃO extrapole o texto legal: responda o que o dispositivo diz, sem completar com prática administrativa, jurisprudência ou analogia.
+### Reproduza prazos, percentuais e valores exatamente como estão no documento.
+### Não responda perguntas fora do assunto relativo a tributos.
+### Se a pergunta não puder ser respondida com os documentos disponíveis, responda que não é possível responder.
+"#;
+
 #[derive(Debug, Deserialize)]
 struct Registry {
     #[serde(default)]
@@ -72,6 +90,10 @@ struct RegistryEntity {
     // jurisprudência, e as instruções de citar o número e o link valem igual.
     #[serde(default)]
     prompt_tarf: String,
+    // Optional per-entity prompt for legislação queries (type=4); empty -> DEFAULT_LEGISLACAO_PROMPT
+    // (global, não o de pareceres da entidade — ver o doc da const).
+    #[serde(default)]
+    prompt_legislacao: String,
 }
 
 #[derive(Debug, Clone)]
@@ -83,6 +105,9 @@ pub struct EntityConfig {
     pub pareceres_prompt: String,
     // Prompt used for TARF queries (type=3); the entity's `prompt_tarf` or the pareceres default.
     pub tarf_prompt: String,
+    // Prompt used for legislação queries (type=4); the entity's `prompt_legislacao` or the global
+    // legislação default.
+    pub legislacao_prompt: String,
 }
 
 impl EntityConfig {
@@ -91,15 +116,22 @@ impl EntityConfig {
         format!("{}-{}", self.id, kind)
     }
 
-    /// O prompt de sistema de UMA coleção de jurisprudência.
+    /// O prompt de sistema de UMA coleção consultada sozinha — jurisprudência ou legislação.
     ///
-    /// Serviços e FAQs não passam por aqui — eles compartilham o `system_prompt`, que é o prompt do
-    /// chat de atendimento. Se um dia passarem, cairão no prompt de pareceres, que é errado; daí o
-    /// `debug_assert`, que faz o engano aparecer em teste em vez de na resposta.
+    /// Serviços e FAQs não passam por aqui: eles são consultados JUNTOS e compartilham o
+    /// `system_prompt`, que é o prompt do chat de atendimento. Se um dia passarem, cairiam no
+    /// prompt de pareceres, que é errado; daí o `debug_assert`, que faz o engano aparecer em teste
+    /// em vez de na resposta. (Antes o assert era `exige_resumo()`, que era o mesmo teste enquanto
+    /// jurisprudência era a única coleção solitária — a legislação separou as duas ideias.)
     pub fn prompt_de(&self, kind: auli_contract::Kind) -> &str {
-        debug_assert!(kind.exige_resumo(), "prompt_de é só para jurisprudência");
+        use auli_contract::Kind;
+        debug_assert!(
+            !matches!(kind, Kind::Servicos | Kind::Faqs),
+            "prompt_de é só para coleção consultada sozinha; servicos/faqs usam o system_prompt"
+        );
         match kind {
-            auli_contract::Kind::Tarf => &self.tarf_prompt,
+            Kind::Tarf => &self.tarf_prompt,
+            Kind::Legislacao => &self.legislacao_prompt,
             _ => &self.pareceres_prompt,
         }
     }
@@ -195,6 +227,15 @@ fn load_entities() -> HashMap<String, EntityConfig> {
         // Sem `prompt_tarf`, cai no prompt de PARECERES da própria entidade (não no default global):
         // ele já fala a língua do acervo daquela UF, e é a aproximação mais útil disponível.
         let tarf_prompt = load_prompt(&base, &ent.id, &ent.prompt_tarf, "tarf", &pareceres_prompt);
+        // Legislação cai no default GLOBAL, não no prompt de pareceres da entidade — ver o doc de
+        // `DEFAULT_LEGISLACAO_PROMPT`.
+        let legislacao_prompt = load_prompt(
+            &base,
+            &ent.id,
+            &ent.prompt_legislacao,
+            "legislacao",
+            DEFAULT_LEGISLACAO_PROMPT,
+        );
         map.insert(
             ent.id.clone(),
             EntityConfig {
@@ -203,6 +244,7 @@ fn load_entities() -> HashMap<String, EntityConfig> {
                 system_prompt,
                 pareceres_prompt,
                 tarf_prompt,
+                legislacao_prompt,
             },
         );
     }
@@ -239,7 +281,44 @@ pub fn init() {
 
 #[cfg(test)]
 mod tests {
-    use super::load_prompt;
+    use super::{DEFAULT_LEGISLACAO_PROMPT, DEFAULT_PARECERES_PROMPT, EntityConfig, load_prompt};
+    use auli_contract::Kind;
+
+    fn cfg_de(legislacao_prompt: &str) -> EntityConfig {
+        EntityConfig {
+            id: "xx".into(),
+            name: "XX".into(),
+            system_prompt: "SISTEMA".into(),
+            pareceres_prompt: "PARECERES".into(),
+            tarf_prompt: "TARF".into(),
+            legislacao_prompt: legislacao_prompt.into(),
+        }
+    }
+
+    #[test]
+    fn prompt_de_serve_um_texto_por_colecao_solitaria() {
+        let cfg = cfg_de("LEGISLACAO");
+        assert_eq!(cfg.prompt_de(Kind::Pareceres), "PARECERES");
+        assert_eq!(cfg.prompt_de(Kind::Tarf), "TARF");
+        // O que este teste impede: legislação caindo no prompt de pareceres, que mandaria o modelo
+        // citar "o número do parecer" sobre um texto de lei — resposta plausível e errada.
+        assert_eq!(cfg.prompt_de(Kind::Legislacao), "LEGISLACAO");
+    }
+
+    /// O fallback da legislação é o default GLOBAL, e não o `prompt_pareceres` da entidade (que é o
+    /// do TARF). Entidade sem prompt próprio é o caso das outras 26 no dia em que ganharem a
+    /// coleção, então o default é o que vai ao LLM na estreia — e ele precisa falar de dispositivo.
+    #[test]
+    fn sem_prompt_proprio_a_legislacao_cai_no_default_global() {
+        let base = std::env::temp_dir();
+        let escolhido = load_prompt(&base, "xx", "", "legislacao", DEFAULT_LEGISLACAO_PROMPT);
+        assert_eq!(escolhido, DEFAULT_LEGISLACAO_PROMPT);
+        assert_ne!(escolhido, DEFAULT_PARECERES_PROMPT);
+        // E o default diz o que a coleção exige: dispositivo e link.
+        assert!(escolhido.contains("dispositivo"), "{escolhido}");
+        assert!(escolhido.contains("link"), "{escolhido}");
+        assert!(!escolhido.contains("parecer"), "{escolhido}");
+    }
 
     #[test]
     fn load_prompt_falls_back_when_empty_or_missing() {

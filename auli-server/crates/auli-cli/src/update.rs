@@ -178,25 +178,67 @@ fn relatar_teto(kind: Kind, items: &[Documento]) {
     }
 }
 
-/// Os `.md` de um diretório, em ordem de NOME. `None` se o diretório não existe ou está vazio —
+/// Os `.md` de um diretório, em ordem de CAMINHO. `None` se o diretório não existe ou está vazio —
 /// nos dois casos a coleção é pulada, o que é melhor que gerar um pack vazio.
+///
+/// `com_subpastas` (de [`Kind::arvore_com_subpastas`], D-LEG-3) liga a descida de **um** nível, que
+/// só a legislação usa: lá a subpasta é uma lei. Segundo nível é erro alto, não arquivo ignorado —
+/// um `.md` esquecido dois níveis abaixo sumiria da coleção sem nada na tela.
 ///
 /// A ordem é estável de propósito, e o motivo mudou na Fase 1: o id não é mais posicional, é o
 /// `doc_path`, então trocar dois documentos de lugar aqui não renomeia registro nenhum. O que a
 /// ordenação sustenta hoje é a **ordem canônica de escrita** (D-INC-4) — o pack é gravado ordenado
-/// por `id`, e como o `id` É o nome do arquivo, ler a árvore em ordem de nome é o que faz aquela
-/// ordenação ser um no-op em vez de um reembaralhamento por rodada. Fora do pack, é o que mantém
-/// determinístico o que o `update` imprime e a ordem em que os documentos são embedados.
-fn arquivos_md(dir: &Path) -> Result<Option<Vec<PathBuf>>> {
+/// por `id`, e como o `id` É o caminho relativo do arquivo, ler a árvore nessa ordem é o que faz
+/// aquela ordenação ser um no-op em vez de um reembaralhamento por rodada. Fora do pack, é o que
+/// mantém determinístico o que o `update` imprime e a ordem em que os documentos são embedados.
+///
+/// **A ordenação é pela STRING do caminho relativo, não pelo `Path`.** Com árvore plana as duas
+/// coincidem; com subpasta, não: `Path` compara componente a componente, e o pack compara o `id`
+/// como string (`write.rs`, `a.id.cmp(&b.id)`). Em `"Lei A"` vs `"Lei A-B"` as duas ordens se
+/// invertem — `/` (0x2F) é maior que `-` (0x2D) —, e aí a ordenação do pack deixaria de ser no-op.
+fn arquivos_md(dir: &Path, com_subpastas: bool) -> Result<Option<Vec<PathBuf>>> {
     if !dir.exists() {
         return Ok(None);
     }
-    let mut caminhos: Vec<PathBuf> = std::fs::read_dir(dir)?
-        .filter_map(|e| e.ok().map(|e| e.path()))
-        .filter(|p| p.is_file() && p.extension().is_some_and(|e| e == "md"))
-        .collect();
-    caminhos.sort();
+    let mut achados: Vec<(String, PathBuf)> = Vec::new();
+    for entrada in std::fs::read_dir(dir)? {
+        let caminho = entrada?.path();
+        if !caminho.is_dir() {
+            empilhar_md(dir, caminho, &mut achados);
+            continue;
+        }
+        if !com_subpastas {
+            continue;
+        }
+        for entrada in std::fs::read_dir(&caminho)? {
+            let neto = entrada?.path();
+            if neto.is_dir() {
+                return Err(format!(
+                    "`{}` é uma subpasta de segundo nível, e a árvore desta coleção só tem um \
+                     nível (uma pasta por lei). Achate a árvore — um `.md` mais fundo que isso \
+                     não seria lido por ninguém.",
+                    neto.display()
+                )
+                .into());
+            }
+            empilhar_md(dir, neto, &mut achados);
+        }
+    }
+    achados.sort_by(|(a, _), (b, _)| a.cmp(b));
+    let caminhos: Vec<PathBuf> = achados.into_iter().map(|(_, p)| p).collect();
     Ok((!caminhos.is_empty()).then_some(caminhos))
+}
+
+/// Guarda o `.md` junto da chave de ordenação: o caminho relativo a `dir`, como string.
+fn empilhar_md(dir: &Path, caminho: PathBuf, out: &mut Vec<(String, PathBuf)>) {
+    if caminho.extension().is_some_and(|e| e == "md") {
+        let chave = caminho
+            .strip_prefix(dir)
+            .unwrap_or(&caminho)
+            .to_string_lossy()
+            .into_owned();
+        out.push((chave, caminho));
+    }
 }
 
 /// Lê a árvore `docs/<kind>/*.md` — **a FONTE** — e devolve os documentos prontos para vetorizar,
@@ -212,7 +254,7 @@ pub(crate) fn preparar(
     kind: Kind,
 ) -> Result<Option<Vec<Documento>>> {
     let dir = docs_dir.join(kind.as_str());
-    let Some(caminhos) = arquivos_md(&dir)? else {
+    let Some(caminhos) = arquivos_md(&dir, kind.arvore_com_subpastas())? else {
         return Ok(None);
     };
 
@@ -226,7 +268,9 @@ pub(crate) fn preparar(
         if kind.exige_resumo() && resumo.trim().is_empty() {
             pendentes.push(header.titulo.clone());
         }
-        docs.push(documento_de(kind, header, resumo, corpo));
+        let doc = documento_de(kind, header, resumo, corpo);
+        conferir_doc_path(docs_dir, caminho, &doc)?;
+        docs.push(doc);
     }
 
     println!(
@@ -239,11 +283,45 @@ pub(crate) fn preparar(
     Ok(Some(docs))
 }
 
+/// **A guarda do invariante do `doc_path`** (D-LEG-4): o caminho DERIVADO do documento tem que ser
+/// o caminho de onde ele foi REALMENTE lido.
+///
+/// O `doc_path` é o id do registro no pack e é por ele que o serving lê o corpo, tarde, na query.
+/// Quando os dois divergem nada quebra no build nem no boot: o pack fica com um caminho que não
+/// existe, e o sintoma aparece só na tela do usuário, como corpo indisponível — o mesmo defeito
+/// silencioso que o `Documento::doc_path` existe para evitar, mas agora do outro lado, no dado.
+///
+/// Vale para as CINCO coleções, não só para a legislação. Nas outras quatro o nome sai de campos
+/// que o próprio arquivo carrega (título, link), então o invariante é praticamente tautológico —
+/// medido na adoção: 48.408 arquivos das 28 entidades, zero divergências. Na legislação ele deixa
+/// de ser tautológico, porque a subpasta sai da TRILHA: uma trilha com o 1º segmento errado escreve
+/// um `doc_path` que aponta para outra lei. É por isso que a guarda nasce aqui, mas é por valer
+/// para todas que ela também protege um `.md` renomeado à mão nas outras.
+fn conferir_doc_path(docs_dir: &Path, lido: &Path, doc: &Documento) -> Result<()> {
+    let real = format!(
+        "docs/{}",
+        lido.strip_prefix(docs_dir).unwrap_or(lido).display()
+    );
+    let derivado = doc.doc_path();
+    if derivado != real {
+        return Err(format!(
+            "`{}` está em conflito com o próprio conteúdo: o caminho derivado do frontmatter é \
+             `{derivado}`, mas o arquivo foi lido de `{real}`. Corrija o DADO — renomeie o arquivo, \
+             ou ajuste o campo de onde o caminho sai (na legislação, o 1º segmento da `trilha` é o \
+             nome da subpasta). O `doc_path` é o id no pack e o caminho por onde o corpo é lido na \
+             query: divergente, ele vira corpo indisponível sem erro nenhum.",
+            lido.display()
+        )
+        .into());
+    }
+    Ok(())
+}
+
 /// Um `.md` lido vira [`Documento`]. A única coisa que difere por coleção é a fórmula da key — o
 /// resto do mapeamento é o vocabulário unificado caindo 1:1.
 ///
-/// As três fórmulas continuam sendo as do contrato, congeladas: mudar qualquer uma re-vetoriza os
-/// packs daquela coleção.
+/// As quatro fórmulas continuam sendo as do contrato, congeladas: mudar qualquer uma re-vetoriza
+/// os packs daquela coleção.
 pub(crate) fn documento_de(
     kind: Kind,
     header: auli_contract::mddoc::DocHeader,
@@ -259,6 +337,14 @@ pub(crate) fn documento_de(
             let (tipo, classe) = auli_contract::partes_trilha_servico(&header.trilha);
             auli_contract::compose_servico_text_to_embed(tipo, classe, &header.titulo, &corpo)
         }
+        // Legislação é a FAQ mais o dispositivo no slot da ementa (D-LEG-7): a pergunta é o
+        // `titulo`, a resposta é o `## corpo`, e a `ementa` traz o "Art. 21, I".
+        Kind::Legislacao => auli_contract::compose_legislacao_text_to_embed(
+            &header.trilha,
+            &header.titulo,
+            &header.ementa,
+            &corpo,
+        ),
         Kind::Pareceres | Kind::Tarf => {
             auli_contract::compose_text_to_embed(&header.titulo, &header.ementa, &resumo)
         }
@@ -800,13 +886,13 @@ mod tests {
 
     /// Monta uma árvore de FAQS de teste e devolve `docs_dir` (o pai de `faqs/`). Os nomes dos
     /// arquivos são dados de fora para o teste de ordem poder escolhê-los.
-    fn arvore_faqs(tag: &str, docs: &[(&str, &str, &str)]) -> PathBuf {
+    fn arvore_faqs(tag: &str, docs: &[(&str, &str)]) -> PathBuf {
         let base =
             std::env::temp_dir().join(format!("auli-update-faq-{}-{tag}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         let dir = base.join("docs").join("faqs");
         std::fs::create_dir_all(&dir).unwrap();
-        for (nome_arquivo, pergunta, origin) in docs {
+        for (pergunta, origin) in docs {
             let header = mddoc::DocHeader {
                 titulo: (*pergunta).into(),
                 trilha: (*origin).into(),
@@ -817,7 +903,7 @@ mod tests {
             };
             let corpo = format!("resposta de {pergunta}");
             std::fs::write(
-                dir.join(format!("{nome_arquivo}.md")),
+                dir.join(format!("{}.md", mddoc::nome_faq_de(pergunta, &header.link))),
                 mddoc::render_doc(&header, None, &corpo),
             )
             .unwrap();
@@ -828,13 +914,7 @@ mod tests {
     #[test]
     fn preparar_faqs_le_arvore_em_ordem() {
         // Gravadas fora de ordem alfabética: a leitura reordena, para o pack ser reproduzível.
-        let docs = arvore_faqs(
-            "ordem",
-            &[
-                ("b-faq", "Segunda", ""),
-                ("a-faq", "Primeira", "Inicial | FAQ"),
-            ],
-        );
+        let docs = arvore_faqs("ordem", &[("Segunda", ""), ("Primeira", "Inicial | FAQ")]);
         let faqs = preparar("xx", &docs, Kind::Faqs).unwrap().unwrap();
         assert_eq!(faqs.len(), 2);
         let perguntas: Vec<&str> = faqs.iter().map(|f| f.titulo.as_str()).collect();
@@ -883,13 +963,13 @@ mod tests {
 
     /// Monta uma árvore de SERVIÇOS de teste e devolve `docs_dir` (o pai de `servicos/`). Os nomes
     /// dos arquivos são dados de fora para o teste de ordem poder escolhê-los.
-    fn arvore_servicos(tag: &str, docs: &[(&str, &str)]) -> PathBuf {
+    fn arvore_servicos(tag: &str, docs: &[&str]) -> PathBuf {
         let base =
             std::env::temp_dir().join(format!("auli-update-svc-{}-{tag}", std::process::id()));
         let _ = std::fs::remove_dir_all(&base);
         let dir = base.join("docs").join("servicos");
         std::fs::create_dir_all(&dir).unwrap();
-        for (nome_arquivo, titulo) in docs {
+        for titulo in docs {
             let header = mddoc::DocHeader {
                 titulo: (*titulo).into(),
                 trilha: auli_contract::trilha_servico("Cidadãos", "IPVA"),
@@ -900,7 +980,10 @@ mod tests {
             };
             let corpo = format!("descrição de {titulo}");
             std::fs::write(
-                dir.join(format!("{nome_arquivo}.md")),
+                dir.join(format!(
+                    "{}.md",
+                    mddoc::nome_servico_de(titulo, &header.link)
+                )),
                 mddoc::render_doc(&header, None, &corpo),
             )
             .unwrap();
@@ -911,8 +994,10 @@ mod tests {
     #[test]
     fn preparar_servicos_le_arvore_em_ordem() {
         // Gravados fora de ordem alfabética: a leitura tem que reordenar, para casar com a ordem
-        // canônica do pack (D-INC-4) e não depender do `read_dir` do SO.
-        let docs = arvore_servicos("ordem", &[("b-svc", "Segundo"), ("a-svc", "Primeiro")]);
+        // canônica do pack (D-INC-4) e não depender do `read_dir` do SO. Os nomes de arquivo saem
+        // das MESMAS funções que materializam a árvore — desde a guarda do `doc_path`, uma árvore
+        // com nome arbitrário não é mais um cenário possível, e sim erro alto.
+        let docs = arvore_servicos("ordem", &["Segundo", "Primeiro"]);
         let servicos = preparar("xx", &docs, Kind::Servicos).unwrap().unwrap();
         assert_eq!(servicos.len(), 2);
         let titulos: Vec<&str> = servicos.iter().map(|s| s.titulo.as_str()).collect();
@@ -963,7 +1048,7 @@ mod tests {
     fn docs_hash_cobre_a_arvore_de_servicos_sozinha() {
         // D11: entidade que só tem serviços também ganha `docs_hash` — antes ele só existia se
         // houvesse pareceres, e a árvore de serviços ficaria fora da guarda de boot.
-        let docs = arvore_servicos("hash", &[("a-svc", "Um")]);
+        let docs = arvore_servicos("hash", &["Um"]);
         assert!(
             preparar("xx", &docs, Kind::Pareceres).unwrap().is_none(),
             "sem pareceres"
@@ -1271,6 +1356,167 @@ mod tests {
         );
 
         let _ = std::fs::remove_dir_all(&base);
+    }
+
+    /// Escreve um par P/R de legislação em `docs/legislacao/<pasta>/`. `pasta` é dada à parte de
+    /// propósito: é ela que os testes da guarda põem em conflito com a trilha.
+    fn arvore_legislacao(tag: &str, pasta: &str, trilha: &str, perguntas: &[&str]) -> PathBuf {
+        let base =
+            std::env::temp_dir().join(format!("auli-update-leg-{}-{tag}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        let dir = base
+            .join("docs")
+            .join(Kind::Legislacao.as_str())
+            .join(pasta);
+        std::fs::create_dir_all(&dir).unwrap();
+        for p in perguntas {
+            let header = mddoc::DocHeader {
+                titulo: (*p).into(),
+                trilha: trilha.into(),
+                ementa: "Art. 1º".into(),
+                link: "http://x/lei".into(),
+                orgao: None,
+                resumo_info: None,
+            };
+            std::fs::write(
+                dir.join(format!("{}.md", mddoc::nome_faq_de(p, &header.link))),
+                mddoc::render_doc(&header, None, &format!("resposta de {p}")),
+            )
+            .unwrap();
+        }
+        base.join("docs")
+    }
+
+    /// A leitura recursiva (D-LEG-3) e o `doc_path` com subpasta, no caminho feliz.
+    #[test]
+    fn legislacao_le_a_arvore_com_subpasta_e_grava_o_doc_path_dela() {
+        let lei = "Lei 6.537-1973 — PTA";
+        let trilha = format!("{lei} | Título I | Capítulo I");
+        let docs = arvore_legislacao("feliz", lei, &trilha, &["Qual o prazo?", "Cabe recurso?"]);
+
+        let leg = preparar("xx", &docs, Kind::Legislacao).unwrap().unwrap();
+        assert_eq!(leg.len(), 2, "os dois arquivos da subpasta foram lidos");
+        for d in &leg {
+            assert!(
+                d.doc_path().starts_with(&format!("docs/legislacao/{lei}/")),
+                "doc_path: {}",
+                d.doc_path()
+            );
+            // A key é a da legislação, com o dispositivo no slot da ementa.
+            assert_eq!(
+                d.text_to_embed,
+                auli_contract::compose_legislacao_text_to_embed(
+                    &d.trilha, &d.titulo, &d.ementa, &d.corpo
+                )
+            );
+        }
+        // Ordem determinística pelo caminho relativo completo (D-INC-4).
+        let mut caminhos: Vec<String> = leg.iter().map(|d| d.doc_path()).collect();
+        let ordenados = {
+            let mut c = caminhos.clone();
+            c.sort();
+            c
+        };
+        assert_eq!(caminhos, ordenados, "a árvore é lida em ordem de caminho");
+        caminhos.clear();
+
+        let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+    }
+
+    /// A ordem de leitura tem que ser a MESMA do `id` no pack (D-INC-4), e o pack ordena o `id`
+    /// como STRING (`write.rs`). Este par de leis é o caso em que ordenar `Path` — componente a
+    /// componente — dá resposta diferente: `/` (0x2F) > `-` (0x2D), então na string `"Lei A-B/…"`
+    /// vem ANTES de `"Lei A/…"`, e por componente vem depois. Com a ordenação errada a escrita do
+    /// pack deixa de ser no-op e reembaralha registro a cada rodada.
+    #[test]
+    fn a_ordem_de_leitura_e_a_do_id_no_pack_mesmo_com_leis_de_nome_prefixo() {
+        let base =
+            std::env::temp_dir().join(format!("auli-update-leg-{}-ordem", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        let raiz = base.join("docs").join(Kind::Legislacao.as_str());
+        for lei in ["Lei A", "Lei A-B"] {
+            let dir = raiz.join(lei);
+            std::fs::create_dir_all(&dir).unwrap();
+            let titulo = format!("Pergunta de {lei}?");
+            let header = mddoc::DocHeader {
+                titulo: titulo.clone(),
+                trilha: format!("{lei} | Título I"),
+                ementa: "Art. 1º".into(),
+                link: "http://x/lei".into(),
+                orgao: None,
+                resumo_info: None,
+            };
+            std::fs::write(
+                dir.join(format!("{}.md", mddoc::nome_faq_de(&titulo, &header.link))),
+                mddoc::render_doc(&header, None, "resposta"),
+            )
+            .unwrap();
+        }
+
+        let docs = base.join("docs");
+        let lidos = preparar("xx", &docs, Kind::Legislacao).unwrap().unwrap();
+        let caminhos: Vec<String> = lidos.iter().map(|d| d.doc_path()).collect();
+        let mut como_o_pack_ordena = caminhos.clone();
+        como_o_pack_ordena.sort(); // String::cmp — o mesmo do `a.id.cmp(&b.id)`
+        assert_eq!(caminhos, como_o_pack_ordena);
+        assert!(
+            caminhos[0].contains("Lei A-B/"),
+            "a lei de nome mais longo vem primeiro na ordem de string: {caminhos:?}"
+        );
+
+        let _ = std::fs::remove_dir_all(&base);
+    }
+
+    /// A guarda do D-LEG-4, no defeito que ela existe para pegar: a trilha diz uma lei e o arquivo
+    /// está na pasta de outra. Sem a guarda isso compila, vetoriza e só some na query.
+    #[test]
+    fn trilha_que_nao_bate_com_a_pasta_e_erro_alto_com_os_dois_caminhos() {
+        let docs = arvore_legislacao(
+            "conflito",
+            "Lei 6.537-1973 — PTA",
+            "Lei 8.820-1989 — ICMS | Título I", // ← 1º segmento aponta para OUTRA lei
+            &["Qual o prazo?"],
+        );
+        let err = preparar("xx", &docs, Kind::Legislacao)
+            .unwrap_err()
+            .to_string();
+
+        // Os dois caminhos na mensagem — sem eles o operador não sabe qual lado corrigir.
+        assert!(
+            err.contains("docs/legislacao/Lei 8.820-1989 — ICMS/"),
+            "{err}"
+        );
+        assert!(
+            err.contains("docs/legislacao/Lei 6.537-1973 — PTA/"),
+            "{err}"
+        );
+
+        let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+    }
+
+    /// A mesma guarda nas coleções planas: um `.md` renomeado à mão deixa de bater com o nome
+    /// derivado do título. Aqui o invariante é quase tautológico — e é justamente por isso que a
+    /// única forma de quebrá-lo é mexer no dado por fora.
+    #[test]
+    fn arquivo_renomeado_a_mao_tambem_e_pego_nas_colecoes_planas() {
+        let docs = arvore("renomeado", &[("CONSULTA Nº 1/26", Some("s"))]);
+        let dir = docs.join("pareceres");
+        std::fs::rename(
+            dir.join("consulta-no-1-26.md"),
+            dir.join("consulta-outro-nome.md"),
+        )
+        .unwrap();
+
+        let err = preparar("xx", &docs, Kind::Pareceres)
+            .unwrap_err()
+            .to_string();
+        assert!(err.contains("docs/pareceres/consulta-no-1-26.md"), "{err}");
+        assert!(
+            err.contains("docs/pareceres/consulta-outro-nome.md"),
+            "{err}"
+        );
+
+        let _ = std::fs::remove_dir_all(docs.parent().unwrap());
     }
 
     #[test]

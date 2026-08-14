@@ -1,4 +1,5 @@
-// Per-kind retrieval knobs for the four content kinds (servicos, faqs, pareceres, notas).
+// Per-kind retrieval knobs for the content kinds (servicos, faqs, legislacao, pareceres, tarf,
+// notas).
 //
 // The *shape* of the data and how `text_to_embed`/`stored_repr` are derived now live in
 // `auli-contract` (materialized by the scraper). This module only carries what the engine needs at
@@ -23,6 +24,13 @@ pub const FAQS: Collection = Collection {
     kind: "faqs",
     n_results: 20,
 };
+// Pares P/R de legislação (D-LEG-10): mesma política dos serviços na v1 — coleção pequena e
+// autorada, em que cada documento já é uma resposta curta. Como nas demais, a banda é ∞/piso 0: a
+// calibragem está adiada e acumula base no log.
+pub const LEGISLACAO: Collection = Collection {
+    kind: "legislacao",
+    n_results: 10,
+};
 pub const PARECERES: Collection = Collection {
     kind: "pareceres",
     n_results: 10,
@@ -39,8 +47,8 @@ pub const NOTAS: Collection = Collection {
     n_results: 1,
 };
 
-// All five kinds, for callers that iterate (boot-time pack loading in `packs::load_all`).
-pub const ALL: [&Collection; 5] = [&SERVICES, &FAQS, &PARECERES, &TARF, &NOTAS];
+// All six kinds, for callers that iterate (boot-time pack loading in `packs::load_all`).
+pub const ALL: [&Collection; 6] = [&SERVICES, &FAQS, &LEGISLACAO, &PARECERES, &TARF, &NOTAS];
 
 // Resolve a kind name to its Collection. `servicos` is the single vocabulary — the `/v1/{kind}/list`
 // route param, the vector-collection suffix, and the UI/registry label all agree. Unknown -> Err.
@@ -48,11 +56,12 @@ pub fn from_kind(kind: &str) -> std::result::Result<&'static Collection, String>
     match kind {
         "servicos" => Ok(&SERVICES),
         "faqs" => Ok(&FAQS),
+        "legislacao" => Ok(&LEGISLACAO),
         "pareceres" => Ok(&PARECERES),
         "tarf" => Ok(&TARF),
         "notas" => Ok(&NOTAS),
         _ => Err(format!(
-            "Tipo de coleção desconhecido: '{}'. Tipos válidos: servicos, faqs, pareceres, tarf, notas.",
+            "Tipo de coleção desconhecido: '{}'. Tipos válidos: servicos, faqs, legislacao, pareceres, tarf, notas.",
             kind
         )),
     }

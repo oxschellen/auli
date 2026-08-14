@@ -38,6 +38,8 @@ pub(crate) const FAQ_FLOOR: usize = 0;
 pub(crate) const FAQ_BAND: f32 = f32::INFINITY;
 const PAR_FLOOR: usize = 0;
 const PAR_BAND: f32 = f32::INFINITY;
+const LEG_FLOOR: usize = 0;
+const LEG_BAND: f32 = f32::INFINITY;
 
 // Expansão por grafo (só no tipo Pareceres): quantos pareceres relacionados por co-citação de
 // dispositivos anexar ao contexto, e o mínimo de dispositivos em comum para um parecer contar como
@@ -78,10 +80,15 @@ impl TemposConsulta {
 pub enum QueryType {
     /// Serviços + FAQs — the default RAG path.
     ServicosFaqs,
-    /// Uma coleção de jurisprudência, sozinha: pareceres ou acórdãos do TARF. O caminho é o mesmo
-    /// (payload leve → corpo lido da árvore → bloco), e o que muda é a coleção, o rótulo do bloco e
-    /// o prompt de sistema — tudo dado, nenhum código a duplicar.
-    Jurisprudencia(Kind),
+    /// UMA coleção consultada sozinha: pareceres, acórdãos do TARF ou legislação. O caminho é o
+    /// mesmo (payload leve → corpo lido da árvore → bloco), e o que muda é a coleção, a banda, o
+    /// rótulo do bloco e o prompt de sistema — tudo dado, nenhum código a duplicar.
+    ///
+    /// A variante nasceu `Jurisprudencia(Kind)`, quando as duas ideias — "coleção sozinha" e
+    /// "coleção de jurisprudência" — coincidiam. A legislação as separou: ela é consultada sozinha
+    /// e NÃO é jurisprudência (nada de resumo, nada de expansão por grafo). Uma variante própria
+    /// duplicaria este braço inteiro para mudar duas constantes, então o que muda é o nome.
+    ColecaoUnica(Kind),
 }
 
 impl QueryType {
@@ -89,11 +96,12 @@ impl QueryType {
     /// `type` malformado degrada em vez de derrubar a requisição.
     ///
     /// Os códigos são **contrato com o frontend** e não podem ser reordenados: `2` é pareceres desde
-    /// a primeira versão da tab do auditor, e `3` é o TARF.
+    /// a primeira versão da tab do auditor, `3` é o TARF e `4` é a legislação.
     pub fn from_code(code: Option<u8>) -> Self {
         match code {
-            Some(2) => QueryType::Jurisprudencia(Kind::Pareceres),
-            Some(3) => QueryType::Jurisprudencia(Kind::Tarf),
+            Some(2) => QueryType::ColecaoUnica(Kind::Pareceres),
+            Some(3) => QueryType::ColecaoUnica(Kind::Tarf),
+            Some(4) => QueryType::ColecaoUnica(Kind::Legislacao),
             _ => QueryType::ServicosFaqs,
         }
     }
@@ -103,8 +111,23 @@ impl QueryType {
     pub fn label(self) -> &'static str {
         match self {
             QueryType::ServicosFaqs => "servicos+faqs",
-            QueryType::Jurisprudencia(k) => k.as_str(),
+            QueryType::ColecaoUnica(k) => k.as_str(),
         }
+    }
+}
+
+/// Piso e banda de UMA coleção consultada sozinha (D-LEG-10). Exaustivo de propósito: coleção nova
+/// não herda banda por omissão — o `match` obriga a decidir.
+///
+/// Serviços e FAQs não chegam por este caminho (são consultados juntos, no outro braço), mas têm
+/// bandas próprias e é a delas que respondem aqui: é a resposta honesta, e não um `unreachable!`
+/// que viraria pânico se o caminho mudasse.
+fn bandas(kind: Kind) -> (usize, f32) {
+    match kind {
+        Kind::Servicos => (SVC_FLOOR, SVC_BAND),
+        Kind::Faqs => (FAQ_FLOOR, FAQ_BAND),
+        Kind::Legislacao => (LEG_FLOOR, LEG_BAND),
+        Kind::Pareceres | Kind::Tarf => (PAR_FLOOR, PAR_BAND),
     }
 }
 
@@ -190,11 +213,11 @@ pub(crate) fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String])
     format!("{}\n{}", rag_service, rag_faq)
 }
 
-/// Contexto do tipo `Jurisprudencia`: um bloco numerado por documento recuperado, e — quando a
+/// Contexto do tipo `ColecaoUnica`: um bloco numerado por documento recuperado, e — quando a
 /// expansão por grafo devolve algo — os pareceres que citam os mesmos dispositivos, rotulados como
 /// relacionados. Com `relacionados` vazio (default/sem grafo, e SEMPRE no TARF — D-A4), só a
 /// primeira seção sai.
-fn montar_rag_jurisprudencia(kind: Kind, blocos: &[String], relacionados: &[String]) -> String {
+fn montar_rag_colecao_unica(kind: Kind, blocos: &[String], relacionados: &[String]) -> String {
     let principal = render(blocos, |i, bloco| envolver(kind.rotulo(), i, bloco));
     if relacionados.is_empty() {
         return principal;
@@ -382,17 +405,18 @@ pub async fn exec_all_question(
                 &blocos(&faq_hits, engine.docs_root(), &cfg.id),
             )
         }
-        QueryType::Jurisprudencia(kind) => {
+        QueryType::ColecaoUnica(kind) => {
             let colecao = corpus::from_kind(kind.as_str())
                 .expect("todo Kind é um kind de corpus — ver o teste de cobertura");
+            let (floor, band) = bandas(kind);
             let hits = retrieve(
                 engine.clone(),
                 cfg.collection(colecao.kind),
                 "jur",
                 embedding,
                 colecao.n_results,
-                PAR_FLOOR,
-                PAR_BAND,
+                floor,
+                band,
             )
             .await?;
 
@@ -468,7 +492,7 @@ pub async fn exec_all_question(
                 "parecer relacionado",
                 relacionados.iter().map(|_| None),
             ));
-            montar_rag_jurisprudencia(kind, &docs, &relacionados)
+            montar_rag_colecao_unica(kind, &docs, &relacionados)
         }
     };
     tempos.retrieve_ms = t.elapsed().as_millis() as u64;
@@ -476,7 +500,7 @@ pub async fn exec_all_question(
     // System prompt = base prompt (per query type) + RAG context, closed with the original delimiter.
     let base_prompt = match query_type {
         QueryType::ServicosFaqs => &cfg.system_prompt,
-        QueryType::Jurisprudencia(kind) => cfg.prompt_de(kind),
+        QueryType::ColecaoUnica(kind) => cfg.prompt_de(kind),
     };
     let system_prompt = format!("{}{}'''", base_prompt, rag);
     trace!("System instructions with RAG: {}", system_prompt);
@@ -705,8 +729,9 @@ pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<Uuid> {
 #[cfg(test)]
 mod tests {
     use super::{
-        QueryType, RegistroConsulta, TemposConsulta, Uuid, aderencia, bloco_documento, envolver,
-        format_log_record, log_question, montar_aderencia, montar_rag_jurisprudencia,
+        FAQ_BAND, FAQ_FLOOR, LEG_BAND, LEG_FLOOR, PAR_BAND, PAR_FLOOR, QueryType, RegistroConsulta,
+        SVC_BAND, SVC_FLOOR, TemposConsulta, Uuid, aderencia, bandas, bloco_documento, envolver,
+        format_log_record, log_question, montar_aderencia, montar_rag_colecao_unica,
         montar_rag_servicos_faqs,
     };
     use auli_contract::{DocumentoPack, Kind, mddoc};
@@ -847,10 +872,15 @@ mod tests {
         // `pareceres` depois de a variante virar `Jurisprudencia(Kind)` — era o risco da mudança.
         assert_eq!(QueryType::ServicosFaqs.label(), "servicos+faqs");
         assert_eq!(
-            QueryType::Jurisprudencia(Kind::Pareceres).label(),
+            QueryType::ColecaoUnica(Kind::Pareceres).label(),
             "pareceres"
         );
-        assert_eq!(QueryType::Jurisprudencia(Kind::Tarf).label(), "tarf");
+        assert_eq!(QueryType::ColecaoUnica(Kind::Tarf).label(), "tarf");
+        // Contrato de grep do log: `grep "tipo: legislacao" logs/*.txt`.
+        assert_eq!(
+            QueryType::ColecaoUnica(Kind::Legislacao).label(),
+            "legislacao"
+        );
     }
 
     #[test]
@@ -1061,14 +1091,18 @@ mod tests {
     #[test]
     fn query_type_from_code_maps_2_to_pareceres_and_everything_else_to_default() {
         // Os códigos são contrato com o frontend: `2` é pareceres desde a primeira versão da tab do
-        // auditor e não pode ser reordenado; `3` é o TARF.
+        // auditor e não pode ser reordenado; `3` é o TARF; `4` é a legislação.
         assert_eq!(
             QueryType::from_code(Some(2)),
-            QueryType::Jurisprudencia(Kind::Pareceres)
+            QueryType::ColecaoUnica(Kind::Pareceres)
         );
         assert_eq!(
             QueryType::from_code(Some(3)),
-            QueryType::Jurisprudencia(Kind::Tarf)
+            QueryType::ColecaoUnica(Kind::Tarf)
+        );
+        assert_eq!(
+            QueryType::from_code(Some(4)),
+            QueryType::ColecaoUnica(Kind::Legislacao)
         );
         assert_eq!(QueryType::from_code(Some(1)), QueryType::ServicosFaqs);
         assert_eq!(QueryType::from_code(None), QueryType::ServicosFaqs);
@@ -1076,7 +1110,21 @@ mod tests {
         assert_eq!(QueryType::from_code(Some(9)), QueryType::ServicosFaqs);
     }
 
-    /// A trava que impede o `expect` do caminho de jurisprudência de virar pânico em produção: todo
+    /// Cada coleção solitária tem banda PRÓPRIA, ainda que hoje todas valham 0/∞ (a calibragem está
+    /// adiada). O teste existe para o dia em que uma delas for calibrada: sem ele, ligar a banda da
+    /// legislação na do parecer passaria despercebido — as duas eram iguais quando isso aconteceu.
+    #[test]
+    fn cada_colecao_solitaria_tem_a_propria_banda() {
+        assert_eq!(bandas(Kind::Legislacao), (LEG_FLOOR, LEG_BAND));
+        assert_eq!(bandas(Kind::Pareceres), (PAR_FLOOR, PAR_BAND));
+        assert_eq!(bandas(Kind::Tarf), (PAR_FLOOR, PAR_BAND));
+        // Servicos/faqs não chegam por este caminho, mas respondem a própria banda em vez de um
+        // `unreachable!` — resposta honesta, e não um pânico esperando o caminho mudar.
+        assert_eq!(bandas(Kind::Servicos), (SVC_FLOOR, SVC_BAND));
+        assert_eq!(bandas(Kind::Faqs), (FAQ_FLOOR, FAQ_BAND));
+    }
+
+    /// A trava que impede o `expect` do caminho de coleção única de virar pânico em produção: todo
     /// `Kind` tem que resolver em `corpus::from_kind`.
     #[test]
     fn todo_kind_resolve_em_corpus() {
@@ -1149,10 +1197,10 @@ mod tests {
     fn montar_rag_pareceres_pina_o_formato() {
         let blocos = vec!["BLOCO UM".to_string(), "BLOCO DOIS".to_string()];
         assert_eq!(
-            montar_rag_jurisprudencia(Kind::Pareceres, &blocos, &[]),
+            montar_rag_colecao_unica(Kind::Pareceres, &blocos, &[]),
             "\n## documento 1: Parecer\nBLOCO UM\n\n## documento 2: Parecer\nBLOCO DOIS\n"
         );
-        assert_eq!(montar_rag_jurisprudencia(Kind::Pareceres, &[], &[]), "");
+        assert_eq!(montar_rag_colecao_unica(Kind::Pareceres, &[], &[]), "");
     }
 
     /// O bloco do TARF: MESMO template, só o rótulo muda. É o que a D-MARC-1 promete — o que
@@ -1161,7 +1209,7 @@ mod tests {
     fn montar_rag_tarf_pina_o_formato() {
         let blocos = vec!["BLOCO UM".to_string()];
         assert_eq!(
-            montar_rag_jurisprudencia(Kind::Tarf, &blocos, &[]),
+            montar_rag_colecao_unica(Kind::Tarf, &blocos, &[]),
             "\n## documento 1: Acórdão TARF\nBLOCO UM\n"
         );
     }
@@ -1172,7 +1220,7 @@ mod tests {
         let blocos = vec!["BLOCO UM".to_string()];
         let rel = vec!["BLOCO REL".to_string()];
         assert_eq!(
-            montar_rag_jurisprudencia(Kind::Pareceres, &blocos, &rel),
+            montar_rag_colecao_unica(Kind::Pareceres, &blocos, &rel),
             "\n## documento 1: Parecer\nBLOCO UM\n\n## documento 1: Parecer relacionado\nBLOCO REL\n"
         );
     }

@@ -15,8 +15,9 @@
 /// Uma coleção de documentos do Auli.
 ///
 /// `Copy` porque é um discriminante: passa por valor em toda parte, e nenhum chamador precisa
-/// clonar. A ordem das variantes é a de **exibição** (serviços e faqs primeiro, jurisprudência
-/// depois) — é a ordem em que o `auli update` vetoriza e em que [`Kind::TODOS`] lista.
+/// clonar. A ordem das variantes é a de **exibição** (atendimento primeiro — serviços, faqs e
+/// legislação —, jurisprudência depois) — é a ordem em que o `auli update` vetoriza e em que
+/// [`Kind::TODOS`] lista.
 ///
 /// A serialização usa o MESMO texto do [`Kind::as_str`] — o vocabulário é um só, e um JSON com
 /// `"kind":"Tarf"` seria um segundo nome para a mesma coisa.
@@ -25,6 +26,7 @@
 pub enum Kind {
     Servicos,
     Faqs,
+    Legislacao,
     Pareceres,
     Tarf,
 }
@@ -32,7 +34,13 @@ pub enum Kind {
 impl Kind {
     /// Todas as coleções, na ordem de exibição. Existe para que quem itera não redigite a lista —
     /// acrescentar uma variante acima a inclui em todos os laços de uma vez.
-    pub const TODOS: [Kind; 4] = [Kind::Servicos, Kind::Faqs, Kind::Pareceres, Kind::Tarf];
+    pub const TODOS: [Kind; 5] = [
+        Kind::Servicos,
+        Kind::Faqs,
+        Kind::Legislacao,
+        Kind::Pareceres,
+        Kind::Tarf,
+    ];
 
     /// O nome da coleção. **É o mesmo string em todos os papéis**, de propósito: o subdiretório da
     /// árvore (`docs/<kind>/`), o sufixo da coleção vetorial (`<id>-<kind>`), o nome do pack, o
@@ -47,6 +55,7 @@ impl Kind {
         match self {
             Kind::Servicos => "servicos",
             Kind::Faqs => "faqs",
+            Kind::Legislacao => "legislacao",
             Kind::Pareceres => "pareceres",
             Kind::Tarf => "tarf",
         }
@@ -58,6 +67,7 @@ impl Kind {
         match self {
             Kind::Servicos => "Serviço",
             Kind::Faqs => "FAQ",
+            Kind::Legislacao => "Legislação",
             Kind::Pareceres => "Parecer",
             Kind::Tarf => "Acórdão TARF",
         }
@@ -69,6 +79,7 @@ impl Kind {
         match self {
             Kind::Servicos => "serviços",
             Kind::Faqs => "perguntas frequentes",
+            Kind::Legislacao => "perguntas de legislação",
             Kind::Pareceres => "pareceres",
             Kind::Tarf => "acórdãos",
         }
@@ -80,6 +91,7 @@ impl Kind {
         match self {
             Kind::Servicos => "Serviços",
             Kind::Faqs => "Perguntas Frequentes",
+            Kind::Legislacao => "Legislação",
             Kind::Pareceres => "Pareceres",
             Kind::Tarf => "Acórdãos TARF",
         }
@@ -89,11 +101,12 @@ impl Kind {
     /// cada `.md` e cujo `text_to_embed` fica cego sem ela (D-FMT-7).
     ///
     /// É também o teste de "é jurisprudência?" usado pelo subcomando `indice`, que só deriva índice
-    /// leve para estas. Serviços e faqs nunca têm `## resumo`, e isso é estado normal deles.
+    /// leve para estas. Serviços, faqs e legislação nunca têm `## resumo`, e isso é estado normal
+    /// deles — nas três o documento inteiro já é a resposta.
     pub fn exige_resumo(self) -> bool {
         match self {
             Kind::Pareceres | Kind::Tarf => true,
-            Kind::Servicos | Kind::Faqs => false,
+            Kind::Servicos | Kind::Faqs | Kind::Legislacao => false,
         }
     }
 
@@ -107,16 +120,33 @@ impl Kind {
     /// | família | árvore | pack |
     /// | --- | --- | --- |
     /// | jurisprudência (`pareceres`, `tarf`) | append-only | **incremental** |
-    /// | mutáveis (`servicos`, `faqs`) | delete + rebuild | **reset + total, sempre** |
+    /// | mutáveis/curadas (`servicos`, `faqs`, `legislacao`) | delete + rebuild | **reset + total, sempre** |
     ///
     /// Serviços e faqs são rescrapeados e reconstruídos por inteiro a cada rodada: são poucos
     /// registros, mudam muito no portal, e detectar com segurança o que foi RETIRADO de lá é
     /// complexo. Reconstruir do zero é mais simples e mais seguro que diferenciar — a mesma razão
-    /// pela qual a árvore delas já é delete + rebuild.
+    /// pela qual a árvore delas já é delete + rebuild. Legislação chega pelo outro lado e à mesma
+    /// política (D-LEG-5): é coleção pequena e AUTORADA fora do app, regerada em lote por lei.
     pub fn pack_incremental(self) -> bool {
         match self {
             Kind::Pareceres | Kind::Tarf => true,
-            Kind::Servicos | Kind::Faqs => false,
+            Kind::Servicos | Kind::Faqs | Kind::Legislacao => false,
+        }
+    }
+
+    /// A árvore desta coleção tem **um nível de subpastas** (`docs/<kind>/<subpasta>/*.md`), ou é
+    /// plana? (D-LEG-3)
+    ///
+    /// Verdadeiro só para [`Kind::Legislacao`], onde a subpasta é uma lei: o acervo de uma entidade
+    /// tem N leis, e uma árvore plana misturaria os pares P/R de todas elas num diretório só.
+    ///
+    /// Mora aqui, e não numa flag de operação, pelo mesmo motivo do [`Kind::pack_incremental`]: é
+    /// política da COLEÇÃO. Quem lê a árvore pergunta ao `Kind` e acerta sem parâmetro para errar;
+    /// as demais continuam planas e a leitura delas não muda em nada.
+    pub fn arvore_com_subpastas(self) -> bool {
+        match self {
+            Kind::Legislacao => true,
+            Kind::Servicos | Kind::Faqs | Kind::Pareceres | Kind::Tarf => false,
         }
     }
 
@@ -137,8 +167,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn todos_cobre_as_quatro_e_o_parse_e_inverso_do_as_str() {
-        assert_eq!(Kind::TODOS.len(), 4);
+    fn todos_cobre_as_cinco_e_o_parse_e_inverso_do_as_str() {
+        assert_eq!(Kind::TODOS.len(), 5);
         for k in Kind::TODOS {
             assert_eq!(Kind::parse(k.as_str()), Some(k), "{k}");
         }
@@ -170,7 +200,7 @@ mod tests {
         let mut nomes: Vec<&str> = Kind::TODOS.iter().map(|k| k.as_str()).collect();
         nomes.sort_unstable();
         nomes.dedup();
-        assert_eq!(nomes.len(), 4);
+        assert_eq!(nomes.len(), 5);
     }
 
     #[test]
@@ -179,6 +209,28 @@ mod tests {
         assert!(Kind::Tarf.exige_resumo());
         assert!(!Kind::Servicos.exige_resumo());
         assert!(!Kind::Faqs.exige_resumo());
+        assert!(!Kind::Legislacao.exige_resumo());
+    }
+
+    #[test]
+    fn so_a_legislacao_tem_arvore_com_subpastas() {
+        // A regressão que isto pega é a pior das duas direções: leitura recursiva ligada numa
+        // coleção plana varre o que não é dela; desligada na legislação, a árvore inteira some.
+        assert!(Kind::Legislacao.arvore_com_subpastas());
+        for k in Kind::TODOS {
+            if k != Kind::Legislacao {
+                assert!(!k.arvore_com_subpastas(), "{k}");
+            }
+        }
+    }
+
+    #[test]
+    fn a_familia_curada_reconstroi_o_pack_por_inteiro() {
+        // Legislação entra na família de servicos/faqs (D-LEG-5), não na da jurisprudência: pack
+        // incremental sobre uma coleção autorada guardaria vetor de par P/R que já não existe.
+        assert!(!Kind::Legislacao.pack_incremental());
+        assert!(Kind::Pareceres.pack_incremental());
+        assert!(Kind::Tarf.pack_incremental());
     }
 
     #[test]
@@ -195,5 +247,6 @@ mod tests {
         assert_eq!(Kind::Tarf.plural(), "acórdãos");
         assert_eq!(Kind::Servicos.plural(), "serviços");
         assert_eq!(Kind::Faqs.plural(), "perguntas frequentes");
+        assert_eq!(Kind::Legislacao.plural(), "perguntas de legislação");
     }
 }

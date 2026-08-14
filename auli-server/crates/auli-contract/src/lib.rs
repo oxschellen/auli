@@ -254,6 +254,13 @@ impl Documento {
             // FAQ: o hash cobre o par `(url, pergunta)` — a url sozinha não distingue perguntas da
             // mesma página.
             Kind::Faqs => mddoc::nome_faq_de(&self.titulo, &self.link),
+            // Legislação: mesma regra de nome da FAQ (é um par P/R), mas **um nível abaixo** —
+            // a subpasta é a lei, e sai do 1º segmento da trilha (D-LEG-4).
+            Kind::Legislacao => format!(
+                "{}/{}",
+                lei_da_trilha(&self.trilha),
+                mddoc::nome_faq_de(&self.titulo, &self.link)
+            ),
         };
         format!("docs/{}/{}.md", self.kind.as_str(), nome)
     }
@@ -423,6 +430,27 @@ pub fn partes_trilha_servico(trilha: &str) -> (&str, &str) {
     }
 }
 
+/// A lei de uma trilha de legislação: o **1º segmento** (`"Lei 6.537-1973 — Processo Tributário
+/// Administrativo"` em `"Lei 6.537-1973 — … | Título I — … | Capítulo I — …"`).
+///
+/// Ponto único de uma convenção que é **autoral**: quem gera o dataset escreve a trilha e cria a
+/// pasta, e os dois têm que coincidir — é o que o [`Documento::doc_path`] deriva e o que o
+/// `preparar` confere contra o caminho realmente lido. Serve também ao agrupamento por lei do
+/// índice (D-LEG-12) e do acordeão do frontend.
+///
+/// Trilha sem separador é toda ela a lei (uma lei sem hierarquia interna é legal); trilha vazia
+/// devolve vazio, e aí o `doc_path` aponta para fora da subpasta — a guarda do `preparar` é que
+/// pega isso, porque aqui não há como distinguir de um dataset legítimo em construção.
+///
+/// **Não pode conter `/`**: o 1º segmento vira nome de diretório, e todo número de lei brasileira
+/// tem barra. A convenção é `Lei {número com a barra trocada por hífen} — {nome}` (D-LEG-4a).
+pub fn lei_da_trilha(trilha: &str) -> &str {
+    match trilha.split_once(" | ") {
+        Some((lei, _)) => lei,
+        None => trilha,
+    }
+}
+
 /// Snippet da descrição que entra na key: 300 chars contados em CHARS (há acentos), aparado.
 fn snippet(descricao: &str) -> String {
     descricao
@@ -465,7 +493,39 @@ pub fn compose_faq_text_to_embed(origin: &str, pergunta: &str, resposta: &str) -
     compose_unificado(&trilha, &titulo, "", &resumo)
 }
 
-/// **O bloco único** de contexto RAG (D-B3): a mesma forma para as quatro coleções.
+/// Key de embedding de um par P/R de legislação (D-LEG-7): trilha da lei + `P:` pergunta +
+/// **dispositivo** + `R:` resposta.
+///
+/// É a fórmula da FAQ mais a ementa no slot dela, e é por causa dela que a fórmula é própria: o
+/// dispositivo ("Art. 21, I") é token de altíssimo valor nesta coleção — analista cita artigo, e
+/// quem busca "art. 11 § 3º" tem que chegar ao par certo. Nas FAQs esse slot fica vazio.
+///
+/// Ter adaptador próprio (em vez de reusar [`compose_faq_text_to_embed`] com a ementa) é o que
+/// permite às duas coleções **divergirem sem re-vetorizar uma à outra**: quando o gate P5 decidir
+/// sobre os prefixos `P:`/`R:`, cada uma paga o próprio custo.
+///
+/// Como nas FAQs, os prefixos entram no **valor** dos slots, não na fórmula — o
+/// [`compose_unificado`] não sabe de prefixo nenhum.
+pub fn compose_legislacao_text_to_embed(
+    trilha: &str,
+    pergunta: &str,
+    dispositivo: &str,
+    resposta: &str,
+) -> String {
+    let trilha = mddoc::colapsa_linha(trilha);
+    let pergunta = mddoc::colapsa_linha(pergunta);
+    let dispositivo = mddoc::colapsa_linha(dispositivo);
+    let resposta = mddoc::colapsa_linha(resposta);
+    let titulo = format!("P: {pergunta}");
+    let resumo = if resposta.is_empty() {
+        String::new()
+    } else {
+        format!("R: {resposta}")
+    };
+    compose_unificado(&trilha, &titulo, &dispositivo, &resumo)
+}
+
+/// **O bloco único** de contexto RAG (D-B3): a mesma forma para as cinco coleções.
 ///
 /// ```text
 /// ## pergunta
@@ -1053,6 +1113,70 @@ mod tests {
     }
 
     #[test]
+    fn compose_legislacao_congela_o_template() {
+        // Literais esperados, não recomputados — o mesmo regime do `compose_faq_congela_o_template`:
+        // mudar o template re-vetoriza o pack de legislação, então a mudança dói aqui primeiro.
+        let trilha = "Lei 6.537-1973 — Processo Tributário Administrativo | Título I";
+
+        // (a) par completo: trilha, P:, dispositivo, R: — nesta ordem.
+        assert_eq!(
+            compose_legislacao_text_to_embed(
+                trilha,
+                "Existe teto para as multas por infração formal?",
+                "Art. 11, § 3º",
+                "Sim: 75 vezes o valor mínimo."
+            ),
+            "Lei 6.537-1973 — Processo Tributário Administrativo | Título I\n\
+             P: Existe teto para as multas por infração formal?\n\
+             Art. 11, § 3º\n\
+             R: Sim: 75 vezes o valor mínimo."
+        );
+
+        // (b) o slot do dispositivo é o que separa esta fórmula da FAQ: sem ele, a linha SOME, e a
+        // key coincide com a da FAQ. É o que torna as duas comparáveis — e por isso separadas.
+        assert_eq!(
+            compose_legislacao_text_to_embed(trilha, "Pergunta?", "", "Resposta."),
+            compose_faq_text_to_embed(trilha, "Pergunta?", "Resposta.")
+        );
+
+        // (c) sem resposta: nada de `R:` pendurado.
+        assert_eq!(
+            compose_legislacao_text_to_embed(trilha, "Pergunta?", "Art. 2º", ""),
+            format!("{trilha}\nP: Pergunta?\nArt. 2º")
+        );
+
+        // (d) campos sujos colapsam — 4 linhas, determinístico byte a byte.
+        let key = compose_legislacao_text_to_embed(
+            " Lei X |  Título I ",
+            "Como  se conta\no prazo?",
+            "Art. 21,\nI",
+            "Em dias  corridos.\n\nExclui o dia do início.\n",
+        );
+        assert_eq!(
+            key,
+            "Lei X | Título I\nP: Como se conta o prazo?\nArt. 21, I\nR: Em dias corridos. Exclui o dia do início."
+        );
+        assert_eq!(key.lines().count(), 4);
+    }
+
+    #[test]
+    fn lei_da_trilha_pega_o_primeiro_segmento() {
+        // É o nome do diretório: errar aqui manda o `doc_path` para uma pasta que não existe.
+        assert_eq!(
+            lei_da_trilha("Lei 6.537-1973 — PTA | Título I — Das Infrações | Capítulo I"),
+            "Lei 6.537-1973 — PTA"
+        );
+        // Lei sem hierarquia interna é legal: a trilha inteira é a lei.
+        assert_eq!(
+            lei_da_trilha("Lei 6.537-1973 — PTA"),
+            "Lei 6.537-1973 — PTA"
+        );
+        // O separador é ` | ` com espaços — um pipe colado é texto do segmento, não separador.
+        assert_eq!(lei_da_trilha("Lei A|B | Título I"), "Lei A|B");
+        assert_eq!(lei_da_trilha(""), "");
+    }
+
+    #[test]
     fn documento_expoe_a_key_e_o_pack_v2() {
         let p = sample_documento();
         assert_eq!(p.text_to_embed(), "ICMS – crédito fiscal na cesta básica");
@@ -1135,6 +1259,43 @@ mod tests {
         assert_eq!(
             f.para_documento().doc_path(),
             format!("docs/faqs/{}.md", mddoc::nome_faq_de(&f.pergunta, &f.url))
+        );
+    }
+
+    /// Legislação é a única coleção com subpasta no `doc_path` (D-LEG-3/D-LEG-4), e a subpasta sai
+    /// da TRILHA — um campo que as outras quatro não usam para nome nenhum. Errar aqui não quebra
+    /// build nem boot: o pack fica com um caminho que não existe, e o corpo some na query.
+    #[test]
+    fn doc_path_de_legislacao_desce_para_a_subpasta_da_lei() {
+        let mut d = sample_documento();
+        d.kind = Kind::Legislacao;
+        d.trilha =
+            "Lei 6.537-1973 — Processo Tributário Administrativo | Título I | Capítulo I".into();
+        d.titulo = "Existe teto para as multas por infração formal?".into();
+        d.link =
+            "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=109403".into();
+
+        assert_eq!(
+            d.doc_path(),
+            format!(
+                "docs/legislacao/Lei 6.537-1973 — Processo Tributário Administrativo/{}.md",
+                mddoc::nome_faq_de(&d.titulo, &d.link)
+            )
+        );
+
+        // Duas perguntas da MESMA página (link idêntico) não colidem: o hash cobre o par
+        // (link, pergunta). É o que sustenta 134 pares atrás de um único `inpKey`.
+        let mut outro = d.clone();
+        outro.titulo = "Qual o prazo para impugnação?".into();
+        assert_ne!(d.doc_path(), outro.doc_path());
+
+        // Mesma pergunta em leis diferentes vai para pastas diferentes — a trilha é o que separa.
+        let mut outra_lei = d.clone();
+        outra_lei.trilha = "Lei 8.820-1989 — ICMS | Título I".into();
+        assert!(
+            outra_lei
+                .doc_path()
+                .starts_with("docs/legislacao/Lei 8.820-1989 — ICMS/")
         );
     }
 
@@ -1240,6 +1401,17 @@ mod tests {
             conteudo_indisponivel(&svc.pack()),
             "[conteúdo indisponível — ver o link oficial]"
         );
+        // Legislação idem: o par P/R não tem síntese, e o corpo É a resposta. Inventar substituto
+        // aqui seria pior que na FAQ — um bloco de aparência completa citando um dispositivo cujo
+        // texto não foi lido.
+        let mut leg = sample_documento();
+        leg.kind = Kind::Legislacao;
+        leg.resumo = "não deve ser servido".into();
+        assert_eq!(
+            conteudo_indisponivel(&leg.pack()),
+            "[conteúdo indisponível — ver o link oficial]"
+        );
+
         // E o bloco degradado NUNCA perde o link — é para onde o leitor vai.
         assert!(
             bloco(&svc.pack(), &conteudo_indisponivel(&svc.pack()))
