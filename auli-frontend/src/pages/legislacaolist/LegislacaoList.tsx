@@ -1,6 +1,9 @@
 import { useDeferredValue, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
+import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { MdExpandLess, MdExpandMore, MdOpenInNew } from "react-icons/md";
+import ReactMarkdown from "react-markdown";
 import useSWR from "swr";
 import {
   agruparPorLei,
@@ -17,74 +20,154 @@ import { hasCollection } from "../../shared/entities";
 import { CollectionEmpty } from "../../shared/CollectionEmpty";
 import { Highlight } from "../../shared/highlight";
 import { parseQuery } from "../../shared/textSearch";
+import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
+import { rehypeHighlight } from "../../shared/rehypeHighlight";
 
 const TITULO = "Legislação";
 
-/** Uma linha: o dispositivo à esquerda, a pergunta e o caminho na lei à direita. */
+/** Renderiza o `<mark>` que o `rehypeHighlight` injeta, com o mesmo visual do `Highlight`. */
+const markdownComponents = {
+  ...compactMarkdownComponents,
+  mark: ({ children }: { children?: ReactNode }) => (
+    <Box as="mark" bg="bg.highlight" color="fg.highlight" px="0.1em" borderRadius="2px">
+      {children}
+    </Box>
+  ),
+};
+
+/**
+ * Uma linha: o dispositivo à esquerda, a pergunta e o caminho na lei à direita — e que **abre para
+ * a resposta**, o `## corpo` do `.md` da árvore, que vem no índice (D-LEG-11a).
+ *
+ * O link do portal mudou de lugar quando a linha virou clicável: antes era um ícone `↗` na própria
+ * linha, agora vive dentro do painel aberto, como no `ParecerItem`. Dois alvos de clique
+ * concorrentes na mesma linha exigiriam `stopPropagation` e ainda deixariam o alvo do teclado
+ * ambíguo — o portal continua a um clique, só que depois de abrir.
+ */
 function ItemDispositivo({ d, terms }: { d: Dispositivo; terms: string[] }) {
   const caminho = caminhoNaLei(d.trilha);
+  const reduceMotion = useReducedMotion();
+  const [isOpen, setIsOpen] = useState(false);
+  // Sem termos o plugin é um no-op, mas evitamos até instanciá-lo no caso comum (sem busca).
+  const rehypePlugins = useMemo(() => (terms.length ? [rehypeHighlight(terms)] : []), [terms]);
+
   return (
-    <Flex
-      align="flex-start"
-      gap={3}
-      py={2}
-      px={4}
-      borderBottom="1px solid var(--chakra-colors-border)"
-      _hover={{ bg: "bg.subtle" }}
-      style={{ transition: "background 0.15s ease" }}
-    >
-      {/* O dispositivo é a identidade da linha e é por ele que o analista procura — daí vir
-          primeiro, numa coluna de largura FIXA (`w`, não `minW`): com largura mínima, um
-          "Art. 1º, parágrafo único" empurra a pergunta para a direita e o alinhamento da lista
-          se perde linha a linha. Fixa, o texto longo quebra dentro da própria coluna. */}
-      <Text
-        fontSize="0.8rem"
-        fontWeight="700"
-        color="accent.fg.muted"
-        w="7.5rem"
-        flexShrink={0}
-        pt="1px"
+    <Box borderBottom="1px solid var(--chakra-colors-border)">
+      <Flex
+        align="flex-start"
+        gap={3}
+        py={2}
+        px={4}
+        bg={isOpen ? "bg.app" : undefined}
+        cursor="pointer"
+        _hover={{ bg: isOpen ? "bg.app" : "bg.subtle" }}
+        style={{ transition: "background 0.15s ease" }}
+        onClick={() => setIsOpen((o) => !o)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsOpen((o) => !o);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isOpen}
       >
-        <Highlight text={d.ementa} terms={terms} />
-      </Text>
-      <Box flex={1} minW={0}>
-        <Text fontSize="0.95rem" fontWeight="500" color="fg" lineHeight="1.3">
-          <Highlight text={d.titulo} terms={terms} />
-        </Text>
-        {caminho && (
-          <Text fontSize="0.75rem" color="fg.muted" lineHeight="1.35" mt={0.5}>
-            <Highlight text={caminho} terms={terms} />
-          </Text>
-        )}
-      </Box>
-      {d.link && (
-        <Link
-          href={d.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          color="fg.muted"
+        {/* O dispositivo é a identidade da linha e é por ele que o analista procura — daí vir
+            primeiro, numa coluna de largura FIXA (`w`, não `minW`): com largura mínima, um
+            "Art. 1º, parágrafo único" empurra a pergunta para a direita e o alinhamento da lista
+            se perde linha a linha. Fixa, o texto longo quebra dentro da própria coluna. */}
+        <Text
+          fontSize="0.8rem"
+          fontWeight="700"
+          color="accent.fg.muted"
+          w="7.5rem"
           flexShrink={0}
-          _hover={{ color: "accent" }}
-          aria-label={`Abrir ${d.ementa} no portal oficial`}
+          pt="1px"
         >
-          <MdOpenInNew size={16} />
-        </Link>
-      )}
-    </Flex>
+          <Highlight text={d.ementa} terms={terms} />
+        </Text>
+        <Box flex={1} minW={0}>
+          <Text fontSize="0.95rem" fontWeight="500" color="fg" lineHeight="1.3">
+            <Highlight text={d.titulo} terms={terms} />
+          </Text>
+          {caminho && (
+            <Text fontSize="0.75rem" color="fg.muted" lineHeight="1.35" mt={0.5}>
+              <Highlight text={caminho} terms={terms} />
+            </Text>
+          )}
+        </Box>
+        <Box color="fg.muted" display="flex" flexShrink={0} pt="1px">
+          {isOpen ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
+        </Box>
+      </Flex>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <m.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.22, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+          >
+            <Box bg="bg.app" px={4} py={3} pl="calc(1rem + 7.5rem + 0.75rem)">
+              {d.link && (
+                <Link
+                  href={d.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  color="accent"
+                  fontSize="0.85rem"
+                  display="inline-flex"
+                  alignItems="center"
+                  gap={1}
+                  mb={2}
+                  aria-label={`Abrir ${d.ementa} no portal oficial`}
+                >
+                  <MdOpenInNew size={14} /> Abrir no portal
+                </Link>
+              )}
+              <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
+                <ReactMarkdown
+                  remarkPlugins={markdownPlugins}
+                  rehypePlugins={rehypePlugins}
+                  components={markdownComponents}
+                >
+                  {d.corpo}
+                </ReactMarkdown>
+              </Box>
+            </Box>
+          </m.div>
+        )}
+      </AnimatePresence>
+    </Box>
   );
 }
 
-/** Um grupo: a lei, aberta por padrão, com os dispositivos dela na ordem do texto. */
+/**
+ * Um grupo: a lei, **fechada por padrão**, com os dispositivos dela na ordem do texto.
+ *
+ * Fechada como nas irmãs (`PareceresAccordion`, `FaqsAccordion`, `ServicosAccordion`): a tela abre
+ * mostrando o acervo inteiro em uma altura, e não uma lei despejada por cima das outras.
+ *
+ * Durante a BUSCA o grupo é forçado aberto e o toggle é inerte — mesmo tratamento do `ServicosList`.
+ * Sem isso, quem pesquisa veria só cabeçalhos com contagem, com o resultado escondido atrás deles.
+ */
 function GrupoLei({
   lei,
   itens,
   terms,
+  isSearching,
 }: {
   lei: string;
   itens: Dispositivo[];
   terms: string[];
+  isSearching: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const aberto = isSearching || isOpen;
+  const alternar = () => !isSearching && setIsOpen((o) => !o);
   return (
     <Box mb={4}>
       <Flex
@@ -97,16 +180,16 @@ function GrupoLei({
         borderRadius="8px"
         cursor="pointer"
         _hover={{ bg: "bg.subtle" }}
-        onClick={() => setIsOpen((o) => !o)}
+        onClick={alternar}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            setIsOpen((o) => !o);
+            alternar();
           }
         }}
         role="button"
         tabIndex={0}
-        aria-expanded={isOpen}
+        aria-expanded={aberto}
       >
         <Text fontSize="0.95rem" fontWeight="700" color="fg" lineHeight="1.25">
           <Highlight text={lei} terms={terms} />
@@ -116,11 +199,11 @@ function GrupoLei({
             {itens.length}
           </Text>
           <Box color="fg.muted" display="flex">
-            {isOpen ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
+            {aberto ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
           </Box>
         </Flex>
       </Flex>
-      {isOpen && (
+      {aberto && (
         <Box mt={1}>
           {itens.map((d) => (
             <ItemDispositivo key={`${d.ementa}|${d.titulo}`} d={d} terms={terms} />
@@ -221,7 +304,13 @@ export const LegislacaoList = () => {
             </Box>
           ) : (
             grupos.map(([lei, doLei]) => (
-              <GrupoLei key={lei} lei={lei} itens={doLei} terms={terms} />
+              <GrupoLei
+                key={lei}
+                lei={lei}
+                itens={doLei}
+                terms={terms}
+                isSearching={isSearching}
+              />
             ))
           )}
         </AsyncContent>

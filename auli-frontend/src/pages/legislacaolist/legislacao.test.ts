@@ -10,10 +10,16 @@ import {
 
 const LEI = "Lei 6.537-1973 — Processo Tributário Administrativo";
 
-const d = (ementa: string, titulo: string, trilha = `${LEI} | Título I`): Dispositivo => ({
+const d = (
+  ementa: string,
+  titulo: string,
+  trilha = `${LEI} | Título I`,
+  corpo = "",
+): Dispositivo => ({
   titulo,
   trilha,
   ementa,
+  corpo,
   link: "http://legislacao.sefaz.rs.gov.br/x",
 });
 
@@ -71,6 +77,24 @@ describe("searchLegislacao", () => {
     expect(searchLegislacao(itens, "art. 11").map((x) => x.titulo)).toEqual([
       "Existe teto para as multas por infração formal?",
     ]);
+  });
+
+  it("acha pela resposta — texto que a tela mostra tem que ser texto que a busca encontra", () => {
+    // O `corpo` é exibido no painel que a linha abre (D-LEG-11a). Deixá-lo fora do haystack criaria
+    // a armadilha de o termo estar marcado em amarelo dentro de uma linha que o filtro não devolve.
+    const comCorpo = [
+      d("Art. 28", "Qual o prazo da impugnação?", `${LEI} | Título II`,
+        "O prazo é de **30 dias** contados da intimação do Auto de Lançamento."),
+      d("Art. 96", "Como é composto o TARF?", `${LEI} | Título III`,
+        "Por representantes do Estado e dos contribuintes, em composição paritária."),
+    ];
+    // "paritária" não está na pergunta, na trilha nem na ementa — só na resposta.
+    expect(searchLegislacao(comCorpo, "paritária").map((x) => x.ementa)).toEqual(["Art. 96"]);
+    // E o índice pré-normalizado tem que concordar com o caminho sem índice.
+    const index = buildLegislacaoIndex(comCorpo);
+    expect(searchLegislacao(comCorpo, "paritária", index)).toEqual(
+      searchLegislacao(comCorpo, "paritária"),
+    );
   });
 
   it("acha pela trilha: o vocabulário estrutural da lei não está na pergunta", () => {
