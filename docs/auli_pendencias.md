@@ -1330,6 +1330,41 @@ depois de uma interrupção? Se for raro, a dívida pode ficar registrada e não
 
 ---
 
+## 37. Busca: termo de **1 caractere** marca meia página (aberta — 2026-08-14)
+
+Encontrada ao revisar a aba Legislação depois que a linha passou a abrir e mostrar a resposta
+(D-LEG-11a). Buscar `impostos competem à União` deixa a letra **`a` marcada dentro de quase toda
+palavra** do resultado — "Qu**a**is", "d**a**", "estr**a**ngeiros". O `à` normaliza para `a` e vira
+substring de tudo.
+
+A causa está no [`parseQuery`](auli-frontend/src/shared/textSearch.ts), que fatia a query por espaço
+e **não descarta termos de um caractere**:
+
+```ts
+export function parseQuery(query: string): string[] {
+  const q = normalizeText(query);
+  return q ? q.split(" ") : [];
+}
+```
+
+**Não é da Legislação, e não é regressão.** É comportamento antigo e compartilhado: o `parseQuery`
+serve Serviços, FAQs, Pareceres, TARF, Conteúdos e Legislação. A prova de que é anterior está na
+própria tela — a linha do **título** já marcava assim, e esse trecho não foi tocado. O que mudou foi
+a **visibilidade**: com o corpo da resposta em tela, o ruído saiu de uma linha de título para um
+parágrafo inteiro.
+
+**O filtro continua correto** — os termos são combinados em E, então um termo que casa com tudo não
+muda o conjunto devolvido; quem filtra são os outros termos. O que degrada é só o realce. Por isso
+está aqui e não como bug.
+
+**O conserto é uma linha** (`.filter((t) => t.length > 1)`), mas ele muda o comportamento de busca de
+**seis abas** de uma vez, e por isso não entrou de carona na entrega da Legislação. Ao pagar, decidir
+também o caso em que **todos** os termos têm 1 caractere: com o filtro, a query esvazia e a lista
+volta inteira — o que é defensável, mas é uma escolha, não uma consequência. Merece teste no
+`textSearch` e uma passada visual em cada aba.
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
