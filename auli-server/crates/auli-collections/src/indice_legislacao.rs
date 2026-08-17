@@ -169,10 +169,12 @@ fn chave_dispositivo(ementa: &str) -> Option<(u32, u8, u16, u8, u16, u8, u8)> {
 
     // Sufixo de letra: só o `-A` colado ao número conta. `Art. 136 - A` (com espaços) não existe no
     // acervo e não é reconhecido — chave sem sufixo é a leitura conservadora.
-    let (sufixo, resto) = match resto
-        .strip_prefix('-')
-        .and_then(|r| r.chars().next().filter(char::is_ascii_uppercase).map(|c| (c, r)))
-    {
+    let (sufixo, resto) = match resto.strip_prefix('-').and_then(|r| {
+        r.chars()
+            .next()
+            .filter(char::is_ascii_uppercase)
+            .map(|c| (c, r))
+    }) {
         Some((c, r)) => (c as u8, &r[c.len_utf8()..]),
         None => (0, resto),
     };
@@ -435,7 +437,10 @@ mod tests {
             ("Art. 96, §§ 5º a 9º", (96, 0, 5, 0, 0, 0, 0)),
             ("Art. 155, § 2º, VII e VIII", (155, 0, 2, 0, 7, 0, 0)),
             ("Art. 155, § 2º, XII, a e b", (155, 0, 2, 0, 12, 1, 0)),
-            ("Art. 155, § 1º, IV; § 2º, IV e V; § 6º, I", (155, 0, 1, 0, 4, 0, 0)),
+            (
+                "Art. 155, § 1º, IV; § 2º, IV e V; § 6º, I",
+                (155, 0, 1, 0, 4, 0, 0),
+            ),
             // Artigo acrescido: o sufixo é o segundo componente, e ainda aceita subdispositivo.
             ("Art. 17-A", (17, b'A', 0, 0, 0, 0, 0)),
             ("Art. 136-F", (136, b'F', 0, 0, 0, 0, 0)),
@@ -457,7 +462,10 @@ mod tests {
             ("Art. 18, § 22-C", (18, 0, 22, b'C', 0, 0, 0)),
             // LC 123: ITEM dentro da alínea.
             ("Art. 13, § 1º, XIII, g.1", (13, 0, 1, 0, 13, 7, 1)),
-            ("Art. 13, § 1º, XIII, g.2 e h, e § 5º", (13, 0, 1, 0, 13, 7, 2)),
+            (
+                "Art. 13, § 1º, XIII, g.2 e h, e § 5º",
+                (13, 0, 1, 0, 13, 7, 2),
+            ),
             ("Art. 13, § 1º, XIII, a a h", (13, 0, 1, 0, 13, 1, 0)),
         ];
         for (ementa, esperada) in casos {
@@ -585,8 +593,8 @@ mod tests {
                 "Art. 155, III", // ...e antes de qualquer parágrafo
                 "Art. 155, § 1º, I",
                 "Art. 155, § 2º, I",
-                "Art. 155, § 2º, IX, a",  // IX antes de XII: romano por VALOR, não lexicográfico
-                "Art. 155, § 2º, XII",    // o inciso sem alínea abre...
+                "Art. 155, § 2º, IX, a", // IX antes de XII: romano por VALOR, não lexicográfico
+                "Art. 155, § 2º, XII",   // o inciso sem alínea abre...
                 "Art. 155, § 2º, XII, a", // ...e as alíneas vêm em ordem
                 "Art. 155, § 2º, XII, g",
                 "Art. 155, § 6º, I",
