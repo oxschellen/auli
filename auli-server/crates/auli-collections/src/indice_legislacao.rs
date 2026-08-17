@@ -65,10 +65,10 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
     entradas.sort_by_cached_key(|e| {
         let lei = lei_da_trilha(&e.trilha).to_string();
         match chave_dispositivo(&e.ementa) {
-            Some((num, sufixo, par, inc, al)) => (lei, 0u8, num, sufixo, par, inc, al),
+            Some(k) => (lei, 0u8, k),
             // `1` no segundo slot é o que empurra o sem-chave para o FIM DO GRUPO — do grupo da
             // própria lei, não da lista, porque a lei é o primeiro componente da chave.
-            None => (lei, 1u8, 0, 0, 0, 0, 0),
+            None => (lei, 1u8, (0, 0, 0, 0, 0, 0, 0)),
         }
     });
 
@@ -122,8 +122,12 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
 }
 
 /// Chave de ordenação do dispositivo, tirada da `ementa`:
-/// `(artigo, sufixo de letra, parágrafo, inciso, alínea)`. `None` quando não há artigo reconhecível
-/// no começo — aí a entrada vai para o fim do grupo da lei, **nunca ganha uma posição chutada**.
+/// `(artigo, sufixo, parágrafo, sufixo do parágrafo, inciso, alínea, item)`. `None` quando não há
+/// artigo reconhecível no começo — aí a entrada vai para o fim do grupo da lei, **nunca ganha uma
+/// posição chutada**.
+///
+/// Os dois últimos níveis vieram com a LC 123/2006, que escreve o que a CF e a 6.537 não escreviam:
+/// parágrafo acrescido (`§ 5º-M` — o art. 18 tem 17 deles) e item dentro da alínea (`XIII, g.1`).
 ///
 /// O que parseia no ARTIGO, medido contra as 175 ementas reais (Lei 6.537/1973 + CF art. 155):
 ///
@@ -142,7 +146,7 @@ pub fn run(entity: &EntityConfig) -> Result<()> {
 ///
 /// O que NÃO parseia (e é o certo): ementa vazia, ou que comece por qualquer outra coisa — remissão
 /// a outra norma, texto livre. Sem número no começo não há ordem defensável.
-fn chave_dispositivo(ementa: &str) -> Option<(u32, u8, u16, u16, u8)> {
+fn chave_dispositivo(ementa: &str) -> Option<(u32, u8, u16, u8, u16, u8, u8)> {
     let resto = ementa.trim().strip_prefix("Art")?;
     // `Art.` e `Arts.` — e nada além disso: `Artigo` não aparece no acervo, e aceitar prefixo
     // arbitrário abriria a porta para casar `Artefato`.
@@ -173,12 +177,36 @@ fn chave_dispositivo(ementa: &str) -> Option<(u32, u8, u16, u16, u8)> {
         None => (0, resto),
     };
 
-    let (paragrafo, inciso, alinea) = subdispositivo(resto);
-    Some((numero, sufixo, paragrafo, inciso, alinea))
+    let sub = subdispositivo(resto);
+    Some((
+        numero,
+        sufixo,
+        sub.paragrafo,
+        sub.sufixo_paragrafo,
+        sub.inciso,
+        sub.alinea,
+        sub.item,
+    ))
 }
 
-/// O subdispositivo depois do artigo: `(parágrafo, inciso, alínea)` — tudo `0` quando não há, que é
-/// o mesmo valor do `caput` e o menor da chave.
+/// Os cinco níveis abaixo do artigo. Tudo `0` é o nível do `caput`, e é o menor da chave.
+///
+/// Virou struct quando o art. 18 da LC 123 chegou: `(u16, u8, u16, u8, u8)` posicional já não se
+/// lia, e trocar dois componentes de lugar por engano daria uma ordem errada que nenhum teste
+/// pegaria de imediato.
+#[derive(Default, PartialEq, Eq, Debug)]
+struct Subdispositivo {
+    paragrafo: u16,
+    /// Letra do parágrafo acrescido (`§ 5º-M` → `M`). Vem DEPOIS do número e ANTES do inciso, então
+    /// `§ 1º, I` < `§ 1º-A` — que é a ordem do texto: os incisos do § 1º vêm antes do § 1º-A.
+    sufixo_paragrafo: u8,
+    inciso: u16,
+    alinea: u8,
+    /// Item numerado dentro da alínea (`XIII, g.1` → `1`). A LC 123 usa; a CF e a 6.537 não.
+    item: u8,
+}
+
+/// Lê o subdispositivo escrito depois do artigo.
 ///
 /// **Corta por vírgula e ponto-e-vírgula, nunca por espaço**, e é essa escolha que faz o parser
 /// funcionar: o acervo tem `Art. 138, II, e`, onde o `e` é a ALÍNEA, e tem `Art. 155, III e § 6º`,
@@ -188,7 +216,8 @@ fn chave_dispositivo(ementa: &str) -> Option<(u32, u8, u16, u16, u8)> {
 /// O primeiro nível escrito manda, e o resto do segmento é ignorado: `caput e incisos I a III` é
 /// caput; `§ 1º, IV; § 2º, IV e V; § 6º, I` é `§ 1º, IV`; `§§ 5º a 9º` é o `§ 5º`. Mesma leitura
 /// conservadora do `Arts.` plural — chaveia pelo primeiro que está escrito, não pela faixa inteira.
-fn subdispositivo(resto: &str) -> (u16, u16, u8) {
+fn subdispositivo(resto: &str) -> Subdispositivo {
+    let vazio = Subdispositivo::default();
     let mut segs = resto
         .split([',', ';'])
         .map(str::trim)
@@ -196,19 +225,19 @@ fn subdispositivo(resto: &str) -> (u16, u16, u8) {
         .peekable();
 
     match segs.peek() {
-        None => return (0, 0, 0),
+        None => return vazio,
         // `caput` explícito encerra a leitura: é o nível mais alto, e o que vier depois dele no
         // mesmo segmento é a companhia dele, não um nível mais fundo.
-        Some(s) if primeira_palavra(s).eq_ignore_ascii_case("caput") => return (0, 0, 0),
+        Some(s) if primeira_palavra(s).eq_ignore_ascii_case("caput") => return vazio,
         Some(_) => {}
     }
 
-    let paragrafo = match segs.peek().and_then(|s| paragrafo_de(s)) {
-        Some(n) => {
+    let (paragrafo, sufixo_paragrafo) = match segs.peek().and_then(|s| paragrafo_de(s)) {
+        Some(p) => {
             segs.next();
-            n
+            p
         }
-        None => 0,
+        None => (0, 0),
     };
 
     let inciso = match segs.peek().and_then(|s| romano_de(primeira_palavra(s))) {
@@ -218,20 +247,26 @@ fn subdispositivo(resto: &str) -> (u16, u16, u8) {
         }
         // Nem parágrafo nem inciso no primeiro segmento: não há subdispositivo reconhecível —
         // texto livre como `(escopo do acervo)`, ou a faixa de artigos de `Arts. 85 a 89`.
-        None if paragrafo == 0 => return (0, 0, 0),
+        None if paragrafo == 0 => return vazio,
         None => 0,
     };
 
     // A alínea só existe pendurada num inciso. A guarda não é purismo: sem ela, o `a` de faixa em
     // `Arts. 85 a 89` seria lido como alínea `a`.
-    let alinea = match inciso {
-        0 => 0,
+    let (alinea, item) = match inciso {
+        0 => (0, 0),
         _ => segs
             .peek()
             .and_then(|s| alinea_de(primeira_palavra(s)))
-            .unwrap_or(0),
+            .unwrap_or((0, 0)),
     };
-    (paragrafo, inciso, alinea)
+    Subdispositivo {
+        paragrafo,
+        sufixo_paragrafo,
+        inciso,
+        alinea,
+        item,
+    }
 }
 
 /// A primeira palavra de um segmento, sem aspas nem parênteses em volta. É ela que decide o nível;
@@ -243,20 +278,35 @@ fn primeira_palavra(seg: &str) -> &str {
         .trim_matches(|c: char| matches!(c, '"' | '\'' | '(' | ')'))
 }
 
-/// Número do parágrafo de um segmento que abre com `§`/`§§`, ou `1` para a grafia
-/// `parágrafo único` — que é o único parágrafo do artigo, e portanto vem logo depois do caput e dos
-/// incisos dele, como no texto.
-fn paragrafo_de(seg: &str) -> Option<u16> {
+/// `(número, sufixo de letra)` do parágrafo, de um segmento que abre com `§`/`§§` — ou `(1, 0)` para
+/// a grafia `parágrafo único`, que é o único parágrafo do artigo e portanto vem logo depois do caput
+/// e dos incisos dele, como no texto.
+///
+/// O sufixo (`§ 5º-M`, `§ 15-A`) é o que a LC 123 trouxe: o art. 18 sozinho tem 17 parágrafos
+/// acrescidos, e a série `§ 5º-A` a `§ 5º-M` empatava inteira sem ele. É o mesmo mecanismo do
+/// sufixo do ARTIGO (`Art. 17-A`), um nível abaixo.
+fn paragrafo_de(seg: &str) -> Option<(u16, u8)> {
     let Some(depois) = seg.strip_prefix("§§").or_else(|| seg.strip_prefix('§')) else {
         let p = primeira_palavra(seg).to_lowercase();
-        return (p == "parágrafo" || p == "paragrafo").then_some(1);
+        return (p == "parágrafo" || p == "paragrafo").then_some((1, 0));
     };
-    let digitos: String = depois
-        .trim_start()
-        .chars()
-        .take_while(char::is_ascii_digit)
-        .collect();
-    digitos.parse().ok()
+    let depois = depois.trim_start();
+    let digitos: String = depois.chars().take_while(char::is_ascii_digit).collect();
+    let numero: u16 = digitos.parse().ok()?;
+
+    // O ordinal é grafia (`5º`), o hífen é conteúdo (`5º-M`). Números altos vêm sem ordinal
+    // (`§ 15-A`), então o `º` é opcional aqui.
+    let resto = &depois[digitos.len()..];
+    let resto = resto
+        .strip_prefix('º')
+        .or_else(|| resto.strip_prefix('°'))
+        .unwrap_or(resto);
+    let sufixo = resto
+        .strip_prefix('-')
+        .and_then(|r| r.chars().next())
+        .filter(char::is_ascii_uppercase)
+        .map_or(0, |c| c as u8);
+    Some((numero, sufixo))
 }
 
 /// Numeral romano MAIÚSCULO (`I`, `IV`, `XII`) — o inciso. Exigir maiúscula é o que separa o inciso
@@ -289,11 +339,25 @@ fn romano_de(palavra: &str) -> Option<u16> {
     u16::try_from(total).ok()
 }
 
-/// Alínea: uma letra minúscula sozinha no seu próprio segmento (`…, XII, a`), valendo `a`=1.
-fn alinea_de(palavra: &str) -> Option<u8> {
+/// Alínea e o item dentro dela: `(letra, item)`. Uma letra minúscula sozinha no seu próprio segmento
+/// (`…, XII, a`) vale `(1, 0)`; com o item numerado da LC 123 (`…, XIII, g.1`) vale `(7, 1)`.
+///
+/// Sem o item, `g.1` e `g.2` não casavam como alínea nenhuma e caíam em `0` — ou seja, ANTES da
+/// alínea `a`, que é o oposto da ordem do texto.
+fn alinea_de(palavra: &str) -> Option<(u8, u8)> {
     let mut letras = palavra.chars();
-    let c = letras.next()?;
-    (letras.next().is_none() && c.is_ascii_lowercase()).then(|| c as u8 - b'a' + 1)
+    let c = letras.next().filter(char::is_ascii_lowercase)?;
+    let letra = c as u8 - b'a' + 1;
+    let resto: String = letras.collect();
+    if resto.is_empty() {
+        return Some((letra, 0));
+    }
+    // Só `.{dígitos}` continua sendo alínea; qualquer outra coisa é palavra comum ("aos", "e").
+    let digitos = resto.strip_prefix('.')?;
+    if digitos.is_empty() || !digitos.chars().all(|c| c.is_ascii_digit()) {
+        return None;
+    }
+    Some((letra, digitos.parse().ok()?))
 }
 
 /// Lê a árvore `docs/legislacao/<lei>/*.md` — **um nível de subpastas** (D-LEG-3), em ordem de
@@ -343,43 +407,58 @@ fn ler_arvore(dir: &Path) -> Result<Vec<Entrada>> {
 mod tests {
     use super::*;
 
-    /// Os formatos REAIS da ementa, tirados das 175 do acervo (6.537 + CF) — um por linha, com a
-    /// chave `(artigo, sufixo, parágrafo, inciso, alínea)` que devem produzir.
+    /// Os formatos REAIS da ementa, tirados das 288 do acervo (6.537 + CF + LC 123) — um por linha,
+    /// com a chave `(artigo, sufixo, parágrafo, sufixo do parágrafo, inciso, alínea, item)`.
     #[test]
     fn chave_cobre_os_formatos_reais_da_ementa() {
         let casos = [
             // O comum, e o ordinal `º` — que não pode virar parte do número nem cortar o parse.
-            ("Art. 28", (28, 0, 0, 0, 0)),
-            ("Art. 1º", (1, 0, 0, 0, 0)),
-            ("Art. 104", (104, 0, 0, 0, 0)),
+            ("Art. 28", (28, 0, 0, 0, 0, 0, 0)),
+            ("Art. 1º", (1, 0, 0, 0, 0, 0, 0)),
+            ("Art. 104", (104, 0, 0, 0, 0, 0, 0)),
             // Nível de caput: ausência, palavra explícita e companhia dos incisos — tudo no menor
             // valor, e por isso empatados entre si de propósito.
-            ("Art. 155, caput", (155, 0, 0, 0, 0)),
-            ("Art. 155, caput e incisos I a III", (155, 0, 0, 0, 0)),
-            ("Art. 155 (escopo do acervo)", (155, 0, 0, 0, 0)),
+            ("Art. 155, caput", (155, 0, 0, 0, 0, 0, 0)),
+            ("Art. 155, caput e incisos I a III", (155, 0, 0, 0, 0, 0, 0)),
+            ("Art. 155 (escopo do acervo)", (155, 0, 0, 0, 0, 0, 0)),
             // Inciso do caput: depois do caput, antes de qualquer §.
-            ("Art. 21, I", (21, 0, 0, 1, 0)),
-            ("Art. 155, II", (155, 0, 0, 2, 0)),
-            ("Art. 11, I, a", (11, 0, 0, 1, 1)),
+            ("Art. 21, I", (21, 0, 0, 0, 1, 0, 0)),
+            ("Art. 155, II", (155, 0, 0, 0, 2, 0, 0)),
+            ("Art. 11, I, a", (11, 0, 0, 0, 1, 1, 0)),
             // Parágrafo, inciso e alínea, o caso fundo.
-            ("Art. 121, § 2º", (121, 0, 2, 0, 0)),
-            ("Art. 155, § 1º, IV", (155, 0, 1, 4, 0)),
-            ("Art. 155, § 2º, IX, a", (155, 0, 2, 9, 1)),
-            ("Art. 155, § 2º, XII, i", (155, 0, 2, 12, 9)),
-            ("Art. 1º, parágrafo único", (1, 0, 1, 0, 0)),
+            ("Art. 121, § 2º", (121, 0, 2, 0, 0, 0, 0)),
+            ("Art. 155, § 1º, IV", (155, 0, 1, 0, 4, 0, 0)),
+            ("Art. 155, § 2º, IX, a", (155, 0, 2, 0, 9, 1, 0)),
+            ("Art. 155, § 2º, XII, i", (155, 0, 2, 0, 12, 9, 0)),
+            ("Art. 1º, parágrafo único", (1, 0, 1, 0, 0, 0, 0)),
             // Faixa e plural, em cada nível: chaveiam pelo PRIMEIRO escrito.
-            ("Art. 96, §§ 5º a 9º", (96, 0, 5, 0, 0)),
-            ("Art. 155, § 2º, VII e VIII", (155, 0, 2, 7, 0)),
-            ("Art. 155, § 2º, XII, a e b", (155, 0, 2, 12, 1)),
-            ("Art. 155, § 1º, IV; § 2º, IV e V; § 6º, I", (155, 0, 1, 4, 0)),
+            ("Art. 96, §§ 5º a 9º", (96, 0, 5, 0, 0, 0, 0)),
+            ("Art. 155, § 2º, VII e VIII", (155, 0, 2, 0, 7, 0, 0)),
+            ("Art. 155, § 2º, XII, a e b", (155, 0, 2, 0, 12, 1, 0)),
+            ("Art. 155, § 1º, IV; § 2º, IV e V; § 6º, I", (155, 0, 1, 0, 4, 0, 0)),
             // Artigo acrescido: o sufixo é o segundo componente, e ainda aceita subdispositivo.
-            ("Art. 17-A", (17, b'A', 0, 0, 0)),
-            ("Art. 136-F", (136, b'F', 0, 0, 0)),
-            ("Art. 136-A, §§ 1º e 2º", (136, b'A', 1, 0, 0)),
+            ("Art. 17-A", (17, b'A', 0, 0, 0, 0, 0)),
+            ("Art. 136-F", (136, b'F', 0, 0, 0, 0, 0)),
+            ("Art. 136-A, §§ 1º e 2º", (136, b'A', 1, 0, 0, 0, 0)),
             // Plural e faixa de ARTIGOS: o ` a ` / ` e ` aqui não é alínea nem inciso.
-            ("Arts. 85 a 89", (85, 0, 0, 0, 0)),
-            ("Arts. 32 e 33", (32, 0, 0, 0, 0)),
-            ("Arts. 136-C a 136-E", (136, b'C', 0, 0, 0)),
+            ("Arts. 85 a 89", (85, 0, 0, 0, 0, 0, 0)),
+            ("Arts. 32 e 33", (32, 0, 0, 0, 0, 0, 0)),
+            ("Arts. 136-C a 136-E", (136, b'C', 0, 0, 0, 0, 0)),
+            // LC 123: PARÁGRAFO acrescido — o art. 18 tem 17, e a série `§ 5º-A` a `§ 5º-M`
+            // empatava inteira antes deste componente.
+            ("Art. 18, § 5º-E", (18, 0, 5, b'E', 0, 0, 0)),
+            ("Art. 18, § 5º-M", (18, 0, 5, b'M', 0, 0, 0)),
+            ("Art. 18, § 1º-B", (18, 0, 1, b'B', 0, 0, 0)),
+            ("Art. 18, §§ 5º-B, 5º-D e 5º-F", (18, 0, 5, b'B', 0, 0, 0)),
+            ("Art. 18, §§ 5º-J, 5º-K e 5º-M", (18, 0, 5, b'J', 0, 0, 0)),
+            ("Art. 16, §§ 1º-A a 1º-D", (16, 0, 1, b'A', 0, 0, 0)),
+            // Número alto vem SEM ordinal no texto legal — o `º` é opcional antes do hífen.
+            ("Art. 18, § 15-A", (18, 0, 15, b'A', 0, 0, 0)),
+            ("Art. 18, § 22-C", (18, 0, 22, b'C', 0, 0, 0)),
+            // LC 123: ITEM dentro da alínea.
+            ("Art. 13, § 1º, XIII, g.1", (13, 0, 1, 0, 13, 7, 1)),
+            ("Art. 13, § 1º, XIII, g.2 e h, e § 5º", (13, 0, 1, 0, 13, 7, 2)),
+            ("Art. 13, § 1º, XIII, a a h", (13, 0, 1, 0, 13, 1, 0)),
         ];
         for (ementa, esperada) in casos {
             assert_eq!(
@@ -390,16 +469,41 @@ mod tests {
         }
     }
 
+    /// O sufixo do parágrafo vem DEPOIS do número e ANTES do inciso, e essa posição é a regra:
+    /// no texto legal, os incisos do `§ 1º` vêm antes do `§ 1º-A`, que é parágrafo próprio.
+    #[test]
+    fn o_paragrafo_acrescido_vem_depois_dos_incisos_do_paragrafo_dele() {
+        let mut ementas = [
+            "Art. 13, § 1º-A",
+            "Art. 13, § 2º",
+            "Art. 13, § 1º, XIII",
+            "Art. 13, § 1º",
+        ];
+        ementas.sort_by_key(|e| chave_dispositivo(e).unwrap());
+        assert_eq!(
+            ementas,
+            [
+                "Art. 13, § 1º",
+                "Art. 13, § 1º, XIII", // inciso do § 1º...
+                "Art. 13, § 1º-A",     // ...antes do § 1º-A, que é outro parágrafo
+                "Art. 13, § 2º",
+            ]
+        );
+    }
+
     /// A vírgula é o que separa a alínea da conjunção — o par que justifica cortar por pontuação e
     /// não por espaço. Os dois existem no acervo, e um parser por espaço erraria necessariamente um.
     #[test]
     fn a_virgula_separa_a_alinea_da_conjuncao() {
         // `e` sozinho no seu segmento é a ALÍNEA `e` (5ª).
-        assert_eq!(chave_dispositivo("Art. 138, II, e"), Some((138, 0, 0, 2, 5)));
+        assert_eq!(
+            chave_dispositivo("Art. 138, II, e"),
+            Some((138, 0, 0, 0, 2, 5, 0))
+        );
         // O mesmo `e` colado ao inciso, sem vírgula, é CONJUNÇÃO — e não vira alínea nenhuma.
         assert_eq!(
             chave_dispositivo("Art. 155, III e § 6º"),
-            Some((155, 0, 0, 3, 0))
+            Some((155, 0, 0, 0, 3, 0, 0))
         );
     }
 
@@ -437,8 +541,8 @@ mod tests {
             "Art. 136-A",
         ];
         ementas.sort_by_key(|e| match chave_dispositivo(e) {
-            Some((n, s, p, i, a)) => (0u8, n, s, p, i, a),
-            None => (1u8, 0, 0, 0, 0, 0),
+            Some(k) => (0u8, k),
+            None => (1u8, (0, 0, 0, 0, 0, 0, 0)),
         });
         assert_eq!(
             ementas,
@@ -486,6 +590,61 @@ mod tests {
                 "Art. 155, § 2º, XII, a", // ...e as alíneas vêm em ordem
                 "Art. 155, § 2º, XII, g",
                 "Art. 155, § 6º, I",
+            ]
+        );
+    }
+
+    /// O caso do art. 18 da LC 123, que motivou os dois níveis novos: uma série inteira de
+    /// parágrafos acrescidos e um item dentro da alínea. Sem eles, os cinco `§ 5º-x` empatariam e
+    /// cairiam na ordem alfabética da pergunta — o problema do art. 155 um nível abaixo.
+    #[test]
+    fn a_serie_de_paragrafos_acrescidos_da_lc123_ordena_pela_letra() {
+        let mut ementas = [
+            "Art. 18, §§ 5º-J, 5º-K e 5º-M",
+            "Art. 18, § 5º-I",
+            "Art. 18, §§ 5º-C e 5º-H",
+            "Art. 18, caput e §§ 1º e 1º-A",
+            "Art. 18, §§ 5º-B, 5º-D e 5º-F",
+            "Art. 18, § 5º-E",
+            "Art. 18, § 1º-B",
+            "Art. 18, § 3º",
+            "Art. 18, §§ 12 a 14",
+        ];
+        ementas.sort_by_key(|e| chave_dispositivo(e).unwrap());
+        assert_eq!(
+            ementas,
+            [
+                "Art. 18, caput e §§ 1º e 1º-A", // `caput` manda: nível mais alto
+                "Art. 18, § 1º-B",
+                "Art. 18, § 3º",
+                "Art. 18, §§ 5º-B, 5º-D e 5º-F", // B < C < E < I < J, pela LETRA
+                "Art. 18, §§ 5º-C e 5º-H",
+                "Art. 18, § 5º-E",
+                "Art. 18, § 5º-I",
+                "Art. 18, §§ 5º-J, 5º-K e 5º-M",
+                "Art. 18, §§ 12 a 14", // 12 > 5: por VALOR, não lexicográfico
+            ]
+        );
+    }
+
+    /// O item da alínea (`g.1`) vem depois das alíneas anteriores, não antes de todas. Sem o
+    /// componente, `g.1` não casava como alínea e caía em `0` — ou seja, na frente do `a`.
+    #[test]
+    fn o_item_da_alinea_ordena_dentro_da_letra_dele() {
+        let mut ementas = [
+            "Art. 13, § 1º, XIII, g.2 e h, e § 5º",
+            "Art. 13, § 1º, XIII, a a h",
+            "Art. 13, § 1º, XIII, g.1",
+            "Art. 13, § 1º, XIII, b a f",
+        ];
+        ementas.sort_by_key(|e| chave_dispositivo(e).unwrap());
+        assert_eq!(
+            ementas,
+            [
+                "Art. 13, § 1º, XIII, a a h",
+                "Art. 13, § 1º, XIII, b a f",
+                "Art. 13, § 1º, XIII, g.1", // g depois de b, e g.1 antes de g.2
+                "Art. 13, § 1º, XIII, g.2 e h, e § 5º",
             ]
         );
     }
