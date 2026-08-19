@@ -4,7 +4,10 @@ Documenta as **fontes** dos textos legais e as **convenções** usadas na geraç
 datasets P/R da coleção `legislacao` do Auli. Companheiro do `TAREFA-LEGISLACAO.md`
 (que rege a implantação no código); este arquivo rege o **conteúdo**.
 
-Última atualização: 14/08/2026 (4ª entrega — arts. 153–154).
+Última atualização: 19/08/2026 — Fase B do `TAREFA-LEGISLACAO-LACUNAS`: o §4
+deixou de duplicar contagens, a LC 123 ganhou o §2.4 e o §3.2 acompanhou a chave
+estendida na #151. Conteúdo: 6ª entrega da CF (arts. 157–162), parte tributária
+COMPLETA, ressalvadas as fronteiras 195/ADCT.
 
 ---
 
@@ -101,10 +104,68 @@ Consequências práticas:
 - **Texto consolidado de referência:** `ref/cf-arts-153-154-redacao-pre-ec132.md`.
 - **Status:** 12 pares gerados em 14/08/2026 (blocos 17–19).
 
+### 2.2-e Constituição Federal — art. 156 (impostos dos Municípios)
+
+- **Link oficial dos pares:** o mesmo compilado do Planalto.
+- **Base textual da consolidação pré-EC 132:** texto original de 1988 + EC 3/1993
+  (inciso III; revogações do IV e do § 4º) + EC 29/2000 (§ 1º) + EC 37/2002
+  (§ 3º, I e III). Última alteração antes da EC 132: **EC 37/2002**.
+- **Armadilhas pré-EC 132 identificadas**: o inciso III do § 1º (atualização da
+  base de cálculo do IPTU pelo Executivo) é da EC 132 — não existe no corte,
+  em que a majoração da base acima da correção monetária exige lei (Súmula 160
+  do STJ, anotada no par); os arts. 156-A/156-B (IBS) também são da EC 132.
+- **Texto consolidado de referência:** `ref/cf-art-156-redacao-pre-ec132.md`.
+- **Status:** 8 pares gerados em 14/08/2026 (bloco 20).
+
+### 2.2-f Constituição Federal — arts. 157 a 162 (repartição das receitas tributárias)
+
+- **Link oficial dos pares:** o mesmo compilado do Planalto.
+- **Base textual da consolidação pré-EC 132:** texto original de 1988 + EC 3/1993 e
+  EC 29/2000 (art. 160) + EC 42/2003 (158, II; 159, III e § 4º) + EC 44/2004
+  (159, III — 29%) + EC 55/2007 (159, I, "d") + EC 84/2014 (159, I, "e") +
+  EC 108/2020 (158, parágrafo único, I e II) + EC 112/2021 (159, I — 50% e
+  alínea "f") + EC 113/2021 (160, §§ 1º e 2º). Última alteração antes da
+  EC 132: **EC 113/2021**.
+- **Linha do tempo do art. 159, I** (verificada — fonte de erro comum):
+  47% original → 48% (EC 55, +1% dez) → 49% (EC 84, +1% jul) → 50%
+  (EC 112, +1% set). Alíneas d/e/f = dezembro/julho/setembro.
+- **Armadilhas pré-EC 132 identificadas**: a EC 132 incluiu o imposto do
+  art. 153, VIII na base dos incisos I e II do art. 159 (no corte, a base é
+  só IR+IPI — nota no par do IPI-exportação); renumerou o parágrafo único do
+  art. 158 para § 1º; e criou os arts. 159-A/159-B (FNDR) — nada disso existe
+  no corte.
+- **Texto consolidado de referência:** `ref/cf-arts-157-162-redacao-pre-ec132.md`.
+- **Status:** 12 pares gerados em 14/08/2026 (blocos 21–23).
+
+### 2.4 LC 123/2006 (Simples Nacional) — documentada por entrega
+
+Fonte, corte e armadilhas vivem nos `REGISTRO-lc123-entrega{1..4}.md`, não aqui: a
+lei entrou depois deste documento e é gerada em blocos, um documento por entrega. O
+que vale registrar no nível do acervo é o que **diverge** das convenções gerais:
+
+- **Corte próprio**: última redação anterior à **LC 214/2025** (a LC 227/2026
+  igualmente fora) — e não a EC 132/2023 do §1, que é o corte da CF. Daí a lei ter
+  sentinela própria.
+- **Fonte padrão a partir da 4ª entrega** (decisão de 14/08): PDF consolidado
+  Câmara/LEGIN "normaatualizada". O `lcp123.htm` do Planalto trunca no art. 18,
+  § 15-A para qualquer extrator — testado com três, não insistir. Os `link` dos
+  pares seguem nas âncoras do Planalto: o truncamento é do fetch, não da leitura
+  em navegador.
+- **Ressalva vinculante da fonte nova**: o PDF da Câmara já consolida a LC 214, então
+  dispositivo com "redação dada pela LC 214" mostra o texto **pós-corte**. A redação
+  anterior tem de ser recuperada na página da LC que a escreveu antes
+  (`Lcp147/155/188.htm`). Essa conferência é manual e é por dispositivo.
+- **Blocos ainda não gerados**: arts. 18-A a 18-F (MEI), 19–20, 21–27, 28–32, 33–41
+  e os Anexos I–V — estes últimos em entrega própria e **só com fetch verificado**,
+  nunca de memória (decisão da 3ª entrega).
+
 ### 2.3 Próximas (planejadas, ordem do geral ao específico)
 
-- CF arts. 145 a 162 restantes (Sistema Tributário Nacional completo);
-  fronteiras a decidir: art. 195 e dispositivos tributários do ADCT.
+- CF: parte tributária COMPLETA (Seções I a VI, 112 pares). Pendente apenas a
+  decisão de fronteiras: art. 195 (contribuições da seguridade) e dispositivos
+  tributários do ADCT.
+- LC 123/2006: **em andamento** — ver §2.4. Fora desta lista porque já tem
+  pares no acervo; o que falta dela são blocos, não a lei.
 - CTN (Lei 5.172/1966) — fonte prevista: compilado do Planalto.
 - Lei Kandir (LC 87/1996) — fonte prevista: compilado do Planalto.
 - Leis estaduais RS.
@@ -128,22 +189,28 @@ Consequências práticas:
   (invariante do doc_path, guardada por teste). Para a CF, os segmentos
   seguintes são Título/Capítulo/Seção do texto constitucional.
 - `ementa` = **o dispositivo** ("Art. 155, § 2º, XII, g"). É o campo que o
-  `chave_dispositivo` do índice usa para ordenar e, desde o **D-LEG-12a**, ele
-  desce até a alínea: `(artigo, sufixo, parágrafo, inciso, alínea)`. Regras que
-  quem escreve a ementa precisa saber, porque governam a posição do par na aba:
-  1. Chaveia pelo **1º de cada nível que estiver escrito**. Plural e faixa são
-     aceitos e valem pelo primeiro — "Arts. 85 a 89" → art. 85; "§§ 5º a 9º" →
-     § 5º; "§ 1º, IV; § 2º, IV e V" → § 1º, IV.
+  `chave_dispositivo` do índice usa para ordenar, e ele desce até o item da alínea:
+  `(artigo, sufixo, parágrafo, sufixo do parágrafo, inciso, alínea, item)` —
+  D-LEG-12a, estendido na #151 quando a LC 123 chegou. Seis regras que quem escreve
+  a ementa precisa saber, porque governam a posição do par na aba:
+  1. Chaveia pelo **1º de cada nível que estiver escrito**. Plural e faixa valem
+     pelo primeiro: "Arts. 85 a 89" → art. 85; "§§ 5º a 9º" → § 5º;
+     "§ 1º, IV; § 2º, IV e V" → § 1º, IV.
   2. **Ausência de subdispositivo, ou a palavra `caput`, vale o menor valor** —
-     "Art. 155", "Art. 155, caput" e "Art. 155 (escopo do acervo)" empatam no
-     topo do artigo. O empate entre elas é aceito de propósito.
-  3. Os níveis são separados por **vírgula, nunca por espaço**. Em
-     "Art. 138, II, e" o `e` é a **alínea**; em "Art. 155, III e § 6º" o mesmo
-     `e` é **conjunção**. Só a pontuação os distingue — a vírgula certa é o que
-     põe o par no lugar certo.
-  4. Sufixo de letra do artigo ("Art. 17-A") é o 2º componente: 17 < 17-A < 18.
-  5. Ementa que não comece por artigo reconhecível **não ganha chave** e vai
-     para o fim do grupo da lei, sem posição inventada.
+     "Art. 155", "Art. 155, caput" e "Art. 155 (escopo do acervo)" empatam no topo
+     do artigo. O empate entre elas é aceito de propósito.
+  3. Os níveis são separados por **vírgula, nunca por espaço**. Em "Art. 138, II, e"
+     o `e` é a **alínea**; em "Art. 155, III e § 6º" o mesmo `e` é **conjunção**. Só
+     a pontuação os distingue — a vírgula certa é o que põe o par no lugar certo.
+  4. **Sufixo de letra** conta em dois níveis. No artigo ("Art. 17-A"): 17 < 17-A <
+     18. No parágrafo ("§ 5º-M"): o sufixo vem **depois** do número e **antes** do
+     inciso, porque no texto legal os incisos do § 1º vêm antes do § 1º-A, que é
+     parágrafo próprio. O `º` é opcional antes do hífen — de 10 em diante a lei
+     escreve "§ 15-A", sem ordinal.
+  5. **Item dentro da alínea** ("XIII, g.1") ordena dentro da letra dele:
+     a < b < g.1 < g.2. Sem o ponto e o dígito, "g.1" não é lido como alínea nenhuma.
+  6. Ementa que não comece por artigo reconhecível **não ganha chave** e vai para o
+     fim do grupo da lei, sem posição inventada.
 - `link` = fonte oficial do texto compilado (SEFAZ para lei estadual,
   Planalto para norma federal).
 
@@ -171,7 +238,13 @@ Permitidas com parcimônia, **sempre rotuladas** e curtas (1–2 linhas):
 
 - 1 por lei/corte temporal; `ementa` = "Art. NNN (escopo do acervo)" —
   o rótulo entre parênteses não atrapalha o `chave_dispositivo`, que lê o
-  artigo do início.
+  artigo do início, então a sentinela abre o grupo.
+- **A LC 123 diverge, e é o único caso**: a ementa dela é "Nota de escopo — corte
+  pré-LC 214/2025", que não começa por artigo. Pela regra 6 do §3.2 ela não ganha
+  chave e vai para o **fim** do grupo da lei, não para o topo — o derivador avisa
+  isso a cada rodada. Não foi corrigida porque o texto atual carrega o corte
+  específico da lei (LC 214/2025, não a EC 132), que a fórmula acima perderia.
+  Ajustar é trocar um campo; a decisão é de conteúdo, não de código.
 
 ### 3.6 Nomes de arquivo
 
@@ -198,13 +271,36 @@ Permitidas com parcimônia, **sempre rotuladas** e curtas (1–2 linhas):
 
 ## 4. Inventário
 
-| Lei | Pares | Situação |
+**318 pares** na coleção `legislacao` do `rs`, em 3 leis (integrados em 19/08/2026).
+
+Este é o **único total declarado** em todo o acervo de documentos, e a regra vem de
+ter errado duas vezes: enquanto esta seção mantinha uma contagem por lei e os
+`REGISTRO-lc123-*` mantinham outra, cada entrega deixava um dos dois desatualizado
+— e quem lesse não tinha como saber qual. O detalhe por entrega (fonte, corte,
+armadilhas, mapa dos pares) vive nos documentos apontados abaixo; aqui fica só o
+agregado.
+
+| Lei | Pasta em `docs/legislacao/` | Onde está o detalhe |
 |---|---|---|
-| Lei 6.537/1973 (RS) | 134 | Implantados (PR #149) |
-| CF art. 155 | 41 | Gerados 14/08/2026 — em revisão |
-| CF arts. 150–152 | 23 | Gerados 14/08/2026 — em revisão |
-| CF arts. 145–149-A | 16 | Gerados 14/08/2026 — em revisão |
-| CF arts. 153–154 | 12 | Gerados 14/08/2026 — em revisão |
+| Lei 6.537/1973 (RS) | `Lei 6.537-1973 — Processo Tributário Administrativo` | §2.1 deste documento |
+| Constituição Federal (parte tributária) | `Constituição Federal — Sistema Tributário Nacional` | §§ 2.2 a 2.2-f deste documento |
+| LC 123/2006 (Simples Nacional) | `Lei Complementar 123-2006 — Simples Nacional` | `REGISTRO-lc123-entrega1..4.md` |
+
+**O total acima é derivado, não mantido à mão** — confira em um segundo, em vez de
+confiar nele:
+
+```bash
+find data/rs/docs/legislacao -name '*.md' | wc -l
+```
+
+O `auli-collections rs indice legislacao` também imprime `N perguntas de legislação,
+M leis` e lista as leis pelo nome — é a conferência que já roda em toda integração.
+
+**Não há total por lei aqui de propósito.** Se precisar de um, derive:
+
+```bash
+for d in "data/rs/docs/legislacao"/*/; do printf '%4d  %s\n' "$(ls "$d"*.md | wc -l)" "$(basename "$d")"; done
+```
 
 ## 5. Divisão em blocos do art. 155 (para rastreio da revisão)
 
@@ -218,10 +314,10 @@ Permitidas com parcimônia, **sempre rotuladas** e curtas (1–2 linhas):
 8. § 6º (IPVA) — pares 39–41
 
 <!-- markdownlint-disable MD029 -->
-<!-- A numeração dos blocos é CONTÍNUA entre as seções 5-b/5-c/5-d de propósito: o bloco é a
-     unidade de rastreio da revisão, e o §2.2-b remete a "blocos 9–12", o 2.2-c a "13–16", o
-     2.2-d a "17–19". O `--fix` do MD029 renumeraria cada seção a partir de 1 e quebraria essas
-     remissões. Regra desligada só daqui até o fim do arquivo. -->
+<!-- A numeração dos blocos é CONTÍNUA entre as seções 5-b a 5-f de propósito: o bloco é a
+     unidade de rastreio da revisão, e as seções 2.2-b a 2.2-f remetem a ele por número
+     ("blocos 9–12", "13–16", "17–19", "20", "21–23"). O `--fix` do MD029 renumeraria cada
+     seção a partir de 1 e quebraria essas remissões. Desligada daqui até o fim do arquivo. -->
 
 ## 5-b. Divisão em blocos dos arts. 150–152
 
@@ -242,3 +338,13 @@ Permitidas com parcimônia, **sempre rotuladas** e curtas (1–2 linhas):
 17. Art. 153, caput e §§ 1º–2º (competências, extrafiscais, IR, IGF) — pares 81–84
 18. Art. 153, §§ 3º–5º (IPI, ITR, ouro-IOF) — pares 85–90
 19. Art. 154 (residual e extraordinários) — pares 91–92
+
+## 5-e. Divisão em blocos do art. 156
+
+20. Art. 156 (IPTU, ITBI, ISS) — pares 93–100
+
+## 5-f. Divisão em blocos dos arts. 157–162
+
+21. Arts. 157–158 (receitas pertencentes) — pares 101–105
+22. Art. 159 (FPE/FPM, IPI-exportação, CIDE) — pares 106–108
+23. Arts. 160–162 (vedação de retenção, LC, TCU, transparência) — pares 109–112
