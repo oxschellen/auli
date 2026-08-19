@@ -139,7 +139,7 @@ Consequências práticas:
 
 ### 2.4 LC 123/2006 (Simples Nacional) — documentada por entrega
 
-Fonte, corte e armadilhas vivem nos `REGISTRO-lc123-entrega{1..4}.md`, não aqui: a
+Fonte, corte e armadilhas vivem nos `REGISTRO-lc123-entrega{1..9}.md`, não aqui: a
 lei entrou depois deste documento e é gerada em blocos, um documento por entrega. O
 que vale registrar no nível do acervo é o que **diverge** das convenções gerais:
 
@@ -155,9 +155,18 @@ que vale registrar no nível do acervo é o que **diverge** das convenções ger
   dispositivo com "redação dada pela LC 214" mostra o texto **pós-corte**. A redação
   anterior tem de ser recuperada na página da LC que a escreveu antes
   (`Lcp147/155/188.htm`). Essa conferência é manual e é por dispositivo.
-- **Blocos ainda não gerados**: arts. 18-A a 18-F (MEI), 19–20, 21–27, 28–32, 33–41
-  e os Anexos I–V — estes últimos em entrega própria e **só com fetch verificado**,
-  nunca de memória (decisão da 3ª entrega).
+- **Refs com corte aplicado a partir da 7ª entrega**: os refs dos arts. 21–27,
+  28–32 e 33–41 **não são espelho da fonte**. Onde a LC 214 ou a LC 227 já haviam
+  reescrito o dispositivo, a redação anterior foi restaurada e a marca
+  **[REDAÇÃO PRÉ-CORTE …]** anota de qual lei ela veio; dispositivos que só nascem
+  depois do corte ficam sob **[FORA DO CORTE …]**. É deliberado — um ref sem essas
+  marcas, nesses três blocos, estaria errado.
+- **Escopo de pares FECHADO em 130** (arts. 1º a 41, entregas 1 a 9). Fora ficam
+  apenas os **Anexos I–V**, em entrega própria e **só com fetch verificado**, nunca
+  de memória (decisão da 3ª entrega), com o formato das tabelas ainda por decidir.
+- **Duas ausências que são conteúdo, não lacuna**: o art. 37 não tem par (o par 122
+  cobre `Arts. 36 e 36-A`), e o art. 18, § 6º, está coberto pelo par de
+  segregação/retenção da 3ª entrega, com o texto integral no ref.
 
 ### 2.3 Próximas (planejadas, ordem do geral ao específico)
 
@@ -281,7 +290,7 @@ Permitidas com parcimônia, **sempre rotuladas** e curtas (1–2 linhas):
 
 ## 4. Inventário
 
-**318 pares** na coleção `legislacao` do `rs`, em 3 leis (integrados em 19/08/2026).
+**442 pares** na coleção `legislacao` do `rs`, em 5 normas (integrados em 19/08/2026).
 
 Este é o **único total declarado** em todo o acervo de documentos, e a regra vem de
 ter errado duas vezes: enquanto esta seção mantinha uma contagem por lei e os
@@ -294,7 +303,9 @@ agregado.
 |---|---|---|
 | Lei 6.537/1973 (RS) | `Lei 6.537-1973 — Processo Tributário Administrativo` | §2.1 deste documento |
 | Constituição Federal (parte tributária) | `Constituição Federal — Sistema Tributário Nacional` | §§ 2.2 a 2.2-f deste documento |
-| LC 123/2006 (Simples Nacional) | `Lei Complementar 123-2006 — Simples Nacional` | `REGISTRO-lc123-entrega1..4.md` |
+| LC 123/2006 (Simples Nacional) | `Lei Complementar 123-2006 — Simples Nacional` | `REGISTRO-lc123-entrega1..9.md` |
+| Lei 8.821/1989 (ITCD) | `Lei 8821-1989 — ITCD` | `REGISTRO-lei8821-entrega1..3.md` |
+| Decreto 33.156/1989 (RITCD) | `Decreto 33156-1989 — Regulamento do ITCD` | `REGISTRO-ritcd-entrega1..3.md` |
 
 **O total acima é derivado, não mantido à mão** — confira em um segundo, em vez de
 confiar nele:
