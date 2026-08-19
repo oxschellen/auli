@@ -236,15 +236,25 @@ Permitidas com parcimônia, **sempre rotuladas** e curtas (1–2 linhas):
 
 ### 3.5 Par sentinela
 
-- 1 por lei/corte temporal; `ementa` = "Art. NNN (escopo do acervo)" —
-  o rótulo entre parênteses não atrapalha o `chave_dispositivo`, que lê o
-  artigo do início, então a sentinela abre o grupo.
-- **A LC 123 diverge, e é o único caso**: a ementa dela é "Nota de escopo — corte
-  pré-LC 214/2025", que não começa por artigo. Pela regra 6 do §3.2 ela não ganha
-  chave e vai para o **fim** do grupo da lei, não para o topo — o derivador avisa
-  isso a cada rodada. Não foi corrigida porque o texto atual carrega o corte
-  específico da lei (LC 214/2025, não a EC 132), que a fórmula acima perderia.
-  Ajustar é trocar um campo; a decisão é de conteúdo, não de código.
+- 1 por lei/corte temporal; `ementa` = `Art. NNN (escopo do acervo)` — o rótulo
+  entre parênteses não atrapalha o `chave_dispositivo`, que lê o artigo do começo,
+  então a sentinela abre o grupo. **Sem exceção**: ementa fora da fórmula não ganha
+  chave (regra 6 do §3.2), cai no fim do grupo e o derivador avisa a cada rodada.
+- **O `NNN` é o PRIMEIRO artigo coberto pelo grupo, e ele envelhece.** Esta é a
+  parte que o formato sozinho não garante, e que já falhou duas vezes: a sentinela
+  da CF nasceu como `Art. 155` quando o grupo era só aquele artigo, e afundou para
+  a posição **52 de 112** quando as entregas 2 a 6 trouxeram os arts. 145 a 154 por
+  cima. A mesma coisa aconteceria com a LC 123, cuja âncora proposta era o art. 12
+  do bloco piloto, depois de a 2ª entrega trazer os arts. 1º a 3º-B.
+
+  **Toda entrega que estenda uma lei PARA TRÁS obriga a reconferir a âncora da
+  sentinela dela.** É um campo, e a conferência é barata: a sentinela tem de ser a
+  1ª linha do grupo no `<id>-legislacao-index.json`.
+
+- Estado em 19/08/2026: as quatro sentinelas do acervo abrem seus grupos —
+  CF (`Art. 145`), LC 123 (`Art. 1º`), Lei 8.821 (`Art. 1º`) e RITCD (`Art. 1º`).
+  A Lei 6.537 **não tem sentinela, e está certo**: é a única norma do acervo sem
+  corte temporal a declarar. A ausência é decisão, não esquecimento.
 
 ### 3.6 Nomes de arquivo
 
