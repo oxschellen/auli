@@ -29,17 +29,19 @@ use crate::util::run_blocking;
 // doc up to the ceiling (`Collection::n_results`). To enable adaptive narrowing, run real
 // questions, read the per-kind score arrays printed below, and lower each band to just above
 // where genuine matches separate from filler.
-// As de serviços/FAQs são `pub(crate)` porque a ferramenta MCP `consultar_servicos_faqs` usa as
-// MESMAS constantes — é o que faz a paridade com o chat ser automática: calibrar uma banda aqui
-// move as duas faces junto. As de pareceres seguem privadas (o MCP não passa por este caminho).
+// As de serviços/FAQs e legislação são `pub(crate)` porque as ferramentas MCP
+// `consultar_servicos_faqs` e `buscar_legislacao` usam as MESMAS constantes — é o que faz a
+// paridade com o chat ser automática: calibrar uma banda aqui move as duas faces junto. As de
+// pareceres seguem privadas (o MCP não passa por este caminho: `search_jurisprudencia` decide as
+// dele).
 pub(crate) const SVC_FLOOR: usize = 0;
 pub(crate) const SVC_BAND: f32 = f32::INFINITY;
 pub(crate) const FAQ_FLOOR: usize = 0;
 pub(crate) const FAQ_BAND: f32 = f32::INFINITY;
 const PAR_FLOOR: usize = 0;
 const PAR_BAND: f32 = f32::INFINITY;
-const LEG_FLOOR: usize = 0;
-const LEG_BAND: f32 = f32::INFINITY;
+pub(crate) const LEG_FLOOR: usize = 0;
+pub(crate) const LEG_BAND: f32 = f32::INFINITY;
 
 // Expansão por grafo (só no tipo Pareceres): quantos pareceres relacionados por co-citação de
 // dispositivos anexar ao contexto, e o mínimo de dispositivos em comum para um parecer contar como
@@ -215,9 +217,17 @@ pub(crate) fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String])
 
 /// Contexto do tipo `ColecaoUnica`: um bloco numerado por documento recuperado, e — quando a
 /// expansão por grafo devolve algo — os pareceres que citam os mesmos dispositivos, rotulados como
-/// relacionados. Com `relacionados` vazio (default/sem grafo, e SEMPRE no TARF — D-A4), só a
-/// primeira seção sai.
-fn montar_rag_colecao_unica(kind: Kind, blocos: &[String], relacionados: &[String]) -> String {
+/// relacionados. Com `relacionados` vazio (default/sem grafo, SEMPRE no TARF — D-A4 — e SEMPRE na
+/// legislação, que não tem grafo de dispositivos), só a primeira seção sai.
+///
+/// `pub(crate)` pela mesma razão do `montar_rag_servicos_faqs`: a ferramenta MCP
+/// `buscar_legislacao` monta o bloco por aqui, e é isso que mantém a paridade byte a byte com o
+/// tipo 4 do chat sem ninguém precisar lembrar.
+pub(crate) fn montar_rag_colecao_unica(
+    kind: Kind,
+    blocos: &[String],
+    relacionados: &[String],
+) -> String {
     let principal = render(blocos, |i, bloco| envolver(kind.rotulo(), i, bloco));
     if relacionados.is_empty() {
         return principal;

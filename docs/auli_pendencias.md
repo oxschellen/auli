@@ -1163,8 +1163,8 @@ local — 483 testes, os três `--ignored` do embedder contra o modelo real, e `
 A v1 (`auli-retrieval` + `/v1/retrieve` + `/mcp`, gates G1..G5) subiu com três ferramentas e rate
 limit; a quarta (`consultar_servicos_faqs`) entrou depois — ver o item riscado abaixo. Em 08/08/2026
 as duas de jurisprudência ganharam o parâmetro opcional `colecao` (`pareceres`, o padrão, ou `tarf`),
-com compatibilidade byte a byte para quem não o manda (#132). O que ficou registrado como próximo
-passo:
+com compatibilidade byte a byte para quem não o manda (#132). Em 20/08/2026 entrou a **quinta**,
+`buscar_legislacao` — ver o item riscado abaixo. O que ficou registrado como próximo passo:
 
 - **Auth opcional no `/mcp` (D-MCP-9).** Hoje sem autenticação: é conteúdo público e somente-leitura,
   atrás do tunnel e com rate limit próprio (10 req/s, burst 30). Uma API key por header
@@ -1173,6 +1173,13 @@ passo:
 - **Rate limit do `/mcp` em JSON-RPC.** O 429 sai como JSON simples, não como erro JSON-RPC.
   Correto no nível HTTP e os clientes tratam, mas um middleware próprio para `/mcp` daria uma
   mensagem melhor ao assistente.
+- ~~**A legislação não é visível por MCP (D-LEG-14).**~~ ✅ **resolvida (2026-08-20)** — entrou
+  como **`buscar_legislacao`**, ferramenta própria e não um valor de `colecao`. O motivo é
+  estrutural e está no D-LEG-14a: as duas ferramentas de jurisprudência devolvem `ParecerHit`
+  (`numero`, `assunto`, `resumo`, `link`), e um par de legislação não tem número nem resumo — três
+  dos quatro campos sairiam vazios, e o `obter_parecer` ficaria sem chave de busca. Segue o caminho
+  dos serviços/FAQs (`DocumentoPack` → `rag::blocos`), com as MESMAS constantes do tipo 4 do chat.
+  O `listar_entidades` passou a reportar cinco kinds.
 - ~~**Ferramenta `buscar_servicos_faqs` (D-MCP-7).**~~ ✅ **resolvida (2026-08-02)** — entrou como
   **`consultar_servicos_faqs`** (o nome mudou porque as tools `buscar_*` devolvem JSON de hits e
   esta devolve o bloco de contexto do chat, não uma lista). Reusa `rag::retrieve` e
