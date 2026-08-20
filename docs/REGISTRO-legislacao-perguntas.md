@@ -187,17 +187,27 @@ que vale registrar no nível do acervo é o que **diverge** das convenções ger
 Entrega única, 40 pares, arts. 1º a 20. Detalhe em `REGISTRO-ipva-entrega-unica.md`;
 o que diverge das convenções gerais:
 
-- **Fonte textual ≠ fonte do link.** O texto veio do PDF compilado do Gabinete de
-  Consultoria Legislativa da **AL-RS** (`repLegisComp`), atualizado até a Lei
-  16.307, de 31/5/2025 — a AL-RS bloqueia fetch por robots, então o PDF chegou por
-  upload manual, como no RITCD. Os `link` dos pares apontam para a SEFAZ
-  (`http://www.legislacao.sefaz.rs.gov.br/Site/Document.aspx?inpKey=109693`), que é
-  a fonte oficial de leitura do acervo para lei estadual. **O host só atende em
-  `http`** — `https` não tem resposta, e é por isso que a família inteira dos links
-  gaúchos é `http`.
-- **Discriminação do vigente pelas imagens.** O PDF marca as redações superadas com
-  tachado, que a camada de texto não preserva. A separação foi feita olhando as
-  páginas e encadeando as anotações "(Redação dada pela Lei X)".
+- **Os pares vieram do PDF da AL-RS; o ref, da SEFAZ.** Os 40 pares foram escritos
+  sobre o PDF compilado do Gabinete de Consultoria Legislativa da **AL-RS**
+  (`repLegisComp`), que chegou por upload manual porque a AL-RS bloqueia fetch por
+  robots. Em 20/08/2026 o ref foi **refeito** a partir do
+  `DocumentView.aspx?inpKey=109693` da SEFAZ — a mesma página que os `link` dos
+  pares apontam —, e a troca corrigiu dois pontos: o **art. 1º**, que no PDF
+  aparecia na redação original de 1985 sem a sigla, e o **art. 4º, § 7º**, que
+  estava parafraseado. Os outros 110 dispositivos conferiam palavra a palavra.
+  **O host só atende em `http`** — `https` não tem resposta, e é por isso que a
+  família inteira dos links gaúchos é `http`.
+- **Por que a troca de fonte do ref.** O PDF marca as redações superadas com
+  tachado, que a camada de texto não preserva — a separação entre vigente e
+  revogado foi feita a olho, pelas imagens das páginas. A página da SEFAZ serve só
+  o vigente, com um `<div>` por dispositivo, o tipo na classe e a atribuição de
+  alteração em campo próprio: extração determinística, sem leitura a fazer.
+- **Art. 12: metade do artigo é inconstitucional.** O texto da SEFAZ traz uma
+  anotação que o PDF não tinha — a parte final (os 50% ao DAER, com 70% em
+  investimentos e 30% em custeio) foi **declarada inconstitucional** na
+  Representação n.º 1.342-1/RS, STF, julgada em 17/12/1986 (DJ de 20/03/1987). O
+  par sobre repartição da receita descreve essa parte como vigente e menciona só o
+  veto mantido pela Assembleia. **Pendente de revisão de conteúdo.**
 - **Sem corte de reforma**, como no ITCD: a EC 132/2023 mexeu no IPVA
   constitucional (veículos aquáticos e aéreos, alíquota por impacto ambiental) e
   nada disso foi internalizado na lei gaúcha. A sentinela avisa.
@@ -219,10 +229,11 @@ diverge:
 - **Um par com validade de um ano** — o art. 14, I traz o calendário do exercício
   **2026** e é reescrito todo dezembro. O par avisa disso no corpo, mas ele
   precisa de revisão anual; é o primeiro dispositivo do acervo com essa natureza.
-- **Sem ref** — o texto integral não veio na entrega e não é gerado aqui. Nada no
-  sistema lê `data/rs/ref/` (o `copy_ref` pula a família e o retrieve serve o
-  corpo do par), então a ausência é lacuna de manutenção, não de função. Mesmo
-  caso da 2ª entrega do RITCD.
+- **Ref gerado da própria SEFAZ em 20/08/2026**, fechando a pendência 3 da entrega:
+  `rs-dec-32144-1985-texto-vigente.md`, extraído do `DocumentView.aspx?inpKey=109694`
+  — a mesma página que os `link` dos pares apontam. Confirma as armadilhas do
+  REGISTRO contra a fonte: o calendário de 2026 no art. 14, I (Alteração 133), o
+  inciso II e o § 13 do art. 14 revogados, e o § 10 do art. 4º revogado em 09/25.
 
 ### 2.3 Próximas (planejadas, ordem do geral ao específico)
 
