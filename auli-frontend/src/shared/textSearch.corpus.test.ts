@@ -7,17 +7,29 @@
  * dos itens pode não estar amanhã. Daí medir contra os artefatos reais de `public/rs/`, os mesmos
  * que o frontend serve.
  *
- * Se este teste quebrar, a mudança de comportamento é real e precisa de decisão humana — não de um
- * ajuste no teste.
+ * **Roda onde há dado, e só lá.** `public/rs/*.json` é gerado pelo `scripts/build-frontend-public.sh`
+ * a partir de `data/`, que não é versionado — no CI esses arquivos não existem, e o teste se declara
+ * pulado em vez de falhar. Não é o CI que ele protege: contra a regressão de código, quem guarda é o
+ * `textSearch.test.ts` (o caso do dígito isolado morre lá se alguém trocar o corte por tamanho).
+ * O que este arquivo protege é a PREMISSA empírica, e ela só pode ser medida em máquina com o
+ * acervo montado — na prática, a de quem integra uma entrega nova.
+ *
+ * Se ele quebrar, a mudança de comportamento é real e precisa de decisão humana — não de um ajuste
+ * no teste.
  */
 // O `@types/node` está no node_modules (vem do vite) mas não é dependência declarada, e o
 // tsconfig não tem campo `types` — sem esta referência o `tsc --noEmit` não enxerga `node:fs`.
 // Local, porque é o único arquivo do projeto que toca API de node.
 /// <reference types="node" />
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
-import { buildHaystack, haystackMatches, normalizeText, parseQuery } from "./textSearch";
+import {
+  buildHaystack,
+  haystackMatches,
+  normalizeText,
+  parseQuery,
+} from "./textSearch";
 
 /** O `parseQuery` de antes do conserto: sem descarte nenhum. */
 function parseQuerySemDescarte(query: string): string[] {
@@ -30,9 +42,12 @@ function itensDe(valor: unknown, saida: string[][] = []): string[][] {
   if (Array.isArray(valor)) {
     for (const v of valor) itensDe(v, saida);
   } else if (valor && typeof valor === "object") {
-    const campos = Object.values(valor).filter((v): v is string => typeof v === "string");
+    const campos = Object.values(valor).filter(
+      (v): v is string => typeof v === "string",
+    );
     if (campos.length) saida.push(campos);
-    for (const v of Object.values(valor)) if (typeof v === "object") itensDe(v, saida);
+    for (const v of Object.values(valor))
+      if (typeof v === "object") itensDe(v, saida);
   }
   return saida;
 }
@@ -57,18 +72,33 @@ const QUERIES = [
   "art 5 do regulamento", // com dígito isolado: preservado, então também não muda
 ];
 
-describe("descartar letra isolada não muda o conjunto filtrado (pendência 37)", () => {
-  for (const [aba, arquivo] of ABAS) {
-    it(aba, () => {
-      const itens = itensDe(JSON.parse(readFileSync(`public/rs/${arquivo}`, "utf8"))).map((campos) =>
-        buildHaystack(campos),
-      );
-      expect(itens.length, `${aba}: artefato vazio`).toBeGreaterThan(0);
-      for (const q of QUERIES) {
-        const antes = itens.filter((h) => haystackMatches(h, parseQuerySemDescarte(q))).length;
-        const depois = itens.filter((h) => haystackMatches(h, parseQuery(q))).length;
-        expect(depois, `${aba} / ${JSON.stringify(q)} / ${itens.length} itens`).toBe(antes);
-      }
-    });
-  }
-});
+/** Sem `data/` montado (CI, clone novo) não há o que medir. */
+const TEM_ACERVO = ABAS.every(([, arquivo]) =>
+  existsSync(`public/rs/${arquivo}`),
+);
+
+describe.skipIf(!TEM_ACERVO)(
+  "descartar letra isolada não muda o conjunto filtrado (pendência 37)",
+  () => {
+    for (const [aba, arquivo] of ABAS) {
+      it(aba, () => {
+        const itens = itensDe(
+          JSON.parse(readFileSync(`public/rs/${arquivo}`, "utf8")),
+        ).map((campos) => buildHaystack(campos));
+        expect(itens.length, `${aba}: artefato vazio`).toBeGreaterThan(0);
+        for (const q of QUERIES) {
+          const antes = itens.filter((h) =>
+            haystackMatches(h, parseQuerySemDescarte(q)),
+          ).length;
+          const depois = itens.filter((h) =>
+            haystackMatches(h, parseQuery(q)),
+          ).length;
+          expect(
+            depois,
+            `${aba} / ${JSON.stringify(q)} / ${itens.length} itens`,
+          ).toBe(antes);
+        }
+      });
+    }
+  },
+);

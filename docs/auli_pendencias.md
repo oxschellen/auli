@@ -1363,12 +1363,18 @@ como a query vazia — mesma regra já documentada no módulo.
 
 ### O que ficou de guarda
 
-- `textSearch.test.ts` — a regra: letra isolada sai, dígito isolado fica, caso-limite.
-- `textSearch.corpus.test.ts` — a consequência, contra os artefatos reais de `public/rs/` que o
-  frontend serve, nas seis abas (509 + 372 + 22.476 + 2.276 + serviços + conteúdos). Se quebrar,
-  a mudança de comportamento é real e pede decisão humana, não ajuste no teste.
+- `textSearch.test.ts` — a **regra**: letra isolada sai, dígito isolado fica, caso-limite. Roda em
+  todo lugar, inclusive no CI, e é ela que pega a regressão de código.
+- `textSearch.corpus.test.ts` — a **premissa empírica**, contra os artefatos reais de `public/rs/`
+  que o frontend serve, nas seis abas (509 + 372 + 22.476 + 2.276 + serviços + conteúdos). Este
+  **se declara pulado onde não há acervo**: `public/rs/*.json` é gerado pelo
+  `build-frontend-public.sh` a partir de `data/`, que não é versionado — no CI os arquivos não
+  existem. Na prática ele roda na máquina de quem integra uma entrega nova, que é exatamente quem
+  pode mudar a premissa.
 
-Verificado por mutação: repondo o defeito, quatro testes morrem.
+Verificado por mutação nos dois cenários: com o acervo montado, repondo o defeito morrem quatro
+testes; **sem** o acervo (o CI), morre um — o do dígito isolado, na guarda da regra. A cobertura do
+CI não depende do dado.
 
 ---
 
