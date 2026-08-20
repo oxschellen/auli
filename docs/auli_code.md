@@ -258,7 +258,7 @@ re-embed: `strategy_version` = "o que entra no vetor mudou" ⇒ **reembed obriga
 "como o arquivo é escrito mudou" ⇒ **migração, nunca reembed**.
 
 As catorze decisões vinham da `TAREFA-UPDATE-INCREMENTAL.md`, removida em 12/08/2026 depois de
-executada (PRs #139–#143). Resumidas aqui porque são o registro de *por que* o pack tem a forma que
+executada (PRs #139–#143). Resumidas aqui porque são o registro de _por que_ o pack tem a forma que
 tem — sem elas, "por que `id = doc_path`?" e "por que o `upsert` recebe `Vec<Record>`?" viram
 arqueologia. Texto integral no git.
 

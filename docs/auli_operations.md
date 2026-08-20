@@ -172,7 +172,6 @@ pipeline. Um clone novo, portanto, **não traz dados** — rode o pipeline para 
 > Ordem recomendada: crescente por tamanho, com `sp` e `rs` no fim — se algo estiver errado, aparece
 > em segundos e não depois de 70 minutos. **Backup dos packs antes**, que é a única parte irreversível.
 
-
 Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo roda de `auli-server/`):
 
 1. **Raspar** (rede, **sem headless**) → grava um snapshot por coleção `data/<id>/<id>-<kind>-snapshot.json` (v3):

@@ -62,7 +62,6 @@ uma pergunta real disparar `CREDIT_CARD`, a condição passou a valer.
 O rascunho do issue está em `UPSTREAM-cloakrs-credit-card-span.md`, **não publicado** — enviar a um
 repositório de terceiros é ação para fora, e é decisão do Carlos.
 
-
 ---
 
 ## 2 — (d) O saneamento na fonte foi **abandonado em 2016**
