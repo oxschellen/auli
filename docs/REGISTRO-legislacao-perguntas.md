@@ -202,6 +202,11 @@ o que diverge das convenções gerais:
   revogado foi feita a olho, pelas imagens das páginas. A página da SEFAZ serve só
   o vigente, com um `<div>` por dispositivo, o tipo na classe e a atribuição de
   alteração em campo próprio: extração determinística, sem leitura a fazer.
+- **Regra a partir daqui (D-LEG-17):** para lei estadual do RS o ref sai da página
+  da SEFAZ, e onde ela divergir de outra compilação, prevalece a SEFAZ — inclusive
+  contra o texto que originou os pares. A troca de fonte e a correção do par são
+  movimentos SEPARADOS (D-LEG-17a): o ref é trocado, a divergência fica anotada, e
+  o par volta para revisão de conteúdo.
 - **Art. 12: metade do artigo é inconstitucional.** O texto da SEFAZ traz uma
   anotação que o PDF não tinha — a parte final (os 50% ao DAER, com 70% em
   investimentos e 30% em custeio) foi **declarada inconstitucional** na
