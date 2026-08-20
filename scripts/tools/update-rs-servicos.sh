@@ -78,7 +78,7 @@ export AULI_COLLECTIONS_BIN="$SERVER/target/release/auli-collections"
 echo "🌳 derivando artefatos do snapshot (árvore docs/servicos)…"
 ( cd "$SERVER" && "$AULI_COLLECTIONS_BIN" rs )
 
-# 6. Re-vetoriza os packs (muda o `docs_hash`; o boot recusa subir até packs e árvore baterem).
+# 6. Re-vetoriza os packs (muda o `docs_hashes` de `servicos`; o boot recusa subir até packs e árvore baterem).
 #
 # O custo NÃO é o da entidade inteira. `servicos` e `faqs` são reescrita total por doutrina
 # (D-INC-8) — 586 + 1.947 vetores —, mas `pareceres` e `tarf` são incrementais desde o PR #140: as

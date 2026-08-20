@@ -79,6 +79,10 @@ web_config.txt
 # Cópias de segurança das árvores antes de uma migração de formato (pré-condição do roteiro
 # D-FMT-9). São dado, como o `data/` que espelham — e maiores ainda, por serem duplicata.
 /data_backup*/
+# Área de espera fora do `data/`: árvores tiradas de circulação mas ainda não descartadas (o
+# workspace do `anon-tarf` foi para cá em 20/08/2026). Nem `/data/*` nem `/data_backup*/` a
+# cobriam, e são centenas de MB a um `git add -A` de distância.
+/data-temp/
 /*.patch
 
 # Saídas de análise derivadas dos dados do portal (TSVs de frontmatter, tabelas de apoio). Mesma

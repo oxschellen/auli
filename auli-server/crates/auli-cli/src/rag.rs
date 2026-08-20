@@ -629,7 +629,7 @@ fn format_log_record(stamp: &str, reg: &RegistroConsulta) -> String {
     // A IDENTIDADE DO ESPAÇO VETORIAL em que estas distâncias foram medidas. Sem ela, uma mudança
     // de fórmula (bump de `STRATEGY_VERSION`) exigia LEMBRAR de arquivar o log — e esquecer não dá
     // erro, dá análise silenciosamente errada, misturando distâncias de dois espaços. É a mesma
-    // classe de defeito que o `docs_hash` fecha no boot. Com o carimbo, separar eras é `grep`.
+    // classe de defeito que o `docs_hashes` fecha no boot. Com o carimbo, separar eras é `grep`.
     //
     // O trio vem do `manifest::identity()`, a MESMA fonte que o manifesto usa para decidir se pack
     // e servidor combinam — três formulações de uma identidade só aparecem quando duas divergem.

@@ -44,11 +44,13 @@ pub fn load_all(packs_root: impl AsRef<Path>) -> Result<Collections> {
             for c in &manifest.collections {
                 hashes.insert(c.file.clone(), c.hash.clone());
             }
-            // A árvore `docs/` (fonte `.md` dos pareceres) é irmã de `packs/`. Divergir dela é tão
-            // grave quanto pack corrompido: o corpo servido ao LLM sai dali. Manifesto sem
-            // `docs_hash` (entidade sem árvore / pacote anterior) ⇒ nada a validar.
+            // A árvore `docs/` (fonte `.md` das coleções) é irmã de `packs/`. Divergir dela é tão
+            // grave quanto pack corrompido: o corpo servido ao LLM sai dali. A validação é por
+            // SUBDIRETÓRIO (D-DH-1/2): divergência vem com o diretório nomeado e o remédio
+            // (`auli update --kind <colecao>`) na mensagem. Manifesto sem o mapa COM árvore no
+            // disco é recusado — é o manifesto anterior à migração.
             let docs_dir = packs_root.join(id).join("docs");
-            manifest::validate_docs_hash(&docs_dir, &manifest)?;
+            manifest::validate_docs_hashes(&docs_dir, &manifest)?;
             println!(
                 "🔎 Manifesto de '{}' validado contra a identidade local.",
                 id

@@ -122,6 +122,12 @@ pub struct CollectionEntry {
     pub hash: String,
 }
 
+/// Mapa `subdiretório de 1º nível de docs/` → hash FNV-1a 64 hex dos arquivos dele (D-DH-1).
+///
+/// `BTreeMap` de propósito: ordem determinística no JSON do manifesto, então dois manifestos do
+/// mesmo estado diferem no máximo pelo `built_at`.
+pub type DocsHashes = std::collections::BTreeMap<String, String>;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Manifest {
     pub entity: String,
@@ -134,12 +140,24 @@ pub struct Manifest {
     #[serde(default = "pack_format_padrao")]
     pub pack_format: u32,
     pub collections: Vec<CollectionEntry>,
-    /// Hash agregado da árvore `docs/` (fonte `.md` dos pareceres), quando ela existe. Validado no
-    /// boot junto dos hashes de pack: a árvore é fonte de conteúdo servido, então divergir dela é
-    /// tão grave quanto um pack corrompido. Ausente em manifestos de entidades sem árvore (e nos
-    /// antigos, anteriores à árvore) — nesse caso não há o que validar.
+    /// Hash da árvore `docs/` POR SUBDIRETÓRIO de primeiro nível (D-DH-1), chaveado pelo DISCO —
+    /// nunca pela lista de coleções do manifesto. É o chaveamento pelo disco que preserva a
+    /// cobertura por omissão: um diretório ganha entrada por EXISTIR, e a próxima pasta que
+    /// aparecer também — nada depende de alguém ter declarado. (Hoje as 27 entidades só têm
+    /// diretórios que são coleções; a diferença aparece no dia em que uma delas não for.)
+    ///
+    /// **Regra central (D-DH-3):** cada entrada significa "o pack desta coleção veio deste estado
+    /// da árvore". Numa rodada parcial (`auli update --kind`), só os kinds reconstruídos são
+    /// recarimbados; os demais viajam verbatim do manifesto anterior — se alguém mexeu em
+    /// `docs/faqs/` e rodou `--kind tarf`, o hash preservado de `faqs` deixa de bater e o boot
+    /// recusa NOMEANDO `faqs`. Recarimbar tudo a cada rodada reproduziria o defeito do agregado,
+    /// só que particionado.
+    ///
+    /// Ausente ⇒ entidade sem árvore, OU manifesto anterior à migração. A validação distingue os
+    /// dois pelo disco (D-DH-2): mapa ausente COM árvore presente é erro alto — devolver `Ok` ali
+    /// desligaria a guarda em silêncio nas 27 entidades.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub docs_hash: Option<String>,
+    pub docs_hashes: Option<DocsHashes>,
 }
 
 impl Manifest {
@@ -173,44 +191,65 @@ pub fn manifest_path(packs_dir: impl AsRef<Path>, entity: &str) -> std::path::Pa
     packs_dir.as_ref().join(format!("{entity}.manifest.json"))
 }
 
-/// Hash agregado da árvore de documentos em `docs_dir` (recursivo), ou `None` se o diretório não
-/// existe (entidade sem árvore).
+/// Um passo do FNV-1a 64 sobre uma fatia, encadeando o acumulador. Fatorado porque agora há dois
+/// campos por arquivo (caminho e conteúdo) e a duplicação do laço era convite a divergirem.
+fn fnv_acc(mut acc: u64, bytes: &[u8]) -> u64 {
+    for &b in bytes {
+        acc ^= b as u64;
+        acc = acc.wrapping_mul(0x100000001b3);
+    }
+    acc
+}
+
+/// Hash da árvore `docs/` por subdiretório de 1º nível, ou `None` se `docs/` não existe (entidade
+/// sem árvore).
 ///
-/// Agrega FNV-1a sobre a lista **ordenada** de `caminho_relativo` + bytes de cada arquivo — assim o
-/// hash muda se um arquivo mudar, for adicionado, removido ou renomeado. Um único agregado (D2):
-/// barato e detecta qualquer alteração; não diz *qual* arquivo mudou — para isso, re-materializar.
+/// **Particiona a VARREDURA de sempre, não a lista de documentos** que o `preparar` enxerga: os
+/// mesmos bytes do antigo agregado, agora agrupados por diretório — um `.tmp` esquecido dentro de
+/// `docs/tarf/` continua sendo detectado (era o requisito que descartou hashear a lista de
+/// documentos). O caminho relativo entra no hash A PARTIR de `docs/` (com o nome do diretório,
+/// portanto): renomear sem mudar conteúdo muda o hash, como antes.
 ///
-/// **Sem delimitador entre caminho e conteúdo — aceito, não esquecido.** O fluxo é
-/// `caminho‖conteúdo‖caminho‖conteúdo…`, então em tese dois layouts distintos poderiam produzir a
-/// mesma sequência de bytes (mover um sufixo do nome para o início do corpo). Irrelevante aqui: é
-/// guarda de INTEGRIDADE contra deriva acidental — pack e árvore fora de sincronia —, não hash
-/// resistente a colisão adversarial; e a árvore é escrita só por nós, com nomes gerados por
-/// `slug*`. Se algum dia virar defesa contra adversário, este é o primeiro ponto a consertar (um
-/// `\0` entre os campos resolve) — mas aí o FNV-1a inteiro teria de sair junto.
-pub fn hash_docs_tree(docs_dir: impl AsRef<Path>) -> Result<Option<String>> {
+/// **Arquivo solto direto em `docs/` é erro** (D-DH-6): não pertenceria a nenhuma chave do mapa e
+/// ficaria fora da guarda — o único buraco silencioso que a partição poderia abrir. Medido antes
+/// de virar erro (F0 da TAREFA): nenhuma das 27 entidades tem arquivo solto.
+///
+/// Sem delimitador entre caminho e conteúdo — a mesma escolha, com a mesma justificativa, do
+/// agregado que este mapa substitui: guarda de integridade contra deriva acidental, não hash
+/// resistente a adversário; se um dia virar defesa contra adversário, o FNV-1a inteiro sai junto.
+pub fn hash_docs_map(docs_dir: impl AsRef<Path>) -> Result<Option<DocsHashes>> {
     let dir = docs_dir.as_ref();
     if !dir.exists() {
         return Ok(None);
     }
-    let mut arquivos: Vec<std::path::PathBuf> = Vec::new();
-    coletar_arquivos(dir, &mut arquivos)?;
-    arquivos.sort();
-
-    // Encadeia (caminho relativo, conteúdo) na ordem — o caminho entra no hash para que renomear
-    // sem mudar conteúdo também seja detectado.
-    let mut acc: u64 = 0xcbf29ce484222325;
-    for p in &arquivos {
-        let rel = p.strip_prefix(dir).unwrap_or(p).to_string_lossy();
-        for b in rel.as_bytes() {
-            acc ^= *b as u64;
-            acc = acc.wrapping_mul(0x100000001b3);
+    let mut mapa = DocsHashes::new();
+    for entry in std::fs::read_dir(dir)? {
+        let sub = entry?.path();
+        if !sub.is_dir() {
+            return Err(Error::from(format!(
+                "arquivo solto direto em `{}`: `{}`. A árvore contém diretórios (um por coleção); \
+                 um arquivo fora deles não pertence a nenhuma entrada do mapa de hashes e ficaria \
+                 fora da guarda de boot. Mova-o para o subdiretório certo ou remova-o.",
+                dir.display(),
+                sub.display()
+            )));
         }
-        for b in std::fs::read(p)? {
-            acc ^= b as u64;
-            acc = acc.wrapping_mul(0x100000001b3);
+        let nome = sub
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        let mut arquivos: Vec<std::path::PathBuf> = Vec::new();
+        coletar_arquivos(&sub, &mut arquivos)?;
+        arquivos.sort();
+        let mut acc: u64 = 0xcbf29ce484222325;
+        for p in &arquivos {
+            let rel = p.strip_prefix(dir).unwrap_or(p).to_string_lossy();
+            acc = fnv_acc(acc, rel.as_bytes());
+            acc = fnv_acc(acc, &std::fs::read(p)?);
         }
+        mapa.insert(nome, format!("{acc:016x}"));
     }
-    Ok(Some(format!("{acc:016x}")))
+    Ok(Some(mapa))
 }
 
 /// Coleta recursivamente os caminhos de arquivo sob `dir`.
@@ -226,31 +265,64 @@ fn coletar_arquivos(dir: &Path, out: &mut Vec<std::path::PathBuf>) -> Result<()>
     Ok(())
 }
 
-/// Confere a árvore em disco contra o `docs_hash` do manifesto. Manifesto sem `docs_hash` (entidade
-/// sem árvore, ou pacote anterior à árvore) ⇒ nada a validar.
+/// Confere a árvore em disco contra o mapa `docs_hashes` do manifesto, listando TODAS as
+/// divergências — não só a primeira (D-DH-5): o remédio de "uma árvore mudou E outra apareceu" é
+/// diferente do de "só uma mudou", e parar no primeiro erro esconderia o segundo.
 ///
-/// Divergência é erro duro pelo mesmo motivo do manifesto de pack: o corpo servido ao LLM sai dessa
-/// árvore, então servir com ela fora de sincronia é responder a partir de conteúdo que não é o que
-/// foi indexado.
-pub fn validate_docs_hash(docs_dir: impl AsRef<Path>, manifest: &Manifest) -> Result<()> {
-    let Some(esperado) = &manifest.docs_hash else {
-        return Ok(());
+/// A matriz do mapa inteiro é o D-DH-2. O braço `(None, Some)` é o que força a migração: um
+/// manifesto anterior ao mapa, com árvore no disco, é recusado alto — devolver `Ok` ali (a
+/// tentação óbvia de "compatibilidade") desligaria a guarda em silêncio nas 27 entidades.
+pub fn validate_docs_hashes(docs_dir: impl AsRef<Path>, manifest: &Manifest) -> Result<()> {
+    let disco = hash_docs_map(&docs_dir)?;
+    let (esperado, obtido) = match (&manifest.docs_hashes, disco) {
+        // Entidade sem árvore, manifesto coerente com isso — o `None` de sempre.
+        (None, None) => return Ok(()),
+        (None, Some(_)) => {
+            return Err(Error::from(format!(
+                "'{}' tem árvore docs/ em disco, mas o manifesto não traz o mapa `docs_hashes` \
+                 (manifesto anterior à migração). Re-gere com `auli update` — a rodada completa \
+                 recarimba o mapa; a jurisprudência é reaproveitada pelo key_hash.",
+                manifest.entity
+            )));
+        }
+        (Some(_), None) => {
+            return Err(Error::from(format!(
+                "Árvore de documentos ausente para '{}' ({}), mas o manifesto exige `docs_hashes`. \
+                 Re-gere os pacotes com `auli update`.",
+                manifest.entity,
+                docs_dir.as_ref().display()
+            )));
+        }
+        (Some(e), Some(o)) => (e, o),
     };
-    let obtido = hash_docs_tree(&docs_dir)?;
-    match obtido {
-        Some(h) if &h == esperado => Ok(()),
-        Some(h) => Err(Error::from(format!(
-            "Árvore de documentos divergente para '{}': manifesto tem docs_hash={esperado}, disco tem {h}. \
-             Re-gere os pacotes com `auli update` (ele relê a árvore e recarimba o hash).",
-            manifest.entity
-        ))),
-        None => Err(Error::from(format!(
-            "Árvore de documentos ausente para '{}' ({}), mas o manifesto exige docs_hash={esperado}. \
-             Re-gere os pacotes com `auli update`.",
-            manifest.entity,
-            docs_dir.as_ref().display()
-        ))),
+
+    let mut problemas: Vec<String> = Vec::new();
+    for (dir, h) in &obtido {
+        match esperado.get(dir) {
+            Some(e) if e == h => {}
+            Some(e) => problemas.push(format!(
+                "docs/{dir}/ mudou: manifesto tem {e}, disco tem {h}"
+            )),
+            None => problemas.push(format!(
+                "docs/{dir}/ existe em disco e não está no manifesto"
+            )),
+        }
     }
+    for dir in esperado.keys() {
+        if !obtido.contains_key(dir) {
+            problemas.push(format!("docs/{dir}/ está no manifesto e sumiu do disco"));
+        }
+    }
+    if problemas.is_empty() {
+        return Ok(());
+    }
+    Err(Error::from(format!(
+        "Árvore de documentos divergente para '{}':\n  - {}\n\
+         Re-gere com `auli update --kind <colecao>` para cada diretório nomeado (ou `auli update` \
+         completo — ele relê tudo e recarimba o mapa).",
+        manifest.entity,
+        problemas.join("\n  - ")
+    )))
 }
 
 /// Escreve o manifesto **atomicamente**: `.tmp` irmão + `rename`, a mesma disciplina que o
@@ -349,7 +421,7 @@ mod tests {
             strategy_version: STRATEGY_VERSION + 1, // wrong
             pack_format: PACK_FORMAT,
             collections: vec![],
-            docs_hash: None,
+            docs_hashes: None,
         };
         write_manifest(&path, &m).unwrap();
         assert!(validate_manifest(&path, &identity()).is_err());
@@ -370,76 +442,118 @@ mod tests {
     }
 
     #[test]
-    fn docs_hash_ausente_quando_nao_ha_arvore() {
+    fn mapa_por_diretorio_e_deterministico_e_isola_mudancas() {
+        let d = temp_docs("mapa");
+        std::fs::create_dir_all(d.join("tarf")).unwrap();
+        std::fs::write(d.join("pareceres/a.md"), "A").unwrap();
+        std::fs::write(d.join("tarf/b.md"), "B").unwrap();
+        let m1 = hash_docs_map(&d).unwrap().unwrap();
+        assert_eq!(m1.len(), 2);
+
+        // Mexer em UMA árvore muda SÓ a entrada dela — é a propriedade que o `--kind` compra.
+        std::fs::write(d.join("tarf/b.md"), "B'").unwrap();
+        let m2 = hash_docs_map(&d).unwrap().unwrap();
+        assert_eq!(m1["pareceres"], m2["pareceres"], "pareceres não foi tocado");
+        assert_ne!(m1["tarf"], m2["tarf"], "tarf mudou");
+
+        // Renomear sem mudar conteúdo também muda (o caminho entra no hash), e desfazer volta:
+        // o mapa é determinístico.
+        std::fs::rename(d.join("tarf/b.md"), d.join("tarf/c.md")).unwrap();
+        let m3 = hash_docs_map(&d).unwrap().unwrap();
+        assert_ne!(m2["tarf"], m3["tarf"]);
+        std::fs::rename(d.join("tarf/c.md"), d.join("tarf/b.md")).unwrap();
+        assert_eq!(hash_docs_map(&d).unwrap().unwrap()["tarf"], m2["tarf"]);
+        let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn mapa_ausente_quando_nao_ha_arvore() {
         let inexistente =
             std::env::temp_dir().join(format!("auli-sem-arvore-{}", std::process::id()));
-        assert_eq!(hash_docs_tree(&inexistente).unwrap(), None);
+        assert_eq!(hash_docs_map(&inexistente).unwrap(), None);
     }
 
     #[test]
-    fn docs_hash_muda_com_conteudo_nome_e_remocao() {
-        let d = temp_docs("mudanca");
-        let a = d.join("pareceres/a.md");
-        std::fs::write(&a, "corpo A").unwrap();
-        let h1 = hash_docs_tree(&d).unwrap().unwrap();
+    fn arquivo_solto_em_docs_e_erro_nomeado() {
+        // D-DH-6: fora de qualquer subdiretório, o arquivo ficaria fora de qualquer hash do mapa
+        // — o único buraco que a partição poderia abrir. O erro NOMEIA o arquivo.
+        let d = temp_docs("solto");
+        std::fs::write(d.join("perdido.md"), "x").unwrap();
+        let e = hash_docs_map(&d).unwrap_err().to_string();
+        assert!(e.contains("perdido.md"), "erro nomeia o arquivo: {e}");
+        let _ = std::fs::remove_dir_all(&d);
+    }
 
-        // Conteúdo diferente ⇒ hash diferente.
-        std::fs::write(&a, "corpo A'").unwrap();
-        let h2 = hash_docs_tree(&d).unwrap().unwrap();
-        assert_ne!(h1, h2, "mudança de conteúdo tem de mudar o hash");
-
-        // Renomear sem mudar conteúdo ⇒ hash diferente (o caminho entra no hash).
-        let b = d.join("pareceres/b.md");
-        std::fs::rename(&a, &b).unwrap();
-        let h3 = hash_docs_tree(&d).unwrap().unwrap();
-        assert_ne!(h2, h3, "renomear tem de mudar o hash");
-
-        // Arquivo novo ⇒ hash diferente; remover volta ao anterior (determinístico).
-        std::fs::write(d.join("pareceres/c.md"), "c").unwrap();
-        let h4 = hash_docs_tree(&d).unwrap().unwrap();
-        assert_ne!(h3, h4);
-        std::fs::remove_file(d.join("pareceres/c.md")).unwrap();
-        assert_eq!(
-            hash_docs_tree(&d).unwrap().unwrap(),
-            h3,
-            "hash é determinístico"
+    #[test]
+    fn validate_lista_todas_as_divergencias_nas_tres_classes() {
+        // D-DH-5: as três classes de uma vez, numa mensagem só. Parar na primeira esconderia o
+        // remédio das outras duas — repor esse defeito mata os dois últimos asserts.
+        let d = temp_docs("classes");
+        std::fs::create_dir_all(d.join("faqs")).unwrap();
+        std::fs::write(d.join("pareceres/x.md"), "x").unwrap();
+        std::fs::write(d.join("faqs/y.md"), "y").unwrap();
+        let mut m = manifesto("rs");
+        m.docs_hashes = hash_docs_map(&d).unwrap();
+        assert!(
+            validate_docs_hashes(&d, &m).is_ok(),
+            "árvore idêntica passa"
         );
 
+        std::fs::write(d.join("pareceres/x.md"), "x ADULTERADO").unwrap();
+        std::fs::remove_dir_all(d.join("faqs")).unwrap();
+        std::fs::create_dir_all(d.join("servicos")).unwrap();
+        std::fs::write(d.join("servicos/n.md"), "n").unwrap();
+        let e = validate_docs_hashes(&d, &m).unwrap_err().to_string();
+        assert!(e.contains("docs/pareceres/ mudou"), "erro: {e}");
+        assert!(
+            e.contains("docs/faqs/ está no manifesto e sumiu"),
+            "erro: {e}"
+        );
+        assert!(e.contains("docs/servicos/ existe em disco"), "erro: {e}");
         let _ = std::fs::remove_dir_all(&d);
     }
 
     #[test]
-    fn validate_docs_hash_aceita_igual_e_recusa_divergente_ou_ausente() {
-        let d = temp_docs("validate");
-        std::fs::write(d.join("pareceres/x.md"), "conteudo").unwrap();
-        let h = hash_docs_tree(&d).unwrap().unwrap();
-
-        let mut m = Manifest {
-            entity: "sc".into(),
-            version: "1".into(),
-            built_at: "now".into(),
-            embed_model_id: EMBED_MODEL_ID.into(),
-            embed_dim: EMBED_DIM,
-            strategy_version: STRATEGY_VERSION,
-            pack_format: PACK_FORMAT,
-            collections: vec![],
-            docs_hash: Some(h),
-        };
-        assert!(validate_docs_hash(&d, &m).is_ok(), "árvore idêntica passa");
-
-        // Árvore mexida por fora ⇒ recusa.
-        std::fs::write(d.join("pareceres/x.md"), "conteudo ADULTERADO").unwrap();
-        let e = validate_docs_hash(&d, &m).unwrap_err().to_string();
-        assert!(e.contains("divergente"), "erro: {e}");
-
-        // Árvore sumida, mas manifesto exige ⇒ recusa.
+    fn mapa_ausente_com_arvore_em_disco_e_erro_alto() {
+        // D-DH-2, o braço que força a migração. "Simplificar" (None, Some) para Ok desligaria a
+        // guarda em silêncio nas 27 entidades — este teste morre com essa simplificação.
+        let d = temp_docs("migracao");
+        std::fs::write(d.join("pareceres/x.md"), "x").unwrap();
+        let m = manifesto("rs"); // docs_hashes: None
+        let e = validate_docs_hashes(&d, &m).unwrap_err().to_string();
+        assert!(e.contains("docs_hashes"), "erro: {e}");
+        assert!(e.contains("auli update"), "o remédio está na mensagem: {e}");
         let _ = std::fs::remove_dir_all(&d);
-        let e = validate_docs_hash(&d, &m).unwrap_err().to_string();
-        assert!(e.contains("ausente"), "erro: {e}");
+    }
 
-        // Manifesto sem docs_hash (entidade sem árvore / pacote antigo) ⇒ nada a validar.
-        m.docs_hash = None;
-        assert!(validate_docs_hash(&d, &m).is_ok());
+    #[test]
+    fn sem_arvore_e_sem_mapa_nada_a_validar() {
+        let inexistente =
+            std::env::temp_dir().join(format!("auli-sem-arvore-v-{}", std::process::id()));
+        assert!(validate_docs_hashes(&inexistente, &manifesto("rs")).is_ok());
+    }
+
+    #[test]
+    fn manifesto_antigo_com_docs_hash_escalar_ainda_desserializa() {
+        // O campo antigo é IGNORADO pelo serde (campo desconhecido) e o mapa fica `None` — que a
+        // validação recusa quando há árvore (teste acima). É a RECUSA que força a migração, não a
+        // desserialização: um manifesto velho nunca derruba o parse, ele derruba o boot com o
+        // remédio na mensagem.
+        let json = r#"{"entity":"rs","version":"1","built_at":"now","embed_model_id":"m",
+                       "embed_dim":1024,"strategy_version":3,"pack_format":2,"collections":[],
+                       "docs_hash":"0123456789abcdef"}"#;
+        let m: Manifest = serde_json::from_str(json).unwrap();
+        assert_eq!(m.docs_hashes, None);
+    }
+
+    #[test]
+    fn manifesto_sem_arvore_nao_emite_o_campo() {
+        // JSON continua enxuto para entidade sem árvore.
+        assert!(
+            !serde_json::to_string(&manifesto("rs"))
+                .unwrap()
+                .contains("docs_hashes")
+        );
     }
 
     #[test]
@@ -459,7 +573,7 @@ mod tests {
             strategy_version: STRATEGY_VERSION,
             pack_format: 1, // formato antigo, identidade de embedding CERTA
             collections: vec![],
-            docs_hash: None,
+            docs_hashes: None,
         };
         write_manifest(&path, &m).unwrap();
         let e = validate_manifest(&path, &identity())
@@ -487,7 +601,7 @@ mod tests {
             strategy_version: STRATEGY_VERSION,
             pack_format: PACK_FORMAT,
             collections: vec![],
-            docs_hash: None,
+            docs_hashes: None,
         }
     }
 
@@ -547,15 +661,5 @@ mod tests {
                        "embed_dim":1024,"strategy_version":2,"collections":[]}"#;
         let m: Manifest = serde_json::from_str(json).unwrap();
         assert_eq!(m.pack_format, 1);
-    }
-
-    #[test]
-    fn manifesto_antigo_sem_docs_hash_ainda_desserializa() {
-        let json = r#"{"entity":"rs","version":"1","built_at":"now","embed_model_id":"m",
-                       "embed_dim":1024,"strategy_version":2,"collections":[]}"#;
-        let m: Manifest = serde_json::from_str(json).unwrap();
-        assert_eq!(m.docs_hash, None);
-        // E um manifesto sem árvore não emite o campo (JSON continua enxuto).
-        assert!(!serde_json::to_string(&m).unwrap().contains("docs_hash"));
     }
 }

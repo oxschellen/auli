@@ -81,21 +81,17 @@ pub fn run_remover(entity: String, out: PathBuf) -> Result<()> {
     // A árvore tem de estar em sincronia com o pack ANTES de qualquer escrita. Se ela andou desde o
     // último `auli update` — um acórdão novo do scraper, por exemplo —, o pack não viu o que chegou:
     // decidir remoções aqui seria decidir sobre o diff errado, o mesmo raciocínio do `ids_na_arvore`
-    // logo abaixo. E recarimbar o manifesto no fim faria pior que isso: apagaria o `docs_hash` que
-    // faz o boot recusar um pack atrasado, deixando o documento novo ausente do índice em silêncio.
+    // logo abaixo. E recarimbar o manifesto no fim faria pior que isso: apagaria o carimbo que faz o
+    // boot recusar um pack atrasado, deixando o documento novo ausente do índice em silêncio.
     // Por isso a recusa vem antes de escrever pack, manifesto ou de consumir log.
     //
-    // **Esta guarda e a preservação do `docs_hash` lá embaixo defendem cenários DISJUNTOS.** Nenhuma
-    // das duas é redundante, e é por isso que os dois testes existem — a mutação derruba exatamente
-    // um cada:
-    //
-    // - `docs_hash: Some(h)` com árvore divergente ⇒ **só a guarda** pega. Recalcular seria
-    //   inofensivo aqui, porque ela já garantiu que a árvore hasheia exatamente `h`;
-    // - `docs_hash: None` com árvore em disco ⇒ **só a preservação** pega. A guarda passa por
-    //   construção (`validate_docs_hash` devolve `Ok` quando o campo é `None`), e recalcular ali
-    //   LIGARIA a proteção com um hash que o pack nunca ganhou — pior que carimbo inventado, é
-    //   cimentar a divergência num estado que passa no boot.
-    manifest::validate_docs_hash(&docs_dir, &manifesto).map_err(|e| {
+    // **Nota histórica (D-DH-2):** até o mapa por diretório, esta guarda e a preservação do carimbo
+    // lá embaixo defendiam cenários DISJUNTOS — o manifesto sem `docs_hash` com árvore em disco só
+    // era pego pela preservação, porque a guarda devolvia `Ok` para o campo ausente. O D-DH-2
+    // fechou esse braço: mapa ausente com árvore presente é erro alto AQUI, na guarda. A
+    // preservação lá embaixo continua correta (o `remover` não toca a árvore e escreve de volta o
+    // que leu), mas o papel dela mudou: é round-trip, não defesa independente.
+    manifest::validate_docs_hashes(&docs_dir, &manifesto).map_err(|e| {
         format!("{e}\nA árvore está à frente do pack: rode `auli update` antes do `remover`.")
     })?;
 
@@ -167,11 +163,11 @@ pub fn run_remover(entity: String, out: PathBuf) -> Result<()> {
         return Ok(());
     }
 
-    // O `docs_hash` lido é escrito de volta INTACTO. O `remover` não toca a árvore, e recalculá-lo
-    // aqui seria carimbar um estado que o pack não viu — exatamente a staleness que o campo existe
-    // para impedir. A guarda no início garante que o carimbo preservado descreve a árvore atual —
-    // menos no caso `None`, que ela deixa passar de propósito e que só esta linha defende (a
-    // partição das duas está documentada na guarda).
+    // O mapa `docs_hashes` lido é escrito de volta INTACTO. O `remover` não toca a árvore, e a
+    // guarda no início já provou que o carimbo lido descreve a árvore atual — recalcular aqui
+    // seria um no-op comprado ao preço de uma leitura da árvore inteira. Round-trip, portanto
+    // (ver a nota histórica na guarda: o cenário que fazia desta linha uma defesa independente
+    // foi fechado pelo D-DH-2).
     manifest::write_manifest(&mpath, &manifesto)?;
     println!("📝 Manifesto recarimbado em {:?}", mpath);
     Ok(())
@@ -316,7 +312,7 @@ mod tests {
                 bytes: 0,
                 hash: "0".into(),
             }],
-            docs_hash: None,
+            docs_hashes: None,
         };
         manifest::write_manifest(manifest::manifest_path(&packs, "ent"), &m).unwrap();
         (packs, "ent".to_string())
@@ -336,13 +332,14 @@ mod tests {
         .unwrap();
     }
 
-    /// Carimba no manifesto o `docs_hash` da árvore como ela está agora — é o que o `auli update`
-    /// deixa para trás quando termina em sincronia.
-    fn carimbar_docs_hash(packs: &Path) {
+    /// Carimba no manifesto o mapa `docs_hashes` da árvore como ela está agora — é o que o
+    /// `auli update` faz ao fim de uma rodada. Os cenários que precisam PASSAR pela guarda de
+    /// entrada do `remover` chamam isto antes.
+    fn carimbar_docs_hashes(packs: &Path) {
         let p = manifest::manifest_path(packs, "ent");
         let mut m = manifest::read_manifest(&p).unwrap();
-        m.docs_hash = manifest::hash_docs_tree(packs.parent().unwrap().join("docs")).unwrap();
-        assert!(m.docs_hash.is_some());
+        m.docs_hashes = manifest::hash_docs_map(packs.parent().unwrap().join("docs")).unwrap();
+        assert!(m.docs_hashes.is_some());
         manifest::write_manifest(&p, &m).unwrap();
     }
 
@@ -369,6 +366,10 @@ mod tests {
     fn remove_exatamente_os_aprovados_e_consome_o_log() {
         // No pack: A, B, C. Na árvore: só A. Órfãos: B e C. Aprovado: só B.
         let (packs, ent) = cenario("basico", &["A 1"], &["A 1", "B 2", "C 3"]);
+        // Pós-D-DH-2: um manifesto de verdade sempre traz o mapa (o `auli update` o carimba),
+        // e sem ele a guarda de entrada recusa antes de qualquer escrita. Este cenário é de
+        // REMOÇÃO, não de migração — daí o carimbo aqui.
+        carimbar_docs_hashes(&packs);
         aprovar(&packs, &["docs/pareceres/b-2.md"]);
 
         run_remover(ent.clone(), packs.clone()).unwrap();
@@ -403,6 +404,10 @@ mod tests {
     #[test]
     fn rodar_duas_vezes_nao_faz_mal() {
         let (packs, ent) = cenario("idem", &["A 1"], &["A 1", "B 2"]);
+        // Pós-D-DH-2: um manifesto de verdade sempre traz o mapa (o `auli update` o carimba),
+        // e sem ele a guarda de entrada recusa antes de qualquer escrita. Este cenário é de
+        // REMOÇÃO, não de migração — daí o carimbo aqui.
+        carimbar_docs_hashes(&packs);
         aprovar(&packs, &["docs/pareceres/b-2.md"]);
 
         run_remover(ent.clone(), packs.clone()).unwrap();
@@ -422,6 +427,10 @@ mod tests {
         // O caso que a interseção existe para cobrir: o log foi revisado quando B era órfão, e
         // entre a revisão e a aplicação o documento VOLTOU para a árvore.
         let (packs, ent) = cenario("voltou", &["A 1", "B 2"], &["A 1", "B 2"]);
+        // Pós-D-DH-2: um manifesto de verdade sempre traz o mapa (o `auli update` o carimba),
+        // e sem ele a guarda de entrada recusa antes de qualquer escrita. Este cenário é de
+        // REMOÇÃO, não de migração — daí o carimbo aqui.
+        carimbar_docs_hashes(&packs);
         aprovar(&packs, &["docs/pareceres/b-2.md"]);
 
         run_remover(ent, packs.clone()).unwrap();
@@ -438,6 +447,10 @@ mod tests {
     fn sem_log_nada_acontece() {
         // O `update` só escreve log quando há órfão; sem ele, o subcomando é inócuo.
         let (packs, ent) = cenario("semlog", &["A 1"], &["A 1", "B 2"]);
+        // Pós-D-DH-2: um manifesto de verdade sempre traz o mapa (o `auli update` o carimba),
+        // e sem ele a guarda de entrada recusa antes de qualquer escrita. Este cenário é de
+        // REMOÇÃO, não de migração — daí o carimbo aqui.
+        carimbar_docs_hashes(&packs);
         assert!(!log_de(&packs).exists());
         run_remover(ent, packs.clone()).unwrap();
         assert_eq!(ids_do_pack(&packs).len(), 2, "sem aprovação, nada sai");
@@ -446,12 +459,12 @@ mod tests {
 
     #[test]
     fn recusa_quando_a_arvore_esta_a_frente_do_pack() {
-        // O cenário que o `docs_hash` existe para pegar: o pack está carimbado com a árvore de
+        // O cenário que o mapa existe para pegar: o pack está carimbado com a árvore de
         // ontem, o scraper trouxe um documento novo, e o boot HOJE recusaria por hash divergente.
         // Se o `remover` rodasse e recarimbasse, o boot passaria a aceitar um pack que não tem esse
         // documento — a proteção apagada justamente pelo subcomando que só devia apagar registro.
         let (packs, ent) = cenario("frente", &["A 1"], &["A 1", "B 2"]);
-        carimbar_docs_hash(&packs);
+        carimbar_docs_hashes(&packs);
         aprovar(&packs, &["docs/pareceres/b-2.md"]);
         escrever_md(
             &packs.parent().unwrap().join("docs").join("pareceres"),
@@ -486,15 +499,37 @@ mod tests {
     }
 
     #[test]
-    fn docs_hash_e_preservado_nao_recalculado() {
-        // O caso que DISCRIMINA é o manifesto sem `docs_hash` (escrito antes do campo existir, com
-        // árvore em disco): recalcular ali inventaria um carimbo que o pack nunca ganhou. Com a
-        // guarda de entrada, um `Some(h)` que passou é por definição igual ao recálculo, então é o
-        // `None` que prova que a linha saiu.
-        let (packs, ent) = cenario("hash-none", &["A 1"], &["A 1", "B 2"]);
+    fn remover_recusa_manifesto_sem_mapa_com_arvore_em_disco() {
+        // D-DH-2 visto do `remover`: o manifesto anterior à migração não passa da guarda — antes
+        // do mapa, este cenário só era defendido pela preservação (ver nota histórica na guarda).
+        // Verificação por mutação: devolver `Ok` no braço (None, Some) do `validate_docs_hashes`
+        // mata este teste.
+        let (packs, ent) = cenario("sem-mapa", &["A 1"], &["A 1", "B 2"]);
         aprovar(&packs, &["docs/pareceres/b-2.md"]);
         let mpath = manifest::manifest_path(&packs, "ent");
-        assert_eq!(manifest::read_manifest(&mpath).unwrap().docs_hash, None);
+        assert_eq!(manifest::read_manifest(&mpath).unwrap().docs_hashes, None);
+
+        let e = run_remover(ent, packs.clone()).unwrap_err().to_string();
+        assert!(e.contains("docs_hashes"), "erro: {e}");
+        assert!(e.contains("auli update"), "o remédio está na mensagem: {e}");
+        assert_eq!(
+            ids_do_pack(&packs),
+            vec!["docs/pareceres/a-1.md", "docs/pareceres/b-2.md"],
+            "recusou ANTES de escrever pack"
+        );
+        let _ = std::fs::remove_dir_all(packs.parent().unwrap());
+    }
+
+    #[test]
+    fn mapa_e_escrito_de_volta_intacto_apos_remocao() {
+        // Round-trip: depois de uma remoção aplicada com sucesso, o mapa no manifesto é byte a
+        // byte o que foi lido — o `remover` não recarimba, porque não toca a árvore.
+        let (packs, ent) = cenario("mapa-roundtrip", &["A 1"], &["A 1", "B 2"]);
+        carimbar_docs_hashes(&packs);
+        aprovar(&packs, &["docs/pareceres/b-2.md"]);
+        let mpath = manifest::manifest_path(&packs, "ent");
+        let antes = manifest::read_manifest(&mpath).unwrap().docs_hashes;
+        assert!(antes.is_some(), "o cenário precisa do mapa carimbado");
 
         run_remover(ent, packs.clone()).unwrap();
 
@@ -503,24 +538,7 @@ mod tests {
             vec!["docs/pareceres/a-1.md"],
             "a rodada não foi inócua"
         );
-        assert_eq!(
-            manifest::read_manifest(&mpath).unwrap().docs_hash,
-            None,
-            "o `remover` não carimba árvore que não tocou"
-        );
-        let _ = std::fs::remove_dir_all(packs.parent().unwrap());
-
-        // E o caminho normal, com carimbo em dia: passa pela guarda e sai idêntico ao que entrou.
-        let (packs, ent) = cenario("hash-some", &["A 1"], &["A 1", "B 2"]);
-        carimbar_docs_hash(&packs);
-        aprovar(&packs, &["docs/pareceres/b-2.md"]);
-        let mpath = manifest::manifest_path(&packs, "ent");
-        let antes = manifest::read_manifest(&mpath).unwrap().docs_hash;
-
-        run_remover(ent, packs.clone()).unwrap();
-
-        assert_eq!(ids_do_pack(&packs), vec!["docs/pareceres/a-1.md"]);
-        assert_eq!(manifest::read_manifest(&mpath).unwrap().docs_hash, antes);
+        assert_eq!(manifest::read_manifest(&mpath).unwrap().docs_hashes, antes);
         let _ = std::fs::remove_dir_all(packs.parent().unwrap());
     }
 

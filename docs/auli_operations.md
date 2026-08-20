@@ -188,6 +188,27 @@ Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo
    `./target/release/auli-collections <id>`.
 3. **Vetorizar** → `scripts/build-packs.sh <id>` (roda o `auli update`, que lê as árvores `docs/`).
 
+> **Mexeu em UMA árvore só? Rode só ela** (a partir de 20/08/2026, D-DH-1..8). O caso típico é uma
+> entrega de legislação: `scripts/build-packs.sh rs legislacao` vetoriza os pares daquela coleção
+> em segundos e reescreve um pack pequeno, em vez de re-embedar serviços + FAQs + legislação e
+> reescrever centenas de MB porque uma pasta mudou. Aceita mais de uma:
+> `scripts/build-packs.sh rs faqs legislacao`.
+>
+> **O que a rodada parcial NÃO afrouxa.** O manifesto carimba um hash **por subdiretório** de
+> `docs/`, e o boot confere o mapa **inteiro** contra o disco — não só o que rodou. Mexer em duas
+> árvores e recarimbar uma é recusa NOMEADA no próximo restart ("docs/faqs/ mudou: manifesto tem
+> X, disco tem Y"), com o remédio na mensagem. Nunca silêncio.
+>
+> **Leia o aviso do fim da rodada.** Quando alguma árvore fora do filtro diverge do carimbo
+> preservado, o `update` imprime `⚠️ Árvores fora do filtro divergentes` e lista quais. É aviso,
+> não erro — o fluxo legítimo de "mexi em duas" é rodar dois `--kind` em sequência —, mas ignorá-lo
+> significa um servidor que não sobe no próximo restart.
+>
+> **Três recusas antes de carregar o modelo**, todas erro alto: sem manifesto anterior (não há o
+> que preservar), manifesto sem o mapa (anterior à migração — rode o completo uma vez), ou
+> identidade de embedding divergente (a parcial carimbaria a identidade nova sobre packs do espaço
+> velho, e o boot os abençoaria). Falham em milissegundos, de propósito.
+
 ```bash
 cd auli-server
 # RS (FAQs + serviços):
