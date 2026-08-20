@@ -82,12 +82,13 @@ Este passo não é opcional: nos modos *Ask* e *Edit* o Copilot **não usa ferra
 simplesmente não vai ser consultado.
 
 **11.** Clique no botão de **ferramentas** (*Configure Tools*, ícone de chave inglesa) e confirme
-que as quatro ferramentas do Auli estão marcadas:
+que as cinco ferramentas do Auli estão marcadas:
 
 - `listar_entidades` — quais estados têm acervo
 - `buscar_pareceres` — busca por assunto (parâmetro `colecao`: `pareceres`, o padrão, ou `tarf`)
 - `obter_parecer` — texto integral de um documento (mesmo `colecao` usado na busca)
 - `consultar_servicos_faqs` — serviços de atendimento e perguntas frequentes
+- `buscar_legislacao` — o texto da lei em pares pergunta/resposta, com o dispositivo e o link
 
 Pronto.
 

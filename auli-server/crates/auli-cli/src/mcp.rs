@@ -1,11 +1,21 @@
 //! Face MCP do Auli — servidor Model Context Protocol sobre o MESMO motor do chat.
 //!
-//! Quatro ferramentas (D-MCP-7, ampliada nesta tarefa), pensadas para a IA de um
+//! Cinco ferramentas (D-MCP-7, ampliada duas vezes), pensadas para a IA de um
 //! auditor/analista fiscal e para o atendimento ao contribuinte:
-//!   - `listar_entidades`          — o que cada UF tem indexado (pareceres, serviços, FAQs)
+//!   - `listar_entidades`          — o que cada UF tem indexado (as cinco coleções)
 //!   - `buscar_pareceres`          — busca semântica; metadados + sinopse + link (sem corpo)
 //!   - `obter_parecer`             — corpo integral de UM parecer, pelo número exato
 //!   - `consultar_servicos_faqs`   — serviços + FAQs no MESMO bloco de contexto do chat
+//!   - `buscar_legislacao`         — pares pergunta/resposta de lei, no MESMO bloco do tipo 4
+//!
+//! **Por que a legislação ganhou ferramenta própria e não um valor de `colecao`** (D-LEG-14,
+//! reaberta em 20/08/2026): as ferramentas de jurisprudência devolvem `ParecerHit`, que é
+//! `{numero, assunto, resumo, link}`. Um par de legislação não tem número — a identidade dele é a
+//! pergunta — e não tem resumo (a coleção não promete `## resumo`, D-LEG-11). Três dos quatro
+//! campos sairiam vazios ou inventados, e o `obter_parecer`, que busca pelo número exato, não
+//! teria o que receber. Some-se que `search_jurisprudencia` carrega
+//! `debug_assert!(kind.exige_resumo())`. A legislação segue o OUTRO caminho, o dos serviços e
+//! FAQs: payload `DocumentoPack` → `rag::blocos` → bloco de contexto pronto.
 //!
 //! Privacidade (D-MCP-5): a pergunta é embedada localmente e NUNCA sai do processo; nenhum LLM
 //! externo é chamado neste caminho; o tracing registra só metadados.
@@ -22,7 +32,7 @@ use rmcp::{
 
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_contract::Kind;
-use auli_core::corpus::{FAQS, SERVICES};
+use auli_core::corpus::{FAQS, LEGISLACAO, SERVICES};
 use auli_retrieval::Engine;
 
 use crate::rag::TemposConsulta;
@@ -42,8 +52,14 @@ const KIND_FAQS: &str = Kind::Faqs.as_str();
 /// Kind dos acórdãos do TARF — a coleção opcional das ferramentas de jurisprudência (D-A6).
 const KIND_TARF: &str = Kind::Tarf.as_str();
 
-/// Kinds que o `listar_entidades` reporta, na ordem de exibição.
-const KINDS_LISTADOS: [&str; 4] = [KIND, KIND_TARF, KIND_SERVICOS, KIND_FAQS];
+/// Kind dos pares P/R de legislação — a quinta coleção, exposta pelo `buscar_legislacao`.
+const KIND_LEGISLACAO: &str = Kind::Legislacao.as_str();
+
+/// Kinds que o `listar_entidades` reporta, na ordem de exibição: primeiro o que INTERPRETA a norma
+/// (pareceres, TARF), depois a NORMA (legislação), depois o atendimento (serviços, FAQs). Kind com
+/// zero documentos é omitido da linha, então incluir a legislação não polui as 26 UFs que não a
+/// têm.
+const KINDS_LISTADOS: [&str; 5] = [KIND, KIND_TARF, KIND_LEGISLACAO, KIND_SERVICOS, KIND_FAQS];
 
 /// Resolve o parâmetro opcional `colecao` das ferramentas de jurisprudência.
 ///
@@ -85,6 +101,16 @@ pub struct ConsultarServicosFaqsArgs {
     pub uf: String,
     /// Pergunta em linguagem natural, como um contribuinte faria (ex.: "como emitir a segunda
     /// via da guia do IPVA?").
+    pub pergunta: String,
+}
+
+#[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
+pub struct BuscarLegislacaoArgs {
+    /// Sigla da UF em minúsculas (ex.: "rs"). Use `listar_entidades` para ver quais têm
+    /// legislação indexada.
+    pub uf: String,
+    /// Pergunta em linguagem natural sobre a norma (ex.: "qual a alíquota de IPVA para
+    /// locadoras?", "quando a empresa é excluída do Simples Nacional?").
     pub pergunta: String,
 }
 
@@ -410,6 +436,84 @@ impl AuliMcp {
         );
         Ok(CallToolResult::success(vec![ContentBlock::text(bloco)]))
     }
+
+    #[tool(
+        description = "Consulta a LEGISLAÇÃO TRIBUTÁRIA de uma UF — o texto da norma explicado em \
+        pares pergunta/resposta, com o dispositivo citado (ex.: \"Art. 18-A, § 2º\") e o link \
+        oficial. Use para o que a LEI diz: alíquota, prazo, isenção, obrigação, definição legal. \
+        Para como a Receita INTERPRETA a lei num caso concreto, use `buscar_pareceres`; para como \
+        FAZER algo no portal, `consultar_servicos_faqs`. Devolve um bloco de texto pronto para \
+        citar, com a trilha da norma em cada resposta."
+    )]
+    async fn buscar_legislacao(
+        &self,
+        Parameters(args): Parameters<BuscarLegislacaoArgs>,
+    ) -> Result<CallToolResult, McpError> {
+        let uf = args.uf.trim().to_lowercase();
+
+        // Mesma guarda das demais, e pelo mesmo motivo: `entidades_com` exige store NÃO-VAZIO, o
+        // que distingue "entidade registrada" de "tem acervo". Hoje só o `rs` tem legislação, e
+        // esta é a mensagem que as outras 26 UFs recebem — em vez de um bloco vazio.
+        if !self.engine.entidades_com(KIND_LEGISLACAO).contains(&uf) {
+            return Err(McpError::invalid_params(erro_uf_sem_legislacao(&uf), None));
+        }
+
+        // D-MCP-5: a pergunta é embedada no processo e nunca sai dele. CPU-bound, fora do runtime.
+        let t = Instant::now();
+        let engine = self.engine.clone();
+        let pergunta = args.pergunta.clone();
+        let embedding = tokio::task::spawn_blocking(move || engine.embed(&pergunta))
+            .await
+            .map_err(|e| McpError::internal_error(e.to_string(), None))?
+            .map_err(|e| McpError::internal_error(e.to_string(), None))?;
+        let embed_ms = t.elapsed().as_millis() as u64;
+        let t_ret = Instant::now();
+
+        // As MESMAS constantes do tipo 4 do chat (`LEGISLACAO.n_results`, `LEG_FLOOR`, `LEG_BAND`)
+        // — calibrar a banda no rag.rs move as duas faces junto, sem ninguém lembrar.
+        let hits = rag::retrieve(
+            self.engine.clone(),
+            format!("{uf}-{KIND_LEGISLACAO}"),
+            "leg",
+            embedding,
+            LEGISLACAO.n_results,
+            rag::LEG_FLOOR,
+            rag::LEG_BAND,
+        )
+        .await
+        .map_err(|e| McpError::internal_error(e.to_string(), None))?;
+        let retrieve_ms = t_ret.elapsed().as_millis() as u64;
+
+        // D-MCP-5: só metadados no log — nunca o texto da pergunta.
+        tracing::info!(uf = %uf, hits = hits.len(), embed_ms, retrieve_ms, "mcp buscar_legislacao");
+
+        // O MESMO montador do tipo 4 do chat, com `relacionados` vazio: a expansão por grafo é dos
+        // pareceres (co-citação de dispositivos), e a legislação não tem grafo.
+        let docs_root = self.engine.docs_root();
+        let bloco = rag::montar_rag_colecao_unica(
+            Kind::Legislacao,
+            &rag::blocos(&hits, docs_root, &uf),
+            &[],
+        );
+        let aderencia = rag::montar_aderencia(&rag::aderencia(
+            &Kind::Legislacao.rotulo().to_lowercase(),
+            hits.iter().map(|h| Some(h.score)),
+        ));
+        self.registrar(
+            &uf,
+            "buscar_legislacao",
+            &args.pergunta,
+            &aderencia,
+            &bloco,
+            TemposConsulta {
+                embed_ms,
+                retrieve_ms,
+                total_ms: embed_ms + retrieve_ms,
+                ..Default::default()
+            },
+        );
+        Ok(CallToolResult::success(vec![ContentBlock::text(bloco)]))
+    }
 }
 
 // ---- Funções livres: a lógica testável sem Engine-com-modelo, no espírito da D-MCP-4 ----
@@ -485,7 +589,7 @@ fn erro_uf_sem_acervo(uf: &str, colecao: Kind) -> String {
 fn erro_colecao_invalida(nome: &str) -> String {
     format!(
         "Coleção '{nome}' desconhecida para esta ferramenta. Use '{}' (padrão) ou '{}'; para \
-         serviços e FAQs, use `consultar_servicos_faqs`.",
+         legislação, use `buscar_legislacao`; para serviços e FAQs, `consultar_servicos_faqs`.",
         Kind::Pareceres.as_str(),
         Kind::Tarf.as_str()
     )
@@ -493,6 +597,10 @@ fn erro_colecao_invalida(nome: &str) -> String {
 
 fn erro_uf_sem_servicos_faqs(uf: &str) -> String {
     format!("UF '{uf}' sem acervo de serviços nem de FAQs. Use `listar_entidades`.")
+}
+
+fn erro_uf_sem_legislacao(uf: &str) -> String {
+    format!("UF '{uf}' sem acervo de legislação. Use `listar_entidades` para ver quais têm.")
 }
 
 fn erro_numero_nao_achado(numero: &str, uf: &str, colecao: Kind) -> String {
@@ -625,8 +733,10 @@ mod tests {
         let msg = erro_colecao_invalida("acordaos");
         assert!(msg.contains("acordaos"), "cita o valor recebido: {msg}");
         assert!(msg.contains("pareceres") && msg.contains("tarf"), "{msg}");
-        // Quem pediu `servicos` é mandado para a ferramenta certa, não deixado no escuro.
+        // Quem pediu uma coleção de outra natureza é mandado para a ferramenta certa, não
+        // deixado no escuro — e são DUAS as saídas, desde que a legislação ganhou a dela.
         assert!(msg.contains("consultar_servicos_faqs"), "{msg}");
+        assert!(msg.contains("buscar_legislacao"), "{msg}");
     }
 
     #[test]
@@ -722,6 +832,83 @@ mod tests {
              - rs (SEFAZ-RS): 2905 pareceres, 586 servicos, 1937 faqs\n\
              - sp (SEFAZ-SP): 16123 pareceres, 537 servicos"
         );
+    }
+
+    #[test]
+    fn a_guarda_da_legislacao_e_por_kind_proprio_e_exige_store_nao_vazio() {
+        // A legislação não segue a tolerância do par serviços/FAQs: é UMA coleção, então a UF
+        // entra se tiver legislação e só. Hoje isso é o `rs` sozinho, e as outras 26 recebem a
+        // mensagem em vez de um bloco de contexto vazio — que é convite a alucinação.
+        let mut c = Collections::new();
+        c.insert("rs-legislacao".into(), store_de(vec!["{}"]));
+        c.insert("sp-pareceres".into(), store_de(vec!["{}"])); // tem acervo, mas de outra coleção
+        c.insert(
+            "sc-legislacao".into(),
+            Arc::new(ReadStore::from_records(vec![])), // registrada, mas VAZIA
+        );
+
+        let leg = auli_retrieval::entidades_com(&c, KIND_LEGISLACAO);
+        assert!(leg.contains(&"rs".to_string()));
+        assert!(!leg.contains(&"sp".to_string()), "outra coleção não vale");
+        assert!(!leg.contains(&"sc".to_string()), "store vazio não conta");
+    }
+
+    #[test]
+    fn mensagem_de_uf_sem_legislacao_aponta_para_listar_entidades() {
+        // Mesma disciplina das outras mensagens: dizer o que fazer a seguir, não só o que falhou.
+        let msg = erro_uf_sem_legislacao("sp");
+        assert!(msg.contains("'sp'"));
+        assert!(msg.contains("listar_entidades"));
+    }
+
+    #[test]
+    fn legislacao_entra_no_listar_entidades_entre_a_jurisprudencia_e_o_atendimento() {
+        // A ordem dos KINDS_LISTADOS é o que o assistente lê primeiro, e ela conta uma história:
+        // quem INTERPRETA a norma, a NORMA, o atendimento. E a omissão de kind zerado é o que
+        // permite incluir a legislação sem poluir as 26 UFs que não a têm.
+        assert_eq!(
+            KINDS_LISTADOS,
+            ["pareceres", "tarf", "legislacao", "servicos", "faqs"]
+        );
+        let dados: Vec<AcervoUf> = vec![
+            (
+                "rs".into(),
+                "SEFAZ-RS".into(),
+                vec![
+                    ("pareceres", 372),
+                    ("tarf", 22476),
+                    ("legislacao", 509),
+                    ("servicos", 586),
+                    ("faqs", 1947),
+                ],
+            ),
+            (
+                "sp".into(),
+                "SEFAZ-SP".into(),
+                vec![
+                    ("pareceres", 16123),
+                    ("tarf", 0),
+                    ("legislacao", 0),
+                    ("servicos", 537),
+                    ("faqs", 0),
+                ],
+            ),
+        ];
+        assert_eq!(
+            linhas_entidades(&dados),
+            "UFs com acervo indexado:\n\
+             - rs (SEFAZ-RS): 372 pareceres, 22476 tarf, 509 legislacao, 586 servicos, 1947 faqs\n\
+             - sp (SEFAZ-SP): 16123 pareceres, 537 servicos"
+        );
+    }
+
+    #[test]
+    fn legislacao_nao_e_valor_aceito_de_colecao_nas_ferramentas_de_jurisprudencia() {
+        // O par `buscar_pareceres`/`obter_parecer` devolve e consome `numero`+`resumo`, que um par
+        // de legislação não tem. Aceitá-la ali daria três campos vazios e um `obter_parecer` sem
+        // chave de busca — daí a ferramenta própria. Este teste trava a fronteira.
+        assert!(resolver_colecao(Some("legislacao")).is_err());
+        assert!(resolver_colecao(Some("servicos")).is_err());
     }
 
     #[test]
