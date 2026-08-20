@@ -39,8 +39,83 @@ use vector_store::{CollectionData, Record, Writer};
 
 use crate::error::Result;
 
-pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Result<()> {
+pub fn run_update(
+    entity: String,
+    out: PathBuf,
+    version: Option<String>,
+    kinds: Vec<String>,
+) -> Result<()> {
     dotenvy::dotenv().ok();
+
+    // Resolve o filtro ANTES de carregar o modelo: nome de coleção errado é erro de chamada e tem
+    // de falhar em milissegundos, não depois de 2 GB de embedder na memória.
+    let filtro = resolver_kinds(&kinds)?;
+
+    // A árvore `docs/` é a fonte das CINCO coleções, por isso o caminho é montado antes dos blocos.
+    let docs_dir = out
+        .parent()
+        .ok_or_else(|| format!("diretório de packs sem pai: {}", out.display()))?
+        .join("docs");
+
+    // O manifesto anterior serve a TRÊS leitores: o `cache_valido` (Fase 5), as guardas do parcial
+    // (D-DH-4) e a mesclagem (D-DH-3). Lido uma vez.
+    let anterior = manifest::read_manifest(manifest::manifest_path(&out, &entity)).ok();
+
+    // FASE 5 — a guarda que passa por cima de todas as outras (D-INC-2 + Fase 5 da TAREFA).
+    //
+    // O cache do incremental casa por `key_hash`, que é hash do `text_to_embed`. Trocar de MODELO
+    // não muda o `text_to_embed`: a key bate, o hash bate, e o cache serviria vetores de dois
+    // espaços vetoriais misturados no mesmo pack. A `DimensionMismatch` da store não pega isso se a
+    // dimensão coincidir — e modelos diferentes com 1024 dimensões são o caso comum, não a exceção.
+    // É o único defeito deste desenho que nasce silencioso e contamina o acervo inteiro.
+    //
+    // Daí a comparação ser do TRIPLO de identidade completo, e não só do modelo: `STRATEGY_VERSION`
+    // muda o que entra no vetor, e um pack embedado sob outra estratégia está igualmente errado.
+    let cache_valido = anterior
+        .as_ref()
+        .map(|a| a.embed_identity() == manifest::identity())
+        .unwrap_or(false); // sem manifesto anterior (ou ilegível) não há cache em que confiar
+
+    // Guardas da rodada parcial (D-DH-4) — todas ANTES do embedder, para falhar barato.
+    if let Some(sel) = &filtro {
+        let Some(anterior) = anterior.as_ref() else {
+            return Err(crate::error::Error::Custom(format!(
+                "--kind exige um manifesto anterior de '{entity}' e não há nenhum legível em {} — \
+                 a rodada parcial PRESERVA o que não rodou, e sem manifesto não existe o que \
+                 preservar. Rode o `auli update` completo primeiro.",
+                out.display()
+            )));
+        };
+        if anterior.docs_hashes.is_none() {
+            return Err(crate::error::Error::Custom(format!(
+                "--kind exige o mapa `docs_hashes` no manifesto anterior de '{entity}', e ele não \
+                 está lá (manifesto anterior à migração). Rode o `auli update` completo uma vez — \
+                 ele recarimba o mapa; a jurisprudência é reaproveitada pelo key_hash."
+            )));
+        }
+        if !cache_valido {
+            return Err(crate::error::Error::Custom(format!(
+                "--kind com identidade de embedding divergente do manifesto anterior de \
+                 '{entity}'. A rodada parcial carimbaria a identidade NOVA num manifesto cujos \
+                 outros packs são do espaço velho — e o boot os abençoaria, que é exatamente o \
+                 defeito que a guarda existe para impedir. Mudança de identidade exige o `auli \
+                 update` completo."
+            )));
+        }
+        println!(
+            "🎯 Rodada parcial: {}",
+            sel.iter()
+                .map(|k| k.as_str())
+                .collect::<Vec<_>>()
+                .join(", ")
+        );
+    } else if !cache_valido {
+        println!(
+            "🧊 Cache de vetores DESLIGADO — não há manifesto anterior, ou a identidade de \
+             embedding mudou. Tudo será re-vetorizado."
+        );
+    }
+
     let cache_dir = std::env::var("EMBED_CACHE_DIR").unwrap_or_else(|_| "./models".to_string());
     let threads: usize = std::env::var("EMBED_THREADS")
         .ok()
@@ -52,42 +127,26 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
     let writer = Writer::new(&out);
     let mut entries: Vec<CollectionEntry> = Vec::new();
 
-    // A árvore `docs/` é a fonte das QUATRO coleções — faqs (TAREFA-FAQS-MD), serviços
-    // (TAREFA-SERVICOS-MD) e a jurisprudência, pareceres e TARF (G5b) —, por isso o caminho é
-    // montado antes dos blocos.
-    let docs_dir = out
-        .parent()
-        .ok_or_else(|| format!("diretório de packs sem pai: {}", out.display()))?
-        .join("docs");
-    // FASE 5 — a guarda que passa por cima de todas as outras (D-INC-2 + Fase 5 da TAREFA).
-    //
-    // O cache do incremental casa por `key_hash`, que é hash do `text_to_embed`. Trocar de MODELO
-    // não muda o `text_to_embed`: a key bate, o hash bate, e o cache serviria vetores de dois
-    // espaços vetoriais misturados no mesmo pack. A `DimensionMismatch` da store não pega isso se a
-    // dimensão coincidir — e modelos diferentes com 1024 dimensões são o caso comum, não a exceção.
-    // É o único defeito deste desenho que nasce silencioso e contamina o acervo inteiro.
-    //
-    // Daí a comparação ser do TRIPLO de identidade completo, e não só do modelo: `STRATEGY_VERSION`
-    // muda o que entra no vetor, e um pack embedado sob outra estratégia está igualmente errado.
-    let cache_valido = manifest::read_manifest(manifest::manifest_path(&out, &entity))
-        .map(|anterior| anterior.embed_identity() == manifest::identity())
-        .unwrap_or(false); // sem manifesto anterior (ou ilegível) não há cache em que confiar
-    if !cache_valido {
-        println!(
-            "🧊 Cache de vetores DESLIGADO — não há manifesto anterior, ou a identidade de \
-             embedding mudou. Tudo será re-vetorizado."
-        );
-    }
-
-    // **UM caminho de código para as quatro coleções** (D-B2). A fonte é sempre a árvore
+    // **UM caminho de código para as cinco coleções** (D-B2). A fonte é sempre a árvore
     // `docs/<kind>/*.md`, o registro é sempre um `Documento`, e o que difere — como o `.md` vira
-    // struct, e se há guarda de resumo — está dentro do `preparar`. Coleção sem árvore é pulada.
+    // struct, e se há guarda de resumo — está dentro do `preparar`. Coleção sem árvore é pulada —
+    // EXCETO quando foi pedida por `--kind`: pedido explícito de árvore inexistente é quase sempre
+    // engano, e prosseguir escreveria um manifesto "parcial de nada" que só confundiria.
     //
     // **Um pack POR coleção** (D-A2): `<id>-pareceres` e `<id>-tarf` nunca se misturam. São acervos
     // de natureza diferente (interpretação da lei × julgamento de recurso) e o usuário escolhe qual
     // consultar; fundi-los tiraria essa escolha dele e diluiria as duas buscas.
     for kind in Kind::TODOS {
+        if filtro.as_ref().is_some_and(|sel| !sel.contains(&kind)) {
+            continue;
+        }
         let Some(docs) = preparar(&entity, &docs_dir, kind)? else {
+            if filtro.is_some() {
+                return Err(crate::error::Error::Custom(format!(
+                    "--kind {kind}: a entidade '{entity}' não tem árvore em {} — nada a vetorizar.",
+                    docs_dir.join(kind.as_str()).display()
+                )));
+            }
             continue;
         };
         entries.push(ingest_items(
@@ -102,29 +161,155 @@ pub fn run_update(entity: String, out: PathBuf, version: Option<String>) -> Resu
     }
     // notas: sem fonte struct por ora (autoradas) — ausentes até serem modeladas.
 
-    // Hash da árvore `docs/` INTEIRA (pareceres e serviços): ela é fonte de conteúdo vetorizado e
-    // servido, então divergir dela é tão grave quanto pack corrompido. Fica aqui, e não dentro de um
-    // dos preparadores, porque a árvore não pertence a uma coleção só — entidade que só tem serviços
-    // também ganha hash, e o `validate_docs_hash` do boot passa a protegê-la de graça.
-    // `hash_docs_tree` devolve `None` se `docs/` não existe.
-    let docs_hash = manifest::hash_docs_tree(&docs_dir)?;
+    // O mapa do DISCO, uma varredura só, com dois usos: fornecer o hash novo dos kinds que rodaram
+    // (a regra central diz que só ELES são recarimbados) e, na rodada parcial, avisar sobre
+    // árvores que andaram fora do filtro. `None` = `docs/` não existe (entidade sem árvore).
+    let disco = manifest::hash_docs_map(&docs_dir)?;
 
-    let manifest = Manifest {
-        entity: entity.clone(),
-        version: version.unwrap_or_else(|| "1".to_string()),
-        built_at: chrono::Utc::now().to_rfc3339(),
-        embed_model_id: manifest::EMBED_MODEL_ID.to_string(),
-        embed_dim: EMBED_DIM,
-        strategy_version: manifest::STRATEGY_VERSION,
-        pack_format: manifest::PACK_FORMAT,
-        collections: entries,
-        docs_hash,
+    let manifest = match &filtro {
+        None => Manifest {
+            entity: entity.clone(),
+            version: version.unwrap_or_else(|| "1".to_string()),
+            built_at: chrono::Utc::now().to_rfc3339(),
+            embed_model_id: manifest::EMBED_MODEL_ID.to_string(),
+            embed_dim: EMBED_DIM,
+            strategy_version: manifest::STRATEGY_VERSION,
+            pack_format: manifest::PACK_FORMAT,
+            collections: entries,
+            // Rodada COMPLETA sincronizou cada pack com sua árvore nesta passada, então recarimbar
+            // o mapa inteiro do disco é exatamente a regra central aplicada a todos de uma vez.
+            docs_hashes: disco,
+        },
+        Some(sel) => {
+            let anterior =
+                anterior.expect("as guardas do parcial exigiram o manifesto — ver início");
+            // `docs/` existe: o `preparar` acabou de ler dela para cada kind do filtro.
+            let disco = disco.unwrap_or_default();
+            let m = mesclar_parcial(anterior, entries, sel, &disco, version);
+            avisar_arvores_fora_do_filtro(&m, &disco, sel);
+            m
+        }
     };
+
     let mpath = manifest::manifest_path(&out, &entity);
     manifest::write_manifest(&mpath, &manifest)?;
     println!("📝 Manifesto escrito em {:?}", mpath);
 
     Ok(())
+}
+
+/// `--kind` textual → `Kind`, com erro alto para nome desconhecido (D-DH-7) e dedup preservando a
+/// ordem de chegada. Vec vazio ⇒ `None` ⇒ rodada completa, o comportamento de sempre.
+fn resolver_kinds(kinds: &[String]) -> Result<Option<Vec<Kind>>> {
+    if kinds.is_empty() {
+        return Ok(None);
+    }
+    let mut sel: Vec<Kind> = Vec::new();
+    for nome in kinds {
+        let Some(kind) = Kind::parse(nome.trim()) else {
+            return Err(crate::error::Error::Custom(format!(
+                "--kind '{nome}': coleção desconhecida. As válidas: {}.",
+                Kind::TODOS
+                    .iter()
+                    .map(|k| k.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )));
+        };
+        if !sel.contains(&kind) {
+            sel.push(kind);
+        }
+    }
+    Ok(Some(sel))
+}
+
+/// Monta o manifesto de uma rodada PARCIAL (D-DH-3): parte do anterior, substitui as entradas e os
+/// hashes SÓ dos kinds que rodaram, e preserva verbatim todo o resto — inclusive diretórios que não
+/// são coleção e hashes que já não batem com o disco. É a preservação que faz o boot recusar
+/// NOMEANDO a árvore que andou fora do filtro; copiar o disco aqui reproduziria o defeito do
+/// agregado, só que particionado.
+///
+/// A identidade de embedding sai das constantes locais, não do anterior — a guarda D-DH-4 já provou
+/// que são iguais, e carimbar a local mantém a regra "quem escreve carimba o que É".
+///
+/// Pura (sem I/O, sem embedder) de propósito: é ela que os testes de mutação exercitam.
+fn mesclar_parcial(
+    anterior: Manifest,
+    novas: Vec<CollectionEntry>,
+    rodados: &[Kind],
+    disco: &manifest::DocsHashes,
+    version: Option<String>,
+) -> Manifest {
+    let mut collections = anterior.collections;
+    for entrada in novas {
+        match collections.iter_mut().find(|c| c.kind == entrada.kind) {
+            Some(c) => *c = entrada,
+            None => collections.push(entrada),
+        }
+    }
+    let mut docs_hashes = anterior.docs_hashes.unwrap_or_default();
+    for kind in rodados {
+        match disco.get(kind.as_str()) {
+            Some(h) => {
+                docs_hashes.insert(kind.as_str().to_string(), h.clone());
+            }
+            // Inalcançável no fluxo (o `preparar` errou alto se a árvore pedida não existe), mas o
+            // braço honesto é remover a chave: não existe "pack reconstruído de árvore que sumiu".
+            None => {
+                docs_hashes.remove(kind.as_str());
+            }
+        }
+    }
+    Manifest {
+        entity: anterior.entity,
+        // Sem `--version`, a versão anterior é MANTIDA — a rodada parcial não é uma release nova
+        // por si; quem quiser marcar uma, passa a flag.
+        version: version.unwrap_or(anterior.version),
+        built_at: chrono::Utc::now().to_rfc3339(),
+        embed_model_id: manifest::EMBED_MODEL_ID.to_string(),
+        embed_dim: EMBED_DIM,
+        strategy_version: manifest::STRATEGY_VERSION,
+        pack_format: manifest::PACK_FORMAT,
+        collections,
+        docs_hashes: Some(docs_hashes),
+    }
+}
+
+/// A cortesia da rodada parcial: compara o que foi PRESERVADO com o disco e avisa o que o boot vai
+/// recusar. Aviso, nunca erro — o fluxo legítimo de "mexi em duas árvores" é exatamente rodar dois
+/// `--kind` em sequência, e o primeiro não pode falhar por causa do segundo.
+fn avisar_arvores_fora_do_filtro(
+    manifesto: &Manifest,
+    disco: &manifest::DocsHashes,
+    rodados: &[Kind],
+) {
+    let rodados: std::collections::HashSet<&str> = rodados.iter().map(|k| k.as_str()).collect();
+    let vazio = manifest::DocsHashes::new();
+    let preservado = manifesto.docs_hashes.as_ref().unwrap_or(&vazio);
+    let mut avisos: Vec<String> = Vec::new();
+    for (dir, h) in disco {
+        if rodados.contains(dir.as_str()) {
+            continue;
+        }
+        match preservado.get(dir) {
+            Some(p) if p == h => {}
+            Some(_) => avisos.push(format!("docs/{dir}/ mudou desde o carimbo preservado")),
+            None => avisos.push(format!("docs/{dir}/ existe e não está no manifesto")),
+        }
+    }
+    for dir in preservado.keys() {
+        if !rodados.contains(dir.as_str()) && !disco.contains_key(dir) {
+            avisos.push(format!("docs/{dir}/ está no manifesto e sumiu do disco"));
+        }
+    }
+    if avisos.is_empty() {
+        return;
+    }
+    println!("⚠️  Árvores fora do filtro divergentes — o boot vai recusar até serem recarimbadas:");
+    for a in &avisos {
+        println!("   - {a}");
+    }
+    println!("   Rode `auli update --kind <colecao>` para cada uma (ou o update completo).");
 }
 
 /// O que o caminho de ingestão usa do embedder — e **nada além disso**.
@@ -400,7 +585,7 @@ fn recusar_jurisprudencia_sem_resumo(
     };
     // O manifesto NÃO é gravado nesta recusa (o `Err` corta antes do `write_manifest`). Para uma
     // entidade já vetorizada, a árvore no disco fica À FRENTE do manifesto antigo — e o boot
-    // recusaria por `docs_hash`, corretamente. Daí o aviso de reinício.
+    // recusaria pelo `docs_hashes`, corretamente. Daí o aviso de reinício.
     Err(format!(
         "{} documento(s) de `{kind}` sem a seção `## resumo` ({amostra}{reticencias}).\n\
          A VETORIZAÇÃO foi recusada para não indexar às cegas — a árvore em si está válida \
@@ -1045,19 +1230,143 @@ mod tests {
     }
 
     #[test]
-    fn docs_hash_cobre_a_arvore_de_servicos_sozinha() {
-        // D11: entidade que só tem serviços também ganha `docs_hash` — antes ele só existia se
-        // houvesse pareceres, e a árvore de serviços ficaria fora da guarda de boot.
+    fn mapa_cobre_a_arvore_de_servicos_sozinha() {
+        // D11, na forma do mapa: entidade que só tem serviços também ganha entrada — a guarda de
+        // boot a protege de graça, como antes.
         let docs = arvore_servicos("hash", &["Um"]);
         assert!(
             preparar("xx", &docs, Kind::Pareceres).unwrap().is_none(),
             "sem pareceres"
         );
-        assert!(
-            manifest::hash_docs_tree(&docs).unwrap().is_some(),
-            "mas com hash"
-        );
+        let mapa = manifest::hash_docs_map(&docs).unwrap().unwrap();
+        assert!(mapa.contains_key("servicos"), "mas com entrada no mapa");
         let _ = std::fs::remove_dir_all(docs.parent().unwrap());
+    }
+
+    #[test]
+    fn resolver_kinds_vazio_e_rodada_completa() {
+        assert_eq!(resolver_kinds(&[]).unwrap(), None);
+    }
+
+    #[test]
+    fn resolver_kinds_recusa_nome_desconhecido_e_lista_os_validos() {
+        let e = resolver_kinds(&["faq".into()]).unwrap_err().to_string();
+        assert!(e.contains("'faq'"), "erro nomeia o pedido: {e}");
+        assert!(e.contains("faqs"), "e lista as válidas: {e}");
+    }
+
+    #[test]
+    fn resolver_kinds_deduplica_preservando_a_ordem() {
+        let sel = resolver_kinds(&["tarf".into(), "faqs".into(), "tarf".into()])
+            .unwrap()
+            .unwrap();
+        assert_eq!(sel, vec![Kind::Tarf, Kind::Faqs]);
+    }
+
+    /// Manifesto anterior de brinquedo: duas coleções carimbadas e um diretório SEM pack, que é o
+    /// caso que a cobertura por omissão protege — ele tem hash e nenhuma `CollectionEntry`.
+    fn manifesto_anterior() -> Manifest {
+        let entrada = |kind: &str| CollectionEntry {
+            kind: kind.into(),
+            count: 1,
+            dim: EMBED_DIM,
+            file: format!("xx-{kind}.json"),
+            bytes: 10,
+            hash: format!("hash-antigo-{kind}"),
+        };
+        let mut mapa = manifest::DocsHashes::new();
+        mapa.insert("faqs".into(), "arvore-antiga-faqs".into());
+        mapa.insert("tarf".into(), "arvore-antiga-tarf".into());
+        mapa.insert("sem-pack".into(), "arvore-antiga-sem-pack".into());
+        Manifest {
+            entity: "xx".into(),
+            version: "7".into(),
+            built_at: "antes".into(),
+            embed_model_id: manifest::EMBED_MODEL_ID.into(),
+            embed_dim: EMBED_DIM,
+            strategy_version: manifest::STRATEGY_VERSION,
+            pack_format: manifest::PACK_FORMAT,
+            collections: vec![entrada("faqs"), entrada("tarf")],
+            docs_hashes: Some(mapa),
+        }
+    }
+
+    #[test]
+    fn parcial_substitui_so_o_que_rodou_e_preserva_o_resto_verbatim() {
+        let nova = CollectionEntry {
+            kind: "faqs".into(),
+            count: 2,
+            dim: EMBED_DIM,
+            file: "xx-faqs.json".into(),
+            bytes: 20,
+            hash: "hash-novo-faqs".into(),
+        };
+        let mut disco = manifest::DocsHashes::new();
+        disco.insert("faqs".into(), "arvore-nova-faqs".into());
+        // O disco também tem as outras DIFERENTES do carimbo — a regra central (D-DH-3) é NÃO
+        // copiá-las: é a preservação que faz o boot recusá-las nomeando-as.
+        disco.insert("tarf".into(), "arvore-nova-tarf".into());
+        disco.insert("sem-pack".into(), "arvore-nova-sem-pack".into());
+
+        let m = mesclar_parcial(
+            manifesto_anterior(),
+            vec![nova],
+            &[Kind::Faqs],
+            &disco,
+            None,
+        );
+
+        let mapa = m.docs_hashes.unwrap();
+        assert_eq!(
+            mapa["faqs"], "arvore-nova-faqs",
+            "o que rodou é recarimbado do disco"
+        );
+        // Verificado por mutação: trocar a preservação por cópia do disco mata estes dois asserts
+        // — e é exatamente o defeito do agregado, particionado.
+        assert_eq!(
+            mapa["tarf"], "arvore-antiga-tarf",
+            "fora do filtro viaja verbatim"
+        );
+        assert_eq!(
+            mapa["sem-pack"], "arvore-antiga-sem-pack",
+            "diretório sem pack também"
+        );
+
+        let faq = m.collections.iter().find(|c| c.kind == "faqs").unwrap();
+        assert_eq!(faq.hash, "hash-novo-faqs");
+        let tarf = m.collections.iter().find(|c| c.kind == "tarf").unwrap();
+        assert_eq!(
+            tarf.hash, "hash-antigo-tarf",
+            "entrada fora do filtro intacta"
+        );
+        assert_eq!(m.version, "7", "sem --version, a versão anterior é mantida");
+    }
+
+    #[test]
+    fn parcial_de_colecao_nova_acrescenta_entrada_e_chave() {
+        // Primeira vez de uma coleção numa entidade (ex.: `legislacao` estreando): a entrada é
+        // ACRESCENTADA e a chave do mapa idem — sem exigir rodada completa.
+        let nova = CollectionEntry {
+            kind: "legislacao".into(),
+            count: 509,
+            dim: EMBED_DIM,
+            file: "xx-legislacao.json".into(),
+            bytes: 30,
+            hash: "hash-legislacao".into(),
+        };
+        let mut disco = manifest::DocsHashes::new();
+        disco.insert("legislacao".into(), "arvore-legislacao".into());
+
+        let m = mesclar_parcial(
+            manifesto_anterior(),
+            vec![nova],
+            &[Kind::Legislacao],
+            &disco,
+            Some("8".into()),
+        );
+        assert!(m.collections.iter().any(|c| c.kind == "legislacao"));
+        assert_eq!(m.docs_hashes.unwrap()["legislacao"], "arvore-legislacao");
+        assert_eq!(m.version, "8", "--version explícita vence");
     }
 
     /// **O coração da Fase 1**: o id do record é o `doc_path`, que É o nome do `.md` na árvore.

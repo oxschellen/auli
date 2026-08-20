@@ -2,7 +2,7 @@
 //!
 //! Subcommands (not flags) so each mode has its own exclusive options:
 //!   auli server  --port <p> [--bind <addr>] [--packs-dir <dir>]   (--packs-dir defaults to $AULI_DATA_DIR or ./data)
-//!   auli update  --entity <id> --out <dir> [--version <v>]   (fonte: as árvores `<dir>/../docs/`)
+//!   auli update  --entity <id> --out <dir> [--version <v>] [--kind <colecao>]...   (fonte: as árvores `<dir>/../docs/`)
 //!   auli remover --entity <id> --out <dir>                   (aplica o log de órfãos aprovado)
 //!   auli bundle  [--data-root <dir>] [--out <dir>]
 
@@ -43,6 +43,12 @@ enum Command {
         out: PathBuf,
         #[arg(long)]
         version: Option<String>,
+        /// Vetoriza SÓ esta(s) coleção(ões) — repetível: `--kind faqs --kind legislacao`. As
+        /// demais entradas e hashes do manifesto anterior são preservadas verbatim (D-DH-3), e o
+        /// boot continua conferindo TODAS contra o disco. Exige manifesto anterior com o mapa
+        /// `docs_hashes` e identidade de embedding igual à local; sem `--kind`, rodada completa.
+        #[arg(long = "kind")]
+        kinds: Vec<String>,
     },
     /// Aplica as remoções que um humano aprovou no log de órfãos. NADA é removido sem isto.
     ///
@@ -81,9 +87,10 @@ async fn main() {
             entity,
             out,
             version,
+            kinds,
         } => {
             // Synchronous, CPU-bound work — runs to completion on the async entrypoint thread.
-            if let Err(e) = auli_cli::run_update(entity, out, version) {
+            if let Err(e) = auli_cli::run_update(entity, out, version, kinds) {
                 eprintln!("Erro no update: {e}");
                 std::process::exit(1);
             }

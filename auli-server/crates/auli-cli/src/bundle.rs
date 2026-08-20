@@ -300,7 +300,7 @@ fn escrever(
 /// pasta dizendo que a coleta estava em andamento — o leitor ficava sabendo, que era o ponto. A
 /// coleta fechou em 09/08/2026 (22.476 acórdãos) e o aviso saiu junto: agora a contagem É o acervo.
 ///
-/// A lista filtra o BUNDLE, não o dado: a árvore segue no disco e dentro do `docs_hash` do
+/// A lista filtra o BUNDLE, não o dado: a árvore segue no disco e dentro do mapa `docs_hashes` do
 /// manifesto. Segurar uma coleção movendo o diretório mudaria esse hash e faria o servidor recusar o
 /// boot — por isso o filtro mora aqui.
 const KINDS_SEGURADOS: &[&str] = &[];

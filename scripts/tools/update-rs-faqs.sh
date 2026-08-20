@@ -84,7 +84,7 @@ export AULI_COLLECTIONS_BIN="$SERVER/target/release/auli-collections"
 echo "🌳 derivando artefatos do snapshot (árvore docs/faqs)…"
 ( cd "$SERVER" && "$AULI_COLLECTIONS_BIN" rs )
 
-# 6. Re-vetoriza os packs a partir da árvore recém-derivada (muda o docs_hash;
+# 6. Re-vetoriza os packs a partir da árvore recém-derivada (muda o `docs_hashes` de `faqs`;
 #    o boot do servidor recusa subir até os packs baterem — daí ser obrigatório).
 #
 # O custo NÃO é mais o da entidade inteira. Até o PR #140 era: atualizar as FAQs re-embeddava os

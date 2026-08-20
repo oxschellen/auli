@@ -11,7 +11,7 @@
 #   2. scrape        → grava o snapshot
 #   3. process       → materializa `docs/servicos/*.md` + reescreve os artefatos de `raw/`
 #   4. diff de `raw/` contra o backup
-#   5. build-packs   → OBRIGATÓRIO: mexer em `docs/` muda o `docs_hash` e o boot recusa até re-vetorizar
+#   5. build-packs   → OBRIGATÓRIO: mexer em `docs/` muda o `docs_hashes` daquela coleção e o boot recusa até re-vetorizar
 #
 # O passo 4 é o gate de leitura humana: o que ele acusa é mudança do PORTAL, porque o re-processamento
 # em si não altera conteúdo. Vale ler o que mudou antes de dar a entidade por atualizada.

@@ -295,6 +295,45 @@ aprovação. O "não" viraria "sim" sozinho.
 - **a guarda de `docs_hash` no `remover` e a não-recarimbagem defendem cenários disjuntos** — a guarda
   cobre árvore à frente do pack; não recalcular o hash cobre o pack ficar à frente da árvore.
 
+### 3.6.2 `docs_hashes` por diretório e a rodada parcial — as oito decisões (D-DH-*)
+
+Vieram da `TAREFA-DOCS-HASH-POR-DIRETORIO.md`, removida em 20/08/2026 depois de executada, que por
+sua vez desarquivou o [ESTUDO-docs-hash-por-diretorio.md](ESTUDO-docs-hash-por-diretorio.md) — lá
+ficam o desenho e os caminhos descartados. Estão aqui, e não no git, pelo mesmo motivo dos `D-INC-*`
+acima: `manifest.rs`, `update.rs`, `packs.rs`, `remocoes.rs` e `main.rs` citam esses identificadores
+em comentário.
+
+**O que mudou, em uma frase:** o manifesto deixou de carimbar UM hash da árvore `docs/` inteira e
+passou a carimbar **um por subdiretório**, o que permite `auli update --kind legislacao` re-vetorizar
+só uma coleção — sem afrouxar a guarda, porque o boot continua conferindo o mapa **inteiro** contra
+o disco.
+
+**A regra que sustenta tudo (D-DH-3):** numa rodada parcial, só os kinds que rodaram são
+recarimbados; os demais viajam **verbatim** do manifesto anterior. Cada entrada significa "o pack
+desta coleção veio deste estado da árvore", não "a árvore estava assim quando o manifesto foi
+escrito". Recarimbar tudo a cada rodada reproduziria o defeito do agregado, só que particionado — e
+é a tentação natural de quem mexer aqui depois.
+
+| # | Decisão |
+|---|---|
+| **D-DH-1** | `docs_hash: Option<String>` sai; entra `docs_hashes: Option<BTreeMap<String, String>>` — chave = nome do subdiretório de 1º nível de `docs/`, valor = FNV-1a 64 hex agregado sobre `(caminho relativo a docs/, bytes)` dos arquivos daquele subdiretório, ordenados. `BTreeMap` para ordem determinística no JSON. |
+| **D-DH-2** | Validação em matriz: `(None, disco None)` ⇒ Ok; `(None, disco Some)` ⇒ **erro alto** (pré-migração); `(Some, disco None)` ⇒ erro (árvore sumiu); `(Some, Some)` ⇒ diff com **todas** as divergências listadas, nas três classes nomeadas. |
+| **D-DH-3** | Regra central da rodada parcial: recarimba do disco **só** os kinds rodados; todo o resto do mapa (inclusive diretórios sem pack, como `notas`, e hashes que já não batem com o disco) viaja verbatim do manifesto anterior. |
+| **D-DH-4** | `--kind` exige três pré-condições, todas erro alto: manifesto anterior existe; ele tem o mapa (senão: rodar o completo, que migra); identidade de embedding local == a dele (senão a rodada parcial carimbaria a identidade nova num manifesto cujos outros packs são do espaço velho — o boot os abençoaria, que é o defeito central em outra roupa). |
+| **D-DH-5** | Os três erros de diff são nomeados por diretório e **acumulados** numa mensagem só — parar no primeiro esconderia o remédio dos demais. |
+| **D-DH-6** | Arquivo solto direto em `docs/` é erro do `hash_docs_map`, com o arquivo nomeado na mensagem. Medido na F0 antes do merge. |
+| **D-DH-7** | `--kind` é repetível (`--kind faqs --kind legislacao`), com dedup e recusa alta de nome desconhecido **antes** de carregar o embedder. Vazio = rodada completa, comportamento de hoje. |
+| **D-DH-8** | `hash_docs_tree` e `validate_docs_hash` **morrem** (sem alias, sem deprecated): três chamadores só (`update`, `packs`, `remocoes`), todos migrados nesta leva. Manter os dois seria duas fontes para a mesma guarda. |
+
+**Cercas que valem além da leva:** nada de Merkle nem de raiz agregada derivada do mapa (as razões
+estão no ESTUDO); a mudança é neutra em saída — não toca key, vetor, banda, `STRATEGY_VERSION` nem
+`PACK_FORMAT`.
+
+**Janela operacional assimétrica**, para quem for migrar de novo: _servidor novo + manifesto velho_
+= recusa alta (desejado, é o D-DH-2 forçando a migração); _servidor velho + manifesto novo_ = sobe
+**sem** guarda de árvore, porque o código antigo lê `docs_hash` ausente como "nada a validar". Daí a
+ordem da migração ser regenerar os manifestos ANTES de subir o binário novo.
+
 ### 3.7 Multi-tenancy (entidades)
 
 As entidades vêm de `config/registry.toml` (fonte única), lido por `auli-cli` e `auli-collections`; o

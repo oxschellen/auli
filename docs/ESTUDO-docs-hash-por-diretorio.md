@@ -3,6 +3,12 @@
 **Data:** 12/08/2026 · **Decisão: não fazer agora.** Analisado até o desenho fechado; nada
 implementado. Documento existe para que retomar não custe refazer a análise.
 
+**Atualização 20/08/2026: EXECUTADO** — revisado e implantado pela
+`TAREFA-DOCS-HASH-POR-DIRETORIO` (que morreu executada, como manda o ciclo de vida). Os quatro
+ajustes que a revisão acrescentou vivem nas decisões `D-DH-*` do
+[auli_code.md](auli_code.md); este estudo permanece como o registro do **desenho** e dos
+**caminhos descartados** — que continuam descartados pelas razões daqui.
+
 **Para o Claude Code:** commitar como está. Nenhuma mudança de código nesta leva.
 
 ---

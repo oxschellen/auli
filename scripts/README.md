@@ -64,7 +64,7 @@ scripts/deploy-frontend.sh --allow-vazias  # publica mesmo com entidade sem dado
 ## Quando rodar cada um sozinho
 
 **`scripts/build-packs.sh <id>`** — obrigatório sempre que a árvore `data/<id>/docs/` mudar. O
-manifesto carimba um `docs_hash` sobre ela e o servidor **recusa subir** se divergir, então pular
+manifesto carimba um mapa `docs_hashes` sobre ela, um hash por subdiretório, e o servidor **recusa subir** se divergir, então pular
 este passo não dá erro sutil: dá boot recusado. É caro — no `rs`, ~72 min e pico de ~42 GB de RAM,
 porque re-vetoriza a entidade inteira e não só a coleção que mudou.
 
