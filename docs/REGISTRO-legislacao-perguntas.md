@@ -4,10 +4,9 @@ Documenta as **fontes** dos textos legais e as **convenções** usadas na geraç
 datasets P/R da coleção `legislacao` do Auli. Companheiro do `TAREFA-LEGISLACAO.md`
 (que rege a implantação no código); este arquivo rege o **conteúdo**.
 
-Última atualização: 19/08/2026 — Fase B do `TAREFA-LEGISLACAO-LACUNAS`: o §4
-deixou de duplicar contagens, a LC 123 ganhou o §2.4 e o §3.2 acompanhou a chave
-estendida na #151. Conteúdo: 6ª entrega da CF (arts. 157–162), parte tributária
-COMPLETA, ressalvadas as fronteiras 195/ADCT.
+Última atualização: 20/08/2026 — o IPVA entrou com lei e regulamento (§§2.5 e
+2.6) e a parte tributária da CF está **fechada**: o art. 195 e o ADCT ficaram
+fora por decisão (§2.2-g).
 
 ---
 
@@ -137,6 +136,21 @@ Consequências práticas:
 - **Texto consolidado de referência:** `ref/cf-arts-157-162-redacao-pre-ec132.md`.
 - **Status:** 12 pares gerados em 14/08/2026 (blocos 21–23).
 
+### 2.2-g Fronteiras da CF — art. 195 e ADCT ficam FORA (decisão de 20/08/2026)
+
+Decisão de Carlos, que encerra a Fase D do `TAREFA-LEGISLACAO-LACUNAS`: **o art.
+195 (contribuições da seguridade social) e os dispositivos tributários do ADCT
+não entram no acervo.** Não é adiamento — é recorte.
+
+Com isso a Constituição Federal está **fechada** no acervo, nos 112 pares das
+Seções I a VI do Capítulo I do Título VI. O nome da pasta já antecipava esta
+possibilidade: o D-LEG-4b recorta o 1º segmento pela parte que entra
+(`Constituição Federal — Sistema Tributário Nacional`), justamente para que outra
+parte da CF, se um dia entrasse, virasse outra pasta. Ela não virá.
+
+Quem revisar o acervo procurando contribuições sociais não vai achar, e é isso
+que este parágrafo existe para dizer — a ausência é escolha, não lacuna.
+
 ### 2.4 LC 123/2006 (Simples Nacional) — documentada por entrega
 
 Fonte, corte e armadilhas vivem nos `REGISTRO-lc123-entrega{1..9}.md`, não aqui: a
@@ -212,9 +226,8 @@ diverge:
 
 ### 2.3 Próximas (planejadas, ordem do geral ao específico)
 
-- CF: parte tributária COMPLETA (Seções I a VI, 112 pares). Pendente apenas a
-  decisão de fronteiras: art. 195 (contribuições da seguridade) e dispositivos
-  tributários do ADCT.
+- CF: **encerrada** — parte tributária completa (Seções I a VI, 112 pares), e as
+  fronteiras decididas contra a inclusão (§2.2-g). Não há próxima entrega da CF.
 - LC 123/2006: **em andamento** — ver §2.4. Fora desta lista porque já tem
   pares no acervo; o que falta dela são blocos, não a lei.
 - CTN (Lei 5.172/1966) — fonte prevista: compilado do Planalto.
