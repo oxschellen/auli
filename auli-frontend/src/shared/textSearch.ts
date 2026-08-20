@@ -10,7 +10,9 @@
  * - **Multi-termo**: a query é quebrada por whitespace; **todos** os termos precisam aparecer
  *   (substring) em **algum** campo — E entre termos, OU entre campos. Termos podem casar em
  *   campos diferentes do mesmo item; a ordem é irrelevante.
- * - **Query vazia** (ou só espaços) casa tudo — devolve a lista inteira, como hoje.
+ * - **Query vazia** (ou só espaços) casa tudo — devolve a lista inteira, como hoje. **Letras
+ *   isoladas** são descartadas pelo `parseQuery` (ver lá o porquê); query inteira de letras
+ *   isoladas cai no mesmo caso da query vazia. Dígito isolado é preservado.
  * - Query de um termo aceita um **superset** do filtro antigo (`toLowerCase().includes`):
  *   nenhum resultado se perde (ver o teste de invariante em `textSearch.test.ts`).
  *
@@ -51,10 +53,40 @@ export function buildHaystack(fields: readonly (string | null | undefined)[]): s
   return fields.map((f) => normalizeText(f ?? ""));
 }
 
-/** Quebra a query em termos normalizados. Query vazia ou só espaços → `[]` (casa tudo). */
+/**
+ * Uma **letra** sozinha, depois da normalização. Em português as palavras de uma letra são todas
+ * átonas (`a`/`à`, `e`/`é`, `o`), e o NFD as colapsa nestas três — que aparecem em 100% dos itens
+ * de todos os corpora medidos (legislação, pareceres, FAQs). Dígito isolado fica de fora do corte:
+ * ele discrimina de verdade (`5` está em 86% dos pareceres, não em 100%), e descartá-lo mudaria o
+ * conjunto devolvido — medido: "art 5 do regulamento" iria de 70 para 92 pareceres.
+ */
+const LETRA_SOZINHA = /^[a-z]$/;
+
+/**
+ * Quebra a query em termos normalizados, **descartando letras isoladas**. Query vazia, só espaços
+ * ou só letras isoladas → `[]` (casa tudo).
+ *
+ * O descarte não é higiene: num filtro por substring, uma letra sozinha casa TODO item do corpus e
+ * portanto **não filtra nada** — mas MARCA tudo. Buscar `impostos competem à União` deixava o `a`
+ * (o `à` normaliza para `a`) marcado dentro de "Quais", "da", "estrangeiros". O ruído sempre
+ * existiu na linha do título; ficou intolerável quando a legislação passou a exibir o corpo da
+ * resposta (D-LEG-11a) e o realce saiu de uma linha para um parágrafo inteiro.
+ *
+ * **O conjunto devolvido não muda** — é o que justifica mexer nas seis abas de uma vez. As três
+ * letras em jogo estão em 100% dos itens, então elas nunca foram o que filtrava; quem filtra são
+ * os outros termos do E lógico. Há teste medindo isso contra os corpora reais.
+ *
+ * O corte vive aqui, e não no `highlight`, para preservar o invariante que sustenta o módulo:
+ * filtro e marcação consomem **a mesma** lista de termos, então nunca discordam sobre o que casou.
+ * Filtrar só na marcação consertaria a tela ao preço de fazer os dois divergirem.
+ *
+ * **Query inteira de letras isoladas devolve a lista inteira**, como a query vazia. É escolha, não
+ * consequência: `a` não carrega sinal nenhum contra este corpus, e devolver tudo é o mesmo que já
+ * fazemos quando não há termo utilizável.
+ */
 export function parseQuery(query: string): string[] {
   const q = normalizeText(query);
-  return q ? q.split(" ") : [];
+  return q ? q.split(" ").filter((t) => !LETRA_SOZINHA.test(t)) : [];
 }
 
 /**

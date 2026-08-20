@@ -1330,38 +1330,51 @@ depois de uma interrupção? Se for raro, a dívida pode ficar registrada e não
 
 ---
 
-## 37. Busca: termo de **1 caractere** marca meia página (aberta — 2026-08-14)
+## 37. Busca: termo de **1 caractere** marca meia página (PAGA — 2026-08-20)
 
 Encontrada ao revisar a aba Legislação depois que a linha passou a abrir e mostrar a resposta
-(D-LEG-11a). Buscar `impostos competem à União` deixa a letra **`a` marcada dentro de quase toda
+(D-LEG-11a). Buscar `impostos competem à União` deixava a letra **`a` marcada dentro de quase toda
 palavra** do resultado — "Qu**a**is", "d**a**", "estr**a**ngeiros". O `à` normaliza para `a` e vira
 substring de tudo.
 
-A causa está no [`parseQuery`](auli-frontend/src/shared/textSearch.ts), que fatia a query por espaço
-e **não descarta termos de um caractere**:
+A causa estava no [`parseQuery`](auli-frontend/src/shared/textSearch.ts), que fatiava a query por
+espaço sem descartar nada. **Não era da Legislação nem regressão**: o `parseQuery` serve seis abas e
+sempre se comportou assim — a linha do título já marcava desse jeito. O que mudou foi a
+visibilidade, com o corpo da resposta em tela.
 
-```ts
-export function parseQuery(query: string): string[] {
-  const q = normalizeText(query);
-  return q ? q.split(" ") : [];
-}
-```
+### O conserto — e a medição que mudou o desenho
 
-**Não é da Legislação, e não é regressão.** É comportamento antigo e compartilhado: o `parseQuery`
-serve Serviços, FAQs, Pareceres, TARF, Conteúdos e Legislação. A prova de que é anterior está na
-própria tela — a linha do **título** já marcava assim, e esse trecho não foi tocado. O que mudou foi
-a **visibilidade**: com o corpo da resposta em tela, o ruído saiu de uma linha de título para um
-parágrafo inteiro.
+A pendência previa `.filter((t) => t.length > 1)`. **Medir contra os corpora reais mostrou que essa
+regra estava errada**: descartar dígito isolado muda o conjunto filtrado. `art 5 do regulamento`
+saltaria de 70 para 92 pareceres, de 1.819 para 1.843 acórdãos, de 38 para 46 FAQs — porque `5` está
+em 86% dos itens, não em 100%.
 
-**O filtro continua correto** — os termos são combinados em E, então um termo que casa com tudo não
-muda o conjunto devolvido; quem filtra são os outros termos. O que degrada é só o realce. Por isso
-está aqui e não como bug.
+O corte ficou em **letra isolada** (`/^[a-z]$/`), não em tamanho. Em português as palavras de uma
+letra são todas átonas — `a`/`à`, `e`/`é`, `o` —, o NFD as colapsa nessas três, e as três estão em
+**100% dos itens** dos corpora medidos. Dígito isolado passa. Com isso o conjunto devolvido não muda
+em aba nenhuma, que é o que autorizou mexer nas seis de uma vez.
 
-**O conserto é uma linha** (`.filter((t) => t.length > 1)`), mas ele muda o comportamento de busca de
-**seis abas** de uma vez, e por isso não entrou de carona na entrega da Legislação. Ao pagar, decidir
-também o caso em que **todos** os termos têm 1 caractere: com o filtro, a query esvazia e a lista
-volta inteira — o que é defensável, mas é uma escolha, não uma consequência. Merece teste no
-`textSearch` e uma passada visual em cada aba.
+O filtro vive no `parseQuery` e não no `highlight` de propósito: o invariante do módulo é que
+marcação e filtro consomem a MESMA lista de termos. Consertar só a marcação faria os dois
+divergirem.
+
+**Caso-limite decidido:** query inteira de letras isoladas (`a`, `a e o`) devolve a lista inteira,
+como a query vazia — mesma regra já documentada no módulo.
+
+### O que ficou de guarda
+
+- `textSearch.test.ts` — a **regra**: letra isolada sai, dígito isolado fica, caso-limite. Roda em
+  todo lugar, inclusive no CI, e é ela que pega a regressão de código.
+- `textSearch.corpus.test.ts` — a **premissa empírica**, contra os artefatos reais de `public/rs/`
+  que o frontend serve, nas seis abas (509 + 372 + 22.476 + 2.276 + serviços + conteúdos). Este
+  **se declara pulado onde não há acervo**: `public/rs/*.json` é gerado pelo
+  `build-frontend-public.sh` a partir de `data/`, que não é versionado — no CI os arquivos não
+  existem. Na prática ele roda na máquina de quem integra uma entrega nova, que é exatamente quem
+  pode mudar a premissa.
+
+Verificado por mutação nos dois cenários: com o acervo montado, repondo o defeito morrem quatro
+testes; **sem** o acervo (o CI), morre um — o do dígito isolado, na guarda da regra. A cobertura do
+CI não depende do dado.
 
 ---
 
