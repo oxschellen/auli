@@ -31,6 +31,29 @@ describe("parseQuery", () => {
   it("quebra em termos normalizados", () => {
     expect(parseQuery(" Crédito  Presumido ")).toEqual(["credito", "presumido"]);
   });
+
+  it("descarta letra isolada e mantém o resto", () => {
+    // O caso que gerou a pendência 37: o `à` normaliza para `a` e casa dentro de toda palavra do
+    // corpus — filtrando nada e marcando tudo.
+    expect(parseQuery("impostos competem à União")).toEqual(["impostos", "competem", "uniao"]);
+    expect(parseQuery("crédito a recolher")).toEqual(["credito", "recolher"]);
+  });
+
+  it("dígito isolado NÃO é descartado — ele filtra de verdade", () => {
+    // Medido: descartar o `5` levaria "art 5 do regulamento" de 70 para 92 pareceres. Letra
+    // isolada está em 100% dos itens; dígito isolado não.
+    expect(parseQuery("art 5 do RICMS")).toEqual(["art", "5", "do", "ricms"]);
+    expect(parseQuery("anexo 3")).toEqual(["anexo", "3"]);
+  });
+
+  it("query inteira de letras isoladas cai no caso da query vazia", () => {
+    expect(parseQuery("a")).toEqual([]);
+    expect(parseQuery("a e o")).toEqual([]);
+  });
+
+  it("duas letras passam — o corte é na letra sozinha, não no tamanho", () => {
+    expect(parseQuery("do ir")).toEqual(["do", "ir"]);
+  });
 });
 
 describe("matchesQuery", () => {
@@ -90,6 +113,29 @@ describe("haystackMatches + buildHaystack (caminho memoizado)", () => {
   it("terms vazio casa qualquer haystack", () => {
     expect(haystackMatches(buildHaystack(["qualquer coisa"]), [])).toBe(true);
     expect(haystackMatches(buildHaystack([]), [])).toBe(true);
+  });
+});
+
+describe("letra isolada: não filtra e não marca (pendência 37)", () => {
+  const campos = ["Quais impostos competem à União?", "Compete à União instituir imposto sobre"];
+
+  it("a letra descartada não muda o conjunto devolvido", () => {
+    // Com e sem o `à`, o mesmo item casa. A letra sozinha nunca foi o que filtrava.
+    expect(matchesQuery(campos, "impostos competem à União")).toBe(true);
+    expect(matchesQuery(campos, "impostos competem União")).toBe(true);
+  });
+
+  it("os termos que sobram continuam em E lógico", () => {
+    // Descartar a letra não afrouxa o resto: `estaduais` não está no texto.
+    expect(matchesQuery(campos, "impostos estaduais à União")).toBe(false);
+  });
+
+  it("nenhuma letra isolada chega ao highlight", () => {
+    // O `Highlight` recebe exatamente a saída do `parseQuery`; se nenhuma letra sozinha sai daqui,
+    // nenhuma é marcada na tela. É este teste que morre se alguém remover o filter.
+    for (const q of ["impostos competem à União", "a b c crédito", "ICMS e IPI"]) {
+      expect(parseQuery(q).every((t) => !/^[a-z]$/.test(t))).toBe(true);
+    }
   });
 });
 
