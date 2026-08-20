@@ -4,10 +4,9 @@ Documenta as **fontes** dos textos legais e as **convenções** usadas na geraç
 datasets P/R da coleção `legislacao` do Auli. Companheiro do `TAREFA-LEGISLACAO.md`
 (que rege a implantação no código); este arquivo rege o **conteúdo**.
 
-Última atualização: 19/08/2026 — Fase B do `TAREFA-LEGISLACAO-LACUNAS`: o §4
-deixou de duplicar contagens, a LC 123 ganhou o §2.4 e o §3.2 acompanhou a chave
-estendida na #151. Conteúdo: 6ª entrega da CF (arts. 157–162), parte tributária
-COMPLETA, ressalvadas as fronteiras 195/ADCT.
+Última atualização: 20/08/2026 — o IPVA entrou com lei e regulamento (§§2.5 e
+2.6) e a parte tributária da CF está **fechada**: o art. 195 e o ADCT ficaram
+fora por decisão (§2.2-g).
 
 ---
 
@@ -137,6 +136,21 @@ Consequências práticas:
 - **Texto consolidado de referência:** `ref/cf-arts-157-162-redacao-pre-ec132.md`.
 - **Status:** 12 pares gerados em 14/08/2026 (blocos 21–23).
 
+### 2.2-g Fronteiras da CF — art. 195 e ADCT ficam FORA (decisão de 20/08/2026)
+
+Decisão de Carlos, que encerra a Fase D do `TAREFA-LEGISLACAO-LACUNAS`: **o art.
+195 (contribuições da seguridade social) e os dispositivos tributários do ADCT
+não entram no acervo.** Não é adiamento — é recorte.
+
+Com isso a Constituição Federal está **fechada** no acervo, nos 112 pares das
+Seções I a VI do Capítulo I do Título VI. O nome da pasta já antecipava esta
+possibilidade: o D-LEG-4b recorta o 1º segmento pela parte que entra
+(`Constituição Federal — Sistema Tributário Nacional`), justamente para que outra
+parte da CF, se um dia entrasse, virasse outra pasta. Ela não virá.
+
+Quem revisar o acervo procurando contribuições sociais não vai achar, e é isso
+que este parágrafo existe para dizer — a ausência é escolha, não lacuna.
+
 ### 2.4 LC 123/2006 (Simples Nacional) — documentada por entrega
 
 Fonte, corte e armadilhas vivem nos `REGISTRO-lc123-entrega{1..9}.md`, não aqui: a
@@ -168,11 +182,52 @@ que vale registrar no nível do acervo é o que **diverge** das convenções ger
   cobre `Arts. 36 e 36-A`), e o art. 18, § 6º, está coberto pelo par de
   segregação/retenção da 3ª entrega, com o texto integral no ref.
 
+### 2.5 Lei 8.115/1985 (IPVA — RS)
+
+Entrega única, 40 pares, arts. 1º a 20. Detalhe em `REGISTRO-ipva-entrega-unica.md`;
+o que diverge das convenções gerais:
+
+- **Fonte textual ≠ fonte do link.** O texto veio do PDF compilado do Gabinete de
+  Consultoria Legislativa da **AL-RS** (`repLegisComp`), atualizado até a Lei
+  16.307, de 31/5/2025 — a AL-RS bloqueia fetch por robots, então o PDF chegou por
+  upload manual, como no RITCD. Os `link` dos pares apontam para a SEFAZ
+  (`http://www.legislacao.sefaz.rs.gov.br/Site/Document.aspx?inpKey=109693`), que é
+  a fonte oficial de leitura do acervo para lei estadual. **O host só atende em
+  `http`** — `https` não tem resposta, e é por isso que a família inteira dos links
+  gaúchos é `http`.
+- **Discriminação do vigente pelas imagens.** O PDF marca as redações superadas com
+  tachado, que a camada de texto não preserva. A separação foi feita olhando as
+  páginas e encadeando as anotações "(Redação dada pela Lei X)".
+- **Sem corte de reforma**, como no ITCD: a EC 132/2023 mexeu no IPVA
+  constitucional (veículos aquáticos e aéreos, alíquota por impacto ambiental) e
+  nada disso foi internalizado na lei gaúcha. A sentinela avisa.
+- **Trilha de 2 níveis** — a lei não tem títulos nem capítulos, então o 2º segmento
+  é o artigo com o tema (`Art. 4.º — Isenções`).
+
+### 2.6 Decreto 32.144/1985 (RIPVA — regulamento do IPVA)
+
+Entrega única, 27 pares, arts. 1º a 21. Detalhe em `REGISTRO-ripva.md`; o que
+diverge:
+
+- **Fonte** — texto consolidado da SEFAZ-RS, atualizado até o Decreto 58.571 (DOE
+  de 30/12/2025). Link dos pares:
+  `http://www.legislacao.sefaz.rs.gov.br/Site/Document.aspx?inpKey=109694`.
+- **Só o que o decreto ACRESCENTA à lei** — método do RITCD. Dispositivo que
+  espelha a Lei 8.115 não vira par; vira remissão ao par da lei (fato gerador,
+  rol de isenções, alíquotas nominais, base "valor médio de mercado"). A
+  sentinela é dedicada a essa fronteira lei × regulamento.
+- **Um par com validade de um ano** — o art. 14, I traz o calendário do exercício
+  **2026** e é reescrito todo dezembro. O par avisa disso no corpo, mas ele
+  precisa de revisão anual; é o primeiro dispositivo do acervo com essa natureza.
+- **Sem ref** — o texto integral não veio na entrega e não é gerado aqui. Nada no
+  sistema lê `data/rs/ref/` (o `copy_ref` pula a família e o retrieve serve o
+  corpo do par), então a ausência é lacuna de manutenção, não de função. Mesmo
+  caso da 2ª entrega do RITCD.
+
 ### 2.3 Próximas (planejadas, ordem do geral ao específico)
 
-- CF: parte tributária COMPLETA (Seções I a VI, 112 pares). Pendente apenas a
-  decisão de fronteiras: art. 195 (contribuições da seguridade) e dispositivos
-  tributários do ADCT.
+- CF: **encerrada** — parte tributária completa (Seções I a VI, 112 pares), e as
+  fronteiras decididas contra a inclusão (§2.2-g). Não há próxima entrega da CF.
 - LC 123/2006: **em andamento** — ver §2.4. Fora desta lista porque já tem
   pares no acervo; o que falta dela são blocos, não a lei.
 - CTN (Lei 5.172/1966) — fonte prevista: compilado do Planalto.
@@ -290,7 +345,7 @@ Permitidas com parcimônia, **sempre rotuladas** e curtas (1–2 linhas):
 
 ## 4. Inventário
 
-**442 pares** na coleção `legislacao` do `rs`, em 5 normas (integrados em 19/08/2026).
+**509 pares** na coleção `legislacao` do `rs`, em 7 normas (integrados em 20/08/2026).
 
 Este é o **único total declarado** em todo o acervo de documentos, e a regra vem de
 ter errado duas vezes: enquanto esta seção mantinha uma contagem por lei e os
@@ -304,6 +359,8 @@ agregado.
 | Lei 6.537/1973 (RS) | `Lei 6.537-1973 — Processo Tributário Administrativo` | §2.1 deste documento |
 | Constituição Federal (parte tributária) | `Constituição Federal — Sistema Tributário Nacional` | §§ 2.2 a 2.2-f deste documento |
 | LC 123/2006 (Simples Nacional) | `Lei Complementar 123-2006 — Simples Nacional` | `REGISTRO-lc123-entrega1..9.md` |
+| Decreto 32.144/1985 (RIPVA) | `Decreto 32144-1985 — Regulamento do IPVA` | §2.6 deste documento e `REGISTRO-ripva.md` |
+| Lei 8.115/1985 (IPVA) | `Lei 8115-1985 — Imposto sobre a Propriedade de Veículos Automotores (IPVA)` | §2.5 deste documento e `REGISTRO-ipva-entrega-unica.md` |
 | Lei 8.821/1989 (ITCD) | `Lei 8821-1989 — ITCD` | `REGISTRO-lei8821-entrega1..3.md` |
 | Decreto 33.156/1989 (RITCD) | `Decreto 33156-1989 — Regulamento do ITCD` | `REGISTRO-ritcd-entrega1..3.md` |
 

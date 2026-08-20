@@ -82,10 +82,11 @@ anterior na página da LC que a escreveu antes (Lcp147/155/188.htm, pequenas).
 
 **Portão C:** um bloco por vez, aprovação de Carlos entre blocos (piloto: C1).
 
-## Fase D — CF: fronteiras (BLOQUEADA por decisão)
+## Fase D — CF: fronteiras (ENCERRADA em 20/08/2026 — ficam FORA)
 
-Art. 195 (contribuições sociais) e ADCT tributário: gerar SOMENTE após Carlos
-decidir se entram no escopo. Registrar a decisão no REGISTRO geral.
+Carlos decidiu: o art. 195 (contribuições sociais) e o ADCT tributário **não
+entram** no acervo. Nada a gerar. A CF fica fechada nos 112 pares das Seções I a
+VI. Registrado no §2.2-g do `REGISTRO-legislacao-perguntas.md`.
 
 ## Convenções (resumo vinculante — detalhe nos REGISTROs por entrega)
 
