@@ -60,7 +60,7 @@ describe("drawer de seções (mobile)", () => {
     expect(intrusos(lista)).toEqual([]);
     // Contagem literal de propósito: é o que pega uma aba entrando ou saindo sem intenção. Foi 9
     // até ago/2026, quando "Acórdãos TARF" entrou no grupo Acervo, e 10 até "Legislação" entrar no
-    // mesmo grupo (TAREFA-LEGISLACAO, Fase 4).
+    // mesmo grupo (D-LEG-13, auli_code.md §3.13.1).
     expect(lista.querySelectorAll('[role="tab"]')).toHaveLength(11);
   });
 });

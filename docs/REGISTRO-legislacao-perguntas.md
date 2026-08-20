@@ -1,8 +1,9 @@
 # REGISTRO — Coleção Legislação: datasets de perguntas e respostas
 
 Documenta as **fontes** dos textos legais e as **convenções** usadas na geração dos
-datasets P/R da coleção `legislacao` do Auli. Companheiro do `TAREFA-LEGISLACAO.md`
-(que rege a implantação no código); este arquivo rege o **conteúdo**.
+datasets P/R da coleção `legislacao` do Auli — o **conteúdo**. A implantação no
+código está na §3.13 do [auli_code.md](auli_code.md), com as decisões `D-LEG-*` na
+§3.13.1 (vieram da `TAREFA-LEGISLACAO.md`, que morreu executada em 20/08/2026).
 
 Última atualização: 20/08/2026 — o IPVA entrou com lei e regulamento (§§2.5 e
 2.6) e a parte tributária da CF está **fechada**: o art. 195 e o ADCT ficaram
@@ -138,9 +139,9 @@ Consequências práticas:
 
 ### 2.2-g Fronteiras da CF — art. 195 e ADCT ficam FORA (decisão de 20/08/2026)
 
-Decisão de Carlos, que encerra a Fase D do `TAREFA-LEGISLACAO-LACUNAS`: **o art.
-195 (contribuições da seguridade social) e os dispositivos tributários do ADCT
-não entram no acervo.** Não é adiamento — é recorte.
+Decisão de Carlos: **o art. 195 (contribuições da seguridade social) e os
+dispositivos tributários do ADCT não entram no acervo.** Não é adiamento — é
+recorte.
 
 Com isso a Constituição Federal está **fechada** no acervo, nos 112 pares das
 Seções I a VI do Capítulo I do Título VI. O nome da pasta já antecipava esta
@@ -178,6 +179,10 @@ que vale registrar no nível do acervo é o que **diverge** das convenções ger
 - **Escopo de pares FECHADO em 130** (arts. 1º a 41, entregas 1 a 9). Fora ficam
   apenas os **Anexos I–V**, em entrega própria e **só com fetch verificado**, nunca
   de memória (decisão da 3ª entrega), com o formato das tabelas ainda por decidir.
+  **Fonte para quando for**: o PDF Câmara/LEGIN "normaatualizada", que os traz na
+  redação da LC 155/2016 — a pré-corte; alternativa é o `Lcp155.htm` do Planalto,
+  que contém os cinco anexos integralmente e **não trunca** (o `lcp123.htm` trunca
+  no art. 18, § 15-A para qualquer extrator, e insistir não resolve).
 - **Duas ausências que são conteúdo, não lacuna**: o art. 37 não tem par (o par 122
   cobre `Arts. 36 e 36-A`), e o art. 18, § 6º, está coberto pelo par de
   segregação/retenção da 3ª entrega, com o texto integral no ref.
@@ -349,6 +354,13 @@ Permitidas com parcimônia, **sempre rotuladas** e curtas (1–2 linhas):
 - O texto consolidado da lei **não entra** em `docs/` (não é vetorizado):
   vai para `data/<id>/ref/` seguindo a família `<id>-*-texto-vigente.md`,
   que o `copy_ref` do `build-frontend-public.sh` sabe pular.
+- **O prefixo `<id>-` é parte da família, não enfeite.** O padrão de exclusão é
+  `"$id"-*-texto-vigente.md`; um arquivo sem o prefixo passa pelo filtro e é
+  copiado para `public/` em todo deploy, sem erro nenhum. Aconteceu na integração
+  do IPVA, onde o ref veio nomeado `lei-8115-1985-texto-vigente.md` — 22,7 KB que
+  iriam junto em cada publicação. A conferência é uma linha: depois de rodar o
+  `build-frontend-public.sh`, `ls public/<id>/ | grep texto-vigente` tem de vir
+  vazio.
 - Para consolidações reconstruídas (caso da CF pré-EC 132), o arquivo de
   referência anota **emenda a emenda** a origem de cada redação, para
   auditoria.
