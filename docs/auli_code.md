@@ -440,14 +440,23 @@ Servidor **Model Context Protocol** sobre o mesmo motor, via **`rmcp` 2.2** (SDK
 axum — mesmo processo, mesma porta, mesmo `Arc<Engine>`. É a razão de não ser um binário separado:
 o BGE-M3 carrega **uma vez**.
 
-Quatro ferramentas em pt-BR (D-MCP-7, ampliada) — o consumidor é a IA de um auditor brasileiro:
+Cinco ferramentas em pt-BR (D-MCP-7, ampliada duas vezes) — o consumidor é a IA de um auditor
+brasileiro:
 
-| Ferramenta                | Argumentos                | Devolve                                                        |
-| ------------------------- | ------------------------- | -------------------------------------------------------------- |
-| `listar_entidades`        | —                         | UFs com acervo **não-vazio** e, por UF, os kinds e seus totais |
-| `buscar_pareceres`        | `uf`, `pergunta`, `top_k` | metadados + sinopse + link + score; **sem** o corpo            |
-| `obter_parecer`           | `uf`, `numero`            | o parecer com o **corpo integral**, lido da árvore `docs/`     |
-| `consultar_servicos_faqs` | `uf`, `pergunta`          | o bloco de contexto RAG serviços+FAQs, byte a byte o do chat   |
+| Ferramenta                | Argumentos                            | Devolve                                                        |
+| ------------------------- | ------------------------------------- | -------------------------------------------------------------- |
+| `listar_entidades`        | —                                     | UFs com acervo **não-vazio** e, por UF, os kinds e seus totais |
+| `buscar_pareceres`        | `uf`, `pergunta`, `top_k`, `colecao`  | metadados + sinopse + link + score; **sem** o corpo            |
+| `obter_parecer`           | `uf`, `numero`, `colecao`             | o parecer com o **corpo integral**, lido da árvore `docs/`     |
+| `consultar_servicos_faqs` | `uf`, `pergunta`                      | o bloco de contexto RAG serviços+FAQs, byte a byte o do chat   |
+| `buscar_legislacao`       | `uf`, `pergunta`                      | o bloco de contexto RAG da legislação, com a trilha da norma   |
+
+O `colecao` das duas de jurisprudência é `pareceres` (padrão) ou `tarf` (D-A6), e o
+`resolver_colecao` recusa qualquer outro nome — inclusive `servicos` e `legislacao`, que são
+coleções legítimas de outra natureza. As duas últimas **não** têm `top_k`: são o caminho do bloco
+pronto, e o número de documentos é a constante do chat, não um knob do cliente. Por que a
+legislação virou ferramenta própria em vez de mais um valor de `colecao` — a estrutura do
+`ParecerHit` recusa — está na **D-LEG-14a** (§3.13.1).
 
 A quarta é a face MCP do tipo `ServicosFaqs` do chat: reusa `rag::retrieve` e
 `rag::montar_rag_servicos_faqs` (ambos `pub(crate)` por isso) com as MESMAS constantes
