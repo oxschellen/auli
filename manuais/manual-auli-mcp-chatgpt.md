@@ -23,6 +23,22 @@ português mesmo (*"o que o TARF já decidiu sobre..."*); por baixo, a busca lev
 São decisões de casos concretos, não interpretação normativa. São 22.476 acórdãos — o maior acervo
 do projeto, maior que todos os pareceres somados.
 
+Há também a **legislação**: o texto da lei em pares pergunta/resposta, cada resposta com o
+dispositivo citado (*"Art. 18-A, § 2º"*) e o link para a norma na fonte oficial. São **509 pares**
+de sete normas, hoje só do Rio Grande do Sul:
+
+| Norma | O que cobre |
+|---|---|
+| Constituição Federal | A parte tributária — competência, princípios, imunidades, ICMS, ITCMD e IPVA |
+| Lei 6.537/1973 | Processo tributário administrativo do RS: infração, multa, impugnação, recurso, dívida ativa |
+| Lei Complementar 123/2006 | Simples Nacional e MEI |
+| Lei 8.821/1989 e Decreto 33.156/1989 | ITCD — o imposto sobre herança e doação — e o regulamento dele |
+| Lei 8.115/1985 e Decreto 32.144/1985 | IPVA e o regulamento dele |
+
+A distinção entre as três frentes é o que decide qual delas responde à sua pergunta: a
+**legislação** diz o que a norma determina; os **pareceres** dizem como a Receita interpreta a
+norma num caso concreto; os **serviços e perguntas frequentes** dizem como fazer a coisa no portal.
+
 ## Antes de começar
 
 Você precisa de uma **conta paga do ChatGPT** (Plus, Pro, Business ou Enterprise). No plano
@@ -77,9 +93,9 @@ funcionando.
 
 ## Como perguntar bem
 
-O acervo tem duas frentes: **pareceres e consultas tributárias** — respostas que as secretarias
-deram a perguntas de contribuintes — e os **serviços de atendimento e perguntas frequentes** dos
-portais, para dúvidas de "como fazer". Funciona melhor quando você diz **o estado** e **o tema**.
+São três frentes — a **legislação**, os **pareceres e consultas tributárias** e os **serviços de
+atendimento e perguntas frequentes** dos portais —, e a busca funciona melhor quando você diz **o
+estado** e **o tema**.
 
 Bons exemplos:
 
@@ -93,6 +109,8 @@ Bons exemplos:
 
 > Em Minas Gerais, como faço para emitir a segunda via da guia do IPVA?
 
+> O que a lei do Rio Grande do Sul exige de uma locadora para ela pagar a alíquota menor de IPVA?
+
 Duas dicas que mudam muito o resultado:
 
 - **Diga o estado.** Sem isso o ChatGPT pode escolher um por conta ou perguntar qual.
@@ -103,8 +121,8 @@ Duas dicas que mudam muito o resultado:
 
 **Pareceres só dos quatro estados da tabela.** Se você pedir um parecer de Minas Gerais, não há.
 
-**Serviços e perguntas frequentes cobrem estados diferentes.** Os serviços de atendimento existem
-em quase todas as secretarias; as perguntas frequentes, hoje, só no Rio Grande do Sul. Pergunte
+**Cada frente cobre estados diferentes.** Os serviços de atendimento existem em quase todas as
+secretarias; as perguntas frequentes e a legislação, hoje, só no Rio Grande do Sul. Pergunte
 *"quais estados têm acervo no Auli, e o que cada um tem?"* — o ChatGPT consulta isso na hora, em vez
 de você conferir numa lista que envelhece.
 

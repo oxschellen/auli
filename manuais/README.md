@@ -43,10 +43,23 @@ num caso concreto; os **serviços/FAQs** dizem como fazer a coisa no portal.
 
 As duas ferramentas de jurisprudência aceitam um parâmetro `colecao`: sem ele, consultam os **pareceres** (interpretação da legislação pela Receita Estadual); com `"tarf"`, os **acórdãos do TARF** do RS — decisões do tribunal administrativo em recursos de contribuintes, caso a caso, que não valem como norma geral. São 22.476 acórdãos, coleta encerrada em 09/08/2026.
 
+A legislação são **509 pares pergunta/resposta**, em sete normas, hoje todas do Rio Grande do Sul:
+
+| Norma | O que cobre |
+|---|---|
+| Constituição Federal | A parte tributária — competência, princípios, imunidades, ICMS, ITCMD e IPVA |
+| Lei 6.537/1973 | Processo tributário administrativo do RS: infração, multa, impugnação, recurso, dívida ativa |
+| Lei Complementar 123/2006 | Simples Nacional e MEI |
+| Lei 8.821/1989 e Decreto 33.156/1989 | ITCD — o imposto sobre herança e doação — e o regulamento dele |
+| Lei 8.115/1985 e Decreto 32.144/1985 | IPVA e o regulamento dele |
+
+Ela não tem total por norma aqui de propósito, pela mesma razão de `docs/REGISTRO-legislacao-perguntas.md`: manter sete contagens à mão em cinco arquivos é garantir que uma delas fique errada. O agregado se confere com `find data/rs/docs/legislacao -name '*.md' | wc -l`.
+
 **Os totais acima são mantidos à mão nos quatro manuais.** Quando entrar um estado novo com acervo
-de pareceres, todos precisam ser atualizados juntos. O total do TARF ficou de fora enquanto a coleta
-corria — publicar um número que muda toda semana seria pior do que omiti-lo. Com a coleta encerrada,
-ele entra na mesma regra dos demais: número exato, mantido à mão.
+de pareceres, todos precisam ser atualizados juntos — e o mesmo vale para a tabela das normas, que
+aparece nos quatro e ganha uma linha a cada lei integrada. O total do TARF ficou de fora enquanto a
+coleta corria — publicar um número que muda toda semana seria pior do que omiti-lo. Com a coleta
+encerrada, ele entra na mesma regra dos demais: número exato, mantido à mão.
 
 ## Quando nenhum caminho estiver disponível
 

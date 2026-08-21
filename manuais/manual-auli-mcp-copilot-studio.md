@@ -21,9 +21,10 @@ Copilot que já usa no Edge.
 | Transporte | **Streamable HTTP** — é o único que o Copilot Studio aceita (SSE saiu de cena em 2025) |
 | Autenticação | **Nenhuma**. Não há chave, não há OAuth, não há usuário |
 | Acervo | 19.780 pareceres tributários de SEFAZ-SP (15.605), SEFA-PR (2.060), SEF-SC (1.743) e SEFAZ-RS (372) |
+| Legislação | 509 pares pergunta/resposta do texto da lei, em sete normas — hoje só do RS (tabela abaixo) |
 | Origem dos dados | Documentos públicos das secretarias estaduais da fazenda, com link oficial em cada resultado |
 
-Quatro ferramentas são expostas:
+Cinco ferramentas são expostas:
 
 | Ferramenta | O que faz |
 |---|---|
@@ -32,6 +33,16 @@ Quatro ferramentas são expostas:
 | `obter_parecer` | Devolve o corpo integral de um documento, dado a UF e o número exato. Passe o mesmo `colecao` da busca |
 | `consultar_servicos_faqs` | Serviços de atendimento e perguntas frequentes de uma UF, num único bloco de texto. Para dúvidas de "como fazer" (guias, cadastros, certidões, parcelamentos) |
 | `buscar_legislacao` | O texto da LEI de uma UF em pares pergunta/resposta, com o dispositivo citado (ex.: "Art. 18-A, § 2º") e o link oficial. Para o que a norma DETERMINA — alíquota, prazo, isenção, obrigação, definição legal |
+
+A legislação indexada, hoje toda do Rio Grande do Sul:
+
+| Norma | O que cobre |
+|---|---|
+| Constituição Federal | A parte tributária — competência, princípios, imunidades, ICMS, ITCMD e IPVA |
+| Lei 6.537/1973 | Processo tributário administrativo do RS: infração, multa, impugnação, recurso, dívida ativa |
+| Lei Complementar 123/2006 | Simples Nacional e MEI |
+| Lei 8.821/1989 e Decreto 33.156/1989 | ITCD — o imposto sobre herança e doação — e o regulamento dele |
+| Lei 8.115/1985 e Decreto 32.144/1985 | IPVA e o regulamento dele |
 
 **O que trafega para fora do tenant:** o texto da pergunta e a sigla da UF. Nada mais — não há
 upload de documento, não há contexto do Microsoft 365, não há identificação do usuário.
@@ -76,8 +87,10 @@ O caminho normal, e o mais rápido.
   chama o servidor. Sugestão:
 
   > Acervo de pareceres e consultas tributárias das secretarias estaduais da fazenda do Brasil
-  > (SP, PR, SC e RS). Use para perguntas sobre entendimento do fisco estadual em ICMS, ITCMD e
-  > demais tributos estaduais. Cada resultado traz o link do documento oficial. A busca exige a UF.
+  > (SP, PR, SC e RS) e do texto da legislação tributária estadual em pares pergunta/resposta
+  > (RS). Use para perguntas sobre o que a lei estadual determina e sobre o entendimento do fisco
+  > estadual em ICMS, ITCMD, IPVA, Simples Nacional e processo tributário administrativo. Cada
+  > resultado traz o link do documento oficial. A busca exige a UF.
 
 **4.** Em autenticação, escolha **None** e clique em **Create**.
 
@@ -116,7 +129,7 @@ a365 develop-mcp register-external-mcp-server \
   --server-name "Auli" \
   --server-url "https://api.auli.com.br/mcp" \
   --publisher "Auli" \
-  --description "Pareceres tributários, serviços de atendimento e perguntas frequentes das secretarias estaduais da fazenda" \
+  --description "Pareceres tributários, legislação, serviços de atendimento e perguntas frequentes das secretarias estaduais da fazenda" \
   --auth-type "NoAuth" \
   --tools "listar_entidades,buscar_pareceres,obter_parecer,consultar_servicos_faqs,buscar_legislacao"
 ```
@@ -138,7 +151,7 @@ connector* → *Import OpenAPI file*):
 swagger: '2.0'
 info:
   title: Auli
-  description: Pareceres tributários, serviços de atendimento e perguntas frequentes das secretarias estaduais da fazenda
+  description: Pareceres tributários, legislação, serviços de atendimento e perguntas frequentes das secretarias estaduais da fazenda
   version: 1.0.0
 host: api.auli.com.br
 basePath: /
@@ -166,8 +179,9 @@ que o endpoint fala MCP por transporte streamable.
 > streamable HTTP.
 >
 > **O que é:** acervo de consulta a 19.780 pareceres e consultas tributárias publicados pelas
-> secretarias estaduais da fazenda de SP, PR, SC e RS. Todo o conteúdo é público e cada resultado
-> devolve o link do documento na fonte oficial.
+> secretarias estaduais da fazenda de SP, PR, SC e RS, ao texto da legislação tributária do RS em
+> pares pergunta/resposta e aos serviços de atendimento dos portais. Todo o conteúdo é público e
+> cada resultado devolve o link do documento na fonte oficial.
 >
 > **Sentido do fluxo:** apenas leitura. O servidor não recebe documento, não acessa dados do
 > Microsoft 365 e não identifica o usuário. O que sai do tenant é o texto da pergunta e a sigla da
