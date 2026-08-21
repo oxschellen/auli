@@ -29,7 +29,13 @@ static LOG_DIR: LazyLock<PathBuf> = LazyLock::new(|| {
     dir
 });
 
-/// Grava um arquivo de log com o nome que o `log_question` produziria, e devolve o UUID.
+/// Grava um arquivo de log na RAIZ plana do diretório, e devolve o UUID.
+///
+/// A raiz é deliberada: desde a subpasta mensal (D-LOG-6) a gravação de produção põe o arquivo em
+/// `logs/AAAA-MM/`, então tudo que este helper produz é **legado**. Os testes que o usam seguem
+/// verdes pelo fallback da D-LOG-7, e é isso que os torna o pino de integração dele — se o
+/// fallback sumir, eles morrem juntos. O caminho novo tem teste próprio
+/// (`log_na_subpasta_do_mes_e_servido_pela_rota`).
 fn gravar_log(conteudo: &str) -> Uuid {
     let id = Uuid::now_v7();
     let nome = format!("2026-08-09_10-15-05_{id}.txt");
@@ -136,6 +142,31 @@ async fn inexistente_e_podado_respondem_identico() {
     let (s2, t2, c2) = get(&format!("/v1/log/{}", Uuid::now_v7()), "203.0.113.11").await;
 
     assert_eq!((s1, t1, c1), (s2, t2, c2));
+}
+
+/// D-LOG-6 de ponta a ponta: arquivo na subpasta do mês derivada do UUID é servido pela rota.
+///
+/// O mês está **hardcoded** de propósito (1788224400 = 2026-09-01T01:00:00Z ⇒ "2026-09" em UTC):
+/// é uma fonte independente da derivação de produção, então se ela mudar — para horário local,
+/// por exemplo —, este teste morre em vez de acompanhar a mudança.
+#[tokio::test]
+async fn log_na_subpasta_do_mes_e_servido_pela_rota() {
+    LazyLock::force(&LOG_DIR);
+    let ts = uuid::Timestamp::from_unix(uuid::NoContext, 1_788_224_400, 0);
+    let id = Uuid::new_v7(ts);
+    let mes_dir = LOG_DIR.join("2026-09");
+    std::fs::create_dir_all(&mes_dir).unwrap();
+    // Prefixo LOCAL de 31/08 com subpasta UTC de 09: é exatamente o descompasso de até 3h que a
+    // D-LOG-6 aceita na virada do mês, e a rota tem de achar assim mesmo.
+    std::fs::write(
+        mes_dir.join(format!("2026-08-31_22-00-00_{id}.txt")),
+        "registro novo",
+    )
+    .unwrap();
+
+    let (status, _, corpo) = get(&format!("/v1/log/{id}"), "203.0.113.20").await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(corpo, "registro novo");
 }
 
 /// Não existe rota de listagem (D-LOG-3): sem o UUID não há como chegar a log nenhum.

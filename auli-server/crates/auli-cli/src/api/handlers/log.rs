@@ -59,17 +59,32 @@ fn texto() -> [(header::HeaderName, &'static str); 1] {
     [(header::CONTENT_TYPE, "text/plain; charset=utf-8")]
 }
 
-/// Procura o arquivo cujo nome termina em `_{uuid}.txt`.
+/// Procura o arquivo cujo nome termina em `_{uuid}.txt` — primeiro na SUBPASTA do mês derivada do
+/// próprio UUID (D-LOG-6) e, no miss, na raiz plana onde vivem os logs anteriores à subpasta
+/// (D-LOG-7: legado congelado, sem migração — coerente com a D-LOG-1 —, morre com a retenção).
 ///
-/// Varre o diretório em vez de reconstruir o nome porque o **prefixo é o timestamp da gravação**,
-/// que o chamador não conhece. Comparação por sufixo do nome, nunca por `contains`: um UUID que
-/// aparecesse no MEIO de outro nome não pode casar.
+/// A varredura deixa de ser da retenção inteira e passa a ser de UM mês: o custo por requisição
+/// fica limitado pelo volume mensal, não pelo histórico — inclusive para quem chuta UUIDs e recebe
+/// 404, que antes varria tudo para concluir que não havia nada. O nome exato não é reconstruível:
+/// o prefixo vem de `chrono::Local::now()`, um relógio DIFERENTE do embutido no UUID, e os dois
+/// podem divergir de segundo — daí varrer o mês em vez de abrir direto.
 ///
-/// Os logs anteriores a 09/08/2026 não têm sufixo de UUID e portanto são inalcançáveis por aqui —
-/// decisão da D-LOG-1 (sem migração retroativa). Também é o que impede que um arquivo antigo com
-/// DOIS registros colados (a colisão de mesmo segundo que a D-LOG-1 conserta) seja servido.
+/// Comparação por sufixo do nome, nunca por `contains`: um UUID que aparecesse no MEIO de outro
+/// nome não pode casar. Os logs anteriores a 09/08/2026 não têm sufixo de UUID e portanto seguem
+/// inalcançáveis por aqui, nos DOIS passos — decisão da D-LOG-1 (sem migração retroativa). Também
+/// é o que impede que um arquivo antigo com DOIS registros colados (a colisão de mesmo segundo que
+/// a D-LOG-1 conserta) seja servido.
 fn localizar(dir: &Path, uuid: Uuid) -> Option<PathBuf> {
+    // UUID sem timestamp (não-v7) nunca foi emitido como capability: 404 sem tocar o disco
+    // (D-LOG-8) — quem chuta formatos não compra varredura nenhuma.
+    let mes = crate::rag::mes_do_log(uuid)?;
     let sufixo = format!("_{uuid}.txt");
+    achar_por_sufixo(&dir.join(mes), &sufixo).or_else(|| achar_por_sufixo(dir, &sufixo))
+}
+
+/// Varre UM diretório (sem recursão) atrás do sufixo. Diretório ausente é `None`, não erro — é o
+/// mês que ainda não recebeu log, ou a instalação que ainda não recebeu consulta.
+fn achar_por_sufixo(dir: &Path, sufixo: &str) -> Option<PathBuf> {
     std::fs::read_dir(dir)
         .ok()?
         .flatten()
@@ -77,7 +92,7 @@ fn localizar(dir: &Path, uuid: Uuid) -> Option<PathBuf> {
         .find(|p| {
             p.file_name()
                 .and_then(|n| n.to_str())
-                .is_some_and(|n| n.ends_with(&sufixo))
+                .is_some_and(|n| n.ends_with(sufixo))
         })
 }
 
@@ -87,25 +102,37 @@ mod tests {
     use std::fs;
     use uuid::Uuid;
 
-    /// O caminho feliz: nome com prefixo de data + sufixo de UUID é encontrado pelo UUID sozinho.
+    /// O caminho feliz: nome com prefixo de data + sufixo de UUID é encontrado pelo UUID sozinho,
+    /// na SUBPASTA do mês (D-LOG-6) — que é onde a gravação põe e onde a varredura começa.
     #[test]
     fn localiza_pelo_sufixo_sem_conhecer_o_prefixo() {
         let dir = tempdir();
         let id = Uuid::now_v7();
-        let alvo = dir.join(format!("2026-08-09_10-15-05_{id}.txt"));
+        let mes = mes_de(&dir, id);
+        fs::create_dir_all(&mes).unwrap();
+        let alvo = mes.join(format!("2026-08-09_10-15-05_{id}.txt"));
         fs::write(&alvo, "conteúdo").unwrap();
-        fs::write(dir.join("2026-08-09_10-15-04_outro.txt"), "vizinho").unwrap();
+        fs::write(mes.join("2026-08-09_10-15-04_outro.txt"), "vizinho").unwrap();
 
         assert_eq!(localizar(&dir, id), Some(alvo));
     }
 
     /// Regressão da doutrina do sufixo: casar por `contains` deixaria um nome forjado — um arquivo
     /// cujo nome CONTÉM o UUID mas não termina nele — ser servido no lugar do log verdadeiro.
+    ///
+    /// **São dois fixtures, e só o segundo separa `contains` de `ends_with`.** O primeiro
+    /// (`_{id}_extra.txt`) não contém sequer o sufixo `_{id}.txt`, então nenhuma das duas
+    /// implementações casa com ele — ele exercita a doutrina, mas não a defende. O que defende é
+    /// `_{id}.txt.bak`: `contains` o serviria, `ends_with` não. Sem esse caso o teste passava
+    /// verde com o defeito reposto (medido na verificação por mutação da D-LOG-6).
     #[test]
     fn nao_casa_uuid_no_meio_do_nome() {
         let dir = tempdir();
         let id = Uuid::now_v7();
-        fs::write(dir.join(format!("2026-08-09_10-15-05_{id}_extra.txt")), "x").unwrap();
+        let mes = mes_de(&dir, id);
+        fs::create_dir_all(&mes).unwrap();
+        fs::write(mes.join(format!("2026-08-09_10-15-05_{id}_extra.txt")), "x").unwrap();
+        fs::write(mes.join(format!("2026-08-09_10-15-05_{id}.txt.bak")), "x").unwrap();
 
         assert_eq!(localizar(&dir, id), None);
     }
@@ -133,6 +160,38 @@ mod tests {
     fn mensagem_do_404_nao_distingue_os_dois_casos() {
         assert!(!NAO_ENCONTRADO.to_lowercase().contains("podad"));
         assert!(!NAO_ENCONTRADO.to_lowercase().contains("nunca"));
+    }
+
+    /// D-LOG-7: log anterior à subpasta (raiz plana) continua alcançável — o fallback existe para
+    /// os `log_id` emitidos entre 09/08 e a subpasta mensal, que não têm para onde migrar.
+    /// Verificação por mutação: remover o `.or_else` do `localizar` mata este teste.
+    #[test]
+    fn legado_na_raiz_e_achado_no_fallback() {
+        let dir = tempdir();
+        let id = Uuid::now_v7();
+        let alvo = dir.join(format!("2026-08-15_10-00-00_{id}.txt"));
+        fs::write(&alvo, "legado").unwrap();
+
+        assert_eq!(localizar(&dir, id), Some(alvo));
+    }
+
+    /// D-LOG-8: UUID sem timestamp (não-v7) devolve `None` SEM varrer nada — o arquivo plantado na
+    /// raiz com o sufixo dele existe, e mesmo assim não é achado, porque a busca nem começa.
+    /// Verificação por mutação: remover o early-return do `localizar` faz o fallback ACHAR este
+    /// arquivo e o teste morrer.
+    #[test]
+    fn uuid_sem_timestamp_nao_compra_varredura() {
+        let dir = tempdir();
+        let id = Uuid::new_v4();
+        fs::write(dir.join(format!("2026-08-15_10-00-00_{id}.txt")), "x").unwrap();
+
+        assert_eq!(localizar(&dir, id), None);
+    }
+
+    /// A subpasta do mês do UUID, dentro do `dir` do teste — pela MESMA função que a produção usa,
+    /// e não por um mês copiado à mão, que envelheceria em silêncio.
+    fn mes_de(dir: &std::path::Path, id: Uuid) -> std::path::PathBuf {
+        dir.join(crate::rag::mes_do_log(id).unwrap())
     }
 
     fn tempdir() -> std::path::PathBuf {
