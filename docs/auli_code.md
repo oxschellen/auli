@@ -279,6 +279,16 @@ arqueologia. Texto integral no git.
 | **D-INC-13** | migração sem reembed, com guarda de `docs_hash` | o `doc_path` já está no payload, então migrar é reescrever o `id`; mas carimbar `key_hash` com a árvore fora de sincronia faz o cache **nascer mentindo** |
 | **D-INC-14** | `upsert` recebe `Vec<Record<P>>`, não um quarto slice paralelo | com slices paralelos o descasamento é detectável em runtime (`ArityMismatch`); com `Vec<Record>` ele é **inexpressável pelo tipo** |
 
+**Duas decisões de 20/08/2026 que separam o que o D-INC-8 tinha fundido (D-REU-*):**
+
+| # | decisão | por quê |
+|---|---|---|
+| **D-REU-1** | O reaproveitamento de vetor por `key_hash` vale para as **cinco** coleções. Gate único: `cache_valido` (o triplo de identidade). `Kind::pack_incremental()` passa a governar **só** remoção/órfãos/reset | O `ingest_items` fundia numa variável só duas decisões de natureza diferente: _política de remoção_ (jurisprudência acumula órfãos atrás de portão humano; mutáveis são `reset`) e _economia de embedding_ (documento cuja key não mudou reusa o vetor). Nada na segunda depende da primeira — o `reset` continua apagando o que sumiu, venha o vetor do cache ou do embedder. O custo da fusão era ~3.000 embeddings por rodada do `rs`, dos quais tipicamente dezenas mudaram. Seguro porque o `key_hash` já está em **todo** record desde o formato 2, e o determinismo do embedder está **medido**, não suposto (48.408 vetores conferidos um a um na regeneração do formato 2). Casa com o `--kind` do D-DH-7: a guarda D-DH-4 exige `cache_valido`, então na rodada parcial o reuso vale **por construção** |
+| **D-REU-2** | O `reset` continua **incondicional** nas mutáveis: nenhum log de remoções, nenhum portão humano nasce para elas | O que saiu da árvore sai do pack sozinho, como sempre. E, ao contrário da jurisprudência, os caminhos com e sem cache **convergem byte a byte inclusive com documento removido** — é o teste `mutavel_com_doc_removido_continua_apagando_no_reset_mesmo_com_reuso`, o espelho invertido do `com_orfao_os_dois_caminhos_divergem_e_isso_e_correto` |
+
+Neutro em saída: nenhum byte de pack muda (embedder determinístico), nenhum bump de
+`STRATEGY_VERSION`/`PACK_FORMAT`, nenhuma regeneração. A economia aparece na rodada seguinte.
+
 **Uma precisão do D-INC-10 que a implementação exigiu (PR #141):** "os não aprovados permanecem no
 log" é o **efeito**, não a mecânica. O subcomando **consome** o log; quem o regenera é o `auli update`
 da rodada seguinte. Se o subcomando o reescrevesse com os órfãos não aprovados, devolveria ao arquivo
@@ -292,8 +302,9 @@ aprovação. O "não" viraria "sim" sozinho.
   teste modificou o manifesto de produção;
 - **pack e manifesto não são atômicos ENTRE SI.** Cada um se escreve inteiro ou não se escreve; uma
   queda entre os dois deixa estado misto, que o `docs_hash` no boot detecta e recusa;
-- **a guarda de `docs_hash` no `remover` e a não-recarimbagem defendem cenários disjuntos** — a guarda
-  cobre árvore à frente do pack; não recalcular o hash cobre o pack ficar à frente da árvore.
+- ~~**a guarda de `docs_hash` no `remover` e a não-recarimbagem defendem cenários disjuntos**~~ —
+  valeu até 20/08/2026; o **D-DH-2** fechou o braço que fazia da preservação uma defesa
+  independente (ver §3.6.2). Hoje a guarda pega os dois cenários e a preservação é round-trip.
 
 ### 3.6.2 `docs_hashes` por diretório e a rodada parcial — as oito decisões (D-DH-*)
 

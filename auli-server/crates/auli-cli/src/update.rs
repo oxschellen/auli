@@ -8,8 +8,10 @@
 //!
 //! **A jurisprudência não é re-vetorizada por inteiro a cada rodada** (Fase 3 da
 //! TAREFA-UPDATE-INCREMENTAL): cada record guarda o `key_hash` da key que o produziu, e o documento
-//! cuja key não mudou tem o vetor **reaproveitado** do pack anterior. Serviços e faqs seguem em
-//! reescrita total, por doutrina (D-INC-8) — quem decide é o `Kind`, não uma flag.
+//! cuja key não mudou tem o vetor **reaproveitado** do pack anterior. Serviços, faqs e legislação
+//! seguem com `reset` + reescrita do PACK, por doutrina (D-INC-8) — quem decide é o `Kind`, não uma
+//! flag. O que deixou de ser total é o EMBEDDING (D-REU-1): documento cuja key não mudou reusa o
+//! vetor do pack anterior em todas as coleções.
 //!
 //! O cache inteiro é descartado quando a identidade de embedding muda (Fase 5): a key não sabe qual
 //! modelo a vetorizou, então sem essa guarda o pack misturaria dois espaços vetoriais em silêncio.
@@ -633,8 +635,11 @@ fn montar_records(items: &[Documento], embeddings: Vec<Vec<f32>>) -> Vec<Record<
 /// Os vetores do pack atual que ainda servem: `doc_path → embedding` para os documentos cuja key
 /// não mudou desde a última rodada.
 ///
-/// Devolve vazio quando o cache está desligado (Fase 5) ou a coleção é de política total (D-INC-8);
-/// nesses casos o chamador re-embeda tudo, sem nenhum outro ramo de código.
+/// Devolve vazio quando o cache está desligado (Fase 5 — identidade divergente ou sem manifesto
+/// anterior); nesse caso o chamador re-embeda tudo, sem nenhum outro ramo de código. Vale para as
+/// CINCO coleções (D-REU-1): o que difere por coleção é a política de REMOÇÃO, não o cache — nas
+/// mutáveis o `reset` do chamador apaga o que sumiu da árvore, e os vetores sobreviventes vêm
+/// daqui quando a key não mudou.
 ///
 /// Casa por `(id, key_hash)`: o id diz que é o mesmo documento, o `key_hash` diz que a key dele não
 /// mudou. Record sem `key_hash` — o pack do formato 1 — nunca casa, então um pack antigo degrada
@@ -654,9 +659,9 @@ fn vetores_reaproveitaveis(
     writer: &Writer,
     name: &str,
     items: &[Documento],
-    habilitado: bool,
+    cache_valido: bool,
 ) -> Result<HashMap<String, Vec<f32>>> {
-    if !habilitado {
+    if !cache_valido {
         return Ok(HashMap::new());
     }
     type SemPayload = serde::de::IgnoredAny;
@@ -797,8 +802,10 @@ pub(crate) fn carimbar_colecao(
 /// permite, na rodada seguinte, saber que um documento não mudou **sem re-embeddá-lo** — a única
 /// forma de responder essa pergunta antes desta fase era pagar o embedding para descobrir.
 ///
-/// **Duas políticas, um formato** (D-INC-8): a jurisprudência reaproveita vetor por `key_hash`;
-/// serviços e faqs são reescritos por inteiro, sempre. Quem decide é o `Kind`, não uma flag.
+/// **Duas políticas de REMOÇÃO, um formato** (D-INC-8): a jurisprudência acumula órfãos atrás de
+/// portão humano; serviços, faqs e legislação são `reset` + reescrita. Quem decide é o `Kind`, não
+/// uma flag. O reaproveitamento de vetor por `key_hash` é ortogonal (D-REU-1) e vale para as cinco
+/// — o gate dele é a identidade (`cache_valido`), nunca a política.
 fn ingest_items(
     embedder: &dyn Vetorizador,
     writer: &Writer,
@@ -809,8 +816,14 @@ fn ingest_items(
     cache_valido: bool,
 ) -> Result<CollectionEntry> {
     let name = format!("{}-{}", entity, kind.as_str());
+    // Duas decisões, dois gates (D-REU-1). `incremental` governa REMOÇÃO — órfãos com portão
+    // humano na jurisprudência, `reset` nas mutáveis (D-INC-8). O reaproveitamento de vetor é
+    // outra pergunta ("esta key já foi embedada NESTE espaço vetorial?") e responde só à
+    // identidade: com o cache válido, as cinco coleções reusam por `(doc_path, key_hash)` — o
+    // `reset` lá embaixo continua apagando o que sumiu, com ou sem cache. Na rodada parcial
+    // (`--kind`) o cache é válido por construção: a guarda D-DH-4 recusou a rodada se não fosse.
     let incremental = kind.pack_incremental() && cache_valido;
-    let reaproveitados = vetores_reaproveitaveis(writer, &name, items, incremental)?;
+    let reaproveitados = vetores_reaproveitaveis(writer, &name, items, cache_valido)?;
 
     // Os documentos que sobraram — os que mudaram, os inéditos, e todos quando não há cache.
     let a_embedar: Vec<&Documento> = items
@@ -827,7 +840,7 @@ fn ingest_items(
         if incremental {
             ""
         } else {
-            " (reescrita total)"
+            " (reset: pack reescrito por inteiro)"
         }
     );
     relatar_teto(kind, items);
@@ -1071,6 +1084,25 @@ mod tests {
 
     /// Monta uma árvore de FAQS de teste e devolve `docs_dir` (o pai de `faqs/`). Os nomes dos
     /// arquivos são dados de fora para o teste de ordem poder escolhê-los.
+    /// Escreve UMA faq em `dir`, com o corpo parametrizado. Extraído do laço do `arvore_faqs`
+    /// porque os testes de reuso precisam reescrever uma faq mudando SÓ a resposta — e a resposta
+    /// entra na key das faqs (D-FAQPR-1), que é o que faz o `key_hash` mudar.
+    fn escrever_faq(dir: &Path, pergunta: &str, trilha: &str, corpo: &str) {
+        let header = mddoc::DocHeader {
+            titulo: pergunta.into(),
+            trilha: trilha.into(),
+            ementa: String::new(),
+            link: format!("https://x/{pergunta}"),
+            orgao: None,
+            resumo_info: None,
+        };
+        std::fs::write(
+            dir.join(format!("{}.md", mddoc::nome_faq_de(pergunta, &header.link))),
+            mddoc::render_doc(&header, None, corpo),
+        )
+        .unwrap();
+    }
+
     fn arvore_faqs(tag: &str, docs: &[(&str, &str)]) -> PathBuf {
         let base =
             std::env::temp_dir().join(format!("auli-update-faq-{}-{tag}", std::process::id()));
@@ -1078,20 +1110,7 @@ mod tests {
         let dir = base.join("docs").join("faqs");
         std::fs::create_dir_all(&dir).unwrap();
         for (pergunta, origin) in docs {
-            let header = mddoc::DocHeader {
-                titulo: (*pergunta).into(),
-                trilha: (*origin).into(),
-                ementa: String::new(),
-                link: format!("https://x/{pergunta}"),
-                orgao: None,
-                resumo_info: None,
-            };
-            let corpo = format!("resposta de {pergunta}");
-            std::fs::write(
-                dir.join(format!("{}.md", mddoc::nome_faq_de(pergunta, &header.link))),
-                mddoc::render_doc(&header, None, &corpo),
-            )
-            .unwrap();
+            escrever_faq(&dir, pergunta, origin, &format!("resposta de {pergunta}"));
         }
         base.join("docs")
     }
@@ -1528,6 +1547,39 @@ mod tests {
     /// Embedder determinístico: o vetor é função pura do texto. É essa pureza que permite exigir
     /// igualdade byte a byte entre os dois caminhos — no real ela vem do modelo, que é exatamente o
     /// que não cabe num teste unitário.
+    /// Envelopa o [`EmbedderFalso`] contando quantos textos foram embedados — é o contador que
+    /// prova o reuso, já que o pack resultante é idêntico por construção nos dois casos (embedder
+    /// determinístico). "Igual" não distingue "reusou" de "recalculou"; o número de chamadas sim.
+    struct EmbedderContador {
+        chamados: std::cell::Cell<usize>,
+    }
+
+    impl Vetorizador for EmbedderContador {
+        fn embed_dense(&self, textos: Vec<String>) -> Result<Vec<Vec<f32>>> {
+            self.chamados.set(self.chamados.get() + textos.len());
+            EmbedderFalso.embed_dense(textos)
+        }
+    }
+
+    /// Uma rodada de ingestão de FAQS (a mutável dos cenários) com o embedder dado.
+    fn ingerir_faqs(emb: &dyn Vetorizador, out: &Path, docs: &Path, cache_valido: bool) {
+        let items = preparar("xx", docs, Kind::Faqs).unwrap().unwrap();
+        ingest_items(
+            emb,
+            &Writer::new(out),
+            "xx",
+            Kind::Faqs,
+            &items,
+            out,
+            cache_valido,
+        )
+        .unwrap();
+    }
+
+    fn bytes_do_pack_faqs(out: &Path) -> Vec<u8> {
+        std::fs::read(out.join("xx-faqs.json")).unwrap()
+    }
+
     struct EmbedderFalso;
 
     impl Vetorizador for EmbedderFalso {
@@ -1631,6 +1683,99 @@ mod tests {
     /// A reescrita total apaga o que sumiu da árvore; o incremental o preserva e escreve o log para
     /// um humano decidir (D-INC-9). Nomear a divergência aqui é o que impede alguém de "consertar"
     /// a assimetria depois, achando que o incremental está deixando lixo para trás.
+    #[test]
+    fn mutavel_com_arvore_inalterada_reaproveita_todos_os_vetores() {
+        // D-REU-1 pelo contador. Verificação por mutação: repor `incremental` como gate do
+        // `vetores_reaproveitaveis` faz `chamados` voltar a 2 e o primeiro assert morrer.
+        let docs = arvore_faqs("reuso-zero", &[("A", ""), ("B", "")]);
+        let base = docs.parent().unwrap().to_path_buf();
+        let out = base.join("packs");
+
+        ingerir_faqs(&EmbedderFalso, &out, &docs, false); // a rodada de ontem
+        let antes = bytes_do_pack_faqs(&out);
+
+        let contador = EmbedderContador {
+            chamados: std::cell::Cell::new(0),
+        };
+        ingerir_faqs(&contador, &out, &docs, true); // hoje, com a árvore intocada
+        assert_eq!(
+            contador.chamados.get(),
+            0,
+            "árvore inalterada ⇒ nada chega ao embedder"
+        );
+        assert_eq!(
+            bytes_do_pack_faqs(&out),
+            antes,
+            "e o pack não muda um byte (D-REU-3)"
+        );
+        let _ = std::fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn mutavel_re_embeda_so_a_key_que_mudou_e_converge_com_a_reescrita_do_zero() {
+        // O delta mínimo: a RESPOSTA entra na key das faqs (D-FAQPR-1), então mudar a resposta de
+        // UMA faq re-embeda exatamente uma. E o resultado converge byte a byte com reescrever tudo
+        // do zero — a mesma exigência que o caminho incremental da jurisprudência já cumpre.
+        let docs = arvore_faqs("reuso-delta", &[("A", ""), ("B", "")]);
+        let base = docs.parent().unwrap().to_path_buf();
+        let (inc, zero) = (base.join("packs-inc"), base.join("packs-zero"));
+
+        ingerir_faqs(&EmbedderFalso, &inc, &docs, false);
+        escrever_faq(&docs.join("faqs"), "B", "", "resposta NOVA de B");
+
+        let contador = EmbedderContador {
+            chamados: std::cell::Cell::new(0),
+        };
+        ingerir_faqs(&contador, &inc, &docs, true);
+        assert_eq!(
+            contador.chamados.get(),
+            1,
+            "só a key que mudou vai ao embedder"
+        );
+
+        ingerir_faqs(&EmbedderFalso, &zero, &docs, false);
+        assert_eq!(
+            bytes_do_pack_faqs(&inc),
+            bytes_do_pack_faqs(&zero),
+            "reuso e reescrita do zero convergem byte a byte"
+        );
+        let _ = std::fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn mutavel_com_doc_removido_continua_apagando_no_reset_mesmo_com_reuso() {
+        // D-REU-2: o reuso NÃO importa o comportamento de órfão da jurisprudência. O `reset` segue
+        // incondicional: o que saiu da árvore sai do pack sozinho, sem log e sem portão — e os dois
+        // caminhos CONVERGEM, ao contrário do caso jurisprudência
+        // (`com_orfao_os_dois_caminhos_divergem_e_isso_e_correto`, logo abaixo).
+        let docs = arvore_faqs("reuso-remocao", &[("A", ""), ("B", "")]);
+        let base = docs.parent().unwrap().to_path_buf();
+        let (inc, zero) = (base.join("packs-inc"), base.join("packs-zero"));
+
+        ingerir_faqs(&EmbedderFalso, &inc, &docs, false);
+        let arquivo_b = docs
+            .join("faqs")
+            .join(format!("{}.md", mddoc::nome_faq_de("B", "https://x/B")));
+        std::fs::remove_file(&arquivo_b).unwrap();
+
+        ingerir_faqs(&EmbedderFalso, &inc, &docs, true);
+        let pack: CollectionData<String> =
+            vector_store::read_collection_file(inc.join("xx-faqs.json")).unwrap();
+        assert_eq!(pack.records.len(), 1, "o removido saiu do pack no reset");
+        assert!(
+            !caminho_log_remocoes(&inc, "xx-faqs").exists(),
+            "mutável não gera log de remoções — o reset já resolveu"
+        );
+
+        ingerir_faqs(&EmbedderFalso, &zero, &docs, false);
+        assert_eq!(
+            bytes_do_pack_faqs(&inc),
+            bytes_do_pack_faqs(&zero),
+            "com removido os caminhos convergem — é a diferença para a jurisprudência"
+        );
+        let _ = std::fs::remove_dir_all(&base);
+    }
+
     #[test]
     fn com_orfao_os_dois_caminhos_divergem_e_isso_e_correto() {
         let docs = arvore("orfao", &[("A 1", Some("s")), ("B 2", Some("s"))]);

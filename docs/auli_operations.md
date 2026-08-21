@@ -209,6 +209,20 @@ Pipeline em **três passos** (a coleta virou binários próprios na fase 2; tudo
 > identidade de embedding divergente (a parcial carimbaria a identidade nova sobre packs do espaço
 > velho, e o boot os abençoaria). Falham em milissegundos, de propósito.
 
+> **A linha `reaproveitados` agora vale para as CINCO coleções** (a partir de 20/08/2026, D-REU-1).
+> Antes só a jurisprudência reusava vetor; serviços, faqs e legislação re-embedavam tudo a cada
+> rodada. Hoje o gate é só a identidade de embedding, então:
+>
+> - **`N reaproveitados, 0 a vetorizar` nas cinco é o estado NORMAL** de uma rodada sem mudanças —
+>   não é bug, e é a leitura rápida de "nada mudou desde a última vez";
+> - o número que importa depois de uma entrega é o `a vetorizar`: ele deve bater com quantos
+>   documentos você de fato mexeu;
+> - **a rodada parcial de mutável reusa por construção** — a guarda do `--kind` exige identidade
+>   igual, então `build-packs.sh rs legislacao` depois de uma entrega de 20 pares embeda 20, não
+>   509;
+> - `(reset: pack reescrito por inteiro)` no fim da linha continua marcando as mutáveis. Ele fala
+>   do PACK, não do embedding: o que sumiu da árvore sai do pack, e isso não mudou.
+
 ```bash
 cd auli-server
 # RS (FAQs + serviços):
