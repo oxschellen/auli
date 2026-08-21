@@ -117,7 +117,7 @@ impl Kind {
     /// numa flag de operação: entidade nova herda a política certa pela coleção, sem ninguém para
     /// errar o parâmetro.
     ///
-    /// | família | árvore | pack |
+    /// | família | árvore | remoção/pack |
     /// | --- | --- | --- |
     /// | jurisprudência (`pareceres`, `tarf`) | append-only | **incremental** |
     /// | mutáveis/curadas (`servicos`, `faqs`, `legislacao`) | delete + rebuild | **reset + total, sempre** |
@@ -127,6 +127,11 @@ impl Kind {
     /// complexo. Reconstruir do zero é mais simples e mais seguro que diferenciar — a mesma razão
     /// pela qual a árvore delas já é delete + rebuild. Legislação chega pelo outro lado e à mesma
     /// política (D-LEG-5): é coleção pequena e AUTORADA fora do app, regerada em lote por lei.
+    ///
+    /// **O que esta flag NÃO decide** (D-REU-1): o reaproveitamento de vetor por `key_hash`, que
+    /// vale para todas as coleções e responde só à identidade de embedding. Aqui mora a política
+    /// de REMOÇÃO — `reset` nas mutáveis, órfãos com portão humano na jurisprudência — e nada
+    /// além dela.
     pub fn pack_incremental(self) -> bool {
         match self {
             Kind::Pareceres | Kind::Tarf => true,
