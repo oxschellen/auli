@@ -18,7 +18,7 @@
 //! `Embedder` (que carregaria o BGE-M3).
 
 use std::collections::{BTreeMap, HashMap, HashSet};
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use std::sync::Arc;
 
 use auli_contract::{DocumentoPack, Kind, bloco, conteudo_indisponivel, mddoc};
@@ -383,12 +383,38 @@ pub fn pareceres_relacionados(
 }
 
 /// Lê o `.md` da árvore da entidade e extrai a seção `## corpo` (parser do contrato).
+///
+/// **A guarda do caminho (D-MCP-10).** Esta é a única junção de caminho do serving, e os dois
+/// segmentos juntados vêm de fora: `entity_id` do chamador e `doc_path` do payload do pack. Ambos
+/// são confiáveis hoje — o `doc_path` é DERIVADO (`Documento::doc_path()` sempre produz
+/// `docs/{kind}/…`, e o `conferir_doc_path` do `auli update` recusa quem divergir, D-LEG-4) e o
+/// `entity_id` é lista-branca em todo chamador. A guarda não corrige buraco aberto: ela para de
+/// depender disso. Sem ela, um `doc_path` adulterado com `..` sairia da árvore em silêncio, e um
+/// com barra inicial faria o `join` DESCARTAR a raiz (semântica do `Path::join`).
+///
+/// Lista branca de componentes, não caça a `".."`: um predicado só rejeita `ParentDir`, `RootDir`,
+/// prefixo de disco e `CurDir`, sem depender de separador de plataforma nem de codificação. É
+/// sintático de propósito — nada de `canonicalize`, que custaria um syscall por documento de toda
+/// consulta para decidir uma questão que não depende do disco.
+///
+/// Rejeição é `Err`, nunca pânico: os dois chamadores (`rag::bloco_documento` e
+/// `documento_por_numero`) já degradam para `conteudo_indisponivel` e registram o erro, então a
+/// tentativa fica no log e a resposta continua de pé.
 pub fn ler_corpo(
     docs_root: &Path,
     entity_id: &str,
     doc_path: &str,
 ) -> std::result::Result<String, String> {
-    let caminho = docs_root.join(entity_id).join(doc_path);
+    let relativo = Path::new(entity_id).join(doc_path);
+    if relativo
+        .components()
+        .any(|c| !matches!(c, Component::Normal(_)))
+    {
+        return Err(format!(
+            "caminho fora da árvore da entidade: {entity_id:?}/{doc_path:?}"
+        ));
+    }
+    let caminho = docs_root.join(relativo);
     let texto = std::fs::read_to_string(&caminho).map_err(|e| e.to_string())?;
     let (_header, _sinopse, corpo) = mddoc::parse_doc(&texto).map_err(|e| e.to_string())?;
     Ok(corpo)
@@ -687,6 +713,76 @@ mod tests {
     #[test]
     fn ler_corpo_falha_em_arquivo_inexistente() {
         assert!(ler_corpo(Path::new("/nao/existe"), "sc", "docs/pareceres/x.md").is_err());
+    }
+
+    /// D-MCP-10: caminho que sai da árvore é recusado ANTES de tocar o disco.
+    ///
+    /// O alvo plantado fora é um `.md` VÁLIDO — se não fosse, o teste passaria pelo motivo errado
+    /// (o `parse_doc` recusaria o formato) e sobreviveria à remoção da guarda. Assim ele morre por
+    /// mutação: sem a guarda, o `..` sobe um nível, o arquivo existe, parseia, e o `Ok` mata os
+    /// asserts de rejeição.
+    #[test]
+    fn ler_corpo_recusa_caminho_que_sai_da_arvore() {
+        let root = temp_dir("traversal");
+        let pdir = root.join("sc").join("docs/pareceres");
+        std::fs::create_dir_all(&pdir).unwrap();
+        let header = mddoc::cabecalho_jurisprudencia("PARECER Nº 1", "ICMS", "http://x/1");
+        let doc = mddoc::render_doc(&header, None, "É o corpo integral.");
+        std::fs::write(pdir.join("parecer-no-1.md"), &doc).unwrap();
+        // Vizinho legítimo de OUTRA entidade: o alvo clássico do `..`, e um arquivo que parseia.
+        std::fs::create_dir_all(root.join("rs")).unwrap();
+        std::fs::write(root.join("rs").join("segredo.md"), &doc).unwrap();
+
+        // Caminho feliz: continua lendo.
+        assert_eq!(
+            ler_corpo(&root, "sc", "docs/pareceres/parecer-no-1.md").unwrap(),
+            "É o corpo integral."
+        );
+
+        // `..` no doc_path — o arquivo do vizinho EXISTE e parseia; só a guarda o impede.
+        let e = ler_corpo(&root, "sc", "../rs/segredo.md").unwrap_err();
+        assert!(e.contains("fora da árvore"), "erro inesperado: {e}");
+
+        // `..` no entity_id — o mesmo `join`, o outro segmento.
+        assert!(
+            ler_corpo(&root, "sc/../rs", "segredo.md")
+                .unwrap_err()
+                .contains("fora da árvore")
+        );
+
+        // Caminho ABSOLUTO: o `join` descartaria a raiz e leria o arquivo apontado.
+        let absoluto = root.join("rs").join("segredo.md");
+        assert!(
+            ler_corpo(&root, "sc", absoluto.to_str().unwrap())
+                .unwrap_err()
+                .contains("fora da árvore")
+        );
+
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    /// A guarda é sintática e NÃO pode recusar nome legítimo. O caso que mais se parece com um
+    /// falso positivo no acervo real é a subpasta da legislação, que tem espaço, ponto e travessão
+    /// no nome (`Lei 6.537-1973 — Processo Tributário Administrativo`).
+    #[test]
+    fn ler_corpo_aceita_o_doc_path_da_legislacao_com_subpasta() {
+        let root = temp_dir("subpasta");
+        let lei = "Lei 6.537-1973 — Processo Tributário Administrativo";
+        let dir = root.join("rs").join("docs/legislacao").join(lei);
+        std::fs::create_dir_all(&dir).unwrap();
+        let header = mddoc::cabecalho_jurisprudencia("Art. 1º", "PTA", "http://x/1");
+        std::fs::write(
+            dir.join("par-01.md"),
+            mddoc::render_doc(&header, None, "É a resposta."),
+        )
+        .unwrap();
+
+        assert_eq!(
+            ler_corpo(&root, "rs", &format!("docs/legislacao/{lei}/par-01.md")).unwrap(),
+            "É a resposta."
+        );
+
+        let _ = std::fs::remove_dir_all(&root);
     }
 
     #[test]

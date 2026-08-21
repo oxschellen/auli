@@ -411,6 +411,19 @@ funções livres os testes cobrem o motor inteiro sem tocar o modelo.
 **Sincronia (D-MCP-3).** Tudo blocking (o embed é CPU-bound); quem é async envelopa em
 `spawn_blocking`, como o `rag.rs` já fazia.
 
+**A guarda do caminho (D-MCP-10).** O `ler_corpo` é a **única** junção de caminho do serving —
+`docs_root / entity_id / doc_path` — e valida o relativo inteiro antes de juntá-lo à raiz, por lista
+branca de componentes (todo componente tem de ser `Component::Normal`). Um predicado só rejeita
+`..`, caminho absoluto e `.` inicial, sem depender de separador nem de codificação; nada de
+`canonicalize`, que custaria um syscall por documento de toda consulta para decidir uma questão
+puramente sintática. **Não substitui nada:** o `conferir_doc_path` (D-LEG-4) já garante a forma do
+lado da escrita e o `validate_docs_hashes` recusa o boot com a árvore em drift. A diferença é o
+modelo de ameaça — os dois protegem contra acidente (o hash do boot é escrito ao lado do pack, então
+quem escreve um escreve o outro), e esta guarda não depende de o chamador ter validado nada. É
+defesa em profundidade que custa uma linha. Rejeição é `Err`: os dois chamadores
+(`rag::bloco_documento`, `documento_por_numero`) já degradam para `conteudo_indisponivel` e
+registram o erro, então a tentativa fica no log e a resposta continua de pé.
+
 **Semântica de erro — importa mais do que parece.** Com o `packs::load_all` atual, **toda entidade
 registrada tem TODOS os kinds no mapa**: arquivo ausente vira store **vazio**, não ausência. (É o
 que faz uma coleção nova entrar sem tocar nas outras 26 entidades: elas sobem servindo zero
