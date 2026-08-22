@@ -1012,9 +1012,12 @@ provavelmente precisa subir para os dois lados continuarem simétricos e o títu
 
 ---
 
-## 33. Clippy: dívida zerada, mas **sem guarda no CI** (parcial — 2026-08-04)
+## 33. Clippy e testes: sem guarda no CI — **decidido que fica assim** (2026-08-21)
 
-Irmã da §28, com um desfecho diferente: a dívida foi zerada, o gate **não** foi criado.
+Irmã da §28, com um desfecho diferente: a dívida foi zerada, o gate **não** foi criado — e em
+21/08/2026 o Carlos decidiu que **não será**. Esta seção deixa de ser uma pendência aberta e passa
+a ser o registro de uma escolha, com o que se sabia quando ela foi feita. Não reabrir sem fato
+novo; o que vier depois vira nota aqui embaixo, não um PR de workflow.
 
 **O sintoma.** `cargo clippy --workspace --all-targets -- -D warnings` reprovava desde o bump para o
 Rust 1.96 — 5 erros de lints que não existiam quando o código foi escrito (`collapsible_if` em
@@ -1030,9 +1033,9 @@ asserção; ler antes de aplicar.
 
 **Por que não há workflow de clippy.** O argumento que torna o `fmt.yml` barato **não vale aqui**: o
 rustfmt parseia, o clippy **compila**. No workspace inteiro isso puxa `fastembed`/`ort` — exatamente
-o custo que o `scraper-boundary` existe para evitar. Um gate honesto precisa de decisão própria:
-escopar aos crates leves (`scrapers/*` + `auli-contract`), ou aceitar o workspace inteiro com cache de
-`~/.cargo` e `target/`.
+o custo que o `scraper-boundary` existe para evitar. Um gate honesto precisaria escolher entre
+escopar aos crates leves (`scrapers/*` + `auli-contract`) e aceitar o workspace inteiro com cache de
+`~/.cargo` e `target/`. **A escolha não será feita** (ver a decisão no fim desta seção).
 
 **⏳ Consequência assumida:** enquanto não houver gate, esta dívida só aparece para quem roda
 localmente e **volta a crescer no próximo bump de toolchain** — foi assim que os 5 chegaram. O mesmo
@@ -1047,17 +1050,48 @@ comportamento. O `cargo fmt --check` passou intocado e os 624 testes passaram na
 ou seja, num bump de duas versões, o clippy foi o **único** dos três a acusar algo, que é
 exatamente o argumento de que ele merece gate e o rustfmt sozinho não basta.
 
-Dois números que a medição também produziu, e que a decisão de escopo do gate precisa: o build
-release do workspace levou **36 s** com o cache quente (`fastembed`/`ort` já compilados), e o
-`clippy --workspace --all-targets` compila o mesmo grafo. O custo de CI é o do cache frio, não o
-deste número. Registrado aqui porque a §33 deixou a escolha em aberto entre "crates leves" e
-"workspace com cache", e a primeira coisa que faltava era a ordem de grandeza.
+Dois números que a medição também produziu: o build release do workspace levou **36 s** com o cache
+quente (`fastembed`/`ort` já compilados), e o `clippy --workspace --all-targets` compila o mesmo
+grafo. O custo de CI é o do **cache frio**, não o deste número — o que a medição deu foi o piso, não
+o teto, e o teto continua sem medir.
 
 **Aproveitando o mesmo bump, uma pergunta vizinha foi respondida:** trocar de `rustc` **não** move
 os vetores. O `rr` foi re-vetorizado do zero (cache desligado, manifesto apagado, 17 registros
 embedados de verdade) com o binário 1.98, numa cópia isolada — o pack saiu **byte a byte idêntico**
 ao gerado sob 1.96 (`c49ed0b5…`). Isso não estava em lugar nenhum, e a §34.2 só afirma o contrário
 para bump de `fastembed`/`ort`. Um bump de compilador não exige refazer pack.
+
+### 33.1 A decisão: não haverá gate de teste nem de clippy no CI (2026-08-21)
+
+**Decidido pelo Carlos, com o quadro completo na mesa.** Fica registrado o que se sabia, para que
+quem reabrir a discussão comece do mesmo ponto e não do zero.
+
+**O que o CI cobre hoje, e o que não cobre.** Quatro workflows: `fmt` (`cargo fmt --check`),
+`frontend` (`lint` + `test` + `build`), `registry-sync` e `scraper-boundary`. O lado **Rust** tem
+somente a formatação — não roda `cargo test` nem `cargo clippy`. São **629 funções de teste** no
+workspace que nunca rodaram numa máquina que não seja a de quem programa. A assimetria com o
+frontend, que tem os três, é real e é deliberada a partir de agora.
+
+**O que se perde, dito sem eufemismo.** A rede de segurança do lado Rust é a disciplina local de
+rodar `cargo test --workspace` e `cargo clippy -- -D warnings` antes de abrir PR. Isso funciona
+enquanto for lembrado; não é uma garantia, é um hábito. O caso concreto que ilustra: em 20/08 uma
+rodada de `cargo test --workspace` deu **74 passed, 1 failed** em `auli-contract --lib`, e a falha
+não reproduziu em 15 tentativas — sem CI não há histórico, nome do teste nem backtrace guardados, e
+um flake assim não deixa rastro. E a dívida de clippy **volta a crescer a cada bump de toolchain**,
+como os 5 do 1.96 e os 3 do 1.98 mostraram; o conserto é barato quando se percebe, e invisível
+enquanto não se percebe.
+
+**O que sustenta a decisão.** O custo do gate não é o dos 36 s com cache quente: é o do cache frio,
+compilando `fastembed`/`ort`, em toda execução em que o cache do runner falhar ou expirar — e é
+exatamente o custo que o `scraper-boundary` foi desenhado para evitar. O projeto tem **um** mantenedor,
+que roda a suíte local em toda entrega e registra a medição no corpo do PR (o histórico de commits
+mostra isso). Um gate acrescentaria minutos de espera e uma superfície de manutenção de CI para
+proteger contra um esquecimento que, na prática do repositório, não aconteceu.
+
+**Se um dia reabrir**, os fatos que mudariam a conta são: um segundo mantenedor, uma regressão que
+chegue a produção por falta de gate, ou o cache do Actions passar a ser confiável o bastante para o
+grafo com `fastembed`/`ort`. Os dois caminhos técnicos seguem sendo os mesmos — crates leves ou
+workspace com cache —, e a ordem de grandeza do caminho barato já está medida acima.
 
 ---
 
@@ -1175,6 +1209,9 @@ parseiam ou rodam script, e a decisão continua certa pelo mesmo motivo da §33 
 `fastembed`/`ort`). A consequência concreta, agora com um caso nomeado: **um `cargo update` que
 mudasse os embeddings passaria por toda a CI sem um vermelho.** Quem sustentou o PR #124 foi a suíte
 local — 483 testes, os três `--ignored` do embedder contra o modelo real, e `cargo fmt --check`.
+
+Desde 21/08/2026 isso deixou de ser um estado provisório: a §33.1 registra a decisão de **não**
+criar o gate. Este parágrafo descreve, portanto, o desenho escolhido — não uma lacuna a fechar.
 
 ---
 
