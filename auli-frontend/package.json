@@ -47,7 +47,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.0",
     "jsdom": "^29.1.1",
-    "react-doctor": "^0.2.14",
+    "react-doctor": "^0.9.12",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.60.0",
     "vite": "^8.0.13",
