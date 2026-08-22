@@ -1,0 +1,9 @@
+{
+  "$schema": "https://react.doctor/schema/config.json",
+  "_motivo": {
+    "react-doctor/no-layout-property-animation": "Dispensada em 2026-08-22. As 15 ocorrências são o MESMO padrão: revelação intrínseca de acordeão (height 0 → auto, uma vez, com overflow hidden e prefers-reduced-motion respeitado) nos quatro acordeões e na LegislacaoList. A própria receita da regra chama esse caso de 'the least-distorting option' e manda CONTER o escopo de layout, não reescrever — foi o que se fez: os cinco painéis levam contain:'layout paint'. As alternativas que silenciariam o detector são piores: scale distorce o texto, e grid-template-rows só engana o detector, que não olha essa chave. Reabrir se: aparecer animação de layout que NÃO seja acordeão, ou medição de perfil mostrar engasgo nesses painéis."
+  },
+  "rules": {
+    "react-doctor/no-layout-property-animation": "off"
+  }
+}

@@ -75,7 +75,11 @@ function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={reduceMotion ? { duration: 0 } : { duration: 0.22, ease: "easeInOut" }}
-            style={{ overflow: "hidden" }}
+            // Mesma contenção do painel de Serviços, e pelo mesmo motivo: animar `height` até
+            // `auto` refaz layout a cada quadro, e `contain` prende esse custo na fronteira do
+            // painel. A animação fica — é revelação intrínseca, o caso que a regra
+            // `no-layout-property-animation` (dispensada em `doctor.config.json`) manda conter.
+            style={{ overflow: "hidden", contain: "layout paint" }}
           >
             <Box bg="bg.app" px={4} py={3}>
               {p.link && (
