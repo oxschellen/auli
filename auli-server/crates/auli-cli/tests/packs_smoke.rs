@@ -79,6 +79,6 @@ fn manifest_validates_and_query_retrieves() {
     eprintln!("top-5 distances: {:?}", &distances[..5]);
     eprintln!(
         "top hit document starts: {:?}",
-        &hits[0].0.chars().take(80).collect::<String>()
+        hits[0].0.chars().take(80).collect::<String>()
     );
 }

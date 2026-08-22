@@ -169,7 +169,7 @@ fn fetch_services(agent: &ureq::Agent, token: &str, url: &str) -> Result<String>
     if !body.trim_start().starts_with('{') {
         bail!(
             "resposta inesperada do _search (não-JSON) — erro? primeiros bytes: {:?}",
-            &body.chars().take(60).collect::<String>()
+            body.chars().take(60).collect::<String>()
         );
     }
     Ok(body)

@@ -1039,6 +1039,26 @@ localmente e **volta a crescer no próximo bump de toolchain** — foi assim que
 risco de deriva de versão descrito no fim da §28 vale aqui, e com mais força: o clippy muda de lints
 entre versões bem mais do que o rustfmt muda de estilo.
 
+**A previsão se cumpriu, e a medida está aqui (2026-08-21, bump 1.96 → 1.98).** O lint novo foi o
+`useless_borrows_in_formatting`, em 3 sítios: `&x.chars().take(n).collect::<String>()` dentro de
+`bail!` (auli-scraper-ro e auli-scraper-pi, que é o mesmo código porque o RO é molde-PI) e de
+`eprintln!` (`tests/packs_smoke.rs`). Custo do conserto: **3 caracteres**, sem mudança de
+comportamento. O `cargo fmt --check` passou intocado e os 624 testes passaram nas duas toolchains —
+ou seja, num bump de duas versões, o clippy foi o **único** dos três a acusar algo, que é
+exatamente o argumento de que ele merece gate e o rustfmt sozinho não basta.
+
+Dois números que a medição também produziu, e que a decisão de escopo do gate precisa: o build
+release do workspace levou **36 s** com o cache quente (`fastembed`/`ort` já compilados), e o
+`clippy --workspace --all-targets` compila o mesmo grafo. O custo de CI é o do cache frio, não o
+deste número. Registrado aqui porque a §33 deixou a escolha em aberto entre "crates leves" e
+"workspace com cache", e a primeira coisa que faltava era a ordem de grandeza.
+
+**Aproveitando o mesmo bump, uma pergunta vizinha foi respondida:** trocar de `rustc` **não** move
+os vetores. O `rr` foi re-vetorizado do zero (cache desligado, manifesto apagado, 17 registros
+embedados de verdade) com o binário 1.98, numa cópia isolada — o pack saiu **byte a byte idêntico**
+ao gerado sob 1.96 (`c49ed0b5…`). Isso não estava em lugar nenhum, e a §34.2 só afirma o contrário
+para bump de `fastembed`/`ort`. Um bump de compilador não exige refazer pack.
+
 ---
 
 ## 34. Dependências Rust: lockfile atualizado, **`fastembed`/`ort` segurados** (parcial — 2026-08-04)
