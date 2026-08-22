@@ -16,16 +16,17 @@ import type { TributumCatalogo } from "./types";
  */
 const CATALOGO_PATH = "/tributum.json";
 
-/** Catálogo vazio: mantém as quatro listas renderizáveis enquanto carrega ou depois de um erro. */
+/** Catálogo vazio: mantém as cinco listas renderizáveis enquanto carrega ou depois de um erro. */
 const VAZIO: TributumCatalogo = {
   artigos: [],
   instituicoes: [],
   dados: [],
   analises: [],
+  livros: [],
 };
 
 /**
- * Normaliza o que veio do disco para o contrato de quatro arrays.
+ * Normaliza o que veio do disco para o contrato de cinco arrays.
  *
  * Cada chave é conferida com `Array.isArray` **isoladamente**: o catálogo é mantido à mão, e a
  * falha realista é uma seção faltando ou com o tipo errado — não o arquivo inteiro quebrado. Assim
@@ -40,6 +41,9 @@ function normalizar(bruto: unknown): TributumCatalogo {
     instituicoes: arr(j.instituicoes),
     dados: arr(j.dados),
     analises: arr(j.analises),
+    // Chave nova (D-TRIB-22): catálogo servido antes dela cai no `arr` e vira estante vazia, que
+    // é o comportamento já valido para qualquer seção ausente — nada a versionar por causa disso.
+    livros: arr(j.livros),
     // Objeto, não array — e a mesma disciplina: forma errada vira ausência, não exceção.
     curadores:
       curadores && typeof curadores === "object" && !Array.isArray(curadores)

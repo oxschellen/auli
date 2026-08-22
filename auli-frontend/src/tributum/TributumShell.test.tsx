@@ -6,7 +6,7 @@ import { renderWithProvider } from "../test/render";
 import { ArtigosLista } from "./ArtigosLista";
 
 /**
- * Contrato do esqueleto compartilhado das quatro listas, exercitado pela `ArtigosLista` — que é a
+ * Contrato do esqueleto compartilhado das cinco listas, exercitado pela `ArtigosLista` — que é a
  * mais completa (badge, metadados, link) e por isso a que cobre mais do esqueleto por render.
  *
  * O `axios` é dublado porque é ele que o `jsonFetcher` da casa usa; interceptar `fetch` não pegaria

@@ -5,10 +5,10 @@ import { MdOpenInNew } from "react-icons/md";
  * Link para fora, no mesmo idioma visual do "Abrir no portal" da aba Legislação: cor `accent`,
  * ícone antes do rótulo, `target="_blank"` com `rel="noopener noreferrer"`.
  *
- * Existe como componente porque as quatro listas do Tributum o repetem e porque o `rel` é fácil de
+ * Existe como componente porque as cinco listas do Tributum o repetem e porque o `rel` é fácil de
  * esquecer numa cópia — sem ele, a página aberta ganha `window.opener` e pode navegar a nossa.
  *
- * O `aria-label` é obrigatório: quatro links "Abrir na fonte" na mesma tela são indistinguíveis
+ * O `aria-label` é obrigatório: vários links "Abrir na fonte" na mesma tela são indistinguíveis
  * para quem navega por lista de links, e o rótulo visível sozinho não diz de qual item ele é.
  */
 export function LinkExterno({
