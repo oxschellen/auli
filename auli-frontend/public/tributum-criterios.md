@@ -8,7 +8,7 @@ Tributum não faz parte do acervo consultado pelo assistente. Nada aqui é usado
 
 ## De quem é o conteúdo
 
-Cada item tem autor ou instituição identificados. O conteúdo expressa a posição de quem o assina, e só dela. Tributum não representa a Secretaria da Fazenda de nenhum estado, nem o NAVI, nem a posição do Auli sobre qualquer tema. A seleção dos itens é uma escolha editorial feita de boa-fé, sob os critérios abaixo, e não uma chancela.
+Cada item tem autor ou instituição identificados. O conteúdo expressa a posição de quem o assina, e só dela. Tributum não representa a Secretaria da Fazenda de nenhum estado, nenhum órgão, nem a posição do Auli sobre qualquer tema. A seleção dos itens é uma escolha editorial feita de boa-fé, sob os critérios abaixo, e não uma chancela.
 
 ## O que entra
 

@@ -241,15 +241,22 @@ para o resultado determinístico — nunca o pipeline inteiro atrás da rede. O 
 
 ## 3 — Guardado para quando a Fase 5 for retomada
 
-Do patch lido em `docs/0001-feat-anon-Fase-5-*.patch`.
+Do patch da Fase 5, **removido da árvore em 22/08/2026** e recuperável em
+`git show e3fedc1:docs/0001-feat-anon-Fase-5-nome-de-pessoa-por-dicion-rio-de-pr.patch`
+(a Fase 6 é o `0001-feat-anon-Fase-6-raz-o-social-sem-sufixo-via-dicion-.patch` do mesmo commit).
 
-> **Atualização (12/08): o `.patch` é agora a única cópia, e isso é deliberado.** A branch
+> **Atualização (12/08): o `.patch` é a única cópia, e isso é deliberado.** A branch
 > `feat/anon-fase5` foi apagada depois de conferido que o patch em `docs/` é byte a byte o mesmo
 > conteúdo — o commit dela (`569e758`) sobrevive como objeto solto, **alcançável por nenhuma ref**,
 > até o próximo `gc`. Verificado: `git log --all` sobre `nome_dicionario`, `razao_segmento` e
-> `prenomes.txt` volta vazio; nada das Fases 5 e 6 jamais entrou em `main`. Os dois `.patch`
-> (`e3fedc1`) são o que resta, e é a forma melhor — branch guarda o código e esquece o motivo; o
-> patch ao lado da §5 do pendencias guarda os dois.
+> `prenomes.txt` volta vazio; nada das Fases 5 e 6 jamais entrou em `main`.
+>
+> **Atualização (22/08): os dois `.patch` saíram da árvore.** O motivo não tem a ver com o valor
+> deles — é que o da Fase 6 nomeava a unidade de atendimento, e um patch não se edita sem deixar
+> de ser o que é. O arquivamento não mudou de natureza, mudou de endereço: era "o arquivo em
+> `docs/`", passa a ser "o blob em `e3fedc1`". O raciocínio de 12/08 continua valendo — branch
+> guarda o código e esquece o motivo, e o motivo segue aqui, ao lado da §5 do `pendencias`. O que
+> se perde é a leitura sem `git`; o que não se perde é o conteúdo.
 
 - **A guarda de topônimo por contenção sobre a sequência inteira**, não igualdade sobre o candidato
   recortado. O defeito está visível no código: `valida_candidato` chama `e_toponimo(candidato)` — no

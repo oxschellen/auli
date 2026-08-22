@@ -49,7 +49,7 @@ via `SparseTextEmbedding` — mesmo modelo, sem índice novo a manter. A via (b)
 [docs/ESTUDO-busca-hibrida.md](docs/ESTUDO-busca-hibrida.md), que também traz o obstáculo dela: o
 `SparseModel::BGEM3` aponta para o fp32 completo, e o nosso é o int8 de 560 MB — o teste que decide o
 custo é se o `UserDefinedSparseModel` aceita o arquivo que já temos.
-**Por quê:** embeddings erram exatamente onde o NAVI é forte — identificadores exatos:
+**Por quê:** embeddings erram exatamente onde quem atende é forte — identificadores exatos:
 "acórdão 510/24", "art. 5º da Lei nº 8.820/89", CFOP, números de protocolo. O léxico acerta
 esses de graça.
 **O ganho da unificação:** com `Documento`, é UMA implementação para as quatro coleções;

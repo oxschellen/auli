@@ -15,7 +15,7 @@ interface SystemMessageProps {
 }
 
 /** Aviso exibido no rodapé de toda resposta gerada (não aparece na saudação,
- *  que chega com showButton=false). Texto validado com o NAVI — manter uma frase só. */
+ *  que chega com showButton=false). Texto validado com quem atende — manter uma frase só. */
 const DISCLAIMER =
   "A Auli é um protótipo experimental de inteligência artificial. As respostas são geradas " +
   "automaticamente, podem variar e conter imprecisões, e têm caráter apenas informativo — " +

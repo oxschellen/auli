@@ -16,7 +16,7 @@
 //! É o mesmo `Disallow: /` do portal de legislação da SEFAZ-RS, cuja coleta (ver
 //! [`crate::pareceres`]) foi autorizada pelo mantenedor — a própria SEFAZ-RS, de quem o TARF é
 //! órgão julgador e a quem este scraper serve. Os acórdãos são **documentos públicos** publicados
-//! no portal, e a coleta atende demanda institucional do NAVI. UA institucional AuliBot +
+//! no portal, e a coleta atende demanda de quem atende consultas. UA institucional AuliBot +
 //! cortesia de 1 s entre requisições + cache agressivo (uma re-coleta não repete rede).
 //!
 //! FONTE — API JSON, sem headless e sem HTML server-rendered na listagem (D-TARF-2):

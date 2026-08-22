@@ -60,7 +60,7 @@ Lacunas **nomeadas e assumidas** nos módulos (todas documentadas em código):
 > nomes reais (23%) não têm sufixo societário nem termo de segmento** — ver a §6.1 do
 > `auli-anon_pendencias`. Deixou de ser lacuna assumida.
 
-**A pergunta do estudo:** o volume real dessas sobras nas perguntas do NAVI justifica um
+**A pergunta do estudo:** o volume real dessas sobras nas perguntas de atendimento justifica um
 modelo, dado o custo permanente que ele introduz? Isso é uma pergunta de medição, não de
 opinião — e a primeira medição não exige modelo nenhum (§2.1).
 
@@ -119,9 +119,9 @@ Consequências para o NER:
   não têm esse modo de falha.
 - **GPU (RTX 3060 Ti, 8 GB) = bancada.** Todos os candidatos cabem com folga sobrando mais
   da metade da VRAM. Usos: (a) rodar o eval em lote (centenas de fixtures × N candidatos);
-  (b) **fine-tuning** de um BERTimbau/DistilBERT com exemplos do domínio NAVI, se nenhum
+  (b) **fine-tuning** de um BERTimbau/DistilBERT com exemplos do domínio de atendimento, se nenhum
   checkpoint pronto servir — treina na GPU, publica o ONNX int8, serve na CPU. Se o volume
-  do NAVI um dia justificar, o CUDA EP do `ort` fica a uma flag de distância.
+  de perguntas um dia justificar, o CUDA EP do `ort` fica a uma flag de distância.
 
 ## 5. Candidatos (lista curta a confirmar)
 
@@ -130,7 +130,7 @@ checkpoint no Hugging Face antes de baixar** — isso muda a cada release.
 
 | Candidato | Base / vocab | Disco fp32 → int8 (aprox.) | Observações |
 |---|---|---|---|
-| NER BERTimbau-base afinado no **LeNER-Br** (ex.: família `pierreguillou/ner-bert-*-lenerbr`) | BERT-base pt, ~30k vocab | ~430 MB → ~110 MB | Corpus **jurídico** brasileiro (PESSOA, ORGANIZACAO, LOCAL, LEGISLACAO…) — o domínio mais próximo do texto fiscal; primeiro da fila. **Expectativa registrada:** LeNER-Br é texto jurídico *formal*, a pergunta do NAVI é coloquial — possível queda de domínio; não é motivo para tirá-lo da frente, é motivo para não se surpreender nas fixtures |
+| NER BERTimbau-base afinado no **LeNER-Br** (ex.: família `pierreguillou/ner-bert-*-lenerbr`) | BERT-base pt, ~30k vocab | ~430 MB → ~110 MB | Corpus **jurídico** brasileiro (PESSOA, ORGANIZACAO, LOCAL, LEGISLACAO…) — o domínio mais próximo do texto fiscal; primeiro da fila. **Expectativa registrada:** LeNER-Br é texto jurídico *formal*, a pergunta de balcão é coloquial — possível queda de domínio; não é motivo para tirá-lo da frente, é motivo para não se surpreender nas fixtures |
 | DistilBERT pt afinado para NER | destilado, vocab pt | ~260 MB → ~65–70 MB | O mais leve da classe transformer; **linha mais especulativa da tabela** — confirmar se existe checkpoint com qualidade publicada; se não existir, sai |
 | BERTimbau-base NER genérico (HAREM/notícias) | BERT-base pt | ~430 MB → ~110 MB | Baseline pt clássico |
 | GLiNER small (zero-shot) | XLM-R-based | ~550–600 MB → ~150 MB | Rótulos arbitrários ("razão social") sem re-treino; paga a taxa multilíngue. **Não é token-classification ONNX padrão** — caminho de inferência próprio, custo de integração maior; esse custo entra na comparação B−A |
@@ -138,7 +138,7 @@ checkpoint no Hugging Face antes de baixar** — isso muda a cada release.
 
 Descartados de antemão: qualquer NER que exija chamada de rede (contradição com o
 propósito) e dicionário de razões sociais dos dados abertos do CNPJ (dezenas de milhões de
-entradas; e a versão "maiores do país" cobre onde o NAVI não precisa e colide com o
+entradas; e a versão "maiores do país" cobre onde o atendimento não precisa e colide com o
 português comum — Vale, Oi, Azul).
 
 ## 6. Desenho do eval

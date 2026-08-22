@@ -1,5 +1,5 @@
 //! Fixtures de aceitação portadas do harness `auli-anon-eval` — perguntas sintéticas
-//! estilo NAVI, com dados fictícios (CPF/CNPJ de DV válido, gerados para teste).
+//! em estilo de balcão de atendimento, com dados fictícios (CPF/CNPJ de DV válido, gerados para teste).
 //!
 //! Quatro travas:
 //! - [`regressao_coberto`] — todo identificador cujo reconhecedor existe (`coberto: true`)

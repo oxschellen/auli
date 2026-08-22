@@ -269,7 +269,7 @@ diverge:
 
 ### 3.2 Frontmatter (vocabulário unificado)
 
-- `titulo` = **a pergunta**, em linguagem natural de balcão NAVI.
+- `titulo` = **a pergunta**, em linguagem natural de balcão.
 - `trilha` = hierárquica, separador ` | `; **1º segmento = nome da subpasta**
   (invariante do doc_path, guardada por teste). Para a CF, os segmentos
   seguintes são Título/Capítulo/Seção do texto constitucional.

@@ -18,7 +18,7 @@
 //! é estágio posterior). Não toca contrato/snapshot/collections.
 //!
 //! ROBOTS/ACESSO: o site **não tem robots.txt** (404) e a página é `/Publico/`; a coleta destas
-//! consultas **públicas** foi solicitada por auditor da NAVI. UA institucional AuliBot + cortesia
+//! consultas **públicas** foi solicitada por quem atende. UA institucional AuliBot + cortesia
 //! (1 s) entre requisições (portal de outro ente — cautela).
 
 use std::collections::HashSet;
