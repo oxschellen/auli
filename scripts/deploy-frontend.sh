@@ -389,7 +389,8 @@ verificar "/tributum.json" "application/json"
 # Um arquivo HOSPEDADO do Tributum (D-TRIB-8), pelo mesmo motivo do catálogo: `public/tributum/` é
 # copiado de `tributum/` pelo build-frontend-public.sh, e um passo de cópia que não rodou some em
 # silêncio — o visualizador abriria um iframe sobre o index.html do FallbackResource.
-verificar "/tributum/exemplo-reforma-atendimento.pdf" "application/pdf"
+verificar "/tributum/exemplo-visualizador.pdf" "application/pdf"
+verificar "/tributum-criterios.md" "text/markdown"
 verificar "/rs/rs-servicos-index.json" "application/json"
 verificar "/rs/rs-pareceres-index.json" "application/json"
 # O do TARF entra pelo mesmo motivo dos outros dois, e com mais razão: com 22.476 acórdãos ele é o

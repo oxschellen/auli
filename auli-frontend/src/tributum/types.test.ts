@@ -11,7 +11,7 @@
  */
 /// <reference types="node" />
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 import { ehPlaceholder, temPdfHospedado, type TributumCatalogo } from "./types";
 
@@ -35,8 +35,10 @@ describe("ehPlaceholder (D-TRIB-7)", () => {
 });
 
 describe("temPdfHospedado (D-TRIB-8)", () => {
-  it("exige os dois campos: `hospedado` e `pdf`", () => {
-    expect(temPdfHospedado({ hospedado: true, pdf: "/tributum/a.pdf" })).toBe(true);
+  it("aceita com os três campos: `hospedado`, `pdf` e `autorizacao`", () => {
+    expect(
+      temPdfHospedado({ hospedado: true, pdf: "/tributum/a.pdf", autorizacao: "Autor X, 2026-08" }),
+    ).toBe(true);
   });
 
   /**
@@ -45,12 +47,26 @@ describe("temPdfHospedado (D-TRIB-8)", () => {
    * visualizador — que é exatamente o que a D-TRIB-8 proíbe.
    */
   it("recusa `pdf` sem `hospedado`", () => {
-    expect(temPdfHospedado({ hospedado: false, pdf: "/tributum/a.pdf" })).toBe(false);
-    expect(temPdfHospedado({ pdf: "/tributum/a.pdf" })).toBe(false);
+    expect(temPdfHospedado({ hospedado: false, pdf: "/tributum/a.pdf", autorizacao: "x" })).toBe(
+      false,
+    );
+    expect(temPdfHospedado({ pdf: "/tributum/a.pdf", autorizacao: "x" })).toBe(false);
   });
 
   it("recusa `hospedado` sem `pdf`", () => {
-    expect(temPdfHospedado({ hospedado: true })).toBe(false);
+    expect(temPdfHospedado({ hospedado: true, autorizacao: "x" })).toBe(false);
+  });
+
+  /**
+   * D-TRIB-10: o critério editorial diz que a autorização "fica registrada". Sem o campo, o item
+   * não é servido — degrada para link. Espaço em branco não conta como registro: um `" "` deixado
+   * para calar a guarda é exatamente o que ela existe para pegar.
+   */
+  it("recusa hospedagem sem `autorizacao` registrada", () => {
+    expect(temPdfHospedado({ hospedado: true, pdf: "/tributum/a.pdf" })).toBe(false);
+    expect(temPdfHospedado({ hospedado: true, pdf: "/tributum/a.pdf", autorizacao: "   " })).toBe(
+      false,
+    );
   });
 });
 
@@ -83,6 +99,35 @@ describe("public/tributum.json", () => {
       .filter((i) => i.pdf && i.hospedado !== true)
       .map((i) => i.id);
     expect(suspeitos, "pdf sem hospedado:true").toEqual([]);
+  });
+
+  /**
+   * D-TRIB-10, do lado do DADO: item hospedado sem procedência não passa na revisão. A UI já
+   * degradaria para link, mas isso esconderia o erro em vez de mostrá-lo — aqui ele falha, com o
+   * id na mensagem. Esta suíte roda no CI do frontend (`npm test`), então é gate de verdade.
+   */
+  it("todo item hospedado registra a `autorizacao`", () => {
+    const semProcedencia = [...catalogo.artigos, ...catalogo.analises]
+      .filter((i) => i.hospedado === true && !i.autorizacao?.trim())
+      .map((i) => i.id);
+    expect(semProcedencia, "hospedado sem autorizacao").toEqual([]);
+  });
+
+  /** O critério editorial exige DATA em todo item que é texto — a instituição é a exceção. */
+  it("artigos, análises e dados têm data", () => {
+    expect(catalogo.artigos.filter((a) => !a.ano).map((a) => a.id)).toEqual([]);
+    expect(catalogo.analises.filter((a) => !a.ano).map((a) => a.id)).toEqual([]);
+    expect(catalogo.dados.filter((d) => !d.atualizado_em).map((d) => d.id)).toEqual([]);
+  });
+
+  /** Todo `pdf` do catálogo aponta para um arquivo que existe em `tributum/`, na raiz do repo. */
+  it("todo `pdf` hospedado existe no disco", () => {
+    for (const item of [...catalogo.artigos, ...catalogo.analises]) {
+      if (!item.pdf) continue;
+      const nome = item.pdf.replace(/^\/tributum\//, "");
+      const caminho = new URL(`../../../tributum/${nome}`, import.meta.url);
+      expect(existsSync(caminho), `${item.id}: ${item.pdf} não existe em tributum/`).toBe(true);
+    }
   });
 
   /** A regra de direitos viaja com o arquivo — quem abrir o JSON para editar lê antes de colar. */

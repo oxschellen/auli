@@ -14,6 +14,7 @@ import {
   MdOutlineAccountBalance,
   MdOutlineDataset,
   MdOutlineInsights,
+  MdOutlineRule,
   MdOutlineFileDownload,
   MdOutlinePower,
   MdInfoOutline,
@@ -33,6 +34,7 @@ import { ArtigosLista } from "../../tributum/ArtigosLista";
 import { InstituicoesLista } from "../../tributum/InstituicoesLista";
 import { DadosLista } from "../../tributum/DadosLista";
 import { AnalisesLista } from "../../tributum/AnalisesLista";
+import { CriteriosTributum } from "../../tributum/CriteriosTributum";
 import { DownloadsList } from "../downloadslist/DownloadsList";
 import { McpList } from "../mcplist/McpList";
 import { About } from "../about/About";
@@ -69,6 +71,7 @@ const TABS: {
   { id: "tributum-instituicoes", label: "Instituições", Component: InstituicoesLista, collection: null, grupo: "tributum", Icone: MdOutlineAccountBalance },
   { id: "tributum-dados", label: "Dados", Component: DadosLista, collection: null, grupo: "tributum", Icone: MdOutlineDataset },
   { id: "tributum-analises", label: "Análises", Component: AnalisesLista, collection: null, grupo: "tributum", Icone: MdOutlineInsights },
+  { id: "tributum-criterios", label: "Critérios", Component: CriteriosTributum, collection: null, grupo: "tributum", Icone: MdOutlineRule },
   { id: "mcp", label: "Conectar sua IA", Component: McpList, collection: null, grupo: "integracoes", Icone: MdOutlinePower },
   { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null, grupo: "integracoes", Icone: MdOutlineFileDownload },
   { id: "about", label: "Sobre", Component: About, collection: null, grupo: "rodape", Icone: MdInfoOutline },
