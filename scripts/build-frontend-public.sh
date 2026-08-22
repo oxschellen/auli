@@ -90,3 +90,17 @@ dst_manuais="$PUB/manuais"
 rm -rf "$dst_manuais"; mkdir -p "$dst_manuais"
 cp "$ROOT"/manuais/manual-*.md "$dst_manuais/"
 echo "📦 public/manuais/  <- manuais/manual-*.md  ($(find "$dst_manuais" -name '*.md' | wc -l) arquivos)"
+
+# tributum/: os arquivos HOSPEDADOS da seção editorial (D-TRIB-8) — PDFs autorais ou com autorização
+# expressa, e datasets públicos. Autorados em tributum/ na raiz e copiados aqui pela MESMA razão dos
+# manuais, e por uma a mais: `auli-frontend/.gitignore` ignora as subpastas de `public/`, então um
+# arquivo posto direto em `public/tributum/` não seria versionado e sumiria no próximo clone.
+# (O CATÁLOGO não passa por aqui: `tributum.json` vive na RAIZ de `public/`, com o `about.md`, que é
+# o único lugar de `public/` que o gitignore preserva. Ver o doc do `useTributum.ts`.)
+# Fora do laço de propósito, como os manuais: mesmo chamado com um `<id>`, este passo roda.
+dst_tributum="$PUB/tributum"
+rm -rf "$dst_tributum"; mkdir -p "$dst_tributum"
+if compgen -G "$ROOT/tributum/*" > /dev/null; then
+  cp "$ROOT"/tributum/* "$dst_tributum/"
+fi
+echo "📦 public/tributum/  <- tributum/*  ($(find "$dst_tributum" -type f | wc -l) arquivos)"

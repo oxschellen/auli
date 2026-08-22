@@ -1,0 +1,42 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 999 >>
+stream
+BT /F1 28 Tf 60 760 Td (Documento de exemplo) Tj ET
+BT /F1 12 Tf 60 691 Td (Este arquivo NÃO é um estudo, uma nota técnica ou um documento) Tj ET
+BT /F1 12 Tf 60 672 Td (de qualquer órgão público. Ele existe por um motivo só: exercitar) Tj ET
+BT /F1 12 Tf 60 653 Td (o visualizador de PDF da seção Tributum do Auli.) Tj ET
+BT /F1 12 Tf 60 615 Td (O item que aponta para cá está marcado como "exemplo" no catálogo) Tj ET
+BT /F1 12 Tf 60 596 Td (\(D-TRIB-7\), e o texto que você lê aqui é a mesma advertência, para) Tj ET
+BT /F1 12 Tf 60 577 Td (o caso de o arquivo ser baixado e sair do contexto da página.) Tj ET
+BT /F1 12 Tf 60 539 Td (Quando houver material real hospedado, este arquivo sai.) Tj ET
+BT /F1 10 Tf 60 501 Td (Regra de direitos \(D-TRIB-8\): o Auli hospeda PDF apenas quando é) Tj ET
+BT /F1 10 Tf 60 485 Td (autoral ou há autorização expressa por escrito. Material de terceiro) Tj ET
+BT /F1 10 Tf 60 469 Td (entra como link para a fonte oficial + resenha própria da curadoria.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001290 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1387
+%%EOF
