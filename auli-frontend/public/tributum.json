@@ -1,5 +1,5 @@
 {
-  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true, o caminho em pdf E o campo autorizacao preenchido (quem autorizou, quando, por qual meio) — sem ele o item e servido como se fosse so link. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7). CURADORES (D-TRIB-11/13): cada estante tem nome obrigatorio.",
+  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true, o caminho em pdf E o campo autorizacao preenchido (quem autorizou, quando, por qual meio) — sem ele o item e servido como se fosse so link. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7). CURADORES (D-TRIB-11/13): cada estante tem nome obrigatorio. Links conferidos em 2026-08-22.",
   "artigos": [
     {
       "id": "rfb-carga-tributaria-2024",
