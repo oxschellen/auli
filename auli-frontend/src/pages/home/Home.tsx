@@ -10,6 +10,10 @@ import {
   MdOutlineStickyNote2,
   MdOutlineLibraryBooks,
   MdOutlineMenuBook,
+  MdOutlineArticle,
+  MdOutlineAccountBalance,
+  MdOutlineDataset,
+  MdOutlineInsights,
   MdOutlineFileDownload,
   MdOutlinePower,
   MdInfoOutline,
@@ -25,6 +29,10 @@ import { TarfList } from "../parecereslist/TarfList";
 import { LegislacaoList } from "../legislacaolist/LegislacaoList";
 import { NotasList } from "../notaslist/NotasList";
 import { ConteudosList } from "../conteudoslist/ConteudosList";
+import { ArtigosLista } from "../../tributum/ArtigosLista";
+import { InstituicoesLista } from "../../tributum/InstituicoesLista";
+import { DadosLista } from "../../tributum/DadosLista";
+import { AnalisesLista } from "../../tributum/AnalisesLista";
 import { DownloadsList } from "../downloadslist/DownloadsList";
 import { McpList } from "../mcplist/McpList";
 import { About } from "../about/About";
@@ -34,12 +42,13 @@ import type { Collection } from "../../shared/entities";
 import { SIDEBAR_WIDTH } from "../../shared/layout";
 
 /** Grupo de navegação. `null` = topo (sem título); `rodape` cola no pé da sidebar. */
-type Grupo = null | "acervo" | "integracoes" | "rodape";
+type Grupo = null | "acervo" | "tributum" | "integracoes" | "rodape";
 
-/** As nove seções, agora agrupadas para a sidebar. `collection: null` = sempre disponível
+/** As seções, agrupadas para a sidebar. `collection: null` = sempre disponível
  *  (`chat` fala com o RAG da entidade, `about` é estático, `downloads` lista TODOS os
- *  estados, `mcp` são manuais globais); as demais dependem de a entidade ter a coleção.
- *  O rótulo de `mcp` virou "Conectar sua IA" — o id NÃO muda (ancora tab-/tabpanel-). */
+ *  estados, `mcp` são manuais globais, e as quatro do `tributum` são curadoria com catálogo
+ *  ÚNICO compartilhado por todas as entidades, D-TRIB-2); as demais dependem de a entidade ter
+ *  a coleção. O rótulo de `mcp` virou "Conectar sua IA" — o id NÃO muda (ancora tab-/tabpanel-). */
 const TABS: {
   id: string;
   label: string;
@@ -56,6 +65,10 @@ const TABS: {
   { id: "legislacao", label: "Legislação", Component: LegislacaoList, collection: "legislacao", grupo: "acervo", Icone: MdOutlineMenuBook },
   { id: "notas", label: "Notas", Component: NotasList, collection: "notas", grupo: "acervo", Icone: MdOutlineStickyNote2 },
   { id: "conteudos", label: "Conteúdos", Component: ConteudosList, collection: "conteudos", grupo: "acervo", Icone: MdOutlineLibraryBooks },
+  { id: "tributum-artigos", label: "Artigos e estudos", Component: ArtigosLista, collection: null, grupo: "tributum", Icone: MdOutlineArticle },
+  { id: "tributum-instituicoes", label: "Instituições", Component: InstituicoesLista, collection: null, grupo: "tributum", Icone: MdOutlineAccountBalance },
+  { id: "tributum-dados", label: "Dados", Component: DadosLista, collection: null, grupo: "tributum", Icone: MdOutlineDataset },
+  { id: "tributum-analises", label: "Análises", Component: AnalisesLista, collection: null, grupo: "tributum", Icone: MdOutlineInsights },
   { id: "mcp", label: "Conectar sua IA", Component: McpList, collection: null, grupo: "integracoes", Icone: MdOutlinePower },
   { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null, grupo: "integracoes", Icone: MdOutlineFileDownload },
   { id: "about", label: "Sobre", Component: About, collection: null, grupo: "rodape", Icone: MdInfoOutline },
@@ -65,6 +78,9 @@ const TABS: {
 const GRUPOS: { id: Grupo; titulo: string | null }[] = [
   { id: null, titulo: null },
   { id: "acervo", titulo: "Acervo" },
+  // D-TRIB-3: entre o Acervo e as Integrações. Sem gate por registry — o catálogo é o mesmo em
+  // todas as entidades (D-TRIB-2), e cada lista se vira sozinha com erro e vazio.
+  { id: "tributum", titulo: "Tributum" },
   { id: "integracoes", titulo: "Integrações" },
 ];
 

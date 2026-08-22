@@ -1,0 +1,88 @@
+{
+  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true e autorizacao expressa por escrito do autor. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7).",
+  "artigos": [
+    {
+      "id": "exemplo-gasto-tributario-icms",
+      "titulo": "Gasto tributário e federalismo fiscal no ICMS",
+      "autores": "A. Silva e B. Costa",
+      "instituicao": "IPEA",
+      "ano": 2025,
+      "resumo": "Resenha da curadoria: estimativas de renúncia fiscal por UF e efeitos distributivos entre entes federados.",
+      "link": "https://www.ipea.gov.br/",
+      "hospedado": false,
+      "placeholder": true
+    },
+    {
+      "id": "exemplo-reforma-atendimento",
+      "titulo": "Reforma tributária e o atendimento ao contribuinte",
+      "autores": "Colegas da SEFAZ-RS",
+      "instituicao": "SEFAZ-RS",
+      "ano": 2026,
+      "resumo": "Resenha da curadoria: nota técnica sobre impactos operacionais da transição IBS/CBS no atendimento.",
+      "link": "https://www.sefaz.rs.gov.br/",
+      "pdf": "/tributum/exemplo-reforma-atendimento.pdf",
+      "hospedado": true,
+      "placeholder": true
+    }
+  ],
+  "instituicoes": [
+    {
+      "id": "ipea",
+      "nome": "IPEA",
+      "descricao": "Pesquisa aplicada em políticas públicas, incluindo tributação e federalismo fiscal.",
+      "homepage": "https://www.ipea.gov.br/",
+      "placeholder": true
+    },
+    {
+      "id": "fgv-nef",
+      "nome": "FGV — Núcleo de Estudos Fiscais",
+      "descricao": "Estudos sobre sistema tributário, reforma e administração fazendária.",
+      "homepage": "https://direitosp.fgv.br/",
+      "placeholder": true
+    },
+    {
+      "id": "ibdt",
+      "nome": "IBDT",
+      "descricao": "Instituto Brasileiro de Direito Tributário — doutrina e revista Direito Tributário Atual.",
+      "homepage": "https://ibdt.org.br/",
+      "placeholder": true
+    },
+    {
+      "id": "ccif",
+      "nome": "CCiF",
+      "descricao": "Centro de Cidadania Fiscal — propostas de reforma do sistema tributário.",
+      "homepage": "https://ccif.com.br/",
+      "placeholder": true
+    },
+    {
+      "id": "receita-cetad",
+      "nome": "Receita Federal — CETAD",
+      "descricao": "Estudos tributários e aduaneiros oficiais; carga tributária e gasto tributário.",
+      "homepage": "https://www.gov.br/receitafederal/",
+      "placeholder": true
+    }
+  ],
+  "dados": [
+    {
+      "id": "exemplo-arrecadacao-icms-rs",
+      "titulo": "Arrecadação ICMS-RS por CNAE",
+      "fonte": "SEFAZ-RS / Dados abertos",
+      "periodo": "2015–2025",
+      "formato": "csv",
+      "atualizado_em": "2026-07",
+      "resumo": "Série mensal de arrecadação por setor econômico.",
+      "link": "https://dados.rs.gov.br/",
+      "placeholder": true
+    }
+  ],
+  "analises": [
+    {
+      "id": "exemplo-renuncia-por-uf",
+      "titulo": "Visualização: renúncia fiscal por UF",
+      "autores": "Curadoria Tributum",
+      "resumo": "Painel comparativo de gasto tributário estadual.",
+      "link": "https://www.ipea.gov.br/",
+      "placeholder": true
+    }
+  ]
+}

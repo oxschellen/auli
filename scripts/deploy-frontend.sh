@@ -379,6 +379,17 @@ verificar() { # <caminho> <content-type esperado (substring)>
 }
 
 verificar "/" "text/html"
+# O catálogo do Tributum (D-TRIB-5) é o segundo arquivo GLOBAL do site, ao lado do
+# `downloads.json` — não pertence a entidade nenhuma e é servido da raiz. Entra no smoke porque a
+# falha dele é traiçoeira: o Apache responde o `index.html` com 200 para estático ausente
+# (FallbackResource), então "sumiu do deploy" chega ao navegador como HTML bem-sucedido. Aqui o
+# content-type denuncia; sem esta linha, as quatro abas do Tributum degradariam em produção com o
+# smoke verde.
+verificar "/tributum.json" "application/json"
+# Um arquivo HOSPEDADO do Tributum (D-TRIB-8), pelo mesmo motivo do catálogo: `public/tributum/` é
+# copiado de `tributum/` pelo build-frontend-public.sh, e um passo de cópia que não rodou some em
+# silêncio — o visualizador abriria um iframe sobre o index.html do FallbackResource.
+verificar "/tributum/exemplo-reforma-atendimento.pdf" "application/pdf"
 verificar "/rs/rs-servicos-index.json" "application/json"
 verificar "/rs/rs-pareceres-index.json" "application/json"
 # O do TARF entra pelo mesmo motivo dos outros dois, e com mais razão: com 22.476 acórdãos ele é o
