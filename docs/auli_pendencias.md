@@ -1442,6 +1442,97 @@ CI não depende do dado.
 
 ---
 
+## 38. Tributum: a régua está no ar, a estante está vazia (aberta — 2026-08-22)
+
+A seção editorial entrou em quatro passos — **#162** (catálogo único e visualizador de PDF), **#163**
+(o critério vira aba e a `autorizacao` vira campo), **#164** (a v2 dos critérios e o rodapé de
+Curador) e `ebaced9` (Critérios abre o grupo). No ar está a **política inteira com o conteúdo de
+exemplo**: as duas guardas de [types.ts](auli-frontend/src/tributum/types.ts) — `ehPlaceholder`
+(D-TRIB-7) e `temPdfHospedado` (D-TRIB-8/10) — existem, têm teste verificado por mutação, e o
+`npm test` do [frontend.yml](.github/workflows/frontend.yml) as roda a cada PR. O catálogo tem **9
+itens, e os 9 são exemplo**.
+
+### 38.1 O `contato` do Curador: o texto publicado promete o que a tela não mostra
+
+A linha 25 de [tributum-criterios.md](auli-frontend/public/tributum-criterios.md) afirma: "Os
+Curadores e seus contatos estão listados no rodapé de cada estante". O bloco `curadores` do
+[tributum.json](auli-frontend/public/tributum.json) traz **só `nome`** nas quatro estantes, o campo
+`Curador.contato` é opcional, e o [RodapeCurador](auli-frontend/src/tributum/RodapeCurador.tsx)
+renderiza o nome sozinho — sem erro, sem aviso. Quem lê o critério e vai ao rodapé não encontra o que
+foi prometido.
+
+**O custo é uma linha por estante no JSON**, sem deploy de código: o rodapé já decide sozinho entre
+`mailto:`, link e texto puro. Não foi feito porque o dado é de outra pessoa — endereço alheio não se
+publica por conta própria, tem de vir de quem será contactado.
+
+Enquanto não vier, a saída honesta é a inversa: **tirar a frase do critério**. O que não se sustenta
+é o par como está hoje.
+
+O teste `"as quatro estantes declaram curador"` ([types.test.ts](auli-frontend/src/tributum/types.test.ts))
+confere o **nome**, não o contato, de propósito — o nome é obrigatório pelo desenho, o contato não.
+Se a decisão for exigir contato, a guarda muda no mesmo commit.
+
+### 38.2 O catálogo é de exemplo — e a TAREFA do conteúdo real está escrita, não executada
+
+Os 9 itens (2 artigos, 5 instituições, 1 dataset, 1 análise) têm todos `placeholder: true` e selo na
+tela. **Não é defeito:** é a D-TRIB-7 funcionando — só `placeholder: false` explícito publica. Mas
+régua sem nada para medir é o estado do Tributum desde o #162.
+
+[TAREFA-TRIBUTUM-CONTEUDO.md](docs/TAREFA-TRIBUTUM-CONTEUDO.md) (22/08/2026) propõe a passagem e vai
+além do conteúdo: institui um **regime de conservação** (D-TRIB-17..21) — `verificado_em` em todo
+item publicado, `link_status` que **bloqueia o merge** enquanto houver link quebrado, o script
+`scripts/tributum-links.mjs` e um workflow trimestral que abre **issue, não PR**. O motivo é
+concreto: portal `gov.br` troca UID de página sem redirecionar, e catálogo de links apodrece em
+silêncio.
+
+**Estado: nada disso foi executado.** O `tributum.json` de 71 itens que a TAREFA diz acompanhar
+existe em `~/Downloads/tributum.json` (41 KB; 26 artigos, 19 instituições, 20 datasets, 6 análises —
+70 com `placeholder: false`, já com `verificado_em`), **fora do repositório e não versionado**. Se a
+TAREFA for adiada, é esse arquivo que se perde: convém trazê-lo para dentro antes de decidir o resto.
+
+Dois pontos a decidir na execução, ambos afirmações sobre o mundo e não sobre código:
+
+- **A revalidação trimestral é promessa de trabalho recorrente.** A cada três meses alguém tem de
+  resolver os `link_status` para o `main` voltar a passar. É o inverso exato da §33.1, onde o gate
+  foi recusado por não haver quem o mantivesse — vale conferir se este tem.
+- **Os 71 links foram conferidos por quem escreveu a TAREFA, em 22/08.** O critério de aceitação
+  (§4.1 dela) é o script sair com 0 falhas na hora do merge, o que reconfere tudo. Enquanto não
+  rodar, "verificado" é afirmação de terceiro e não medição nossa.
+
+---
+
+## 39. O nome próprio do mantenedor: o que o #166 tirou, e as duas decisões que devolveu (aberta — 2026-08-22)
+
+`801e288` (#166) tirou o nome da **prosa** dos documentos. Sobraram três grupos — e os dois primeiros
+sobraram por serem decisão de quem tem o nome, não limpeza de texto.
+
+**1. O e-mail no User-Agent do AuliBot — 17 lugares.** `carlos.schellenberger@gmail.com` aparece em
+16 arquivos `.rs` (15 crates de scraper; o `rs` duas vezes, em `pareceres.rs` e `tarf.rs`) e na linha
+116 de [REGISTRO-restart-incremental.md](docs/REGISTRO-restart-incremental.md). A regra aqui é
+**substituir, nunca apagar**: esse e-mail é o canal pelo qual o site raspado pede que o bot pare, e é
+sobre ele que se apoiam os cabeçalhos `//! ROBOTS/ACESSO` e a D-PA-ROBOTS (UA institucional +
+cortesia de ≥1 s). Bot sem contato é postura pior que bot com contato pessoal. Trocar por canal
+não-pessoal — uma caixa do projeto, um endereço de issues — exige que o canal **exista antes**, e os
+textos dos cabeçalhos vão na mesma passada, porque descrevem o que o UA declara.
+
+**2. O titular do copyright MIT — 3 lugares:** `LICENSE:3`, `auli-frontend/LICENSE:3` e
+`README.md:335`. Aqui o nome não é resíduo de prosa: titular de direito autoral é quem detém os
+direitos. Trocar por entidade ("Projeto Auli e Contribuidores") é mudança jurídica, não cosmética, e
+só quem cede pode decidir.
+
+**3. Fora de escopo — não mexer.** `Carlos Alberto` nos testes do
+[nome_pessoa.rs](auli-server/crates/auli-anon/src/reconhecedores/nome_pessoa.rs#L127) é caso de teste
+do reconhecedor; `Carlos Barbosa` em [ESTUDO-anon-ner-v2.md](docs/ESTUDO-anon-ner-v2.md) e
+[auli-anon_pendencias.md](docs/auli-anon_pendencias.md) é **município gaúcho**, e o exemplo existe
+justamente por ser homônimo de prenome; os nomes nas fixtures de TARF são de terceiros em documento
+público raspado. Nada disso é o mantenedor — e uma varredura cega por `carlos` quebraria testes.
+
+**Não há guarda no CI para o nome**, ao contrário da unidade de atendimento
+([check-sem-navi.sh](scripts/tools/check-sem-navi.sh), #165). Escrever uma só faz sentido depois de
+**1** e **2** decididos: hoje ela reprovaria o próprio `main`.
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
