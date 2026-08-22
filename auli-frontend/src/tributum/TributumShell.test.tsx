@@ -180,6 +180,53 @@ describe("TributumShell", () => {
   });
 });
 
+describe("rodapé do Curador", () => {
+  /** A promessa do critério editorial: nome e contato no rodapé de cada estante. */
+  it("mostra o curador da estante, com o contato linkado", async () => {
+    axios.get.mockResolvedValue({
+      data: {
+        ...CATALOGO,
+        curadores: { artigos: { nome: "Fulana de Tal", contato: "fulana@exemplo.org" } },
+      },
+    });
+    montar();
+    await aguardarCarga();
+
+    expect(screen.getByText("Fulana de Tal")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "fulana@exemplo.org" })).toHaveAttribute(
+      "href",
+      "mailto:fulana@exemplo.org",
+    );
+  });
+
+  /**
+   * Curador não se inventa nem se herda de outra estante: sem declaração, sem rodapé. A ausência
+   * é o sinal de que a promessa do texto ainda não foi cumprida naquela estante — melhor visível
+   * do que preenchida por padrão com o nome de alguém que não escolheu ser curador.
+   */
+  it("não inventa curador quando a estante não declara nenhum", async () => {
+    axios.get.mockResolvedValue({
+      data: { ...CATALOGO, curadores: { dados: { nome: "Outro" } } },
+    });
+    montar();
+    await aguardarCarga();
+
+    expect(screen.queryByText(/Curadoria desta estante/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Outro")).not.toBeInTheDocument();
+  });
+
+  /** Estante vazia continua tendo curador — é onde saber a quem propor um item vale mais. */
+  it("aparece mesmo na estante sem itens", async () => {
+    axios.get.mockResolvedValue({
+      data: { artigos: [], curadores: { artigos: { nome: "Fulana de Tal" } } },
+    });
+    montar();
+
+    await waitFor(() => expect(screen.getByText("Fulana de Tal")).toBeInTheDocument());
+    expect(screen.getByText(/Nada em artigos e estudos por enquanto/i)).toBeInTheDocument();
+  });
+});
+
 describe("D-TRIB-8 na UI: o botão 'Ler PDF'", () => {
   /**
    * A guarda de direitos. Os DOIS campos são necessários, e o caso perigoso é o do meio: um `pdf`
