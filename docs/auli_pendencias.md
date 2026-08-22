@@ -1483,21 +1483,50 @@ além do conteúdo: institui um **regime de conservação** (D-TRIB-17..21) — 
 item publicado, `link_status` que **bloqueia o merge** enquanto houver link quebrado, o script
 `scripts/tributum-links.mjs` e um workflow trimestral que abre **issue, não PR**. O motivo é
 concreto: portal `gov.br` troca UID de página sem redirecionar, e catálogo de links apodrece em
-silêncio.
+silêncio. **O regime foi recusado — §38.3.** O conteúdo, não.
 
 **Estado: nada disso foi executado.** O `tributum.json` de 71 itens que a TAREFA diz acompanhar
 existe em `~/Downloads/tributum.json` (41 KB; 26 artigos, 19 instituições, 20 datasets, 6 análises —
 70 com `placeholder: false`, já com `verificado_em`), **fora do repositório e não versionado**. Se a
 TAREFA for adiada, é esse arquivo que se perde: convém trazê-lo para dentro antes de decidir o resto.
 
-Dois pontos a decidir na execução, ambos afirmações sobre o mundo e não sobre código:
+Fica de pé o ponto que a execução não resolve sozinha: **os 71 links foram conferidos por quem
+escreveu a TAREFA, em 22/08**, e enquanto ninguém os reconferir aqui, "verificado" é afirmação de
+terceiro e não medição nossa.
 
-- **A revalidação trimestral é promessa de trabalho recorrente.** A cada três meses alguém tem de
-  resolver os `link_status` para o `main` voltar a passar. É o inverso exato da §33.1, onde o gate
-  foi recusado por não haver quem o mantivesse — vale conferir se este tem.
-- **Os 71 links foram conferidos por quem escreveu a TAREFA, em 22/08.** O critério de aceitação
-  (§4.1 dela) é o script sair com 0 falhas na hora do merge, o que reconfere tudo. Enquanto não
-  rodar, "verificado" é afirmação de terceiro e não medição nossa.
+### 38.3 A decisão: não haverá revalidação trimestral nem issue automática (2026-08-22)
+
+**Decidido pelo mantenedor.** Caem a D-TRIB-17 (revalidar a cada trimestre), a D-TRIB-19/20
+(`link_status` no item, bloqueando o merge) e a D-TRIB-21 (o `tributum-links.yml` com `cron` e
+`gh issue create`). O **conteúdo** da TAREFA — os 71 itens — não depende disso e segue executável.
+
+**O que se perde, dito sem eufemismo.** A podridão de link é real e é silenciosa: `gov.br` roda
+Plone e troca UID de página sem redirecionar, o Ipea migrou de `handle` para `items/uuid`, revistas
+OJS movem volumes de lugar. Sem a rodada trimestral, **nada no repositório detecta isso** — o
+primeiro a perceber é o leitor que clica, numa estante que afirma curadoria. Um link morto aqui é
+pior que uma estante vazia, e essa continua sendo a razão pela qual a TAREFA propôs o regime.
+
+**O que sustenta a decisão.** É a mesma conta da §33.1, e ela pesa mais aqui: o gate da D-TRIB-20
+**bloqueia o `main`** até alguém resolver cada `link_status`, de três em três meses, para sempre.
+Um `cron` que abre issue que ninguém fecha vira ruído; um gate que ninguém limpa vira `main`
+travado. O projeto tem um mantenedor, e o Tributum tem Curador nomeado — cuja tarefa, pelo próprio
+critério editorial, é justamente ler, escolher e apresentar. A conferência dos links cabe nessa
+pessoa **quando ela mexe no catálogo**, que é quando ela já está com o arquivo aberto, e não numa
+data do calendário em que talvez não esteja.
+
+**O que isso obriga a decidir junto, quando o conteúdo entrar.** O arquivo entregue já traz
+`verificado_em` em todo item publicado (D-TRIB-18). Sem o script, **nada atualiza esse campo** — e
+uma data que ninguém renova afirma uma conferência que não está acontecendo, o que é pior que campo
+nenhum. As duas saídas honestas: tirar o campo, ou mantê-lo como registro de uma conferência única e
+datada. O que **não** entra é o teste do §3.4 da TAREFA (`todo item publicado tem verificado_em`):
+ele transformaria em obrigação de CI exatamente a promessa que esta decisão dispensa.
+
+O script `tributum-links.mjs` continua sendo uma ferramenta possível — rodado à mão na hora de mexer
+no catálogo, sem `cron`, sem issue e sem gate, ele custa uma linha de terminal. Isso é opção de quem
+edita, não regime.
+
+**Se um dia reabrir**, os fatos que mudariam a conta: um segundo Curador, um link morto encontrado
+em produção, ou o catálogo crescer além do que uma pessoa relê ao mexer nele.
 
 ---
 
