@@ -34,11 +34,17 @@ const VAZIO: TributumCatalogo = {
 function normalizar(bruto: unknown): TributumCatalogo {
   const j = (bruto ?? {}) as Partial<Record<keyof TributumCatalogo, unknown>>;
   const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
+  const curadores = j.curadores;
   return {
     artigos: arr(j.artigos),
     instituicoes: arr(j.instituicoes),
     dados: arr(j.dados),
     analises: arr(j.analises),
+    // Objeto, não array — e a mesma disciplina: forma errada vira ausência, não exceção.
+    curadores:
+      curadores && typeof curadores === "object" && !Array.isArray(curadores)
+        ? (curadores as TributumCatalogo["curadores"])
+        : undefined,
   };
 }
 

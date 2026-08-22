@@ -5,13 +5,14 @@ import { SearchInput } from "../shared/SearchInput";
 import { AsyncContent } from "../shared/AsyncContent";
 import { buildHaystack, haystackMatches, parseQuery } from "../shared/textSearch";
 import { useTributum } from "./useTributum";
-import type { ItemBase, TributumCatalogo } from "./types";
+import { RodapeCurador } from "./RodapeCurador";
+import type { Estante, ItemBase } from "./types";
 
 interface Props<T extends ItemBase> {
   /** Título da seção, e o que entra no placeholder da busca e nas mensagens de vazio. */
   titulo: string;
-  /** Qual das quatro listas do catálogo esta aba mostra. */
-  secao: keyof TributumCatalogo;
+  /** Qual das quatro estantes esta aba mostra. */
+  secao: Estante;
   /** Substantivo do contador, singular e plural ("artigo"/"artigos"). */
   substantivo: [string, string];
   /** Campos que a busca enxerga. Um array por item, na ordem que fizer sentido para o leitor. */
@@ -43,6 +44,7 @@ export function TributumShell<T extends ItemBase>({
 }: Props<T>) {
   const { catalogo, erro, carregando } = useTributum();
   const itens = catalogo[secao] as unknown as T[];
+  const curador = catalogo.curadores?.[secao];
 
   const [searchQuery, setSearchQuery] = useState("");
   const deferredQuery = useDeferredValue(searchQuery);
@@ -138,6 +140,9 @@ export function TributumShell<T extends ItemBase>({
               ))}
             </Flex>
           )}
+          {/* Fora do gate de vazio: a estante sem itens continua tendo curador, e é justamente
+              onde saber a quem propor um item vale mais. */}
+          <RodapeCurador curador={curador} />
         </AsyncContent>
       </Box>
     </Flex>

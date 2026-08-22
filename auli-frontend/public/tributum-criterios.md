@@ -1,42 +1,49 @@
-# Tributum — o que é, o que entra, o que não entra
+# Tributum
 
-## O que é
+## Uma estante ao lado da ferramenta
 
-Tributum é a estante de leitura do Auli. O acervo do Auli reproduz documentos oficiais — serviços, FAQs, pareceres, acórdãos, leis — com fidelidade e sem opinião. Tributum é o lugar para o que vem depois de lidar com esses documentos todos os dias: estudos, artigos, análises e dados sobre os tributos no Brasil, produzidos por quem os aplica, os estuda ou os mede.
+O Auli existe para achar o documento certo na hora certa: o serviço, a pergunta já respondida, o parecer, o acórdão, o artigo da lei. É trabalho de balcão, e é bom que seja — a resposta ao contribuinte sai daí.
 
-Tributum não faz parte do acervo consultado pelo assistente. Nada aqui é usado para compor respostas do chat ou da busca. É uma biblioteca de leitura humana, curada à mão, que vive ao lado da ferramenta — e não dentro dela.
+Tributum é outra coisa. É o que acontece depois do balcão, quando alguém que passa os dias dentro da legislação para, olha em volta e escreve sobre o que viu. Um estudo sobre como a arrecadação de um imposto se distribui entre regiões. Uma análise de por que certo dispositivo gera tanta consulta. Uma base de dados que ninguém sabia que existia. Um artigo de alguém que senta a três mesas de distância.
 
-## De quem é o conteúdo
+Aqui você vai encontrar quatro estantes: **Artigos e estudos**, **Instituições**, **Dados** e **Análises**. Nenhuma delas alimenta o assistente. O que está aqui é para ser lido por gente, com tempo — não para compor respostas automáticas.
 
-Cada item tem autor ou instituição identificados. O conteúdo expressa a posição de quem o assina, e só dela. Tributum não representa a Secretaria da Fazenda de nenhum estado, nenhum órgão, nem a posição do Auli sobre qualquer tema. A seleção dos itens é uma escolha editorial feita de boa-fé, sob os critérios abaixo, e não uma chancela.
+## Por que isso importa para quem usa o Auli
+
+Quem responde consultas tributárias todos os dias acumula um conhecimento que raramente aparece em lugar nenhum: sabe onde a lei tropeça, quais perguntas voltam, o que a teoria não previu. Tributum é o lugar onde esse conhecimento ganha forma e nome — e onde quem trabalha na ponta descobre que há colegas, pesquisadores e instituições produzindo material de primeira sobre exatamente os problemas que enfrenta.
+
+Ver o próprio ofício tratado com seriedade por outras pessoas muda o peso do trabalho. É essa a aposta.
+
+## O Curador
+
+Cada estante tem um Curador: uma pessoa que lê, escolhe e apresenta. Pode ser quem atende, quem pesquisa, quem ensina, quem programa. A curadoria não é cargo nem função institucional — é uma tarefa que alguém aceita por gosto, e que pode ser passada adiante.
+
+O Curador escreve a resenha de cada item com as próprias palavras, dizendo por que vale a leitura. A escolha é dele, e a responsabilidade também. Tributum não fala por nenhuma instituição, nenhum órgão, nenhum governo. Fala pelas pessoas que assinam o que está nele.
+
+Os Curadores e seus contatos estão listados no rodapé de cada estante.
 
 ## O que entra
 
-- Estudos, artigos e análises sobre tributação no Brasil, de qualquer disciplina: direito, economia, contabilidade, administração pública, história, ciência de dados.
-- Produção de servidores de administrações tributárias, de pesquisadores e de instituições de ensino e pesquisa.
-- Bases de dados públicas e repositórios oficiais, apontados pela página de origem.
-- Material de domínio público ou com licença que permita a indicação.
+Três coisas são obrigatórias em qualquer item: **quem escreveu**, **onde está o original** e **quando foi publicado**. Sem uma delas, não entra — por melhor que seja.
 
-Todo item precisa de três coisas: **autoria identificável**, **fonte localizável** (onde o texto original está) e **data**.
+Dentro disso, a porta é larga: direito, economia, contabilidade, administração pública, história, ciência de dados. Texto de servidor, de professor, de estudante, de instituto de pesquisa. Base de dados oficial. Material que esteja em domínio público ou tenha licença que permita apontar para ele.
 
-## O que não entra
+## O que fica de fora
 
-- Material patrocinado, promocional ou de escritórios de contabilidade, consultoria ou advocacia — mesmo que de qualidade. Tributum não tem anunciantes nem parceiros comerciais, e isso precisa ser visível na própria lista.
-- Conteúdo sem autor, ou cujo autor não possa ser confirmado.
-- Orientação a contribuinte sobre caso concreto. Para isso existe o atendimento oficial.
-- Textos que reproduzam documento oficial já presente no acervo do Auli. O acervo é o lugar deles.
-- Manifestação político-partidária ou defesa de interesse econômico específico de empresa ou setor.
+- Material patrocinado ou promocional, e conteúdo de escritórios de contabilidade, consultoria ou advocacia. Tributum não tem anunciante, parceiro nem cliente — e isso precisa ser visível na própria lista.
+- Texto sem autor, ou com autor que não se consegue confirmar.
+- Orientação sobre caso concreto de contribuinte. Para isso há os canais oficiais.
+- Documento oficial que já está no acervo do Auli. O acervo é a casa dele.
+- Defesa de interesse de empresa ou setor, e manifestação político-partidária.
 
-## Hospedagem
+## Apontar, não copiar
 
-A regra padrão é **apontar, não copiar**: o item leva à página do autor ou da instituição. O Tributum só hospeda o arquivo de um texto quando o autor autorizou expressamente, e essa autorização fica registrada. Artigos de revistas acadêmicas e de editoras comerciais são sempre apontados, nunca hospedados.
+A regra padrão é levar o leitor até o autor. O item aponta para a página onde o texto vive — a revista, o repositório, o blog, o site da instituição.
 
-O registro fica no próprio catálogo, no campo `autorizacao` do item: quem autorizou, quando e por qual meio. Item hospedado sem esse campo preenchido não é servido — a lista o trata como se fosse só link, e a conferência do catálogo recusa a publicação.
+Tributum só guarda uma cópia do arquivo quando o autor autorizou expressamente, e essa autorização fica registrada no próprio catálogo: quem autorizou, quando e por qual meio. Item hospedado sem esse registro não é servido — vira link, e a conferência do catálogo recusa a publicação. Artigos de revistas e editoras são sempre apontados, nunca copiados.
 
-## Como propor um item
+## Como entrar na estante
 
-Quem quiser ver um texto seu ou de outra pessoa listado manda: título, autor, data, onde está publicado e, se for o caso, a autorização para hospedar. Não há promessa de inclusão nem de prazo. Um item pode ser retirado a pedido do autor a qualquer momento.
+Escreveu algo? Leu algo que merece estar aqui? Mande ao Curador da estante correspondente: título, autor, data, onde está publicado — e, se quiser que o arquivo seja hospedado, a autorização por escrito.
 
-## Quem cuida
-
-A curadoria é feita pelo mantenedor do Auli, que é servidor público em exercício numa administração tributária estadual. Por isso mesmo os critérios acima são escritos e públicos: quem seleciona tem interesse declarado em que a seleção não possa ser lida como posição institucional, favorecimento ou conselho.
+Não há promessa de inclusão nem prazo. Há a promessa de leitura. E um item sai a qualquer momento, a pedido do autor.

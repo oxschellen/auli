@@ -57,11 +57,31 @@ export interface Analise extends ItemBase {
   autorizacao?: string;
 }
 
+/**
+ * Quem lê, escolhe e apresenta uma estante. O critério editorial promete o nome e o contato no
+ * rodapé de cada uma — a curadoria é pessoal e nomeada de propósito: ela não é cargo nem função
+ * institucional, e é isso que a distingue de uma chancela.
+ */
+export interface Curador {
+  nome: string;
+  /** Como falar com ele — e-mail, perfil, o que for. Texto livre; o rodapé linka se for URL. */
+  contato?: string;
+}
+
+/** As quatro estantes. `criterios` é a régua, não é estante — por isso fica fora daqui. */
+export type Estante = "artigos" | "instituicoes" | "dados" | "analises";
+
 export interface TributumCatalogo {
   artigos: Artigo[];
   instituicoes: Instituicao[];
   dados: Dataset[];
   analises: Analise[];
+  /**
+   * Curador por estante. **Opcional por estante**: o rodapé só aparece onde há alguém declarado.
+   * Nome de curador não se inventa nem se herda — estante sem curador é estante sem rodapé, e a
+   * ausência é visível para quem mantém o catálogo.
+   */
+  curadores?: Partial<Record<Estante, Curador>>;
 }
 
 /**
