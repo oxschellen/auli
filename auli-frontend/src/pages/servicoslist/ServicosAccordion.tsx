@@ -60,7 +60,17 @@ export function AccordionItem({ classe, items, isOpen, onToggle, isFirst, isLast
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={reduceMotion ? { duration: 0 } : { duration: 0.25, ease: 'easeInOut' }}
-            style={{ overflow: 'hidden' }}
+            // `contain` isola o custo da revelação: animar `height` de 0 a `auto` obriga o
+            // navegador a refazer layout A CADA QUADRO, e o painel de Serviços é o maior da casa
+            // (a classe mais cheia do público "empresas" passa de cem linhas). Com
+            // `layout paint`, esse recálculo para na fronteira do painel em vez de subir a árvore.
+            //
+            // A animação de altura FICA, e isso é deliberado: é uma revelação intrínseca, de uma
+            // só vez, com `prefers-reduced-motion` já respeitado acima — o caso que a própria
+            // regra `no-layout-property-animation` descreve como "a opção menos distorcida", e
+            // que ela manda conter em vez de reescrever. Trocar por `scale` distorceria o texto;
+            // trocar por `grid-template-rows` só enganaria o detector, que não olha essa chave.
+            style={{ overflow: 'hidden', contain: 'layout paint' }}
           >
             <Box
               bg="bg.canvas"
