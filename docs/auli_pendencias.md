@@ -1461,12 +1461,13 @@ Curadores e seus contatos estão listados no rodapé de cada estante". O bloco `
 renderiza o nome sozinho — sem erro, sem aviso. Quem lê o critério e vai ao rodapé não encontra o que
 foi prometido.
 
-**O custo é uma linha por estante no JSON**, sem deploy de código: o rodapé já decide sozinho entre
-`mailto:`, link e texto puro. Não foi feito porque o dado é de outra pessoa — endereço alheio não se
-publica por conta própria, tem de vir de quem será contactado.
+**Resolvido como pendência de dado, não de código (22/08/2026):** o mantenedor informará o contato
+de Wagner Bomfim mais tarde. Até lá o rodapé fica com o nome sozinho — e **o assunto não volta à
+pauta**; ele entra quando o dado chegar.
 
-Enquanto não vier, a saída honesta é a inversa: **tirar a frase do critério**. O que não se sustenta
-é o par como está hoje.
+O custo, quando chegar, é **uma linha por estante no JSON**, sem deploy: o rodapé já decide sozinho
+entre `mailto:`, link e texto puro. O dado é de outra pessoa, e endereço alheio não se publica por
+conta própria — tem de vir de quem será contactado.
 
 O teste `"as quatro estantes declaram curador"` ([types.test.ts](auli-frontend/src/tributum/types.test.ts))
 confere o **nome**, não o contato, de propósito — o nome é obrigatório pelo desenho, o contato não.
