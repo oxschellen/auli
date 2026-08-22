@@ -1,7 +1,7 @@
 # ESTUDO — busca híbrida (denso + esparso) e calibragem das bandas
 
 **Data:** 08/08/2026
-**Origem:** o Carlos pesquisou "conluio" no chat do TARF e não veio nada, embora **69 acórdãos** do
+**Origem:** o mantenedor pesquisou "conluio" no chat do TARF e não veio nada, embora **69 acórdãos** do
 acervo contenham a palavra.
 **Status:** medido, não decidido. Nenhuma linha de código foi mudada por causa disto.
 
@@ -135,7 +135,7 @@ responder a pergunta do modelo int8 na §5.
 
 ## 9. Decisão: adiada, com a base sendo acumulada (09/08/2026)
 
-**A calibragem das bandas fica para depois.** O critério do Carlos: observar as respostas por mais
+**A calibragem das bandas fica para depois.** O critério do mantenedor: observar as respostas por mais
 tempo, até as mudanças de código estabilizarem e haver base empírica de verdade. Escolher o corte
 por intuição é o mesmo erro de estimar sem medir.
 

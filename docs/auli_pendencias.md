@@ -612,7 +612,7 @@ indexado apontava para o lado errado. É o caso exato que a TAREFA existia para 
 **Duas decisões da spec foram superadas na execução:**
 
 - **D-FAQPR-5 revogada.** A spec proibia truncamento silencioso e mandava erro alto agregado. Decisão
-  do Carlos: **truncar em 8192 tokens + avisar**, nomeando os `.md` afetados (`avisar_faqs_truncadas`).
+  do mantenedor: **truncar em 8192 tokens + avisar**, nomeando os `.md` afetados (`avisar_faqs_truncadas`).
   Hoje nenhuma FAQ chega perto do teto.
 - **D-FAQPR-4 superada.** O estimador `chars/4` deu lugar ao **tokenizer real** do fastembed
   (`Embedder::conta_tokens`), e `EMBED_MAX_TOKENS` subiu para **8192** (o `max_length` era 512).
@@ -706,7 +706,7 @@ push. Barato pelo mesmo critério do `scraper-boundary`: o rustfmt parseia, não
 fastembed/ort).
 
 **⏳ Risco em aberto — deriva de versão do rustfmt.** Não existe `rust-toolchain.toml`: a máquina do
-Carlos usa 1.96.0 stable e o runner do GitHub usa a stable que estiver instalada nele. O rustfmt é
+o desenvolvimento local usa 1.96.0 stable e o runner do GitHub usa a stable que estiver instalada nele. O rustfmt é
 estável entre versões, mas se algum dia o CI acusar divergência que não reproduz local, a causa é
 essa — e o remédio é pinar a toolchain (o que também tornaria o build reprodutível, decisão maior que
 afeta todo mundo, por isso não foi feita agora).
@@ -1015,7 +1015,7 @@ provavelmente precisa subir para os dois lados continuarem simétricos e o títu
 ## 33. Clippy e testes: sem guarda no CI — **decidido que fica assim** (2026-08-21)
 
 Irmã da §28, com um desfecho diferente: a dívida foi zerada, o gate **não** foi criado — e em
-21/08/2026 o Carlos decidiu que **não será**. Esta seção deixa de ser uma pendência aberta e passa
+21/08/2026 o mantenedor decidiu que **não será**. Esta seção deixa de ser uma pendência aberta e passa
 a ser o registro de uma escolha, com o que se sabia quando ela foi feita. Não reabrir sem fato
 novo; o que vier depois vira nota aqui embaixo, não um PR de workflow.
 
@@ -1063,7 +1063,7 @@ para bump de `fastembed`/`ort`. Um bump de compilador não exige refazer pack.
 
 ### 33.1 A decisão: não haverá gate de teste nem de clippy no CI (2026-08-21)
 
-**Decidido pelo Carlos, com o quadro completo na mesa.** Fica registrado o que se sabia, para que
+**Decidido pelo mantenedor, com o quadro completo na mesa.** Fica registrado o que se sabia, para que
 quem reabrir a discussão comece do mesmo ponto e não do zero.
 
 **O que o CI cobre hoje, e o que não cobre.** Quatro workflows: `fmt` (`cargo fmt --check`),

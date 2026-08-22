@@ -4,7 +4,7 @@
 
 ## Ref
 
-`lei-8821-1989-arts-8-17-texto-vigente.md` (9,2 KB). **Pendência de conferência marcada no ref:** o LegisWeb registra revogação pela Lei 14.136/2012 em posição ambígua junto ao art. 12, § 2º — Carlos confere no LEGIS/SEFAZ se o § 2º está vigente ou revogado; o par 27 o menciona (ajustar se a conferência indicar revogação).
+`lei-8821-1989-arts-8-17-texto-vigente.md` (9,2 KB). **Pendência de conferência marcada no ref:** o LegisWeb registra revogação pela Lei 14.136/2012 em posição ambígua junto ao art. 12, § 2º — o mantenedor confere no LEGIS/SEFAZ se o § 2º está vigente ou revogado; o par 27 o menciona (ajustar se a conferência indicar revogação).
 
 ## Mapa dos pares
 

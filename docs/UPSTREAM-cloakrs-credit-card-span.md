@@ -1,7 +1,7 @@
 # Rascunho de issue para `kadir/cloakrs` — não publicado
 
 **Estado:** redigido, **não enviado**. Publicar num repositório de terceiros é ação para fora e é
-decisão do Carlos. Texto em inglês abaixo, pronto para colar.
+decisão do mantenedor. Texto em inglês abaixo, pronto para colar.
 
 **Onde:** <https://github.com/kadir/cloakrs> · crate `cloakrs-patterns` 0.3.0 (MIT).
 

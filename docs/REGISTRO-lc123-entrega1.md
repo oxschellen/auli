@@ -10,7 +10,7 @@
 
 ## Convenções desta lei
 
-- Pasta provisória (D-LEG-4): **"Lei Complementar 123-2006 — Simples Nacional"** — nome final é decisão do Carlos.
+- Pasta provisória (D-LEG-4): **"Lei Complementar 123-2006 — Simples Nacional"** — nome final é decisão do mantenedor.
 - Links: âncoras do Planalto por artigo (#art12 … #art17; 13-A = #art13a).
 - Nomes de arquivo provisórios (NNN-slug) até o rename canônico via nome_faq_de.
 - Par 2 = sentinela do corte pré-reforma (padrão da CF).

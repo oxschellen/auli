@@ -60,7 +60,7 @@ agir — e com o gatilho nomeado, para que a decisão possa ser revista sem refa
 uma pergunta real disparar `CREDIT_CARD`, a condição passou a valer.
 
 O rascunho do issue está em `UPSTREAM-cloakrs-credit-card-span.md`, **não publicado** — enviar a um
-repositório de terceiros é ação para fora, e é decisão do Carlos.
+repositório de terceiros é ação para fora, e é decisão do mantenedor.
 
 ---
 

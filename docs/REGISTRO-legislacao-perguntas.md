@@ -56,7 +56,7 @@ Consequências práticas:
   em 19/12/2023 (véspera da EC 132). Usar como segunda fonte ao consolidar
   os arts. 145–154, 156–162.
 - **Status:** 41 pares gerados em 14/08/2026 (blocos 1–8), aguardando revisão
-  do Carlos no site do Auli.
+  do mantenedor no site do Auli.
 
 ### 2.2-b Constituição Federal — arts. 150 a 152 (limitações ao poder de tributar)
 
@@ -139,7 +139,7 @@ Consequências práticas:
 
 ### 2.2-g Fronteiras da CF — art. 195 e ADCT ficam FORA (decisão de 20/08/2026)
 
-Decisão de Carlos: **o art. 195 (contribuições da seguridade social) e os
+Decisão do mantenedor: **o art. 195 (contribuições da seguridade social) e os
 dispositivos tributários do ADCT não entram no acervo.** Não é adiamento — é
 recorte.
 

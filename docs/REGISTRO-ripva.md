@@ -31,7 +31,7 @@
 
 ## Pendências
 
-1. Conferência humana dos 27 pares (Carlos), como nas entregas anteriores.
+1. Conferência humana dos 27 pares (mantenedor), como nas entregas anteriores.
 2. Separador/estrutura da trilha: validar contra pares já integrados antes da ingestão.
 3. ~~ref/ não incluído~~ **FEITO em 20/08/2026**: `data/rs/ref/rs-dec-32144-1985-texto-vigente.md`, extraído do `DocumentView.aspx?inpKey=109694` da SEFAZ (a mesma página dos `link` dos pares), atualizado até o Decreto 58.571 (DOE 30/12/25). 187 dispositivos em 14 Títulos. As armadilhas registradas acima conferem com a fonte: calendário de 2026 no art. 14, I (Alteração 133); art. 14, II e § 13 revogados; art. 4º, § 10 revogado em 09/25.
 4. Integração via fluxo normal (rename canônico + vetorização da coleção legislacao).

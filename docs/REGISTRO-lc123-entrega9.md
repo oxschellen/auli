@@ -36,7 +36,7 @@ Data: 19/08/2026. Pares 119–130 (numeração própria da lei). Pasta (D-LEG-4)
 - **129** — art. 41, caput e §§ 1º–4º **pré-corte** (Seção XIII): União/PGFN; auxílio; convênio de delegação; § 4º da 139 (títulos das informações do PGDAS e da declaração anual).
 - **130** — art. 41, § 5º: as cinco exceções (MS, tributos do ente, convênio, acessória, ICMS/ISS fixos do MEI).
 
-Sem par sentinela novo. **FASE C DE PARES COMPLETA: a LC 123 fecha com 130 pares (arts. 1º–3º-B, 12–41).** Resta apenas o C6 (Anexos I–V), que é tabela, não par — decidir formato com Carlos.
+Sem par sentinela novo. **FASE C DE PARES COMPLETA: a LC 123 fecha com 130 pares (arts. 1º–3º-B, 12–41).** Resta apenas o C6 (Anexos I–V), que é tabela, não par — decidir formato com o mantenedor.
 
 ## ref/
 
