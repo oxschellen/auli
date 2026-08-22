@@ -1,5 +1,7 @@
 # Tributum
 
+Palavra latina que deu origem ao termo tributo e significa "repartir entre as tribos".
+
 ## Uma estante ao lado da ferramenta
 
 O Auli existe para achar o documento certo na hora certa: o serviço, a pergunta já respondida, o parecer, o acórdão, o artigo da lei. É trabalho de balcão, e é bom que seja — a resposta ao contribuinte sai daí.
