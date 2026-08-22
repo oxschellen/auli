@@ -1,5 +1,5 @@
 {
-  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true e autorizacao expressa por escrito do autor. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7).",
+  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true, o caminho em pdf E o campo autorizacao preenchido (quem autorizou, quando, por qual meio) — sem ele o item e servido como se fosse so link. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7).",
   "artigos": [
     {
       "id": "exemplo-gasto-tributario-icms",
@@ -20,8 +20,7 @@
       "ano": 2026,
       "resumo": "Resenha da curadoria: nota técnica sobre impactos operacionais da transição IBS/CBS no atendimento.",
       "link": "https://www.sefaz.rs.gov.br/",
-      "pdf": "/tributum/exemplo-reforma-atendimento.pdf",
-      "hospedado": true,
+      "hospedado": false,
       "placeholder": true
     }
   ],
@@ -80,8 +79,12 @@
       "id": "exemplo-renuncia-por-uf",
       "titulo": "Visualização: renúncia fiscal por UF",
       "autores": "Curadoria Tributum",
+      "ano": 2026,
       "resumo": "Painel comparativo de gasto tributário estadual.",
       "link": "https://www.ipea.gov.br/",
+      "pdf": "/tributum/exemplo-visualizador.pdf",
+      "hospedado": true,
+      "autorizacao": "Material próprio da curadoria do Tributum — autoria e hospedagem do próprio Auli (2026-08-21).",
       "placeholder": true
     }
   ]

@@ -22,6 +22,8 @@ export interface Artigo extends ItemBase {
   /** Caminho local do PDF; só é usado se `hospedado === true` (D-TRIB-8). */
   pdf?: string;
   hospedado?: boolean;
+  /** Quem autorizou a hospedagem, quando e por qual meio. Exigido se `hospedado` (D-TRIB-10). */
+  autorizacao?: string;
 }
 
 export interface Instituicao extends ItemBase {
@@ -45,10 +47,14 @@ export interface Dataset extends ItemBase {
 export interface Analise extends ItemBase {
   titulo: string;
   autores: string;
+  /** Obrigatório: o critério editorial exige data em todo item, e a análise não tinha campo. */
+  ano: number;
   resumo: string;
   link?: string;
   pdf?: string;
   hospedado?: boolean;
+  /** Quem autorizou a hospedagem, quando e por qual meio. Exigido se `hospedado` (D-TRIB-10). */
+  autorizacao?: string;
 }
 
 export interface TributumCatalogo {
@@ -69,13 +75,23 @@ export interface TributumCatalogo {
 export const ehPlaceholder = (item: ItemBase): boolean => item.placeholder !== false;
 
 /**
- * D-TRIB-8 na UI: o PDF só é servido daqui quando é **nosso** — `hospedado: true` E `pdf` presente.
+ * D-TRIB-8 na UI: o PDF só é servido daqui quando é **nosso e a autorização está registrada** —
+ * `hospedado: true`, `pdf` presente E `autorizacao` preenchida.
  *
- * Item de terceiro entra como link + resenha própria, e é por isso que os dois campos são
- * conferidos juntos: `pdf` preenchido sozinho não basta, porque a autorização mora no `hospedado`.
+ * Item de terceiro entra como link + resenha própria, e é por isso que os campos são conferidos
+ * juntos: `pdf` preenchido sozinho não basta, e `hospedado: true` sozinho também não.
+ *
+ * **A `autorizacao` entrou aqui porque o critério editorial afirma que ela "fica registrada"**
+ * (D-TRIB-10). Enquanto era só um booleano, `hospedado` dizia QUE houve autorização e nada sobre
+ * de quem, quando ou onde — e uma regra que não se pode conferir não é regra. Com o campo exigido,
+ * um item hospedado sem procedência degrada para link em vez de servir o arquivo. A conferência do
+ * catálogo (`types.test.ts`) pega o mesmo caso antes, na revisão; esta é a rede de baixo.
+ *
  * Predicado único para que a lista e o modal não possam divergir sobre o que é hospedado.
  */
 export const temPdfHospedado = (item: {
   pdf?: string;
   hospedado?: boolean;
-}): item is { pdf: string; hospedado: true } => item.hospedado === true && !!item.pdf;
+  autorizacao?: string;
+}): item is { pdf: string; hospedado: true; autorizacao: string } =>
+  item.hospedado === true && !!item.pdf && !!item.autorizacao?.trim();

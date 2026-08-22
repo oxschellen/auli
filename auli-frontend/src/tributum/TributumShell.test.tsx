@@ -72,8 +72,8 @@ const aguardarCarga = () =>
   waitFor(() => screen.getByText("Gasto tributário no ICMS"));
 
 /**
- * Catálogo do teste da D-TRIB-8: os três estados que decidem o botão "Ler PDF". Só o primeiro
- * autoriza — os outros dois são as duas metades que sozinhas não bastam.
+ * Catálogo do teste da D-TRIB-8/10: os quatro estados que decidem o botão "Ler PDF". Só o
+ * primeiro autoriza — os outros três são cada uma das condições faltando sozinha.
  */
 const CATALOGO_PDF = {
   artigos: [
@@ -82,6 +82,14 @@ const CATALOGO_PDF = {
       id: "nosso",
       titulo: "Nosso estudo",
       pdf: "/tributum/a.pdf",
+      hospedado: true,
+      autorizacao: "Autoria própria da curadoria (2026-08-21).",
+    },
+    {
+      ...CATALOGO.artigos[0],
+      id: "sem-procedencia",
+      titulo: "Sem procedência",
+      pdf: "/tributum/c.pdf",
       hospedado: true,
     },
     {
@@ -193,6 +201,10 @@ describe("D-TRIB-8 na UI: o botão 'Ler PDF'", () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByLabelText('Ler o PDF de "Sem arquivo"'),
+    ).not.toBeInTheDocument();
+    // D-TRIB-10: hospedado e com arquivo, mas sem a procedência registrada — degrada para link.
+    expect(
+      screen.queryByLabelText('Ler o PDF de "Sem procedência"'),
     ).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /Ler o PDF/ })).toHaveLength(
       1,
