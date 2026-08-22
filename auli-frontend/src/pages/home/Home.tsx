@@ -30,11 +30,11 @@ import { TarfList } from "../parecereslist/TarfList";
 import { LegislacaoList } from "../legislacaolist/LegislacaoList";
 import { NotasList } from "../notaslist/NotasList";
 import { ConteudosList } from "../conteudoslist/ConteudosList";
+import { CriteriosTributum } from "../../tributum/CriteriosTributum";
 import { ArtigosLista } from "../../tributum/ArtigosLista";
 import { InstituicoesLista } from "../../tributum/InstituicoesLista";
 import { DadosLista } from "../../tributum/DadosLista";
 import { AnalisesLista } from "../../tributum/AnalisesLista";
-import { CriteriosTributum } from "../../tributum/CriteriosTributum";
 import { DownloadsList } from "../downloadslist/DownloadsList";
 import { McpList } from "../mcplist/McpList";
 import { About } from "../about/About";
@@ -48,9 +48,10 @@ type Grupo = null | "acervo" | "tributum" | "integracoes" | "rodape";
 
 /** As seções, agrupadas para a sidebar. `collection: null` = sempre disponível
  *  (`chat` fala com o RAG da entidade, `about` é estático, `downloads` lista TODOS os
- *  estados, `mcp` são manuais globais, e as quatro do `tributum` são curadoria com catálogo
+ *  estados, `mcp` são manuais globais, e as cinco do `tributum` são curadoria com catálogo
  *  ÚNICO compartilhado por todas as entidades, D-TRIB-2); as demais dependem de a entidade ter
- *  a coleção. O rótulo de `mcp` virou "Conectar sua IA" — o id NÃO muda (ancora tab-/tabpanel-). */
+ *  a coleção. **`Critérios` abre o grupo**: a régua editorial vem antes das listas que ela
+ *  governa — quem chega à seção lê o que entra e o que não entra antes de ler a seleção. O rótulo de `mcp` virou "Conectar sua IA" — o id NÃO muda (ancora tab-/tabpanel-). */
 const TABS: {
   id: string;
   label: string;
@@ -67,11 +68,11 @@ const TABS: {
   { id: "legislacao", label: "Legislação", Component: LegislacaoList, collection: "legislacao", grupo: "acervo", Icone: MdOutlineMenuBook },
   { id: "notas", label: "Notas", Component: NotasList, collection: "notas", grupo: "acervo", Icone: MdOutlineStickyNote2 },
   { id: "conteudos", label: "Conteúdos", Component: ConteudosList, collection: "conteudos", grupo: "acervo", Icone: MdOutlineLibraryBooks },
+  { id: "tributum-criterios", label: "Critérios", Component: CriteriosTributum, collection: null, grupo: "tributum", Icone: MdOutlineRule },
   { id: "tributum-artigos", label: "Artigos e estudos", Component: ArtigosLista, collection: null, grupo: "tributum", Icone: MdOutlineArticle },
   { id: "tributum-instituicoes", label: "Instituições", Component: InstituicoesLista, collection: null, grupo: "tributum", Icone: MdOutlineAccountBalance },
   { id: "tributum-dados", label: "Dados", Component: DadosLista, collection: null, grupo: "tributum", Icone: MdOutlineDataset },
   { id: "tributum-analises", label: "Análises", Component: AnalisesLista, collection: null, grupo: "tributum", Icone: MdOutlineInsights },
-  { id: "tributum-criterios", label: "Critérios", Component: CriteriosTributum, collection: null, grupo: "tributum", Icone: MdOutlineRule },
   { id: "mcp", label: "Conectar sua IA", Component: McpList, collection: null, grupo: "integracoes", Icone: MdOutlinePower },
   { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null, grupo: "integracoes", Icone: MdOutlineFileDownload },
   { id: "about", label: "Sobre", Component: About, collection: null, grupo: "rodape", Icone: MdInfoOutline },
