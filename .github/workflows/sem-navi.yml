@@ -1,0 +1,22 @@
+name: sem-navi
+
+# Guard-rail barato: o repositório não nomeia a unidade de atendimento onde o Auli é usado
+# (TAREFA-SEM-NAVI, 22/08/2026). Só `git grep`, não compila nada — mesmo critério que torna o
+# `fmt` e o `scraper-boundary` aceitáveis, e que a §33.1 do auli_pendencias usa para recusar
+# gate de teste e de clippy: aqueles compilam, este não.
+#
+# SEM filtro de `paths`, de propósito, pela mesma razão dos irmãos: workflow que não dispara não
+# cria check run, e check OBRIGATÓRIO que nunca reporta trava a PR em "Expected" para sempre.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  # Nome do job = nome do check obrigatório. Distinto entre os workflows por isso.
+  sem-navi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: sem-navi guard
+        run: bash scripts/tools/check-sem-navi.sh
