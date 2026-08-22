@@ -1487,8 +1487,8 @@ silêncio. **O regime foi recusado — §38.3.** O conteúdo, não.
 
 **Estado: nada disso foi executado.** O `tributum.json` de 71 itens que a TAREFA diz acompanhar
 existe em `~/Downloads/tributum.json` (41 KB; 26 artigos, 19 instituições, 20 datasets, 6 análises —
-70 com `placeholder: false`, já com `verificado_em`), **fora do repositório e não versionado**. Se a
-TAREFA for adiada, é esse arquivo que se perde: convém trazê-lo para dentro antes de decidir o resto.
+70 com `placeholder: false`), **fora do repositório e não versionado**. Se a TAREFA for adiada, é
+esse arquivo que se perde: convém trazê-lo para dentro antes de decidir o resto.
 
 Fica de pé o ponto que a execução não resolve sozinha: **os 71 links foram conferidos por quem
 escreveu a TAREFA, em 22/08**, e enquanto ninguém os reconferir aqui, "verificado" é afirmação de
@@ -1496,9 +1496,10 @@ terceiro e não medição nossa.
 
 ### 38.3 A decisão: não haverá revalidação trimestral nem issue automática (2026-08-22)
 
-**Decidido pelo mantenedor.** Caem a D-TRIB-17 (revalidar a cada trimestre), a D-TRIB-19/20
-(`link_status` no item, bloqueando o merge) e a D-TRIB-21 (o `tributum-links.yml` com `cron` e
-`gh issue create`). O **conteúdo** da TAREFA — os 71 itens — não depende disso e segue executável.
+**Decidido pelo mantenedor.** Cai a **D-TRIB-17..21 inteira**: revalidação trimestral,
+`verificado_em`, `link_status` bloqueando o merge, o script e o `tributum-links.yml` com `cron` e
+`gh issue create`. Do §3 da TAREFA não entra nada. O **conteúdo** — os 71 itens — não depende disso
+e segue executável.
 
 **O que se perde, dito sem eufemismo.** A podridão de link é real e é silenciosa: `gov.br` roda
 Plone e troca UID de página sem redirecionar, o Ipea migrou de `handle` para `items/uuid`, revistas
@@ -1514,16 +1515,9 @@ critério editorial, é justamente ler, escolher e apresentar. A conferência do
 pessoa **quando ela mexe no catálogo**, que é quando ela já está com o arquivo aberto, e não numa
 data do calendário em que talvez não esteja.
 
-**O que isso obriga a decidir junto, quando o conteúdo entrar.** O arquivo entregue já traz
-`verificado_em` em todo item publicado (D-TRIB-18). Sem o script, **nada atualiza esse campo** — e
-uma data que ninguém renova afirma uma conferência que não está acontecendo, o que é pior que campo
-nenhum. As duas saídas honestas: tirar o campo, ou mantê-lo como registro de uma conferência única e
-datada. O que **não** entra é o teste do §3.4 da TAREFA (`todo item publicado tem verificado_em`):
-ele transformaria em obrigação de CI exatamente a promessa que esta decisão dispensa.
-
-O script `tributum-links.mjs` continua sendo uma ferramenta possível — rodado à mão na hora de mexer
-no catálogo, sem `cron`, sem issue e sem gate, ele custa uma linha de terminal. Isso é opção de quem
-edita, não regime.
+Conferir um link continua possível a qualquer momento — quem edita o catálogo abre o endereço, e
+nada disso precisa estar versionado. O que esta decisão recusa é o **regime**: a data no calendário,
+a issue que se abre sozinha e o gate que trava o merge.
 
 **Se um dia reabrir**, os fatos que mudariam a conta: um segundo Curador, um link morto encontrado
 em produção, ou o catálogo crescer além do que uma pessoa relê ao mexer nele.
