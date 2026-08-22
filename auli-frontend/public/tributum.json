@@ -1,80 +1,701 @@
 {
-  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true, o caminho em pdf E o campo autorizacao preenchido (quem autorizou, quando, por qual meio) — sem ele o item e servido como se fosse so link. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7).",
+  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true, o caminho em pdf E o campo autorizacao preenchido (quem autorizou, quando, por qual meio) — sem ele o item e servido como se fosse so link. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7). CURADORES (D-TRIB-11/13): cada estante tem nome obrigatorio.",
   "artigos": [
     {
-      "id": "exemplo-gasto-tributario-icms",
-      "titulo": "Gasto tributário e federalismo fiscal no ICMS",
-      "autores": "A. Silva e B. Costa",
-      "instituicao": "IPEA",
+      "id": "rfb-carga-tributaria-2024",
+      "titulo": "Carga Tributária no Brasil 2024",
+      "autores": "Centro de Estudos Tributários e Aduaneiros (CETAD)",
+      "instituicao": "Receita Federal",
       "ano": 2025,
-      "resumo": "Resenha da curadoria: estimativas de renúncia fiscal por UF e efeitos distributivos entre entes federados.",
-      "link": "https://www.ipea.gov.br/",
+      "resumo": "A série oficial, por tributo e por base de incidência. É contra ela que todo número de carga tributária precisa ser conferido — e a diferença para o número do Tesouro (que exclui FGTS e Sistema S) é o primeiro erro que um leitor desavisado comete.",
+      "link": "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/estudos/carga-tributaria/carga-tributaria-no-brasil-2024/view",
       "hospedado": false,
-      "placeholder": true
+      "placeholder": false
     },
     {
-      "id": "exemplo-reforma-atendimento",
-      "titulo": "Reforma tributária e o atendimento ao contribuinte",
-      "autores": "Colegas da SEFAZ-RS",
-      "instituicao": "SEFAZ-RS",
-      "ano": 2026,
-      "resumo": "Resenha da curadoria: nota técnica sobre impactos operacionais da transição IBS/CBS no atendimento.",
-      "link": "https://www.sefaz.rs.gov.br/",
+      "id": "rfb-bid-diagnostico-contencioso",
+      "titulo": "Diagnóstico do Contencioso Tributário Administrativo no Brasil",
+      "autores": "Receita Federal e Banco Interamericano de Desenvolvimento (execução: ABJ)",
+      "instituicao": "Receita Federal / BID",
+      "ano": 2022,
+      "resumo": "O retrato mais completo do contencioso administrativo no país, com relatório, sumário e painel. Quem lida com pareceres e acórdãos todo dia reconhece cada uma das oito travas apontadas.",
+      "link": "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/estudos/diagnostico-do-contencioso-tributario-administrativo",
       "hospedado": false,
-      "placeholder": true
+      "placeholder": false
+    },
+    {
+      "id": "stn-carga-tributaria-governo-geral-2024",
+      "titulo": "Carga Tributária do Governo Geral — 2024",
+      "autores": "Secretaria do Tesouro Nacional",
+      "instituicao": "Tesouro Nacional",
+      "ano": 2025,
+      "resumo": "A estimativa do Tesouro, alinhada ao padrão internacional. Ler ao lado da série da Receita: os dois números são corretos e diferentes, e saber por quê é metade da conversa sobre carga tributária.",
+      "link": "https://www.tesourotransparente.gov.br/publicacoes/carga-tributaria-do-governo-geral/2024/114",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ipea-td3142-gobetti-imposto-de-renda",
+      "titulo": "Ineficiências e iniquidades do imposto de renda: da agenda negligenciada para a próxima etapa da reforma tributária",
+      "autores": "Sérgio Wulff Gobetti",
+      "instituicao": "Ipea — Texto para Discussão 3142",
+      "ano": 2025,
+      "resumo": "Diagnóstico das distorções do IRPF e do IRPJ e o que fazer com elas. O autor, técnico do Ipea cedido à Fazenda gaúcha, escreve com a clareza de quem conhece os dois lados do balcão.",
+      "link": "https://repositorio.ipea.gov.br/handle/11058/17483",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ipea-td2956-politica-fiscal-desigualdade",
+      "titulo": "O papel da política fiscal no enfrentamento da desigualdade",
+      "autores": "Fernando Gaiger Silveira, Luana Passos, Matias Cardomingo, Jéssica Gomes, Luiz Di Rada, Manoel Pires e Nelson Marques",
+      "instituicao": "Ipea — Texto para Discussão 2956",
+      "ano": 2024,
+      "resumo": "Quem paga e quem recebe: tributos e transferências na ponta da distribuição. Leitura de base para entender por que a reforma do consumo e a da renda são a mesma discussão.",
+      "link": "https://repositorio.ipea.gov.br/bitstreams/3b403342-665c-44d1-9ce1-e9817977fe93/download",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ipea-td2530-reforma-federalismo-iva",
+      "titulo": "Reforma tributária e federalismo fiscal: uma análise das propostas de criação de um novo imposto sobre o valor adicionado para o Brasil",
+      "autores": "Ipea",
+      "instituicao": "Ipea — Texto para Discussão 2530",
+      "ano": 2019,
+      "resumo": "Compara as duas propostas de IVA que tramitavam em 2019 e estima a alíquota neutra. Foi escrito antes da EC 132 — e por isso mesmo mostra o que estava em jogo.",
+      "link": "https://repositorio.ipea.gov.br/items/369bf3d6-803c-4cf6-b6f6-94a5bf42737c",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ipea-td606-afonso-rezende-varsano",
+      "titulo": "Reforma tributária no plano constitucional: uma proposta para debate",
+      "autores": "José Roberto Afonso, Fernando Rezende e Ricardo Varsano",
+      "instituicao": "Ipea — Texto para Discussão 606",
+      "ano": 1998,
+      "resumo": "Três nomes que definiram o debate nos anos 1990 propõem um imposto compartilhado União–estados e uma contribuição social não cumulativa. Vinte e cinco anos depois, a EC 132 fez algo parecido.",
+      "link": "https://repositorio.ipea.gov.br/entities/publication/d99f0832-901d-45ed-bd12-8559398294e4",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ifi-ee19-reforma-tributaria",
+      "titulo": "Reforma Tributária: contexto, mudanças e impactos (Estudo Especial nº 19)",
+      "autores": "Instituição Fiscal Independente (relator: Marcus Pestana)",
+      "instituicao": "IFI — Senado Federal",
+      "ano": 2024,
+      "resumo": "O olhar do órgão técnico independente do Senado sobre a EC 132: o que avança, o que ficou para a lei complementar, e por que ninguém sabia a alíquota padrão em março de 2024.",
+      "link": "https://www12.senado.leg.br/ifi/pdf/ee19.pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "senado-td348-tributacao-em-expansao",
+      "titulo": "Tributação em expansão: medidas de elevação da arrecadação federal 2023–2025",
+      "autores": "Ivan Morais Ribeiro",
+      "instituicao": "Senado Federal — Consultoria Legislativa, Texto para Discussão 348",
+      "ano": 2025,
+      "resumo": "Inventário das medidas que elevaram a arrecadação federal em três anos, uma a uma. Útil para quem precisa separar o que foi reforma do que foi ajuste.",
+      "link": "https://www12.senado.leg.br/publicacoes/estudos-legislativos/tipos-de-estudos/textos-para-discussao/td348",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "camara-conleg-plp68-plp108",
+      "titulo": "Notas técnicas da Consultoria Legislativa sobre a regulamentação da reforma (PLP 68/2024 e PLP 108/2024)",
+      "autores": "Consultoria Legislativa da Câmara dos Deputados",
+      "instituicao": "Câmara dos Deputados",
+      "ano": 2024,
+      "resumo": "As duas notas que a Câmara produziu para seus próprios deputados sobre a Lei Geral do IBS/CBS/IS e o PLP do Comitê Gestor. Linguagem de quem precisa explicar a lei a quem vai votá-la.",
+      "link": "https://www.camara.leg.br/assessoria-de-imprensa/1082211-consultoria-legislativa-detalha-regulamentacao-da-reforma-tributaria/",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ccif-nt28-sinafi",
+      "titulo": "Nota Técnica XXVIII — Sistema Nacional de Fiscalização Integrado (SINAFI)",
+      "autores": "Centro de Cidadania Fiscal",
+      "instituicao": "CCiF",
+      "ano": 2024,
+      "resumo": "Como fiscalizar um imposto que é de todos os entes ao mesmo tempo. O CCiF é defensor declarado do modelo — leia como proposta, não como descrição.",
+      "link": "https://ccif.com.br/wp-content/uploads/2024/12/Nota-Tecnica-XXVIII-Sistema-Nacional-de-Fiscalizacao-Integrado-SINAFI.pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ccif-nt29-ibs-cbs-base-icms-iss",
+      "titulo": "Nota Técnica XXIX — IBS e CBS na base de cálculo do ICMS e do ISS",
+      "autores": "Centro de Cidadania Fiscal",
+      "instituicao": "CCiF",
+      "ano": 2025,
+      "resumo": "Uma tese econômica que virou disputa jurídica durante a transição. Relevante para quem vai responder sobre base de cálculo nos próximos sete anos.",
+      "link": "https://www.ccif.com.br/wp-content/uploads/2025/07/Nota-Tecnica-XXIX.-O-absurdo-juridico-da-tese-economica-que-pretende-incluir-o-IBS-e-a-CBS-na-base-de-calculo-do-ICMS-e-do-ISS.pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "made-npe71-reforma-irpf",
+      "titulo": "Reforma do IRPF: análise do PL 1.087/2025 e das propostas alternativas (Nota de Política Econômica 71)",
+      "autores": "Centro de Pesquisa em Macroeconomia das Desigualdades",
+      "instituicao": "Made — FEA/USP",
+      "ano": 2025,
+      "resumo": "Simula quem ganha e quem perde em cada desenho de isenção e imposto mínimo. Método aberto, dados públicos, conclusão clara.",
+      "link": "https://madeusp.com.br/wp-content/uploads/2025/06/npe71-reformairpf.pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ufpe-siqueira-reforma-consumo-plp68",
+      "titulo": "Impacto redistributivo da reforma da tributação do consumo no Brasil: simulações baseadas no PLP 68/2024",
+      "autores": "Rozane Bezerra de Siqueira, José Ricardo Nogueira e Carlos Feitosa Luna",
+      "instituicao": "UFPE / Fiocruz (pré-print, arXiv)",
+      "ano": 2024,
+      "resumo": "Microssimulação com a POF sobre quem paga mais e quem paga menos com o IVA dual. É um pré-print: não passou por revisão de pares — vale pela transparência do método.",
+      "link": "https://arxiv.org/pdf/2411.12110",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ufrgs-porsse-reestruturacao-icms-rs",
+      "titulo": "Exercícios de reestruturação tributária para o Rio Grande do Sul: análise com um modelo de equilíbrio geral computável inter-regional",
+      "autores": "Alexandre Alves Porsse, Patrícia Ullmann Palermo e Marcelo Savino Portugal",
+      "instituicao": "UFRGS / FEE — Encontro Nacional de Economia (ANPEC)",
+      "ano": 2010,
+      "resumo": "O que acontece com a arrecadação gaúcha se mexermos nas alíquotas de ICMS produto a produto. A resposta (pouco, e quase sempre para baixo) continua valendo.",
+      "link": "https://ideas.repec.org/p/anp/en2010/101.html",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "tesouro-cadernos-guerra-fiscal-stf",
+      "titulo": "Benefícios e competição fiscal entre estados brasileiros: judicialização da guerra fiscal do ICMS no Supremo Tribunal Federal",
+      "autores": "Menção Honrosa — Prêmio Tesouro Nacional 2019",
+      "instituicao": "Cadernos de Finanças Públicas — Tesouro Nacional / Enap",
+      "ano": 2019,
+      "resumo": "A guerra fiscal contada pelas ADIs que ela gerou. Monografia premiada, acesso aberto, método explícito.",
+      "link": "https://publicacoes.tesouro.gov.br/index.php/cadernos/article/view/79",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "cnm-ctat-nt1-2025-itbi",
+      "titulo": "Nota Técnica CTAT 1/2025 — Base de cálculo do ITBI após o Tema 1.113 do STJ",
+      "autores": "Conselho Técnico das Administrações Tributárias Municipais",
+      "instituicao": "CNM — CTAT",
+      "ano": 2025,
+      "resumo": "O que muda no lançamento do ITBI quando o STJ diz que o valor declarado se presume verdadeiro. A melhor orientação municipal em circulação sobre o tema.",
+      "link": "https://cnm.org.br/comunicacao/noticias/duvidas-sobre-a-base-de-calculo-do-itbi-ctat-orienta-municipios",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "cnm-ctat-nt2-2025-iss-construcao",
+      "titulo": "Nota Técnica CTAT 2/2025 — Dedução de materiais na base de cálculo do ISS na construção civil",
+      "autores": "Conselho Técnico das Administrações Tributárias Municipais",
+      "instituicao": "CNM — CTAT",
+      "ano": 2025,
+      "resumo": "Interpreta a jurisprudência do STF para o fisco municipal. Quem responde sobre ISS de obra reconhece a pergunta.",
+      "link": "https://cnm.org.br/comunicacao/noticias/municipios-devem-seguir-as-orientacoes-de-nota-tecnica-para-cobranca-do-iss-na-construcao-civil",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "cnm-ctat-nt10-2025-pgv-iptu",
+      "titulo": "Nota Técnica CTAT 10/2025 — Atualização da Planta Genérica de Valores do IPTU e integração ao CIB/Sinter",
+      "autores": "Conselho Técnico das Administrações Tributárias Municipais",
+      "instituicao": "CNM — CTAT",
+      "ano": 2025,
+      "resumo": "Como a reforma do consumo acaba mexendo no IPTU pela porta do cadastro imobiliário nacional.",
+      "link": "https://cnm.org.br/comunicacao/noticias/reforma-tributaria-atualizacao-da-planta-de-valores-genericos-do-iptu-e-tema-de-nota-tecnica",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "cnm-moskviak-iss-ibs-federalismo",
+      "titulo": "Reforma tributária e o novo federalismo fiscal: a transição do ISS para o IBS e a reconfiguração dos poderes municipais",
+      "autores": "Vanderlei Piala Moskviak",
+      "instituicao": "CNM — Portal da Reforma Tributária",
+      "ano": 2025,
+      "resumo": "Um fiscal de tributos de União da Vitória (PR) escreve, com nome próprio, sobre o que o município perde e ganha com o IBS. É exatamente o tipo de texto para o qual esta estante existe.",
+      "link": "https://reformatributaria.cnm.org.br/reforma-tributaria-e-o-novo-federalismo-fiscal-a-transicao-do-iss-para-o-ibs-e-a-reconfiguracao-dos-poderes-municipais/",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "comsefaz-gt08-guia-impactos-administrativos",
+      "titulo": "Guia de Orientações para Impactos Administrativos da Reforma Tributária (GT-08)",
+      "autores": "Grupo de Trabalho 08 do Pré-Comitê Gestor do IBS — Comsefaz, CNM e FNP",
+      "instituicao": "Comsefaz",
+      "ano": 2025,
+      "resumo": "Quarenta técnicos de estados e municípios escrevendo juntos sobre o que muda na administração tributária. Raro e pouco citado.",
+      "link": "https://comsefaz.org.br/novo/wp-content/uploads/2025/11/GT-08-Guia-Orientativo-para-Impactos-Administrativos-da-Reforma-Tributaria-1.pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "pgfn-revista-15",
+      "titulo": "Revista da PGFN, v. 15",
+      "autores": "Vários — procuradores e convidados",
+      "instituicao": "Procuradoria-Geral da Fazenda Nacional",
+      "ano": 2025,
+      "resumo": "Artigos assinados sobre execução fiscal, prescrição intercorrente e federalismo depois da EC 132. A visão de quem cobra.",
+      "link": "https://www.gov.br/pgfn/pt-br/central-de-conteudo/publicacoes/revista-pgfn/15_revistapgfn_.pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "revista-pgm-jp-azevedo-contencioso-ibs",
+      "titulo": "O contencioso administrativo tributário do IBS à luz do federalismo fiscal",
+      "autores": "Thaciano Rodrigues de Azevedo",
+      "instituicao": "Revista da Procuradoria-Geral do Município de João Pessoa",
+      "ano": 2025,
+      "resumo": "Como será julgar um imposto que pertence a 27 estados e 5.570 municípios ao mesmo tempo. Acesso aberto, método declarado.",
+      "link": "https://revistapgmjp.com.br/index.php/ojs/article/view/15",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "nova-economia-paes-simples-nacional",
+      "titulo": "Simples Nacional no Brasil: o difícil balanço entre estímulos e gastos tributários",
+      "autores": "Nelson Leitão Paes",
+      "instituicao": "Nova Economia — UFMG",
+      "ano": 2014,
+      "resumo": "Quanto custa o Simples e o que ele entrega. Artigo revisado por pares, em acesso aberto, ainda citado.",
+      "link": "https://www.redalyc.org/pdf/4004/400434063004.pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "enfoque-gonzales-corrar-st-icms-sp",
+      "titulo": "Reflexo da introdução da substituição tributária de ICMS na arrecadação do Estado de São Paulo",
+      "autores": "Alexandre Gonzales e Luiz João Corrar",
+      "instituicao": "Enfoque: Reflexão Contábil — UEM",
+      "ano": 2010,
+      "resumo": "Regressão múltipla sobre o que a ST fez com a arrecadação de um setor paulista. Pequeno, empírico, direto.",
+      "link": "https://doi.org/10.4025/enfoque.v29i3.11369",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ibdt-rdta-v62",
+      "titulo": "Revista Direito Tributário Atual, v. 62",
+      "autores": "Vários — revisão cega por pares",
+      "instituicao": "IBDT",
+      "ano": 2026,
+      "resumo": "O número corrente da revista do IBDT, vinculada à USP, em acesso aberto. Doutrina com revisão de pares, não opinião.",
+      "link": "https://revista.ibdt.org.br/index.php/RDTA/issue/current",
+      "hospedado": false,
+      "placeholder": false
     }
   ],
   "instituicoes": [
     {
+      "id": "receita-cetad",
+      "nome": "Receita Federal — Centro de Estudos Tributários e Aduaneiros",
+      "descricao": "Os estudos oficiais: carga tributária, contencioso, distribuição da renda, grandes números do IRPF, Simples Nacional. A página-índice de tudo isso.",
+      "homepage": "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/estudos",
+      "placeholder": false
+    },
+    {
       "id": "ipea",
-      "nome": "IPEA",
-      "descricao": "Pesquisa aplicada em políticas públicas, incluindo tributação e federalismo fiscal.",
-      "homepage": "https://www.ipea.gov.br/",
-      "placeholder": true
+      "nome": "Ipea — Instituto de Pesquisa Econômica Aplicada",
+      "descricao": "Textos para Discussão e Carta de Conjuntura sobre tributação e federalismo fiscal, todos em acesso aberto no repositório.",
+      "homepage": "https://repositorio.ipea.gov.br/",
+      "placeholder": false
+    },
+    {
+      "id": "ifi-senado",
+      "nome": "IFI — Instituição Fiscal Independente",
+      "descricao": "Órgão técnico autônomo do Senado. Relatório de Acompanhamento Fiscal mensal, Estudos Especiais e Notas Técnicas.",
+      "homepage": "https://www12.senado.leg.br/ifi/publicacoes-1",
+      "placeholder": false
+    },
+    {
+      "id": "senado-estudos-legislativos",
+      "nome": "Senado Federal — Consultoria Legislativa (Estudos Legislativos)",
+      "descricao": "Textos para Discussão e Boletins Legislativos com autoria nomeada, inclusive sobre tributação.",
+      "homepage": "https://www12.senado.leg.br/publicacoes/estudos-legislativos",
+      "placeholder": false
+    },
+    {
+      "id": "camara-estudos-notas-tecnicas",
+      "nome": "Câmara dos Deputados — Consultoria Legislativa",
+      "descricao": "Estudos e notas técnicas produzidos para os deputados, inclusive sobre a regulamentação da reforma tributária.",
+      "homepage": "https://www2.camara.leg.br/atividade-legislativa/estudos-e-notas-tecnicas",
+      "placeholder": false
+    },
+    {
+      "id": "fgv-ibre-observatorio",
+      "nome": "FGV IBRE — Observatório de Política Fiscal",
+      "descricao": "Séries históricas (carga tributária desde 1990) e análises sobre tributação, coordenadas por Manoel Pires.",
+      "homepage": "https://observatorio-politica-fiscal.ibre.fgv.br/",
+      "placeholder": false
     },
     {
       "id": "fgv-nef",
-      "nome": "FGV — Núcleo de Estudos Fiscais",
-      "descricao": "Estudos sobre sistema tributário, reforma e administração fazendária.",
-      "homepage": "https://direitosp.fgv.br/",
-      "placeholder": true
+      "nome": "FGV Direito SP — Núcleo de Estudos Fiscais",
+      "descricao": "Pesquisa empírica em direito tributário. A linha Macrovisão do Crédito Tributário trata do contencioso administrativo e da execução fiscal.",
+      "homepage": "https://direitosp.fgv.br/en/research-centers/fiscal-studies-center-nef",
+      "placeholder": false
     },
     {
-      "id": "ibdt",
-      "nome": "IBDT",
-      "descricao": "Instituto Brasileiro de Direito Tributário — doutrina e revista Direito Tributário Atual.",
-      "homepage": "https://ibdt.org.br/",
-      "placeholder": true
+      "id": "usp-made",
+      "nome": "Made — Centro de Pesquisa em Macroeconomia das Desigualdades (FEA/USP)",
+      "descricao": "Notas de Política Econômica e working papers sobre progressividade, IRPF e reforma do consumo; mantém o microssimulador BRASMOD.",
+      "homepage": "https://madeusp.com.br/tag/progressividade-tributaria/",
+      "placeholder": false
     },
     {
       "id": "ccif",
-      "nome": "CCiF",
-      "descricao": "Centro de Cidadania Fiscal — propostas de reforma do sistema tributário.",
-      "homepage": "https://ccif.com.br/",
-      "placeholder": true
+      "nome": "CCiF — Centro de Cidadania Fiscal",
+      "descricao": "Think tank que desenhou a base da PEC 45/2019. Notas técnicas numeradas sobre o IVA dual. Posição declarada a favor do modelo.",
+      "homepage": "https://ccif.com.br/categoria/notas-reforma-tributaria/",
+      "placeholder": false
     },
     {
-      "id": "receita-cetad",
-      "nome": "Receita Federal — CETAD",
-      "descricao": "Estudos tributários e aduaneiros oficiais; carga tributária e gasto tributário.",
-      "homepage": "https://www.gov.br/receitafederal/",
-      "placeholder": true
+      "id": "ibdt",
+      "nome": "IBDT — Instituto Brasileiro de Direito Tributário",
+      "descricao": "Edita a Revista Direito Tributário Atual e a Revista Direito Tributário Internacional Atual, ambas em acesso aberto.",
+      "homepage": "https://revista.ibdt.org.br/index.php/RDTA",
+      "placeholder": false
+    },
+    {
+      "id": "cnm-ctat",
+      "nome": "CNM — Conselho Técnico das Administrações Tributárias Municipais",
+      "descricao": "Notas técnicas numeradas e artigos sobre ISS, IPTU e ITBI. O produtor municipal mais consistente do país.",
+      "homepage": "https://reformatributaria.cnm.org.br/",
+      "placeholder": false
+    },
+    {
+      "id": "comsefaz",
+      "nome": "Comsefaz — Comitê Nacional de Secretários de Fazenda dos Estados e do DF",
+      "descricao": "Publicações e o Boletim Fiscal dos Estados. Representa os secretários estaduais — e diz isso.",
+      "homepage": "https://comsefaz.org.br/novo/boletim-fiscal-dos-estados-brasileiros/",
+      "placeholder": false
+    },
+    {
+      "id": "cgibs",
+      "nome": "CGIBS — Comitê Gestor do Imposto sobre Bens e Serviços",
+      "descricao": "O órgão que vai administrar o IBS. Portal de serviços, FAQ e atos conjuntos com a Receita Federal.",
+      "homepage": "https://www.cgibs.gov.br/",
+      "placeholder": false
+    },
+    {
+      "id": "pgfn-publicacoes",
+      "nome": "PGFN — Procuradoria-Geral da Fazenda Nacional (publicações)",
+      "descricao": "Revista da PGFN e estudos sobre dívida ativa e execução fiscal.",
+      "homepage": "https://www.gov.br/pgfn/pt-br/central-de-conteudo/publicacoes/revista-pgfn",
+      "placeholder": false
+    },
+    {
+      "id": "tesouro-cadernos",
+      "nome": "Tesouro Nacional — Cadernos de Finanças Públicas",
+      "descricao": "Monografias do Prêmio Tesouro Nacional e artigos em acesso aberto sobre finanças públicas e federalismo.",
+      "homepage": "https://publicacoes.tesouro.gov.br/index.php/cadernos",
+      "placeholder": false
+    },
+    {
+      "id": "dee-rs",
+      "nome": "DEE — Departamento de Economia e Estatística do RS (SPGG)",
+      "descricao": "Herdeiro da FEE. O Boletim de Conjuntura do RS tem seção própria de arrecadação de ICMS, com autoria nomeada.",
+      "homepage": "https://dee.rs.gov.br/",
+      "placeholder": false
+    },
+    {
+      "id": "ipece-ce",
+      "nome": "IPECE — Instituto de Pesquisa e Estratégia Econômica do Ceará",
+      "descricao": "A série Enfoque Econômico traz análises assinadas de arrecadação estadual.",
+      "homepage": "https://www.ipece.ce.gov.br/",
+      "placeholder": false
+    },
+    {
+      "id": "fjp-mg",
+      "nome": "Fundação João Pinheiro (MG)",
+      "descricao": "Boletim de finanças públicas de Minas e série de contas regionais.",
+      "homepage": "https://fjp.mg.gov.br/",
+      "placeholder": false
+    },
+    {
+      "id": "ibpt",
+      "nome": "IBPT — Instituto Brasileiro de Planejamento e Tributação",
+      "descricao": "Responsável pelo Impostômetro e pelo indicador de dias trabalhados para pagar impostos. A metodologia é contestada por economistas e pelo Comsefaz, e o instituto tem braço comercial. Está aqui porque é a fonte mais citada pelo público — leia como indicador de advocacy, não como estatística.",
+      "homepage": "https://ibpt.org.br/",
+      "placeholder": false
     }
   ],
   "dados": [
     {
-      "id": "exemplo-arrecadacao-icms-rs",
-      "titulo": "Arrecadação ICMS-RS por CNAE",
-      "fonte": "SEFAZ-RS / Dados abertos",
-      "periodo": "2015–2025",
+      "id": "rfb-dados-abertos",
+      "titulo": "Receita Federal — Dados Abertos",
+      "fonte": "Receita Federal",
+      "periodo": "2011–atual",
+      "formato": "csv / xlsx",
+      "atualizado_em": "2026-08",
+      "resumo": "Arrecadação por CNAE (mensal, desde 2011), renúncias, contencioso, créditos ativos, cadastros. A seção inteira é a fonte primária.",
+      "link": "https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/dados-abertos",
+      "placeholder": false
+    },
+    {
+      "id": "rfb-distribuicao-renda",
+      "titulo": "Receita Federal — Distribuição da Renda (estudos e dados)",
+      "fonte": "Receita Federal / CETAD",
+      "periodo": "série anual",
+      "formato": "xlsx / pdf",
+      "atualizado_em": "2026-08",
+      "resumo": "A base de microdados agregados das declarações de pessoa física que alimenta todo o debate sobre progressividade.",
+      "link": "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/estudos/distribuicao-da-renda",
+      "placeholder": false
+    },
+    {
+      "id": "rfb-grandes-numeros-irpf",
+      "titulo": "Receita Federal — Grandes Números do IRPF",
+      "fonte": "Receita Federal / CETAD",
+      "periodo": "série anual",
+      "formato": "xlsx / pdf",
+      "atualizado_em": "2026-08",
+      "resumo": "Estatísticas agregadas das DIRPF por faixa de renda, ocupação e UF.",
+      "link": "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/estudos/imposto-de-renda",
+      "placeholder": false
+    },
+    {
+      "id": "rfb-simples-nacional",
+      "titulo": "Receita Federal — Estudos sobre o Simples Nacional",
+      "fonte": "Receita Federal / CETAD",
+      "periodo": "série anual",
+      "formato": "xlsx / pdf",
+      "atualizado_em": "2026-08",
+      "resumo": "Grandes números das empresas optantes: quantas, onde, quanto faturam, quanto pagam.",
+      "link": "https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/estudos/simples-nacional",
+      "placeholder": false
+    },
+    {
+      "id": "stn-tesouro-transparente-siconfi",
+      "titulo": "Tesouro Transparente / Siconfi",
+      "fonte": "Secretaria do Tesouro Nacional",
+      "periodo": "2013–atual",
+      "formato": "API / csv / painéis",
+      "atualizado_em": "2026-06",
+      "resumo": "Contas de todos os entes subnacionais. A API do Siconfi é o jeito de comparar ICMS, IPVA e ITCD entre estados; em junho de 2026 ganhou consulta em linguagem natural (Siconfi.IA) e o painel Contas Públicas do Brasil.",
+      "link": "https://www.tesourotransparente.gov.br/",
+      "placeholder": false
+    },
+    {
+      "id": "fgv-opf-carga-tributaria-serie",
+      "titulo": "Carga Tributária no Brasil 1990–2024 (série histórica)",
+      "fonte": "FGV IBRE — Observatório de Política Fiscal",
+      "periodo": "1990–2024",
+      "formato": "xlsx",
+      "atualizado_em": "2025",
+      "resumo": "Série longa revisada, com a explicação de por que o número da Receita e o do Tesouro diferem.",
+      "link": "https://observatorio-politica-fiscal.ibre.fgv.br/series-historicas/carga-tributaria/carga-tributaria-no-brasil-1990-2024",
+      "placeholder": false
+    },
+    {
+      "id": "ocde-revenue-statistics-lac-2026",
+      "titulo": "Revenue Statistics in Latin America and the Caribbean 2026",
+      "fonte": "OCDE, CIAT, Cepal e BID",
+      "periodo": "1990–2024",
+      "formato": "pdf / base OECD.Stat",
+      "atualizado_em": "2026",
+      "resumo": "A comparação internacional padronizada. O Brasil aparece com a maior razão tributos/PIB da região.",
+      "link": "https://www.oecd.org/en/publications/revenue-statistics-in-latin-america-and-the-caribbean-2026_2f21f131-en.html",
+      "placeholder": false
+    },
+    {
+      "id": "comsefaz-boletim-fiscal-estados",
+      "titulo": "Boletim Fiscal dos Estados Brasileiros",
+      "fonte": "Comsefaz",
+      "periodo": "série",
+      "formato": "painel / pdf",
+      "atualizado_em": "2026",
+      "resumo": "Receitas, despesas e indicadores fiscais dos 27 entes, consolidados pelo comitê dos secretários.",
+      "link": "https://comsefaz.org.br/novo/boletim-fiscal-dos-estados-brasileiros/",
+      "placeholder": false
+    },
+    {
+      "id": "sefaz-rs-bet",
+      "titulo": "Boletim Econômico-Tributário da Receita Estadual do RS",
+      "fonte": "Receita Estadual — SEFAZ-RS",
+      "periodo": "2024–atual",
+      "formato": "pdf",
+      "atualizado_em": "2025-04",
+      "resumo": "Nasceu em maio de 2024 para medir, semana a semana, o efeito das enchentes sobre os contribuintes do ICMS — com base em NF-e e NFC-e. Virou panorama trimestral das empresas gaúchas e da arrecadação.",
+      "link": "https://www.fazenda.rs.gov.br/conteudo/20680/boletim-da-receita-estadual-apresenta-desempenho-das-empresas-e-do-icms-nos-tres-primeiros-meses-de-2025",
+      "placeholder": false
+    },
+    {
+      "id": "dee-rs-boletim-conjuntura-jan-2025",
+      "titulo": "Boletim de Conjuntura do RS — v. 6, n. 4",
+      "fonte": "DEE/SPGG-RS (Vanessa Sulzbach, Fernando Cruz, Martinho Lazzari e Tomás Torezani)",
+      "periodo": "2024",
+      "formato": "pdf",
+      "atualizado_em": "2025-01",
+      "resumo": "Conjuntura gaúcha com seção própria de arrecadação de ICMS. Autoria nomeada.",
+      "link": "https://dee.rs.gov.br/upload/arquivos/202501/30100421-boletim-de-conjuntura-do-rs-v-6-n-4-jan-2025.pdf",
+      "placeholder": false
+    },
+    {
+      "id": "dee-rs-nota-tecnica-enchentes",
+      "titulo": "Boletim de Conjuntura do RS — nota técnica sobre as enchentes de 2024",
+      "fonte": "DEE/SPGG-RS",
+      "periodo": "2024",
+      "formato": "pdf",
+      "atualizado_em": "2024",
+      "resumo": "O que a maior enchente da história do estado fez com a economia e a arrecadação, nos números do órgão de estatística.",
+      "link": "https://www.estado.rs.gov.br/upload/arquivos//boletim-de-conjuntura-do-rs-nota-tecnica.pdf",
+      "placeholder": false
+    },
+    {
+      "id": "sefaz-sp-eventos-estudos",
+      "titulo": "SEFAZ-SP — Eventos e Estudos",
+      "fonte": "Secretaria da Fazenda de São Paulo / Fundação SEADE",
+      "periodo": "série",
+      "formato": "pdf / xlsx",
+      "atualizado_em": "2026",
+      "resumo": "Boletim trimestral da economia paulista e valor adicionado dos contribuintes de ICMS por Região Administrativa e CNAE.",
+      "link": "https://portal.fazenda.sp.gov.br/acessoinformacao/Paginas/Eventos-e-Estudos.aspx",
+      "placeholder": false
+    },
+    {
+      "id": "ipece-enfoque-231-icms-ceara",
+      "titulo": "Enfoque Econômico nº 231 — Recuperação da arrecadação de ICMS do Ceará em 2021",
+      "fonte": "IPECE — Diretoria de Estudos Econômicos",
+      "periodo": "2021",
+      "formato": "pdf",
+      "atualizado_em": "2021-11",
+      "resumo": "Um exemplo da série de análises curtas e assinadas do órgão de planejamento cearense.",
+      "link": "https://www.ipece.ce.gov.br/wp-content/uploads/sites/45/2021/11/Enfoque_EconomicoN231_22112021.pdf",
+      "placeholder": false
+    },
+    {
+      "id": "sefaz-ce-arrecadacao",
+      "titulo": "SEFAZ-CE — Arrecadação (boletins e ICMS por CNAE)",
+      "fonte": "Secretaria da Fazenda do Ceará",
+      "periodo": "série mensal",
+      "formato": "xlsx / pdf",
+      "atualizado_em": "2026",
+      "resumo": "Boletins mensais de arrecadação estadual.",
+      "link": "https://www.sefaz.ce.gov.br/arrecadacao/",
+      "placeholder": false
+    },
+    {
+      "id": "sefaz-ba-arrecadacao-municipios",
+      "titulo": "SEFAZ-BA — Arrecadação mensal por município",
+      "fonte": "Secretaria da Fazenda da Bahia",
+      "periodo": "série mensal",
+      "formato": "xlsx",
+      "atualizado_em": "2026",
+      "resumo": "ICMS, IPVA, ITD e taxas por município — a base do índice de participação.",
+      "link": "https://www.sefaz.ba.gov.br/financas-publicas/arrecadacao-mensal-dos-municipios/",
+      "placeholder": false
+    },
+    {
+      "id": "sef-mg-receita-estado",
+      "titulo": "SEF-MG — Receita do Estado",
+      "fonte": "Secretaria de Estado de Fazenda de Minas Gerais",
+      "periodo": "série mensal",
+      "formato": "painel / xlsx",
+      "atualizado_em": "2026",
+      "resumo": "Evolução da receita arrecadada mineira, por tributo.",
+      "link": "https://www.fazenda.mg.gov.br/governo/receita_estado/",
+      "placeholder": false
+    },
+    {
+      "id": "pbh-boletim-receita-municipal",
+      "titulo": "Boletim da Receita Municipal de Belo Horizonte",
+      "fonte": "Subsecretaria da Receita Municipal — Prefeitura de Belo Horizonte",
+      "periodo": "2022–atual",
+      "formato": "pdf",
+      "atualizado_em": "2023",
+      "resumo": "O único boletim narrativo semestral de uma capital sobre ISS, IPTU e ITBI que encontramos. Quem cuida de tributos municipais deveria ler.",
+      "link": "https://prefeitura.pbh.gov.br/fazenda/boletim-receita-municipal",
+      "placeholder": false
+    },
+    {
+      "id": "sf-sp-rsatm-1sem-2025",
+      "titulo": "Relatório Simplificado de Arrecadação Tributária Municipal de São Paulo — 1º semestre de 2025",
+      "fonte": "Secretaria Municipal da Fazenda de São Paulo (Lei 17.097/2019)",
+      "periodo": "2025",
+      "formato": "html",
+      "atualizado_em": "2025-08",
+      "resumo": "Arrecadação por tributo, separando parcelamento, dívida ativa e recolhimento espontâneo, com número de contribuintes adimplentes e inadimplentes de ISS e IPTU.",
+      "link": "https://prefeitura.sp.gov.br/web/fazenda/w/rsatm012025",
+      "placeholder": false
+    },
+    {
+      "id": "smf-rio-dados-tributarios",
+      "titulo": "Dados tributários do Município do Rio de Janeiro",
+      "fonte": "Secretaria Municipal de Fazenda e Planejamento — Rio de Janeiro",
+      "periodo": "2016–atual",
+      "formato": "xlsx",
+      "atualizado_em": "2026",
+      "resumo": "Planilhas de ISS, IPTU e ITBI, inclusive valores médios por m² por trecho de logradouro. Dados, não estudo.",
+      "link": "https://fazenda.prefeitura.rio/",
+      "placeholder": false
+    },
+    {
+      "id": "poa-dados-abertos-iptu",
+      "titulo": "Porto Alegre — dados abertos de IPTU, ITBI e ISSQN",
+      "fonte": "Receita Municipal — Prefeitura de Porto Alegre",
+      "periodo": "2020–atual",
       "formato": "csv",
-      "atualizado_em": "2026-07",
-      "resumo": "Série mensal de arrecadação por setor econômico.",
-      "link": "https://dados.rs.gov.br/",
-      "placeholder": true
+      "atualizado_em": "2026",
+      "resumo": "Conjuntos abertos da Receita Municipal da capital. Dados, não estudo.",
+      "link": "https://dadosabertos.poa.br/dataset/iptu",
+      "placeholder": false
     }
   ],
   "analises": [
+    {
+      "id": "ipea-carta-conjuntura-gobetti-monteiro-redistributivo",
+      "titulo": "Impactos redistributivos da reforma tributária: estimativas atualizadas",
+      "autores": "Sérgio Wulff Gobetti e Priscila Kaiser Monteiro",
+      "ano": 2023,
+      "resumo": "Quanto cada estado e município ganha ou perde com a transição para o IBS, recalculado sobre o texto aprovado pela Câmara.",
+      "link": "https://repositorio.ipea.gov.br/items/4c72abdc-65cc-4675-8888-ee88ecd5d1de",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "fgv-opf-carga-efetiva-consumo-2022",
+      "titulo": "Carga tributária efetiva sobre o consumo no Brasil foi de cerca de 25% em 2022",
+      "autores": "Observatório de Política Fiscal (FGV IBRE) com o Made/USP",
+      "ano": 2023,
+      "resumo": "Um número que muda a conversa sobre a alíquota de referência do IVA: o que o consumo já paga hoje, de fato.",
+      "link": "https://observatorio-politica-fiscal.ibre.fgv.br/reformas/tributacao/carga-tributaria-efetiva-sobre-o-consumo-no-brasil-foi-de-cerca-de-25-em-2022",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "ifi-raf105-reforma-renda",
+      "titulo": "Relatório de Acompanhamento Fiscal nº 105 — a reforma da renda (PL 1.087/2025)",
+      "autores": "Instituição Fiscal Independente",
+      "ano": 2025,
+      "resumo": "O que a isenção até R$ 5 mil e o imposto mínimo custam e quem compensa. A conta feita por quem não é governo nem oposição.",
+      "link": "https://www12.senado.leg.br/ifi/publicacoes-1/relatorio/2025/outubro/relatorio-de-acompanhamento-fiscal-out-2025",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "tcu-gestao-tributaria-federal-2015-2021",
+      "titulo": "Os principais problemas na gestão tributária federal entre 2015 e 2021",
+      "autores": "Tribunal de Contas da União",
+      "ano": 2022,
+      "resumo": "Auditoria consolidada: divergências de arrecadação, demora na cobrança administrativa, renúncias sem avaliação. O controle externo olhando para o fisco.",
+      "link": "https://portal.tcu.gov.br/imprensa/noticias/tcu-aponta-os-principais-problemas-na-gestao-tributaria-federal-entre-2015-e-2021",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "dee-rs-boletim-conjuntura-jan-2026",
+      "titulo": "Boletim de Conjuntura do RS aponta crescimento acima da média nacional em 2026",
+      "autores": "DEE/SPGG-RS",
+      "ano": 2026,
+      "resumo": "ICMS gaúcho de 2025 em termos reais e o efeito do Refaz Reconstrução sobre a arrecadação. A análise mais recente sobre o imposto que o balcão gaúcho aplica todo dia.",
+      "link": "https://dee.rs.gov.br/boletim-de-conjuntura-aponta-perspectiva-de-crescimento-do-rs-acima-da-media-nacional-em-2026",
+      "hospedado": false,
+      "placeholder": false
+    },
     {
       "id": "exemplo-renuncia-por-uf",
       "titulo": "Visualização: renúncia fiscal por UF",
