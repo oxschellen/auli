@@ -286,6 +286,39 @@
       "link": "https://revista.ibdt.org.br/index.php/RDTA/issue/current",
       "hospedado": false,
       "placeholder": false
+    },
+    {
+      "id": "imb-go-renuncia-fiscal-2025",
+      "titulo": "Relatório de Renúncia Fiscal 2025",
+      "autores": "Sávio Luan da Costa Oliveira, Paulo Jackson Bezerra Vianna, Rubens Villar Siqueira e Wesley Modanez Freitas",
+      "instituicao": "Instituto Mauro Borges (IMB) — Governo de Goiás",
+      "ano": 2026,
+      "resumo": "R$ 16,35 bilhões renunciados em 2025: 4,2% do PIB goiano, 95% em ICMS, e a indústria com 70% do total. A série recua a 2016 (R$ 11,37 bi) e desce ao município, em mapas. É o documento que faltava nas fazendas estaduais — um Estado medindo o próprio gasto tributário, com equipe nomeada e ficha catalográfica. Leia como monitoramento, não como avaliação independente: quem mede o ProGoiás aqui é o governo que o concede. O mesmo PDF traz antes o Relatório Conjuntural da Economia Goiana 2025.",
+      "link": "https://transparencia.go.gov.br/wp-content/uploads/sites/2/2026/04/ANEXO-Capitulo-01-Relatorios-elaborados-pelo-IMB-Economia-Goiana-e-Renuncia-Fiscal.pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "df-seec-ldo2025-anexo-riscos-fiscais",
+      "titulo": "LDO 2025 — Anexo XII: Anexo de Riscos Fiscais",
+      "autores": "Secretaria de Estado de Economia do Distrito Federal (SEEC-DF)",
+      "instituicao": "Governo do Distrito Federal",
+      "ano": 2024,
+      "resumo": "Análise de sensibilidade da arrecadação de ICMS, ISS, IPVA e IPTU a desvios do PIB e do IPCA no triênio 2025–2027, com o método explícito. Vale pelo caso: o DF é o único ente que arrecada imposto estadual e municipal ao mesmo tempo — os quatro somaram 74% da receita tributária em 2023, o ICMS quase metade e o ISS 14% —, o que o aproxima do desenho do IBS. É peça orçamentária da LDO (LRF, art. 4º, §3º), não estudo; a ressalva fica aqui para o leitor não confundir.",
+      "link": "https://www.economia.df.gov.br/documents/d/seec/b12-2-anexo-xii-anexo-de-riscos-fiscais-consideracoes-finalizado-processo-sei-pdf",
+      "hospedado": false,
+      "placeholder": false
+    },
+    {
+      "id": "sefaz-sp-relatorio-anual-2023-cap1",
+      "titulo": "Relatório Anual do Governo 2023 — Cap. 1: Situação Econômico-Financeira",
+      "autores": "Secretaria da Fazenda e Planejamento do Estado de São Paulo",
+      "instituicao": "SEFAZ-SP",
+      "ano": 2024,
+      "resumo": "A queda real de 8% do ICMS paulista em 2023, atribuída às leis complementares de 2022 que desoneraram combustíveis, energia elétrica e comunicações — no mesmo capítulo em que estão o resultado primário de R$ 5,1 bilhões e a relação dívida/receita de 1,28. Prestação de contas com linguagem de governo, não estudo: entra pela série setorial de ICMS e pela análise que a acompanha.",
+      "link": "https://portal.fazenda.sp.gov.br/acessoinformacao/_layouts/15/download.aspx?SourceUrl=/acessoinformacao/Downloads/Relat%C3%B3rio-Anual-do-Governo-do-Estado/Cap.+1+-+Situa%C3%A7%C3%A3o+Econ%C3%B4mico-Financeira+do+Gov.+Estado.pdf",
+      "hospedado": false,
+      "placeholder": false
     }
   ],
   "instituicoes": [
@@ -420,6 +453,27 @@
       "nome": "IBPT — Instituto Brasileiro de Planejamento e Tributação",
       "descricao": "Responsável pelo Impostômetro e pelo indicador de dias trabalhados para pagar impostos. A metodologia é contestada por economistas e pelo Comsefaz, e o instituto tem braço comercial. Está aqui porque é a fonte mais citada pelo público — leia como indicador de advocacy, não como estatística.",
       "homepage": "https://ibpt.org.br/",
+      "placeholder": false
+    },
+    {
+      "id": "imb-go",
+      "nome": "Instituto Mauro Borges — Goiás",
+      "descricao": "O órgão de estatística e estudos socioeconômicos de Goiás, e a única fonte estadual que publica um relatório anual e assinado sobre a própria renúncia fiscal. Publica também o BDE e relatórios conjunturais.",
+      "homepage": "https://goias.gov.br/imb/",
+      "placeholder": false
+    },
+    {
+      "id": "ijsn-es",
+      "nome": "Instituto Jones dos Santos Neves — Espírito Santo",
+      "descricao": "O instituto de pesquisa e estatística capixaba, parceiro da SEFAZ-ES no painel de receitas do Estado. Mantém publicações, painéis interativos e dados abertos próprios.",
+      "homepage": "https://ijsn.es.gov.br/",
+      "placeholder": false
+    },
+    {
+      "id": "fundacao-seade",
+      "nome": "Fundação Seade — São Paulo",
+      "descricao": "O sistema estadual de análise de dados de São Paulo, referência nacional em estatística socioeconômica. Para o tributarista, o que interessa é a parceria com a administração tributária paulista, de onde sai o boletim de conjuntura.",
+      "homepage": "https://www.seade.gov.br/",
       "placeholder": false
     }
   ],
@@ -642,6 +696,61 @@
       "atualizado_em": "2026",
       "resumo": "Conjuntos abertos da Receita Municipal da capital. Dados, não estudo.",
       "link": "https://dadosabertos.poa.br/dataset/iptu",
+      "placeholder": false
+    },
+    {
+      "id": "imb-go-bde",
+      "titulo": "BDE-Goiás — Banco de Dados Estatísticos",
+      "fonte": "Instituto Mauro Borges (IMB)",
+      "periodo": "desde 1980, conforme a variável",
+      "formato": "html / xls",
+      "atualizado_em": "2026-08",
+      "resumo": "Séries físicas, econômicas, sociais, financeiras e administrativas do Estado e dos municípios, pesquisáveis por município, região do IBGE ou região de planejamento. Sistema antigo, servido em frames e sem API — abre no navegador, não em script.",
+      "link": "https://www.imb.go.gov.br/bde/",
+      "placeholder": false
+    },
+    {
+      "id": "sef-sc-dados-abertos",
+      "titulo": "Dados Abertos SC — Secretaria de Estado da Fazenda",
+      "fonte": "SEF-SC",
+      "periodo": "varia por conjunto",
+      "formato": "xlsx / csv / json",
+      "atualizado_em": "2026-08",
+      "resumo": "Trinta e cinco conjuntos publicados pela SEF no CKAN estadual, etiquetados por Arrecadação, Receita, ICMS e Transferência, além de gestão fiscal e orçamento. O endereço que circula com “/id/” no caminho devolve 404; este é o que responde.",
+      "link": "https://dados.sc.gov.br/organization/sef",
+      "placeholder": false
+    },
+    {
+      "id": "sefaz-pe-arrecadacao-por-setor",
+      "titulo": "Arrecadação por Setor da Economia — Pernambuco",
+      "fonte": "SEFAZ-PE",
+      "periodo": "não declarado na página",
+      "formato": "html",
+      "atualizado_em": "2026-08",
+      "resumo": "A arrecadação aberta por setor, no portal de Transparência e Cidadania Fiscal. Dado bruto: a página não traz descrição nem nota metodológica, e nenhum estudo assinado da Secretaria foi encontrado a acompanhá-la.",
+      "link": "https://www.sefaz.pe.gov.br/Transparencia/Transparencia%20e%20Cidadania%20Fiscal/Receita/Paginas/Arrecada%C3%A7%C3%A3o-por-setor-da-economia.aspx",
+      "placeholder": false
+    },
+    {
+      "id": "sefaz-pe-repasse-icms-municipios",
+      "titulo": "Repasse de ICMS aos municípios e índice de participação — Pernambuco",
+      "fonte": "SEFAZ-PE",
+      "periodo": "ano de distribuição corrente",
+      "formato": "html / pdf",
+      "atualizado_em": "2026-08",
+      "resumo": "O IPM provisório, o manual do índice e os valores repassados. Pernambuco põe critérios socioambientais na determinação do índice, ao lado das condições econômicas — um dos federalismos estaduais mais interessantes para estudar, e que a própria Secretaria não estuda.",
+      "link": "https://www.sefaz.pe.gov.br/Transparencia/Financas/Municipios/Paginas/Informacoes.aspx",
+      "placeholder": false
+    },
+    {
+      "id": "seade-conjuntura-economia-paulista",
+      "titulo": "Boletim Conjuntura da Economia Paulista",
+      "fonte": "Grupo de Conjuntura Econômica da Fundação Seade, publicado pela SEFAZ-SP",
+      "periodo": "trimestral",
+      "formato": "html / pdf",
+      "atualizado_em": "2026-08",
+      "resumo": "Fruto da parceria entre a Coordenadoria da Administração Tributária e a Fundação Seade: como o ICMS acompanha o nível de atividade. É o arranjo que quase nenhum Estado tem — o fisco publicando análise feita pelo órgão de estatística, em vez de nenhuma das duas coisas.",
+      "link": "https://portal.fazenda.sp.gov.br/acessoinformacao/Paginas/Boletim-Conjuntura-Econ%C3%B4mica-Paulista.aspx",
       "placeholder": false
     }
   ],
