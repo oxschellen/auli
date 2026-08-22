@@ -1352,7 +1352,7 @@ mod tests {
     /// D-LOG-6: o mês é derivado do timestamp DO UUID, em UTC, com instante fixo — exato em
     /// qualquer ambiente. 1788224400 = 2026-09-01T01:00:00Z: em UTC o mês é "2026-09"; em −03
     /// seria "2026-08". Verificação por mutação: trocar a derivação para horário local faz este
-    /// teste morrer em qualquer máquina fora de UTC (a de Carlos está em −03).
+    /// teste morrer em qualquer máquina fora de UTC (a de desenvolvimento está em −03).
     #[test]
     fn mes_do_log_e_utc_e_deriva_do_timestamp_do_uuid() {
         let ts = uuid::Timestamp::from_unix(uuid::NoContext, 1_788_224_400, 0);

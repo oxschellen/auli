@@ -4,7 +4,7 @@
 
 ## Fonte e corte
 
-- **Base textual:** consolidação LegisWeb (id=153614), com atribuição por dispositivo; **conferência de Carlos** no LEGIS AL-RS (IDNorma 19586) e/ou SEFAZ (inpKey=109695) — ambos bloqueiam fetch, mas abrem no navegador.
+- **Base textual:** consolidação LegisWeb (id=153614), com atribuição por dispositivo; **conferência do mantenedor** no LEGIS AL-RS (IDNorma 19586) e/ou SEFAZ (inpKey=109695) — ambos bloqueiam fetch, mas abrem no navegador.
 - **Link dos pares:** SEFAZ inpKey=109695 (padrão da Lei 6.537; o sistema não tem âncora por artigo).
 - **Corte:** texto vigente consolidado — últimas alterações Leis 16.243/16.244 de 2024 (efeitos 01/01/2025). SEM corte de reforma: a EC 132/2023 ainda não foi internalizada no ITCD gaúcho — o par 2 é a sentinela dessa natureza.
 - Ref: `lei-8821-1989-arts-1-7-texto-vigente.md` (15,3 KB, família texto-vigente).

@@ -4,7 +4,7 @@ Data: 19/08/2026. Escopo: lei completa, arts. 1.º a 20, em 40 pares P/R + ref t
 
 ## 1. Fonte
 
-- PDF compilado oficial da AL-RS (Gabinete de Consultoria Legislativa, repLegisComp), "Lei nº 08.115.pdf", atualizado até a Lei n.º 16.307, de 31/05/2025. Obtido por upload manual de Carlos (rota RITCD — AL-RS bloqueada para fetch por robots).
+- PDF compilado oficial da AL-RS (Gabinete de Consultoria Legislativa, repLegisComp), "Lei nº 08.115.pdf", atualizado até a Lei n.º 16.307, de 31/05/2025. Obtido por upload manual do mantenedor (rota RITCD — AL-RS bloqueada para fetch por robots).
 - Discriminação do texto vigente: redações superadas aparecem RISCADAS nas imagens das páginas e cada dispositivo traz anotação "(Redação dada/Incluído/Renumerado pela Lei X)". A camada de texto extraída NÃO preserva o riscado — a discriminação foi feita pelas imagens das páginas + encadeamento das anotações de alteração.
 - Link dos pares: SEFAZ inpKey=109693 (conferir o host/formato exato do link na integração — padrão dos acervos anteriores).
 
@@ -53,5 +53,5 @@ Data: 19/08/2026. Escopo: lei completa, arts. 1.º a 20, em 40 pares P/R + ref t
 
 ## 6. Pendências
 
-- Revisão de Carlos no site do Auli + integração (rename canônico via mddoc, rebuild, posição na aba: "Lei 8115..." ordena entre "Lei 6537" e "Lei 8821" — conferir).
+- Revisão do mantenedor no site do Auli + integração (rename canônico via mddoc, rebuild, posição na aba: "Lei 8115..." ordena entre "Lei 6537" e "Lei 8821" — conferir).
 - Conferir host/formato exato do link SEFAZ (inpKey=109693) na integração.

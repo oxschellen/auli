@@ -4,7 +4,7 @@
 
 ## Fonte — MUDANÇA DE MÉTODO
 
-- Base textual: **arquivo oficial da SEFAZ enviado por Carlos** (RI_ITCD_RS.txt, 82,7 KB), consolidação "atualizado até o Decreto 58.093 (DOE 08/04/25)". Upload manual = rota padrão para fontes com bloqueio de robots.
+- Base textual: **arquivo oficial da SEFAZ enviado pelo mantenedor** (RI_ITCD_RS.txt, 82,7 KB), consolidação "atualizado até o Decreto 58.093 (DOE 08/04/25)". Upload manual = rota padrão para fontes com bloqueio de robots.
 - **Ref por EXTRAÇÃO DIRETA do arquivo** (sem redigitação): `dec-33156-1989-titulo-1-texto-vigente.md` (60,2 KB, Título I integral, arts. 1º–33). Fidelidade absoluta à fonte; atribuições no formato "Alteração nº X" preservadas.
 - Validação cruzada: tabelas dos arts. 22/23 do decreto CONFEREM com as dos arts. 18/19 da Lei 8.821 (ref da E3 da lei).
 

@@ -314,7 +314,7 @@ disparam esses padrões. Se algum dia o acervo passar a ser anonimizado, começa
 
 ## 6. Anonimização **estrutural** de pareceres (aberta — próximo passo, 2026-08-04)
 
-Direção nova, e a mais promissora depois da §5. O Carlos vai **buscar o texto de pareceres novos**
+Direção nova, e a mais promissora depois da §5. O mantenedor vai **buscar o texto de pareceres novos**
 para analisarmos a estrutura do documento; a hipótese é **anonimizar apenas a parte do documento
 que identifica o contribuinte**, em vez de varrer o texto inteiro com reconhecedores de entidade.
 
@@ -351,7 +351,7 @@ ingestão — a §2.1 do plano avisa que essa escolha já foi feita errado uma v
 
 ### 6.1 O acervo atual **já vem saneado da fonte**
 
-Ponto de partida, confirmado pelo Carlos e corroborado pela contagem: **os pareceres públicos já
+Ponto de partida, confirmado pelo mantenedor e corroborado pela contagem: **os pareceres públicos já
 são saneados pela própria SEFAZ antes da publicação.** Não é efeito colateral do nosso pipeline
 nem sorte de amostragem — é etapa editorial do publicador. A medição nas quatro entidades com
 pareceres indexados:
