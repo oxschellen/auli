@@ -802,7 +802,8 @@ Controles compensatórios:
 
 | Controle | Estado |
 | --- | --- |
-| Permissão | `logs/` **0700**, arquivos **0600** — reaplicado a cada gravação pelo `log_question`, então um diretório herdado com modo frouxo se conserta sozinho. |
+| Layout | `logs/AAAA-MM/{data-local}_{uuid}.txt` desde 20/08/2026 (D-LOG-6). A subpasta é o mês **UTC** derivado do timestamp embutido no UUID v7 — a mesma função pura que a rota usa para procurar. A raiz plana guarda o legado de 09–20/08 e não recebe mais nada (D-LOG-7). |
+| Permissão | `logs/` **0700**, arquivos **0600** — reaplicado a cada gravação pelo `log_question`, então um diretório herdado com modo frouxo se conserta sozinho. **A subpasta do mês herda o mesmo 0700**, também reaplicado a cada gravação. |
 | Versionamento | `**/logs/` está no `.gitignore` — nunca vai ao GitHub. Confira com `git check-ignore -v logs/`. |
 | Retenção | **manual** (ver abaixo). Não há expurgo automático. ⚠️ **Desde 2026-08-02 o MCP também grava**, e o regime de volume é outro: o chat é ~1 arquivo por interação humana, enquanto um assistente faz **várias** chamadas por conversa. Reavaliar a periodicidade do expurgo — a doutrina de retenção não mudou, o volume sim. |
 | Cópia/compartilhamento | Quem lê o diretório lê PII. Não colar trecho de log em issue, PR ou chat sem revisar. |
@@ -825,7 +826,9 @@ Três consequências operacionais:
 - **os arquivos são servidos da máquina do Desktop Server**, um por vez e sob demanda; nada é
   copiado para o VPS, e o deploy do estático não muda;
 - **logs anteriores a 09/08/2026 não têm UUID no nome e são inalcançáveis pela rota** — sem
-  migração retroativa, por decisão (D-LOG-1);
+  migração retroativa, por decisão (D-LOG-1). Os de 09–20/08, que têm UUID mas vivem na raiz plana,
+  **continuam alcançáveis**: a rota tenta a subpasta do mês e, no miss, cai na raiz (D-LOG-7).
+  Também sem migração — o legado morre com a retenção;
 - o **expurgo** abaixo segue valendo tal como está: um log podado responde `404` com a mesma
   mensagem de um que nunca existiu, de propósito.
 
@@ -834,14 +837,23 @@ Retenção — o expurgo é seu, e não roda sozinho:
 ```bash
 find logs -name '*.txt' -mtime +90 -print          # o que sairia (confira ANTES)
 find logs -name '*.txt' -mtime +90 -delete         # expurga o que passou de 90 dias
+rm -r logs/2026-08                                 # ou o mês inteiro, de uma vez
 ```
+
+O `find` já era recursivo e segue valendo sem mudança. O `rm -r` do mês é o que a subpasta
+acrescenta: uma unidade natural de poda, em vez de contar dias.
 
 Para medir a exposição sem imprimir nada (útil antes de compartilhar a pasta):
 
 ```bash
-grep -lE '[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}' logs/*.txt | wc -l   # arquivos com CPF
-grep -lE '\[(CPF|CNPJ)_[0-9]+\]' logs/*.txt | wc -l                   # arquivos onde o anon atuou
+grep -rlE '[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}' --include='*.txt' logs/ | wc -l   # arquivos com CPF
+grep -rlE '\[(CPF|CNPJ)_[0-9]+\]' --include='*.txt' logs/ | wc -l                   # arquivos onde o anon atuou
 ```
+
+> ⚠️ **`logs/*.txt` deixou de ver tudo.** Com a subpasta mensal, o glob plano enxerga só o legado
+> da raiz — e devolve um número tranquilizador e errado. Os comandos desta seção e das 7.1/7.2 já
+> estão na forma recursiva (`grep -r … --include='*.txt' logs/`); qualquer receita antiga que você
+> tenha guardado precisa do mesmo tratamento.
 
 ### 7.1 Latência por fase (linha `TEMPOS`)
 
@@ -850,7 +862,7 @@ pergunta, CPU), `retrieve+montagem` (varredura + leitura dos corpos + montagem d
 (a chamada externa) e `total`:
 
 ```bash
-grep -h "^TEMPOS" logs/*.txt        # a série temporal, uma linha por consulta
+grep -rh "^TEMPOS" --include='*.txt' logs/   # a série temporal, uma linha por consulta
 ```
 
 Exemplo real (pareceres, RS): `embed: 18 ms · retrieve+montagem: 0 ms · llm: 3487 ms · total: 3508
@@ -903,7 +915,7 @@ A seção vive **só no log**. O bloco que vai ao prompt do LLM não muda um byt
 `rag` nos dois lugares, e os testes `montar_rag_*_pina_o_formato` a travam byte a byte.
 
 ```bash
-grep -h "aderência" logs/*.txt | sort -t' ' -k4 -n | head   # os piores casos do acervo
+grep -rh "aderência" --include='*.txt' logs/ | sort -t' ' -k4 -n | head   # os piores casos do acervo
 ```
 
 ---

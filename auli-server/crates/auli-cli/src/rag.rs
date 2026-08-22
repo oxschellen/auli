@@ -688,6 +688,28 @@ pub(crate) fn log_dir() -> String {
     std::env::var("AULI_LOG_DIR").unwrap_or_else(|_| "./logs".to_string())
 }
 
+/// Subpasta mensal (`AAAA-MM`) de um log, derivada do timestamp embutido no UUID v7 (D-LOG-6).
+///
+/// FUNÇÃO PURA e ÚNICA: a gravação cria a pasta por ela e a rota `GET /v1/log/{uuid}` procura por
+/// ela — uma fonte só, então os dois lados não podem divergir. O mês é **UTC** de propósito:
+/// determinístico em qualquer ambiente (o CI roda em UTC, a máquina em −03), exatamente testável,
+/// e imune a mudança de fuso do servidor entre gravar e ler. O preço é um descompasso cosmético de
+/// até 3h com o prefixo LOCAL do nome do arquivo na virada do mês — não afeta lookup nem retenção.
+///
+/// `None` para UUID sem timestamp (não-v7): a rota nunca emitiu um, então não há o que procurar
+/// (D-LOG-8).
+///
+/// **O que não dá para fazer** é reconstruir o nome exato e abrir direto: o prefixo humano vem de
+/// `chrono::Local::now()`, um relógio DIFERENTE do embutido no UUID (dois reads separados, podem
+/// divergir de segundo) e em fuso local. Daí varrer o mês — pequeno e limitado — em vez de
+/// perseguir um O(1) frágil.
+pub(crate) fn mes_do_log(id: Uuid) -> Option<String> {
+    let ts = id.get_timestamp()?;
+    let (secs, nanos) = ts.to_unix();
+    let instante = chrono::DateTime::from_timestamp(secs as i64, nanos)?;
+    Some(instante.format("%Y-%m").to_string())
+}
+
 /// `pub(crate)` porque a face MCP grava pelo MESMO caminho — mesmo diretório, mesmas permissões
 /// (0700/0600), mesmo formato. Duplicar o gravador criaria dois lugares para acertar a doutrina de
 /// §7.0 do `auli_operations.md`; `answer: None` é a única diferença (o MCP não chama LLM).
@@ -709,11 +731,25 @@ pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<Uuid> {
         fs::set_permissions(&log_dir, fs::Permissions::from_mode(0o700))?;
     }
     let agora = chrono::Local::now();
-    // O prefixo de data continua na frente porque é para HUMANOS: `ls logs/` segue cronológico e
+    // O prefixo de data continua na frente porque é para HUMANOS: `ls` do mês segue cronológico e
     // legível. O UUID v7 vai de sufixo e desempata o que o prefixo não distingue — dois registros
     // no mesmo segundo —, porque seus 48 bits mais significativos são o timestamp em ms.
     let id = Uuid::now_v7();
-    let path = format!("{}/{}_{id}.txt", log_dir, agora.format("%Y-%m-%d_%H-%M-%S"));
+    // A SUBPASTA vem do timestamp do PRÓPRIO UUID (D-LOG-6), nunca de um segundo relógio: é a
+    // mesma função pura que a rota usa para procurar, então gravação e leitura não podem divergir
+    // — nem a cavalo da virada de mês. (O `agora` acima segue existindo só para o prefixo humano.)
+    let mes = mes_do_log(id)
+        .ok_or_else(|| std::io::Error::other("UUID v7 recém-gerado sem timestamp — impossível"))?;
+    let mes_dir = format!("{log_dir}/{mes}");
+    fs::create_dir_all(&mes_dir)?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        // O mesmo 0700 da raiz, reaplicado a cada gravação pelo mesmo motivo de lá: `create_dir_all`
+        // não reaplica modo em diretório que já existe.
+        fs::set_permissions(&mes_dir, fs::Permissions::from_mode(0o700))?;
+    }
+    let path = format!("{mes_dir}/{}_{id}.txt", agora.format("%Y-%m-%d_%H-%M-%S"));
     let stamp = agora.format("%Y-%m-%d %H:%M:%S").to_string();
     let content = format_log_record(&stamp, reg);
     let mut opts = OpenOptions::new();
@@ -741,7 +777,7 @@ mod tests {
     use super::{
         FAQ_BAND, FAQ_FLOOR, LEG_BAND, LEG_FLOOR, PAR_BAND, PAR_FLOOR, QueryType, RegistroConsulta,
         SVC_BAND, SVC_FLOOR, TemposConsulta, Uuid, aderencia, bandas, bloco_documento, envolver,
-        format_log_record, log_question, montar_aderencia, montar_rag_colecao_unica,
+        format_log_record, log_question, mes_do_log, montar_aderencia, montar_rag_colecao_unica,
         montar_rag_servicos_faqs,
     };
     use auli_contract::{DocumentoPack, Kind, mddoc};
@@ -1266,7 +1302,7 @@ mod tests {
         let dir = &*DIR_DE_TESTE;
         let id = log_question(&registro_de_teste()).unwrap();
 
-        let achado = std::fs::read_dir(dir)
+        let achado = std::fs::read_dir(dir.join(mes_do_log(id).unwrap()))
             .unwrap()
             .flatten()
             .map(|e| e.file_name().to_string_lossy().into_owned())
@@ -1291,7 +1327,7 @@ mod tests {
         assert_ne!(a, b, "dois registros não podem compartilhar identidade");
 
         for id in [a, b] {
-            let arquivo = std::fs::read_dir(dir)
+            let arquivo = std::fs::read_dir(dir.join(mes_do_log(id).unwrap()))
                 .unwrap()
                 .flatten()
                 .map(|e| e.path())
@@ -1308,6 +1344,61 @@ mod tests {
                 1,
                 "{arquivo:?} tem mais de um registro — a colisão voltou"
             );
+        }
+    }
+
+    // ---- Subpasta mensal (D-LOG-6/7/8) ----
+
+    /// D-LOG-6: o mês é derivado do timestamp DO UUID, em UTC, com instante fixo — exato em
+    /// qualquer ambiente. 1788224400 = 2026-09-01T01:00:00Z: em UTC o mês é "2026-09"; em −03
+    /// seria "2026-08". Verificação por mutação: trocar a derivação para horário local faz este
+    /// teste morrer em qualquer máquina fora de UTC (a de Carlos está em −03).
+    #[test]
+    fn mes_do_log_e_utc_e_deriva_do_timestamp_do_uuid() {
+        let ts = uuid::Timestamp::from_unix(uuid::NoContext, 1_788_224_400, 0);
+        let id = Uuid::new_v7(ts);
+        assert_eq!(mes_do_log(id).as_deref(), Some("2026-09"));
+    }
+
+    /// D-LOG-8: UUID sem timestamp embutido (v4) não tem mês — e portanto não tem busca.
+    #[test]
+    fn mes_do_log_e_none_para_uuid_sem_timestamp() {
+        assert_eq!(mes_do_log(Uuid::new_v4()), None);
+    }
+
+    /// D-LOG-6 do lado da gravação: o arquivo nasce DENTRO da subpasta que `mes_do_log` deriva do
+    /// UUID devolvido — a mesma função que a rota vai usar para procurar. E a subpasta herda o
+    /// 0700 da raiz: o conteúdo é deliberadamente íntegro, a proteção é de acesso.
+    #[test]
+    fn log_e_gravado_na_subpasta_do_mes_do_uuid() {
+        let dir = &*DIR_DE_TESTE;
+        let id = log_question(&registro_de_teste()).unwrap();
+        let mes_dir = dir.join(mes_do_log(id).unwrap());
+
+        let achado = std::fs::read_dir(&mes_dir)
+            .unwrap()
+            .flatten()
+            .map(|e| e.file_name().to_string_lossy().into_owned())
+            .find(|n| n.ends_with(&format!("_{id}.txt")));
+        assert!(
+            achado.is_some(),
+            "o log de {id} não está em {}",
+            mes_dir.display()
+        );
+
+        // A RAIZ não recebe mais nada: só a subpasta. É a metade "congelada" da D-LOG-7.
+        let na_raiz = std::fs::read_dir(dir).unwrap().flatten().any(|e| {
+            e.file_name()
+                .to_string_lossy()
+                .ends_with(&format!("_{id}.txt"))
+        });
+        assert!(!na_raiz, "a raiz plana não deveria receber log novo");
+
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let modo = std::fs::metadata(&mes_dir).unwrap().permissions().mode() & 0o777;
+            assert_eq!(modo, 0o700, "a subpasta do mês tem o mesmo 0700 da raiz");
         }
     }
 }
