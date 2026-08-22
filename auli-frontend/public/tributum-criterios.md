@@ -18,11 +18,13 @@ Ver o próprio ofício tratado com seriedade por outras pessoas muda o peso do t
 
 ## O Curador
 
-Cada estante tem um Curador: uma pessoa que lê, escolhe e apresenta. Pode ser quem atende, quem pesquisa, quem ensina, quem programa. A curadoria não é cargo nem função institucional — é uma tarefa que alguém aceita por gosto, e que pode ser passada adiante.
+O Tributum tem um Curador: uma pessoa que lê, escolhe e apresenta. Pode ser quem atende, quem pesquisa, quem ensina, quem programa. A curadoria não é cargo nem função institucional — é uma tarefa que alguém aceita por gosto, e que pode ser passada adiante.
 
-O Curador escreve a resenha de cada item com as próprias palavras, dizendo por que vale a leitura. A escolha é dele, e a responsabilidade também. Tributum não fala por nenhuma instituição, nenhum órgão, nenhum governo. Fala pelas pessoas que assinam o que está nele.
+Quem quiser pode cuidar de um item: indicar, resenhar e responder por ele com o próprio nome. A curadoria é de pessoas, não de prateleiras — alguém que acompanha três estudos sobre um imposto e um livro tem uma curadoria inteira, ainda que ela atravesse mais de uma estante.
 
-Os Curadores e seus contatos estão listados no rodapé de cada estante.
+Quem cuida de um item escreve a resenha com as próprias palavras, dizendo por que vale a leitura. A escolha é dessa pessoa, e a responsabilidade também. Tributum não fala por nenhuma instituição, nenhum órgão, nenhum governo. Fala pelas pessoas que assinam o que está nele.
+
+O Curador e o contato estão no rodapé de cada estante.
 
 ## O que entra
 
@@ -46,6 +48,6 @@ Tributum só guarda uma cópia do arquivo quando o autor autorizou expressamente
 
 ## Como entrar na estante
 
-Escreveu algo? Leu algo que merece estar aqui? Mande ao Curador da estante correspondente: título, autor, data, onde está publicado — e, se quiser que o arquivo seja hospedado, a autorização por escrito.
+Escreveu algo? Leu algo que merece estar aqui? Mande ao Curador: título, autor, data, onde está publicado — e, se quiser que o arquivo seja hospedado, a autorização por escrito.
 
 Não há promessa de inclusão nem prazo. Há a promessa de leitura. E um item sai a qualquer momento, a pedido do autor.

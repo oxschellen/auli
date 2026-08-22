@@ -1454,8 +1454,8 @@ itens, e os 9 são exemplo**.
 
 ### 38.1 O `contato` do Curador: o texto publicado promete o que a tela não mostra
 
-A linha 25 de [tributum-criterios.md](auli-frontend/public/tributum-criterios.md) afirma: "Os
-Curadores e seus contatos estão listados no rodapé de cada estante". O bloco `curadores` do
+O [tributum-criterios.md](auli-frontend/public/tributum-criterios.md) afirma: "O Curador e o
+contato estão no rodapé de cada estante". O bloco `curadores` do
 [tributum.json](auli-frontend/public/tributum.json) traz **só `nome`** nas quatro estantes, o campo
 `Curador.contato` é opcional, e o [RodapeCurador](auli-frontend/src/tributum/RodapeCurador.tsx)
 renderiza o nome sozinho — sem erro, sem aviso. Quem lê o critério e vai ao rodapé não encontra o que
