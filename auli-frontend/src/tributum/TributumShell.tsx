@@ -11,7 +11,7 @@ import type { Estante, ItemBase } from "./types";
 interface Props<T extends ItemBase> {
   /** Título da seção, e o que entra no placeholder da busca e nas mensagens de vazio. */
   titulo: string;
-  /** Qual das quatro estantes esta aba mostra. */
+  /** Qual das cinco estantes esta aba mostra. */
   secao: Estante;
   /** Substantivo do contador, singular e plural ("artigo"/"artigos"). */
   substantivo: [string, string];
@@ -22,10 +22,10 @@ interface Props<T extends ItemBase> {
 }
 
 /**
- * O esqueleto das quatro listas do Tributum: barra de busca fixa no topo com contador, o gate de
+ * O esqueleto das cinco listas do Tributum: barra de busca fixa no topo com contador, o gate de
  * carga/erro e a lista de cartões.
  *
- * **Componente compartilhado, e não quatro cópias**, porque aqui as quatro abas compartilham tudo
+ * **Componente compartilhado, e não cinco cópias**, porque aqui as cinco abas compartilham tudo
  * menos os campos exibidos — é o oposto do caso da `LegislacaoList`, que documenta por que NÃO
  * reusou a `JurisprudenciaList` (lá os dois modos não compartilhavam nada além da caixa de busca).
  * O que varia vem por prop; o que é igual mora uma vez só.

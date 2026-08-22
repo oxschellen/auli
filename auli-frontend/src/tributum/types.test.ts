@@ -13,7 +13,7 @@
 import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 
-import { ehPlaceholder, temPdfHospedado, type TributumCatalogo } from "./types";
+import { ehPlaceholder, ESTANTES, temPdfHospedado, type TributumCatalogo } from "./types";
 
 describe("ehPlaceholder (D-TRIB-7)", () => {
   it("só publica com `false` explícito", () => {
@@ -75,14 +75,14 @@ describe("public/tributum.json", () => {
     readFileSync(new URL("../../public/tributum.json", import.meta.url), "utf-8"),
   ) as TributumCatalogo & { _leia_me?: string };
 
-  it("tem as quatro seções, todas arrays", () => {
-    for (const secao of ["artigos", "instituicoes", "dados", "analises"] as const) {
+  it("tem as cinco seções, todas arrays", () => {
+    for (const secao of ESTANTES) {
       expect(Array.isArray(catalogo[secao]), secao).toBe(true);
     }
   });
 
   it("todo item tem `id`, e os ids não colidem dentro da seção", () => {
-    for (const secao of ["artigos", "instituicoes", "dados", "analises"] as const) {
+    for (const secao of ESTANTES) {
       const ids = catalogo[secao].map((i) => i.id);
       expect(ids.every(Boolean), `${secao}: item sem id`).toBe(true);
       expect(new Set(ids).size, `${secao}: id repetido`).toBe(ids.length);
@@ -135,11 +135,45 @@ describe("public/tributum.json", () => {
    * estante não declara curador, o que é o desenho certo (nome não se inventa) — mas silencioso.
    * Este teste é o que torna a lacuna visível: se uma estante ficar sem curador, ele nomeia qual.
    */
-  it("as quatro estantes declaram curador", () => {
-    const semCurador = (["artigos", "instituicoes", "dados", "analises"] as const).filter(
-      (e) => !catalogo.curadores?.[e]?.nome?.trim(),
-    );
+  it("todas as estantes declaram curador", () => {
+    const semCurador = ESTANTES.filter((e) => !catalogo.curadores?.[e]?.nome?.trim());
     expect(semCurador, "estante sem curador declarado").toEqual([]);
+  });
+
+  /**
+   * D-TRIB-22 no dado: livro não tem `pdf` nem `hospedado`. O modo de falha que isto pega é o
+   * concreto — copiar um artigo, trocar os campos e esquecer os dois que sobraram; a UI de Livros
+   * nem os lê, então o erro passaria invisível até alguém tentar entender por que estão lá.
+   */
+  it("nenhum livro traz `pdf` ou `hospedado`", () => {
+    const comCampoDeArtigo = catalogo.livros
+      .filter((l) => "pdf" in l || "hospedado" in l)
+      .map((l) => l.id);
+    expect(comCampoDeArtigo, "livro com campo de artigo").toEqual([]);
+  });
+
+  /**
+   * D-TRIB-23/24: o `link` é a "fonte localizável" que o critério editorial exige, e o `acesso` é a
+   * promessa que a lista faz ao leitor antes do clique. A conferência vale só para o que está
+   * publicado — item de exemplo pode ter `link` incompleto, e é para isso que o selo serve.
+   */
+  it("todo livro publicado tem `link` https e `acesso` válido", () => {
+    const publicados = catalogo.livros.filter((l) => l.placeholder === false);
+    expect(
+      publicados.filter((l) => !l.link?.startsWith("https://")).map((l) => l.id),
+      "livro publicado sem link https",
+    ).toEqual([]);
+    expect(
+      publicados
+        .filter((l) => !["aberto", "comercial", "biblioteca"].includes(l.acesso))
+        .map((l) => l.id),
+      "livro publicado com acesso fora do vocabulário",
+    ).toEqual([]);
+  });
+
+  /** D-TRIB-25: resenha do Curador é obrigatória — inclusive nos exemplos, que mostram o formato. */
+  it("todo livro tem `resumo` não vazio", () => {
+    expect(catalogo.livros.filter((l) => !l.resumo?.trim()).map((l) => l.id)).toEqual([]);
   });
 
   /** A regra de direitos viaja com o arquivo — quem abrir o JSON para editar lê antes de colar. */

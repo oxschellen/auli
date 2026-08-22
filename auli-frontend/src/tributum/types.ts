@@ -57,6 +57,29 @@ export interface Analise extends ItemBase {
   autorizacao?: string;
 }
 
+/** Como se chega ao livro (D-TRIB-24). Vira selo na lista, para o leitor saber antes de clicar. */
+export type AcessoLivro = "aberto" | "comercial" | "biblioteca";
+
+/**
+ * Livro (D-TRIB-22). **Não tem `pdf` nem `hospedado`, e a ausência é o desenho**: obra comercial
+ * não se hospeda, e livro aberto já está publicado por quem o publica — entra pelo `link`.
+ * Aparecer `pdf` aqui um dia é decisão de schema, não descuido de quem copiou um artigo; por isso
+ * a conferência do catálogo recusa esses campos em vez de ignorá-los.
+ */
+export interface Livro extends ItemBase {
+  titulo: string;
+  autores: string;
+  editora: string;
+  ano: number;
+  /** Opcional (D-TRIB-23): edição antiga e publicação institucional muitas vezes não têm. */
+  isbn?: string;
+  acesso: AcessoLivro;
+  /** Resenha do Curador — nunca a sinopse da editora, que é material promocional (D-TRIB-25). */
+  resumo: string;
+  /** Editora, repositório ou catálogo de biblioteca. Obrigatório: é a "fonte localizável". */
+  link: string;
+}
+
 /**
  * Quem lê, escolhe e apresenta uma estante. O critério editorial promete o nome e o contato no
  * rodapé de cada uma — a curadoria é pessoal e nomeada de propósito: ela não é cargo nem função
@@ -68,14 +91,31 @@ export interface Curador {
   contato?: string;
 }
 
-/** As quatro estantes. `criterios` é a régua, não é estante — por isso fica fora daqui. */
-export type Estante = "artigos" | "instituicoes" | "dados" | "analises";
+/** As cinco estantes. `criterios` é a régua, não é estante — por isso fica fora daqui. */
+export type Estante = "artigos" | "instituicoes" | "dados" | "analises" | "livros";
+
+/**
+ * As estantes em ordem de menu, para quem precisa percorrer todas.
+ *
+ * Existe para que acrescentar a sexta seja uma linha e não uma caçada: antes da estante Livros, a
+ * conferência do catálogo repetia o array literal em três lugares, e nada obrigava os três a
+ * concordarem com o tipo `Estante`. O `satisfies` é o que amarra — sobrou ou faltou estante, não
+ * compila.
+ */
+export const ESTANTES = [
+  "artigos",
+  "instituicoes",
+  "dados",
+  "analises",
+  "livros",
+] as const satisfies readonly Estante[];
 
 export interface TributumCatalogo {
   artigos: Artigo[];
   instituicoes: Instituicao[];
   dados: Dataset[];
   analises: Analise[];
+  livros: Livro[];
   /**
    * Curador por estante. **Opcional por estante**: o rodapé só aparece onde há alguém declarado.
    * Nome de curador não se inventa nem se herda — estante sem curador é estante sem rodapé, e a

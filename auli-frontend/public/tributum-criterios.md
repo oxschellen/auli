@@ -8,7 +8,7 @@ O Auli existe para achar o documento certo na hora certa: o serviço, a pergunta
 
 Tributum é outra coisa. É o que acontece depois do balcão, quando alguém que passa os dias dentro da legislação para, olha em volta e escreve sobre o que viu. Um estudo sobre como a arrecadação de um imposto se distribui entre regiões. Uma análise de por que certo dispositivo gera tanta consulta. Uma base de dados que ninguém sabia que existia. Um artigo de alguém que senta a três mesas de distância.
 
-Aqui você vai encontrar quatro estantes: **Artigos e estudos**, **Instituições**, **Dados** e **Análises**. Nenhuma delas alimenta o assistente. O que está aqui é para ser lido por gente, com tempo — não para compor respostas automáticas.
+Aqui você vai encontrar cinco estantes: **Artigos e estudos**, **Instituições**, **Dados**, **Análises** e **Livros**. Nenhuma delas alimenta o assistente. O que está aqui é para ser lido por gente, com tempo — não para compor respostas automáticas.
 
 ## Por que isso importa para quem usa o Auli
 

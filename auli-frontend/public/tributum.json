@@ -1,5 +1,5 @@
 {
-  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true, o caminho em pdf E o campo autorizacao preenchido (quem autorizou, quando, por qual meio) — sem ele o item e servido como se fosse so link. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7). CURADORES (D-TRIB-11/13): cada estante tem nome obrigatorio. Links conferidos em 2026-08-22.",
+  "_leia_me": "REGRA DE DIREITOS (D-TRIB-8): material de terceiros entra como link + resenha propria, NUNCA como PDF hospedado. PDF hospedado exige hospedado:true, o caminho em pdf E o campo autorizacao preenchido (quem autorizou, quando, por qual meio) — sem ele o item e servido como se fosse so link. Datasets publicos podem ser hospedados citando a fonte. Item sem placeholder:false explicito e tratado como exemplo (D-TRIB-7). CURADORES (D-TRIB-11/13): cada estante tem nome obrigatorio. LIVROS (D-TRIB-22/25): nunca hospedados; acesso em aberto|comercial|biblioteca; resumo e do Curador, nunca sinopse de editora. Links conferidos em 2026-08-22.",
   "artigos": [
     {
       "id": "rfb-carga-tributaria-2024",
@@ -818,6 +818,42 @@
       "placeholder": true
     }
   ],
+  "livros": [
+    {
+      "id": "varsano-sistema-tributario-brasileiro",
+      "titulo": "A evolução do sistema tributário brasileiro ao longo do século: anotações e reflexões para futuras reformas",
+      "autores": "Ricardo Varsano",
+      "editora": "Ipea (Texto para Discussão 405, edição em livro)",
+      "ano": 1996,
+      "acesso": "aberto",
+      "resumo": "A história do sistema tributário de 1891 a 1988 contada por quem ajudou a desenhá-lo. Curto, e ainda a melhor porta de entrada.",
+      "link": "https://repositorio.ipea.gov.br/",
+      "placeholder": true
+    },
+    {
+      "id": "appy-et-al-reforma-tributaria-ibs",
+      "titulo": "Reforma tributária: IBS e CBS",
+      "autores": "(a confirmar — coletânea sobre a EC 132/2023)",
+      "editora": "(a confirmar)",
+      "ano": 2024,
+      "acesso": "comercial",
+      "resumo": "(resenha do Curador)",
+      "link": "https://",
+      "placeholder": true
+    },
+    {
+      "id": "rezende-financas-publicas",
+      "titulo": "Finanças Públicas",
+      "autores": "Fernando Rezende",
+      "editora": "Atlas",
+      "ano": 2001,
+      "isbn": "(a confirmar)",
+      "acesso": "comercial",
+      "resumo": "O manual brasileiro de finanças públicas; o capítulo sobre federalismo fiscal explica por que o ICMS é como é.",
+      "link": "https://",
+      "placeholder": true
+    }
+  ],
   "curadores": {
     "artigos": {
       "nome": "Wagner Bomfim"
@@ -829,6 +865,9 @@
       "nome": "Wagner Bomfim"
     },
     "analises": {
+      "nome": "Wagner Bomfim"
+    },
+    "livros": {
       "nome": "Wagner Bomfim"
     }
   }

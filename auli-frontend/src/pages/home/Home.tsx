@@ -14,6 +14,7 @@ import {
   MdOutlineAccountBalance,
   MdOutlineDataset,
   MdOutlineInsights,
+  MdOutlineAutoStories,
   MdOutlineRule,
   MdOutlineFileDownload,
   MdOutlinePower,
@@ -35,6 +36,7 @@ import { ArtigosLista } from "../../tributum/ArtigosLista";
 import { InstituicoesLista } from "../../tributum/InstituicoesLista";
 import { DadosLista } from "../../tributum/DadosLista";
 import { AnalisesLista } from "../../tributum/AnalisesLista";
+import { LivrosLista } from "../../tributum/LivrosLista";
 import { DownloadsList } from "../downloadslist/DownloadsList";
 import { McpList } from "../mcplist/McpList";
 import { About } from "../about/About";
@@ -48,7 +50,7 @@ type Grupo = null | "acervo" | "tributum" | "integracoes" | "rodape";
 
 /** As seções, agrupadas para a sidebar. `collection: null` = sempre disponível
  *  (`chat` fala com o RAG da entidade, `about` é estático, `downloads` lista TODOS os
- *  estados, `mcp` são manuais globais, e as cinco do `tributum` são curadoria com catálogo
+ *  estados, `mcp` são manuais globais, e as seis do `tributum` são curadoria com catálogo
  *  ÚNICO compartilhado por todas as entidades, D-TRIB-2); as demais dependem de a entidade ter
  *  a coleção. **`Critérios` abre o grupo**: a régua editorial vem antes das listas que ela
  *  governa — quem chega à seção lê o que entra e o que não entra antes de ler a seleção. O rótulo de `mcp` virou "Conectar sua IA" — o id NÃO muda (ancora tab-/tabpanel-). */
@@ -73,6 +75,7 @@ const TABS: {
   { id: "tributum-instituicoes", label: "Instituições", Component: InstituicoesLista, collection: null, grupo: "tributum", Icone: MdOutlineAccountBalance },
   { id: "tributum-dados", label: "Dados", Component: DadosLista, collection: null, grupo: "tributum", Icone: MdOutlineDataset },
   { id: "tributum-analises", label: "Análises", Component: AnalisesLista, collection: null, grupo: "tributum", Icone: MdOutlineInsights },
+  { id: "tributum-livros", label: "Livros", Component: LivrosLista, collection: null, grupo: "tributum", Icone: MdOutlineAutoStories },
   { id: "mcp", label: "Conectar sua IA", Component: McpList, collection: null, grupo: "integracoes", Icone: MdOutlinePower },
   { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null, grupo: "integracoes", Icone: MdOutlineFileDownload },
   { id: "about", label: "Sobre", Component: About, collection: null, grupo: "rodape", Icone: MdInfoOutline },
