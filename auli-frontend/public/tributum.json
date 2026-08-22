@@ -87,5 +87,19 @@
       "autorizacao": "Material próprio da curadoria do Tributum — autoria e hospedagem do próprio Auli (2026-08-21).",
       "placeholder": true
     }
-  ]
+  ],
+  "curadores": {
+    "artigos": {
+      "nome": "Wagner Bomfim"
+    },
+    "instituicoes": {
+      "nome": "Wagner Bomfim"
+    },
+    "dados": {
+      "nome": "Wagner Bomfim"
+    },
+    "analises": {
+      "nome": "Wagner Bomfim"
+    }
+  }
 }

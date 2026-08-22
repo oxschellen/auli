@@ -130,6 +130,18 @@ describe("public/tributum.json", () => {
     }
   });
 
+  /**
+   * O critério editorial promete nome e contato no rodapé de CADA estante. O rodapé some quando a
+   * estante não declara curador, o que é o desenho certo (nome não se inventa) — mas silencioso.
+   * Este teste é o que torna a lacuna visível: se uma estante ficar sem curador, ele nomeia qual.
+   */
+  it("as quatro estantes declaram curador", () => {
+    const semCurador = (["artigos", "instituicoes", "dados", "analises"] as const).filter(
+      (e) => !catalogo.curadores?.[e]?.nome?.trim(),
+    );
+    expect(semCurador, "estante sem curador declarado").toEqual([]);
+  });
+
   /** A regra de direitos viaja com o arquivo — quem abrir o JSON para editar lê antes de colar. */
   it("carrega a regra de direitos no `_leia_me`", () => {
     expect(catalogo._leia_me).toContain("D-TRIB-8");
