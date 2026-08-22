@@ -8,8 +8,9 @@ administrative notes (_notas_) — with links back to the source.
 
 The pilot tenant is **SEFAZ-RS** (Rio Grande do Sul); the system is **multi-tenant by state**, so
 one codebase serves many secretariats from isolated data. **All 27 registered states** have their
-service catalog collected. As of 2026-08-09 the corpus is **48.408 documents**: 22.476 acórdãos of
-the TARF, 19.780 pareceres, 4.205 serviços and 1.947 FAQs.
+service catalog collected; on top of that come the case-law corpora — TARF acórdãos and pareceres —,
+plus FAQs, notas, conteúdos and legislação. For the count of the moment, read it off the pack
+manifests: [`docs/auli_operations.md`](docs/auli_operations.md) §4.1 has the one-liner.
 
 - 🌐 Production: [auli.com.br](https://auli.com.br) · API: `https://api.auli.com.br/v1` ·
   MCP: `https://api.auli.com.br/mcp`
@@ -221,9 +222,9 @@ serves an incomplete TLS chain that has to be pinned. Each crate documents its p
 [`SCRAPERS.md`](auli-server/crates/scrapers/SCRAPERS.md).
 
 - **RS** (`auli-scraper-rs`) — FAQs (portal CMS via AJAX/`ureq`) + serviços (**headless Chrome** for
-  the listing, `ureq` for details) + **TARF**: 22.476 acórdãos from the state tax court, the single
+  the listing, `ureq` for details) + **TARF**: the acórdãos of the state tax court, the single
   largest collection in the project.
-- **SP / PR / SC** — plus **pareceres**: 15.605, 2.060 and 1.743 opinions respectively.
+- **SP / PR / SC** — plus **pareceres**, São Paulo being by far the largest of the three.
 - On-disk **cache** with an offline `--usecache` mode; **dedup** of services shared across audiences.
 
 The cache is **cache-first always** — `--usecache` only changes what a miss does (bail vs. network).
@@ -296,16 +297,16 @@ Required variables panic at startup if missing.
 
 ## Content types
 
-| Type          | What it is                                     | Where it appears today                          | Volume |
-| ------------- | ---------------------------------------------- | ----------------------------------------------- | ------ |
-| **TARF**      | Rulings of the state tax court (2nd instance)  | Chat (dedicated query type) + tab + **MCP**     | 22.476 (RS) |
-| **Pareceres** | Legal/technical opinions                       | Chat (dedicated query type) + tab + **MCP**     | 19.780 (SP, PR, SC, RS) |
-| **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab                       | 4.205 across 27 states |
-| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | 1.947 (RS) |
+| Type          | What it is                                     | Where it appears today                          | Coverage |
+| ------------- | ---------------------------------------------- | ----------------------------------------------- | -------- |
+| **TARF**      | Rulings of the state tax court (2nd instance)  | Chat (dedicated query type) + tab + **MCP**     | RS |
+| **Pareceres** | Legal/technical opinions                       | Chat (dedicated query type) + tab + **MCP**     | SP, PR, SC, RS |
+| **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab                       | all 27 states |
+| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | RS |
 | **Notas**     | Administrative/tax notes                       | Notas tab (reference)                           | RS |
 | **Conteúdos** | Misc reference materials                       | Conteúdos tab (reference)                       | RS |
 
-Rows are ordered by volume, and the order is the point: the TARF alone outweighs every parecer
+Rows are ordered by size, and the order is the point: the TARF alone outweighs every parecer
 combined.
 
 **Serviços and FAQs** feed the default chat mode. **Pareceres and TARF acórdãos** each have their
@@ -319,9 +320,9 @@ related. **Notas and Conteúdos** remain reference-only navigation.
 
 - **Working today:** RAG chat for the configured state, the full UI (chat, reference tabs,
   downloads, connector guides, state selection with map), local embeddings, an MCP server for
-  external assistants. **All 27 registered states have serviços collected** (4.205), pareceres for
-  four (19.780), and — for RS — FAQs (1.947) and the TARF acórdãos (22.476, collection closed
-  2026-08-09). The backend is open (no auth) and database-free — it serves from packs alone.
+  external assistants. **All 27 registered states have serviços collected**, pareceres for four,
+  and — for RS — FAQs and the TARF acórdãos (collection closed 2026-08-09). The backend is open (no
+  auth) and database-free — it serves from packs alone.
 - **In progress:** FAQs beyond RS, automated scraping of notas, and a controlled vocabulary for the
   legal-provision graph.
 

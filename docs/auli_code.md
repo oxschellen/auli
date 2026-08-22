@@ -370,8 +370,7 @@ N cópias coexistem sem coordenação.
   modelo real (`manifest_validates_and_query_retrieves`, os dois de `/v1/retrieve`, os três de
   `embed::testes_ordem`), o golden do RS (`golden_rs_equivalence`, precisa de `AULI_GOLDEN_DATA`) e
   as duas ferramentas de A/B (`ab_faq_pr`, `dump_pool`).
-- **Pacotes reais gerados** via `auli update` (`strategy_version: 2`): **29.732 documentos** nas 27
-  entidades — 4.205 serviços, 19.780 pareceres, 1.947 FAQs e 3.800 acórdãos do TARF. O manifest
+- **Pacotes reais gerados** via `auli update` (`strategy_version: 2`) nas 27 entidades. O manifest
   confere — `bytes` e `hash` FNV-1a batem com os arquivos (o `packs::load_all` re-hasheia e alerta em
   divergência); todos os vetores em dim 1024; chave `document` preservada. Distribuição do momento:
   ver `docs/auli_operations.md` §4.1, que traz o comando que a imprime dos manifestos.
