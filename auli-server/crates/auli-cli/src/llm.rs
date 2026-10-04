@@ -2,6 +2,8 @@
 
 use std::time::Duration;
 
+use tracing::warn;
+
 use crate::config::config;
 use crate::error::Result;
 
@@ -12,7 +14,8 @@ use crate::error::Result;
 /// - `max_completion_tokens 8192` (era 4096) e `reasoning_effort` do `.env` (D-SF-6): nos modelos de
 ///   raciocínio, os tokens de saída incluem o raciocínio. Com esforço alto, 4096 arriscaria o
 ///   modelo gastar a cota pensando e devolver conteúdo vazio — o mesmo defeito que o `Low` do lote
-///   de sinopses existe para quebrar. Risco previsto, não medido.
+///   de sinopses existe para quebrar. Medido em 04/10/2026: com `high`, nem 8192 bastam ao
+///   gpt-oss-120b (3 de 4 chamadas vazias) — use `medium`; o vazio vira erro em [`texto_ou_aviso`].
 pub async fn chat(system_prompt: &str, user_message: &str) -> Result<String> {
     chamar(system_prompt, user_message, Duration::from_secs(30)).await
 }
@@ -45,7 +48,46 @@ async fn chamar(system_prompt: &str, user_message: &str, timeout: Duration) -> R
         reasoning_effort: config().llm_reasoning_effort,
     };
     // O chat do RAG não usa o headroom de rate-limit (isso é do lote de sinopses offline).
-    Ok(auli_llm::chat(&params, system_prompt, user_message)
-        .await?
-        .text)
+    let resp = auli_llm::chat(&params, system_prompt, user_message).await?;
+    Ok(texto_ou_aviso(resp.text, resp.finish_reason.as_deref()))
+}
+
+/// Conteúdo vazio vira texto de erro, no idioma dos erros de API do `auli-llm`.
+///
+/// Existe porque o vazio passava calado: com `reasoning_effort=high`, o gpt-oss-120b gastou os 8192
+/// tokens raciocinando (`finish_reason=length`) em 3 de 4 chamadas, e o usuário recebia uma resposta
+/// em branco, sem erro nem aviso no log. Fica aqui, e não no `auli-llm`, porque os lotes offline
+/// (sinopse, extração) contam com o vazio para cair na validação e re-tentar com `Low` — um texto de
+/// erro de API os faria desistir sem o resgate. Na triagem, o texto não é JSON: ela falha aberta.
+fn texto_ou_aviso(texto: String, finish_reason: Option<&str>) -> String {
+    if !texto.trim().is_empty() {
+        return texto;
+    }
+    let motivo = finish_reason.unwrap_or("ausente");
+    warn!("o LLM devolveu conteúdo vazio (finish_reason={motivo})");
+    format!(
+        "Erro na chamada da API do modelo AI: o modelo não produziu resposta \
+         (finish_reason={motivo}). Tente novamente."
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn conteudo_vazio_vira_erro_com_o_finish_reason() {
+        let t = texto_ou_aviso("  \n".into(), Some("length"));
+        assert!(t.starts_with("Erro na chamada da API"), "{t}");
+        assert!(t.contains("finish_reason=length"), "{t}");
+        assert!(texto_ou_aviso(String::new(), None).contains("finish_reason=ausente"));
+    }
+
+    #[test]
+    fn conteudo_presente_passa_intacto() {
+        assert_eq!(
+            texto_ou_aviso("**Resumo**".into(), Some("stop")),
+            "**Resumo**"
+        );
+    }
 }

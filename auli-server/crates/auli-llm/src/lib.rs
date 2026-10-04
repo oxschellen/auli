@@ -59,12 +59,14 @@ pub type Result<T> = core::result::Result<T, Error>;
 /// `remaining_requests` = `x-ratelimit-remaining-requests` (Requests Per Day / RPD) — o consumidor
 /// usa para parar ANTES de esgotar a cota (zero rejeição). `reset_requests` = `x-ratelimit-reset-
 /// requests` bruto (ex.: `"2m59.56s"`), útil para reportar quando a cota volta. Ambos `None` se o
-/// header não veio.
+/// header não veio. `finish_reason` = `choices[0].finish_reason` (`"stop"`, `"length"`…), `None` em
+/// erro de API ou se o campo não veio — é o que distingue um `text` vazio por esgotamento do teto.
 #[derive(Debug, Clone)]
 pub struct ChatResponse {
     pub text: String,
     pub remaining_requests: Option<u64>,
     pub reset_requests: Option<String>,
+    pub finish_reason: Option<String>,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -162,21 +164,32 @@ pub async fn chat(
         result?
     };
 
-    let answer = match serde_json::from_str::<Value>(&response_text) {
+    let (answer, finish_reason) = match serde_json::from_str::<Value>(&response_text) {
         Ok(data) => {
             if let Some(err) = data.get("error") {
-                format!("Erro na chamada da API do modelo AI: {}!", err)
+                (
+                    format!("Erro na chamada da API do modelo AI: {}!", err),
+                    None,
+                )
             } else {
-                data["choices"][0]["message"]["content"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string()
+                (
+                    data["choices"][0]["message"]["content"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_string(),
+                    data["choices"][0]["finish_reason"]
+                        .as_str()
+                        .map(str::to_string),
+                )
             }
         }
         // Non-JSON body (e.g. an HTML 5xx from a proxy) — surface the status, not a raw serde error.
-        Err(_) => format!(
-            "Erro na chamada da API do modelo AI (HTTP {}): resposta não-JSON do provedor.",
-            status
+        Err(_) => (
+            format!(
+                "Erro na chamada da API do modelo AI (HTTP {}): resposta não-JSON do provedor.",
+                status
+            ),
+            None,
         ),
     };
 
@@ -187,6 +200,7 @@ pub async fn chat(
         text: answer,
         remaining_requests,
         reset_requests,
+        finish_reason,
     })
 }
 
