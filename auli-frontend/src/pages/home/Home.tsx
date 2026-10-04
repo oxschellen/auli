@@ -389,9 +389,11 @@ export const Home = () => {
         </Flex>
 
         {/* Drawer mobile: overlay + painel com a MESMA NavList. Feito à mão (Box fixed) para
-            não depender da API de Drawer da versão instalada do Chakra. */}
+            não depender da API de Drawer da versão instalada do Chakra. O zIndex fica ACIMA do
+            AppHeader (sticky, 100): abaixo dele, o cabeçalho cobria o topo do painel e o "Chat",
+            primeiro item, sumia atrás dele. */}
         {drawerOpen && (
-          <Box hideFrom="md" position="fixed" inset={0} zIndex={90}>
+          <Box hideFrom="md" position="fixed" inset={0} zIndex={110}>
             <Box
               position="absolute"
               inset={0}
