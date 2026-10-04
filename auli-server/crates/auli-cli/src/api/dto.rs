@@ -40,6 +40,10 @@ pub struct Answer {
     /// sair sem a chave em vez de com `null`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub log_id: Option<String>,
+    /// A lista de fontes recuperadas (D-SF-10) — só no tipo serviços+FAQs. Vazia ⇒ a chave não
+    /// sai, e o cliente antigo, que não a conhece, não vê diferença nenhuma.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub fontes: Vec<crate::rag::Fonte>,
 }
 
 /// Corpo do POST /v1/retrieve. `kind` usa o vocabulário único de `corpus::from_kind`.
@@ -77,7 +81,8 @@ pub struct RetrieveResponse {
 
 #[cfg(test)]
 mod tests {
-    use super::{Question, RetrieveHit, RetrieveRequest, RetrieveResponse};
+    use super::{Answer, Question, RetrieveHit, RetrieveRequest, RetrieveResponse};
+    use crate::rag::Fonte;
 
     #[test]
     fn retrieve_request_sem_kind_e_top_k_desserializa_com_none() {
@@ -165,5 +170,39 @@ mod tests {
         let q: Question = serde_json::from_str(r#"{"question":"x"}"#).unwrap();
         assert_eq!(q.query_type, None);
         assert_eq!(q.entity, None);
+    }
+
+    /// O contrato de fio da D-SF-10: sem fontes, a chave não sai (cliente antigo e os tipos 2–4
+    /// não veem diferença); sem veredito, a chave `triagem` também não.
+    #[test]
+    fn fontes_e_triagem_so_aparecem_quando_existem() {
+        let mut a = Answer {
+            question: "q".into(),
+            answer: "r".into(),
+            log_id: None,
+            fontes: vec![],
+        };
+        let json = serde_json::to_value(&a).unwrap();
+        assert!(json.get("fontes").is_none(), "{json}");
+
+        a.fontes = vec![
+            Fonte {
+                rotulo: "Serviço 1".into(),
+                titulo: "Emitir guia".into(),
+                link: "https://s/1".into(),
+                triagem: None,
+            },
+            Fonte {
+                rotulo: "FAQ 1".into(),
+                titulo: "Como pagar?".into(),
+                link: "https://f/1".into(),
+                triagem: Some("descarta".into()),
+            },
+        ];
+        let json = serde_json::to_value(&a).unwrap();
+        let f = json["fontes"].as_array().unwrap();
+        assert_eq!(f[0]["rotulo"], "Serviço 1");
+        assert!(f[0].get("triagem").is_none(), "{json}");
+        assert_eq!(f[1]["triagem"], "descarta");
     }
 }

@@ -6,12 +6,16 @@ import ReactMarkdown from "react-markdown";
 import { utilsCopyTextToClipboard } from "./utils/utils";
 import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
 import { LogModal } from "./LogModal";
+import { Fontes } from "./Fontes";
+import type { Fonte } from "../../types/chat";
 
 interface SystemMessageProps {
   messageText: string;
   showButton: boolean;
   /** Quando presente, oferece o ícone que abre o registro de auditoria desta resposta. */
   logId?: string;
+  /** Lista de fontes recuperadas (D-SF-10); ausente ou vazia = nada é desenhado. */
+  fontes?: Fonte[];
 }
 
 /** Aviso exibido no rodapé de toda resposta gerada (não aparece na saudação,
@@ -21,7 +25,7 @@ const DISCLAIMER =
   "automaticamente, podem variar e conter imprecisões, e têm caráter apenas informativo — " +
   "confira sempre as fontes e os links indicados.";
 
-export const SystemMessage = ({ messageText, showButton, logId }: SystemMessageProps) => {
+export const SystemMessage = ({ messageText, showButton, logId, fontes }: SystemMessageProps) => {
   const [logAberto, setLogAberto] = useState(false);
 
   return (
@@ -48,6 +52,8 @@ export const SystemMessage = ({ messageText, showButton, logId }: SystemMessageP
             {messageText}
           </ReactMarkdown>
         </Box>
+
+        {showButton && fontes && fontes.length > 0 && <Fontes fontes={fontes} />}
 
         {showButton && (
           <Box

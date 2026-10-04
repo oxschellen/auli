@@ -202,7 +202,8 @@ Acionado por `POST /v1/question`. Assinatura:
    jurisprudência; um aviso, em serviços e FAQs) e **nunca** derruba a query.
 7. Envolve cada bloco em `## documento {i}: {rótulo}` e concatena; o system prompt = prompt da
    entidade **para aquele tipo** (`system_prompt`, `pareceres_prompt` ou `tarf_prompt`) + contexto +
-   delimitador `'''`.
+   delimitador `'''` — ou, com o marcador `{{CONTEXTO}}` no prompt, com o contexto no lugar dele
+   (§3.4.1, D-SF-8).
 8. Chama o LLM externo — com a pergunta **anonimizada** se o flag estiver ligado (default), e
    restaura os placeholders na resposta antes de devolvê-la.
 9. Retorna `{ question, answer }` e **anexa o diálogo a `$AULI_LOG_DIR/<timestamp>.txt`** (default
@@ -213,7 +214,7 @@ Acionado por `POST /v1/question`. Assinatura:
 prompt de sistema. Só `notas` fica de fora: tem rota de listagem, mas não tem fonte struct nem
 pack — ver §3.13.
 
-### 3.4.1 Serviços + FAQs: alternativas, não peças — as cinco decisões (D-SF-\*)
+### 3.4.1 Serviços + FAQs: alternativas, não peças — as decisões (D-SF-\*)
 
 **O sintoma (04/10/2026, uso real):** a indicação do serviço funciona quando o serviço está bem
 descrito; o que falha é a resposta que **unifica** informações de muitos serviços distintos e
@@ -236,6 +237,11 @@ pedido.
 | **D-SF-3** | `corpus::SERVICES.n_results` 10 → **5**; `corpus::FAQS.n_results` 20 → **10** | Menos irmãos e menos ruído no contexto, e cerca de metade dos tokens do prompt. **Não resolve sozinho** — o irmão excludente costuma estar entre os primeiros —, por isso vem em par com a D-SF-2. As bandas continuam ∞/piso 0: isto é teto, não calibragem; a calibragem segue adiada e com base acumulando no log. |
 | **D-SF-4** | Sem bump de `STRATEGY_VERSION` nem de `PACK_FORMAT`; nenhum `auli update` | `corpus` é parâmetro de **consulta** (o próprio módulo diz que nada ali afeta o que foi embedado). Recompilar e reiniciar basta; os packs ficam como estão. |
 | **D-SF-5** | A mudança vale para as **três faces** de uma vez: chat (tipo 1), ferramenta MCP `consultar_servicos_faqs` (descrição atualizada para "até 5 serviços e até 10 FAQs") e o default de `top_k` do `/v1/retrieve` para `servicos`/`faqs` | É a paridade por construção da §3.12 — as faces leem as mesmas constantes. Consequência esperada: o `parity-replay.py` acusa divergência contra logs anteriores a esta mudança, porque o contexto ficou menor. Não é regressão; a linha de base nova começa aqui. |
+| **D-SF-6** | Esforço de raciocínio do chat vem do `.env` (`LLM_REASONING_EFFORT` = `low`/`medium`/`high`); ausente = o campo não é enviado. `max_completion_tokens` do chat 4096 → **8192** | O `gpt-oss` confere melhor as próprias regras com esforço alto, e o `auli-llm` já suportava o campo — faltava o chat passá-lo. Variável, e não constante, porque o parâmetro é recusado por modelos que não são de raciocínio: trocar de modelo não pode exigir recompilar. Valor inválido **aborta o boot** (o erro de digitação não vira default em silêncio). Os 8192 existem porque, nesses modelos, a saída inclui o raciocínio. Vale para todos os tipos de consulta do chat. |
+| **D-SF-7** | O `rs.txt` exige **citação por afirmação** no formato do marcador do contexto — `[Serviço 2]`, `[FAQ 4]` —, e afirmação sem documento para citar não se escreve | Amarra cada frase à fonte, o que dificulta a fusão entre documentos e torna a conferência mecânica (o rótulo citado existe no contexto? a frase está nele?). O tipo vai junto do número porque a numeração é **por coleção** (D-MARC-3): "[doc 3]" seria ambíguo entre o Serviço 3 e a FAQ 3. A lista de fontes da resposta usa os mesmos rótulos, para o analista bater uma com a outra. |
+| **D-SF-8** | Marcador `{{CONTEXTO}}` no prompt de sistema: o que vem antes dele fica antes dos documentos, o que vem depois vai **depois** do contexto e do `'''` (`rag::compor_system_prompt`). O `rs.txt` usa o espaço para repetir a regra central | Com 15 documentos entre as regras e a pergunta, a regra que mais importa ficava longe do ponto em que o modelo redige. A decisão de O QUE repetir é do prompt (catálogo), não do código. Prompt **sem** marcador sai byte a byte como antes — é o caso dos outros 26 estados, e há teste que trava isso. Divide na primeira ocorrência; o marcador nunca chega ao modelo. |
+| **D-SF-9** | **Triagem em duas chamadas** (`triagem.rs` + `rag.rs`), opt-in por entidade pelo campo `prompt_triagem` do registry (só o `rs`, com `config/prompts/rs-triagem.txt`). A 1ª chamada recebe a pergunta e os documentos e devolve JSON com um veredito por rótulo — `aplica`, `condicional` ou `descarta`; a 2ª redige vendo o contexto **sem os descartados**, com a **numeração original** preservada (`montar_rag_servicos_faqs_sem`). Tudo descartado ⇒ resposta fixa, sem 2ª chamada. Triagem que falha (rede, teto de tempo, JSON inválido, rótulo inexistente) ⇒ segue com o contexto **integral** (fail-open); documento omitido no JSON **fica**. Teto de **20 s para o passo inteiro** (`tokio::time::timeout` por fora, porque o `auli-llm` repete até 3 vezes em timeout); o frontend sobe de 35 s para **70 s** | É a forma explícita da D-SF-1: o que não trata da situação perguntada nem deveria estar na mesa quando o texto é escrito. Escolhida em vez da classificação dentro do raciocínio de uma chamada só, **ciente de que dobra a latência**. `condicional` fica no contexto porque é justamente o irmão que a resposta deve apresentar como alternativa — e, na dúvida, o prompt manda escolher `condicional`, não `descarta`. A numeração original é o que mantém citação (D-SF-7), ADERÊNCIA do log e lista de fontes falando dos mesmos rótulos. Fail-open porque a triagem é filtro de qualidade, não guarda: perdê-la volta à resposta de uma chamada só, nunca derruba a consulta. O log ganha a seção **TRIAGEM** (tempo, descartados e a saída crua do modelo, incluindo o `motivo` de cada veredito), e o `CONTEXTO RAG` continua sendo o **recuperado inteiro** — o que a triagem viu —, o que preserva o sentido do `parity-replay.py`. O MCP não tem triagem: entrega o contexto integral e o assistente externo faz a dele. |
+| **D-SF-10** | **Lista fixa de fontes** na resposta de Serviços + FAQs — e só nela. O `POST /v1/question` ganha o campo `fontes` (`rotulo`, `titulo`, `link`, `triagem`), montado por `rag::fontes_servicos_faqs` a partir dos payloads, e o chat a mostra num `<details>` **recolhido** (`Fontes.tsx`): "Fontes consultadas: 15 (3 descartadas na triagem)" | O analista vê sempre o que a busca trouxe, independentemente do que o texto do LLM decidiu citar — o núcleo do Auli é achar a informação, e o texto é complemento. O `rotulo` é exatamente o da citação (D-SF-7), na ordem do contexto. Um item por documento, mesmo com payload ilegível (título de aviso, sem link), senão a numeração deixa de bater. O veredito vem da triagem pelo mesmo rótulo; ausente quando não houve triagem, quando ela falhou, ou quando o modelo omitiu o documento. Descartada aparece esmaecida e riscada, não some: o descarte errado tem que ser visível. Recolhida porque, aberta, empurraria 15 linhas abaixo de cada resposta no celular. Só neste tipo **por decisão**: os demais seguem sem lista. Campo vazio não serializa — cliente antigo e tipos 2–4 não veem diferença (há teste do contrato de fio). `exec_all_question` passa a devolver `RespostaChat`. |
 
 ### 3.5 Clientes e adaptadores (embeddings/busca/LLM in-process)
 
@@ -656,8 +662,11 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
   `import.meta.env.VITE_API_URL ?? "https://api.auli.com.br/v1/question"`. Passa
   `entityId: entity.id` ao backend.
 - [pages/chat/utils/callServerAPI.ts](auli-frontend/src/pages/chat/utils/callServerAPI.ts):
-  `POST` via axios do corpo `{ question, entity? }`, com **timeout de 25s** via
-  `AbortController`; mensagens de erro/timeout em pt-BR. Lê `res.data.answer`.
+  `POST` via axios do corpo `{ question, entity? }`, com **timeout de 70 s** via
+  `AbortController`; mensagens de erro/timeout em pt-BR. Lê `res.data.answer`, `log_id` e
+  `fontes` (D-SF-10).
+- [pages/chat/Fontes.tsx](auli-frontend/src/pages/chat/Fontes.tsx): a lista fixa de fontes de
+  Serviços + FAQs, recolhida num `<details>`, abaixo da resposta e acima do aviso (§3.4.1, D-SF-10).
 - [pages/chat/utils/prompt.ts](auli-frontend/src/pages/chat/utils/prompt.ts): validação do
   prompt (mínimo de 10 caracteres) — fonte única usada pelo guard de envio, botão e contador.
 - [pages/chat/utils/useMessages.ts](auli-frontend/src/pages/chat/utils/useMessages.ts):
@@ -864,7 +873,7 @@ mantém um espelho **gerado** (não mais divergente) do registro. Pendências em
   `faqs` (10) — eram 10 + 20 até 04/10/2026, ver §3.4.1; estreitamento por proximidade presente mas
   em modo paridade (`band=∞`) até calibração.
 - `auli-frontend`: SPA com seleção de entidade (as 12), chat contra `POST /v1/question` com
-  timeout de 25s, abas de referência lendo `public/<id>/` (arquivos prefixados `<id>-`), tema
+  timeout de 70 s, abas de referência lendo `public/<id>/` (arquivos prefixados `<id>-`), tema
   claro/escuro, testes Vitest.
 - **Scrapers por entidade** (`auli-scraper-{rs,sc,sp,pr,mg,pe,ba,rj,ce,ms,mt,go}` sobre `auli-scraper-kit`): FAQs (rs) e
   serviços (rs API JSON, sc JSON, sp SharePoint, pr Drupal, mg ServiceNow, pe/ba/rj/ms HTML, ce/mt/go JSON — go via curl por WAF JA3), cache + `--usecache`,

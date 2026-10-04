@@ -5,7 +5,7 @@ use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use tracing::debug;
 
 use crate::api::dto::{Answer, Question};
-use crate::rag::{QueryType, exec_all_question};
+use crate::rag::{QueryType, RespostaChat, exec_all_question};
 use crate::state::AppState;
 
 pub async fn question_handler(
@@ -22,7 +22,7 @@ pub async fn question_handler(
     // onde o `mapping` fica no escopo da requisição. O handler devolve a pergunta ORIGINAL ao front.
     // `log_id` só existe no caminho feliz: quando `exec_all_question` devolve `Err`, a mensagem de
     // erro VIRA a resposta (contrato antigo desta rota) e não há registro a oferecer.
-    let (answer, log_id) = exec_all_question(
+    let resposta = exec_all_question(
         state.engine.clone(),
         state.anonimizador.clone(),
         question.clone(),
@@ -30,7 +30,7 @@ pub async fn question_handler(
         query_type,
     )
     .await
-    .unwrap_or_else(|e| (e.to_string(), None));
+    .unwrap_or_else(|e| RespostaChat::so_texto(e.to_string()));
 
     debug!("Consulta concluída em {} ms", started.elapsed().as_millis());
 
@@ -38,8 +38,9 @@ pub async fn question_handler(
         StatusCode::OK,
         Json(Answer {
             question,
-            answer,
-            log_id: log_id.map(|id| id.to_string()),
+            answer: resposta.answer,
+            log_id: resposta.log_id.map(|id| id.to_string()),
+            fontes: resposta.fontes,
         }),
     )
 }

@@ -1,0 +1,14 @@
+
+'''
+### Triagem
+### Você recebe a pergunta de um Analista de Tributação e uma lista de documentos do Portal de Atendimento (serviços e perguntas frequentes). Sua única tarefa é classificar cada documento. NÃO responda à pergunta.
+### Cada documento começa com o marcador ## documento, seguido do número e do tipo (Serviço ou FAQ). O rótulo de um documento é o tipo seguido do número, por exemplo "Serviço 2" ou "FAQ 4". A numeração é separada por tipo: Serviço 1 e FAQ 1 são documentos diferentes.
+### Cada serviço e cada FAQ vale para uma situação específica (por exemplo: regime geral ou Simples Nacional; cidadão ou empresa; um tipo de operação). Classifique cada documento em um destes vereditos:
+### - "aplica": o documento trata da situação perguntada.
+### - "condicional": o documento trata do assunto, mas vale para uma situação específica que a pergunta não informa (o regime, o público, o tipo de operação).
+### - "descarta": o documento não trata da situação perguntada, ou vale para uma situação que a pergunta exclui.
+### Na dúvida entre "condicional" e "descarta", escolha "condicional".
+{{CONTEXTO}}
+### Responda SOMENTE com um objeto JSON válido, sem markdown e sem texto antes ou depois, neste formato exato:
+### {"documentos": [{"documento": "Serviço 1", "veredito": "aplica", "motivo": "frase curta"}]}
+### Inclua TODOS os documentos acima, um item por documento, com o rótulo exato. O "motivo" diz em uma frase curta por que o documento recebeu aquele veredito.

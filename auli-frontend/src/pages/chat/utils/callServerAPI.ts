@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { Dispatch, SetStateAction } from "react";
-import type { Message } from "../../../types/chat";
+import type { Fonte, Message } from "../../../types/chat";
 import type { QuestionType } from "./useQuestionType";
 
 interface CallServerAPIArgs {
@@ -22,10 +22,14 @@ interface QuestionResponse {
   /** UUID do registro de auditoria (D-LOG-2). **Ausente quando a gravação falhou** — o chat não
    *  falha por causa do log, só deixa de oferecer o ícone. */
   log_id?: string;
+  /** Fontes recuperadas (D-SF-10). Só vem em Serviços + FAQs; ausente nos demais tipos. */
+  fontes?: Fonte[];
 }
 
-/** Abort the request if the server hasn't responded within this window. */
-const REQUEST_TIMEOUT_MS = 35_000;
+/** Abort the request if the server hasn't responded within this window.
+ *  70 s (era 35 s) desde a triagem de serviços+FAQs (D-SF-9): a resposta pode levar DUAS chamadas
+ *  ao LLM — até 20 s na triagem e 30 s na redação —, mais embed e busca. */
+const REQUEST_TIMEOUT_MS = 70_000;
 
 /** User-facing copy (pt-BR). Kept here so the wording lives in one place. */
 const MESSAGES = {
@@ -89,6 +93,7 @@ export const callServerAPI = async ({
       text: serverMessage,
       showButton: true,
       logId: res.data?.log_id,
+      fontes: res.data?.fontes,
     });
 
     setPrompt("");

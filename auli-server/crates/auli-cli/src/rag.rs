@@ -13,6 +13,7 @@ use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_contract::{DocumentoPack, Kind, bloco, conteudo_indisponivel};
 use auli_core::corpus::{self, FAQS, SERVICES};
 use auli_retrieval::{Engine, Hit};
+use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info, trace, warn};
 use uuid::Uuid;
 
@@ -20,6 +21,7 @@ use crate::config::config;
 use crate::entities::get_entity;
 use crate::error::Result;
 use crate::llm;
+use crate::triagem;
 use crate::util::run_blocking;
 
 // Per-kind adaptive selection. `score` is a cosine DISTANCE — lower is closer. `floor` is the
@@ -197,6 +199,25 @@ fn envolver(rotulo: &str, i: usize, conteudo: &str) -> String {
     format!("\n## documento {i}: {rotulo}\n{conteudo}\n")
 }
 
+/// O marcador que divide um prompt de sistema em "antes do contexto" e "depois do contexto".
+pub(crate) const MARCADOR_CONTEXTO: &str = "{{CONTEXTO}}";
+
+/// **Monta o prompt de sistema**: prompt da entidade + contexto RAG + o delimitador `'''`.
+///
+/// Sem o [`MARCADOR_CONTEXTO`], é exatamente o `format!("{base}{rag}'''")` de sempre — byte a byte,
+/// e é o caso de todos os prompts escritos antes da D-SF-8. Com ele, o prompt se divide na PRIMEIRA
+/// ocorrência: a parte de antes abre, o contexto e o `'''` vêm no meio, e a parte de depois fecha.
+///
+/// Existe porque, com o contexto inteiro entre as regras e a pergunta, a regra central fica longe
+/// do ponto em que o modelo redige. O que vai depois do marcador é tipicamente um lembrete curto da
+/// regra que mais importa — a decisão de O QUE repetir é do prompt, não do código.
+pub(crate) fn compor_system_prompt(base: &str, rag: &str) -> String {
+    match base.split_once(MARCADOR_CONTEXTO) {
+        Some((antes, depois)) => format!("{antes}{rag}'''{depois}"),
+        None => format!("{base}{rag}'''"),
+    }
+}
+
 /// O rótulo do documento que veio por **expansão de grafo**, não por busca vetorial.
 ///
 /// Fica aqui, e não no `Kind`, porque não é uma coleção: é um PAPEL que um parecer assume neste
@@ -214,6 +235,45 @@ pub(crate) fn montar_rag_servicos_faqs(svc_docs: &[String], faq_docs: &[String])
     let rag_faq = render(faq_docs, |i, doc| envolver(Kind::Faqs.rotulo(), i, doc));
     format!("{}\n{}", rag_service, rag_faq)
 }
+
+/// Os rótulos dos documentos de serviços+faqs, na grafia em que o prompt manda citá-los e em que a
+/// triagem os devolve: `"Serviço 1".."Serviço n"`, depois `"FAQ 1".."FAQ m"` — numeração por
+/// coleção, como a do bloco (D-MARC-3).
+pub(crate) fn rotulos_servicos_faqs(n_svc: usize, n_faq: usize) -> Vec<String> {
+    let svc = (1..=n_svc).map(|i| format!("{} {i}", Kind::Servicos.rotulo()));
+    let faq = (1..=n_faq).map(|i| format!("{} {i}", Kind::Faqs.rotulo()));
+    svc.chain(faq).collect()
+}
+
+/// [`montar_rag_servicos_faqs`] sem os documentos de `fora` (rótulos de [`rotulos_servicos_faqs`]),
+/// **mantendo a numeração original**: o que sobra continua sendo o "Serviço 4" que a triagem
+/// avaliou, e a ADERÊNCIA do log continua batendo com ele. Com `fora` vazio, sai byte a byte igual
+/// ao [`montar_rag_servicos_faqs`] — há teste para isso.
+pub(crate) fn montar_rag_servicos_faqs_sem(
+    svc_docs: &[String],
+    faq_docs: &[String],
+    fora: &std::collections::BTreeSet<String>,
+) -> String {
+    let manter = |rotulo: &str, docs: &[String]| -> String {
+        docs.iter()
+            .enumerate()
+            .map(|(i, d)| (i + 1, d))
+            .filter(|(i, _)| !fora.contains(&format!("{rotulo} {i}")))
+            .map(|(i, d)| envolver(rotulo, i, d))
+            .collect()
+    };
+    format!(
+        "{}\n{}",
+        manter(Kind::Servicos.rotulo(), svc_docs),
+        manter(Kind::Faqs.rotulo(), faq_docs)
+    )
+}
+
+/// A resposta quando a triagem descarta TODOS os documentos (D-SF-9). Fixa, sem segunda chamada.
+pub(crate) const SEM_DOCUMENTO_APLICAVEL: &str = "Nenhum dos serviços e perguntas frequentes \
+recuperados do Portal trata da situação perguntada, então não há orientação a dar com base neles. \
+Reformule a pergunta com mais detalhes da situação do contribuinte, ou consulte o Portal \
+diretamente.";
 
 /// Contexto do tipo `ColecaoUnica`: um bloco numerado por documento recuperado, e — quando a
 /// expansão por grafo devolve algo — os pareceres que citam os mesmos dispositivos, rotulados como
@@ -319,13 +379,79 @@ pub(crate) fn blocos(hits: &[Hit], docs_root: &Path, entity_id: &str) -> Vec<Str
         .collect()
 }
 
+/// Um documento recuperado, como a **lista de fontes** da resposta o mostra (D-SF-10).
+///
+/// Existe para que o analista veja SEMPRE o que a busca trouxe, independentemente do que o texto do
+/// LLM decidiu citar: o núcleo do Auli é achar a informação, e o texto gerado é complemento. O
+/// `rotulo` é exatamente o da citação (`"Serviço 2"`, `"FAQ 4"` — D-SF-7), para que uma bata com a
+/// outra.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Fonte {
+    pub rotulo: String,
+    pub titulo: String,
+    pub link: String,
+    /// Veredito da triagem (`aplica` / `condicional` / `descarta` — D-SF-9). Ausente quando não
+    /// houve triagem, quando ela falhou, ou quando o modelo omitiu este documento: nos três casos o
+    /// documento foi à resposta sem filtro, e não há veredito a mostrar.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub triagem: Option<String>,
+}
+
+/// O que o chat devolve: o texto, a identidade do log e a lista de fontes.
+#[derive(Debug, Default)]
+pub struct RespostaChat {
+    pub answer: String,
+    pub log_id: Option<Uuid>,
+    /// Vazia fora do tipo serviços+FAQs — a lista é só dele por decisão (D-SF-10).
+    pub fontes: Vec<Fonte>,
+}
+
+impl RespostaChat {
+    /// Os atalhos que saem antes de qualquer gravação: só o texto, sem log e sem fontes.
+    pub fn so_texto(answer: String) -> Self {
+        RespostaChat {
+            answer,
+            ..Default::default()
+        }
+    }
+}
+
+/// As fontes de serviços+FAQs, na ordem e com os rótulos do contexto ([`rotulos_servicos_faqs`]).
+///
+/// Payload que não desserializa (não deveria passar pelo boot) ainda gera a linha, com título de
+/// aviso e sem link: a lista tem que ter um item por documento, ou a numeração deixa de bater com a
+/// citação.
+pub(crate) fn fontes_servicos_faqs(svc_payloads: &[&str], faq_payloads: &[&str]) -> Vec<Fonte> {
+    let rotulos = rotulos_servicos_faqs(svc_payloads.len(), faq_payloads.len());
+    rotulos
+        .into_iter()
+        .zip(svc_payloads.iter().chain(faq_payloads.iter()))
+        .map(
+            |(rotulo, payload)| match serde_json::from_str::<DocumentoPack>(payload) {
+                Ok(p) => Fonte {
+                    rotulo,
+                    titulo: p.titulo,
+                    link: p.link,
+                    triagem: None,
+                },
+                Err(_) => Fonte {
+                    rotulo,
+                    titulo: "[documento ilegível]".to_string(),
+                    link: String::new(),
+                    triagem: None,
+                },
+            },
+        )
+        .collect()
+}
+
 pub async fn exec_all_question(
     engine: Arc<Engine>,
     anonimizador: Arc<Anonimizador>,
     question: String,
     entity: Option<String>,
     query_type: QueryType,
-) -> Result<(String, Option<Uuid>)> {
+) -> Result<RespostaChat> {
     debug!("Executando consulta: {}", question);
 
     let t_total = Instant::now();
@@ -356,7 +482,7 @@ pub async fn exec_all_question(
             warn!("{}", e);
             // Sem `log_id`: este atalho sai antes de qualquer gravação. O ícone do log não aparece
             // porque de fato não há registro — mesma regra dos outros retornos precoces.
-            return Ok((e, None));
+            return Ok(RespostaChat::so_texto(e));
         }
     };
     info!("Entidade: {} ({})", cfg.id, cfg.name);
@@ -378,6 +504,11 @@ pub async fn exec_all_question(
     // `aderencia` acompanha `rag` em paralelo: mesmos documentos, mesma ordem — mas só o `rag` vai
     // ao prompt do LLM.
     let mut itens_aderencia: Vec<Aderencia> = Vec::new();
+    // Os blocos de serviços e de FAQs em separado, guardados para a TRIAGEM (D-SF-9): ela precisa
+    // remontar o contexto sem os descartados, mantendo a numeração original. `None` nos outros tipos.
+    let mut blocos_sf: Option<(Vec<String>, Vec<String>)> = None;
+    // A lista de fontes da resposta (D-SF-10): só serviços+faqs a preenchem.
+    let mut fontes: Vec<Fonte> = Vec::new();
     let rag = match query_type {
         QueryType::ServicosFaqs => {
             // Retrieve this entity's servicos + faqs concurrently, both through the engine.
@@ -410,10 +541,21 @@ pub async fn exec_all_question(
             itens_aderencia.extend(aderencia("faq", faq_hits.iter().map(|h| Some(h.score))));
             // Pack v2: o payload é leve, então o bloco de CADA serviço e de CADA faq é montado
             // aqui, lendo a árvore. Antes eles vinham prontos de dentro do pack.
-            montar_rag_servicos_faqs(
-                &blocos(&svc_hits, engine.docs_root(), &cfg.id),
-                &blocos(&faq_hits, engine.docs_root(), &cfg.id),
-            )
+            let svc_docs = blocos(&svc_hits, engine.docs_root(), &cfg.id);
+            let faq_docs = blocos(&faq_hits, engine.docs_root(), &cfg.id);
+            let rag = montar_rag_servicos_faqs(&svc_docs, &faq_docs);
+            blocos_sf = Some((svc_docs, faq_docs));
+            fontes = fontes_servicos_faqs(
+                &svc_hits
+                    .iter()
+                    .map(|h| h.payload.as_str())
+                    .collect::<Vec<_>>(),
+                &faq_hits
+                    .iter()
+                    .map(|h| h.payload.as_str())
+                    .collect::<Vec<_>>(),
+            );
+            rag
         }
         QueryType::ColecaoUnica(kind) => {
             let colecao = corpus::from_kind(kind.as_str())
@@ -434,13 +576,10 @@ pub async fn exec_all_question(
             // contexto vazio (que é convite a alucinação).
             if hits.is_empty() {
                 // Idem: sai antes do `log_question`, logo sem `log_id`.
-                return Ok((
-                    format!(
-                        "A consulta de {} ainda não está disponível para esta entidade.",
-                        kind.titulo()
-                    ),
-                    None,
-                ));
+                return Ok(RespostaChat::so_texto(format!(
+                    "A consulta de {} ainda não está disponível para esta entidade.",
+                    kind.titulo()
+                )));
             }
 
             // Expansão por grafo: pareceres que citam os MESMOS dispositivos dos recuperados — sinal
@@ -507,25 +646,95 @@ pub async fn exec_all_question(
     };
     tempos.retrieve_ms = t.elapsed().as_millis() as u64;
 
-    // System prompt = base prompt (per query type) + RAG context, closed with the original delimiter.
-    let base_prompt = match query_type {
-        QueryType::ServicosFaqs => &cfg.system_prompt,
-        QueryType::ColecaoUnica(kind) => cfg.prompt_de(kind),
-    };
-    let system_prompt = format!("{}{}'''", base_prompt, rag);
-    trace!("System instructions with RAG: {}", system_prompt);
-
     // Fronteira do LLM: com o flag ligado (default), envia a pergunta ANONIMIZADA e restaura a
     // resposta antes de devolvê-la ao usuário; com o flag desligado, envia a original (comportamento
-    // anterior). Os documentos do RAG são conteúdo público e NÃO passam por anonimização.
+    // anterior). Os documentos do RAG são conteúdo público e NÃO passam por anonimização. Vale para as
+    // DUAS chamadas quando há triagem.
     let anonimizar = config().anonimizar_llm;
     let entrada_llm = if anonimizar {
         &pergunta_anon
     } else {
         &question
     };
+
+    // `llm_ms` cobre as duas chamadas quando há triagem; o tempo só da triagem vai na seção dela.
     let t = Instant::now();
-    let resposta_llm = llm::chat(&system_prompt, entrada_llm).await?;
+
+    // TRIAGEM (D-SF-9) — só serviços+faqs, só com `prompt_triagem` na entidade. Primeira chamada:
+    // um veredito por documento. A segunda vê o contexto sem os descartados. Fail-open: triagem
+    // que falha segue com o contexto integral, que é a resposta de uma chamada só.
+    let mut rag_resposta = rag.clone();
+    let mut resposta_fixa: Option<String> = None;
+    let mut registro_triagem: Option<String> = None;
+    if let (Some((svc, faq)), Some(prompt_triagem)) = (&blocos_sf, &cfg.triagem_prompt)
+        && !(svc.is_empty() && faq.is_empty())
+    {
+        let rotulos = rotulos_servicos_faqs(svc.len(), faq.len());
+        let t_tri = Instant::now();
+        let (texto, resultado) =
+            match llm::triagem(&compor_system_prompt(prompt_triagem, &rag), entrada_llm).await {
+                Ok(txt) => {
+                    let r = triagem::vereditos(&txt, &rotulos);
+                    (txt, r)
+                }
+                Err(e) => (String::new(), Err(format!("a chamada falhou: {e}"))),
+            };
+        let ms = t_tri.elapsed().as_millis();
+        registro_triagem = Some(match resultado {
+            Ok(vereditos) => {
+                // O veredito vai para a lista de fontes, pelo mesmo rótulo do contexto.
+                for f in &mut fontes {
+                    f.triagem = vereditos.get(&f.rotulo).map(|v| v.as_str().to_string());
+                }
+                let fora = triagem::descartados(&vereditos);
+                info!(
+                    "Triagem: {} de {} documentos descartados",
+                    fora.len(),
+                    rotulos.len()
+                );
+                if fora.len() == rotulos.len() {
+                    // Nada trata da situação: a segunda chamada não teria o que ler. A resposta é
+                    // fixa, e não um contexto vazio — que é convite a alucinação.
+                    resposta_fixa = Some(SEM_DOCUMENTO_APLICAVEL.to_string());
+                } else {
+                    rag_resposta = montar_rag_servicos_faqs_sem(svc, faq, &fora);
+                }
+                let lista = fora.iter().cloned().collect::<Vec<_>>().join(", ");
+                format!(
+                    "tempo: {ms} ms · descartados: {} de {}{}\n{texto}",
+                    fora.len(),
+                    rotulos.len(),
+                    if lista.is_empty() {
+                        String::new()
+                    } else {
+                        format!(" ({lista})")
+                    },
+                )
+            }
+            Err(e) => {
+                warn!("triagem ignorada, contexto integral: {e}");
+                format!(
+                    "tempo: {ms} ms · FALHOU ({e}) — a resposta usou o contexto integral\n{texto}"
+                )
+            }
+        });
+    }
+
+    let resposta_llm = match resposta_fixa {
+        Some(fixa) => fixa,
+        None => {
+            // System prompt = base prompt (per query type) + RAG context, closed with the original
+            // delimiter. Com o marcador `{{CONTEXTO}}` no prompt, o que vem depois dele vai DEPOIS
+            // do contexto (D-SF-8).
+            let base_prompt = match query_type {
+                QueryType::ServicosFaqs => &cfg.system_prompt,
+                QueryType::ColecaoUnica(kind) => cfg.prompt_de(kind),
+            };
+            let system_prompt = compor_system_prompt(base_prompt, &rag_resposta);
+            trace!("System instructions with RAG: {}", system_prompt);
+            llm::chat(&system_prompt, entrada_llm).await?
+        }
+    };
     tempos.llm_ms = t.elapsed().as_millis() as u64;
 
     // Restaura os placeholders (`[CNPJ_1]` → valor original) antes de devolver — o usuário vê o valor
@@ -563,13 +772,18 @@ pub async fn exec_all_question(
         sanitizada: &pergunta_anon,
         answer: Some(&answer),
         aderencia: &montar_aderencia(&itens_aderencia),
+        triagem: registro_triagem.as_deref(),
         rag: &rag,
         tempos,
     })
     .inspect_err(|e| warn!("falha ao gravar o log da consulta: {e}"))
     .ok();
 
-    Ok((answer, log_id))
+    Ok(RespostaChat {
+        answer,
+        log_id,
+        fontes,
+    })
 }
 
 /// Uma consulta a registrar no log de auditoria — tudo que entra no arquivo, menos o carimbo de
@@ -590,7 +804,11 @@ pub(crate) struct RegistroConsulta<'a> {
     pub answer: Option<&'a str>,
     /// Seção de proximidade já montada por [`montar_aderencia`]; vazia = sem busca vetorial.
     pub aderencia: &'a str,
-    /// O contexto RAG — a MESMA string que foi ao prompt do LLM.
+    /// Seção da TRIAGEM (D-SF-9): tempo, descartados e a saída crua do modelo. `None` = não houve
+    /// triagem, e a seção é OMITIDA (o registro sai byte a byte como antes).
+    pub triagem: Option<&'a str>,
+    /// O contexto RAG recuperado — a MESMA string que foi ao prompt do LLM. Com triagem, é o que a
+    /// TRIAGEM viu; a resposta viu este contexto menos os descartados que a seção TRIAGEM lista.
     pub rag: &'a str,
     pub tempos: TemposConsulta,
 }
@@ -622,6 +840,7 @@ fn format_log_record(stamp: &str, reg: &RegistroConsulta) -> String {
         sanitizada,
         answer,
         aderencia,
+        triagem,
         rag,
         tempos,
     } = reg;
@@ -658,6 +877,11 @@ fn format_log_record(stamp: &str, reg: &RegistroConsulta) -> String {
         ),
         true => String::new(),
     };
+    // Mesma disciplina: sem triagem, a seção não existe (nem vazia).
+    let triagem = match triagem {
+        Some(t) => format!("{}\n{t}\n\n", secao("TRIAGEM (primeira chamada)")),
+        None => String::new(),
+    };
     format!(
         "{regua}\n\
          CONSULTA · {stamp} · entidade: {entidade} · tipo: {tipo}\n\
@@ -667,6 +891,7 @@ fn format_log_record(stamp: &str, reg: &RegistroConsulta) -> String {
          {}\n{original}\n\n\
          {}\n{sanitizada}\n\n\
          {resposta}\
+         {triagem}\
          {aderencia}\
          {}\n{rag}\n\
          {regua}",
@@ -775,10 +1000,11 @@ pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<Uuid> {
 #[cfg(test)]
 mod tests {
     use super::{
-        FAQ_BAND, FAQ_FLOOR, LEG_BAND, LEG_FLOOR, PAR_BAND, PAR_FLOOR, QueryType, RegistroConsulta,
-        SVC_BAND, SVC_FLOOR, TemposConsulta, Uuid, aderencia, bandas, bloco_documento, envolver,
-        format_log_record, log_question, mes_do_log, montar_aderencia, montar_rag_colecao_unica,
-        montar_rag_servicos_faqs,
+        FAQ_BAND, FAQ_FLOOR, LEG_BAND, LEG_FLOOR, MARCADOR_CONTEXTO, PAR_BAND, PAR_FLOOR,
+        QueryType, RegistroConsulta, SVC_BAND, SVC_FLOOR, TemposConsulta, Uuid, aderencia, bandas,
+        bloco_documento, compor_system_prompt, envolver, fontes_servicos_faqs, format_log_record,
+        log_question, mes_do_log, montar_aderencia, montar_rag_colecao_unica,
+        montar_rag_servicos_faqs, montar_rag_servicos_faqs_sem, rotulos_servicos_faqs,
     };
     use auli_contract::{DocumentoPack, Kind, mddoc};
     use std::path::Path;
@@ -803,6 +1029,24 @@ mod tests {
             doc_path: doc_path.into(),
         })
         .unwrap()
+    }
+
+    #[test]
+    fn compor_system_prompt_sem_marcador_e_o_formato_de_sempre() {
+        // A trava da D-SF-8: os 26 prompts sem marcador não podem mudar um byte.
+        let base = "\n'''\n### Regras\n";
+        let rag = "\n## documento 1: Serviço\nX\n";
+        assert_eq!(compor_system_prompt(base, rag), format!("{base}{rag}'''"),);
+    }
+
+    #[test]
+    fn compor_system_prompt_com_marcador_poe_o_resto_depois_do_contexto() {
+        let base = format!("ANTES\n{MARCADOR_CONTEXTO}\nLEMBRETE");
+        let rag = "\n## documento 1: Serviço\nX\n";
+        let p = compor_system_prompt(&base, rag);
+        assert_eq!(p, format!("ANTES\n{rag}'''\nLEMBRETE"));
+        // O marcador em si nunca chega ao modelo.
+        assert!(!p.contains(MARCADOR_CONTEXTO));
     }
 
     #[test]
@@ -981,6 +1225,7 @@ mod tests {
             sanitizada: "p",
             answer: Some("r"),
             aderencia: "",
+            triagem: None,
             rag: "",
             tempos: TemposConsulta {
                 embed_ms: 1,
@@ -1002,6 +1247,7 @@ mod tests {
                 sanitizada: "CNPJ [CNPJ_1] pode aderir?",
                 answer: Some("Sim, o CNPJ 11.222.333/0001-81 atende."),
                 aderencia: "parecer 1 · aderência 0.700 · distância 0.300\n",
+                triagem: None,
                 rag: "## documento 1: Parecer\n...",
                 tempos: TemposConsulta {
                     embed_ms: 12,
@@ -1060,6 +1306,7 @@ mod tests {
                 sanitizada: "como parcelar ICMS em atraso?",
                 answer: None,
                 aderencia: "servico 1 · aderência 0.550 · distância 0.450\n",
+                triagem: None,
                 rag: "\n## documento 1: Serviço\n...",
                 tempos: TemposConsulta {
                     embed_ms: 14,
@@ -1084,6 +1331,88 @@ mod tests {
         assert!(rec.contains("tipo: mcp:consultar_servicos_faqs"), "{rec}");
         // `llm: 0 ms` preserva o contrato de grep da linha TEMPOS (ver `tempos_linha_pina_o_formato`).
         assert!(rec.contains("llm: 0 ms"), "{rec}");
+    }
+
+    /// A seção TRIAGEM (D-SF-9) entra entre RESPOSTA e ADERÊNCIA quando existe — e só então.
+    #[test]
+    fn log_record_com_triagem_tem_a_secao_no_lugar_certo() {
+        let rec = format_log_record(
+            "2026-10-04 10:00:00",
+            &RegistroConsulta {
+                entidade: "rs",
+                tipo: "servicos+faqs",
+                original: "como pago o ICMS?",
+                sanitizada: "como pago o ICMS?",
+                answer: Some("Resposta."),
+                aderencia: "servico 1 · aderência 0.550 · distância 0.450\n",
+                triagem: Some("tempo: 900 ms · descartados: 1 de 2 (FAQ 1)\n{}"),
+                rag: "\n## documento 1: Serviço\n...",
+                tempos: TemposConsulta::default(),
+            },
+        );
+        let i_resp = rec.find("----- RESPOSTA").expect("resposta");
+        let i_tri = rec.find("----- TRIAGEM").expect("triagem");
+        let i_ader = rec.find("----- ADERÊNCIA").expect("aderência");
+        assert!(i_resp < i_tri && i_tri < i_ader, "{rec}");
+        assert!(rec.contains("descartados: 1 de 2 (FAQ 1)"), "{rec}");
+    }
+
+    #[test]
+    fn fontes_tem_um_item_por_documento_com_o_rotulo_da_citacao() {
+        let pack = |titulo: &str, link: &str| {
+            serde_json::to_string(&DocumentoPack {
+                kind: Kind::Servicos,
+                trilha: String::new(),
+                titulo: titulo.into(),
+                ementa: String::new(),
+                resumo: String::new(),
+                link: link.into(),
+                doc_path: "docs/servicos/x.md".into(),
+            })
+            .unwrap()
+        };
+        let s1 = pack("Emitir guia", "https://s/1");
+        let f1 = pack("Como pagar?", "https://f/1");
+        let fontes = fontes_servicos_faqs(&[s1.as_str(), "{quebrado"], &[f1.as_str()]);
+        let rotulos: Vec<_> = fontes.iter().map(|f| f.rotulo.as_str()).collect();
+        assert_eq!(rotulos, ["Serviço 1", "Serviço 2", "FAQ 1"]);
+        assert_eq!(fontes[0].titulo, "Emitir guia");
+        assert_eq!(fontes[0].link, "https://s/1");
+        // Payload ilegível não some da lista: a numeração tem que continuar batendo.
+        assert_eq!(fontes[1].link, "");
+        assert_eq!(fontes[2].titulo, "Como pagar?");
+        assert!(fontes.iter().all(|f| f.triagem.is_none()));
+    }
+
+    #[test]
+    fn rotulos_seguem_a_numeracao_por_colecao() {
+        assert_eq!(
+            rotulos_servicos_faqs(2, 1),
+            vec!["Serviço 1", "Serviço 2", "FAQ 1"]
+        );
+        assert!(rotulos_servicos_faqs(0, 0).is_empty());
+    }
+
+    #[test]
+    fn contexto_sem_descartados_e_byte_a_byte_o_de_sempre() {
+        let svc = vec!["S1".to_string(), "S2".to_string()];
+        let faq = vec!["F1".to_string()];
+        assert_eq!(
+            montar_rag_servicos_faqs_sem(&svc, &faq, &Default::default()),
+            montar_rag_servicos_faqs(&svc, &faq),
+        );
+    }
+
+    #[test]
+    fn contexto_sem_descartados_mantem_a_numeracao_original() {
+        let svc = vec!["S1".to_string(), "S2".to_string(), "S3".to_string()];
+        let faq = vec!["F1".to_string(), "F2".to_string()];
+        let fora = std::collections::BTreeSet::from(["Serviço 2".to_string(), "FAQ 1".to_string()]);
+        let rag = montar_rag_servicos_faqs_sem(&svc, &faq, &fora);
+        assert!(rag.contains("## documento 1: Serviço\nS1"), "{rag}");
+        assert!(rag.contains("## documento 3: Serviço\nS3"), "{rag}");
+        assert!(rag.contains("## documento 2: FAQ\nF2"), "{rag}");
+        assert!(!rag.contains("S2") && !rag.contains("F1"), "{rag}");
     }
 
     #[test]
@@ -1123,6 +1452,7 @@ mod tests {
                 sanitizada: "CONSULTA COPAT nº 0091/17",
                 answer: None,
                 aderencia: "",
+                triagem: None,
                 rag: "{\"numero\":\"CONSULTA COPAT nº 0091/17\"}",
                 tempos: TemposConsulta {
                     retrieve_ms: 1,
@@ -1290,6 +1620,7 @@ mod tests {
             sanitizada: "pergunta",
             answer: Some("resposta"),
             aderencia: "",
+            triagem: None,
             rag: "contexto",
             tempos: TemposConsulta::default(),
         }

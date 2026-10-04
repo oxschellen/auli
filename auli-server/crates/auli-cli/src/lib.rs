@@ -22,6 +22,7 @@ pub mod packs;
 pub mod rag;
 pub mod remocoes;
 pub mod state;
+mod triagem;
 pub mod update;
 mod util;
 

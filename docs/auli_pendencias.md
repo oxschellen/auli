@@ -1559,7 +1559,7 @@ público raspado. Nada disso é o mantenedor — e uma varredura cega por `carlo
 
 ## 40. Serviços + FAQs: a resposta fundia serviços excludentes — prompt v2 e 5 + 10 (aberta — 2026-10-04)
 
-Decisões e mecanismo em [docs/auli_code.md](docs/auli_code.md) §3.4.1 (D-SF-1..5). Em resumo: os
+Decisões e mecanismo em [docs/auli_code.md](docs/auli_code.md) §3.4.1 (D-SF-\*). Em resumo: os
 serviços são alternativas para situações excludentes (regime geral × Simples Nacional, cidadão ×
 empresa), a busca densa traz justamente os irmãos, e o chat — com 30 documentos e um prompt que
 pedia "a orientação completa" — fundia regras que não se aplicam juntas. Entraram o `rs.txt` v2,
@@ -1581,6 +1581,12 @@ que proíbe a síntese entre documentos, e o corte para 5 serviços + 10 FAQs.
    quem cuida do conteúdo do portal.
 4. **Não reabrir sem dado:** as bandas continuam ∞/piso 0. O corte 5 + 10 é teto; a calibragem
    segue a doutrina do `ESTUDO-busca-hibrida.md` §9.
+5. **A triagem (D-SF-9) precisa de medida própria.** Três números a ler nos logs depois de uma
+   semana de uso: a latência somada (a seção TEMPOS e o `tempo:` da TRIAGEM — o frontend corta em
+   70 s); a taxa de falha (linhas `FALHOU` na seção TRIAGEM — cada uma é uma resposta que voltou ao
+   contexto integral); e os **descartes errados** — documento descartado que era o certo. Este
+   último é o que decide se a triagem fica: ela troca ruído por risco de recall, e o `motivo` de
+   cada veredito está no log justamente para essa leitura.
 
 ---
 

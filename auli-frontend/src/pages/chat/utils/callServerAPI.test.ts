@@ -69,6 +69,17 @@ describe("callServerAPI", () => {
     expect(firstUpdate[2].text).toMatch(/pensando/i);
   });
 
+  it("leva as fontes da resposta para a mensagem (D-SF-10)", async () => {
+    const fontes = [{ rotulo: "Serviço 1", titulo: "Emitir guia", link: "https://s/1" }];
+    mockedPost.mockResolvedValue({ data: { answer: "ok", fontes } });
+    const { setMessages, args } = makeArgs();
+
+    await callServerAPI(args);
+
+    const final = finalMessages(setMessages);
+    expect(final[final.length - 1].fontes).toEqual(fontes);
+  });
+
   it("replaces the placeholder with the server answer and clears the prompt", async () => {
     mockedPost.mockResolvedValue({ data: { answer: "Resposta do servidor" } });
     const { setMessages, setPrompt, args } = makeArgs();
