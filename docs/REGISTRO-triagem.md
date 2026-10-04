@@ -120,10 +120,53 @@ real **não foi exercitada** — com `medium` o vazio não ocorre.
 
 ## 6. Pendências que este registro acrescenta
 
-1. O [.env.example](../.env.example) ainda sugere `# LLM_REASONING_EFFORT=high`, e a linha da D-SF-6
-   em [auli_code.md](auli_code.md) §3.4.1 diz que o `gpt-oss` "confere melhor as próprias regras com
-   esforço alto" — ambos devem passar a apontar `medium` e o resultado da §3.2.
-2. Fumaça com uma pergunta que traga **os dois regimes** (geral e Simples), para ver as alternativas
-   separadas com a condição que decide — o objetivo da série.
+1. ~~O `.env.example` ainda sugere `high`, e a D-SF-6 em [auli_code.md](auli_code.md) §3.4.1 diz que o
+   `gpt-oss` "confere melhor as próprias regras com esforço alto".~~ **Feito em 04/10/2026:** o
+   [.env.example](../.env.example) passa a sugerir `medium` com o motivo, e a linha da D-SF-6 ganha
+   o resultado medido.
+2. ~~Fumaça com uma pergunta que traga **os dois regimes**.~~ **Feita em 04/10/2026** — resultado na
+   §7, que abre duas pendências novas.
 3. As medidas da triagem da [auli_pendencias.md](auli_pendencias.md) §40, item 5 (latência somada,
    taxa de `FALHOU`, descartes errados) seguem valendo — agora com `medium` como linha de base.
+   Precisam de uma semana de uso real.
+
+## 7. Fumaça com os dois regimes (04/10/2026, `medium`)
+
+**Achar a pergunta.** Das três perguntas sobre ICMS de empresa sem dizer o regime, só *"Empresa nova:
+como apurar e recolher o ICMS?"* trouxe os dois lados para o contexto — regime geral (Serviço 1,
+emissão da GA; Serviço 2, Consultas GIA) e Simples Nacional (Serviço 3, "Alteração de Enquadramento –
+Sublimite"; FAQ 7, inscrição INOVA Simples). As outras duas trouxeram no máximo um documento do
+Simples, descartado pela triagem.
+
+**Medido — 3 consultas da mesma pergunta:**
+
+| consulta | triagem | Serviço 3 (Simples) | resposta |
+| --- | --- | --- | --- |
+| 1 | OK — S1, S2 `aplica`; S3 `condicional` | ficou no contexto | só a GA [Serviço 1]; "o portal não traz informações específicas sobre a apuração" — ignorou a GIA, que estava `aplica` |
+| 2 | OK — idem; 10 FAQs `condicional` | ficou no contexto | GIA [Serviço 2] para apurar, GA [Serviço 1] para recolher |
+| 3 | **FALHOU** — JSON inválido | contexto integral | igual à 2 |
+
+**O que isso diz:**
+
+- **Nenhuma fusão** nas três: cada afirmação cita um documento e nenhuma regra migra de um serviço
+  para outro. É o defeito que motivou a série, e não apareceu.
+- **Mas a alternativa não aparece.** O Serviço 3 (Simples) passou pela triagem como `condicional` e
+  nenhuma resposta o apresentou como "se a empresa for do Simples…". **Deduzido:** o `rs.txt` v2
+  manda apresentar irmãos como alternativas *com a condição que decide*, e também proíbe deduzir
+  condição não escrita; como a descrição do serviço não diz a quem se aplica em relação à GA, o
+  modelo prefere omitir. É exatamente o cenário do item 3 da
+  [auli_pendencias.md](auli_pendencias.md) §40 (extrair offline uma condição de aplicação por
+  serviço) — e este caso é evidência a favor dele.
+- **A triagem falhou 1 vez em 5** nesta rodada (as três perguntas de busca + as duas repetições). O
+  modelo fechou o JSON com `}}]` em vez de `}]}` — erro de digitação dele, não de conteúdo: os 15
+  vereditos estavam lá. O fail-open funcionou como desenhado (resposta com o contexto integral, 7,5 s).
+
+**Pendências novas:**
+
+1. **Modo JSON na chamada da triagem.** A Groq aceita `response_format` (JSON mode / structured
+   outputs) para o gpt-oss; com ele, o `}}]` não passaria. **Não testado** — exige um campo novo no
+   `auli_llm::LlmParams`. Medir a taxa de `FALHOU` (pendência 3 da §6) antes, para ter com o que
+   comparar.
+2. **Alternativa `condicional` que não chega ao texto** — ver o item 3 da
+   [auli_pendencias.md](auli_pendencias.md) §40. Não mexer no prompt antes da validação v1 × v2 (item
+   1 de lá).
