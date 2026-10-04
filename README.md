@@ -183,7 +183,7 @@ and only ever embeds the incoming question.
 A single-page app (no router; **tab navigation**) built with React 19, Vite, and Chakra UI v3.
 
 - **State selection** with an interactive map of Brazil; choice persisted in `localStorage`.
-- **Chat** against `POST /v1/question` (25 s timeout, friendly errors, copy button, markdown), with
+- **Chat** against `POST /v1/question` (70 s timeout, friendly errors, copy button, markdown), with
   a **query-type selector**: serviços+FAQs, pareceres or TARF acórdãos.
 - **Reference tabs** — Serviços, FAQs, Pareceres, Notas, Conteúdos — each reading static files from
   `public/<id>/`; "coming soon" placeholders for collections a state doesn't have yet.

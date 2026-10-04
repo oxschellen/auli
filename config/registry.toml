@@ -51,6 +51,11 @@ prompt_tarf = "prompts/rs-tarf.txt"
 # sem prompt próprio ainda é jurisprudência, e legislação não é: cair no de pareceres mandaria o
 # modelo citar "o número do parecer" sobre um texto de lei.
 prompt_legislacao = "prompts/rs-legislacao.txt"
+# Prompt da TRIAGEM das consultas de serviços+FAQs (query type=1, D-SF-9). Opcional e SEM default:
+# com ele, a resposta sai de DUAS chamadas ao LLM — a primeira classifica cada documento recuperado
+# (aplica / condicional / descarta) e a segunda redige vendo só os que não foram descartados. Sem
+# ele, uma chamada só, como antes. A triagem que falha segue com o contexto integral (fail-open).
+prompt_triagem = "prompts/rs-triagem.txt"
 # `tarf` é a coleção dos acórdãos do Tribunal Administrativo de Recursos Fiscais. Ela dirige DUAS
 # coisas: a aba de listagem (que lê o `rs-tarf-index.json`) e a fonte "Acórdãos TARF" do chat (que lê
 # o pack vetorial `rs-tarf`).

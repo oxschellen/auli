@@ -120,7 +120,7 @@ pub async fn chat(
         for attempt in 1u32..=3 {
             let outcome = async {
                 // Timeout POR REQUISIÇÃO, mantido pelo chamador abaixo do seu próprio budget — no
-                // servidor, os 35 s do frontend (callServerAPI.ts): um LLM pendurado vira timeout
+                // servidor, os 70 s do frontend (callServerAPI.ts): um LLM pendurado vira timeout
                 // retryável aqui em vez de o cliente desistir com a chamada paga ainda aberta.
                 let resp = CLIENT
                     .post(params.api_url.as_str())

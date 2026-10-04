@@ -193,6 +193,7 @@ impl AuliMcp {
             sanitizada: &anonimizada,
             answer: None, // sem LLM neste caminho
             aderencia,
+            triagem: None, // a triagem é só do chat
             rag: devolvido,
             tempos,
         }) {

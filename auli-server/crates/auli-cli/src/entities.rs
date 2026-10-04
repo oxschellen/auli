@@ -94,6 +94,11 @@ struct RegistryEntity {
     // (global, não o de pareceres da entidade — ver o doc da const).
     #[serde(default)]
     prompt_legislacao: String,
+    // Optional per-entity prompt for the TRIAGEM step of serviços+faqs (D-SF-9). Vazio ⇒ sem
+    // triagem: a resposta sai de uma chamada só, como antes. Não há default global de propósito —
+    // a triagem é opt-in por entidade.
+    #[serde(default)]
+    prompt_triagem: String,
 }
 
 #[derive(Debug, Clone)]
@@ -108,6 +113,8 @@ pub struct EntityConfig {
     // Prompt used for legislação queries (type=4); the entity's `prompt_legislacao` or the global
     // legislação default.
     pub legislacao_prompt: String,
+    // Prompt da triagem de serviços+faqs (D-SF-9); `None` = resposta em uma chamada só.
+    pub triagem_prompt: Option<String>,
 }
 
 impl EntityConfig {
@@ -203,6 +210,30 @@ fn load_prompt(
     })
 }
 
+/// Como [`load_prompt`], mas para um passo OPCIONAL, sem texto padrão: caminho vazio ⇒ `None` (o
+/// passo não existe para a entidade); arquivo ilegível ⇒ aviso e `None` — o passo cai fora, e a
+/// consulta segue pelo caminho de sempre em vez de rodar com um prompt que ninguém escreveu.
+fn load_prompt_opcional(
+    base: &std::path::Path,
+    id: &str,
+    rel_path: &str,
+    kind: &str,
+) -> Option<String> {
+    if rel_path.is_empty() {
+        return None;
+    }
+    match fs::read_to_string(base.join(rel_path)) {
+        Ok(p) => Some(p),
+        Err(_) => {
+            eprintln!(
+                "⚠️  prompt de {} ausente para a entidade '{}' ({}), passo desligado.",
+                kind, id, rel_path
+            );
+            None
+        }
+    }
+}
+
 fn load_entities() -> HashMap<String, EntityConfig> {
     let mut map = HashMap::new();
     // Os caminhos de prompt do registry (`prompts/rs.txt`) são relativos à pasta DO REGISTRY, e
@@ -236,6 +267,7 @@ fn load_entities() -> HashMap<String, EntityConfig> {
             "legislacao",
             DEFAULT_LEGISLACAO_PROMPT,
         );
+        let triagem_prompt = load_prompt_opcional(&base, &ent.id, &ent.prompt_triagem, "triagem");
         map.insert(
             ent.id.clone(),
             EntityConfig {
@@ -245,6 +277,7 @@ fn load_entities() -> HashMap<String, EntityConfig> {
                 pareceres_prompt,
                 tarf_prompt,
                 legislacao_prompt,
+                triagem_prompt,
             },
         );
     }
@@ -292,6 +325,7 @@ mod tests {
             pareceres_prompt: "PARECERES".into(),
             tarf_prompt: "TARF".into(),
             legislacao_prompt: legislacao_prompt.into(),
+            triagem_prompt: None,
         }
     }
 

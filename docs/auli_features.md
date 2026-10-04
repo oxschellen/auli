@@ -82,7 +82,7 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
   em destaque) e cards das secretarias; a escolha é **persistida** no navegador e pode ser
   trocada pelo cabeçalho.
 - **Chat conversacional** com balões diferenciados para usuário e assistente, mensagem de
-  "pensando", **botão de copiar** mensagens e **timeout amigável** (25s) quando a API demora.
+  "pensando", **botão de copiar** mensagens e **timeout amigável** (70 s) quando a API demora.
 - **Navegação por abas** (sem recarga de página), em três grupos: **Acervo** (Serviços, FAQs,
   Pareceres, Acórdãos TARF, Notas, Conteúdos), **Integrações** (Conectar sua IA, Downloads) e o
   Chat, mais o Sobre no rodapé — com o estado de cada aba preservado ao alternar. Aba de coleção que

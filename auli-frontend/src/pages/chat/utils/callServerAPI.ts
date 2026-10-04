@@ -24,8 +24,10 @@ interface QuestionResponse {
   log_id?: string;
 }
 
-/** Abort the request if the server hasn't responded within this window. */
-const REQUEST_TIMEOUT_MS = 35_000;
+/** Abort the request if the server hasn't responded within this window.
+ *  70 s (era 35 s) desde a triagem de serviços+FAQs (D-SF-9): a resposta pode levar DUAS chamadas
+ *  ao LLM — até 20 s na triagem e 30 s na redação —, mais embed e busca. */
+const REQUEST_TIMEOUT_MS = 70_000;
 
 /** User-facing copy (pt-BR). Kept here so the wording lives in one place. */
 const MESSAGES = {
