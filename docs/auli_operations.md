@@ -334,6 +334,7 @@ para o server rodando em `auli-server/`. Variáveis:
 | Variável                                        | Obrigatória?                                                 | Uso                                             |
 | ----------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------- |
 | `LLM_API_URL` / `LLM_API_KEY` / `LLM_API_MODEL` | sim                                                          | LLM externo (Groq-compat) que redige a resposta |
+| `LLM_REASONING_EFFORT`                          | não (ausente = default do provedor)                          | `low`/`medium`/`high`; inválido aborta o boot   |
 | `EMBED_CACHE_DIR`                               | não (lançadores: `<raiz>/models`; def. do código `./models`) | cache do modelo                                 |
 | `EMBED_THREADS`                                 | não (def. `16`)                                              | threads do ONNX Runtime                         |
 | `AULI_LOG_DIR`                                  | não (lançadores: `<raiz>/logs`; def. do código `./logs`)     | dir dos logs de Q&A do RAG (§7)                 |

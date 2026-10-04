@@ -213,7 +213,7 @@ Acionado por `POST /v1/question`. Assinatura:
 prompt de sistema. Só `notas` fica de fora: tem rota de listagem, mas não tem fonte struct nem
 pack — ver §3.13.
 
-### 3.4.1 Serviços + FAQs: alternativas, não peças — as cinco decisões (D-SF-\*)
+### 3.4.1 Serviços + FAQs: alternativas, não peças — as decisões (D-SF-\*)
 
 **O sintoma (04/10/2026, uso real):** a indicação do serviço funciona quando o serviço está bem
 descrito; o que falha é a resposta que **unifica** informações de muitos serviços distintos e
@@ -236,6 +236,7 @@ pedido.
 | **D-SF-3** | `corpus::SERVICES.n_results` 10 → **5**; `corpus::FAQS.n_results` 20 → **10** | Menos irmãos e menos ruído no contexto, e cerca de metade dos tokens do prompt. **Não resolve sozinho** — o irmão excludente costuma estar entre os primeiros —, por isso vem em par com a D-SF-2. As bandas continuam ∞/piso 0: isto é teto, não calibragem; a calibragem segue adiada e com base acumulando no log. |
 | **D-SF-4** | Sem bump de `STRATEGY_VERSION` nem de `PACK_FORMAT`; nenhum `auli update` | `corpus` é parâmetro de **consulta** (o próprio módulo diz que nada ali afeta o que foi embedado). Recompilar e reiniciar basta; os packs ficam como estão. |
 | **D-SF-5** | A mudança vale para as **três faces** de uma vez: chat (tipo 1), ferramenta MCP `consultar_servicos_faqs` (descrição atualizada para "até 5 serviços e até 10 FAQs") e o default de `top_k` do `/v1/retrieve` para `servicos`/`faqs` | É a paridade por construção da §3.12 — as faces leem as mesmas constantes. Consequência esperada: o `parity-replay.py` acusa divergência contra logs anteriores a esta mudança, porque o contexto ficou menor. Não é regressão; a linha de base nova começa aqui. |
+| **D-SF-6** | Esforço de raciocínio do chat vem do `.env` (`LLM_REASONING_EFFORT` = `low`/`medium`/`high`); ausente = o campo não é enviado. `max_completion_tokens` do chat 4096 → **8192** | O `gpt-oss` confere melhor as próprias regras com esforço alto, e o `auli-llm` já suportava o campo — faltava o chat passá-lo. Variável, e não constante, porque o parâmetro é recusado por modelos que não são de raciocínio: trocar de modelo não pode exigir recompilar. Valor inválido **aborta o boot** (o erro de digitação não vira default em silêncio). Os 8192 existem porque, nesses modelos, a saída inclui o raciocínio. Vale para todos os tipos de consulta do chat. |
 
 ### 3.5 Clientes e adaptadores (embeddings/busca/LLM in-process)
 
