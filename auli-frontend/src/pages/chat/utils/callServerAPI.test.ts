@@ -67,6 +67,10 @@ describe("callServerAPI", () => {
     expect(firstUpdate.map((m) => m.from)).toEqual(["server", "user", "server"]);
     expect(firstUpdate[1].text).toBe(args.prompt);
     expect(firstUpdate[2].text).toMatch(/pensando/i);
+    // Desenhado como a animação `Pensando`; a resposta que o substitui já não é pendente.
+    expect(firstUpdate[2].pendente).toBe(true);
+    const final = setMessages.mock.calls.at(-1)![0] as Message[];
+    expect(final.at(-1)!.pendente).toBeUndefined();
   });
 
   it("leva as fontes da resposta para a mensagem (D-SF-10)", async () => {

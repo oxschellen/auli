@@ -26,6 +26,9 @@ export interface Message {
   logId?: string;
   /** Lista de fontes recuperadas (D-SF-10) — só em respostas de Serviços + FAQs. */
   fontes?: Fonte[];
+  /** O lugar da resposta enquanto a consulta roda: desenhado como a animação `Pensando`, não
+   *  como texto. O `text` segue preenchido para quem não desenha (e para os testes). */
+  pendente?: boolean;
 }
 
 /** Setter returned by `usePrompt`, matching React's `useState<string>` setter. */

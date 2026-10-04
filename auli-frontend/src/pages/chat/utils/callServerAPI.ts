@@ -66,6 +66,7 @@ export const callServerAPI = async ({
     from: "server",
     text: MESSAGES.thinking,
     showButton: false,
+    pendente: true,
   });
 
   setMessages([...messagesArray]);
