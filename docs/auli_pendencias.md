@@ -1557,6 +1557,33 @@ público raspado. Nada disso é o mantenedor — e uma varredura cega por `carlo
 
 ---
 
+## 40. Serviços + FAQs: a resposta fundia serviços excludentes — prompt v2 e 5 + 10 (aberta — 2026-10-04)
+
+Decisões e mecanismo em [docs/auli_code.md](docs/auli_code.md) §3.4.1 (D-SF-1..5). Em resumo: os
+serviços são alternativas para situações excludentes (regime geral × Simples Nacional, cidadão ×
+empresa), a busca densa traz justamente os irmãos, e o chat — com 30 documentos e um prompt que
+pedia "a orientação completa" — fundia regras que não se aplicam juntas. Entraram o `rs.txt` v2,
+que proíbe a síntese entre documentos, e o corte para 5 serviços + 10 FAQs.
+
+**O que fica aberto:**
+
+1. **Validação v1 × v2.** Reenviar ao servidor local as perguntas reais em que a mistura foi vista
+   e comparar as respostas. Critério: nenhuma afirmação de um documento atribuída a outro; quando
+   houver irmãos excludentes, as alternativas aparecem separadas com a condição que decide. O
+   `parity-replay.py` reenvia a partir dos logs, mas descarta a resposta — precisa de uma variante
+   que a guarde. Atenção: contra logs anteriores a 04/10 ele acusa divergência de contexto por
+   construção (D-SF-5).
+2. **Replicar o prompt** para os outros 26 estados, **depois** da validação. O `sc.txt` é idêntico
+   ao `rs.txt` v1; os demais diferem em ~9 linhas e precisam de merge à mão.
+3. **Se o par prompt + corte não bastar:** extrair offline uma **condição de aplicação** por
+   serviço, no molde do `extracao-servicos.txt` (só o que estiver explícito no texto). Os serviços
+   em que ela sair vazia são exatamente os mal descritos — e essa lista tem valor por si, para
+   quem cuida do conteúdo do portal.
+4. **Não reabrir sem dado:** as bandas continuam ∞/piso 0. O corte 5 + 10 é teto; a calibragem
+   segue a doutrina do `ESTUDO-busca-hibrida.md` §9.
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →

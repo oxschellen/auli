@@ -16,13 +16,19 @@ pub struct Collection {
     pub n_results: usize, // how many documents to retrieve for RAG
 }
 
+// Serviços e FAQs (D-SF-3, 04/10/2026): 5 + 10, eram 10 + 20. Os documentos desta coleção são
+// ALTERNATIVAS entre si — cada um vale para uma situação específica (regime geral × Simples
+// Nacional, cidadão × empresa) —, e a busca densa traz justamente os irmãos. Com 30 no contexto a
+// resposta fundia regras de situações excludentes. Cortar o número reduz os irmãos e o ruído, mas
+// NÃO resolve sozinho (o irmão costuma estar no topo): o par é o prompt v2 (D-SF-2), que proíbe a
+// síntese entre documentos. As bandas seguem ∞/piso 0 — isto é teto, não calibragem.
 pub const SERVICES: Collection = Collection {
     kind: "servicos",
-    n_results: 10,
+    n_results: 5,
 };
 pub const FAQS: Collection = Collection {
     kind: "faqs",
-    n_results: 20,
+    n_results: 10,
 };
 // Pares P/R de legislação (D-LEG-10): mesma política dos serviços na v1 — coleção pequena e
 // autorada, em que cada documento já é uma resposta curta. Como nas demais, a banda é ∞/piso 0: a
@@ -75,7 +81,7 @@ mod tests {
     fn from_kind_resolves_known_and_rejects_unknown() {
         // `servicos` is the one vocabulary — route param, vector-collection suffix, and UI label.
         assert_eq!(from_kind("servicos").unwrap().kind, "servicos");
-        assert_eq!(from_kind("faqs").unwrap().n_results, 20);
+        assert_eq!(from_kind("faqs").unwrap().n_results, 10);
         // The old English spelling `services` is no longer a kind.
         assert!(from_kind("services").is_err());
     }
