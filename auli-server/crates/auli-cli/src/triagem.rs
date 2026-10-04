@@ -15,7 +15,7 @@
 //! Este módulo é PURO (sem rede, sem I/O): interpreta o texto que o modelo devolveu. A chamada vive
 //! no `rag.rs`, junto da outra.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::Deserialize;
 
@@ -31,6 +31,17 @@ pub(crate) enum Veredito {
     Condicional,
     /// Não trata da situação perguntada. Sai do contexto da segunda chamada.
     Descarta,
+}
+
+impl Veredito {
+    /// A grafia de fio — a mesma do JSON que o modelo devolve e da lista de fontes (D-SF-10).
+    pub(crate) fn as_str(self) -> &'static str {
+        match self {
+            Veredito::Aplica => "aplica",
+            Veredito::Condicional => "condicional",
+            Veredito::Descarta => "descarta",
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -49,25 +60,37 @@ struct Resposta {
     documentos: Vec<Item>,
 }
 
-/// Interpreta a resposta da triagem e devolve os rótulos **descartados** (`"Serviço 3"`, `"FAQ 7"`).
+/// Interpreta a resposta da triagem: o veredito de cada documento, pelo rótulo canônico
+/// (`"Serviço 3"`, `"FAQ 7"`). Documento que o modelo omitiu simplesmente não está no mapa.
 ///
 /// `rotulos` são os que existem no contexto enviado. Um rótulo desconhecido na resposta é `Err`:
 /// o modelo está falando de um documento que não viu, e nada do que ele disse sobre os outros
 /// merece confiança.
-pub(crate) fn descartados(resposta: &str, rotulos: &[String]) -> Result<BTreeSet<String>, String> {
+pub(crate) fn vereditos(
+    resposta: &str,
+    rotulos: &[String],
+) -> Result<BTreeMap<String, Veredito>, String> {
     let json = extrair_objeto(resposta).ok_or("a resposta não contém um objeto JSON")?;
     let r: Resposta = serde_json::from_str(json).map_err(|e| format!("JSON inválido: {e}"))?;
-    let mut fora = BTreeSet::new();
+    let mut mapa = BTreeMap::new();
     for item in r.documentos {
         let rotulo = normalizar(&item.documento);
         if !rotulos.contains(&rotulo) {
             return Err(format!("rótulo fora do contexto: '{}'", item.documento));
         }
-        if item.veredito == Veredito::Descarta {
-            fora.insert(rotulo);
-        }
+        mapa.insert(rotulo, item.veredito);
     }
-    Ok(fora)
+    Ok(mapa)
+}
+
+/// Os rótulos **descartados** — os únicos que saem do contexto da segunda chamada. Omitido e
+/// `condicional` ficam (fail-open por documento).
+pub(crate) fn descartados(vereditos: &BTreeMap<String, Veredito>) -> BTreeSet<String> {
+    vereditos
+        .iter()
+        .filter(|(_, v)| **v == Veredito::Descarta)
+        .map(|(r, _)| r.clone())
+        .collect()
 }
 
 /// O trecho entre a primeira `{` e a última `}`. Cobre a cerca markdown (```` ```json ````) e o
@@ -102,6 +125,11 @@ fn normalizar(s: &str) -> String {
 mod tests {
     use super::*;
 
+    /// O caminho do `rag.rs`: vereditos e, deles, os descartados.
+    fn fora(r: &str) -> Result<BTreeSet<String>, String> {
+        vereditos(r, &rotulos()).map(|m| descartados(&m))
+    }
+
     fn rotulos() -> Vec<String> {
         ["Serviço 1", "Serviço 2", "FAQ 1", "FAQ 2"]
             .iter()
@@ -116,7 +144,7 @@ mod tests {
             {"documento": "Serviço 2", "veredito": "condicional", "motivo": "regime"},
             {"documento": "FAQ 1", "veredito": "descarta", "motivo": "outro tema"}
         ]}"#;
-        let fora = descartados(r, &rotulos()).unwrap();
+        let fora = fora(r).unwrap();
         // A FAQ 2 foi omitida pelo modelo: fica (fail-open por documento).
         assert_eq!(fora, BTreeSet::from(["FAQ 1".to_string()]));
     }
@@ -124,14 +152,14 @@ mod tests {
     #[test]
     fn cerca_markdown_e_texto_em_volta_sao_tolerados() {
         let r = "Segue:\n```json\n{\"documentos\": [{\"documento\": \"FAQ 2\", \"veredito\": \"descarta\"}]}\n```";
-        let fora = descartados(r, &rotulos()).unwrap();
+        let fora = fora(r).unwrap();
         assert_eq!(fora, BTreeSet::from(["FAQ 2".to_string()]));
     }
 
     #[test]
     fn rotulo_com_colchete_e_caixa_diferente_e_normalizado() {
         let r = r#"{"documentos": [{"documento": "[servico 2]", "veredito": "descarta"}]}"#;
-        let fora = descartados(r, &rotulos()).unwrap();
+        let fora = fora(r).unwrap();
         assert_eq!(fora, BTreeSet::from(["Serviço 2".to_string()]));
     }
 
@@ -141,13 +169,27 @@ mod tests {
             {"documento": "FAQ 1", "veredito": "descarta"},
             {"documento": "Serviço 9", "veredito": "aplica"}
         ]}"#;
-        assert!(descartados(r, &rotulos()).is_err());
+        assert!(fora(r).is_err());
     }
 
     #[test]
     fn veredito_desconhecido_e_resposta_sem_json_sao_erro() {
         let r = r#"{"documentos": [{"documento": "FAQ 1", "veredito": "talvez"}]}"#;
-        assert!(descartados(r, &rotulos()).is_err());
-        assert!(descartados("não sei", &rotulos()).is_err());
+        assert!(fora(r).is_err());
+        assert!(fora("não sei").is_err());
+    }
+
+    #[test]
+    fn vereditos_trazem_os_tres_valores_e_omitido_fica_de_fora_do_mapa() {
+        let r = r#"{"documentos": [
+            {"documento": "Serviço 1", "veredito": "aplica"},
+            {"documento": "Serviço 2", "veredito": "condicional"},
+            {"documento": "FAQ 1", "veredito": "descarta"}
+        ]}"#;
+        let m = vereditos(r, &rotulos()).unwrap();
+        assert_eq!(m.get("Serviço 1").map(|v| v.as_str()), Some("aplica"));
+        assert_eq!(m.get("Serviço 2").map(|v| v.as_str()), Some("condicional"));
+        assert_eq!(m.get("FAQ 1").map(|v| v.as_str()), Some("descarta"));
+        assert!(!m.contains_key("FAQ 2"));
     }
 }

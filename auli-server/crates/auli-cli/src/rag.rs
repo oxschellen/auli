@@ -13,6 +13,7 @@ use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_contract::{DocumentoPack, Kind, bloco, conteudo_indisponivel};
 use auli_core::corpus::{self, FAQS, SERVICES};
 use auli_retrieval::{Engine, Hit};
+use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info, trace, warn};
 use uuid::Uuid;
 
@@ -378,13 +379,79 @@ pub(crate) fn blocos(hits: &[Hit], docs_root: &Path, entity_id: &str) -> Vec<Str
         .collect()
 }
 
+/// Um documento recuperado, como a **lista de fontes** da resposta o mostra (D-SF-10).
+///
+/// Existe para que o analista veja SEMPRE o que a busca trouxe, independentemente do que o texto do
+/// LLM decidiu citar: o núcleo do Auli é achar a informação, e o texto gerado é complemento. O
+/// `rotulo` é exatamente o da citação (`"Serviço 2"`, `"FAQ 4"` — D-SF-7), para que uma bata com a
+/// outra.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Fonte {
+    pub rotulo: String,
+    pub titulo: String,
+    pub link: String,
+    /// Veredito da triagem (`aplica` / `condicional` / `descarta` — D-SF-9). Ausente quando não
+    /// houve triagem, quando ela falhou, ou quando o modelo omitiu este documento: nos três casos o
+    /// documento foi à resposta sem filtro, e não há veredito a mostrar.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub triagem: Option<String>,
+}
+
+/// O que o chat devolve: o texto, a identidade do log e a lista de fontes.
+#[derive(Debug, Default)]
+pub struct RespostaChat {
+    pub answer: String,
+    pub log_id: Option<Uuid>,
+    /// Vazia fora do tipo serviços+FAQs — a lista é só dele por decisão (D-SF-10).
+    pub fontes: Vec<Fonte>,
+}
+
+impl RespostaChat {
+    /// Os atalhos que saem antes de qualquer gravação: só o texto, sem log e sem fontes.
+    pub fn so_texto(answer: String) -> Self {
+        RespostaChat {
+            answer,
+            ..Default::default()
+        }
+    }
+}
+
+/// As fontes de serviços+FAQs, na ordem e com os rótulos do contexto ([`rotulos_servicos_faqs`]).
+///
+/// Payload que não desserializa (não deveria passar pelo boot) ainda gera a linha, com título de
+/// aviso e sem link: a lista tem que ter um item por documento, ou a numeração deixa de bater com a
+/// citação.
+pub(crate) fn fontes_servicos_faqs(svc_payloads: &[&str], faq_payloads: &[&str]) -> Vec<Fonte> {
+    let rotulos = rotulos_servicos_faqs(svc_payloads.len(), faq_payloads.len());
+    rotulos
+        .into_iter()
+        .zip(svc_payloads.iter().chain(faq_payloads.iter()))
+        .map(
+            |(rotulo, payload)| match serde_json::from_str::<DocumentoPack>(payload) {
+                Ok(p) => Fonte {
+                    rotulo,
+                    titulo: p.titulo,
+                    link: p.link,
+                    triagem: None,
+                },
+                Err(_) => Fonte {
+                    rotulo,
+                    titulo: "[documento ilegível]".to_string(),
+                    link: String::new(),
+                    triagem: None,
+                },
+            },
+        )
+        .collect()
+}
+
 pub async fn exec_all_question(
     engine: Arc<Engine>,
     anonimizador: Arc<Anonimizador>,
     question: String,
     entity: Option<String>,
     query_type: QueryType,
-) -> Result<(String, Option<Uuid>)> {
+) -> Result<RespostaChat> {
     debug!("Executando consulta: {}", question);
 
     let t_total = Instant::now();
@@ -415,7 +482,7 @@ pub async fn exec_all_question(
             warn!("{}", e);
             // Sem `log_id`: este atalho sai antes de qualquer gravação. O ícone do log não aparece
             // porque de fato não há registro — mesma regra dos outros retornos precoces.
-            return Ok((e, None));
+            return Ok(RespostaChat::so_texto(e));
         }
     };
     info!("Entidade: {} ({})", cfg.id, cfg.name);
@@ -440,6 +507,8 @@ pub async fn exec_all_question(
     // Os blocos de serviços e de FAQs em separado, guardados para a TRIAGEM (D-SF-9): ela precisa
     // remontar o contexto sem os descartados, mantendo a numeração original. `None` nos outros tipos.
     let mut blocos_sf: Option<(Vec<String>, Vec<String>)> = None;
+    // A lista de fontes da resposta (D-SF-10): só serviços+faqs a preenchem.
+    let mut fontes: Vec<Fonte> = Vec::new();
     let rag = match query_type {
         QueryType::ServicosFaqs => {
             // Retrieve this entity's servicos + faqs concurrently, both through the engine.
@@ -476,6 +545,16 @@ pub async fn exec_all_question(
             let faq_docs = blocos(&faq_hits, engine.docs_root(), &cfg.id);
             let rag = montar_rag_servicos_faqs(&svc_docs, &faq_docs);
             blocos_sf = Some((svc_docs, faq_docs));
+            fontes = fontes_servicos_faqs(
+                &svc_hits
+                    .iter()
+                    .map(|h| h.payload.as_str())
+                    .collect::<Vec<_>>(),
+                &faq_hits
+                    .iter()
+                    .map(|h| h.payload.as_str())
+                    .collect::<Vec<_>>(),
+            );
             rag
         }
         QueryType::ColecaoUnica(kind) => {
@@ -497,13 +576,10 @@ pub async fn exec_all_question(
             // contexto vazio (que é convite a alucinação).
             if hits.is_empty() {
                 // Idem: sai antes do `log_question`, logo sem `log_id`.
-                return Ok((
-                    format!(
-                        "A consulta de {} ainda não está disponível para esta entidade.",
-                        kind.titulo()
-                    ),
-                    None,
-                ));
+                return Ok(RespostaChat::so_texto(format!(
+                    "A consulta de {} ainda não está disponível para esta entidade.",
+                    kind.titulo()
+                )));
             }
 
             // Expansão por grafo: pareceres que citam os MESMOS dispositivos dos recuperados — sinal
@@ -598,14 +674,19 @@ pub async fn exec_all_question(
         let (texto, resultado) =
             match llm::triagem(&compor_system_prompt(prompt_triagem, &rag), entrada_llm).await {
                 Ok(txt) => {
-                    let r = triagem::descartados(&txt, &rotulos);
+                    let r = triagem::vereditos(&txt, &rotulos);
                     (txt, r)
                 }
                 Err(e) => (String::new(), Err(format!("a chamada falhou: {e}"))),
             };
         let ms = t_tri.elapsed().as_millis();
         registro_triagem = Some(match resultado {
-            Ok(fora) => {
+            Ok(vereditos) => {
+                // O veredito vai para a lista de fontes, pelo mesmo rótulo do contexto.
+                for f in &mut fontes {
+                    f.triagem = vereditos.get(&f.rotulo).map(|v| v.as_str().to_string());
+                }
+                let fora = triagem::descartados(&vereditos);
                 info!(
                     "Triagem: {} de {} documentos descartados",
                     fora.len(),
@@ -698,7 +779,11 @@ pub async fn exec_all_question(
     .inspect_err(|e| warn!("falha ao gravar o log da consulta: {e}"))
     .ok();
 
-    Ok((answer, log_id))
+    Ok(RespostaChat {
+        answer,
+        log_id,
+        fontes,
+    })
 }
 
 /// Uma consulta a registrar no log de auditoria — tudo que entra no arquivo, menos o carimbo de
@@ -917,9 +1002,9 @@ mod tests {
     use super::{
         FAQ_BAND, FAQ_FLOOR, LEG_BAND, LEG_FLOOR, MARCADOR_CONTEXTO, PAR_BAND, PAR_FLOOR,
         QueryType, RegistroConsulta, SVC_BAND, SVC_FLOOR, TemposConsulta, Uuid, aderencia, bandas,
-        bloco_documento, compor_system_prompt, envolver, format_log_record, log_question,
-        mes_do_log, montar_aderencia, montar_rag_colecao_unica, montar_rag_servicos_faqs,
-        montar_rag_servicos_faqs_sem, rotulos_servicos_faqs,
+        bloco_documento, compor_system_prompt, envolver, fontes_servicos_faqs, format_log_record,
+        log_question, mes_do_log, montar_aderencia, montar_rag_colecao_unica,
+        montar_rag_servicos_faqs, montar_rag_servicos_faqs_sem, rotulos_servicos_faqs,
     };
     use auli_contract::{DocumentoPack, Kind, mddoc};
     use std::path::Path;
@@ -1270,6 +1355,33 @@ mod tests {
         let i_ader = rec.find("----- ADERÊNCIA").expect("aderência");
         assert!(i_resp < i_tri && i_tri < i_ader, "{rec}");
         assert!(rec.contains("descartados: 1 de 2 (FAQ 1)"), "{rec}");
+    }
+
+    #[test]
+    fn fontes_tem_um_item_por_documento_com_o_rotulo_da_citacao() {
+        let pack = |titulo: &str, link: &str| {
+            serde_json::to_string(&DocumentoPack {
+                kind: Kind::Servicos,
+                trilha: String::new(),
+                titulo: titulo.into(),
+                ementa: String::new(),
+                resumo: String::new(),
+                link: link.into(),
+                doc_path: "docs/servicos/x.md".into(),
+            })
+            .unwrap()
+        };
+        let s1 = pack("Emitir guia", "https://s/1");
+        let f1 = pack("Como pagar?", "https://f/1");
+        let fontes = fontes_servicos_faqs(&[s1.as_str(), "{quebrado"], &[f1.as_str()]);
+        let rotulos: Vec<_> = fontes.iter().map(|f| f.rotulo.as_str()).collect();
+        assert_eq!(rotulos, ["Serviço 1", "Serviço 2", "FAQ 1"]);
+        assert_eq!(fontes[0].titulo, "Emitir guia");
+        assert_eq!(fontes[0].link, "https://s/1");
+        // Payload ilegível não some da lista: a numeração tem que continuar batendo.
+        assert_eq!(fontes[1].link, "");
+        assert_eq!(fontes[2].titulo, "Como pagar?");
+        assert!(fontes.iter().all(|f| f.triagem.is_none()));
     }
 
     #[test]

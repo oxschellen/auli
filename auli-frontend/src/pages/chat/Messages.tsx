@@ -31,6 +31,7 @@ export const Messages = ({ messages, setPrompt }: MessagesProps) => {
               messageText={messageText}
               showButton={item.showButton}
               logId={item.logId}
+              fontes={item.fontes}
             />
           );
         }
