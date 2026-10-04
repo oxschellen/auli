@@ -1,7 +1,7 @@
 import { Flex, Button, Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { Tooltip } from "./ui/tooltip";
-import { MdCopyAll, MdHistory } from "react-icons/md";
+import { MdCopyAll, MdReceiptLong } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { utilsCopyTextToClipboard } from "./utils/utils";
 import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
@@ -71,22 +71,28 @@ export const SystemMessage = ({ messageText, showButton, logId, fontes }: System
         {showButton && (
           <Flex justify="flex-end" mt={0} gap={2}>
             {/* Só existe quando o backend devolveu `log_id` — sem registro gravado não há o que
-                abrir, e o ícone some em vez de levar a um 404. Isso já o exclui da saudação. */}
+                abrir, e o botão some em vez de levar a um 404. Isso já o exclui da saudação.
+                Ícone de documento + rótulo visível: o relógio com seta (MdHistory) lia como
+                "reprocessar", e um botão só de ícone não dizia o que abre. */}
             {logId && (
               <Tooltip content="Ver o log desta resposta" bg="bg.inverted">
                 <Button
                   borderRadius="full"
                   aria-label="Ver o log de auditoria desta resposta"
                   size="xs"
-                  minW="26px"
                   h="26px"
+                  px={2}
+                  gap={1}
+                  fontSize="11px"
+                  fontWeight="normal"
                   color="fg.muted"
                   bg="transparent"
                   _hover={{ bg: "bg.overlay" }}
                   transition="all 0.15s ease"
                   onClick={() => setLogAberto(true)}
                 >
-                  <MdHistory size={16} color="var(--chakra-colors-fg-muted)" />
+                  <MdReceiptLong size={16} color="var(--chakra-colors-fg-muted)" />
+                  Log da consulta
                 </Button>
               </Tooltip>
             )}

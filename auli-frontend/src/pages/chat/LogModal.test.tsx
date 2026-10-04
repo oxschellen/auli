@@ -46,12 +46,11 @@ describe("ícone do log", () => {
     expect(screen.queryByLabelText(ROTULO_COPIA)).toBeNull();
   });
 
-  /** O mesmo tamanho do ícone de cópia é decisão de UI registrada na D-LOG-4. */
-  it("tem o mesmo tamanho do botão de cópia", () => {
+  /** Rótulo visível, não só ícone: o relógio com seta lia como "reprocessar" (04/10/2026). Até
+   *  então o botão era só ícone, do mesmo tamanho do de cópia. */
+  it("diz o que abre, em texto visível", () => {
     renderWithProvider(<SystemMessage messageText="Depende." showButton logId="abc" />);
-    const log = screen.getByLabelText(ROTULO_LOG);
-    const copia = screen.getByLabelText(ROTULO_COPIA);
-    expect(log.className).toEqual(copia.className);
+    expect(screen.getByLabelText(ROTULO_LOG).textContent).toBe("Log da consulta");
   });
 });
 
