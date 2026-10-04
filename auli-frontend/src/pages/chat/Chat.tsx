@@ -28,6 +28,20 @@ export const Chat = () => {
   const { isKeyboardVisible: isKeyboardOpen, keyboardHeight } = useIsKeyboardVisible();
   const [loading, setLoading] = useState(false);
 
+  // Altura MEDIDA da barra de composição, que é `fixed` e cobre o fim da lista. O recuo era fixo
+  // (185px) e no celular a barra passa disso — o seletor de tipo quebra em duas linhas —, então a
+  // última faixa de cada resposta (os botões do log e de cópia) ficava escondida atrás dela.
+  // O valor inicial reproduz os 185px de antes até a primeira medição.
+  const composerRef = useRef<HTMLDivElement>(null);
+  const [composerHeight, setComposerHeight] = useState(169);
+  useEffect(() => {
+    const el = composerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setComposerHeight(el.offsetHeight));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     requestAnimationFrame(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -55,7 +69,7 @@ export const Chat = () => {
   };
 
   return (
-    <Flex flexDirection="column" w="100%" flex={1} bg="bg.app" pb="185px">
+    <Flex flexDirection="column" w="100%" flex={1} bg="bg.app" pb={`${composerHeight + 16}px`}>
       <Messages messages={messages} setPrompt={setPrompt} />
       <div ref={messagesEndRef} />
 
@@ -68,6 +82,7 @@ export const Chat = () => {
           direita exatamente a largura da sidebar. Abaixo de `md` a sidebar vira drawer e não
           ocupa espaço, daí o `base: 0`. */}
       <Box
+        ref={composerRef}
         position="fixed"
         // Lift the input above the on-screen keyboard when it's open. The
         // keyboard height is measured from visualViewport, so this needs no
