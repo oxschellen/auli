@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it } from "vitest";
-import { screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithProvider } from "../../test/render";
 import { EntityProvider } from "../../shared/EntityContext";
 import { Chat } from "./Chat";
@@ -72,5 +72,41 @@ describe("barra de composição não invade a sidebar", () => {
     const media = regrasDaBarra().find((r) => r.startsWith("@media"));
     expect(media).toBeDefined();
     expect(media).toContain(`left:${SIDEBAR_WIDTH}`);
+  });
+});
+
+/**
+ * Recolher a caixa no celular. O esconder é CSS responsivo (`base: none`, `md: block`), então o
+ * teste lê a regra que o Chakra emite para a classe da caixa — o mesmo método do bloco acima.
+ */
+describe("recolher a caixa de mensagem (celular)", () => {
+  const regrasDe = (el: HTMLElement) => {
+    const classes = el.className.split(/\s+/).filter(Boolean);
+    const css = [...document.querySelectorAll("style")].map((s) => s.textContent).join("\n");
+    return css
+      .split("}")
+      .filter((r) => classes.some((c) => r.includes(`.${c}`)))
+      .join("}\n");
+  };
+  // Pelo `aria-label`, e não pelo papel: recolhida, a caixa sai da árvore de acessibilidade (o
+  // jsdom aplica o `none` da base) e o `getByRole` deixa de achá-la.
+  const caixa = () => screen.getByLabelText("Caixa de mensagem");
+
+  it("Recolher esconde a caixa só abaixo de md", () => {
+    montar();
+    expect(regrasDe(caixa())).not.toMatch(/display:\s*none/);
+    fireEvent.click(screen.getByRole("button", { name: "Recolher a caixa de mensagem" }));
+    expect(regrasDe(caixa())).toMatch(/display:\s*none/);
+    expect(regrasDe(caixa())).toMatch(/display:\s*block/); // o `md: block` segue valendo
+  });
+
+  it("a barrinha traz a caixa de volta com o foco no campo", async () => {
+    montar();
+    fireEvent.click(screen.getByRole("button", { name: "Recolher a caixa de mensagem" }));
+    fireEvent.click(screen.getByRole("button", { name: "Mostrar a caixa de mensagem" }));
+    expect(regrasDe(caixa())).not.toMatch(/display:\s*none/);
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByPlaceholderText("Digite sua pergunta...")),
+    );
   });
 });

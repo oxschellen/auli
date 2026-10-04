@@ -13,6 +13,9 @@ interface InputProps {
    *  consulta. Slot em vez de import direto para o `Input` não depender do que é composto nele
    *  (e para os testes dele seguirem montando o campo sozinho). */
   children?: ReactNode;
+  /** No celular (< md), a caixa some e quem aparece é a barrinha "Escrever pergunta" do `Chat`.
+   *  No desktop é ignorado: ali não há barrinha para trazê-la de volta. */
+  recolhido?: boolean;
 }
 
 /**
@@ -31,6 +34,7 @@ export const Input = ({
   loading,
   callServerAPI,
   children,
+  recolhido = false,
 }: InputProps) => {
   const valid = isPromptValid(prompt);
   const remaining = charsRemaining(prompt);
@@ -40,6 +44,7 @@ export const Input = ({
       // agrupá-los é a marcação honesta — e é o que o dá nome para o leitor de tela.
       role="group"
       aria-label="Caixa de mensagem"
+      display={{ base: recolhido ? "none" : "block", md: "block" }}
       mx={3}
       mb={2}
       px={2}

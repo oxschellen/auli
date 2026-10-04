@@ -1,4 +1,5 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, chakra } from "@chakra-ui/react";
+import { MdEdit, MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { useRef, useEffect, useState } from "react";
 import { useIsKeyboardVisible } from "./utils/useIsKeyboardVisible";
 import { Messages } from "./Messages";
@@ -27,6 +28,13 @@ export const Chat = () => {
 
   const { isKeyboardVisible: isKeyboardOpen, keyboardHeight } = useIsKeyboardVisible();
   const [loading, setLoading] = useState(false);
+  // Só no celular: a caixa de mensagem ocupa ~220px da tela, e recolhê-la libera a leitura da
+  // resposta. Fica uma barrinha que a traz de volta já com o foco no campo.
+  const [recolhido, setRecolhido] = useState(false);
+  const expandir = () => {
+    setRecolhido(false);
+    requestAnimationFrame(() => textareaRef.current?.focus());
+  };
 
   // Altura MEDIDA da barra de composição, que é `fixed` e cobre o fim da lista. O recuo era fixo
   // (185px) e no celular a barra passa disso — o seletor de tipo quebra em duas linhas —, então a
@@ -93,6 +101,56 @@ export const Chat = () => {
         zIndex={20}
         bg="bg.canvas"
       >
+        {/* Celular: o "Recolher" acima da caixa e, recolhida, a barrinha que a traz de volta. A
+            caixa segue filha DIRETA desta barra fixa (o teste da sidebar sobe por `parentElement`),
+            então quem a esconde é o próprio `Input`, pela prop `recolhido`. */}
+        <Flex display={{ base: recolhido ? "none" : "flex", md: "none" }} justify="flex-end" mx={3}>
+          <chakra.button
+            type="button"
+            aria-label="Recolher a caixa de mensagem"
+            aria-expanded={true}
+            onClick={() => setRecolhido(true)}
+            display="flex"
+            alignItems="center"
+            gap={1}
+            px={2}
+            py={1}
+            fontSize="11px"
+            color="fg.muted"
+            borderRadius="full"
+            _hover={{ bg: "bg.overlay" }}
+          >
+            Recolher
+            <MdKeyboardArrowDown size={16} />
+          </chakra.button>
+        </Flex>
+        <chakra.button
+          type="button"
+          aria-label="Mostrar a caixa de mensagem"
+          aria-expanded={false}
+          onClick={expandir}
+          display={{ base: recolhido ? "flex" : "none", md: "none" }}
+          alignItems="center"
+          justifyContent="space-between"
+          w="calc(100% - 24px)"
+          mx={3}
+          mb={2}
+          px={3}
+          py={2}
+          fontSize="0.9rem"
+          color="fg.muted"
+          bg="bg.canvas"
+          border="1px solid"
+          borderColor="border"
+          borderRadius="12px"
+        >
+          <Flex as="span" alignItems="center" gap={2}>
+            <MdEdit size={16} />
+            Escrever pergunta
+          </Flex>
+          <MdKeyboardArrowUp size={20} />
+        </chakra.button>
+
         {/* O seletor mora DENTRO da caixa de mensagem: é filho do `Input`, não irmão. */}
         <Input
           textareaRef={textareaRef}
@@ -100,6 +158,7 @@ export const Chat = () => {
           updatePrompt={updatePrompt}
           loading={loading}
           callServerAPI={handleCallServerAPI}
+          recolhido={recolhido}
         >
           <SelectQuestionType
             questionType={questionType}
