@@ -52,6 +52,12 @@ describe("ícone do log", () => {
     renderWithProvider(<SystemMessage messageText="Depende." showButton logId="abc" />);
     expect(screen.getByLabelText(ROTULO_LOG).textContent).toBe("Log da consulta");
   });
+
+  /** O botão de cópia ganhou legenda no mesmo estilo, ao lado do do log. */
+  it("o botão de cópia também tem legenda visível", () => {
+    renderWithProvider(<SystemMessage messageText="Depende." showButton logId="abc" />);
+    expect(screen.getByLabelText(ROTULO_COPIA).textContent).toBe("Copiar resposta");
+  });
 });
 
 describe("modal do log", () => {

@@ -101,8 +101,11 @@ export const SystemMessage = ({ messageText, showButton, logId, fontes }: System
                 borderRadius="full"
                 aria-label="Copiar resposta para a área de transferência"
                 size="xs"
-                minW="26px"
                 h="26px"
+                px={2}
+                gap={1}
+                fontSize="11px"
+                fontWeight="normal"
                 color="fg.muted"
                 bg="transparent"
                 _hover={{ bg: "bg.overlay" }}
@@ -112,6 +115,7 @@ export const SystemMessage = ({ messageText, showButton, logId, fontes }: System
                 }}
               >
                 <MdCopyAll size={16} color="var(--chakra-colors-fg-muted)" />
+                Copiar resposta
               </Button>
             </Tooltip>
           </Flex>
