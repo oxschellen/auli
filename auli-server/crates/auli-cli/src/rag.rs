@@ -197,6 +197,25 @@ fn envolver(rotulo: &str, i: usize, conteudo: &str) -> String {
     format!("\n## documento {i}: {rotulo}\n{conteudo}\n")
 }
 
+/// O marcador que divide um prompt de sistema em "antes do contexto" e "depois do contexto".
+pub(crate) const MARCADOR_CONTEXTO: &str = "{{CONTEXTO}}";
+
+/// **Monta o prompt de sistema**: prompt da entidade + contexto RAG + o delimitador `'''`.
+///
+/// Sem o [`MARCADOR_CONTEXTO`], é exatamente o `format!("{base}{rag}'''")` de sempre — byte a byte,
+/// e é o caso de todos os prompts escritos antes da D-SF-8. Com ele, o prompt se divide na PRIMEIRA
+/// ocorrência: a parte de antes abre, o contexto e o `'''` vêm no meio, e a parte de depois fecha.
+///
+/// Existe porque, com o contexto inteiro entre as regras e a pergunta, a regra central fica longe
+/// do ponto em que o modelo redige. O que vai depois do marcador é tipicamente um lembrete curto da
+/// regra que mais importa — a decisão de O QUE repetir é do prompt, não do código.
+pub(crate) fn compor_system_prompt(base: &str, rag: &str) -> String {
+    match base.split_once(MARCADOR_CONTEXTO) {
+        Some((antes, depois)) => format!("{antes}{rag}'''{depois}"),
+        None => format!("{base}{rag}'''"),
+    }
+}
+
 /// O rótulo do documento que veio por **expansão de grafo**, não por busca vetorial.
 ///
 /// Fica aqui, e não no `Kind`, porque não é uma coleção: é um PAPEL que um parecer assume neste
@@ -508,11 +527,12 @@ pub async fn exec_all_question(
     tempos.retrieve_ms = t.elapsed().as_millis() as u64;
 
     // System prompt = base prompt (per query type) + RAG context, closed with the original delimiter.
+    // Com o marcador `{{CONTEXTO}}` no prompt, o que vem depois dele vai DEPOIS do contexto (D-SF-8).
     let base_prompt = match query_type {
         QueryType::ServicosFaqs => &cfg.system_prompt,
         QueryType::ColecaoUnica(kind) => cfg.prompt_de(kind),
     };
-    let system_prompt = format!("{}{}'''", base_prompt, rag);
+    let system_prompt = compor_system_prompt(base_prompt, &rag);
     trace!("System instructions with RAG: {}", system_prompt);
 
     // Fronteira do LLM: com o flag ligado (default), envia a pergunta ANONIMIZADA e restaura a
@@ -775,7 +795,8 @@ pub(crate) fn log_question(reg: &RegistroConsulta) -> std::io::Result<Uuid> {
 #[cfg(test)]
 mod tests {
     use super::{
-        FAQ_BAND, FAQ_FLOOR, LEG_BAND, LEG_FLOOR, PAR_BAND, PAR_FLOOR, QueryType, RegistroConsulta,
+        FAQ_BAND, FAQ_FLOOR, LEG_BAND, LEG_FLOOR, MARCADOR_CONTEXTO, PAR_BAND, PAR_FLOOR, QueryType,
+        RegistroConsulta, compor_system_prompt,
         SVC_BAND, SVC_FLOOR, TemposConsulta, Uuid, aderencia, bandas, bloco_documento, envolver,
         format_log_record, log_question, mes_do_log, montar_aderencia, montar_rag_colecao_unica,
         montar_rag_servicos_faqs,
@@ -803,6 +824,27 @@ mod tests {
             doc_path: doc_path.into(),
         })
         .unwrap()
+    }
+
+    #[test]
+    fn compor_system_prompt_sem_marcador_e_o_formato_de_sempre() {
+        // A trava da D-SF-8: os 26 prompts sem marcador não podem mudar um byte.
+        let base = "\n'''\n### Regras\n";
+        let rag = "\n## documento 1: Serviço\nX\n";
+        assert_eq!(
+            compor_system_prompt(base, rag),
+            format!("{base}{rag}'''"),
+        );
+    }
+
+    #[test]
+    fn compor_system_prompt_com_marcador_poe_o_resto_depois_do_contexto() {
+        let base = format!("ANTES\n{MARCADOR_CONTEXTO}\nLEMBRETE");
+        let rag = "\n## documento 1: Serviço\nX\n";
+        let p = compor_system_prompt(&base, rag);
+        assert_eq!(p, format!("ANTES\n{rag}'''\nLEMBRETE"));
+        // O marcador em si nunca chega ao modelo.
+        assert!(!p.contains(MARCADOR_CONTEXTO));
     }
 
     #[test]

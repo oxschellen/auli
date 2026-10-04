@@ -202,7 +202,8 @@ Acionado por `POST /v1/question`. Assinatura:
    jurisprudência; um aviso, em serviços e FAQs) e **nunca** derruba a query.
 7. Envolve cada bloco em `## documento {i}: {rótulo}` e concatena; o system prompt = prompt da
    entidade **para aquele tipo** (`system_prompt`, `pareceres_prompt` ou `tarf_prompt`) + contexto +
-   delimitador `'''`.
+   delimitador `'''` — ou, com o marcador `{{CONTEXTO}}` no prompt, com o contexto no lugar dele
+   (§3.4.1, D-SF-8).
 8. Chama o LLM externo — com a pergunta **anonimizada** se o flag estiver ligado (default), e
    restaura os placeholders na resposta antes de devolvê-la.
 9. Retorna `{ question, answer }` e **anexa o diálogo a `$AULI_LOG_DIR/<timestamp>.txt`** (default
@@ -237,6 +238,7 @@ pedido.
 | **D-SF-4** | Sem bump de `STRATEGY_VERSION` nem de `PACK_FORMAT`; nenhum `auli update` | `corpus` é parâmetro de **consulta** (o próprio módulo diz que nada ali afeta o que foi embedado). Recompilar e reiniciar basta; os packs ficam como estão. |
 | **D-SF-5** | A mudança vale para as **três faces** de uma vez: chat (tipo 1), ferramenta MCP `consultar_servicos_faqs` (descrição atualizada para "até 5 serviços e até 10 FAQs") e o default de `top_k` do `/v1/retrieve` para `servicos`/`faqs` | É a paridade por construção da §3.12 — as faces leem as mesmas constantes. Consequência esperada: o `parity-replay.py` acusa divergência contra logs anteriores a esta mudança, porque o contexto ficou menor. Não é regressão; a linha de base nova começa aqui. |
 | **D-SF-6** | Esforço de raciocínio do chat vem do `.env` (`LLM_REASONING_EFFORT` = `low`/`medium`/`high`); ausente = o campo não é enviado. `max_completion_tokens` do chat 4096 → **8192** | O `gpt-oss` confere melhor as próprias regras com esforço alto, e o `auli-llm` já suportava o campo — faltava o chat passá-lo. Variável, e não constante, porque o parâmetro é recusado por modelos que não são de raciocínio: trocar de modelo não pode exigir recompilar. Valor inválido **aborta o boot** (o erro de digitação não vira default em silêncio). Os 8192 existem porque, nesses modelos, a saída inclui o raciocínio. Vale para todos os tipos de consulta do chat. |
+| **D-SF-8** | Marcador `{{CONTEXTO}}` no prompt de sistema: o que vem antes dele fica antes dos documentos, o que vem depois vai **depois** do contexto e do `'''` (`rag::compor_system_prompt`). O `rs.txt` usa o espaço para repetir a regra central | Com 15 documentos entre as regras e a pergunta, a regra que mais importa ficava longe do ponto em que o modelo redige. A decisão de O QUE repetir é do prompt (catálogo), não do código. Prompt **sem** marcador sai byte a byte como antes — é o caso dos outros 26 estados, e há teste que trava isso. Divide na primeira ocorrência; o marcador nunca chega ao modelo. |
 
 ### 3.5 Clientes e adaptadores (embeddings/busca/LLM in-process)
 
