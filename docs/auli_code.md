@@ -184,7 +184,8 @@ Acionado por `POST /v1/question`. Assinatura:
 4. **O `query_type` decide o caminho** — é o seletor de fonte da caixa de mensagem, que chega como
    inteiro no campo `type`:
    - **`ServicosFaqs`** (código 1, o default): consulta **duas** coleções de forma **concorrente**
-     (`tokio::try_join!`), `<id>-servicos` (`n_results = 10`) e `<id>-faqs` (`n_results = 20`).
+     (`tokio::try_join!`), `<id>-servicos` (`n_results = 5`) e `<id>-faqs` (`n_results = 10`) —
+     eram 10 + 20 até 04/10/2026; ver §3.4.1.
    - **`Jurisprudencia(Kind)`** (código 2 = `pareceres`, 3 = `tarf`): uma coleção só,
      `n_results = 10`. Nos **pareceres** há ainda a expansão por grafo — pareceres que citam os
      mesmos dispositivos —, exclusiva deles (o `dispositivos-index.json` é derivado da árvore de
@@ -211,6 +212,30 @@ Acionado por `POST /v1/question`. Assinatura:
 `pareceres`, `tarf` e `legislacao` separadamente — uma coleção por consulta, cada uma com o próprio
 prompt de sistema. Só `notas` fica de fora: tem rota de listagem, mas não tem fonte struct nem
 pack — ver §3.13.
+
+### 3.4.1 Serviços + FAQs: alternativas, não peças — as cinco decisões (D-SF-\*)
+
+**O sintoma (04/10/2026, uso real):** a indicação do serviço funciona quando o serviço está bem
+descrito; o que falha é a resposta que **unifica** informações de muitos serviços distintos e
+atribui a uma situação a regra de outra — o ICMS de uma empresa no regime geral tem regras
+diferentes das do Simples Nacional, e o texto saía misturando as duas. Não é invenção do nada: o
+modelo compõe peças verdadeiras de documentos que não se aplicam juntos.
+
+**O mecanismo:** o RAG trata o contexto como peças de um quebra-cabeça a sintetizar, e os serviços
+são o oposto — uma árvore de casos pontuais e excludentes, em que a **escolha** sempre coube a quem
+usa o portal, e por isso a condição que separa um serviço do irmão muitas vezes nem está escrita na
+descrição. A busca densa agrava por construção: "ICMS regime geral X" e "ICMS Simples Nacional X"
+ficam colados no espaço vetorial, então o que volta junto são justamente os irmãos. Com 30
+documentos no contexto e um prompt que pedia "a orientação completa", a fusão era o comportamento
+pedido.
+
+| Decisão    | O quê | Por quê |
+| ---------- | ----- | ------- |
+| **D-SF-1** | Na coleção serviços+FAQs, documentos parecidos são tratados como **alternativas**: o chat não sintetiza entre eles, e a ambiguidade entre situações vira apresentação das alternativas com a condição que decide | É a premissa que estava errada. A seleção que o portal deixa com o usuário volta para quem atende, em vez de ser resolvida pelo modelo sem o dado que a decide. |
+| **D-SF-2** | `config/prompts/rs.txt` **v2**: ancoragem pela **fonte**, não pelo assunto; proibição de combinar documentos e de transferir requisito/prazo de um para outro; condição de aplicação não escrita não se deduz; documentos irrelevantes são ignorados; sem documento aplicável, "o Portal não traz essa informação"; **Detalhes** passa a ser um bloco por documento citado | O v1 delimitava o escopo por assunto ("não responda fora de tributos") — pergunta tributária sem resposta no contexto era "dentro do escopo" e o modelo completava com conhecimento próprio. E a seção Detalhes pedia "a orientação completa", que é literalmente a instrução de fundir. O frontend não depende dos títulos Resumo/Detalhes (conferido), então o formato é livre. **Só o `rs`** nesta leva: o `sc.txt` é idêntico ao v1 e os demais diferem em ~9 linhas; replicar depois de medir (§40 das pendências). Prompt é catálogo: reiniciar o servidor basta. |
+| **D-SF-3** | `corpus::SERVICES.n_results` 10 → **5**; `corpus::FAQS.n_results` 20 → **10** | Menos irmãos e menos ruído no contexto, e cerca de metade dos tokens do prompt. **Não resolve sozinho** — o irmão excludente costuma estar entre os primeiros —, por isso vem em par com a D-SF-2. As bandas continuam ∞/piso 0: isto é teto, não calibragem; a calibragem segue adiada e com base acumulando no log. |
+| **D-SF-4** | Sem bump de `STRATEGY_VERSION` nem de `PACK_FORMAT`; nenhum `auli update` | `corpus` é parâmetro de **consulta** (o próprio módulo diz que nada ali afeta o que foi embedado). Recompilar e reiniciar basta; os packs ficam como estão. |
+| **D-SF-5** | A mudança vale para as **três faces** de uma vez: chat (tipo 1), ferramenta MCP `consultar_servicos_faqs` (descrição atualizada para "até 5 serviços e até 10 FAQs") e o default de `top_k` do `/v1/retrieve` para `servicos`/`faqs` | É a paridade por construção da §3.12 — as faces leem as mesmas constantes. Consequência esperada: o `parity-replay.py` acusa divergência contra logs anteriores a esta mudança, porque o contexto ficou menor. Não é regressão; a linha de base nova começa aqui. |
 
 ### 3.5 Clientes e adaptadores (embeddings/busca/LLM in-process)
 
@@ -835,8 +860,9 @@ mantém um espelho **gerado** (não mais divergente) do registro. Pendências em
   na raiz do repo) e `GET /v1/{kind}/list` (leitura). Escuta configurável (`--bind`, default `0.0.0.0`).
   Público, **sem auth nem banco**; CORS; configuração por `.env` (`config()`); logging via `tracing`.
   Vetorização separada pelo `auli update`.
-- **Doze estados ativos** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go). RAG consulta efetivamente apenas `servicos` (10) +
-  `faqs` (20); estreitamento por proximidade presente mas em modo paridade (`band=∞`) até calibração.
+- **Doze estados ativos** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go). RAG consulta efetivamente apenas `servicos` (5) +
+  `faqs` (10) — eram 10 + 20 até 04/10/2026, ver §3.4.1; estreitamento por proximidade presente mas
+  em modo paridade (`band=∞`) até calibração.
 - `auli-frontend`: SPA com seleção de entidade (as 12), chat contra `POST /v1/question` com
   timeout de 25s, abas de referência lendo `public/<id>/` (arquivos prefixados `<id>-`), tema
   claro/escuro, testes Vitest.

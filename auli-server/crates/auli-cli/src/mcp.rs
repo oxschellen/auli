@@ -343,7 +343,7 @@ impl AuliMcp {
     #[tool(
         description = "Consulta os serviços de atendimento e as perguntas frequentes (FAQs) \
         de uma UF. Devolve UM bloco de texto com os serviços e FAQs mais próximos da pergunta \
-        (até 10 serviços e até 20 FAQs) — o MESMO contexto que o chat do portal Auli usa para \
+        (até 5 serviços e até 10 FAQs) — o MESMO contexto que o chat do portal Auli usa para \
         responder. Ideal para dúvidas de 'como fazer' do contribuinte (guias, cadastros, \
         certidões, parcelamentos, prazos de atendimento); para fundamentação tributária \
         (interpretação da legislação), prefira `buscar_pareceres`."
