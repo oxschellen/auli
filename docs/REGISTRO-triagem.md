@@ -151,12 +151,9 @@ Simples, descartado pela triagem.
 - **Nenhuma fusão** nas três: cada afirmação cita um documento e nenhuma regra migra de um serviço
   para outro. É o defeito que motivou a série, e não apareceu.
 - **Mas a alternativa não aparece.** O Serviço 3 (Simples) passou pela triagem como `condicional` e
-  nenhuma resposta o apresentou como "se a empresa for do Simples…". **Deduzido:** o `rs.txt` v2
-  manda apresentar irmãos como alternativas *com a condição que decide*, e também proíbe deduzir
-  condição não escrita; como a descrição do serviço não diz a quem se aplica em relação à GA, o
-  modelo prefere omitir. É exatamente o cenário do item 3 da
-  [auli_pendencias.md](auli_pendencias.md) §40 (extrair offline uma condição de aplicação por
-  serviço) — e este caso é evidência a favor dele.
+  nenhuma resposta o apresentou como "se a empresa for do Simples…". A explicação que este registro
+  dava (o prompt proíbe deduzir condição não escrita) **não se sustentou** — ver a §7.1.
+
 - **A triagem falhou 1 vez em 5** nesta rodada (as três perguntas de busca + as duas repetições). O
   modelo fechou o JSON com `}}]` em vez de `}]}` — erro de digitação dele, não de conteúdo: os 15
   vereditos estavam lá. O fail-open funcionou como desenhado (resposta com o contexto integral, 7,5 s).
@@ -167,6 +164,35 @@ Simples, descartado pela triagem.
    outputs) para o gpt-oss; com ele, o `}}]` não passaria. **Não testado** — exige um campo novo no
    `auli_llm::LlmParams`. Medir a taxa de `FALHOU` (pendência 3 da §6) antes, para ter com o que
    comparar.
-2. **Alternativa `condicional` que não chega ao texto** — ver o item 3 da
-   [auli_pendencias.md](auli_pendencias.md) §40. Não mexer no prompt antes da validação v1 × v2 (item
-   1 de lá).
+2. **Os vereditos não chegam à redação** (§7.1). Passá-los é a correção de desenho, mas sem efeito
+   medido ainda: avaliar com uma pergunta cujo irmão **de fato** alternativo seja recuperado.
+3. **Este caso é de recall, não de redação:** o irmão real (como a empresa do Simples recolhe o
+   ICMS) não veio entre os 5 serviços. Pesa a favor do item 3 da
+   [auli_pendencias.md](auli_pendencias.md) §40 e contra apertar mais o corte de documentos.
+
+### 7.1 Os vereditos não chegam à 2ª chamada — e, aqui, não são a causa
+
+**Medido no código:** a redação recebe só o contexto filtrado
+(`rag::montar_rag_servicos_faqs_sem`, que usa apenas o conjunto dos descartados). O veredito e o
+`motivo` de cada documento mantido morrem no log, e o `rs.txt` não menciona `condicional`. É falha
+de desenho da D-SF-9: a triagem marca exatamente "irmão a apresentar como alternativa", e a redação
+não sabe disso. (Observação do mantenedor, 04/10/2026.)
+
+**Medido — a hipótese posta à prova.** Mesma pergunta, mesmo contexto filtrado da consulta
+`01a108bc-…` (Serviço 3 = `condicional`, "aplica apenas a empresas no Simples Nacional e ao limite
+de receita"), chamadas diretas com `medium`, 5 por variante:
+
+| variante | cita `[Serviço 3]` | menciona "Simples" |
+| --- | --- | --- |
+| A — o contexto de hoje | 0/5 | 0/5 |
+| B — `Triagem: condicional — <motivo>` no cabeçalho de cada documento | 0/5 | 0/5 |
+| C — B + regra no fim do prompt: "documento condicional é alternativa; apresente-o separado, com a condição" | 0/5 | 0/5 |
+
+Nem o veredito com uma regra explícita trouxe a alternativa. Então, **neste caso**, nem a falta dos
+vereditos nem a proibição de deduzir condição explicam a omissão — a hipótese anterior deste
+registro também cai, porque com a regra C o modelo seguiu omitindo.
+
+**Deduzido:** o Serviço 3 não é alternativa à pergunta. Ele trata de **enquadramento pelo
+sublimite**, não de como apurar e recolher; o irmão de verdade — como a empresa do Simples recolhe
+o ICMS (DAS) — não estava entre os documentos recuperados. O modelo omite com razão, e o
+`condicional` da triagem aqui é frouxo. Limite da medida: uma pergunta, n = 5.
