@@ -161,11 +161,13 @@ Simples, descartado pela triagem.
 **Pendências novas:**
 
 1. **Modo JSON na chamada da triagem.** A Groq aceita `response_format` (JSON mode / structured
-   outputs) para o gpt-oss; com ele, o `}}]` não passaria. **Não testado** — exige um campo novo no
-   `auli_llm::LlmParams`. Medir a taxa de `FALHOU` (pendência 3 da §6) antes, para ter com o que
-   comparar.
-2. **Os vereditos não chegam à redação** (§7.1). Passá-los é a correção de desenho, mas sem efeito
-   medido ainda: avaliar com uma pergunta cujo irmão **de fato** alternativo seja recuperado.
+   outputs) para o gpt-oss; com ele, o `}}]` não passaria. **Adiado** até haver a taxa de
+   `FALHOU` (pendência 3 da §6): 1 em 5 não justifica um campo novo no `auli_llm::LlmParams` —
+   [auli_pendencias.md](auli_pendencias.md) §40, item 7.
+2. **Os vereditos não chegam à redação** (§7.1). Passá-los junto ao bloco do documento é a
+   alavanca barata, anterior à condição de aplicação, e também ataca o `aplica` ignorado (a GIA na
+   consulta 1). **Candidata para depois da validação v1 × v2** —
+   [auli_pendencias.md](auli_pendencias.md) §40, item 6.
 3. **Este caso é de recall, não de redação:** o irmão real (como a empresa do Simples recolhe o
    ICMS) não veio entre os 5 serviços. Pesa a favor do item 3 da
    [auli_pendencias.md](auli_pendencias.md) §40 e contra apertar mais o corte de documentos.

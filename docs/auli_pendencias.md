@@ -1587,6 +1587,16 @@ que proíbe a síntese entre documentos, e o corte para 5 serviços + 10 FAQs.
    contexto integral); e os **descartes errados** — documento descartado que era o certo. Este
    último é o que decide se a triagem fica: ela troca ruído por risco de recall, e o `motivo` de
    cada veredito está no log justamente para essa leitura.
+6. **Candidata: o veredito da triagem junto ao bloco do documento** (ex.: `Triagem: condicional —
+   <motivo>` no cabeçalho), para a redação saber o que a triagem sinalizou — hoje ele morre no log
+   ([REGISTRO-triagem.md](REGISTRO-triagem.md) §7.1). Alavanca barata, **anterior** ao item 3:
+   ataca o `condicional` que não vira alternativa e também o `aplica` ignorado (a GIA na 1ª consulta
+   da §7 do registro). **Ordem decidida em 04/10/2026: só depois da validação v1 × v2 (item 1)** —
+   mexe no prompt e no contexto, e mudar antes contaminaria a comparação. No único caso medido
+   (n = 5) não teve efeito, mas ali o irmão real nem foi recuperado; medir com um caso em que foi.
+7. **Modo JSON na triagem (`response_format`): adiado até haver a taxa de `FALHOU` do item 5.** Uma
+   falha em 5 (o `}}]` da §7 do registro) é amostra pequena demais para justificar um campo novo no
+   `auli_llm::LlmParams`. Decidido em 04/10/2026.
 
 ---
 
