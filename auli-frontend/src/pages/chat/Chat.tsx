@@ -1,4 +1,4 @@
-import { Box, Flex, chakra } from "@chakra-ui/react";
+import { Box, Flex, Text, chakra } from "@chakra-ui/react";
 import { MdEdit, MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { useRef, useEffect, useState } from "react";
 import { useIsKeyboardVisible } from "./utils/useIsKeyboardVisible";
@@ -10,6 +10,8 @@ import { useQuestionType } from "./utils/useQuestionType";
 import { callServerAPI } from "./utils/callServerAPI";
 import { isPromptValid } from "./utils/prompt";
 import { SelectQuestionType } from "./SelectQuestionType";
+import { EstadoInicial } from "./EstadoInicial";
+import { TIPOS } from "./utils/tipos";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { SIDEBAR_WIDTH } from "../../shared/layout";
 // O `API_URL` saiu daqui para `utils/api.ts` quando o modal do log passou a precisar da MESMA
@@ -50,11 +52,26 @@ export const Chat = () => {
     return () => ro.disconnect();
   }, []);
 
+  // Resposta que chega rola até o COMEÇO dela, não até o fim (D-UI-2): a resposta longa terminava
+  // com a tabela e as fontes na tela, e o Resumo — a parte mais lida — ficava acima, fora da vista
+  // (no celular, sempre). A pergunta e a espera seguem rolando até o fim, como antes.
   useEffect(() => {
+    const ultima = messages[messages.length - 1];
     requestAnimationFrame(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      if (ultima?.from === "server" && ultima.showButton && !ultima.pendente) {
+        document.getElementById(`msg-${ultima.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
     });
   }, [messages]);
+
+  // Antes da primeira pergunta, a apresentação do tipo selecionado no lugar da saudação (D-UI-10).
+  const vazio = !messages.some((m) => m.from === "user");
+  const usarExemplo = (pergunta: string) => {
+    setPrompt(pergunta);
+    requestAnimationFrame(() => textareaRef.current?.focus());
+  };
 
   const handleCallServerAPI = async (prompt: string) => {
     const trimmedPrompt = prompt.trim();
@@ -78,7 +95,11 @@ export const Chat = () => {
 
   return (
     <Flex flexDirection="column" w="100%" flex={1} bg="bg.app" pb={`${composerHeight + 16}px`}>
-      <Messages messages={messages} setPrompt={setPrompt} />
+      {vazio ? (
+        <EstadoInicial tipo={questionType} onExemplo={usarExemplo} />
+      ) : (
+        <Messages messages={messages} setPrompt={setPrompt} />
+      )}
       <div ref={messagesEndRef} />
 
       {/* Barra de composição. `fixed` é o que permite subi-la acima do teclado virtual — mas
@@ -99,7 +120,9 @@ export const Chat = () => {
         left={{ base: 0, md: SIDEBAR_WIDTH }}
         right={0}
         zIndex={20}
-        bg="bg.canvas"
+        // Mesma cor do fundo: a caixa é que se destaca (borda e sombra), não uma faixa branca de
+        // ponta a ponta (D-UI-4).
+        bg="bg.app"
       >
         {/* Celular: o "Recolher" acima da caixa e, recolhida, a barrinha que a traz de volta. A
             caixa segue filha DIRETA desta barra fixa (o teste da sidebar sobe por `parentElement`),
@@ -159,6 +182,7 @@ export const Chat = () => {
           loading={loading}
           callServerAPI={handleCallServerAPI}
           recolhido={recolhido}
+          placeholder={TIPOS[questionType].placeholder}
         >
           <SelectQuestionType
             questionType={questionType}
@@ -166,6 +190,18 @@ export const Chat = () => {
             disponiveis={disponiveis}
           />
         </Input>
+        {/* O aviso de protótipo saiu de cada resposta (eram 3 linhas repetidas) e mora aqui, uma vez
+            (D-UI-4). O texto completo, validado com quem atende, está no Sobre. */}
+        <Text
+          display={{ base: recolhido ? "none" : "block", md: "block" }}
+          textAlign="center"
+          fontSize="12px"
+          color="fg.muted"
+          px={3}
+          pb={2}
+        >
+          A Auli é experimental e pode errar — confira as fontes.
+        </Text>
       </Box>
     </Flex>
   );

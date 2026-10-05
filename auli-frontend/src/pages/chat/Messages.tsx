@@ -13,6 +13,8 @@ export const Messages = ({ messages, setPrompt }: MessagesProps) => {
   return (
     <Flex
       w="100%"
+      maxW="760px"
+      mx="auto"
       flexDirection="column"
       position="relative"
       bg="bg.app"
@@ -31,10 +33,13 @@ export const Messages = ({ messages, setPrompt }: MessagesProps) => {
           return (
             <SystemMessage
               key={key}
+              id={item.id}
               messageText={messageText}
               showButton={item.showButton}
               logId={item.logId}
               fontes={item.fontes}
+              tipo={item.tipo}
+              duracaoMs={item.duracaoMs}
             />
           );
         }

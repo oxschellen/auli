@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
+import type { QuestionType } from "../pages/chat/utils/useQuestionType";
 
 /** Who authored a chat message. */
 export type MessageSender = "user" | "server";
@@ -29,6 +30,10 @@ export interface Message {
   /** O lugar da resposta enquanto a consulta roda: desenhado como a animação `Pensando`, não
    *  como texto. O `text` segue preenchido para quem não desenha (e para os testes). */
   pendente?: boolean;
+  /** Tipo de consulta que produziu esta resposta (D-UI-9) — a linha de contexto no topo dela. */
+  tipo?: QuestionType;
+  /** Quanto a resposta levou, medido no navegador do envio à chegada (D-UI-9). */
+  duracaoMs?: number;
 }
 
 /** Setter returned by `usePrompt`, matching React's `useState<string>` setter. */

@@ -10,4 +10,4 @@
  */
 
 /** Largura da sidebar de seções (a partir do breakpoint `md`; abaixo dele vira drawer). */
-export const SIDEBAR_WIDTH = "210px";
+export const SIDEBAR_WIDTH = "224px";
