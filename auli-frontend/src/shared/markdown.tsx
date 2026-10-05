@@ -61,18 +61,35 @@ export function toAbsoluteHref(href?: string): string | undefined {
   return `http://${href.replace(/^\/+/, "")}`;
 }
 
+/** Aspas curvas que o autolink do GFM engole no fim de um endereço citado: `acesse “https://x/y”`
+ *  virava link para `https://x/y%E2%80%9D`, e o portal respondia 404. As retas o GFM já deixa de
+ *  fora; as curvas, não — e são as que o modelo escreve. Chegam aqui já codificadas no `href`. */
+const ASPAS_CURVAS_NO_FIM = /(?:%E2%80%9[89CD]|%C2%[AB]B|[“”‘’«»])+$/i;
+
 /** Exportado para o `SystemMessage`, que troca o `a` do mapa compacto pelo selo de citação e cai
  *  neste para os demais links. */
-export const MarkdownLink = ({ href, children }: { href?: string; children?: ReactNode }) => (
-  <a
-    href={toAbsoluteHref(href)}
-    target="_blank"
-    rel="noopener noreferrer"
-    style={{ color: accent, textDecoration: "underline", textUnderlineOffset: "2px" }}
-  >
-    {children}
-  </a>
-);
+export const MarkdownLink = ({ href, children }: { href?: string; children?: ReactNode }) => {
+  const sobra = href?.match(ASPAS_CURVAS_NO_FIM)?.[0];
+  const aspas = sobra ? decodeURIComponent(sobra) : "";
+  const destino = sobra ? href!.slice(0, -sobra.length) : href;
+  // No autolink o texto É o endereço, aspas incluídas: elas saem do link e voltam logo depois dele.
+  const unico = Array.isArray(children) && children.length === 1 ? children[0] : children;
+  const texto =
+    aspas && typeof unico === "string" && unico.endsWith(aspas) ? unico.slice(0, -aspas.length) : null;
+  return (
+    <>
+      <a
+        href={toAbsoluteHref(destino)}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: accent, textDecoration: "underline", textUnderlineOffset: "2px" }}
+      >
+        {texto ?? children}
+      </a>
+      {texto !== null && aspas}
+    </>
+  );
+};
 
 export const compactMarkdownComponents: Components = {
   ...tableComponents,

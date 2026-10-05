@@ -48,6 +48,27 @@ describe("markdown rendering", () => {
     );
   });
 
+  // A aspa CURVA que fecha um endereço citado entrava no autolink do GFM, e o portal respondia 404
+  // (05/10/2026, "Emitir Certidão de Situação Fiscal": o portal escreve o endereço entre aspas
+  // retas, e o modelo as repete curvas). As retas o GFM já deixa de fora — o segundo teste trava.
+  it("leaves a closing curly quote out of an autolinked URL, keeping it in the text", () => {
+    const url = "https://www.sefaz.rs.gov.br/sat/CertidaoSitFiscalSolic.aspx";
+    const { container } = renderMd(`Acesse o link “${url}” ou clique no botão.`);
+    const a = container.querySelector("a");
+    expect(a?.getAttribute("href")).toBe(url);
+    expect(a?.textContent).toBe(url);
+    expect(container.textContent).toContain(`“${url}” ou clique`);
+  });
+
+  it("leaves a closing straight quote out of an autolinked URL, keeping it in the text", () => {
+    const url = "https://www.sefaz.rs.gov.br/sat/CertidaoSitFiscalSolic.aspx";
+    const { container } = renderMd(`acessando aqui "${url}". Ou, clicando no botão acima.`);
+    const a = container.querySelector("a");
+    expect(a?.getAttribute("href")).toBe(url);
+    expect(a?.textContent).toBe(url);
+    expect(container.textContent).toContain(`"${url}". Ou, clicando`);
+  });
+
   it("keeps an explicit http:// portal link exactly as given", () => {
     const url = "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=299748";
     const { container } = renderMd(`[parecer](${url})`);
