@@ -666,15 +666,50 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
   `AbortController`; mensagens de erro/timeout em pt-BR. Lê `res.data.answer`, `log_id` e
   `fontes` (D-SF-10).
 - [pages/chat/Fontes.tsx](auli-frontend/src/pages/chat/Fontes.tsx): a lista fixa de fontes de
-  Serviços + FAQs, recolhida num `<details>`, abaixo da resposta e acima do aviso (§3.4.1, D-SF-10).
+  Serviços + FAQs (§3.4.1, D-SF-10), abaixo da resposta, em três grupos — citadas à vista,
+  também consideradas e descartadas recolhidas (§4.3.1, D-UI-8).
 - [pages/chat/utils/prompt.ts](auli-frontend/src/pages/chat/utils/prompt.ts): validação do
   prompt (mínimo de 10 caracteres) — fonte única usada pelo guard de envio, botão e contador.
 - [pages/chat/utils/useMessages.ts](auli-frontend/src/pages/chat/utils/useMessages.ts):
-  estado das mensagens, iniciando com a saudação "Olá! Como posso ajudar?".
+  estado das mensagens, que começa **vazio** — antes da primeira pergunta o chat mostra o
+  [EstadoInicial](auli-frontend/src/pages/chat/EstadoInicial.tsx) (D-UI-10), não uma saudação.
 
 Há subpasta [pages/chat/ui/](auli-frontend/src/pages/chat/ui/) com 4 snippets utilitários do
 Chakra em `.jsx` (color-mode, provider, toaster, tooltip) — confirmando a observação do
 README de que apenas esses arquivos permanecem em JSX.
+
+### 4.3.1 Chat redesenhado — as decisões (D-UI-\*)
+
+**O ponto de partida (05/10/2026):** a interface do chat foi capturada em navegador headless
+(desktop 1440×900 e celular 390×844, claro e escuro). No desktop, cabeçalho e caixa de mensagem
+comiam 28% da altura; no celular, cabeçalho + barra do menu + caixa chegavam a 44%. A resposta
+corria em ~980px (~140 caracteres por linha), e havia seis defeitos visíveis: listas sem marcador,
+"Resumo" colado no parágrafo, resposta que abria pelo fim no celular, pergunta que ficava na caixa
+durante a espera, item ativo da barra lateral cortado e um botão "copiar" que na verdade reutiliza
+a pergunta. O redesenho seguiu um mockup aprovado. **Escopo: só o frontend** — nada no servidor, no
+contrato da API, nos prompts ou nos packs.
+
+| | O quê | Por quê |
+| --- | --- | --- |
+| **D-UI-1** | `ul`/`ol` dos dois mapas de markdown ganham `listStyleType` | O reset do Chakra zera o `list-style`; os itens viravam parágrafos recuados soltos |
+| **D-UI-2** | A caixa esvazia no **envio** (não na chegada); a resposta que chega rola até o **começo** dela; o botão do balão do usuário vira "Reutilizar a pergunta" (ícone de lápis) | A pergunta ficava no campo com "Pronto para enviar" durante a espera, convidando a reenviar; a resposta longa abria na tabela e nas fontes, com o Resumo fora da vista; o ícone de cópia não dizia que a pergunta volta para a caixa |
+| **D-UI-3** | Item ativo da barra lateral em peso 600 (era 700); `SIDEBAR_WIDTH` 210 → 224px | O negrito alargava o texto e cortava "Artigos e estu…" |
+| **D-UI-4** | Cabeçalho de 52px na cor de superfície, com o estado à esquerda ("SEFAZ-RS ▾") e a versão como dica do logo; coluna de leitura de 760px; caixa numa linha só (seletor compacto + campo que cresce a partir de 1 linha + enviar), dica de mínimo só com texto curto; aviso de protótipo uma vez, sob a caixa; faixa da caixa na cor do fundo; fundo escuro `#111113` (era `#000`) | Devolve área de leitura e legibilidade (70–80 caracteres por linha). O aviso de 3 linhas repetido em toda resposta vira uma linha fixa |
+| **D-UI-5** | `utils/secoes.ts` separa "Resumo" e "Detalhes" do texto — rótulo em negrito sozinho, com dois-pontos, ou como título | O modelo escreve `**Resumo**` colado ao parágrafo, e a estrutura que o prompt pede sumia no render |
+| **D-UI-6** | O Resumo vira bloco de destaque (token `bg.resumo`, rótulo em `accent.strong`) | É a parte mais lida; tem de ser a primeira coisa que o olho encontra. Fundo, não borda lateral colorida (clichê que envelhece mal) |
+| **D-UI-7** | `utils/citacoes.ts` + `CitacaoSelo`: `[Serviço 2]` vira selo clicável que leva à fonte e a realça (2,5 s); a dica mostra o título | Fecha visualmente a promessa da D-SF-7 e da D-SF-10: cada afirmação aponta para a origem. Só vira selo quando há lista de fontes para onde levar |
+| **D-UI-8** | `utils/fontes.ts` + `Fontes.tsx`: três grupos — **citadas** (sempre à vista), **também consideradas** (com selo "depende de condição"; abrem sozinhas se o texto não cita nada) e **descartadas** (recolhidas, mas presentes) | O que sustenta o texto fica à vista; a alternativa `condicional` que o texto às vezes omite (REGISTRO-triagem §7) fica a um clique; o descarte errado continua visível |
+| **D-UI-9** | Linha de contexto no topo da resposta ("Serviços + FAQs · respondida em 8 s"); `Message` ganha `tipo` e `duracaoMs`; `utils/tipos.ts` concentra rótulo, descrição, apresentação, placeholder e exemplos de cada tipo | Numa conversa que mistura tipos, não se sabia de que gaveta veio cada resposta. O texto de cada tipo, que estava espalhado, fica num lugar só |
+| **D-UI-10** | `EstadoInicial.tsx` no lugar do "Olá! Como posso ajudar?": o que o tipo faz, três exemplos (vão para a caixa, não são enviados) e o que a Auli não responde | Reduz pergunta feita no tipo errado e deixa explícito que situação de contribuinte e erro de sistema estão fora do acervo público |
+
+**Correção posterior (mesma entrega):** a saudação "Olá! Como posso ajudar?" seguia como primeira
+mensagem do `useMessages` e ressurgia acima da pergunta no primeiro envio; a conversa passou a
+começar vazia (teste no `Chat.test.tsx`).
+
+**Verificado:** typecheck, lint, build e os testes do frontend; no Chromium headless, com a API
+simulada, as telas no desktop e no celular (estado inicial, envio, Resumo, selos, fontes em três
+grupos, recolher no celular). **Não verificado:** com o LLM real em todos os tipos, em Safari/iOS e
+com leitor de tela.
 
 ### 4.4 Páginas de referência (conteúdo estático por entidade)
 
