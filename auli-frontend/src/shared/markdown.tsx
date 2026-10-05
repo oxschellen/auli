@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 /**
  * Shared ReactMarkdown component maps. Centralizes the renderers that were
  * duplicated across the chat bubble, the FAQ answers, and the About page —
@@ -60,7 +61,9 @@ export function toAbsoluteHref(href?: string): string | undefined {
   return `http://${href.replace(/^\/+/, "")}`;
 }
 
-const MarkdownLink: Components["a"] = ({ href, children }) => (
+/** Exportado para o `SystemMessage`, que troca o `a` do mapa compacto pelo selo de citação e cai
+ *  neste para os demais links. */
+export const MarkdownLink = ({ href, children }: { href?: string; children?: ReactNode }) => (
   <a
     href={toAbsoluteHref(href)}
     target="_blank"
@@ -75,8 +78,10 @@ export const compactMarkdownComponents: Components = {
   ...tableComponents,
   a: MarkdownLink,
   p: ({ children }) => <p style={{ marginBottom: "0.5em" }}>{children}</p>,
-  ul: ({ children }) => <ul style={{ paddingLeft: "1.2em", marginBottom: "0.5em" }}>{children}</ul>,
-  ol: ({ children }) => <ol style={{ paddingLeft: "1.2em", marginBottom: "0.5em" }}>{children}</ol>,
+  // `listStyleType` explícito: o reset do Chakra zera o `list-style`, e sem ele os itens viravam
+  // parágrafos recuados soltos (D-UI-1).
+  ul: ({ children }) => <ul style={{ paddingLeft: "1.3em", marginBottom: "0.5em", listStyleType: "disc" }}>{children}</ul>,
+  ol: ({ children }) => <ol style={{ paddingLeft: "1.3em", marginBottom: "0.5em", listStyleType: "decimal" }}>{children}</ol>,
   li: ({ children }) => <li style={{ marginBottom: "0.25em" }}>{children}</li>,
 };
 
@@ -98,8 +103,8 @@ export const proseMarkdownComponents: Components = {
     </h3>
   ),
   p: ({ children }) => <p style={{ marginBottom: "0.85em" }}>{children}</p>,
-  ul: ({ children }) => <ul style={{ paddingLeft: "1.4em", marginBottom: "0.75em" }}>{children}</ul>,
-  ol: ({ children }) => <ol style={{ paddingLeft: "1.4em", marginBottom: "0.75em" }}>{children}</ol>,
+  ul: ({ children }) => <ul style={{ paddingLeft: "1.4em", marginBottom: "0.75em", listStyleType: "disc" }}>{children}</ul>,
+  ol: ({ children }) => <ol style={{ paddingLeft: "1.4em", marginBottom: "0.75em", listStyleType: "decimal" }}>{children}</ol>,
   li: ({ children }) => <li style={{ marginBottom: "0.3em" }}>{children}</li>,
   a: MarkdownLink,
   hr: () => <hr style={{ border: "none", borderTop: `1px solid var(--chakra-colors-border)`, margin: "1.5em 0" }} />,

@@ -70,6 +70,11 @@ export const callServerAPI = async ({
   });
 
   setMessages([...messagesArray]);
+  // A caixa esvazia no ENVIO, não na chegada (D-UI-2): a pergunta já está no balão do usuário,
+  // e deixá-la no campo com "Pronto para enviar" durante a espera convidava a reenviar. Quem
+  // quiser reaproveitá-la usa o botão do próprio balão.
+  setPrompt("");
+  const inicio = Date.now();
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -95,9 +100,9 @@ export const callServerAPI = async ({
       showButton: true,
       logId: res.data?.log_id,
       fontes: res.data?.fontes,
+      tipo: questionType,
+      duracaoMs: Date.now() - inicio,
     });
-
-    setPrompt("");
   } catch (e) {
     // Distinguish: timeout (aborted) → rate limited (HTTP 429, server sends a friendly pt-BR
     // `{ error }` body) → anything else (server down / network). Without this, a throttled user is
@@ -120,8 +125,6 @@ export const callServerAPI = async ({
       text: serverMessage,
       showButton: true,
     });
-
-    setPrompt("");
   } finally {
     clearTimeout(timeoutId);
     setMessages([...messagesArray]);

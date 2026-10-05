@@ -23,23 +23,41 @@ describe("Chat", () => {
   it("monta o seletor de tipo de consulta DENTRO da caixa de mensagem", () => {
     montar();
     const caixa = screen.getByRole("group", { name: "Caixa de mensagem" });
-    expect(caixa).toContainElement(screen.getByRole("radiogroup"));
-    expect(caixa).toContainElement(screen.getByPlaceholderText("Digite sua pergunta..."));
+    const seletor = screen.getByRole("button", { name: /^Tipo de consulta:/ });
+    expect(caixa).toContainElement(seletor);
+    expect(caixa).toContainElement(screen.getByLabelText("Sua pergunta"));
   });
 
   it("o seletor vem ANTES do campo dentro da caixa", () => {
     montar();
-    const grupo = screen.getByRole("radiogroup");
-    const campo = screen.getByPlaceholderText("Digite sua pergunta...");
+    const seletor = screen.getByRole("button", { name: /^Tipo de consulta:/ });
+    const campo = screen.getByLabelText("Sua pergunta");
     // `DOCUMENT_POSITION_FOLLOWING` = o campo vem depois do seletor na ordem do documento, que é
     // a ordem que o teclado e o leitor de tela seguem.
-    expect(grupo.compareDocumentPosition(campo) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(seletor.compareDocumentPosition(campo) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it("as duas opções de consulta continuam disponíveis", () => {
+  // A troca de tipo em si é do RadioGroup do Chakra, que o jsdom não aciona por clique; ela é
+  // conferida no navegador (ver a TAREFA-CHAT-REDESENHO, Fase 2). Aqui: abrir, listar, fechar.
+  it("o seletor abre a lista dos tipos (radiogroup) e fecha com Esc", () => {
     montar();
-    expect(screen.getByText("Serviços+FAQs")).toBeInTheDocument();
-    expect(screen.getByText("Pareceres")).toBeInTheDocument();
+    const botao = screen.getByRole("button", { name: /^Tipo de consulta:/ });
+    expect(botao).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(botao);
+    expect(botao).toHaveAttribute("aria-expanded", "true");
+    const grupo = screen.getByRole("radiogroup", { name: "Tipo de consulta" });
+    expect(grupo).toHaveTextContent("Serviços + FAQs");
+    expect(grupo).toHaveTextContent("Pareceres");
+    fireEvent.keyDown(grupo, { key: "Escape" });
+    expect(screen.queryByRole("radiogroup")).toBeNull();
+  });
+
+  it("antes da primeira pergunta, mostra a apresentação do tipo e os exemplos vão para a caixa", () => {
+    localStorage.setItem("auli.questionType", "1");
+    montar();
+    expect(screen.getByRole("heading", { name: "Como posso ajudar?" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Empresa nova: como apurar e recolher o ICMS?" }));
+    expect(screen.getByLabelText("Sua pergunta")).toHaveValue("Empresa nova: como apurar e recolher o ICMS?");
   });
 });
 
@@ -106,7 +124,7 @@ describe("recolher a caixa de mensagem (celular)", () => {
     fireEvent.click(screen.getByRole("button", { name: "Mostrar a caixa de mensagem" }));
     expect(regrasDe(caixa())).not.toMatch(/display:\s*none/);
     await waitFor(() =>
-      expect(document.activeElement).toBe(screen.getByPlaceholderText("Digite sua pergunta...")),
+      expect(document.activeElement).toBe(screen.getByLabelText("Sua pergunta")),
     );
   });
 });

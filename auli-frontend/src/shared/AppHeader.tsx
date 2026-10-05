@@ -1,8 +1,11 @@
-import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { MdExpandMore } from "react-icons/md";
 import { ColorModeButton } from "../pages/chat/ui/color-mode.jsx";
 import type { Entity } from "./entities";
 
 interface AppHeaderProps {
+  /** A versão do app. Saiu da vista (D-UI-4): vira a dica do logo — era informação de quem
+   *  desenvolve ocupando a área mais nobre da tela. */
   subtitle?: string;
   /** The active entity (state), if one is selected. */
   entity?: Entity | null;
@@ -10,79 +13,67 @@ interface AppHeaderProps {
   onChangeEntity?: () => void;
 }
 
+/**
+ * Cabeçalho compacto (D-UI-4): 52px na cor de superfície, com borda — era uma faixa preta de 77px
+ * com o logo centralizado e a versão embaixo. A marca e o estado vão para a esquerda, onde a
+ * leitura começa; o estado vira um seletor que diz o que é ("SEFAZ-RS ▾"), não "RS trocar".
+ */
 export const AppHeader = ({ subtitle, entity, onChangeEntity }: AppHeaderProps) => {
   return (
     <Box
       as="header"
       w="100%"
-      py={3}
-      px={3}
-      bg="bg.inverted"
-      borderBottom="1px solid var(--chakra-colors-border-inverted)"
+      h="52px"
+      flex="none"
+      px={{ base: 2, md: 4 }}
+      bg="bg.canvas"
+      borderBottom="1px solid"
+      borderColor="border"
       position="sticky"
       top={0}
       zIndex={100}
     >
-      <Flex maxW="1440px" mx="auto" alignItems="center" justifyContent="space-between">
-        {/* Left: active-state switcher (the rs/sc selector). */}
-        <Box minW="96px" display="flex" justifyContent="flex-start">
-          {entity && onChangeEntity && (
-            <Button
-              size="xs"
-              variant="outline"
-              onClick={onChangeEntity}
-              aria-label={`Estado atual: ${entity.name}. Trocar de estado.`}
-              title="Trocar de estado"
-              color="fg.inverted"
-              borderColor="border.inverted"
-              _hover={{ bg: "whiteAlpha.200" }}
-              borderRadius="full"
-              px={3}
-              gap={1.5}
-            >
-              <Box
-                as="span"
-                fontWeight="700"
-                fontSize="0.7rem"
-                bg="accent"
-                color="accent.fg"
-                borderRadius="full"
-                px={1.5}
-                py={0.5}
-                lineHeight="1"
-              >
-                {entity.uf}
-              </Box>
-              <Text as="span" fontSize="0.72rem" color="fg.invertedMuted" fontWeight="500">
-                trocar
-              </Text>
-            </Button>
-          )}
-        </Box>
-
-        {/* Center */}
-        <VStack gap={0} align="center">
+      <Flex h="100%" alignItems="center" justifyContent="space-between" gap={3}>
+        <Flex alignItems="center" gap={3} minW={0}>
           <Text
-            fontSize="2rem"
-            fontWeight="600"
-            color="fg.inverted"
-            lineHeight="1.2"
-            letterSpacing="-0.01em"
+            as="span"
+            fontSize="20px"
+            fontWeight="700"
+            letterSpacing="-0.02em"
+            color="fg"
+            pl={{ base: 1, md: 0 }}
+            title={subtitle}
             fontFamily='"SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
           >
             Auli
           </Text>
-          {subtitle && (
-            <Text fontSize="0.75rem" color="fg.invertedMuted" lineHeight="1" fontWeight="400">
-              {entity ? `${subtitle} · ${entity.name}` : subtitle}
-            </Text>
+          {entity && onChangeEntity && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onChangeEntity}
+              aria-label={`Estado atual: ${entity.name}. Trocar de estado.`}
+              title="Trocar de estado"
+              h="32px"
+              px={2}
+              gap={1.5}
+              borderRadius="8px"
+              borderColor="border"
+              color="fg"
+              fontWeight="500"
+              _hover={{ bg: "bg.overlay" }}
+            >
+              <Box as="span" fontWeight="700" fontSize="11px" bg="accent" color="accent.fg" borderRadius="5px" px={1.5} lineHeight="20px">
+                {entity.uf}
+              </Box>
+              <Text as="span" fontSize="14px" display={{ base: "none", sm: "inline" }}>
+                {entity.name}
+              </Text>
+              <MdExpandMore size={16} color="var(--chakra-colors-fg-muted)" />
+            </Button>
           )}
-        </VStack>
-
-        {/* Right */}
-        <Box minW="96px" display="flex" justifyContent="flex-end">
-          <ColorModeButton />
-        </Box>
+        </Flex>
+        <ColorModeButton color="fg" _hover={{ bg: "bg.overlay" }} borderRadius="8px" />
       </Flex>
     </Box>
   );

@@ -1,6 +1,6 @@
 import { Flex, Text, Button } from "@chakra-ui/react";
 import { Tooltip } from "./ui/tooltip";
-import { MdCopyAll } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 import { utilsCopyTextToClipboard } from "./utils/utils";
 import type { SetPrompt } from "../../types/chat";
 
@@ -34,7 +34,7 @@ export const UserMessage = ({ messageText, setPrompt }: UserMessageProps) => {
         </Text>
 
         <Flex justify="flex-end" mt={0}>
-          <Tooltip content="Copiar pergunta" bg="bg.inverted">
+          <Tooltip content="Reutilizar a pergunta" bg="bg.inverted">
             <Button
               borderRadius="full"
               aria-label="Copiar a pergunta para a área de entrada"
@@ -53,7 +53,7 @@ export const UserMessage = ({ messageText, setPrompt }: UserMessageProps) => {
                 );
               }}
             >
-              <MdCopyAll size={16} color="var(--chakra-colors-fg-muted)" />
+              <MdEdit size={15} color="var(--chakra-colors-fg-muted)" />
             </Button>
           </Tooltip>
         </Flex>

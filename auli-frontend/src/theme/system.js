@@ -44,7 +44,11 @@ const config = defineConfig({
         // ── semantic: what components reference; { light, dark } ──
         bg: {
           canvas: { value: { base: "{colors.canvas}", _dark: "#1d1d1f" } },
-          app: { value: { base: "{colors.parchment}", _dark: "#000000" } },
+          // Quase-preto no escuro (era #000000): com o preto puro as superfícies (`canvas` #1d1d1f)
+          // flutuavam sem degrau, e o contraste máximo cansava na leitura longa (D-UI-4).
+          app: { value: { base: "{colors.parchment}", _dark: "#111113" } },
+          // O bloco do Resumo da resposta do chat (D-UI-6): um tom do azul da marca, nos dois modos.
+          resumo: { value: { base: "#f3f7fd", _dark: "#15253a" } },
           subtle: { value: { base: "{colors.neutral.100}", _dark: "#272729" } },
           inverted: { value: { base: "#000000", _dark: "#000000" } }, // header stays black both modes
           // translucent hover overlay that reads correctly on any surface
@@ -95,12 +99,27 @@ const config = defineConfig({
         accent: {
           DEFAULT: { value: { base: "{colors.brand.500}", _dark: "{colors.brand.400}" } },
           fg: { value: { base: "#ffffff", _dark: "#ffffff" } },
+          // Texto pequeno em azul (o rótulo RESUMO): o brand.500 fica no limite do contraste em
+          // 12px sobre `bg.resumo`; o 700 passa com folga.
+          strong: { value: { base: "{colors.brand.700}", _dark: "{colors.brand.400}" } },
         },
         bubble: {
           user: { value: { base: "{colors.bubble}", _dark: "#1e3a5f" } },
         },
+        // Selo "depende de condição" das fontes (D-UI-8).
+        condicional: {
+          bg: { value: { base: "#fff3e0", _dark: "#3a2a12" } },
+          fg: { value: { base: "#8a4600", _dark: "#ffcc80" } },
+        },
       },
       shadows: {
+        // A caixa de mensagem descolada do fundo (D-UI-4) e o painel que abre sobre ela.
+        composer: {
+          value: { base: "0 2px 10px rgba(15,23,42,0.06)", _dark: "0 2px 10px rgba(0,0,0,0.35)" },
+        },
+        popover: {
+          value: { base: "0 10px 30px rgba(15,23,42,0.16)", _dark: "0 10px 30px rgba(0,0,0,0.5)" },
+        },
         // accent-colored focus ring for text inputs
         focusRing: {
           value: {

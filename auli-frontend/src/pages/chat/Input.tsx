@@ -1,5 +1,5 @@
 import { Flex, Textarea, IconButton, Box } from "@chakra-ui/react";
-import { MdSend } from "react-icons/md";
+import { MdArrowUpward } from "react-icons/md";
 import type { ChangeEvent, ReactNode, RefObject } from "react";
 import { isPromptValid, charsRemaining } from "./utils/prompt";
 
@@ -16,6 +16,8 @@ interface InputProps {
   /** No celular (< md), a caixa some e quem aparece é a barrinha "Escrever pergunta" do `Chat`.
    *  No desktop é ignorado: ali não há barrinha para trazê-la de volta. */
   recolhido?: boolean;
+  /** Texto de exemplo do campo — muda com o tipo de consulta (D-UI-9). */
+  placeholder?: string;
 }
 
 /**
@@ -24,8 +26,12 @@ interface InputProps {
  *
  * A borda é do cartão, não do textarea — antes cada um tinha a sua, e aninhar o seletor deixaria
  * moldura dentro de moldura dentro de moldura. Pelo mesmo motivo o anel de foco subiu para o
- * cartão via `_focusWithin`: acende com o campo E com os chips, que é o que "esta caixa está
+ * cartão via `_focusWithin`: acende com o campo E com o seletor, que é o que "esta caixa está
  * ativa" quer dizer.
+ *
+ * Uma linha só (D-UI-4): seletor de tipo, campo e botão lado a lado; o campo começa com uma linha
+ * e cresce até ~6. A dica de tamanho mínimo só aparece quando há texto curto demais — vazia, a
+ * caixa não precisa explicar nada, e "Pronto para enviar" não informava (o botão aceso já diz).
  */
 export const Input = ({
   textareaRef,
@@ -35,50 +41,53 @@ export const Input = ({
   callServerAPI,
   children,
   recolhido = false,
+  placeholder = "Digite sua pergunta...",
 }: InputProps) => {
   const valid = isPromptValid(prompt);
   const remaining = charsRemaining(prompt);
+  const curto = prompt.trim().length > 0 && !valid;
   return (
     <Box
-      // O cartão passou a reunir controles heterogêneos (o seletor, o campo, o enviar), então
-      // agrupá-los é a marcação honesta — e é o que o dá nome para o leitor de tela.
       role="group"
       aria-label="Caixa de mensagem"
       display={{ base: recolhido ? "none" : "block", md: "block" }}
-      mx={3}
-      mb={2}
-      px={2}
-      pt={2}
-      pb={1}
+      // Coluna de leitura (D-UI-4): no desktop a caixa alinha com as mensagens, em 760px.
+      mx={{ base: 3, md: "auto" }}
+      maxW="760px"
+      mb={1.5}
+      p={1.5}
       bg="bg.canvas"
       border="1px solid"
       borderColor="border"
-      borderRadius="12px"
+      borderRadius="16px"
+      boxShadow="composer"
       _focusWithin={{ borderColor: "accent", boxShadow: "focusRing" }}
       transition="border-color 0.15s ease, box-shadow 0.15s ease"
     >
-      {children}
+      <Flex alignItems="flex-end" gap={2}>
+        {children}
 
-      <Flex mx="auto" flexDirection="row" alignItems="flex-start">
         <Textarea
           ref={textareaRef}
           id="prompt-id"
           name="prompt"
-          size="md"
-          fontSize="1rem"
+          aria-label="Sua pergunta"
+          rows={1}
+          autoresize
+          maxH="160px"
+          minH={{ base: "44px", md: "40px" }}
           px={2}
-          py={2}
-          rows={3}
-          minH="80px"
-          variant="outline"
-          placeholder="Digite sua pergunta..."
-          // Sem borda e sem anel próprios: quem os desenha é o cartão (ver o topo do arquivo).
+          py={{ base: "11px", md: "9px" }}
+          fontSize="16px"
+          lineHeight="1.4"
+          placeholder={placeholder}
           border="none"
           bg="bg.canvas"
           color="fg"
-          _placeholder={{ color: "fg.muted" }}
+          // Placeholder numa linha só: com `autoresize`, o texto de exemplo que quebrava no celular
+          // fazia a caixa VAZIA crescer para 5 linhas.
+          _placeholder={{ color: "fg.muted", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
           _focus={{ outline: "none", boxShadow: "none" }}
-          borderRadius="8px"
           value={prompt}
           onChange={updatePrompt}
           onKeyDown={(event) => {
@@ -89,50 +98,37 @@ export const Input = ({
               }
             }
           }}
-          width="100%"
           flex={1}
+          minW={0}
           resize="none"
           fontFamily="body"
         />
 
         <IconButton
-          borderRadius="full"
-          ml={2}
-          mt={4}
-          px={4}
-          h="48px"
-          minW="48px"
+          flex="none"
+          borderRadius="10px"
+          h={{ base: "44px", md: "40px" }}
+          minW={{ base: "44px", md: "40px" }}
           variant="solid"
           aria-label="Enviar pesquisa"
           bg="accent"
           color="accent.fg"
-          _hover={{
-            bg: "brand.600",
-            transform: "translateY(-2px)",
-          }}
-          _disabled={{
-            bg: "border",
-            cursor: "not-allowed",
-            transform: "none",
-          }}
-          _active={{
-            bg: "brand.700",
-            transform: "translateY(0)"
-          }}
-          transition="all 0.2s ease"
+          _hover={{ bg: "brand.600" }}
+          _disabled={{ bg: "border", color: "fg.disabled", cursor: "not-allowed" }}
+          _active={{ bg: "brand.700" }}
+          transition="background 0.15s ease"
           disabled={loading || !valid}
           onClick={() => callServerAPI(prompt)}
         >
-          <MdSend size={20} />
+          <MdArrowUpward size={20} />
         </IconButton>
       </Flex>
 
-      {/* Character count hint */}
-      <Flex justify="flex-end" px={2}>
-        <Box fontSize="xs" color={valid ? "accent" : "fg.muted"} fontWeight={valid ? "500" : "400"}>
-          {valid ? "Pronto para enviar" : `Mínimo ${remaining} caracteres`}
+      {curto && (
+        <Box fontSize="xs" color="fg.muted" textAlign="right" px={2} pt={1}>
+          Mínimo {remaining} caracteres
         </Box>
-      </Flex>
+      )}
     </Box>
   );
 };

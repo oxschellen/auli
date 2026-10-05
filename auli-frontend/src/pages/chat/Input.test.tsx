@@ -30,10 +30,16 @@ describe("Input", () => {
     expect(screen.getByText(/Mínimo \d+ caracteres/)).toBeInTheDocument();
   });
 
-  it("enables send and shows the ready hint for a valid prompt", () => {
+  it("enables send for a valid prompt, with no hint (D-UI-4: the lit button says it)", () => {
     setup(VALID);
     expect(screen.getByLabelText("Enviar pesquisa")).toBeEnabled();
-    expect(screen.getByText("Pronto para enviar")).toBeInTheDocument();
+    expect(screen.queryByText(/Mínimo \d+ caracteres/)).toBeNull();
+  });
+
+  it("shows no hint while the box is empty", () => {
+    setup("");
+    expect(screen.getByLabelText("Enviar pesquisa")).toBeDisabled();
+    expect(screen.queryByText(/Mínimo \d+ caracteres/)).toBeNull();
   });
 
   it("submits on click with a valid prompt", () => {
