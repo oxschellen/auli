@@ -37,7 +37,7 @@ export const UserMessage = ({ messageText, setPrompt }: UserMessageProps) => {
           <Tooltip content="Reutilizar a pergunta" bg="bg.inverted">
             <Button
               borderRadius="full"
-              aria-label="Copiar a pergunta para a área de entrada"
+              aria-label="Reutilizar a pergunta na caixa de mensagem"
               size="xs"
               minW="26px"
               h="26px"

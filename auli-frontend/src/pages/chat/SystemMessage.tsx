@@ -98,7 +98,8 @@ export const SystemMessage = ({
     [comFontes, titulos, citar],
   );
 
-  // A saudação e as mensagens de erro seguem como balão simples; a resposta ocupa a coluna.
+  // Sem ações (`showButton` falso), a mensagem segue como balão simples. A resposta ocupa a
+  // coluna — e as mensagens de erro também, porque o `callServerAPI` as cria com `showButton`.
   if (!showButton) {
     return (
       <Flex px={3} py={2} w="100%">

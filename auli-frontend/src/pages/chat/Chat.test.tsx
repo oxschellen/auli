@@ -1,10 +1,15 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithProvider } from "../../test/render";
 import { EntityProvider } from "../../shared/EntityContext";
 import { Chat } from "./Chat";
 import { SIDEBAR_WIDTH } from "../../shared/layout";
+
+// A consulta nunca responde: os testes daqui olham o que acontece no ENVIO, não na chegada.
+vi.mock("axios", () => ({
+  default: { post: vi.fn(() => new Promise(() => {})), isCancel: vi.fn(() => false) },
+}));
 
 /** O Chat exige uma entidade escolhida; o provider a lê do localStorage no primeiro render. */
 beforeEach(() => localStorage.setItem("auli.entity", "rs"));
@@ -38,7 +43,7 @@ describe("Chat", () => {
   });
 
   // A troca de tipo em si é do RadioGroup do Chakra, que o jsdom não aciona por clique; ela é
-  // conferida no navegador (ver a TAREFA-CHAT-REDESENHO, Fase 2). Aqui: abrir, listar, fechar.
+  // conferida no navegador (Chromium). Aqui: abrir, listar, fechar.
   it("o seletor abre a lista dos tipos (radiogroup) e fecha com Esc", () => {
     montar();
     const botao = screen.getByRole("button", { name: /^Tipo de consulta:/ });
@@ -126,5 +131,20 @@ describe("recolher a caixa de mensagem (celular)", () => {
     await waitFor(() =>
       expect(document.activeElement).toBe(screen.getByLabelText("Sua pergunta")),
     );
+  });
+});
+
+/**
+ * O `EstadoInicial` tomou o lugar da saudação (D-UI-10), mas ela seguia como a primeira mensagem
+ * do estado: ao enviar a primeira pergunta, o balão "Olá! Como posso ajudar?" surgia acima dela.
+ */
+describe("a conversa começa vazia", () => {
+  it("depois do primeiro envio, não aparece saudação acima da pergunta", async () => {
+    montar();
+    const pergunta = "Qual o prazo para pagar o ICMS da empresa?";
+    fireEvent.change(screen.getByLabelText("Sua pergunta"), { target: { value: pergunta } });
+    fireEvent.click(screen.getByLabelText("Enviar pesquisa"));
+    expect(await screen.findByText(pergunta)).toBeInTheDocument();
+    expect(screen.queryByText("Olá! Como posso ajudar?")).toBeNull();
   });
 });
