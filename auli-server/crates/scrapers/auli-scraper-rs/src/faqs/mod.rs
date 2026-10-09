@@ -156,18 +156,14 @@ fn walk(
         "{}{}&currentPage=1&pageSize=100",
         source.base_url, source_uri
     );
-    let body_html = match fetch::get_web_page_ajax_body_html(
-        url,
-        &path_body,
-        &ajax_url,
-        source.use_cache,
-    ) {
-        Ok(html) => html,
-        Err(e) => {
-            eprintln!("Error fetching body for {}: {}", url, e);
-            return Ok(node);
-        }
-    };
+    let body_html =
+        match fetch::get_web_page_ajax_body_html(url, &path_body, &ajax_url, source.use_cache) {
+            Ok(html) => html,
+            Err(e) => {
+                eprintln!("Error fetching body for {}: {}", url, e);
+                return Ok(node);
+            }
+        };
 
     match page_type {
         PageType::Faq => {
