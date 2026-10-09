@@ -5,6 +5,7 @@
 // artefatos é o `auli-collections rs`.
 
 mod errors;
+mod f5;
 mod faqs;
 mod pareceres;
 mod servicos;

@@ -256,6 +256,10 @@ fn fetch_html(
         },
     )
     .map_err(|e| e.to_string())?;
+    // Vem com 200: sem esta guarda, entraria no cache e as próximas rodadas a leriam como página.
+    if crate::f5::bloqueio_f5(&body) {
+        return Err(format!("{}: o F5 devolveu desafio/bloqueio no lugar da página", url).into());
+    }
     auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
     Ok(body)
 }
@@ -286,6 +290,15 @@ fn fetch_api(
         },
     )
     .map_err(|e| e.to_string())?;
+    // Só JSON entra no cache: o desafio do F5 vem com 200 e, gravado, envenenava as rodadas seguintes.
+    if let Err(e) = serde_json::from_str::<serde::de::IgnoredAny>(&body) {
+        let f5 = if crate::f5::bloqueio_f5(&body) {
+            " (desafio/bloqueio do F5)"
+        } else {
+            ""
+        };
+        return Err(format!("{}: resposta não é JSON{}: {}", url, f5, e).into());
+    }
     auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
     Ok(body)
 }
@@ -432,6 +445,62 @@ fn extract_selector_content(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::f5::teste::{DESAFIO, arquivos, dir_vazio, servidor_local};
+
+    fn agente() -> Agent {
+        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(5)))
+    }
+
+    #[test]
+    fn fetch_html_nao_grava_no_cache_a_pagina_do_f5() {
+        let dir = dir_vazio("svc-html-f5");
+        let url = format!("{}/servicos-ao-cidadao", servidor_local(DESAFIO));
+        let r = fetch_html(dir.to_str().unwrap(), &agente(), &url, false);
+        let n = arquivos(&dir);
+        let _ = std::fs::remove_dir_all(&dir);
+        assert!(r.is_err(), "a página do F5 tem de ser erro, não conteúdo");
+        assert_eq!(n, 0, "a página do F5 não pode entrar no cache");
+    }
+
+    #[test]
+    fn fetch_html_grava_no_cache_a_pagina_legitima() {
+        // Controle: o mesmo caminho grava quando o conteúdo é bom — o "0 arquivos" acima não é vácuo.
+        let dir = dir_vazio("svc-html-ok");
+        let url = format!("{}/servicos-ao-cidadao", servidor_local("<html>ok</html>"));
+        let r = fetch_html(dir.to_str().unwrap(), &agente(), &url, false);
+        let n = arquivos(&dir);
+        let _ = std::fs::remove_dir_all(&dir);
+        assert_eq!(r.unwrap(), "<html>ok</html>");
+        assert_eq!(n, 1);
+    }
+
+    #[test]
+    fn fetch_api_nao_grava_no_cache_o_que_nao_e_json() {
+        let dir = dir_vazio("svc-api-f5");
+        let url = format!(
+            "{}/_service/tudofacil/capaservicos",
+            servidor_local(DESAFIO)
+        );
+        let r = fetch_api(dir.to_str().unwrap(), &url, "http://ref.test/", false);
+        let n = arquivos(&dir);
+        let _ = std::fs::remove_dir_all(&dir);
+        assert!(r.unwrap_err().to_string().contains("F5"));
+        assert_eq!(n, 0, "o desafio do F5 não pode entrar no cache");
+    }
+
+    #[test]
+    fn fetch_api_grava_no_cache_o_json() {
+        let dir = dir_vazio("svc-api-ok");
+        let url = format!(
+            "{}/_service/tudofacil/capaservicos",
+            servidor_local(r#"{"a":1}"#)
+        );
+        let r = fetch_api(dir.to_str().unwrap(), &url, "http://ref.test/", false);
+        let n = arquivos(&dir);
+        let _ = std::fs::remove_dir_all(&dir);
+        assert_eq!(r.unwrap(), r#"{"a":1}"#);
+        assert_eq!(n, 1);
+    }
 
     #[test]
     fn orgao_do_card_replica_o_getorgao_do_js() {

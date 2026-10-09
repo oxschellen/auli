@@ -26,10 +26,18 @@ for arg in "$@"; do
   esac
 done
 
-# Quantos serviços o snapshot atual tem — lido ANTES de qualquer coisa ser sobrescrita. É a linha de
-# base do guard do passo 3; sem snapshot anterior (primeira coleta) não há com o que comparar.
+# Cópia do snapshot ANTES da coleta: o scraper o sobrescreve, e `data/` está fora do git — sem a
+# cópia, a queda que o guard do passo 3 pega já não teria volta. Ela só some quando o guard passa;
+# enquanto existir, é o último estado bom. Por isso uma rodada que falhou NÃO a recopia: a repetição
+# compara com o estado bom, não com o snapshot que acabou de encolher.
+if [ ! -f "$SNAPSHOT.anterior" ] && [ -f "$SNAPSHOT" ]; then
+  cp -p "$SNAPSHOT" "$SNAPSHOT.anterior"
+fi
+
+# Quantos serviços o último snapshot bom tem. É a linha de base do guard do passo 3; sem snapshot
+# anterior (primeira coleta) não há com o que comparar.
 ANTES=0
-[ -f "$SNAPSHOT" ] && ANTES="$(jq '.coleta.items | length' "$SNAPSHOT")"
+[ -f "$SNAPSHOT.anterior" ] && ANTES="$(jq '.coleta.items | length' "$SNAPSHOT.anterior")"
 
 # 1. Cache fresco — apaga só o cache de serviços. Os irmãos `faqs`, `pareceres` e `tarf` (1,5 GB)
 #    são namespaces separados e ficam intactos.
@@ -60,10 +68,14 @@ echo "🔢 serviços no snapshot: $DEPOIS (antes: $ANTES)"
 if [ "$ANTES" -gt 0 ] && [ "$DEPOIS" -lt "$ANTES" ]; then
   echo "❌ o snapshot ENCOLHEU ($ANTES → $DEPOIS). Serviço some do acervo por duas razões — o portal"
   echo "   tirou do ar, ou a coleta falhou —, e o snapshot não distingue as duas."
+  echo "   O estado bom está guardado. Para voltar a ele:"
+  echo "     mv \"$SNAPSHOT.anterior\" \"$SNAPSHOT\""
   echo "   Confira as URLs que falharam no log acima e rode de novo (o cache agora está quente:"
-  echo "   só o que faltou volta à rede). Se a queda for real, repita com --keep-cache para seguir."
+  echo "   só o que faltou volta à rede; a comparação segue contra o estado bom)."
+  echo "   Se a queda for real, apague a cópia .anterior e siga com --keep-cache."
   exit 1
 fi
+rm -f "$SNAPSHOT.anterior"
 
 # 4. Binários release que os passos seguintes exigem (auli + auli-collections).
 echo "🔧 compilando binários release…"

@@ -15,6 +15,7 @@ ROOT="$(cd "$(dirname "$(readlink -f "$0")")/../.." && pwd)"   # raiz do repo
 SERVER="$ROOT/auli-server"
 FAQS_CACHE="$ROOT/data/rs/raw/cache/faqs"
 SNAPSHOT="$ROOT/data/rs/rs-faqs-snapshot.json"
+TREE="$ROOT/data/rs/raw/rs-faqs-tree.json"
 
 FRESH=1
 SERVE=1
@@ -26,10 +27,19 @@ for arg in "$@"; do
   esac
 done
 
-# Quantas FAQs o snapshot atual tem — lido ANTES de qualquer coisa ser sobrescrita. É a linha de
-# base do guard do passo 3; sem snapshot anterior (primeira coleta) não há com o que comparar.
+# Cópia do snapshot e da árvore ANTES da coleta: o scraper sobrescreve os dois, e `data/` está fora
+# do git — sem a cópia, a queda que o guard do passo 3 pega já não teria volta. Ela só some quando o
+# guard passa; enquanto existir, é o último estado bom. Por isso uma rodada que falhou NÃO a recopia:
+# a repetição compara com o estado bom, não com o snapshot que acabou de encolher.
+if [ ! -f "$SNAPSHOT.anterior" ] && [ -f "$SNAPSHOT" ]; then
+  cp -p "$SNAPSHOT" "$SNAPSHOT.anterior"
+  [ -f "$TREE" ] && cp -p "$TREE" "$TREE.anterior"
+fi
+
+# Quantas FAQs o último snapshot bom tem. É a linha de base do guard do passo 3; sem snapshot
+# anterior (primeira coleta) não há com o que comparar.
 ANTES=0
-[ -f "$SNAPSHOT" ] && ANTES="$(jq '.coleta.items | length' "$SNAPSHOT")"
+[ -f "$SNAPSHOT.anterior" ] && ANTES="$(jq '.coleta.items | length' "$SNAPSHOT.anterior")"
 
 # 1. Cache fresco — apaga só o cache de faqs (serviços/pareceres ficam intactos).
 if [ "$FRESH" -eq 1 ]; then
@@ -59,11 +69,14 @@ echo "🔢 FAQs no snapshot: $DEPOIS (antes: $ANTES)"
 if [ "$ANTES" -gt 0 ] && [ "$DEPOIS" -lt "$ANTES" ]; then
   echo "❌ o snapshot ENCOLHEU ($ANTES → $DEPOIS). FAQ some do acervo por duas razões — o portal"
   echo "   tirou do ar, ou a coleta falhou —, e o snapshot não distingue as duas."
+  echo "   O estado bom está guardado. Para voltar a ele:"
+  echo "     mv \"$SNAPSHOT.anterior\" \"$SNAPSHOT\" && mv \"$TREE.anterior\" \"$TREE\""
   echo "   Procure 'Error walking' / 'Error fetching body' no log acima e rode de novo (o cache"
-  echo "   agora está quente: só o que faltou volta à rede). Se a queda for real, siga com"
-  echo "   --keep-cache."
+  echo "   agora está quente: só o que faltou volta à rede; a comparação segue contra o estado bom)."
+  echo "   Se a queda for real, apague as duas cópias .anterior e siga com --keep-cache."
   exit 1
 fi
+rm -f "$SNAPSHOT.anterior" "$TREE.anterior"
 
 # 4. Binários release que os passos seguintes exigem (auli + auli-collections).
 echo "🔧 compilando binários release…"

@@ -80,6 +80,10 @@ pub fn get_web_page_html(
             .call()?;
         Ok(resp.body_mut().read_to_string()?)
     })?;
+    // Vem com 200, então o `retry` não a vê; gravada, a próxima rodada a leria do cache como página.
+    if crate::f5::bloqueio_f5(&raw) {
+        return Err(format!("{}: o F5 devolveu desafio/bloqueio no lugar da página", url).into());
+    }
     let html = format_html(&raw);
     save(cache_path, &html)?;
     Ok(html)
@@ -147,4 +151,33 @@ fn save(path: &Path, content: &str) -> Result<()> {
     }
     fs::write(path, content)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::f5::teste::{DESAFIO, arquivos, dir_vazio, servidor_local};
+
+    #[test]
+    fn get_web_page_html_nao_grava_no_cache_a_pagina_do_f5() {
+        let dir = dir_vazio("faq-html-f5");
+        let url = format!("{}/perguntas-frequentes", servidor_local(DESAFIO));
+        let r = get_web_page_html(&build_agent(), &url, &dir.join("pagina.html"), false);
+        let n = arquivos(&dir);
+        let _ = std::fs::remove_dir_all(&dir);
+        assert!(r.is_err(), "a página do F5 tem de ser erro, não conteúdo");
+        assert_eq!(n, 0, "a página do F5 não pode entrar no cache");
+    }
+
+    #[test]
+    fn get_web_page_html_grava_no_cache_a_pagina_legitima() {
+        // Controle: o mesmo caminho grava quando o conteúdo é bom — o "0 arquivos" acima não é vácuo.
+        let dir = dir_vazio("faq-html-ok");
+        let url = format!("{}/perguntas-frequentes", servidor_local("<html>ok</html>"));
+        let r = get_web_page_html(&build_agent(), &url, &dir.join("pagina.html"), false);
+        let n = arquivos(&dir);
+        let _ = std::fs::remove_dir_all(&dir);
+        assert!(r.is_ok());
+        assert_eq!(n, 1);
+    }
 }
