@@ -13,6 +13,10 @@ use auli_scraper_kit::http::GetOpts;
 
 const ACCEPT: &str = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 const ACCEPT_LANGUAGE: &str = "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7";
+// O F5 na frente de `_service/*` (desde out/2026) rejeita o ureq pela impressão do cliente e devolve
+// um desafio JS, com 200, a quem pede a API como página (`Accept: text/html` ou sem `Referer` do
+// site). Passa o curl com o `Accept` do `$.getJSON` do capaservicos.js e o `Referer` da página.
+const ACCEPT_JSON: &str = "application/json, text/javascript, */*; q=0.01";
 
 static LINK_REGEX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r#"<a[^>]*href=["'](https://[^"']+)["'][^>]*>([^<]*)</a>"#).unwrap()
@@ -214,7 +218,7 @@ fn extrair_servicos_da_api(
     let mut pagina = 1;
     loop {
         let url = format!("{}?parent={}&page={}", SERVICOS_API_BASE, parent, pagina);
-        let raw = fetch_html(data_dir, client, &url, use_cache)?;
+        let raw = fetch_api(data_dir, &url, &tipo.url, use_cache)?;
         let page: ApiPage = serde_json::from_str(&raw)
             .map_err(|e| format!("JSON inválido da API de serviços em {}: {}", url, e))?;
         let mais = page.mais_resultados;
@@ -248,6 +252,36 @@ fn fetch_html(
         &GetOpts {
             log_prefix: "RS",
             headers: &[("Accept", ACCEPT), ("Accept-Language", ACCEPT_LANGUAGE)],
+            ..Default::default()
+        },
+    )
+    .map_err(|e| e.to_string())?;
+    auli_scraper_kit::cache::write(data_dir, "servicos", url, &body);
+    Ok(body)
+}
+
+/// A API `_service/*` via curl (ver `ACCEPT_JSON`); cache-first como o `fetch_html`.
+fn fetch_api(
+    data_dir: &str,
+    url: &str,
+    referer: &str,
+    use_cache: bool,
+) -> Result<String, Box<dyn std::error::Error>> {
+    if let Some(cached) =
+        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", url, use_cache)
+            .map_err(|e| e.to_string())?
+    {
+        return Ok(cached);
+    }
+    let body = auli_scraper_kit::http::get_via_curl(
+        url,
+        &GetOpts {
+            log_prefix: "RS",
+            headers: &[
+                ("Accept", ACCEPT_JSON),
+                ("Accept-Language", ACCEPT_LANGUAGE),
+                ("Referer", referer),
+            ],
             ..Default::default()
         },
     )

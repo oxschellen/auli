@@ -157,7 +157,6 @@ fn walk(
         source.base_url, source_uri
     );
     let body_html = match fetch::get_web_page_ajax_body_html(
-        agent,
         url,
         &path_body,
         &ajax_url,
