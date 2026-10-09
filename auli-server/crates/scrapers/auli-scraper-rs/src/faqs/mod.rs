@@ -58,6 +58,19 @@ struct MenuItem {
 pub fn run(source: &FaqSource) -> Result<()> {
     let tree = scrape(source)?;
 
+    // Zero FAQs nunca é o portal: é a raiz que caiu (a falha na AJAX vira nó vazio, não erro). Sai
+    // ANTES de gravar — snapshot e árvore estão em `data/`, fora do git, e a árvore não tem outra
+    // fonte. Queda parcial (uma subárvore) continua passando: quem a pega é o guard dos
+    // `scripts/tools/update-rs-*.sh`, que guarda o snapshot anterior.
+    let faqs = flatten_faqs_raw(&tree);
+    if faqs.is_empty() {
+        return Err(format!(
+            "nenhuma FAQ colhida a partir de {} — snapshot e árvore anteriores mantidos",
+            source.root_url
+        )
+        .into());
+    }
+
     // A árvore (page_type/children) que a aba de FAQs do frontend consome — o snapshot achatado a
     // perde, então persistimos o nó-raiz aqui, ao lado do snapshot. Prefixado por `<id>-` como os
     // demais artefatos de `raw/`.
@@ -76,7 +89,7 @@ pub fn run(source: &FaqSource) -> Result<()> {
         &source.id,
         &source.data_dir,
         &crate::scraper_info(),
-        flatten_faqs_raw(&tree),
+        faqs,
     )?;
     Ok(())
 }
@@ -320,5 +333,46 @@ mod tests {
         assert_eq!(raw[0].url, "ua");
         assert_eq!(raw[0].origin, "Inicial | A");
         assert_eq!(raw[2].origin, "");
+    }
+
+    /// Raiz em cache, mas a AJAX dela falha (cache-miss no `--usecache`, como o desafio do F5 em
+    /// 09/10/2026): a caminhada não colhe nada. O `run` tem de falhar SEM tocar no snapshot nem na
+    /// árvore que já estavam no disco — antes, gravava os dois vazios por cima dos bons.
+    #[test]
+    fn run_sem_nenhuma_faq_falha_e_preserva_snapshot_e_arvore() {
+        let tmp = std::env::temp_dir().join(format!("auli-rs-faqs-zero-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&tmp);
+        let data_dir = tmp.join("raw");
+        let cache_dir = tmp.join("cache");
+        std::fs::create_dir_all(&data_dir).unwrap();
+        std::fs::create_dir_all(&cache_dir).unwrap();
+
+        let root_url = "https://exemplo.test/perguntas-frequentes";
+        std::fs::write(
+            cache_dir.join(format!("{}.html", url_to_filename(root_url))),
+            r#"<div data-matriz-source-uri="/_service/x?templatename=pagina.listapagina.categoriafaq"></div>"#,
+        )
+        .unwrap();
+        let snapshot = tmp.join("rs-faqs-snapshot.json");
+        let arvore = data_dir.join("rs-faqs-tree.json");
+        std::fs::write(&snapshot, "SNAPSHOT BOM").unwrap();
+        std::fs::write(&arvore, "ARVORE BOA").unwrap();
+
+        let r = run(&FaqSource {
+            id: "rs".into(),
+            base_url: "https://exemplo.test".into(),
+            root_url: root_url.into(),
+            root_title: "Raiz".into(),
+            data_dir: data_dir.to_str().unwrap().into(),
+            cache_dir: cache_dir.to_str().unwrap().into(),
+            use_cache: true,
+        });
+
+        let snapshot_depois = std::fs::read_to_string(&snapshot).unwrap();
+        let arvore_depois = std::fs::read_to_string(&arvore).unwrap();
+        let _ = std::fs::remove_dir_all(&tmp);
+        assert!(r.is_err(), "coleta com 0 FAQs tem de ser erro");
+        assert_eq!(snapshot_depois, "SNAPSHOT BOM");
+        assert_eq!(arvore_depois, "ARVORE BOA");
     }
 }
