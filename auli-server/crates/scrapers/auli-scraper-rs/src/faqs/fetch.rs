@@ -9,6 +9,7 @@ use std::path::Path;
 use std::thread::sleep;
 use std::time::Duration;
 
+use auli_scraper_kit::http::GetOpts;
 use ureq::Agent;
 
 use crate::errors::Result;
@@ -16,6 +17,10 @@ use crate::faqs::html::format_html;
 
 const ACCEPT: &str = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 const ACCEPT_LANGUAGE: &str = "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7";
+// O F5 na frente de `_service/*` (desde out/2026) rejeita o ureq pela impressão do cliente e devolve
+// um desafio JS, com 200, ao AJAX que pede `Accept: text/html`. Passa o curl com o `Accept` de um
+// `$.getJSON` — daí o AJAX ir por `get_via_curl` e as páginas seguirem no ureq.
+const ACCEPT_JSON: &str = "application/json, text/javascript, */*; q=0.01";
 
 /// Number of attempts for a network operation before giving up.
 const MAX_ATTEMPTS: u32 = 3;
@@ -82,7 +87,6 @@ pub fn get_web_page_html(
 
 /// Fetches (or reads from cache) the `body` markup returned by the portal's AJAX list endpoint.
 pub fn get_web_page_ajax_body_html(
-    agent: &Agent,
     url: &str,
     cache_path: &Path,
     ajax_url: &str,
@@ -96,18 +100,23 @@ pub fn get_web_page_ajax_body_html(
     }
 
     let raw_body = retry(url, || {
-        let mut resp = agent
-            .get(ajax_url)
-            .header("X-Requested-With", "XMLHttpRequest")
-            .header("Referer", url)
-            .header("Accept", ACCEPT)
-            .header("Accept-Language", ACCEPT_LANGUAGE)
-            .call()
-            .map_err(|e| format!("AJAX request failed for {}: {}", url, e))?;
+        let raw = auli_scraper_kit::http::get_via_curl(
+            ajax_url,
+            &GetOpts {
+                log_prefix: "RS",
+                headers: &[
+                    ("X-Requested-With", "XMLHttpRequest"),
+                    ("Referer", url),
+                    ("Accept", ACCEPT_JSON),
+                    ("Accept-Language", ACCEPT_LANGUAGE),
+                ],
+                attempts: 1, // o `retry` em volta já repete — e repete também o parse.
+                ..Default::default()
+            },
+        )
+        .map_err(|e| format!("AJAX request failed for {}: {}", url, e))?;
 
-        let value: serde_json::Value = resp
-            .body_mut()
-            .read_json()
+        let value: serde_json::Value = serde_json::from_str(&raw)
             .map_err(|e| format!("AJAX parse failed for {}: {}", url, e))?;
 
         let body = value["body"]
