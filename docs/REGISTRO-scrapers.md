@@ -1675,6 +1675,34 @@ que ficou decidido:
 
 ## Estado
 
-**Coleta pausada em 3.800 de ~22.522** — parada de propósito, para não mover a árvore enquanto o
-código evoluía (`docs_hash` divergente faz o servidor recusar o boot). Retomável: o cache dos corpos
-já baixados é reaproveitado. A ~1 req/s, o acervo completo leva ~6h.
+**Acervo completo, atualizado em 18/10/2026: 22.514 acórdãos na árvore.** A pausa em 3.800 ficou para
+trás; desde então a coleta é incremental — `auli-scraper-rs tarf` refaz a listagem inteira (46 GETs)
+e só busca o corpo do que ainda não tem `.md`, e o `build-packs.sh rs` vetoriza só o novo. A rodada de
+18/10 levou ~10 min e acrescentou 38 (22.476 → 22.514).
+
+Como a conta fecha, na listagem dessa data:
+
+| | |
+|---|---|
+| anunciados pelo portal (`totalItens`) | 22.627 |
+| − `SLUG-DUPLICADO` (revisões do mesmo acórdão) | 68 |
+| = únicos na listagem | 22.559 |
+| − `SEM-EMENTA` | 29 |
+| − `FALHA-CORPO` | 17 |
+| = com `.md` na árvore | 22.513 |
+| + acórdão que saiu da listagem e segue na árvore | 1 |
+| **= árvore** | **22.514** |
+
+As exceções são re-tentadas a cada rodada (do cache, quando o corpo já veio), então reaparecem no
+`tarf-anomalias.txt` sem ser regressão. Esse arquivo é reescrito **durante** a rodada — para comparar
+com a anterior, copie-o antes de rodar. Três `FALHA-CORPO` falham sempre, confirmadas por requisição
+direta:
+
+- **233/23** — o corpo tem 14 MB (o curl o traz em 76 s) e passa do limite de 10 MB da resposta no
+  scraper. Subir esse limite o recupera.
+- **202/23** e **457/23** — `504` do gateway do portal depois de ~88 s. É do lado do servidor; não há
+  o que fazer daqui.
+
+**ACÓRDÃO 066/26** (`aa0f538a-fb65-4d2b-ada4-08deb7f7f86a`, pedido de esclarecimento) saiu da listagem
+do portal e não reaparece com outro id. A árvore é append-only, então ele continua no acervo e
+citável pelo chat; tirá-lo é decisão humana (apagar o `.md` e rodar o `build-packs.sh rs`).
