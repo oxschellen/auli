@@ -36,9 +36,13 @@ use auli_scraper_kit::{cache, clean};
 
 use crate::errors::{Error, Result};
 
+// Sem `www.` (out/2026): o host `www.` passou a responder 301 para `https://legislacao…`, e o curl
+// não segue redirect — a coleta parseava o stub "Object Moved" (0 pareceres, a guarda abortava). O
+// https tampouco serve: o servidor manda a cadeia incompleta (curl: "unable to get local issuer
+// certificate"). O http sem `www.` devolve o mesmo conteúdo, sem redirect.
 const LISTING_URL: &str =
-    "http://www.legislacao.sefaz.rs.gov.br/Site/Search.aspx?CodArea=3&CodGroup=159";
-const DETAIL_BASE: &str = "http://www.legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=";
+    "http://legislacao.sefaz.rs.gov.br/Site/Search.aspx?CodArea=3&CodGroup=159";
+const DETAIL_BASE: &str = "http://legislacao.sefaz.rs.gov.br/Site/DocumentView.aspx?inpKey=";
 const UA: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
