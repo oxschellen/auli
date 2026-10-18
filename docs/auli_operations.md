@@ -236,9 +236,9 @@ done
 Produz, por entidade, `data/<id>/packs/<id>-<kind>.json` + `<id>.manifest.json`
 (`strategy_version: 2` desde o pack v2 de ago/2026).
 
-**Contagens (08/08/2026): 29.732 documentos** — 4.205 serviços nas 27 entidades, 19.780 pareceres
-(sp 15.605, pr 2.060, sc 1.743, rs 372), 1.947 FAQs (só rs) e 3.800 acórdãos do TARF (rs, coleta em
-andamento). Números viram mentira sozinhos; para a verdade do momento:
+**Contagens (18/10/2026): 48.984 documentos** — 4.210 serviços nas 27 entidades, 19.789 pareceres
+(sp 15.605, pr 2.060, sc 1.743, rs 381), 1.962 FAQs (só rs), 509 perguntas de legislação (só rs) e
+22.514 acórdãos do TARF (rs). Números viram mentira sozinhos; para a verdade do momento:
 
 ```bash
 python3 -c "
@@ -387,11 +387,11 @@ coleção de jurisprudência presente — `pareceres` e `tarf`.
 `auli-collections <id> indice [pareceres|tarf]` existe como subcomando avulso — derivação pura,
 re-rodar nunca faz mal — mas no fluxo normal não precisa ser chamado à mão.
 
-> **Estado da coleta do TARF (08/08/2026): 3.800 de ~22.522.** Pausada de propósito, para não mover a
-> árvore enquanto o código evoluía. Retomável (`./target/debug/auli-scraper-rs tarf`, ~5 h a 1 req/s;
-> o cache dos corpos já baixados é reaproveitado). Ao fechar: `build-packs.sh rs`, remover a nota de
-> "coleta em andamento" do `bundle.rs` e da `TarfList.tsx`, e publicar. Registro da fonte e das
-> exceções conhecidas: `docs/REGISTRO-scrapers.md#tarf`.
+> **Estado da coleta do TARF (18/10/2026): completa, 22.514 acórdãos na árvore.** Atualizar é
+> incremental: `./target/release/auli-scraper-rs tarf` refaz a listagem inteira (46 GETs) e só busca o
+> corpo do que ainda não tem `.md` (~10 min na rodada de 18/10, +38), e o `build-packs.sh rs` vetoriza
+> só o novo. Registro da fonte, das exceções conhecidas e da conta listagem → árvore:
+> `docs/REGISTRO-scrapers.md#tarf`.
 
 > **A árvore `.md` É a fonte** (G5b). Não há mais `.txt` intermediário, promoção manual, JSON de
 > contrato nem passo de materialização — o `auli update` lê `docs/<kind>/*.md` direto, nas quatro
