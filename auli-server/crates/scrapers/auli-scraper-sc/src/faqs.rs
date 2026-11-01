@@ -307,6 +307,22 @@ fn consolidar(raizes: &[AssuntoNo], buscas: Vec<(i64, BuscaApi)>) -> Result<Cons
         })
         .collect::<Result<Vec<_>>>()?;
 
+    // (f) Pergunta sem texto vira `.md` sem título e vetor sem conteúdo — inútil para a busca, então
+    //     é erro, não aviso como a (e): o operador olha a fonte. Resposta vazia não entra (título e
+    //     link ainda são documento).
+    let sem_texto: Vec<String> = itens
+        .iter()
+        .filter(|(p, _)| texto_da_pergunta(p).is_empty())
+        .map(|(p, _)| p.id.to_string())
+        .collect();
+    if !sem_texto.is_empty() {
+        bail!(
+            "{} pergunta(s) sem texto de Questao — {}",
+            sem_texto.len(),
+            sem_texto.join(", ")
+        );
+    }
+
     // (e) Até 01/11/2026 todas vieram com Visibilidade 2; outro valor pode ser conteúdo interno. Só
     //     conta — quem avisa é o `run`.
     let fora_da_visibilidade = itens.iter().filter(|(p, _)| p.visibilidade != 2).count();
@@ -415,6 +431,7 @@ fn montar_arvore(raizes: &[AssuntoNo], c: &Consolidado) -> FaqNode {
         faq_items.push(FaqItem {
             pergunta: texto_da_pergunta(p),
             resposta: texto_da_resposta(p),
+            url: Some(link_da_pergunta(p.id)),
         });
     }
 
@@ -614,6 +631,20 @@ mod tests {
     }
 
     #[test]
+    fn pergunta_sem_texto_e_erro() {
+        // HTML que vira vazio (o caminho pelo `html_para_texto`, não só o `null`) e um `null`. A 1558
+        // vem em dobro na raiz 2955: as duas linhas mudam, senão o dedup ficaria com a intacta.
+        let mut b = buscas();
+        for p in b[0].1.perguntas.iter_mut().filter(|p| p.id == 1558) {
+            p.questao = Some("<p> </p>".to_string());
+        }
+        b[2].1.perguntas[0].questao = None;
+        let e = erro(consolidar(&arvore(), b));
+        assert!(e.contains("2 pergunta(s) sem texto de Questao"), "{e}");
+        assert!(e.contains("1558") && e.contains("1170"), "{e}");
+    }
+
+    #[test]
     fn visibilidade_diferente_de_2_so_avisa() {
         let mut b = buscas();
         b[2].1.perguntas[0].visibilidade = 1;
@@ -700,6 +731,11 @@ mod tests {
         assert_eq!(
             aspectos.faq_items[0].pergunta,
             "Como efetuar um pedido de TTD?"
+        );
+        // Cada pergunta leva o próprio link, não só o do assunto.
+        assert_eq!(
+            aspectos.faq_items[0].url.as_deref(),
+            Some("https://www.sef.sc.gov.br/perguntas/buscar?numero=1211")
         );
         // O fio que o `parseFaqs.ts` lê: folha sem `children`, page_type como string.
         let json = serde_json::to_value(aspectos).unwrap();

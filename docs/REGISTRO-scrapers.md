@@ -1756,7 +1756,8 @@ JS não chamam API externa: os dados saem do `getServerSideProps`, pelo `/_next/
 ## Guardas e transporte
 
 - `Err` antes de gravar qualquer arquivo: `buscar != true` ou `errorCode` preenchido em qualquer
-  chamada; uma pergunta em duas raízes; cadeia de pais que não resolve; zero perguntas no total.
+  chamada; uma pergunta em duas raízes; cadeia de pais que não resolve; zero perguntas no total;
+  pergunta sem texto de `Questao` (D-SCFAQ-3f; `Resposta` vazia passa).
   `Visibilidade ≠ 2` só avisa: em 01/11, todas eram 2.
 - **Sempre à rede.** Diferente do resto do kit (cache-first), o cache em `data/sc/raw/cache/faqs/` só é
   lido com `--usecache`, que reproduz snapshot e árvore byte a byte. Ler do cache por padrão faria a
@@ -1767,3 +1768,28 @@ JS não chamam API externa: os dados saem do `getServerSideProps`, pelo `/_next/
   um nó pode ser `Menu` e ter `faq_items`; nó sem pergunta na subárvore é omitido) e
   `data/sc/sc-faqs-snapshot.json`, nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-sc-faqs.sh` (guarda de encolhimento contra o `.anterior`).
+
+## Limitação conhecida — 4º nível
+
+A `perguntas.json` só tem 2 níveis. O 3º entra no mapa de assuntos pelo `Assunto` das perguntas
+(`completar_mapa`), então um assunto só está no mapa se está na árvore **ou** tem ao menos uma
+pergunta pendurada diretamente nele. Se a SEF-SC criar um 4º nível `A › B › C › D` em que só `D`
+tem pergunta, a subida de `D` chega a `C`, que não está em lugar nenhum, e a coleta inteira para
+**antes de gravar** (guarda D-SCFAQ-3c, teste `pai_fora_do_mapa_e_erro`):
+
+```
+assunto <C> fora do mapa de assuntos — a cadeia de pais de <D> não resolve
+```
+
+É a falha certa, alta e sem tocar no acervo, mas não se resolve sozinha. Em 01/11/2026 não havia
+4º nível (trilhas 4/513/789 de 1/2/3 níveis); a limitação é latente.
+
+**Remédio, se acontecer** (não implementado — é código para um caso que não existe). A página do
+assunto, `GET /_next/data/<buildId>/perguntas/<id>.json?id=<id>`, traz em `respostaApi.assunto` o
+`Nome` e os `Subassuntos` **reais** (a do `75` lista 166, 169, 293, 168 e 167, que a `perguntas.json`
+mostra como `[]`). Mas ela traz `SuperiorHierarquicoID: null` em tudo, inclusive no próprio assunto
+(conferido em 01/11/2026). Então buscar a página do elo ausente `C` não diz quem é o pai dele: o
+remédio é **descer**. A partir dos assuntos já no mapa, busca-se a página de cada um e acrescentam-se
+os `Subassuntos` com o pai que a própria descida conhece, até `C` aparecer, com um teto de
+profundidade contra ciclo.
+

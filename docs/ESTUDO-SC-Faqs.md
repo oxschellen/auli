@@ -192,10 +192,14 @@ campos independentes, e o `parseFaqs.ts` já renderiza os dois: o `convertJsonNo
   (c) **cadeia de pais irresolúvel**: o mapa é a árvore completada pelo `Assunto` de cada pergunta (§2.1), e a trilha
   sobe por `SuperiorHierarquicoID` até uma raiz — se algum elo faltar (ex.: um 4º nível cujo pai não está nem na
   árvore nem em pergunta alguma), é `Err`. Exigir que o `Assunto` esteja na árvore, como a versão anterior pedia,
-  abortaria toda rodada (49/67 em Benefícios Fiscais estão fora dela);
+  abortaria toda rodada (49/67 em Benefícios Fiscais estão fora dela). A limitação que isso deixa — um 4º nível cujo
+  pai não tem pergunta própria derruba a coleta — e o remédio estão em `REGISTRO-scrapers.md#sc-faqs`;
   (d) zero perguntas no total (é a raiz que caiu, não o portal vazio — mesma doutrina do RS: sai **antes** de gravar);
   (e) **decidido: aviso, não erro** — `Visibilidade != 2` em algum item imprime a contagem. O endpoint é público e não
-  pede login, então o conteúdo é público; o aviso existe para alguém olhar.
+  pede login, então o conteúdo é público; o aviso existe para alguém olhar;
+  (f) **pergunta sem texto** (acrescentada em 01/11/2026, depois da revisão do PR #175) — `Questao` nula ou que o
+  `html_para_texto` esvazia (ex.: `<p> </p>`) é `Err` com os `BaseConhecimentoID`. O `.md` sairia sem título e o vetor
+  sem conteúdo. `Resposta` vazia não entra: título e link ainda são documento. Na rodada de 01/11, nenhuma.
 - **D-SCFAQ-4 — Rede sempre; cache só para replay offline.** O `read_or_bail` do kit é **cache-first sempre** (devolve
   o hit mesmo sem `--usecache`), e reusar o `fetch_cached` do `sc.rs` faria a próxima atualização reproduzir em
   silêncio a primeira coleta — foi o que aconteceu com os serviços do SC em 31/10/2026 (cache de 25/07). Com 32
