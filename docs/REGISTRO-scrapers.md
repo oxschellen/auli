@@ -1852,7 +1852,8 @@ server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
   `heading<N>` para os cards de referente — nada disso vira pergunta); nº de
   `perguntaFrequentePanelHeader` no HTML ≠ painéis parseados; `heading<N>` ≠ `Pergunta Nº`; `Assunto:`
   do painel ≠ título do card que o contém; um número de pergunta em dois lugares; pergunta sem texto.
-  Resposta vazia depois da conversão só avisa (0 em 01/11).
+  Só avisam: resposta vazia depois da conversão e resposta com tag de estrutura fora da lista fechada
+  (`table`/`tr`/`td`, `h1`–`h6`, `blockquote`, `pre`, `form`…), que sairia literal no `.md` (0 e 0 em 01/11).
 - **Sempre à rede**, como no SC: o cache em `data/pr/raw/cache/faqs/` só é lido com `--usecache`, que
   reproduz snapshot e árvore byte a byte.
 - 49 GETs com o UA `AuliBot` e 1 s de cortesia (as constantes do `pareceres.rs`), ~1 min.

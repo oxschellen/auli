@@ -372,6 +372,21 @@ fn consolidar(paginas: &[(Referente, Vec<Card>)]) -> Result<Vec<FaqRaw>> {
         );
     }
 
+    // (h) A lista fechada é deliberada (o `<` de menu e o `<Consulta Pendencias>` são texto), então tag de
+    //     estrutura que escape dela só avisa: ela sairia literal no `.md`, e crescer a lista é decisão do
+    //     operador. 0 em 01/11/2026.
+    let com_tag: Vec<String> = respostas_com_tag_sobrando(paginas)
+        .iter()
+        .map(u32::to_string)
+        .collect();
+    if !com_tag.is_empty() {
+        eprintln!(
+            "⚠️  PR FAQs: {} resposta(s) com tag HTML fora da lista fechada — {} — ver D-PRFAQ-5",
+            com_tag.len(),
+            com_tag.join(", ")
+        );
+    }
+
     let faqs: Vec<FaqRaw> = perguntas(paginas)
         .map(|(r, c, p)| montar_faq_raw(r, c, p))
         .collect();
@@ -381,6 +396,22 @@ fn consolidar(paginas: &[(Referente, Vec<Card>)]) -> Result<Vec<FaqRaw>> {
         paginas.len()
     );
     Ok(faqs)
+}
+
+/// Tag de estrutura que a lista fechada do `TAG_RE` não tira — se aparecer, sai literal na resposta.
+static TAG_SOBRANDO_RE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r"(?i)</?(?:table|thead|tbody|tr|td|th|h[1-6]|blockquote|pre|code|iframe|form|input|select|textarea)\b",
+    )
+    .unwrap()
+});
+
+/// As perguntas cuja resposta, já convertida, ainda tem tag de estrutura (a guarda (h) do `consolidar`).
+fn respostas_com_tag_sobrando(paginas: &[(Referente, Vec<Card>)]) -> Vec<u32> {
+    perguntas(paginas)
+        .filter(|(_, _, p)| TAG_SOBRANDO_RE.is_match(&p.resposta))
+        .map(|(_, _, p)| p.id)
+        .collect()
 }
 
 static IMG_RE: LazyLock<Regex> =
@@ -684,6 +715,16 @@ mod tests {
     fn resposta_vazia_so_avisa() {
         let mut p = paginas();
         p[0].1[0].paineis[0].resposta.clear();
+        assert_eq!(consolidar(&p).unwrap().len(), 5);
+    }
+
+    #[test]
+    fn tag_fora_da_lista_fechada_so_avisa() {
+        assert!(respostas_com_tag_sobrando(&paginas()).is_empty());
+        // O que sobraria de uma tabela na resposta depois da conversão (o `TAG_RE` não tira `<table>`).
+        let mut p = paginas();
+        p[0].1[0].paineis[1].resposta = "Veja a tabela: <table>x</table>".to_string();
+        assert_eq!(respostas_com_tag_sobrando(&p), vec![1334]);
         assert_eq!(consolidar(&p).unwrap().len(), 5);
     }
 

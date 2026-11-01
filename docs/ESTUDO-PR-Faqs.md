@@ -221,7 +221,10 @@ O `FaqNode` de `auli_scraper_kit::faqtree` (D-SCFAQ-5):
   (d) um número de pergunta em dois referentes (hoje 0; se aparecer, não é dobro conhecido, é reclassificação);
   (e) zero perguntas no total;
   (f) pergunta sem texto (a D-SCFAQ-3f);
-  (g) **aviso**: resposta vazia depois da conversão (com a D-PRFAQ-5, hoje 0).
+  (g) **aviso**: resposta vazia depois da conversão (com a D-PRFAQ-5, hoje 0);
+  (h) **aviso**: resposta que, convertida, ainda tem tag de estrutura fora da lista fechada (`table`, `tr`, `td`,
+  `h1`–`h6`, `blockquote`, `pre`, `form`…) — sairia literal no `.md`; crescer a lista é decisão do operador (hoje 0;
+  acrescentada pela TAREFA-PR-FAQS-AJUSTES).
 - **D-PRFAQ-7 — Rede sempre; cache só para `--usecache`** (a lição da D-SCFAQ-4): cache-first reproduziria a
   primeira coleta em silêncio. Cache sob `data/pr/raw/cache/faqs/`, chave = a url da página.
 - **D-PRFAQ-8 — CLI:** `auli-scraper-pr faqs` e `all` (= serviços + FAQs). O padrão continua `servicos`, e
