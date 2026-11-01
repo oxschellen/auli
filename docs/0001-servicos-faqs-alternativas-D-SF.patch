@@ -1,0 +1,247 @@
+From b8a4beef47344ff886904a75cb766c559e6c34d5 Mon Sep 17 00:00:00 2001
+From: ubuntu <carlos.schellenberger@gmail.com>
+Date: Sun, 4 Oct 2026 11:03:24 +0000
+Subject: [PATCH] =?UTF-8?q?feat(chat):=20servi=C3=A7os=20e=20FAQs=20s?=
+ =?UTF-8?q?=C3=A3o=20alternativas,=20n=C3=A3o=20pe=C3=A7as=20=E2=80=94=20p?=
+ =?UTF-8?q?rompt=20v2=20do=20rs=20e=205=20+=2010=20documentos=20(D-SF-1..5?=
+ =?UTF-8?q?)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+O sintoma veio do uso real: a indicação do serviço funciona quando ele está bem
+descrito; o que falha é a resposta que UNIFICA informações de muitos serviços e
+atribui a uma situação a regra de outra — o ICMS do regime geral e o do Simples
+Nacional saíam misturados.
+
+O mecanismo é uma premissa errada do desenho para esta coleção. O RAG trata o
+contexto como peças a sintetizar; os serviços são uma árvore de casos
+excludentes, em que a escolha sempre coube a quem usa o portal — e por isso a
+condição que separa um serviço do irmão muitas vezes nem está escrita. A busca
+densa agrava por construção: os irmãos ficam colados no espaço vetorial e
+voltam juntos. Com 30 documentos e um prompt que pedia "a orientação completa",
+fundir era o comportamento pedido.
+
+Duas mudanças, em par:
+
+- `config/prompts/rs.txt` v2 (D-SF-2): ancoragem pela fonte, não pelo assunto;
+  proibido combinar documentos ou transferir requisito/prazo de um para outro;
+  irmãos excludentes viram alternativas com a condição que decide; condição
+  não escrita não se deduz; sem documento aplicável, "o Portal não traz essa
+  informação". Só o rs nesta leva — replicar depois de medir.
+- `corpus::SERVICES` 10 → 5 e `corpus::FAQS` 20 → 10 (D-SF-3). Menos irmãos e
+  menos ruído, mas não resolve sozinho: o irmão costuma estar no topo. Bandas
+  seguem ∞/piso 0 — é teto, não calibragem.
+
+Sem bump de STRATEGY_VERSION nem de PACK_FORMAT, e sem `auli update` (D-SF-4):
+`corpus` é parâmetro de consulta. Vale para as três faces de uma vez — chat,
+MCP `consultar_servicos_faqs` (descrição atualizada) e o default de `top_k` do
+`/v1/retrieve` (D-SF-5). O parity-replay vai acusar divergência contra logs
+anteriores; é a linha de base nova, não regressão.
+
+Decisões em docs/auli_code.md §3.4.1; o que fica aberto (validação v1 × v2,
+replicação do prompt, condição de aplicação por serviço) em
+docs/auli_pendencias.md §40.
+
+Verificado: markdownlint limpo, check-sem-navi limpo. NÃO compilado aqui (sem
+toolchain Rust no ambiente) — rodar cargo fmt --check e cargo test antes do merge.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ auli-server/crates/auli-cli/src/mcp.rs     |  2 +-
+ auli-server/crates/auli-core/src/corpus.rs | 12 +++++--
+ config/prompts/rs.txt                      | 37 ++++++++++++----------
+ docs/auli_code.md                          | 32 +++++++++++++++++--
+ docs/auli_pendencias.md                    | 27 ++++++++++++++++
+ 5 files changed, 86 insertions(+), 24 deletions(-)
+
+diff --git a/auli-server/crates/auli-cli/src/mcp.rs b/auli-server/crates/auli-cli/src/mcp.rs
+index d1df9da..49a2638 100644
+--- a/auli-server/crates/auli-cli/src/mcp.rs
++++ b/auli-server/crates/auli-cli/src/mcp.rs
+@@ -343,7 +343,7 @@ impl AuliMcp {
+     #[tool(
+         description = "Consulta os serviços de atendimento e as perguntas frequentes (FAQs) \
+         de uma UF. Devolve UM bloco de texto com os serviços e FAQs mais próximos da pergunta \
+-        (até 10 serviços e até 20 FAQs) — o MESMO contexto que o chat do portal Auli usa para \
++        (até 5 serviços e até 10 FAQs) — o MESMO contexto que o chat do portal Auli usa para \
+         responder. Ideal para dúvidas de 'como fazer' do contribuinte (guias, cadastros, \
+         certidões, parcelamentos, prazos de atendimento); para fundamentação tributária \
+         (interpretação da legislação), prefira `buscar_pareceres`."
+diff --git a/auli-server/crates/auli-core/src/corpus.rs b/auli-server/crates/auli-core/src/corpus.rs
+index f28103a..032efe4 100644
+--- a/auli-server/crates/auli-core/src/corpus.rs
++++ b/auli-server/crates/auli-core/src/corpus.rs
+@@ -16,13 +16,19 @@ pub struct Collection {
+     pub n_results: usize, // how many documents to retrieve for RAG
+ }
+ 
++// Serviços e FAQs (D-SF-3, 04/10/2026): 5 + 10, eram 10 + 20. Os documentos desta coleção são
++// ALTERNATIVAS entre si — cada um vale para uma situação específica (regime geral × Simples
++// Nacional, cidadão × empresa) —, e a busca densa traz justamente os irmãos. Com 30 no contexto a
++// resposta fundia regras de situações excludentes. Cortar o número reduz os irmãos e o ruído, mas
++// NÃO resolve sozinho (o irmão costuma estar no topo): o par é o prompt v2 (D-SF-2), que proíbe a
++// síntese entre documentos. As bandas seguem ∞/piso 0 — isto é teto, não calibragem.
+ pub const SERVICES: Collection = Collection {
+     kind: "servicos",
+-    n_results: 10,
++    n_results: 5,
+ };
+ pub const FAQS: Collection = Collection {
+     kind: "faqs",
+-    n_results: 20,
++    n_results: 10,
+ };
+ // Pares P/R de legislação (D-LEG-10): mesma política dos serviços na v1 — coleção pequena e
+ // autorada, em que cada documento já é uma resposta curta. Como nas demais, a banda é ∞/piso 0: a
+@@ -75,7 +81,7 @@ mod tests {
+     fn from_kind_resolves_known_and_rejects_unknown() {
+         // `servicos` is the one vocabulary — route param, vector-collection suffix, and UI label.
+         assert_eq!(from_kind("servicos").unwrap().kind, "servicos");
+-        assert_eq!(from_kind("faqs").unwrap().n_results, 20);
++        assert_eq!(from_kind("faqs").unwrap().n_results, 10);
+         // The old English spelling `services` is no longer a kind.
+         assert!(from_kind("services").is_err());
+     }
+diff --git a/config/prompts/rs.txt b/config/prompts/rs.txt
+index 3bcf2d8..deba8b2 100644
+--- a/config/prompts/rs.txt
++++ b/config/prompts/rs.txt
+@@ -1,19 +1,22 @@
+ 
+ '''
+-### Instructions
+-### Voce é um modelo de linguagem treinado para auxiliar o Analista de Tributação a indicar o serviço adequado no Portal de Atendimento .
+-### Sua tarefa é responder à questão proposta indicando os serviços adequados disponíveis no Portal de Atendimento
+-### Indique também os links das Perguntas Frequentes que se apliquem ao assunto.
+-### Responda sempre no idioma português do brasil.
+-### Não responda perguntas fora do assunto relativo a tributos
+-### Faça uma resposta com no máximo 400 palavras,
+-### Estruture a resposta em duas partes, nesta ordem:
+-### 1. Comece com a seção "**Resumo**": no máximo 3 frases, indo direto ao serviço ou procedimento adequado, com o link principal. Sem preâmbulo.
+-### 2. Em seguida, a seção "**Detalhes**": a orientação completa, com os demais serviços, FAQs e links aplicáveis.
+-### Se a resposta inteira couber no Resumo, omita a seção Detalhes.
+-### Para responder use as informações apresentadas na lista de serviços e nas perguntas frequentes (Faq) apresentados abaixo.
+-### Cada documento do contexto inicia com o marcador: ## documento (seguido do número e do tipo — Serviço ou FAQ).
+-### Dentro de cada documento, o título vem após o marcador ## pergunta e o conteúdo após o marcador ## resposta.
+-### Sempre apresente os links de chamadas https
+-### Apresente cada link no formato markdown [Título](URL), usando como texto o título exato do serviço ou da pergunta frequente — nunca exiba a URL crua no texto da resposta.
+-### Se a pergunta não puder ser respondida com as informações disponíveis, responda que não é possível responder
++### Instruções
++### Você auxilia o Analista de Tributação a identificar, no Portal de Atendimento, o serviço ou a pergunta frequente que se aplica à situação do contribuinte.
++### Responda sempre em português do Brasil, em no máximo 400 palavras. Perguntas fora do tema tributário: diga que não pode ajudar.
++###
++### Natureza dos documentos
++### Cada documento do contexto começa com o marcador ## documento, seguido do número e do tipo (Serviço ou FAQ). O título vem após ## pergunta e o conteúdo após ## resposta.
++### Cada serviço e cada FAQ vale para uma situação específica (por exemplo: regime geral ou Simples Nacional; cidadão ou empresa; um tipo de operação). Documentos parecidos costumam ser ALTERNATIVAS entre si, não partes de uma mesma resposta.
++###
++### Regras de fidelidade
++### 1. Use apenas o que está escrito nos documentos. Não complete com conhecimento próprio sobre legislação, prazos, valores, alíquotas ou documentos exigidos.
++### 2. Nunca combine informações de documentos diferentes numa mesma orientação. Um requisito, prazo ou procedimento de um documento nunca deve ser atribuído a outro.
++### 3. Se mais de um documento puder se aplicar e eles se distinguem por uma condição do contribuinte (regime, público, tipo de operação), apresente-os separadamente, cada um com a condição que o distingue, e diga qual informação do contribuinte decide entre eles. Não escolha pelo analista.
++### 4. Se a condição de aplicação de um documento não estiver escrita nele, não a deduza: diga que a aplicabilidade deve ser conferida no link.
++### 5. Ignore os documentos que não tratam da situação perguntada. Não é preciso citar todos.
++### 6. Se nenhum documento tratar da situação perguntada, responda que o Portal não traz essa informação. Não oriente com base em conhecimento próprio.
++###
++### Formato
++### Seção "**Resumo**": no máximo 3 frases, com o serviço ou FAQ aplicável e o link. Se houver alternativas pela regra 3, diga quais são e o que decide entre elas. Sem preâmbulo.
++### Seção "**Detalhes**": um bloco por documento citado, encabeçado pelo título em link, contendo apenas o que aquele documento diz. Omita a seção se o Resumo bastar.
++### Apresente cada link no formato markdown [Título](URL), usando o título exato do documento — nunca a URL crua.
+diff --git a/docs/auli_code.md b/docs/auli_code.md
+index 45902c0..73d599b 100644
+--- a/docs/auli_code.md
++++ b/docs/auli_code.md
+@@ -184,7 +184,8 @@ Acionado por `POST /v1/question`. Assinatura:
+ 4. **O `query_type` decide o caminho** — é o seletor de fonte da caixa de mensagem, que chega como
+    inteiro no campo `type`:
+    - **`ServicosFaqs`** (código 1, o default): consulta **duas** coleções de forma **concorrente**
+-     (`tokio::try_join!`), `<id>-servicos` (`n_results = 10`) e `<id>-faqs` (`n_results = 20`).
++     (`tokio::try_join!`), `<id>-servicos` (`n_results = 5`) e `<id>-faqs` (`n_results = 10`) —
++     eram 10 + 20 até 04/10/2026; ver §3.4.1.
+    - **`Jurisprudencia(Kind)`** (código 2 = `pareceres`, 3 = `tarf`): uma coleção só,
+      `n_results = 10`. Nos **pareceres** há ainda a expansão por grafo — pareceres que citam os
+      mesmos dispositivos —, exclusiva deles (o `dispositivos-index.json` é derivado da árvore de
+@@ -212,6 +213,30 @@ Acionado por `POST /v1/question`. Assinatura:
+ prompt de sistema. Só `notas` fica de fora: tem rota de listagem, mas não tem fonte struct nem
+ pack — ver §3.13.
+ 
++### 3.4.1 Serviços + FAQs: alternativas, não peças — as cinco decisões (D-SF-\*)
++
++**O sintoma (04/10/2026, uso real):** a indicação do serviço funciona quando o serviço está bem
++descrito; o que falha é a resposta que **unifica** informações de muitos serviços distintos e
++atribui a uma situação a regra de outra — o ICMS de uma empresa no regime geral tem regras
++diferentes das do Simples Nacional, e o texto saía misturando as duas. Não é invenção do nada: o
++modelo compõe peças verdadeiras de documentos que não se aplicam juntos.
++
++**O mecanismo:** o RAG trata o contexto como peças de um quebra-cabeça a sintetizar, e os serviços
++são o oposto — uma árvore de casos pontuais e excludentes, em que a **escolha** sempre coube a quem
++usa o portal, e por isso a condição que separa um serviço do irmão muitas vezes nem está escrita na
++descrição. A busca densa agrava por construção: "ICMS regime geral X" e "ICMS Simples Nacional X"
++ficam colados no espaço vetorial, então o que volta junto são justamente os irmãos. Com 30
++documentos no contexto e um prompt que pedia "a orientação completa", a fusão era o comportamento
++pedido.
++
++| Decisão    | O quê | Por quê |
++| ---------- | ----- | ------- |
++| **D-SF-1** | Na coleção serviços+FAQs, documentos parecidos são tratados como **alternativas**: o chat não sintetiza entre eles, e a ambiguidade entre situações vira apresentação das alternativas com a condição que decide | É a premissa que estava errada. A seleção que o portal deixa com o usuário volta para quem atende, em vez de ser resolvida pelo modelo sem o dado que a decide. |
++| **D-SF-2** | `config/prompts/rs.txt` **v2**: ancoragem pela **fonte**, não pelo assunto; proibição de combinar documentos e de transferir requisito/prazo de um para outro; condição de aplicação não escrita não se deduz; documentos irrelevantes são ignorados; sem documento aplicável, "o Portal não traz essa informação"; **Detalhes** passa a ser um bloco por documento citado | O v1 delimitava o escopo por assunto ("não responda fora de tributos") — pergunta tributária sem resposta no contexto era "dentro do escopo" e o modelo completava com conhecimento próprio. E a seção Detalhes pedia "a orientação completa", que é literalmente a instrução de fundir. O frontend não depende dos títulos Resumo/Detalhes (conferido), então o formato é livre. **Só o `rs`** nesta leva: o `sc.txt` é idêntico ao v1 e os demais diferem em ~9 linhas; replicar depois de medir (§40 das pendências). Prompt é catálogo: reiniciar o servidor basta. |
++| **D-SF-3** | `corpus::SERVICES.n_results` 10 → **5**; `corpus::FAQS.n_results` 20 → **10** | Menos irmãos e menos ruído no contexto, e cerca de metade dos tokens do prompt. **Não resolve sozinho** — o irmão excludente costuma estar entre os primeiros —, por isso vem em par com a D-SF-2. As bandas continuam ∞/piso 0: isto é teto, não calibragem; a calibragem segue adiada e com base acumulando no log. |
++| **D-SF-4** | Sem bump de `STRATEGY_VERSION` nem de `PACK_FORMAT`; nenhum `auli update` | `corpus` é parâmetro de **consulta** (o próprio módulo diz que nada ali afeta o que foi embedado). Recompilar e reiniciar basta; os packs ficam como estão. |
++| **D-SF-5** | A mudança vale para as **três faces** de uma vez: chat (tipo 1), ferramenta MCP `consultar_servicos_faqs` (descrição atualizada para "até 5 serviços e até 10 FAQs") e o default de `top_k` do `/v1/retrieve` para `servicos`/`faqs` | É a paridade por construção da §3.12 — as faces leem as mesmas constantes. Consequência esperada: o `parity-replay.py` acusa divergência contra logs anteriores a esta mudança, porque o contexto ficou menor. Não é regressão; a linha de base nova começa aqui. |
++
+ ### 3.5 Clientes e adaptadores (embeddings/busca/LLM in-process)
+ 
+ Toda a parte de embeddings/busca vetorial é **in-process** (sem Ollama nem ChromaDB):
+@@ -835,8 +860,9 @@ mantém um espelho **gerado** (não mais divergente) do registro. Pendências em
+   na raiz do repo) e `GET /v1/{kind}/list` (leitura). Escuta configurável (`--bind`, default `0.0.0.0`).
+   Público, **sem auth nem banco**; CORS; configuração por `.env` (`config()`); logging via `tracing`.
+   Vetorização separada pelo `auli update`.
+-- **Doze estados ativos** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go). RAG consulta efetivamente apenas `servicos` (10) +
+-  `faqs` (20); estreitamento por proximidade presente mas em modo paridade (`band=∞`) até calibração.
++- **Doze estados ativos** (rs/sc/sp/pr/mg/pe/ba/rj/ce/ms/mt/go). RAG consulta efetivamente apenas `servicos` (5) +
++  `faqs` (10) — eram 10 + 20 até 04/10/2026, ver §3.4.1; estreitamento por proximidade presente mas
++  em modo paridade (`band=∞`) até calibração.
+ - `auli-frontend`: SPA com seleção de entidade (as 12), chat contra `POST /v1/question` com
+   timeout de 25s, abas de referência lendo `public/<id>/` (arquivos prefixados `<id>-`), tema
+   claro/escuro, testes Vitest.
+diff --git a/docs/auli_pendencias.md b/docs/auli_pendencias.md
+index 029f497..381f1ee 100644
+--- a/docs/auli_pendencias.md
++++ b/docs/auli_pendencias.md
+@@ -1557,6 +1557,33 @@ público raspado. Nada disso é o mantenedor — e uma varredura cega por `carlo
+ 
+ ---
+ 
++## 40. Serviços + FAQs: a resposta fundia serviços excludentes — prompt v2 e 5 + 10 (aberta — 2026-10-04)
++
++Decisões e mecanismo em [docs/auli_code.md](docs/auli_code.md) §3.4.1 (D-SF-1..5). Em resumo: os
++serviços são alternativas para situações excludentes (regime geral × Simples Nacional, cidadão ×
++empresa), a busca densa traz justamente os irmãos, e o chat — com 30 documentos e um prompt que
++pedia "a orientação completa" — fundia regras que não se aplicam juntas. Entraram o `rs.txt` v2,
++que proíbe a síntese entre documentos, e o corte para 5 serviços + 10 FAQs.
++
++**O que fica aberto:**
++
++1. **Validação v1 × v2.** Reenviar ao servidor local as perguntas reais em que a mistura foi vista
++   e comparar as respostas. Critério: nenhuma afirmação de um documento atribuída a outro; quando
++   houver irmãos excludentes, as alternativas aparecem separadas com a condição que decide. O
++   `parity-replay.py` reenvia a partir dos logs, mas descarta a resposta — precisa de uma variante
++   que a guarde. Atenção: contra logs anteriores a 04/10 ele acusa divergência de contexto por
++   construção (D-SF-5).
++2. **Replicar o prompt** para os outros 26 estados, **depois** da validação. O `sc.txt` é idêntico
++   ao `rs.txt` v1; os demais diferem em ~9 linhas e precisam de merge à mão.
++3. **Se o par prompt + corte não bastar:** extrair offline uma **condição de aplicação** por
++   serviço, no molde do `extracao-servicos.txt` (só o que estiver explícito no texto). Os serviços
++   em que ela sair vazia são exatamente os mal descritos — e essa lista tem valor por si, para
++   quem cuida do conteúdo do portal.
++4. **Não reabrir sem dado:** as bandas continuam ∞/piso 0. O corte 5 + 10 é teto; a calibragem
++   segue a doutrina do `ESTUDO-busca-hibrida.md` §9.
++
++---
++
+ ## D-NAMING (pendência separada — MG, NÃO é do GO)
+ 
+ Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
+-- 
+2.43.0
+
