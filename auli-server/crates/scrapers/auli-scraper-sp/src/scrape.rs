@@ -35,21 +35,21 @@ fn publicos() -> [(&'static str, &'static str, &'static str); 4] {
 // --- Shapes da API (verbose: `{ "d": { "results": [...], "__next": "..." } }`) ---
 
 #[derive(Deserialize)]
-struct Resp<T> {
-    d: DBlock<T>,
+pub(crate) struct Resp<T> {
+    pub(crate) d: DBlock<T>,
 }
 
 #[derive(Deserialize)]
-struct DBlock<T> {
-    results: Vec<T>,
+pub(crate) struct DBlock<T> {
+    pub(crate) results: Vec<T>,
     #[serde(rename = "__next", default)]
-    next: Option<String>,
+    pub(crate) next: Option<String>,
 }
 
 #[derive(Deserialize, Default)]
-struct Facet {
+pub(crate) struct Facet {
     #[serde(default)]
-    results: Vec<String>,
+    pub(crate) results: Vec<String>,
 }
 
 #[derive(Deserialize)]

@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC e no PR, também FAQs e pareceres) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -22,7 +22,7 @@ Todos os scrapers seguem o mesmo esqueleto:
 - Dependem de **`auli-contract`** (tipos + I/O do snapshot, shape per-público) +
   **`auli-scraper-kit`** (o cardápio comum abaixo) — **nunca** de `fastembed`/`ort`/vector-store.
   Recíproca (D-C1): nada fora de `scrapers/` depende do kit.
-- **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS, SC e PR também aceitam `faqs`, `all` e `pareceres`).
+- **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS, SC, PR e SP também aceitam `faqs`, `all` e `pareceres`).
 - **Saída:** `data/<id>/<id>-servicos-snapshot.json` (schema v3), gravado por
   `kit::snapshot::write_servicos`. Cache de páginas/respostas em `data/<id>/raw/cache/` (gitignored).
 - **Pipeline downstream:** `auli-collections <id>` (deriva `raw/*.json` + `.txt`) →
@@ -177,6 +177,12 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   não é único.
 - 537 serviços, 4 públicos. Descrições **curtas** (blurb do card, ~80 chars). 8 testes
   (clean, canonical, parse verbose/facet, build_corpo, build_servico — ocorrência por faceta).
+- **FAQs** (`auli-scraper-sp faqs`): uma lista SharePoint `Perguntas Frequentes` por subsite, enumerados
+  pela `Homes 360` (a chamada do plugin da página central), pela mesma `_api` anônima. HTML do editor
+  SharePoint → texto (entidades numéricas, espaço cru, `<style>`/`<svg>`, tabelas, `href`/`src` relativos);
+  `Assunto` MultiChoice → trilha `Home | A, B`; link = o do botão "copiar link" (`…perguntas-frequentes.aspx#ID=`).
+  Sempre à rede (cache só com `--usecache`). 2.665 perguntas em 64 subsites (01/11/2026), 15 testes.
+  Descoberta em `docs/REGISTRO-scrapers.md#sp-faqs`.
 
 ### pr — SEFA-PR (Paraná)
 

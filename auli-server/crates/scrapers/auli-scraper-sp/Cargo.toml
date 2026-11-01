@@ -3,8 +3,9 @@ name = "auli-scraper-sp"
 version = "0.1.0"
 edition = "2024"
 
-# Scraper da SEFAZ-SP (serviços, catálogo SharePoint via REST `_api` anônimo — JSON). SEM
-# headless_chrome e sem parser HTML (as descrições do card são texto puro). Depende de auli-contract
+# Scraper da SEFAZ-SP (serviços e FAQs, listas SharePoint via REST `_api` anônimo — JSON). SEM
+# headless_chrome e sem parser HTML (as descrições do card são texto puro; o HTML das respostas das FAQs
+# sai por regex). Depende de auli-contract
 # + o kit — nunca de fastembed/ort.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }

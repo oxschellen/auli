@@ -1,0 +1,58 @@
+{
+ "d": {
+  "results": [
+   {
+    "__metadata": {
+     "id": "d6c56ea2-2f07-4dcd-90b3-523f48bb0d50",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/_api/Web/Lists(guid'6efce9d4-d745-42ab-9a25-c99472678530')/Items(6)",
+     "etag": "\"11\"",
+     "type": "SP.Data.Homes_x0020_360ListItem"
+    },
+    "Id": 6,
+    "Title": "GIA - Guia de Informação e Apuração do ICMS ",
+    "Assunto": "SPED, SINTEGRA E GIA",
+    "URLHome": "/servicos/gia/",
+    "ID": 6
+   },
+   {
+    "__metadata": {
+     "id": "d9e6c772-8dd2-4f07-a2ea-b1c0338c0014",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/_api/Web/Lists(guid'6efce9d4-d745-42ab-9a25-c99472678530')/Items(432)",
+     "etag": "\"10\"",
+     "type": "SP.Data.Homes_x0020_360ListItem"
+    },
+    "Id": 432,
+    "Title": "Pauta do Café",
+    "Assunto": "ÍNDICES",
+    "URLHome": null,
+    "ID": 432
+   },
+   {
+    "__metadata": {
+     "id": "300929e7-3841-46f0-b3ca-f52d41d25268",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/_api/Web/Lists(guid'6efce9d4-d745-42ab-9a25-c99472678530')/Items(492)",
+     "etag": "\"2\"",
+     "type": "SP.Data.Homes_x0020_360ListItem"
+    },
+    "Id": 492,
+    "Title": "Recursos Humanos",
+    "Assunto": "RECURSOS HUMANOS",
+    "URLHome": "https://www.sfp.sp.gov.br/sefaz/institucional/recursos-humanos",
+    "ID": 492
+   },
+   {
+    "__metadata": {
+     "id": "bd58872a-eed3-45b7-961e-310bc1d0cdd6",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/_api/Web/Lists(guid'6efce9d4-d745-42ab-9a25-c99472678530')/Items(400)",
+     "etag": "\"4\"",
+     "type": "SP.Data.Homes_x0020_360ListItem"
+    },
+    "Id": 400,
+    "Title": "Isenção ICMS - Veículos",
+    "Assunto": "ISENÇÕES, IMUNIDADES E BENEFÍCIOS",
+    "URLHome": "/servicos/isencao-icms-veiculos",
+    "ID": 400
+   }
+  ]
+ }
+}

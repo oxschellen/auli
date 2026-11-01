@@ -91,7 +91,7 @@ uf = "SP"
 state = "São Paulo"
 prompt = "prompts/sp.txt"
 prompt_pareceres = "prompts/sp-pareceres.txt"
-collections = ["servicos", "pareceres"]
+collections = ["servicos", "faqs", "pareceres"]
 
 [[entities]]
 id = "mg"

@@ -1,9 +1,10 @@
-// auli-scraper-sp — scraper da SEFAZ-SP (serviços; catálogo SharePoint via REST `_api` anônimo).
+// auli-scraper-sp — scraper da SEFAZ-SP (serviços e FAQs; listas SharePoint via REST `_api` anônimo).
 //
 // Conhece UMA entidade ("sp"); não lê o registry. Sem headless Chrome e sem parser HTML: o catálogo
 // vem em JSON (duas listas SharePoint — 'Serviços' e 'Homes 360'). Um serviço pertence a várias
 // facetas (Cidadão/Empresa/Servidor/Tributo) → múltiplas `Ocorrencia`s (schema v2 nativo).
 
+mod faqs;
 mod pareceres;
 mod scrape;
 
@@ -12,7 +13,7 @@ pub const ENTITY: &str = "sp";
 const DATA_DIR: &str = "../data/sp/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-sp [--usecache] servicos|pareceres   (omitido -> servicos)
+    // CLI: auli-scraper-sp [--usecache] servicos|faqs|all|pareceres   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -28,6 +29,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        // As duas coleções de atendimento. `pareceres` fica fora, como no RS, no SC e no PR (D-SPFAQ-6).
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         // Respostas de Consultas (RC): grava o intermediário `ref/sp-pareceres-temp.txt` e retorna
         // (sem snapshot — a ingestão dos pareceres é estágio posterior, como no SC).
         "pareceres" => {
@@ -36,7 +43,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         other => {
             return Err(format!(
-                "coleção desconhecida: '{}'. Use: servicos | pareceres",
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all | pareceres",
                 other
             )
             .into());

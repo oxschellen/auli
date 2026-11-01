@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 2 de **FAQs** (SC e PR). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 3 de **FAQs** (SC, PR e SP). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -34,6 +34,7 @@
 - [TARF — Tribunal Administrativo de Recursos Fiscais do RS (tarf.sefaz.rs.gov.br)](#tarf)
 - [SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)](#sc-faqs)
 - [PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)](#pr-faqs)
+- [SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)](#sp-faqs)
 
 ---
 
@@ -1864,3 +1865,68 @@ server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
 - Resposta = todos os `<p>` do corpo, um por linha, com o corpo limitado ao `<script` da página (o último
   painel encosta no rodapé, que também tem `<p>`). Em 01/11/2026, um `<p>` por painel em 1.321/1.321.
 - Atualização: `scripts/tools/update-pr-faqs.sh` (guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="sp-faqs"></a>
+
+# SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)
+
+**Discovery e implantação:** 01/11/2026. Estudo, medições e decisões D-SPFAQ-1..9:
+[`docs/ESTUDO-SP-Faqs.md`](ESTUDO-SP-Faqs.md). Coleção `faqs` do `auli-scraper-sp` (`auli-scraper-sp faqs`, ou
+`all` = serviços + FAQs). **2.665 perguntas** em 64 subsites com conteúdo na rodada de 01/11.
+
+## Fonte
+
+O mesmo portal SharePoint (`portal.fazenda.sp.gov.br`) e a mesma `_api` anônima dos serviços. A página
+central `/Paginas/perguntas-frequentes.aspx` não traz pergunta no HTML: é um plugin JS
+(`/BibliotecaDeScripts/pluginPerguntasFrequentes.js`) que faz duas chamadas, e o scraper repete as duas.
+
+- **Subsites:** `GET /servicos/_api/web/lists/getByTitle('Homes 360')/items?$select=Id,Title,URLHome` →
+  99 Homes. O `URLHome` vem de quatro jeitos: relativo com barra (94), relativo **sem** a barra
+  (`/servicos/isencao-icms-veiculos` — o botão do portal monta um link quebrado com ele; o scraper põe a
+  barra), ausente (3) e absoluto para outro domínio (o de Recursos Humanos, em `www.sfp.sp.gov.br` — o
+  plugin não o lê, e o scraper o pula com aviso). `/_api/web/webs` não é público: a `Homes 360` é a fonte.
+- **Perguntas:** `GET <URLHome>_api/web/lists/getByTitle('Perguntas Frequentes')/items?$select=Id,Title,
+  Resposta,Assunto&$orderby=Title&$top=1000`, uma por subsite. 95 listas respondem 200 (31 vazias); nenhuma
+  passa de 1.000, mas o `d.__next` é seguido. `Assunto` é MultiChoice (`results: [...]`): 388 perguntas têm
+  mais de um. O `ItemCount` da lista conta rascunhos que o anônimo não vê — não serve de guarda.
+- **Link:** o que o botão "copiar link" do portal copia (`TemplatePerguntasFrequentesGeral.html`):
+  `<URLHome>Paginas/perguntas-frequentes.aspx#ID=<Id>`. O `DispForm.aspx` do item dá 401. O `#ID=` separa as
+  perguntas de mesmo texto no mesmo subsite (32 em 01/11) — sem ele, os `.md` colidiriam.
+
+## As armadilhas
+
+1. **O `Id` é por lista.** A identidade é (subsite, `Id`); o `Id 68` existe em vários subsites.
+2. **HTML do editor SharePoint.** A `Resposta` vem com entidades numéricas por toda parte (`&#58;` 12 mil
+   vezes, `&#160;`, emojis `&#128073;`), o U+200B do editor, quebras de linha cruas, `<style>`, `<svg>`,
+   tabelas e `href`/`src` relativos com entidades (`https&#58;//`, `/servicos/…`). Diferente do PR, o editor
+   escapa o `<` do texto (`&lt;escrituras&gt;`): toda tag sai, e as entidades só são decodificadas depois.
+   O espaço cru é colapsado antes de os blocos virarem linha (senão a frase se parte), `<style>`/`<svg>`
+   saem com o conteúdo, célula de tabela vira espaço ("CST_ICMS 53") — não `|`, porque as respostas citam
+   registros SPED (`|C197|SP90090278|…`) — e `href`/`src` relativos ganham o domínio. O decodificador é o
+   `decode_html` do `pareceres.rs`, que já tratava as numéricas.
+3. **O `Title` é texto puro.** A pergunta 530 do SAT tem "(`<IM>`)" de verdade: o título só passa pelo
+   `clean`, nunca pela retirada de tags.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: nenhum Home com `URLHome` do portal; `Id` repetido numa lista;
+  pergunta sem texto; zero perguntas no total; qualquer chamada que falhe (inclusive uma página `__next`).
+  Resposta vazia só avisa (0 em 01/11).
+- **Sempre à rede**, como no SC e no PR: o cache em `data/sp/raw/cache/faqs/` só é lido com `--usecache`, que
+  reproduz snapshot e árvore byte a byte.
+- 97 GETs com o UA `AuliBot` e 1 s de cortesia (as constantes do `pareceres.rs`), ~2 min. A lista do Profisco
+  estourou o timeout de 60 s uma vez na 1ª rodada e passou na 2ª tentativa.
+- Saída: `data/sp/raw/sp-faqs-tree.json` (raiz → 64 `Menu` de subsite → 365 `Faq` de assunto; a pergunta com
+  vários assuntos aparece em cada um, como no portal, num total de 3.068 itens) e
+  `data/sp/sp-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<Home> | <assunto>, <assunto>`), nessa
+  ordem e atômicos.
+- Atualização: `scripts/tools/update-sp-faqs.sh` (guarda de encolhimento contra o `.anterior`).
+
+## Limitação conhecida — dois subsites com o link quebrado no próprio portal
+
+O link do botão "copiar link" leva a uma página inexistente em dois subsites: `cfaiim` (Conta Fiscal AIIM, 33
+perguntas, página 404) e `evolucao-funcional` (1 pergunta, 401 — intranet). O scraper usa o mesmo formato do
+portal; quem abre a pergunta desses dois cai no erro do SharePoint. O `sefazidentity` redireciona (301) para
+`www.sfp.sp.gov.br` e funciona.
