@@ -1756,7 +1756,8 @@ JS não chamam API externa: os dados saem do `getServerSideProps`, pelo `/_next/
 ## Guardas e transporte
 
 - `Err` antes de gravar qualquer arquivo: `buscar != true` ou `errorCode` preenchido em qualquer
-  chamada; uma pergunta em duas raízes; cadeia de pais que não resolve; zero perguntas no total.
+  chamada; uma pergunta em duas raízes; cadeia de pais que não resolve; zero perguntas no total;
+  pergunta sem texto de `Questao` (D-SCFAQ-3f; `Resposta` vazia passa).
   `Visibilidade ≠ 2` só avisa: em 01/11, todas eram 2.
 - **Sempre à rede.** Diferente do resto do kit (cache-first), o cache em `data/sc/raw/cache/faqs/` só é
   lido com `--usecache`, que reproduz snapshot e árvore byte a byte. Ler do cache por padrão faria a

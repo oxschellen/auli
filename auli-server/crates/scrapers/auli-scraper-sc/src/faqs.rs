@@ -307,6 +307,22 @@ fn consolidar(raizes: &[AssuntoNo], buscas: Vec<(i64, BuscaApi)>) -> Result<Cons
         })
         .collect::<Result<Vec<_>>>()?;
 
+    // (f) Pergunta sem texto vira `.md` sem título e vetor sem conteúdo — inútil para a busca, então
+    //     é erro, não aviso como a (e): o operador olha a fonte. Resposta vazia não entra (título e
+    //     link ainda são documento).
+    let sem_texto: Vec<String> = itens
+        .iter()
+        .filter(|(p, _)| texto_da_pergunta(p).is_empty())
+        .map(|(p, _)| p.id.to_string())
+        .collect();
+    if !sem_texto.is_empty() {
+        bail!(
+            "{} pergunta(s) sem texto de Questao — {}",
+            sem_texto.len(),
+            sem_texto.join(", ")
+        );
+    }
+
     // (e) Até 01/11/2026 todas vieram com Visibilidade 2; outro valor pode ser conteúdo interno. Só
     //     conta — quem avisa é o `run`.
     let fora_da_visibilidade = itens.iter().filter(|(p, _)| p.visibilidade != 2).count();
@@ -611,6 +627,20 @@ mod tests {
     fn zero_perguntas_e_erro() {
         let b = vec![(2955, busca(BUSCA_91)), (91, busca(BUSCA_91))];
         assert!(erro(consolidar(&arvore(), b)).contains("nenhuma pergunta"));
+    }
+
+    #[test]
+    fn pergunta_sem_texto_e_erro() {
+        // HTML que vira vazio (o caminho pelo `html_para_texto`, não só o `null`) e um `null`. A 1558
+        // vem em dobro na raiz 2955: as duas linhas mudam, senão o dedup ficaria com a intacta.
+        let mut b = buscas();
+        for p in b[0].1.perguntas.iter_mut().filter(|p| p.id == 1558) {
+            p.questao = Some("<p> </p>".to_string());
+        }
+        b[2].1.perguntas[0].questao = None;
+        let e = erro(consolidar(&arvore(), b));
+        assert!(e.contains("2 pergunta(s) sem texto de Questao"), "{e}");
+        assert!(e.contains("1558") && e.contains("1170"), "{e}");
     }
 
     #[test]
