@@ -192,7 +192,8 @@ campos independentes, e o `parseFaqs.ts` já renderiza os dois: o `convertJsonNo
   (c) **cadeia de pais irresolúvel**: o mapa é a árvore completada pelo `Assunto` de cada pergunta (§2.1), e a trilha
   sobe por `SuperiorHierarquicoID` até uma raiz — se algum elo faltar (ex.: um 4º nível cujo pai não está nem na
   árvore nem em pergunta alguma), é `Err`. Exigir que o `Assunto` esteja na árvore, como a versão anterior pedia,
-  abortaria toda rodada (49/67 em Benefícios Fiscais estão fora dela);
+  abortaria toda rodada (49/67 em Benefícios Fiscais estão fora dela). A limitação que isso deixa — um 4º nível cujo
+  pai não tem pergunta própria derruba a coleta — e o remédio estão em `REGISTRO-scrapers.md#sc-faqs`;
   (d) zero perguntas no total (é a raiz que caiu, não o portal vazio — mesma doutrina do RS: sai **antes** de gravar);
   (e) **decidido: aviso, não erro** — `Visibilidade != 2` em algum item imprime a contagem. O endpoint é público e não
   pede login, então o conteúdo é público; o aviso existe para alguém olhar;
