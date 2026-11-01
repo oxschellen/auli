@@ -82,7 +82,7 @@ uf = "PR"
 state = "Paraná"
 prompt = "prompts/pr.txt"
 prompt_pareceres = "prompts/pr-pareceres.txt"
-collections = ["servicos", "pareceres"]
+collections = ["servicos", "faqs", "pareceres"]
 
 [[entities]]
 id = "sp"
