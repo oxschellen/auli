@@ -6,6 +6,8 @@
 //!   - `Menu`  nodes group other nodes via `children`. RS menus have no FAQ content of their own; a
 //!     SC menu may also carry `faq_items` (a question attached to an intermediate subject).
 //!   - `Faq`   nodes carry the actual question/answer pairs in `faq_items` (+ a breadcrumb `origin`).
+//!     An item may carry its own `url` when the source links each question (SC); otherwise the UI
+//!     links it to its node's page (RS).
 //!   - `Geral` nodes are plain pages with neither children nor FAQ items.
 //!
 //! `origin`, `children` and `faq_items` are omitted from the JSON when empty, so a leaf `Faq`
@@ -26,6 +28,10 @@ pub enum PageType {
 pub struct FaqItem {
     pub pergunta: String,
     pub resposta: String,
+    /// The question's own link, when the source has one (SC: `…/perguntas/buscar?numero=<id>`).
+    /// Absent in RS, where the question lives on its node's page — the UI then uses the node `url`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub url: Option<String>,
 }
 
 /// One node of the FAQ tree. The root node is what gets written to `faqs-tree.json`.
@@ -46,4 +52,37 @@ pub struct FaqNode {
     /// Question/answer pairs, for `Faq` nodes.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub faq_items: Vec<FaqItem>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn item_sem_url_nao_escreve_a_chave() {
+        // É o que deixa o `rs-faqs-tree.json` igual byte a byte: o RS não tem link por pergunta.
+        let item = FaqItem {
+            pergunta: "P?".to_string(),
+            resposta: "R.".to_string(),
+            url: None,
+        };
+        let json = r#"{"pergunta":"P?","resposta":"R."}"#;
+        assert_eq!(serde_json::to_string(&item).unwrap(), json);
+        assert_eq!(serde_json::from_str::<FaqItem>(json).unwrap(), item);
+    }
+
+    #[test]
+    fn item_com_url_escreve_a_chave() {
+        let item = FaqItem {
+            pergunta: "P?".to_string(),
+            resposta: "R.".to_string(),
+            url: Some("https://x/p?numero=1".to_string()),
+        };
+        let json = serde_json::to_string(&item).unwrap();
+        assert_eq!(
+            json,
+            r#"{"pergunta":"P?","resposta":"R.","url":"https://x/p?numero=1"}"#
+        );
+        assert_eq!(serde_json::from_str::<FaqItem>(&json).unwrap(), item);
+    }
 }

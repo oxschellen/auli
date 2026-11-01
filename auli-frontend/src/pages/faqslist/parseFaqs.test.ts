@@ -54,6 +54,26 @@ describe("buildNodesFromJson", () => {
     expect(icms.children[0].url).toBe("https://portal/icms");
   });
 
+  it("gives a faq leaf its own url when the item has one, else the parent's", () => {
+    const nodes = buildNodesFromJson({
+      children: [
+        {
+          title: "TTD/FUNDOS",
+          url: "https://portal/buscar?assunto=75",
+          page_type: "Faq",
+          faq_items: [
+            { pergunta: "Com link?", resposta: "Sim.", url: "https://portal/buscar?numero=1211" },
+            { pergunta: "Sem link?", resposta: "Não." },
+          ],
+        },
+      ],
+    });
+    expect(nodes[0].children.map((c) => c.url)).toEqual([
+      "https://portal/buscar?numero=1211",
+      "https://portal/buscar?assunto=75",
+    ]);
+  });
+
   it("assigns stable, unique ids and resets the counter per build", () => {
     const first = buildNodesFromJson(sampleJson);
     const second = buildNodesFromJson(sampleJson);

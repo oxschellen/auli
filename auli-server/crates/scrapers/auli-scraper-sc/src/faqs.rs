@@ -431,6 +431,7 @@ fn montar_arvore(raizes: &[AssuntoNo], c: &Consolidado) -> FaqNode {
         faq_items.push(FaqItem {
             pergunta: texto_da_pergunta(p),
             resposta: texto_da_resposta(p),
+            url: Some(link_da_pergunta(p.id)),
         });
     }
 
@@ -730,6 +731,11 @@ mod tests {
         assert_eq!(
             aspectos.faq_items[0].pergunta,
             "Como efetuar um pedido de TTD?"
+        );
+        // Cada pergunta leva o próprio link, não só o do assunto.
+        assert_eq!(
+            aspectos.faq_items[0].url.as_deref(),
+            Some("https://www.sef.sc.gov.br/perguntas/buscar?numero=1211")
         );
         // O fio que o `parseFaqs.ts` lê: folha sem `children`, page_type como string.
         let json = serde_json::to_value(aspectos).unwrap();

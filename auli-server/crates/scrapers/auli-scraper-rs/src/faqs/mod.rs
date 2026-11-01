@@ -245,7 +245,11 @@ fn extract_faq_items(html: &str) -> Vec<FaqItem> {
         if pergunta.is_empty() || resposta.is_empty() {
             continue;
         }
-        items.push(FaqItem { pergunta, resposta });
+        items.push(FaqItem {
+            pergunta,
+            resposta,
+            url: None,
+        });
     }
 
     items
@@ -296,6 +300,7 @@ mod tests {
                 .map(|(p, r)| FaqItem {
                     pergunta: p.to_string(),
                     resposta: r.to_string(),
+                    url: None,
                 })
                 .collect(),
         }

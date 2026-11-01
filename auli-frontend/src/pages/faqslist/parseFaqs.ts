@@ -4,6 +4,8 @@ import { parseQuery, buildHaystack, haystackMatches } from "../../shared/textSea
 interface RawFaqItem {
   pergunta: string;
   resposta: string;
+  /** Link da própria pergunta, quando a fonte tem um (SC). Sem ele, a folha usa o do nó (RS). */
+  url?: string | null;
 }
 
 /** Raw node shape as it appears in faqs-tree.json (and its recursive children). */
@@ -64,7 +66,7 @@ function convertJsonNode(jsonNode: RawFaqNode): FaqNode {
     children.push({
       id: makeId(),
       text: item.pergunta,
-      url: jsonNode.url || null,
+      url: item.url || jsonNode.url || null,
       children: [],
     });
   }
