@@ -168,7 +168,8 @@ struct Card {
     paineis: Vec<Painel>,
 }
 
-/// Uma pergunta, já em texto. `id` é o `Pergunta Nº`, conferido contra o `heading<id>`.
+/// Uma pergunta, já em texto. `id` é o `Pergunta Nº`, conferido contra o `heading<id>`; `resposta` junta os
+/// parágrafos do corpo, um por linha.
 struct Painel {
     id: u32,
     pergunta: String,
@@ -213,6 +214,7 @@ static NUMERO_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"<b>\s*Pergunta\s+N[ºo°]\s*(\d+)\s*</b>").unwrap());
 static ASSUNTO_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?s)Assunto:(.*?)</b>").unwrap());
+/// Um parágrafo da resposta: todos os `<p>` do corpo do painel, na ordem (em 01/11/2026, um por painel).
 static RESPOSTA_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?s)<p\b[^>]*>(.*?)</p>").unwrap());
 
@@ -248,6 +250,11 @@ fn parse_referente(rid: u32, html: &str) -> Result<Vec<Card>> {
             let (cabecalho, corpo) = painel
                 .split_once("perguntaFrequentePanelBody")
                 .ok_or_else(|| anyhow!("referente {rid}, heading{id}: painel sem corpo"))?;
+            // O último painel da página encosta no `<script>` e no rodapé (que tem `<p>`); os demais já
+            // terminam no próximo `heading`. Cortar no `<script` deixa, em qualquer corpo, só a resposta.
+            let corpo = corpo
+                .split_once("<script")
+                .map_or(corpo, |(antes, _)| antes);
             let campo = |re: &Regex, metade: &str, nome: &str| {
                 re.captures(metade)
                     .map(|c| c[1].to_string())
@@ -267,6 +274,14 @@ fn parse_referente(rid: u32, html: &str) -> Result<Vec<Card>> {
                     "referente {rid}, pergunta {id}: Assunto \"{assunto}\" ≠ card \"{titulo}\" ({aid})"
                 );
             }
+            // Sem nenhum `<p>`, o markup mudou; um `<p>` que a conversão esvazia fica para a guarda (g).
+            let paragrafos: Vec<String> = RESPOSTA_RE
+                .captures_iter(corpo)
+                .map(|c| html_para_texto(&c[1]))
+                .collect();
+            if paragrafos.is_empty() {
+                bail!("referente {rid}, heading{id}: painel sem resposta — o markup mudou?");
+            }
             paineis.push(Painel {
                 id,
                 pergunta: clean(&html_para_texto(&campo(
@@ -274,7 +289,11 @@ fn parse_referente(rid: u32, html: &str) -> Result<Vec<Card>> {
                     cabecalho,
                     "pergunta",
                 )?)),
-                resposta: html_para_texto(&campo(&RESPOSTA_RE, corpo, "resposta")?),
+                resposta: paragrafos
+                    .into_iter()
+                    .filter(|p| !p.is_empty())
+                    .collect::<Vec<_>>()
+                    .join("\n"),
             });
         }
         cards.push(Card { titulo, paineis });
@@ -567,6 +586,23 @@ mod tests {
         assert!(cards[1].paineis[1].resposta.starts_with(
             "O Decreto nº 6.022, de 22 de janeiro de 2007, instituiu o Sistema Público de Escrituração Digital (SPED) como"
         ));
+    }
+
+    #[test]
+    fn resposta_junta_todos_os_paragrafos_sem_o_rodape() {
+        // O 2595 é o último painel da página: depois dele vêm o `<script>` e o rodapé, que tem `<p>`.
+        let html = REFERENTE_39.replacen(
+            "Decreto n° 6.022/2007</a>                    </p>",
+            "Decreto n° 6.022/2007</a>                    </p><p>Segundo parágrafo.</p>",
+            1,
+        );
+        let cards = parse_referente(39, &html).unwrap();
+        let r = &cards[1].paineis[1].resposta;
+        assert!(r.ends_with("D6022.htm\"\nSegundo parágrafo."), "{r}");
+        assert!(
+            !r.contains("Vicente Machado") && !r.contains("SEFA - 2026"),
+            "{r}"
+        );
     }
 
     #[test]
