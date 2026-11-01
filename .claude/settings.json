@@ -10,7 +10,9 @@
       "Bash(git commit *)",
       "Bash(git push *)",
       "Bash(git commit -q -m ' *)",
-      "Bash(gh pr create --title 'feat\\(pr\\): scraper de Consultas Tributárias da SEFA-PR \\(PDFs anuais\\)' --body ' *)"
+      "Bash(gh pr create --title 'feat\\(pr\\): scraper de Consultas Tributárias da SEFA-PR \\(PDFs anuais\\)' --body ' *)",
+      "Bash(ls -la data/rs/ref/ | grep -v portal; echo \"=== procurando os dois ref/ pendentes ===\"; find /home/ubu/Downloads /home/ubu/Desktop -maxdepth 4 \\\\\\( -name \"*150-152*\" -o -name \"*145-149*\" \\\\\\) -not -path \"*/.git/*\" 2>/dev/null)",
+      "Read(//home/ubu/Downloads/**)"
     ]
   }
 }
