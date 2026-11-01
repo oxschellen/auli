@@ -327,6 +327,9 @@ tag nem entidade sobrando; nenhuma resposta vazia; como texto ficaram exatamente
 `POST /v1/retrieve` (instância temporária, `127.0.0.1:3999`): leilão de IPVA → 0271, NF-e voluntária → 1657, Cadin
 → 1775, todas em 1º. `update-pr-faqs.sh --no-serve` de ponta a ponta: 1.321 → 1.321, os 1.321 vetores reaproveitados.
 
+**Portão humano (01/11/2026):** as FAQs 0271 (com link), 2274 (com o `<` de menu) e 1009 (só a tabela em
+imagem) conferidas contra o portal pelo usuário.
+
 **Testes:** 18 das FAQs (31 no crate). Cada guarda, a lista fechada, a âncora, a imagem e o corte cabeçalho/corpo
 verificados por mutação — com o defeito de volta, o teste correspondente cai.
 
