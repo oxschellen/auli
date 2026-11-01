@@ -1831,7 +1831,8 @@ server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
    e `ureq` falham com o store do sistema. O PEM do DV R36 (AIA do folha, válido até 21/03/2036) vai
    embutido como trust anchor do rustls num agent só do módulo `faqs` (o molde do AC). **O folha vence
    em 21/11/2026**: se a renovação vier de outro emissor, a coleta falha alta no handshake e o PEM tem
-   de ser trocado. O `www.fazenda.pr.gov.br` manda a cadeia completa e não precisa disso.
+   de ser trocado — o procedimento (conferir o emissor novo com `openssl s_client`) está na mensagem de
+   falha do `update-pr-faqs.sh`. O `www.fazenda.pr.gov.br` manda a cadeia completa e não precisa disso.
 2. **`<` como texto.** As respostas usam `<` como seta de menu ("Cadastro de Contribuintes < Alteração
    Cadastral < Dados Cadastrais", 12 ocorrências) e a 1775 cita `<Consulta Pendencias>`. O `<[^>]+>` do
    SC apagaria texto em 2 respostas (a 1775 e a 2274, onde a seta vem antes de um `<b>`). A conversão

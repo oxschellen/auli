@@ -37,8 +37,17 @@ ANTES=0
 [ -f "$SNAPSHOT.anterior" ] && ANTES="$(jq '.coleta.items | length' "$SNAPSHOT.anterior")"
 
 # 1. Re-scrape das faqs → grava data/pr/raw/pr-faqs-tree.json e data/pr/pr-faqs-snapshot.json.
+#    O folha de atendimento.fazenda.pr.gov.br vence em 21/11/2026, e o agent só confia no intermediário
+#    embutido (D-PRFAQ-4): se a renovação vier de outro emissor, a coleta para no handshake com a mensagem
+#    do rustls, que não diz o que fazer. Daí a orientação abaixo.
 echo "🕸️  scrapeando faqs do PR…"
-( cd "$SERVER" && cargo run --release -p auli-scraper-pr -- faqs )
+if ! ( cd "$SERVER" && cargo run --release -p auli-scraper-pr -- faqs ); then
+  echo "❌ a coleta falhou. Se o erro for de TLS/certificado (o folha de atendimento.fazenda.pr.gov.br"
+  echo "   vencia em 21/11/2026): confira o emissor novo com"
+  echo "     openssl s_client -connect atendimento.fazenda.pr.gov.br:443 -servername atendimento.fazenda.pr.gov.br </dev/null 2>/dev/null | grep ' i:'"
+  echo "   e, se mudou, troque o SECTIGO_DV_R36_PEM em auli-scraper-pr/src/faqs.rs (D-PRFAQ-4)."
+  exit 1
+fi
 
 # 2. Guard de completude. As guardas do scraper (`faqs.rs`, D-PRFAQ-6) param ANTES de gravar quando
 #    um referente do index vem sem pergunta, o parse perde um painel, a identidade não confere ou um
