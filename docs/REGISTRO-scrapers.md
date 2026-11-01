@@ -1818,7 +1818,7 @@ server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
   varrer ids.
 - **Referente:** `GET /sacsefa/portal/assuntosReferente/<id>` traz o referente inteiro, sem paginação:
   cards de assunto (`headPanel<idAssunto>`) → painéis de pergunta (`heading<N>` + `collapse<N>`), com
-  `Pergunta Nº <N>` no cabeçalho e `Referente:`/`Assunto:` + a resposta num único `<p>` no corpo. De
+  `Pergunta Nº <N>` no cabeçalho e `Referente:`/`Assunto:` + a resposta em `<p>` no corpo. De
   52 KB a 594 KB (o ITCMD, 185 perguntas); 6,3 MB os 48.
 - **Link:** não há rota por pergunta (`pergunta/<N>` e afins dão 302; a busca é `POST`). O link é a
   página do referente + `#heading<N>`. A âncora não abre o painel (ele fica num card recolhido, e a
@@ -1831,7 +1831,8 @@ server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
    e `ureq` falham com o store do sistema. O PEM do DV R36 (AIA do folha, válido até 21/03/2036) vai
    embutido como trust anchor do rustls num agent só do módulo `faqs` (o molde do AC). **O folha vence
    em 21/11/2026**: se a renovação vier de outro emissor, a coleta falha alta no handshake e o PEM tem
-   de ser trocado. O `www.fazenda.pr.gov.br` manda a cadeia completa e não precisa disso.
+   de ser trocado — o procedimento (conferir o emissor novo com `openssl s_client`) está na mensagem de
+   falha do `update-pr-faqs.sh`. O `www.fazenda.pr.gov.br` manda a cadeia completa e não precisa disso.
 2. **`<` como texto.** As respostas usam `<` como seta de menu ("Cadastro de Contribuintes < Alteração
    Cadastral < Dados Cadastrais", 12 ocorrências) e a 1775 cita `<Consulta Pendencias>`. O `<[^>]+>` do
    SC apagaria texto em 2 respostas (a 1775 e a 2274, onde a seta vem antes de um `<b>`). A conversão
@@ -1852,19 +1853,14 @@ server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
   `heading<N>` para os cards de referente — nada disso vira pergunta); nº de
   `perguntaFrequentePanelHeader` no HTML ≠ painéis parseados; `heading<N>` ≠ `Pergunta Nº`; `Assunto:`
   do painel ≠ título do card que o contém; um número de pergunta em dois lugares; pergunta sem texto.
-  Resposta vazia depois da conversão só avisa (0 em 01/11).
+  Só avisam: resposta vazia depois da conversão e resposta com tag de estrutura fora da lista fechada
+  (`table`/`tr`/`td`, `h1`–`h6`, `blockquote`, `pre`, `form`…), que sairia literal no `.md` (0 e 0 em 01/11).
 - **Sempre à rede**, como no SC: o cache em `data/pr/raw/cache/faqs/` só é lido com `--usecache`, que
   reproduz snapshot e árvore byte a byte.
 - 49 GETs com o UA `AuliBot` e 1 s de cortesia (as constantes do `pareceres.rs`), ~1 min.
 - Saída: `data/pr/raw/pr-faqs-tree.json` (raiz → 48 `Menu` de referente → 274 `Faq` de assunto, cada
   pergunta com o próprio `url`) e `data/pr/pr-faqs-snapshot.json`, nessa ordem e atômicos. Trilha
   sempre de 2 níveis: `<nome longo do index> | <assunto>`.
+- Resposta = todos os `<p>` do corpo, um por linha, com o corpo limitado ao `<script` da página (o último
+  painel encosta no rodapé, que também tem `<p>`). Em 01/11/2026, um `<p>` por painel em 1.321/1.321.
 - Atualização: `scripts/tools/update-pr-faqs.sh` (guarda de encolhimento contra o `.anterior`).
-
-## Limitação conhecida — resposta de um parágrafo
-
-A resposta é o primeiro `<p>` do corpo do painel. Em 01/11/2026, os 1.321 painéis tinham exatamente um
-`</p>` no corpo, então nada se perde. Se a SEFA passar a escrever respostas em vários `<p>`, o parse
-fica com o primeiro, **em silêncio**. Não há guarda: o último painel de cada página encosta no rodapé,
-que também tem `<p>`, e contar parágrafos por painel ficaria frágil. Sintoma a procurar numa revisão:
-resposta que termina no meio do assunto.

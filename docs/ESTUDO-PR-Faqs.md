@@ -106,7 +106,8 @@ Sem paginação: a página traz o referente inteiro, de 52 KB (`33`) a 594 KB (`
   `index` (difere em 23 dos 48). `Assunto:` == o título do card que contém o painel, em 100% dos 1.321 — **lido no
   corpo**: a pergunta 2247 cita `Assunto: "Outorga de..."` no próprio texto, no cabeçalho (§11).
 - **Resposta**: o `<p style="text-align: justify;">` do corpo. É HTML em 819 das 1.321 (§4). Um `</p>` por
-  painel: comparado com o corpo inteiro até o fim do `panel-body`, nenhum truncamento.
+  painel: comparado com o corpo inteiro até o fim do `panel-body`, nenhum truncamento. O parse junta **todos**
+  os `<p>` do corpo, um por linha, para não truncar se um dia houver mais de um (§11).
 
 ### 2.4 Link da pergunta
 
@@ -220,7 +221,10 @@ O `FaqNode` de `auli_scraper_kit::faqtree` (D-SCFAQ-5):
   (d) um número de pergunta em dois referentes (hoje 0; se aparecer, não é dobro conhecido, é reclassificação);
   (e) zero perguntas no total;
   (f) pergunta sem texto (a D-SCFAQ-3f);
-  (g) **aviso**: resposta vazia depois da conversão (com a D-PRFAQ-5, hoje 0).
+  (g) **aviso**: resposta vazia depois da conversão (com a D-PRFAQ-5, hoje 0);
+  (h) **aviso**: resposta que, convertida, ainda tem tag de estrutura fora da lista fechada (`table`, `tr`, `td`,
+  `h1`–`h6`, `blockquote`, `pre`, `form`…) — sairia literal no `.md`; crescer a lista é decisão do operador (hoje 0;
+  acrescentada pela TAREFA-PR-FAQS-AJUSTES).
 - **D-PRFAQ-7 — Rede sempre; cache só para `--usecache`** (a lição da D-SCFAQ-4): cache-first reproduziria a
   primeira coleta em silêncio. Cache sob `data/pr/raw/cache/faqs/`, chave = a url da página.
 - **D-PRFAQ-8 — CLI:** `auli-scraper-pr faqs` e `all` (= serviços + FAQs). O padrão continua `servicos`, e
@@ -334,13 +338,15 @@ imagem) conferidas contra o portal pelo usuário.
 **Testes:** 18 das FAQs (31 no crate). Cada guarda, a lista fechada, a âncora, a imagem e o corte cabeçalho/corpo
 verificados por mutação — com o defeito de volta, o teste correspondente cai.
 
-**Limitação conhecida — resposta de um parágrafo.** A resposta é o 1º `<p>` do corpo. Em 01/11/2026, os 1.321
-painéis tinham exatamente um `</p>` no corpo. Se a SEFA passar a escrever respostas em vários `<p>`, o parse fica com
-o primeiro em silêncio. Sem guarda: o último painel de cada página encosta no rodapé, que também tem `<p>`.
+**Resposta = todos os `<p>` do corpo, limitado ao `<script` da página** (TAREFA-PR-FAQS-AJUSTES, 01/11/2026). A
+1ª versão pegava só o 1º `<p>`, e uma resposta em vários parágrafos sairia truncada em silêncio. O que impedia contar
+os `<p>` era o último painel de cada página, que encosta no rodapé (também com `<p>`); mas entre ele e o rodapé vem
+o `<script>` da página, e cortar o corpo ali deixa só a resposta. Medido nas 48 páginas: nenhum `<script` dentro de
+painel, e um `<p>` por corpo cortado em 1.321/1.321 — o `--usecache` reproduziu snapshot e árvore idênticos.
 
 **Comparado a uma descoberta independente** (outro estudo da mesma fonte, feito em paralelo, não versionado): os
 números bateram (48 referentes, 1.321 perguntas, nenhuma em dois referentes, o DV R36). Três divergências mantidas
 aqui: parse pelo HTML cru em vez do `scraper` (o `<Consulta Pendencias>`); trilha com o nome longo do `index` em vez
 do `Referente:` curto do painel (a sigla expandida entra no vetor); âncora `#heading<N>` em vez de `#collapse<N>`
 (equivalentes — as duas estão num card recolhido). A ressalva dele de que a resposta "pode ter vários `<p>`" levou
-à medição da limitação acima.
+à medição e, depois, ao parse de todos os `<p>` descrito acima.
