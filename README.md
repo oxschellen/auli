@@ -209,7 +209,7 @@ The only backend endpoint the frontend calls is `POST /v1/question` (via `VITE_A
 
 Collection is a **two-step, synchronous** pipeline. First a **per-entity scraper binary**
 (`auli-scraper-<id>`) fetches the portal and writes a versioned **snapshot**
-(one per collection: `data/<id>/<id>-servicos-snapshot.json`, plus `<id>-faqs-snapshot.json` for RS); the scrapers share `auli-scraper-kit` (HTTP cache, service
+(one per collection: `data/<id>/<id>-servicos-snapshot.json`, plus `<id>-faqs-snapshot.json` for RS and SC); the scrapers share `auli-scraper-kit` (HTTP cache, service
 aggregation, snapshot I/O). Then **`auli-collections <id> process`** derives, offline, the typed
 `auli-contract` artifacts (`Table<Faq>` / `Table<Servico>` → `data/<id>/raw/<id>-<kind>.json`,
 materializing each record's `text_to_embed`) plus the human-readable `portal-<kind>.txt` audit
@@ -224,12 +224,15 @@ serves an incomplete TLS chain that has to be pinned. Each crate documents its p
 - **RS** (`auli-scraper-rs`) — FAQs (portal CMS via AJAX/`ureq`) + serviços (**headless Chrome** for
   the listing, `ureq` for details) + **TARF**: the acórdãos of the state tax court, the single
   largest collection in the project.
-- **SP / PR / SC** — plus **pareceres**, São Paulo being by far the largest of the three.
+- **SP / PR / SC** — plus **pareceres**, São Paulo being by far the largest of the three. SC also
+  has **FAQs** (the `/perguntas` knowledge base, from the same Next.js data JSON as its serviços).
 - On-disk **cache** with an offline `--usecache` mode; **dedup** of services shared across audiences.
 
 The cache is **cache-first always** — `--usecache` only changes what a miss does (bail vs. network).
 A genuine re-scrape therefore means deleting that collection's cache first, which is what
 `scripts/tools/update-rs-faqs.sh` does before running the six-step scrape → derive → vectorize chain.
+The SC FAQs are the exception: they always go to the network and read the cache only under
+`--usecache` (`scripts/tools/update-sc-faqs.sh`).
 
 ```bash
 cd auli-server
@@ -302,7 +305,7 @@ Required variables panic at startup if missing.
 | **TARF**      | Rulings of the state tax court (2nd instance)  | Chat (dedicated query type) + tab + **MCP**     | RS |
 | **Pareceres** | Legal/technical opinions                       | Chat (dedicated query type) + tab + **MCP**     | SP, PR, SC, RS |
 | **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab                       | all 27 states |
-| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | RS |
+| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | RS, SC |
 | **Notas**     | Administrative/tax notes                       | Notas tab (reference)                           | RS |
 | **Conteúdos** | Misc reference materials                       | Conteúdos tab (reference)                       | RS |
 
@@ -321,9 +324,9 @@ related. **Notas and Conteúdos** remain reference-only navigation.
 - **Working today:** RAG chat for the configured state, the full UI (chat, reference tabs,
   downloads, connector guides, state selection with map), local embeddings, an MCP server for
   external assistants. **All 27 registered states have serviços collected**, pareceres for four,
-  and — for RS — FAQs and the TARF acórdãos (collection closed 2026-08-09). The backend is open (no
+  FAQs for RS and SC, and — for RS — the TARF acórdãos (collection closed 2026-08-09). The backend is open (no
   auth) and database-free — it serves from packs alone.
-- **In progress:** FAQs beyond RS, automated scraping of notas, and a controlled vocabulary for the
+- **In progress:** FAQs beyond RS and SC, automated scraping of notas, and a controlled vocabulary for the
   legal-provision graph.
 
 For the precise active-vs-modeled breakdown (routes, auth flows, cross-repo divergences), see

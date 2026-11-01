@@ -57,15 +57,15 @@ fn publicos() -> Vec<(i64, &'static str, &'static str)> {
 // --- API response shapes (only the fields we use; everything else is ignored) ---
 
 #[derive(Deserialize)]
-struct NextData<T> {
+pub(crate) struct NextData<T> {
     #[serde(rename = "pageProps")]
-    page_props: PageProps<T>,
+    pub(crate) page_props: PageProps<T>,
 }
 
 #[derive(Deserialize)]
-struct PageProps<T> {
+pub(crate) struct PageProps<T> {
     #[serde(rename = "respostaApi")]
-    resposta_api: T,
+    pub(crate) resposta_api: T,
 }
 
 #[derive(Deserialize)]
@@ -296,7 +296,7 @@ fn discover_build_id(
 }
 
 /// Extracts the Next.js `buildId` from the `"buildId":"…"` marker in a portal page's HTML.
-fn parse_build_id(html: &str) -> Result<String, Box<dyn std::error::Error>> {
+pub(crate) fn parse_build_id(html: &str) -> Result<String, Box<dyn std::error::Error>> {
     let marker = "\"buildId\":\"";
     let start = html
         .find(marker)

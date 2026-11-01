@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 1 de **FAQs** (SC). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -32,6 +32,7 @@
 - [TO — Carta de Serviços SEFAZ-TO (servicos.to.gov.br)](#to)
 - [RS Pareceres — Portal de Legislação / Consultas Formais Respondidas](#rs-pareceres)
 - [TARF — Tribunal Administrativo de Recursos Fiscais do RS (tarf.sefaz.rs.gov.br)](#tarf)
+- [SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)](#sc-faqs)
 
 ---
 
@@ -1706,3 +1707,63 @@ direta:
 **ACÓRDÃO 066/26** (`aa0f538a-fb65-4d2b-ada4-08deb7f7f86a`, pedido de esclarecimento) saiu da listagem
 do portal e não reaparece com outro id. A árvore é append-only, então ele continua no acervo e
 citável pelo chat; tirá-lo é decisão humana (apagar o `.md` e rodar o `build-packs.sh rs`).
+
+---
+
+<a id="sc-faqs"></a>
+
+# SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)
+
+**Discovery e implantação:** 31/10 a 01/11/2026. Estudo completo, com as medições
+e as decisões D-SCFAQ-1..8: [`docs/ESTUDO-SC-Faqs.md`](ESTUDO-SC-Faqs.md). Coleção `faqs` do
+`auli-scraper-sc` (`auli-scraper-sc faqs`, ou `all` = serviços + FAQs). **1.306 perguntas** na rodada de
+01/11.
+
+## Fonte
+
+O mesmo portal Next.js (Pages Router) dos serviços. A base antiga,
+`caf2.sef.sc.gov.br/.../ConsultarBaseConhecimento.aspx`, hoje redireciona (307) para `/perguntas`. Os chunks
+JS não chamam API externa: os dados saem do `getServerSideProps`, pelo `/_next/data/<buildId>/…`. O
+`buildId` vem do HTML de `/perguntas` e muda a cada deploy, então o cache usa a URL lógica, sem ele.
+
+- **Árvore:** `GET /_next/data/<buildId>/perguntas.json` → `respostaApi.assuntosBusca`, com 31 raízes. As
+  raízes são as do JSON, não os 15 cards do HTML; as 16 extras dão 0 perguntas, exceto a `72` (DTEC), com 1.
+  Não declarar o `IconeBase64`, que traz PNGs inteiros.
+- **Perguntas:** `GET /_next/data/<buildId>/perguntas/buscar.json?assunto=<raiz>`, uma chamada por raiz,
+  sem paginação. A lista já traz a resposta íntegra; não há detalhe por pergunta. Só `assunto`, `texto` e
+  `numero` são reconhecidos. Qualquer outro nome volta `buscar:false` em silêncio, por isso `buscar:false`
+  é erro, não "zero resultados".
+- **Link oficial:** `/perguntas/buscar?numero=<BaseConhecimentoID>`. A `/perguntas/<AssuntoID>` mostra só
+  parte do assunto; para o nó da aba, o link é `/perguntas/buscar?assunto=<AssuntoID>`.
+
+## As três armadilhas
+
+1. **O dobro.** `assunto=<nó intermediário>` devolve cada descendente duas vezes (`75` → 44 linhas, 22
+   únicas; `2955` → 134/67). O dobro vem da fonte e é determinístico. Dedup por `BaseConhecimentoID`
+   dentro de cada raiz, com `linhas → únicas` no log. A guarda de verdade é estrutural: uma pergunta
+   tem um `Assunto`, então pertence a uma raiz só, e `Σ únicas por raiz == únicas no total`.
+2. **A árvore tem só 2 níveis.** O 3º (ex.: Benefícios Fiscais › TTD/Fundos › Aspectos Gerais, `166`)
+   só aparece no `Assunto{AssuntoID, Nome, SuperiorHierarquicoID}` de cada pergunta. Em Benefícios
+   Fiscais, 49 de 67 perguntas estão num assunto ausente da árvore. O mapa de assuntos é a árvore
+   **completada pelas perguntas**, e a trilha sobe por `SuperiorHierarquicoID`. Rodada de 01/11:
+   4 trilhas de 1 nível, 513 de 2, 789 de 3.
+3. **HTML às vezes.** `Questao`/`Resposta` vêm ora em texto puro com `\n`, ora em HTML (`p`, `br`, `a`,
+   `font`, `span`, `strong` + entidades; 22 de 67 em Benefícios Fiscais). O `html_para_texto` converte
+   `<a href>` → `texto "url"`, bloco → quebra de linha, tira o resto e decodifica as entidades. O texto
+   puro passa sem mudar, inclusive as quebras no meio da frase que vêm da fonte. Nenhum `[[url âncora]]`
+   (o formato dos serviços) no acervo.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: `buscar != true` ou `errorCode` preenchido em qualquer
+  chamada; uma pergunta em duas raízes; cadeia de pais que não resolve; zero perguntas no total.
+  `Visibilidade ≠ 2` só avisa: em 01/11, todas eram 2.
+- **Sempre à rede.** Diferente do resto do kit (cache-first), o cache em `data/sc/raw/cache/faqs/` só é
+  lido com `--usecache`, que reproduz snapshot e árvore byte a byte. Ler do cache por padrão faria a
+  atualização seguinte repetir a primeira coleta em silêncio, como aconteceu com os serviços do SC em
+  31/10.
+- 33 GETs com o UA `AuliBot` e 1 s de cortesia (as constantes do `pareceres.rs`); `ureq` passa.
+- Saída: `data/sc/raw/sc-faqs-tree.json` (o `FaqNode` de `auli_scraper_kit::faqtree`, o mesmo do RS;
+  um nó pode ser `Menu` e ter `faq_items`; nó sem pergunta na subárvore é omitido) e
+  `data/sc/sc-faqs-snapshot.json`, nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-sc-faqs.sh` (guarda de encolhimento contra o `.anterior`).

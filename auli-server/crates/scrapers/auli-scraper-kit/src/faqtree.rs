@@ -1,16 +1,15 @@
-// In-memory model for the `faqs` scrape.
-//
-// The scraper walks the FAQ portal and produces this tree in memory; `faqs::run` flattens it into the
-// snapshot's `Vec<FaqRaw>` and also serializes the tree itself to `faqs-tree.json` (consumed by the
-// frontend's FAQ tab).
-//
-// Tree shape:
-//   - `Menu`  nodes group other nodes via `children` (no FAQ content of their own).
-//   - `Faq`   nodes carry the actual question/answer pairs in `faq_items` (+ a breadcrumb `origin`).
-//   - `Geral` nodes are plain pages with neither children nor FAQ items.
-//
-// `origin`, `children` and `faq_items` are omitted from the JSON when empty, so a leaf `Faq`
-// node serializes without a `children` key and a `Menu` node without `faq_items`/`origin`.
+//! Árvore de FAQs que a aba de FAQs do frontend consome (`<id>-faqs-tree.json`, lida pelo
+//! `parseFaqs.ts`). É contrato de fio com o frontend, por isso mora aqui e não em cada scraper
+//! (D-SCFAQ-5): o RS a produz caminhando o portal, o SC a monta da árvore de assuntos.
+//!
+//! Tree shape:
+//!   - `Menu`  nodes group other nodes via `children`. RS menus have no FAQ content of their own; a
+//!     SC menu may also carry `faq_items` (a question attached to an intermediate subject).
+//!   - `Faq`   nodes carry the actual question/answer pairs in `faq_items` (+ a breadcrumb `origin`).
+//!   - `Geral` nodes are plain pages with neither children nor FAQ items.
+//!
+//! `origin`, `children` and `faq_items` are omitted from the JSON when empty, so a leaf `Faq`
+//! node serializes without a `children` key and a `Menu` node without `faq_items`/`origin`.
 
 use serde::{Deserialize, Serialize};
 

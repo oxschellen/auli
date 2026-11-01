@@ -14,11 +14,10 @@
 //     that returns JSON with the rendered HTML in a `body` field.
 //   - We recurse through menus, collecting FAQ question/answer pairs at the leaves.
 
-mod faq;
 mod fetch;
 mod html;
 
-pub use faq::{FaqItem, FaqNode, PageType};
+pub use auli_scraper_kit::faqtree::{FaqItem, FaqNode, PageType};
 
 use std::collections::HashSet;
 use std::path::Path;
