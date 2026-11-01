@@ -1,9 +1,11 @@
-// auli-scraper-pr — scraper da SEFA-PR (serviços; portal Drupal server-side, HTML pronto).
+// auli-scraper-pr — scraper da SEFA-PR (serviços; portal Drupal server-side, HTML pronto — e as FAQs
+// do Portal de Atendimento do SAC, outro host, também HTML pronto).
 //
 // Conhece UMA entidade ("pr"); não lê o registry. Sem headless Chrome (classe do SC). O mega-menu
 // "Serviços para você!" traz o catálogo curado em 7 abas (público) × grupos (classe); um mesmo link
 // aparece sob várias abas/classes — o schema v2 (`Ocorrencia`) comporta isso nativamente.
 
+mod faqs;
 mod pareceres;
 mod scrape;
 
@@ -12,7 +14,7 @@ pub const ENTITY: &str = "pr";
 const DATA_DIR: &str = "../data/pr/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-pr [--usecache] servicos|pareceres   (omitido -> servicos)
+    // CLI: auli-scraper-pr [--usecache] servicos|faqs|all|pareceres   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -28,6 +30,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        // As duas coleções de atendimento. `pareceres` fica fora, como no RS e no SC (D-PRFAQ-8).
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         // Consultas Tributárias (PDFs anuais): grava o intermediário `ref/pr-pareceres-temp.txt` e
         // retorna (sem snapshot — a ingestão dos pareceres é estágio posterior, como no SC/SP).
         "pareceres" => {
@@ -36,7 +44,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         other => {
             return Err(format!(
-                "coleção desconhecida: '{}'. Use: servicos | pareceres",
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all | pareceres",
                 other
             )
             .into());

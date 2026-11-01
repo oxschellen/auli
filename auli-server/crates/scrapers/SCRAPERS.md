@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS e na SC, também FAQs e pareceres) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC e no PR, também FAQs e pareceres) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -22,7 +22,7 @@ Todos os scrapers seguem o mesmo esqueleto:
 - Dependem de **`auli-contract`** (tipos + I/O do snapshot, shape per-público) +
   **`auli-scraper-kit`** (o cardápio comum abaixo) — **nunca** de `fastembed`/`ort`/vector-store.
   Recíproca (D-C1): nada fora de `scrapers/` depende do kit.
-- **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS e SC também aceitam `faqs`, `all` e `pareceres`).
+- **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS, SC e PR também aceitam `faqs`, `all` e `pareceres`).
 - **Saída:** `data/<id>/<id>-servicos-snapshot.json` (schema v3), gravado por
   `kit::snapshot::write_servicos`. Cache de páginas/respostas em `data/<id>/raw/cache/` (gitignored).
 - **Pipeline downstream:** `auli-collections <id>` (deriva `raw/*.json` + `.txt`) →
@@ -187,6 +187,12 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - 141 serviços, 7 públicos (Cidadão/Empresa/Município/Produtor rural/Receita-PR/Programas/Legislação).
   Descrições ricas (~1185). 7 testes (parse_panel do mega-menu, canonical/canonical_any,
   normalize_body_links, html_block_to_text, decode_entities).
+- **FAQs** (`auli-scraper-pr faqs`): Portal de Atendimento do SAC (`atendimento.fazenda.pr.gov.br/sacsefa`),
+  outro host, PHP server-side. `index` (48 referentes) + uma página `assuntosReferente/<id>` por
+  referente, com todas as perguntas em cards de assunto. Cadeia TLS incompleta → Sectigo **DV** R36
+  embutido como trust anchor (não o OV R36 do AC); HTML → texto com lista fechada de tags (o texto usa
+  `<` como seta); link = página + `#heading<N>`. Sempre à rede (cache só com `--usecache`). 1.321
+  perguntas (01/11/2026), 18 testes. Descoberta em `docs/REGISTRO-scrapers.md#pr-faqs`.
 
 ### mg — SEF-MG (Minas Gerais)
 

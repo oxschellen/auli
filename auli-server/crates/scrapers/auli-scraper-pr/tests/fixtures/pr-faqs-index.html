@@ -1,0 +1,406 @@
+<div class="maincontent">
+    <h4 id="procurandoTitleLayout"><b>O que você está procurando ?</b></h4>
+    <form action="/sacsefa/portal/procurar" id="formProcurarPerguntasFrequentes" method="post">    <div class="form-group">
+        <input type="text" class="form-control" id="palavrasChave" name="palavrasChave" placeholder="Digite sua busca" data-toggle="popover">
+    </div>
+    <div class="form-group">
+        <label for="tpProcurar">Opções para Busca</label><br>
+        <div class="radio" id="procurarRadioGroup">
+            <label for="opcaoNormalPalavrasChave" style="margin: 0px 0px 0px 20px" id="opcaoNormalPalavrasChaveLabel">
+                <input style="margin-top: 0px" type="radio" name="tpProcurar" value="qualquer" id="opcaoNormalPalavrasChave">
+                Contendo Qualquer Palavra
+            </label>
+            <br>
+            <label for="opcaoExataPalavrasChave" style="margin: 0px 0px 0px 20px;" id="opcaoExataPalavrasChaveLabel">
+                <input style="margin-top: 0px" type="radio" name="tpProcurar" value="exata" id="opcaoExataPalavrasChave" checked>
+                Contendo Exatamente a Expressão
+            </label>
+            <br>
+            <label for="opcaoInteiroPalavrasChave" style="margin: 0px 0px 0px 20px" id="opcaoInteiroPalavrasChaveLabel">
+                <input style="margin-top: 0px" type="radio" name="tpProcurar" value="inteiro" id="opcaoInteiroPalavrasChave">
+                Contendo Todas as Palavras
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="idReferente">Referente a:</label>
+        <select id="idReferente" name="idReferente" class="form-control">
+	<option value="">Selecione uma referência...</option>
+	<option value="49">ADRC-ST </option>
+	<option value="1">AIDF</option>
+	<option value="3">Arquivos Magnéticos</option>
+	<option value="5">Auto de Infração e PAF</option>
+	<option value="4">Autorregularização</option>
+	<option value="34">CADIN</option>
+	<option value="47">CTe </option>
+	<option value="6">Cadastro de Contribuintes de ICMS</option>
+	<option value="7">Certidões</option>
+	<option value="51">Combustíveis</option>
+	<option value="57">Confia Paraná</option>
+	<option value="8">Contabilista</option>
+	<option value="58">DC-e - Declaração de Conteúdo Eletrônica</option>
+	<option value="48">DEVEC - Declaração de Valor de Aquisição de Energia Elétrica</option>
+	<option value="12">DIFAL</option>
+	<option value="11">DeSTDA</option>
+	<option value="44">Decretos 442/2015 e 953/2015</option>
+	<option value="43">Devolução de Mercadorias por Pessoa Física ou Pessoa Jurídica não Contribuinte do ICMS</option>
+	<option value="38">EFD - Valor Adicionado</option>
+	<option value="14">EFD/ICMS</option>
+	<option value="15">Energia Elétrica e Serviços de Comunicação</option>
+	<option value="16">FECOP</option>
+	<option value="17">GIA</option>
+	<option value="55">Guias de Recolhimento</option>
+	<option value="56">IBS/CBS</option>
+	<option value="18">IPVA</option>
+	<option value="60">ITCMD</option>
+	<option value="42">Isenção de ICMS na Aquisição de Veículo Novo</option>
+	<option value="53">Leilão</option>
+	<option value="20">NFAe</option>
+	<option value="21">NFAe - Orientações para MEI</option>
+	<option value="22">NFCe</option>
+	<option value="50">NFF - Aplicativo Nota Fiscal Fácil</option>
+	<option value="45">NFPe</option>
+	<option value="23">NFe</option>
+	<option value="24">Parcelamentos</option>
+	<option value="59">Programa Regulariza Paraná - IAT</option>
+	<option value="35">Protesto de Dívidas Ativas</option>
+	<option value="28">ROe</option>
+	<option value="26">Receita/PR</option>
+	<option value="27">Restituição de Tributos</option>
+	<option value="29">SISCRED</option>
+	<option value="39">SPED-Fiscal</option>
+	<option value="46">Simples Nacional</option>
+	<option value="30">Substituição Tributária e Contribuintes de outra UF</option>
+	<option value="37">Transporte </option>
+	<option value="25">UPD - Processamento de Dados</option>
+	<option value="33">Veículos</option>
+</select>    </div>
+    <div class="form-group">
+        <label for="idAssunto">Assunto:</label>
+        <select id='idAssunto' name='idAssunto' class="form-control" disabled="true">
+            <option value=''>...</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <center>
+            <button type="submit" class="btn btn-primary" style="width: 50%">
+                <span class="glyphicon glyphicon-search"></span> Procurar
+            </button>
+            <button type="button" class="btn btn-default" style="width: 48%" onclick="javascript:location.href = '/sacsefa/portal/index';">
+                <span class="glyphicon glyphicon glyphicon-refresh"></span> Limpar Filtros
+            </button>
+        </center>
+    </div>
+    </form>    <hr>
+    <a href="/sacsefa/agendamento/index" class='linkNoDecoration'>
+        <div class="panel panel-default sideBlock" id='agendamentoPanelInfo'>
+            <div class="fontFamilyRoboto sideBlockAdjust">
+                <h4><b>Agendamento</b></h4>
+            </div>
+        </div>
+    </a>
+    <a href="/sacsefa/faleconosco/index" class='linkNoDecoration'>
+        <div class="panel panel-default sideBlock" id='faleConoscoPanelInfo'>
+            <div class="fontFamilyRoboto sideBlockAdjust">
+                <h4><b>Fale Conosco</b></h4>
+            </div>
+        </div>
+    </a>
+    <a href="https://linktr.ee/receitaestadual" class='linkNoDecoration' target="_blank">
+        <div class="panel panel-default sideBlock" id='appReceitaPR'>
+            <div class="fontFamilyRoboto sideBlockAdjust">
+                <h4><b>Aplicativo Receita Paraná</b></h4>
+            </div>
+        </div>
+    </a>
+    <!-- <a href="/sacsefa/agendamento/cascavel" class='linkNoDecoration'>
+        <div class="panel panel-default sideBlock" id='agendamentoCascavelPanelInfo'>
+            <div class="fontFamilyRoboto sideBlockAdjust">
+                <h4><b>Agendamento - Outros Serviços</b></h4>
+            </div>
+        </div>
+    </a> -->
+    <a href="http://www.fazenda.pr.gov.br/Pagina/Legislacao-Tributaria" class='linkNoDecoration' target="_blank">
+        <div class="panel panel-default sideBlock" id='legislacaoPanelInfo'>
+            <div class="fontFamilyRoboto sideBlockAdjust">
+                <h4><b>Legislação</b></h4>
+            </div>
+        </div>
+    </a>
+    <a href="http://www.arinternet.pr.gov.br/portalsefa/_l_DownloadLegislacao2.asp?eTpDoc=16&eTpPer=9&eDtPublicacaoIni=&eDtPublicacaoFim=&eNrDocumento=&eAnoDocumento=&eTpMod=1" class='linkNoDecoration' target="_blank">
+        <div class="panel panel-default sideBlock" id='consultasTributariasPanelInfo'>
+            <div class="fontFamilyRoboto sideBlockAdjust">
+                <h4><b>Consultas Tributárias</b></h4>
+            </div>
+        </div>
+    </a>
+    <a href="http://pdp.fazenda.pr.gov.br/pdp/" class='linkNoDecoration' target="_blank">
+        <div class="panel panel-default sideBlock" id='unidadesAtendimentoPanelInfo'>
+            <div class="fontFamilyRoboto sideBlockAdjust">
+                <h4><b>Unidades de Atendimento</b></h4>
+            </div>
+        </div>
+    </a>
+    <div class="panel panel-default" id='sacPanelInfo'>
+        <a href="http://www.fazenda.pr.gov.br/Pagina/Canais-de-atendimento" target="blank" class='linkNoDecoration'>
+            <div class="panel-body fontFamilyRoboto sideBlockSAC">
+                <h4 style="text-align: center"><b>SAC</b></h4>
+                <p style="text-align: center;">
+                    <small>Servi&ccedil;o de Atendimento ao Cidad&atilde;o</small>
+                </p>
+                <p style="text-align: center;">
+                    (41) 3200-5009 (celular ou fixo)
+                    <br />
+                    0800-041-1528 (apenas fixo)
+                    <br />
+                    <br />
+                    De segunda a sexta-feira das 7h às 19h
+                    <br />
+                </p>
+                <p style="text-align: center;">
+                    <img src="/sacsefa/images/horariosSAC.JPG" id="hrsSACIMG" alt="Horários de Pico SAC" style="width: 95%;">                </p>
+            </div>
+        </a>
+    </div>
+    <hr>
+</div>
+<div style='display: none;' id='popoverHtmlTitle'>
+    <div style="width:400px">
+        <center><b><span class="formspaninfo" id='popoverHtmlTitleText'></span></b></center>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $("#palavrasChave").popover({
+            title: '<div style="width:400px; height: 10px; margin:-5px 0px 0px 30px"><center><b><h4 class="formspaninfo">Como usar a Busca</h4></b></center></div>',
+            html: true,
+            trigger: 'focus',
+        });
+        var textPalavraChave = '<p style="text-align:justify">Este filtro irá pesquisar as palavras digitadas de acordo com as opções de busca abaixo.</p>';
+        $("#palavrasChave").attr('data-content', textPalavraChave);
+
+        $("#opcaoNormalPalavrasChaveLabel").popover({
+            title: '<div style="width:400px; height: 10px; margin:-5px 0px 0px 30px"><center><b><h4 class="formspaninfo">Contendo Qualquer Palavra-Chave</h4></b></center></div>',
+            html: true,
+            trigger: 'hover',
+            container: '#main-content'
+        });
+        var textQualquerPalavra = '<p style="text-align:justify">Para encontrar uma pergunta/resposta que contenha <b>qualquer</b> dos termos pesquisados. Ex.: crédito tributário. A busca retorna “crédito” ou “tributário”</p>';
+        $("#opcaoNormalPalavrasChaveLabel").attr('data-content', textQualquerPalavra);
+
+        $("#opcaoExataPalavrasChaveLabel").popover({
+            title: '<div style="width:400px; height: 10px; margin:-5px 0px 0px 30px"><center><b><h4 class="formspaninfo">Contendo Exatamente a Palavra-Chave</h4></b></center></div>',
+            html: true,
+            trigger: 'hover',
+            container: '#main-content'
+        });
+        var textTermoExato = '<p style="text-align:justify">Para encontrar uma pergunta/resposta que contenha <b>exatamente</b> o termo pesquisado. Ex: crédito tributário – a busca será nessa ordem.</p>';
+        $("#opcaoExataPalavrasChaveLabel").attr('data-content', textTermoExato);
+
+        $("#opcaoInteiroPalavrasChaveLabel").popover({
+            title: '<div style="width:400px; height: 10px; margin:-5px 0px 0px 30px"><center><b><h4 class="formspaninfo">Contendo Toda a Palavra-Chave</h4></b></center></div>',
+            html: true,
+            trigger: 'hover',
+            container: '#main-content'
+        });
+        var textTodaPalavra = '<p style="text-align:justify">Para encontrar uma pergunta/resposta que contenha <b>todos</b> os termos pesquisados em qualquer ordem. Ex: crédito tributário. A busca retorna “crédito” e “tributário” em uma mesma pergunta/resposta.</p>';
+        $("#opcaoInteiroPalavrasChaveLabel").attr('data-content', textTodaPalavra);
+
+        $("#idReferente").popover({
+            title: '<div style="width:400px"><center><b><h4 class="formspaninfo">Referente</h4></b></center></div>',
+            html: true,
+            trigger: 'focus',
+        });
+        var textReferente = '<p style="text-align:justify">O filtro de <span class="formspaninfo"><b>Referente</b></span> é uma lista ';
+        textReferente += 'de todos os temas disponíveis para pesquisa</p><hr><p style="text-align:justify">';
+        textReferente += '<b>Por exemplo:</b> <u>AIDF</u><br>Trará todos as perguntas frequentes dos assuntos que este tema possa abordar ';
+        textReferente += 'dentre eles Inutilização de Documentos Fiscais e outros</p><hr><p style="text-align:justify">';
+        textReferente += 'Quando é selecionado um item neste filtro, o outro filtro abaixo <span class="formspaninfo"><b>Assunto</b></span> ';
+        textReferente += 'é carregado com os assuntos referentes</p>';
+        $("#idReferente").attr('data-content', textReferente);
+
+        $("#idAssunto").popover({
+            title: '<div style="width:400px"><center><b><h4 class="formspaninfo">Assunto</h4></b></center></div>',
+            html: true,
+            trigger: 'focus',
+        });
+        var textAssunto = '<p style="text-align:justify">O filtro de <span class="formspaninfo"><b>Assunto</b></span> é uma lista ';
+        textAssunto += 'de todos os assuntos relacionados ao filtro <span class="formspaninfo"><b>Referente</b></span> selecionado acima</p><hr>';
+        textAssunto += '<p style="text-align:justify"><b>Por exemplo:</b> Ao selecionar AIDF no filtro <span class="formspaninfo"><b>Referente</b></span>, neste filtro será ';
+        textAssunto += 'carregado todos os assuntos disponíveis sobre AIDF, dentre eles <u>Inutilização de Documentos Fiscais</u>, que quando selecionado ';
+        textAssunto += 'e pesquisado, trará todos as perguntas frequentes sobre este assunto e referência</p>';
+        $("#idAssunto").attr('data-content', textAssunto);
+
+        $("#legislacaoPanelInfo").popover({
+            html: true,
+            trigger: 'hover',
+            placement: 'right'
+        });
+        var textLegislação = '<p style="width:400px;text-align:justify">Saiba mais sobre a legislação do Estado do Paraná.</p>';
+        $("#legislacaoPanelInfo").attr('data-content', textLegislação);
+
+        $("#agendamentoPanelInfo").popover({
+            html: true,
+            trigger: 'hover',
+            placement: 'right'
+        });
+        var textAgendamento = '<p style="width:400px;text-align:justify">Clique para agendar atendimento.</p>';
+        $("#agendamentoPanelInfo").attr('data-content', textAgendamento);
+
+        $("#faleConoscoPanelInfo").popover({
+            html: true,
+            trigger: 'hover',
+            placement: 'right'
+        });
+
+        $("#faleConoscoPanelInfo").attr('data-content', '<p style="width:400px;text-align:justify">Envie sua dúvida por escrito.</p>');
+
+
+        $("#appReceitaPR").popover({
+            html: true,
+            trigger: 'hover',
+            placement: 'right'
+        });
+        $("#appReceitaPR").attr('data-content', '<p style="width:400px;text-align:justify">Baixe o APP de Serviços Rápidos da Receita Estadual.</p>');
+
+        $("#agendamentoCascavelPanelInfo").popover({
+            html: true,
+            trigger: 'hover',
+            placement: 'right'
+        });
+        var textAgendamentoCascavel = '<p style="width:400px;text-align:justify">Clique para agendar atendimento.</p>';
+        $("#agendamentoCascavelPanelInfo").attr('data-content', textAgendamentoCascavel);
+
+        $("#consultasTributariasPanelInfo").popover({
+            html: true,
+            trigger: 'hover',
+            placement: 'right'
+        });
+        var textConsultasTributarias = '<p style="width:400px;text-align:justify">Respostas de Consultas Tributárias</p>';
+        $("#consultasTributariasPanelInfo").attr('data-content', textConsultasTributarias);
+
+        $("#unidadesAtendimentoPanelInfo").popover({
+            html: true,
+            trigger: 'hover',
+            placement: 'right'
+        });
+        var textUnidadesAtendimento = '<p style="width:400px;text-align:justify">Obtenha informações sobre localização e horários de atendimento das Repartições da Receita Estadual do Paraná.<p>';
+        $("#unidadesAtendimentoPanelInfo").attr('data-content', textUnidadesAtendimento);
+        $("#unidadesAtendimentoPanelInfo").attr('data-toogle', 'popover');
+
+        $("#idReferente").on('change', function() {
+            if ($(this).val() == '' || $(this).val() == undefined) {
+                $("#idAssunto").html("<option value='' >...</option>");
+                $("#idAssunto").prop('disabled', true);
+                $('#procurarAssunto').html('Para procurar por um assunto, selecione algo no campo referente acima');
+            } else {
+                listarAssuntoPorReferencia($(this).val(), $("#idReferente option:selected").text());
+                $("#idAssunto").prop('disabled', false);
+                $('#procurarAssunto').html('Procurar filtrando por um assunto <b>(' + $("#idReferente option:selected").text() + ')</b> específico');
+            }
+        });
+
+        $('#idReferente').keypress(function(e) {
+            if (e.keyCode === 13 && $(this).val() != '' && $(this).val() != undefined) {
+                $('#formProcurarPerguntasFrequentes').submit();
+            }
+        });
+
+        $('#idAssunto').keypress(function(e) {
+            if (e.keyCode === 13 && $(this).val() != '' && $(this).val() != undefined) {
+                $('#formProcurarPerguntasFrequentes').submit();
+            }
+        });
+
+        adicionarSeparadorCategoriaSelect('#idReferente', 'Selecione uma referência...');
+        if ($("#idReferente").val() != '' && $("#idReferente").val() != undefined) {
+            listarAssuntoPorReferencia($("#idReferente").val(), $("#idReferente option:selected").text());
+            $("#idAssunto").prop('disabled', false);
+            $('#procurarAssunto').html('Procurar filtrando por um assunto <b>(' + $("#idReferente option:selected").text() + ')</b> específico');
+        }
+
+        $('#formProcurarPerguntasFrequentes').submit(function() {
+            if ($('#palavrasChave').val() != '' && $('#palavrasChave').val().length < 3) {
+                alert('Para pesquisar por palavras-chave, digite no mínimo 3 caracteres e tente novamente.');
+                return false;
+            }
+        });
+
+    });
+</script>                    </div>
+                    <div class="col-sm-8" id='main-content'>
+                        <div class="maincontent">
+    <div class="container-fluid">
+        <center><h2 class="titleLayout">Perguntas Frequentes</h2></center>
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading perguntaFrequentePanelHeader customPanelHeading" role="tab" id="heading49">
+                        <h4 class="panel-title">
+                            <a class="linkNoDecoration" role="button" href="/sacsefa/portal/assuntosReferente/49" 
+                               aria-expanded="false">
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <h4 style="color: #0073e6; text-align: justify" class='referenteAssuntoPerguntaContrast'>
+                                            ADRC-ST  - Arquivo Digital de Recuperação e Ressarcimento do ICMS-ST e FECOP                                        </h4>
+                                        
+                                    </div>
+                                    <div class="col-md-1 text-right">
+                                        <button type="button" class="btn-sm btn-info" style="margin-top:3%">
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading perguntaFrequentePanelHeader customPanelHeading" role="tab" id="heading1">
+                        <h4 class="panel-title">
+                            <a class="linkNoDecoration" role="button" href="/sacsefa/portal/assuntosReferente/1" 
+                               aria-expanded="false">
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <h4 style="color: #0073e6; text-align: justify" class='referenteAssuntoPerguntaContrast'>
+                                            AIDF - Autorização para Impressão de Documentos Fiscais                                        </h4>
+                                        
+                                    </div>
+                                    <div class="col-md-1 text-right">
+                                        <button type="button" class="btn-sm btn-info" style="margin-top:3%">
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading perguntaFrequentePanelHeader customPanelHeading" role="tab" id="heading3">
+                        <h4 class="panel-title">
+                            <a class="linkNoDecoration" role="button" href="/sacsefa/portal/assuntosReferente/3" 
+                               aria-expanded="false">
+                                <div class="row">
+                                    <div class="col-md-11">
+                                        <h4 style="color: #0073e6; text-align: justify" class='referenteAssuntoPerguntaContrast'>
+                                            Arquivos Magnéticos                                        </h4>
+                                        
+                                    </div>
+                                    <div class="col-md-1 text-right">
+                                        <button type="button" class="btn-sm btn-info" style="margin-top:3%">
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </a>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                

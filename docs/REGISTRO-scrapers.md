@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 1 de **FAQs** (SC). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 2 de **FAQs** (SC e PR). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -33,6 +33,7 @@
 - [RS Pareceres — Portal de Legislação / Consultas Formais Respondidas](#rs-pareceres)
 - [TARF — Tribunal Administrativo de Recursos Fiscais do RS (tarf.sefaz.rs.gov.br)](#tarf)
 - [SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)](#sc-faqs)
+- [PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)](#pr-faqs)
 
 ---
 
@@ -1793,3 +1794,76 @@ remédio é **descer**. A partir dos assuntos já no mapa, busca-se a página de
 os `Subassuntos` com o pai que a própria descida conhece, até `C` aparecer, com um teto de
 profundidade contra ciclo.
 
+---
+
+<a id="pr-faqs"></a>
+
+# PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)
+
+**Discovery e implantação:** 01/11/2026. Estudo completo, com as medições e as decisões D-PRFAQ-1..9:
+[`docs/ESTUDO-PR-Faqs.md`](ESTUDO-PR-Faqs.md). Coleção `faqs` do `auli-scraper-pr` (`auli-scraper-pr faqs`,
+ou `all` = serviços + FAQs). **1.321 perguntas** em 48 referentes e 274 assuntos na rodada de 01/11.
+
+## Fonte
+
+As 6 fichas "perguntas frequentes" da Carta de Serviços (`www.fazenda.pr.gov.br`, o Drupal dos serviços)
+levam todas ao **Portal de Atendimento do SAC**, uma aplicação PHP à parte, em outro host. HTML
+server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
+
+- **Índice:** `GET /sacsefa/portal/index` → 48 links `assuntosReferente/<id>`, com o nome longo do
+  referente no `h4` do mesmo cabeçalho ("IPVA - Imposto sobre a Propriedade de Veículos Automotores").
+  Os ids têm lacunas, e toda lacuna dá 302 para o `index` (referente desativado — a ficha do ITCMD da
+  Carta ainda aponta para o `19`; o ITCMD de hoje é o `60`). **O `index` é a fonte de verdade**; nunca
+  varrer ids.
+- **Referente:** `GET /sacsefa/portal/assuntosReferente/<id>` traz o referente inteiro, sem paginação:
+  cards de assunto (`headPanel<idAssunto>`) → painéis de pergunta (`heading<N>` + `collapse<N>`), com
+  `Pergunta Nº <N>` no cabeçalho e `Referente:`/`Assunto:` + a resposta num único `<p>` no corpo. De
+  52 KB a 594 KB (o ITCMD, 185 perguntas); 6,3 MB os 48.
+- **Link:** não há rota por pergunta (`pergunta/<N>` e afins dão 302; a busca é `POST`). O link é a
+  página do referente + `#heading<N>`. A âncora não abre o painel (ele fica num card recolhido, e a
+  página não lê `location.hash`): o usuário cai no topo do referente certo.
+
+## As quatro armadilhas
+
+1. **TLS com cadeia incompleta.** O servidor manda só o folha `*.fazenda.pr.gov.br`, emitido pelo
+   **Sectigo Public Server Authentication CA DV R36** — outro intermediário, não o OV R36 do AC. `curl`
+   e `ureq` falham com o store do sistema. O PEM do DV R36 (AIA do folha, válido até 21/03/2036) vai
+   embutido como trust anchor do rustls num agent só do módulo `faqs` (o molde do AC). **O folha vence
+   em 21/11/2026**: se a renovação vier de outro emissor, a coleta falha alta no handshake e o PEM tem
+   de ser trocado. O `www.fazenda.pr.gov.br` manda a cadeia completa e não precisa disso.
+2. **`<` como texto.** As respostas usam `<` como seta de menu ("Cadastro de Contribuintes < Alteração
+   Cadastral < Dados Cadastrais", 12 ocorrências) e a 1775 cita `<Consulta Pendencias>`. O `<[^>]+>` do
+   SC apagaria texto em 2 respostas (a 1775 e a 2274, onde a seta vem antes de um `<b>`). A conversão
+   só tira as tags de uma **lista fechada** (`a b br center div em font hr i img li ol p span strong sub
+   sup u ul`); qualquer outro `<…>` fica.
+3. **"Assunto:" dentro da pergunta.** A 2247 (referente 28) tem `Assunto: "Outorga de..."` no texto
+   da pergunta. Cada campo é lido só na sua metade do painel — número e pergunta no cabeçalho,
+   `Assunto:` e resposta no corpo —, senão a guarda de assunto dispara (foi o que ela fez na 1ª rodada).
+4. **Pergunta repetida e imagem.** Há 17 pares de pergunta com o mesmo texto no mesmo referente (em
+   assuntos diferentes): sem a âncora `#heading<N>`, a url seria a mesma e os `.md` colidiriam. E 11
+   respostas trazem tabela ou ícone em imagem (`/sacsefa/images/…`), 3 delas só a imagem: `<img src>`
+   vira `"<url absoluta>"`, a convenção da âncora vazia.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: `index` sem referente; referente sem nenhuma pergunta na
+  página (o 302 de um referente desativado cai no `index`, que reusa `perguntaFrequentePanelHeader` e
+  `heading<N>` para os cards de referente — nada disso vira pergunta); nº de
+  `perguntaFrequentePanelHeader` no HTML ≠ painéis parseados; `heading<N>` ≠ `Pergunta Nº`; `Assunto:`
+  do painel ≠ título do card que o contém; um número de pergunta em dois lugares; pergunta sem texto.
+  Resposta vazia depois da conversão só avisa (0 em 01/11).
+- **Sempre à rede**, como no SC: o cache em `data/pr/raw/cache/faqs/` só é lido com `--usecache`, que
+  reproduz snapshot e árvore byte a byte.
+- 49 GETs com o UA `AuliBot` e 1 s de cortesia (as constantes do `pareceres.rs`), ~1 min.
+- Saída: `data/pr/raw/pr-faqs-tree.json` (raiz → 48 `Menu` de referente → 274 `Faq` de assunto, cada
+  pergunta com o próprio `url`) e `data/pr/pr-faqs-snapshot.json`, nessa ordem e atômicos. Trilha
+  sempre de 2 níveis: `<nome longo do index> | <assunto>`.
+- Atualização: `scripts/tools/update-pr-faqs.sh` (guarda de encolhimento contra o `.anterior`).
+
+## Limitação conhecida — resposta de um parágrafo
+
+A resposta é o primeiro `<p>` do corpo do painel. Em 01/11/2026, os 1.321 painéis tinham exatamente um
+`</p>` no corpo, então nada se perde. Se a SEFA passar a escrever respostas em vários `<p>`, o parse
+fica com o primeiro, **em silêncio**. Não há guarda: o último painel de cada página encosta no rodapé,
+que também tem `<p>`, e contar parágrafos por painel ficaria frágil. Sintoma a procurar numa revisão:
+resposta que termina no meio do assunto.
