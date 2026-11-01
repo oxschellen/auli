@@ -89,5 +89,5 @@ Adicionar ao bloco que lê o JSON real:
 4. Redirecionamento conta como OK e aparece no relatório?
 5. O workflow abre issue e **não** abre PR nem commita?
 6. Três testes novos presentes; mutação de `link_status` testada?
-7. Nenhuma menção ao NAVI nem ao nome do mantenedor em nada novo (a guarda do #165 deve continuar verde).
+7. Nenhuma menção à unidade de atendimento nem ao nome do mantenedor em nada novo (a guarda do #165 deve continuar verde).
 8. Commit: `feat(tributum): o catálogo real entra (71 itens verificados) e os links passam a ser conferidos a cada trimestre (D-TRIB-17..21)`.
