@@ -27,7 +27,7 @@ Secretaria de Estado da Fazenda do Paraná (SEFA-PR), Receita Estadual. · **Fon
 | Rota | Veredito | Evidência |
 |---|---|---|
 | Cache dos serviços do PR (`data/pr/raw/cache/servicos/`) | ponto de partida: 6 fichas da Carta são "Consultar perguntas frequentes sobre…" | `grep` no cache, 01/11/2026 |
-| Fichas IPVA / ITCMD / Receita PR / IPM | botão "Consultar" → `atendimento.fazenda.pr.gov.br/sacsefa/portal/assuntosReferente/{18,19,26,38}` | snapshot de serviços do PR |
+| Fichas IPVA / ITCMD / Receita PR / IPM | botão "Consultar" → `atendimento.fazenda.pr.gov.br/sacsefa/portal/assuntosReferente/{18,19,26,38}` (o `19` do ITCMD virou `60` na Carta em 01/11/2026 — §10) | snapshot de serviços do PR |
 | Ficha "Receita Estadual" (geral) | → `…/sacsefa/portal/index` | idem |
 | Ficha "Simples Nacional" → `fazenda.pr.gov.br/Pagina/Perguntas-Simples-Nacional` (Drupal) | **só um hub**: aponta para os referentes `46`, `21` e `11` do mesmo SAC + o portal da RFB (fora de escopo) | `<article>` da página, 8 links |
 | **`/sacsefa/portal/index` + `/sacsefa/portal/assuntosReferente/<id>`** | **✅ a fonte.** HTML server-side, sem sessão | abaixo |
@@ -69,8 +69,9 @@ do **OV** R36 embutido no `auli-scraper-ac`. O PEM sai do AIA do folha:
 48 links `href="/sacsefa/portal/assuntosReferente/<id>"`, com o nome longo do referente como texto
 ("IPVA - Imposto sobre a Propriedade de Veículos Automotores"). O `<select id="idReferente">` do formulário de busca
 tem **as mesmas 48** opções. Os ids vão de 1 a 60 com lacunas, e **todas as lacunas (1–64 fora dos 48) dão 302
-para o `index`**: são referentes desativados. Um caso real é o `19`, para onde a ficha do ITCMD da Carta ainda
-aponta; o ITCMD de hoje é o `60` (§10). **A fonte de verdade dos referentes é o `index`.**
+para o `index`**: são referentes desativados. Um caso real é o `19`, o ITCMD antigo, para onde a ficha do ITCMD da
+Carta apontava até a coleta de serviços de 01/11/2026; o ITCMD de hoje é o `60` (§10). **A fonte de verdade dos
+referentes é o `index`.**
 
 ⚠️ O `index` reusa a classe `perguntaFrequentePanelHeader` e o padrão `id="heading<N>"` para os cards de
 **referente**: ali `N` é o id do referente, não de pergunta. O parse de perguntas só roda nas páginas de referente.
@@ -283,7 +284,7 @@ curl -s -o /dev/null -w '%{http_code}\n' $B/index                               
 curl -s --cacert ca.pem $B/index | grep -o 'assuntosReferente/[0-9]*' | sort -u | wc -l   # 48
 curl -s --cacert ca.pem $B/assuntosReferente/18 | grep -c perguntaFrequentePanelHeader     # 70 (IPVA)
 curl -s --cacert ca.pem $B/assuntosReferente/18 | grep -o 'Pergunta N[^<]*' | head -1      # Pergunta Nº 0271
-curl -s --cacert ca.pem -o /dev/null -w '%{http_code}\n' $B/assuntosReferente/19         # 302 (o ITCMD da Carta)
+curl -s --cacert ca.pem -o /dev/null -w '%{http_code}\n' $B/assuntosReferente/19         # 302 (o ITCMD antigo)
 curl -s --cacert ca.pem $B/assuntosReferente/34 | grep -o '<Consulta Pendencias>'           # FAQ 1775 (CADIN)
 echo | openssl s_client -connect atendimento.fazenda.pr.gov.br:443 -servername atendimento.fazenda.pr.gov.br 2>/dev/null \
   | openssl x509 -noout -enddate                                                      # notAfter=Nov 21 23:59:59 2026 GMT
@@ -291,9 +292,9 @@ echo | openssl s_client -connect atendimento.fazenda.pr.gov.br:443 -servername a
 
 ## 10. Observações fora do escopo
 
-- **Link morto na Carta de Serviços.** A ficha "Ver as perguntas mais frequentes sobre o ITCMD" aponta para
-  `assuntosReferente/19`, que hoje é 302 para o `index`; o ITCMD é o `60`. Está no snapshot de serviços do PR como
-  veio da fonte. Corrigir é com a SEFA, não aqui.
+- **Link morto na Carta de Serviços — corrigido pela SEFA.** Na descoberta, a ficha "Ver as perguntas mais
+  frequentes sobre o ITCMD" apontava para `assuntosReferente/19`, que é 302 para o `index`; o ITCMD é o `60`. A
+  coleta de serviços de 01/11/2026 (141 → 139) já trouxe a ficha apontando para o `60`.
 - A ficha do IPM aponta para o referente `38`, "EFD - Valor Adicionado". É coerente (o IPM sai do valor adicionado),
   só o nome não diz.
 

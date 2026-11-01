@@ -1813,7 +1813,8 @@ server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
 - **Índice:** `GET /sacsefa/portal/index` → 48 links `assuntosReferente/<id>`, com o nome longo do
   referente no `h4` do mesmo cabeçalho ("IPVA - Imposto sobre a Propriedade de Veículos Automotores").
   Os ids têm lacunas, e toda lacuna dá 302 para o `index` (referente desativado — a ficha do ITCMD da
-  Carta ainda aponta para o `19`; o ITCMD de hoje é o `60`). **O `index` é a fonte de verdade**; nunca
+  Carta apontava para o `19` até a coleta de serviços de 01/11/2026; o ITCMD de hoje é o `60`). **O `index`
+  é a fonte de verdade**; nunca
   varrer ids.
 - **Referente:** `GET /sacsefa/portal/assuntosReferente/<id>` traz o referente inteiro, sem paginação:
   cards de assunto (`headPanel<idAssunto>`) → painéis de pergunta (`heading<N>` + `collapse<N>`), com
