@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, também FAQs e pareceres) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS e na SC, também FAQs e pareceres) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -22,7 +22,7 @@ Todos os scrapers seguem o mesmo esqueleto:
 - Dependem de **`auli-contract`** (tipos + I/O do snapshot, shape per-público) +
   **`auli-scraper-kit`** (o cardápio comum abaixo) — **nunca** de `fastembed`/`ort`/vector-store.
   Recíproca (D-C1): nada fora de `scrapers/` depende do kit.
-- **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS também aceita `faqs` e `pareceres`).
+- **CLI uniforme:** `auli-scraper-<id> [--usecache] servicos` (RS e SC também aceitam `faqs`, `all` e `pareceres`).
 - **Saída:** `data/<id>/<id>-servicos-snapshot.json` (schema v3), gravado por
   `kit::snapshot::write_servicos`. Cache de páginas/respostas em `data/<id>/raw/cache/` (gitignored).
 - **Pipeline downstream:** `auli-collections <id>` (deriva `raw/*.json` + `.txt`) →
@@ -142,7 +142,7 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 
 ### rs — SEFAZ-RS (Rio Grande do Sul)
 
-- **Único com FAQs e pareceres** além de serviços (`auli-scraper-rs [--usecache] faqs|servicos|pareceres`).
+- **FAQs e pareceres** além de serviços (`auli-scraper-rs [--usecache] faqs|servicos|pareceres`).
 - **Serviços:** API JSON do Tudo Fácil (`fazenda.rs.gov.br/_service/tudofacil/capaservicos`) — não
   precisa mais de headless Chrome (era o único que usava).
 - **FAQs:** `atendimento.receita.rs.gov.br/perguntas-frequentes`, via AJAX.
@@ -162,6 +162,11 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **API JSON Next.js** (`www.sef.sc.gov.br`) — o portal expõe os dados de build/página em JSON.
 - 208 serviços, 5 públicos (Cidadão/Empresa/Servidor Público/Estudante/Prefeitura). Agregada.
 - 6 testes (normalize_links, parse_build_id, StringOrNum, parse listagem/detalhe, build_descricao).
+- **FAQs** (`auli-scraper-sc faqs`): base `/perguntas`, uma chamada
+  `/_next/data/<buildId>/perguntas/buscar.json?assunto=<raiz>` por raiz da árvore `perguntas.json`;
+  dedup do dobro dos nós intermediários, 3º nível vindo do `Assunto` de cada pergunta, HTML → texto.
+  Sempre à rede (cache só com `--usecache`). 1.306 perguntas (01/11/2026), 11 testes. Descoberta em
+  `docs/REGISTRO-scrapers.md#sc-faqs`.
 
 ### sp — SEFAZ-SP (São Paulo)
 

@@ -62,9 +62,10 @@ const DETAIL_BASE: &str =
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
 const DOCS_DIR: &str = "../data/sc/docs/pareceres";
 const CACHE_DIR: &str = "../data/sc/raw/cache/pareceres";
-const UA: &str =
+/// UA institucional + cortesia entre requisições — também os das FAQs (D-SCFAQ-8).
+pub(crate) const UA: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
-const COURTESY: Duration = Duration::from_millis(1000);
+pub(crate) const COURTESY: Duration = Duration::from_millis(1000);
 const MIN_YEAR: i32 = 2011;
 const MIN_PARECERES: usize = 1500; // guarda contra coleta truncada (esperado ~1744 em 2011+)
 
