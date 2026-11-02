@@ -1672,8 +1672,9 @@ kit — é o cache do [`rj.rs`](auli-server/crates/scrapers/auli-scraper-rj/src/
 
 **Efeito.**
 
-1. **Serviços:** o acervo segue com os 91 de 25/07. A próxima coleta recebe o desafio; as guardas do `rj.rs`
-   (mínimo de 12 categorias e 60 ocorrências) devem pará-la com `Err` antes de gravar — esperado, não rodado.
+1. **Serviços:** o acervo segue com os 91 de 25/07. A coleta recebe o desafio e para com `Err` antes de gravar —
+   confirmado em 02/11/2026 com o cache tirado do caminho: "menu de categorias não encontrado (nenhuma âncora
+   interna válida) — markup mudou?"; snapshot e cache de 25/07 intactos.
 2. **FAQs:** a sondagem não chegou a nenhuma página. Passar exigiria executar o JavaScript do desafio
    (navegador automatizado), isto é, contornar uma proteção anti-robô explícita — fora de questão sem
    autorização.
