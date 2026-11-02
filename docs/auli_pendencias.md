@@ -1625,12 +1625,15 @@ Registro em [REGISTRO-scrapers.md#sp-faqs](REGISTRO-scrapers.md#sp-faqs); estudo
 
 ---
 
-## D-NAMING (pendência separada — MG, NÃO é do GO)
+## D-NAMING (pendência separada — MG, NÃO é do GO) — ✅ resolvida em 01/11/2026
 
-Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
-`"SEF-MG"` em [`auli-scraper-mg/src/mg.rs:222`](auli-server/crates/scrapers/auli-scraper-mg/src/mg.rs#L222)
-(o `registry.toml` já usa `SEF-MG`; confirmado em todos os itens do snapshot — 149 na coleta atual). Muda bytes do snapshot MG →
-**recoleta verificada + commit de dados próprio**, na próxima vez que o MG for tocado.
+Política da frota: separador sigla–UF sempre `-`. O `orgao` do **MG** passou de `"SEF/MG"` para
+`"SEF-MG"` em [`auli-scraper-mg/src/mg.rs:241`](auli-server/crates/scrapers/auli-scraper-mg/src/mg.rs#L241),
+o mesmo do `registry.toml`, num commit próprio (fora do squash das FAQs do MG). Verificação: o snapshot foi
+refeito do cache de serviços coletado sem cache na mesma noite (02/11 00:34Z), para a diferença ficar
+isolada — 153 de 153 itens com `SEF-MG`, nenhuma outra mudança no snapshot, nos 153 `.md` e nos JSONs de
+`raw/`; packs refeitos. O "SEF/MG" que sobra dentro de algumas descrições é texto do portal (ingerido como
+está), e o `config/prompts/mg.txt` também escreve "SEF/MG" em prosa — nenhum dos dois é o campo `orgao`.
 
 ---
 
