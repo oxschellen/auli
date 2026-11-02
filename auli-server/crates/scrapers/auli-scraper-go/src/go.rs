@@ -200,6 +200,8 @@ fn fetch_recurso(
     // GET via curl: o ureq é barrado pelo WAF (D-GO-WAF). Bearer + Accept nos headers do GetOpts.
     let body = auli_scraper_kit::http::get_via_curl(
         &url,
+        // D-FROTA-UA: UA de navegador por legado, nunca testado com o AuliBot neste host.
+        auli_scraper_kit::USER_AGENT,
         &GetOpts {
             log_prefix: "GO",
             accept: Some("application/json"),

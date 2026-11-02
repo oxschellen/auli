@@ -109,6 +109,8 @@ pub fn get_web_page_ajax_body_html(
     let raw_body = retry(url, || {
         let raw = auli_scraper_kit::http::get_via_curl(
             ajax_url,
+            // D-FROTA-UA: UA de navegador por legado, nunca testado com o AuliBot neste host.
+            auli_scraper_kit::USER_AGENT,
             &GetOpts {
                 log_prefix: "RS",
                 headers: &[

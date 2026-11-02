@@ -16,7 +16,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 7 | RN | Catálogo só de cards (D-RN-ACERVO) | reavaliar se o RN publicar uma Carta |
 | 8 | PA, ES, AL | Scraper estadual genérico, multi-órgão (D-PA-ACERVO, D-AL-1) | registrado, não implementado |
 | 9 | PI, RO | Scraper Sydle conecta-360 compartilhado (D-XX-SYDLE-COMPARTILHADO) | decisão de arquitetura em aberto |
-| 10 | kit | Camada 2 do kit (`validar_contagem`, `absolutize`, `cli::parse_args`) | TAREFA curta, não feita |
+| 10 | kit | Camada 2 do kit (`validar_contagem`, `absolutize`, `cli::parse_args`; conversor HTML das FAQs) | TAREFA curta, não feita |
 | 11 | frota | User-Agent: AuliBot por padrão (D-FROTA-UA) | ✅ decidida e aplicada; restam os usos legados, a testar quando alguém tocar o scraper |
 | 12 | 16 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
 | 13 | ES | O scraper não ordena os itens | ajuste pequeno |
@@ -209,6 +209,11 @@ _Era item da §10 do [auli_pendencias.md](auli_pendencias.md) (extração das fu
 
 Conferido em 02/11/2026: nenhuma das três existe no kit.
 
+**Candidata nova (02/11/2026):** o conversor HTML → texto das FAQs (`html_para_texto`: `<style>`/comentários fora,
+link → `texto "url"`, bloco → linha, entidades no fim) tem **três cópias** — SP, GO e DF (a do DF com o filtro de
+`http(s)`/`mailto` e sem duplicar a URL quando ela é o texto do link). Já passou do 2º consumidor; ao extrair,
+levar as melhorias do DF e provar SP e GO byte a byte com `--usecache`.
+
 ## 11. User-Agent institucional para a frota
 
 _Era item da §10 do [auli_pendencias.md](auli_pendencias.md)._
@@ -236,12 +241,13 @@ UA de navegador diz o porquê:
 | mesmo host do caso acima, sem teste próprio | serviços do MG |
 | decisão registrada — robots restritivo a crawlers genéricos | PE (D-PE4), BA (D-BA4), CE |
 | **legado, nunca testado com o AuliBot** | serviços de AM, GO (token), MS, MT, PI, PR, RS, SC e SP; FAQs do RS |
-| **legado, caminho curl** (`get_via_curl` manda sempre o UA de navegador) | serviços de GO, DF, SE e RS; FAQs do RS (AJAX) |
+| **legado, caminho curl** (o call site passa o `kit::USER_AGENT` explícito) | serviços de GO, DF, SE e RS; FAQs do RS (AJAX) |
 
 **O que fica aberto:** as duas linhas "legado". Não são violação a corrigir já, mas candidatas: quem tocar um
 desses scrapers testa o AuliBot no portal e, se o portal responder igual (recoleta com `--usecache` desligado
-e diff limpo contra o backup), troca e apaga o comentário de legado. No caminho curl, a troca pede antes um
-parâmetro de UA no `get_via_curl`.
+e diff limpo contra o backup), troca e apaga o comentário de legado. O caminho curl recebe o UA como parâmetro
+desde as FAQs do DF (02/11/2026), e o host da Carta de Serviços do DF já mostrou que aceita o AuliBot pelo curl —
+os serviços do DF são o candidato mais barato.
 
 ## 12. Serviços sem atualização desde julho
 

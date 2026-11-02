@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT e no GO, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO e no DF, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -50,7 +50,8 @@ Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/
 omite o texto do artigo — ou por decisão registrada (robots restritivo: PE, BA, CE), sempre **com o
 motivo comentado no call site**. Os usos anteriores à regra, nunca testados com o AuliBot, ficam como
 estão e dizem isso no comentário; trocar só com recoleta verificada (lista em
-`docs/auli_scraper_pendências.md` §11). O `kit::http::get_via_curl` manda sempre o UA de navegador.
+`docs/auli_scraper_pendências.md` §11). O caminho curl (`kit::http::get_via_curl` e `post_form_via_curl`) recebe
+o UA de quem chama.
 
 As variantes *line-based* de limpeza
 (`clean_text`, que preserva quebras) têm semântica própria por formato e **ficam locais** (ba, mg,
@@ -514,7 +515,15 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **público** = `codTipoPessoa`: Cidadão (6/22, 168 svc) e Empresa (7/8, 304 svc); **classe** =
   subcategoria; `link` = a URL absoluta do `servico.cfm` (única por serviço); identidade = `codServico`.
 - 472 serviços, 142 classes, descrição rica (~893). 4 testes. `ServicoRaw` direto. Descoberta em
-  `docs/REGISTRO-scrapers.md#df`.
+  `docs/REGISTRO-scrapers.md#df`. (02/11/2026: 475 serviços, 139 classes.)
+- **FAQs** (`auli-scraper-df faqs`, `faqs.rs`): duas fontes. As Perguntas e Respostas do Portal da Receita (mesmo
+  host, mesmo WAF → curl, agora com o AuliBot): a casca dá os temas e os tipos de atendimento, e as perguntas chegam
+  por POST de formulário (`kit::http::post_form_via_curl`) — o tema inteiro e cada tipo, que vira o 3º nível da
+  trilha. O fragmento é cortado por pergunta antes do parse (respostas do Word truncadas no meio de um comentário
+  engolem as seguintes). E as Perguntas Frequentes do ISS/NFS-e (`iss.fazenda.df.gov.br`, `ureq`), por seção. Link
+  com o id (`#collapse<id>`) ou a seção (`#<slug>`): há perguntas de texto repetido. Conversor das FAQs do SP/GO, só
+  `http(s)`/`mailto` no texto, sem o prefixo "R.". 993 perguntas (900 + 93, 02/11/2026), 15 testes. Descoberta em
+  `docs/REGISTRO-scrapers.md#df-faqs`.
 
 ---
 

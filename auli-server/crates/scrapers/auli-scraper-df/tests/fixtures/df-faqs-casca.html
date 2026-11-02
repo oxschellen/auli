@@ -1,0 +1,298 @@
+<!-- Recorte da casca de 02/11/2026: o formulário da busca geral e os temas 24 (Agênci@Net, 2 tipos) e 4250 (Restituição, 1 tipo com " - serviço"). -->
+<html><body>
+<form name="formBuscaGeral" id="formBuscaGeral">
+                            <input type="hidden" id="pgDivListarPerguntasGeral" name="pgDivListarPerguntasGeral" value="perguntasFreqBuscaGeral_div.cfm">
+                            <input type="search" id="buscaGeralPergunta" name="buscaGeralPergunta" placeholder="Faça uma busca em todas as Perguntas e Respostas:" aria-describedby="btnBuscarGeral" class="form-control bg-transparent border-0">
+                            <div class="input-group-append border-0">
+                                <button id="btnBuscarGeral" name="btnBuscarGeral" type="submit" class="btn btn-link text-success">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+<div class="accordion faq" id="accordionExample">
+<div class="card">
+                    <div class="card-header" id="headingOne">                
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne24" aria-expanded="false" aria-controls="collapseOne">
+                                <h5>Agênci@Net</h5>
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="collapseOne24" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body border buscarCardBody">
+
+                            
+
+                            <script>
+                                    var perguntas24 = [
+                                                
+                                        'como fazer?',
+                                        
+                                                
+                                        'mas não consigo executar alguns serviços com o meu Certificado Digital',
+                                        
+                                                
+                                        'ou só terei acesso aos dados da empresa?',
+                                        
+                                                
+                                        'pessoa física',
+                                        
+                                                
+                                        'por quê?',
+                                        
+                                                
+                                        'tenho acesso aos dados do sócio',
+                                        
+                                                
+                                        'A procuração eletrônica pode ser estabelecida utilizando o certificado da matriz (E-CNPJ)?',
+                                        
+                                                
+                                        'Com a Procuração Eletrônica da empresa',
+                                        
+                                                
+                                        'Como faço para estabelecer a Procuração Eletrônica?',
+                                        
+                                                
+                                        'Como imprimir o DIF ou comprovante de inscrição de situação CFDF?',
+                                        
+                                                
+                                        'Como saber o NAS – Número de Acompanhamento da Solicitação?',
+                                        
+                                                
+                                        'Como verificar os poderes concedidos (STATUS) em uma Procuração Eletrônica?',
+                                        
+                                                
+                                        'O Certificado Digital da matriz pode ser utilizado para estabelecer Procuração Eletrônica em nome da filial?',
+                                        
+                                                
+                                        'O que é Agênci@net?',
+                                        
+                                                
+                                        'O que é NAS?',
+                                        
+                                                
+                                        'Poderá haver substabelecimento de Procuração Eletrônica?',
+                                        
+                                                
+                                        'Posso revogar ou alterar a Procuração Eletrônica?',
+                                        
+                                                
+                                        'Possuo a Procuração Eletrônica do contribuinte',
+                                        
+                                                
+                                        'Quais os poderes podem ser concedidos pela Procuração eletrônica? (tipos)',
+                                        
+                                                
+                                        'Quais são as hipóteses que podem se encontrar as Procurações Eletrônicas?',
+                                        
+                                                
+                                        'É possível cancelar o NAS pela Agenci@net? Se sim',
+                                        
+                                                
+                                        'É possível emitir um relatório das pendências de uma empresa da qual sou contadora por meio da Agênci@net?',
+                                        
+                                                
+                                        'É possível imprimir os dados de FAC já enviada pela agenci@net?',
+                                        
+                                    
+                                    ];
+
+                                    $(function(){
+                                        $("#busca24 .form-control").typeahead({
+                                            hint: true,
+                                            highlight: true,
+                                            minLength: 1
+                                        },
+                                        {
+                                            name: 'perguntas24',
+                                            source: autocompleteBusca(perguntas24)
+                                        });                                    
+                                    });
+                            </script>
+
+                            <form name="formBusca24" id="formBusca24">
+                                <div class="form-group">
+                                    <label for="TipoAtendimento" class="mb-0"></label>
+                                    <select class="form-control" id="selectTipoAtendimento24" name="selectTipoAtendimento">
+                                        <option value="0">Escolha aqui o tema relacionado com sua dúvida</option>
+                                        
+                                            <option value="80">Obter Outras Informações sobre Agenci@Net</option>
+                                        
+                                            <option value="187">Procuração Eletrônica - Obter Informações e Verificar Erros</option>
+                                        
+                                    </select>
+                                </div>
+                            
+
+                                <div class="d-flex flex-row-reverse bd-highlight no-gutters">
+                                    <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                                        <div class="input-group mb-4 border rounded-pill p-1" id="busca24">
+                                            
+                                                <input type="hidden" id="pgDivListarPerguntas24" name="pgDivListarPerguntas24" value="perguntasFreqBusca_div.cfm">
+                                                <input type="hidden" id="codAssunto" name="codAssunto" value="24">
+                                                <input type="search" id="buscaPergunta" name="buscaPergunta" placeholder="Digite palavras-chaves para filtrar:" aria-describedby="btnBuscar24" class="form-control bg-none border-0">
+                                                <div class="input-group-append border-0">
+                                                <button id="btnBuscar24" name="btnBuscar24" type="submit" class="btn btn-link text-success"><i class="fa fa-search"></i></button>
+                                                </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <script>   
+                                $(document).ready(function(){
+
+                                    $("#selectTipoAtendimento24").change(function(){
+                                        $(this).closest("form").find("#buscaPergunta").typeahead('val','');
+                                        resultadoPerguntasFreq();
+                                    });
+                                
+                                    $("#btnBuscar24").click(function(){ 
+                                        resultadoPerguntasFreq();
+                                        return false;
+                                    });
+
+                                    function resultadoPerguntasFreq(){                                 
+                                        var dadosForm = $('#formBusca24').serialize();                                       
+                                        $.ajax({
+                                            type: "post",
+                                            url: $("#pgDivListarPerguntas24").val(), // pagina de acao
+                                            data: dadosForm, // variaveis de form
+                                            //dataType: "json",		 
+                                            success: function( objResponse ){
+                                                // Check to see if request was successful.
+                                                
+                                                objResponse = objResponse.replace(/^\s+|\s+$/g,"");
+                                                
+                                                if (objResponse) {
+                                                    $("#divListarPerguntas24").html(objResponse);
+                                                    return false;
+                                                }else{
+                                                    $("#divListarPerguntas24").html("Oops! Nenhum resultado encontrado para a busca.");
+                                                }
+                                            },
+                                            error: function( objRequest, strError ){
+                                                $("#divListarPerguntas24").html("Erro ao exibir perguntas frequentes!!");
+                                            }
+                                        });		
+                                    }
+                                });
+                            </script>
+
+                            <div id="divListarPerguntas24"></div> 
+
+                        </div>
+                    </div>            
+                </div>
+                
+                <div class="card">
+                    <div class="card-header" id="headingOne">                
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne4250" aria-expanded="false" aria-controls="collapseOne">
+                                <h5>Restituição</h5>
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="collapseOne4250" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body border buscarCardBody">
+
+                            
+
+                            <script>
+                                    var perguntas4250 = [
+                                                
+                                        'Qual o prazo para solicitar a restituição?',
+                                        
+                                    
+                                    ];
+
+                                    $(function(){
+                                        $("#busca4250 .form-control").typeahead({
+                                            hint: true,
+                                            highlight: true,
+                                            minLength: 1
+                                        },
+                                        {
+                                            name: 'perguntas4250',
+                                            source: autocompleteBusca(perguntas4250)
+                                        });                                    
+                                    });
+                            </script>
+
+                            <form name="formBusca4250" id="formBusca4250">
+                                <div class="form-group">
+                                    <label for="TipoAtendimento" class="mb-0"></label>
+                                    <select class="form-control" id="selectTipoAtendimento4250" name="selectTipoAtendimento">
+                                        <option value="0">Escolha aqui o tema relacionado com sua dúvida</option>
+                                        
+                                            <option value="17002">Restituir ou Compensar Tributos Diretos Pessoa Física - serviço</option>
+                                        
+                                    </select>
+                                </div>
+                            
+
+                                <div class="d-flex flex-row-reverse bd-highlight no-gutters">
+                                    <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                                        <div class="input-group mb-4 border rounded-pill p-1" id="busca4250">
+                                            
+                                                <input type="hidden" id="pgDivListarPerguntas4250" name="pgDivListarPerguntas4250" value="perguntasFreqBusca_div.cfm">
+                                                <input type="hidden" id="codAssunto" name="codAssunto" value="4250">
+                                                <input type="search" id="buscaPergunta" name="buscaPergunta" placeholder="Digite palavras-chaves para filtrar:" aria-describedby="btnBuscar4250" class="form-control bg-none border-0">
+                                                <div class="input-group-append border-0">
+                                                <button id="btnBuscar4250" name="btnBuscar4250" type="submit" class="btn btn-link text-success"><i class="fa fa-search"></i></button>
+                                                </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <script>   
+                                $(document).ready(function(){
+
+                                    $("#selectTipoAtendimento4250").change(function(){
+                                        $(this).closest("form").find("#buscaPergunta").typeahead('val','');
+                                        resultadoPerguntasFreq();
+                                    });
+                                
+                                    $("#btnBuscar4250").click(function(){ 
+                                        resultadoPerguntasFreq();
+                                        return false;
+                                    });
+
+                                    function resultadoPerguntasFreq(){                                 
+                                        var dadosForm = $('#formBusca4250').serialize();                                       
+                                        $.ajax({
+                                            type: "post",
+                                            url: $("#pgDivListarPerguntas4250").val(), // pagina de acao
+                                            data: dadosForm, // variaveis de form
+                                            //dataType: "json",		 
+                                            success: function( objResponse ){
+                                                // Check to see if request was successful.
+                                                
+                                                objResponse = objResponse.replace(/^\s+|\s+$/g,"");
+                                                
+                                                if (objResponse) {
+                                                    $("#divListarPerguntas4250").html(objResponse);
+                                                    return false;
+                                                }else{
+                                                    $("#divListarPerguntas4250").html("Oops! Nenhum resultado encontrado para a busca.");
+                                                }
+                                            },
+                                            error: function( objRequest, strError ){
+                                                $("#divListarPerguntas4250").html("Erro ao exibir perguntas frequentes!!");
+                                            }
+                                        });		
+                                    }
+                                });
+                            </script>
+
+                            <div id="divListarPerguntas4250"></div> 
+
+                        </div>
+                    </div>            
+                </div>
+                
+                </div>
+</body></html>

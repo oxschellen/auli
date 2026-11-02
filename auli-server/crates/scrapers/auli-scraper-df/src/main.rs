@@ -2,17 +2,21 @@
 // Sem headless: a listagem ColdFusion embute a árvore inteira do catálogo (472 serviços) como um
 // objeto JS; cada `servico.cfm` traz a descrição rica num accordion.
 //
+// As FAQs vêm de duas fontes — as Perguntas e Respostas do Portal da Receita (mesmo host) e as do sistema
+// do ISS/NFS-e — `faqs.rs`.
+//
 // Conhece UMA entidade ("df"); não lê o registry. Grava o snapshot de serviços (v3); a derivação
 // dos artefatos é o `auli-collections df`.
 
 mod df;
+mod faqs;
 
 /// A entidade que este scraper conhece (um crate binário por entidade).
 pub const ENTITY: &str = "df";
 const DATA_DIR: &str = "../data/df/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-df [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-df [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -28,8 +32,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
         }
     }
 

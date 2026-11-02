@@ -281,6 +281,8 @@ fn fetch_api(
     }
     let body = auli_scraper_kit::http::get_via_curl(
         url,
+        // D-FROTA-UA: UA de navegador por legado, nunca testado com o AuliBot neste host.
+        auli_scraper_kit::USER_AGENT,
         &GetOpts {
             log_prefix: "RS",
             headers: &[
