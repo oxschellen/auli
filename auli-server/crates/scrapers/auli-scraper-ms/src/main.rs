@@ -2,9 +2,12 @@
 // WordPress server-rendered). Perfis são os públicos; categorias são as classes; os links
 // canônicos apontam para o Portal Único ms.gov.br (D-MS1/D-MS2).
 //
-// Conhece UMA entidade ("ms"); não lê o registry. Grava o snapshot de serviços (v3); a derivação
-// dos artefatos é o `auli-collections ms`.
+// As FAQs vêm de outro host, a FAQ da Fale Conosco MS (API JSON) — `faqs.rs`.
+//
+// Conhece UMA entidade ("ms"); não lê o registry. Grava os snapshots de serviços (v3) e de FAQs; a
+// derivação dos artefatos é o `auli-collections ms`.
 
+mod faqs;
 mod ms;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
@@ -12,7 +15,7 @@ pub const ENTITY: &str = "ms";
 const DATA_DIR: &str = "../data/ms/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-ms [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-ms [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -28,8 +31,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
         }
     }
 
