@@ -238,7 +238,7 @@ fn push_servico(
         id: 0, // renumerado per-arquivo pelo process
         tipo: publico.to_string(),
         classe: categoria.to_string(),
-        orgao: "SEF/MG".to_string(),
+        orgao: "SEF-MG".to_string(),
         link: format!("{}/csm?id=catalog_item_info&sys_id={}", BASE, item.sys_id),
         titulo,
         descricao,
