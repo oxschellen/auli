@@ -12,6 +12,9 @@
 //     pergunta é localizada pela âncora que o índice anuncia e, sem ela, pelo número (`parse_respostas`);
 //   - o índice é a autoridade da estrutura: dele vêm a lista de perguntas, a seção e o sub-tópico, que a
 //     página de respostas repete (com "• ") ou omite.
+//
+// A 2ª fonte, a base "SRE - Dúvidas Frequentes" do CSM, é o `csm.rs`; aqui ela só entra no acervo e na
+// árvore, depois dos módulos do SPED.
 
 use std::collections::BTreeSet;
 use std::path::Path;
@@ -82,14 +85,19 @@ pub fn run(data_dir: &str, use_cache: bool) -> Result<()> {
             perguntas,
         });
     }
-    let faqs = consolidar(&com_faq)?;
+    let mut faqs = consolidar(&com_faq)?;
+    let csm = crate::csm::coletar(data_dir, use_cache)?;
+    faqs.extend(crate::csm::faqs(&csm));
+    println!("MG FAQs: {} perguntas no total", faqs.len());
 
     // Atômico pelo mesmo motivo do RS, do SC, do PR e do SP: a árvore não tem outra fonte (o snapshot
     // achatado não a reconstrói) e é o único artefato de coleta que o frontend lê direto.
+    let mut arvore = montar_arvore(&com_faq);
+    arvore.children.push(crate::csm::arvore(&csm));
     let tree_path = format!("{data_dir}/{}-faqs-tree.json", crate::ENTITY);
     auli_contract::arquivo::escrever_atomico(
         Path::new(&tree_path),
-        &serde_json::to_string_pretty(&montar_arvore(&com_faq))?,
+        &serde_json::to_string_pretty(&arvore)?,
     )?;
     println!("Wrote {tree_path} (árvore de FAQ p/ o frontend)");
 
@@ -269,7 +277,7 @@ fn parse_indice(html: &str) -> Result<Vec<Entrada>> {
     let mut fim_da_anterior = 0;
     for tabela in TABELA_RE.find_iter(c) {
         // Sem texto entre duas tabelas, a seção segue a mesma.
-        if let Some(titulo) = html_para_texto(&c[fim_da_anterior..tabela.start()])
+        if let Some(titulo) = html_para_texto(&c[fim_da_anterior..tabela.start()], BASE)
             .lines()
             .last()
         {
@@ -353,7 +361,7 @@ fn parse_respostas(html: &str, entradas: &[Entrada]) -> Result<Vec<Pergunta>> {
             c[0].to_string()
         }
     });
-    let texto = html_para_texto(&marcado);
+    let texto = html_para_texto(&marcado, BASE);
     let linhas: Vec<&str> = texto.lines().collect();
     let sem_marca: Vec<String> = linhas
         .iter()
@@ -486,26 +494,27 @@ static BLOCO_RE: LazyLock<Regex> = LazyLock::new(|| {
 });
 static CELULA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</?t[dh]\b[^>]*>").unwrap());
 static TAG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<[^>]+>").unwrap());
+static NUMERICA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"&#(\d+);").unwrap());
 
 /// HTML → texto, na convenção da frota: `<a href="url">texto</a>` vira `texto "url"` (relativo ganha o
-/// host), tag de bloco vira quebra de linha, célula vira espaço, linhas vazias saem. Toda tag sai, como
+/// `base`), tag de bloco vira quebra de linha, célula vira espaço, linhas vazias saem. Toda tag sai, como
 /// no SP (D-MGFAQ-6): nas 17 páginas de 01/11/2026 não há `<` cru (o `>` do texto vem como `&gt;`), e
 /// as entidades só são decodificadas depois.
-fn html_para_texto(s: &str) -> String {
+pub(crate) fn html_para_texto(s: &str, base: &str) -> String {
     let com_links = LINK_RE.replace_all(s, |c: &regex::Captures| {
-        let href = decode_entities(c[1].trim());
+        let href = decodificar(c[1].trim());
         let texto = uma_linha(&c[2]);
         if href.is_empty() || href.starts_with('#') || href.starts_with("javascript:") {
             texto
         } else if texto.is_empty() {
-            format!("\"{}\"", absoluta(&href))
+            format!("\"{}\"", absoluta_em(base, &href))
         } else {
-            format!("{texto} \"{}\"", absoluta(&href))
+            format!("{texto} \"{}\"", absoluta_em(base, &href))
         }
     });
     let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
     let com_celulas = CELULA_RE.replace_all(&com_quebras, " ");
-    decode_entities(&TAG_RE.replace_all(&com_celulas, ""))
+    decodificar(&TAG_RE.replace_all(&com_celulas, ""))
         .lines()
         .map(clean)
         .filter(|l| !l.is_empty())
@@ -514,13 +523,29 @@ fn html_para_texto(s: &str) -> String {
 }
 
 /// Um trecho curto (texto de link, linha do índice) numa linha só, sem tag.
-fn uma_linha(s: &str) -> String {
-    clean(&decode_entities(&TAG_RE.replace_all(s, "")))
+pub(crate) fn uma_linha(s: &str) -> String {
+    clean(&decodificar(&TAG_RE.replace_all(s, "")))
+}
+
+/// As entidades do kit mais as numéricas decimais, que o editor do CSM emite (`&#34;`, `&#61;`, `&#43;`)
+/// e o SPED não (0 nas 17 páginas). As numéricas vão antes: nenhum `&amp;#` nos 62 artigos de 02/11/2026.
+fn decodificar(s: &str) -> String {
+    let numericas = NUMERICA_RE.replace_all(s, |c: &regex::Captures| {
+        c[1].parse()
+            .ok()
+            .and_then(char::from_u32)
+            .map_or_else(|| c[0].to_string(), String::from)
+    });
+    decode_entities(&numericas)
 }
 
 fn absoluta(href: &str) -> String {
+    absoluta_em(BASE, href)
+}
+
+fn absoluta_em(base: &str, href: &str) -> String {
     if href.starts_with('/') {
-        format!("{BASE}{href}")
+        format!("{base}{href}")
     } else {
         href.to_string()
     }
@@ -1034,9 +1059,22 @@ mod tests {
     fn html_para_texto_absolutiza_tira_tags_e_decodifica_depois() {
         assert_eq!(
             html_para_texto(
-                r#"<p>Veja o <a href="/spedmg/nfe/Obrigatoriedade/">cronograma</a>.</p><table><tr><td>CST</td><td>53</td></tr></table><p>&lt;b&gt; e &gt;A Sefaz&nbsp;Virtual</p>"#
+                r#"<p>Veja o <a href="/spedmg/nfe/Obrigatoriedade/">cronograma</a>.</p><table><tr><td>CST</td><td>53</td></tr></table><p>&lt;b&gt; e &gt;A Sefaz&nbsp;Virtual</p>"#,
+                BASE
             ),
             "Veja o cronograma \"https://portalsped.fazenda.mg.gov.br/spedmg/nfe/Obrigatoriedade/\".\nCST 53\n<b> e >A Sefaz Virtual"
+        );
+    }
+
+    #[test]
+    fn html_para_texto_decodifica_as_numericas_do_csm_e_absolutiza_no_base_dado() {
+        // Do texto do CSM (02/11/2026): `&#34;` e `&#61;` no corpo e no href.
+        assert_eq!(
+            html_para_texto(
+                r#"<p>A rejeição &#34;690&#34; (indIEDest&#61;2) — <a href="/csm?id&#61;kb_search">busca</a> e <a href="http://x.gov.br/a.aspx?t&#61;r&amp;c&#61;7">consulta</a></p>"#,
+                "https://atendimento2.fazenda.mg.gov.br"
+            ),
+            "A rejeição \"690\" (indIEDest=2) — busca \"https://atendimento2.fazenda.mg.gov.br/csm?id=kb_search\" e consulta \"http://x.gov.br/a.aspx?t=r&c=7\""
         );
     }
 }

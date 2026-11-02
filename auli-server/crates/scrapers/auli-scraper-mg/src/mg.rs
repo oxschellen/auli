@@ -34,11 +34,11 @@ use ureq::Agent;
 
 use auli_contract::ServicoPerPublico as Servico;
 
-const BASE: &str = "https://atendimento2.fazenda.mg.gov.br";
+pub(crate) const BASE: &str = "https://atendimento2.fazenda.mg.gov.br";
 
 /// sys_id do Service Portal "csm" (header `X-Portal` + param `portal_id`). Sem ele a page API
 /// responde sem os dados dos widgets. Estável enquanto a SEF-MG não recriar o portal.
-const PORTAL_ID: &str = "89275a53cb13020000f8d856634c9c51";
+pub(crate) const PORTAL_ID: &str = "89275a53cb13020000f8d856634c9c51";
 
 /// Pausa entre requisições de rede (educação com o portal; não se aplica a cache hits).
 const FETCH_DELAY: Duration = Duration::from_millis(200);
@@ -359,7 +359,7 @@ fn fetch_page(
 
 /// Acha, na árvore `containers/rows/columns/widgets` da page API, o primeiro widget com o `id`
 /// dado e devolve o seu `data`.
-fn widget_data<'a>(page: &'a Value, widget_id: &str) -> Option<&'a Value> {
+pub(crate) fn widget_data<'a>(page: &'a Value, widget_id: &str) -> Option<&'a Value> {
     fn walk<'a>(v: &'a Value, widget_id: &str) -> Option<&'a Value> {
         match v {
             Value::Object(map) => {

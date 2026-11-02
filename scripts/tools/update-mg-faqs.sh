@@ -3,8 +3,9 @@
 #   re-scrape → deriva a árvore → re-vetoriza os packs → sobe o servidor.
 #
 # Irmão do `update-sc-faqs.sh`, do `update-pr-faqs.sh` e do `update-sp-faqs.sh`: aqui também não há cache
-# a apagar. A coleta das FAQs do MG vai SEMPRE à rede (D-MGFAQ-10); o cache em data/mg/raw/cache/faqs/ só
-# é lido com `--usecache`. (Os SERVIÇOS do MG são cache-first: este script não os toca.)
+# a apagar. A coleta das FAQs do MG — o SPED e a base "SRE - Dúvidas Frequentes" do CSM — vai SEMPRE à
+# rede (D-MGFAQ-10); o cache em data/mg/raw/cache/faqs/ só é lido com `--usecache`. (Os SERVIÇOS do MG
+# são cache-first: este script não os toca.)
 #
 # Uso:   scripts/tools/update-mg-faqs.sh              # scrape + rebuild + sobe servidor
 #        scripts/tools/update-mg-faqs.sh --no-serve   # para antes de subir o servidor
@@ -41,9 +42,10 @@ ANTES=0
 echo "🕸️  scrapeando faqs do MG…"
 ( cd "$SERVER" && cargo run --release -p auli-scraper-mg -- faqs )
 
-# 2. Guard de completude. As guardas do scraper (`faqs.rs`, D-MGFAQ-5) param ANTES de gravar quando
-#    uma chamada falha, o índice e a página de respostas não batem, um índice com markup novo deixa de
-#    ser reconhecido ou o total é zero. Não pegam um módulo cujo índice voltou com menos perguntas do que
+# 2. Guard de completude. As guardas do scraper (`faqs.rs`, D-MGFAQ-5; `csm.rs`, D-MGFAQ-13 a 15) param
+#    ANTES de gravar quando uma chamada falha, o índice e a página de respostas não batem, um índice com
+#    markup novo deixa de ser reconhecido, a busca do CSM traz menos artigos do que conta, aparece uma
+#    categoria nova ou o total é zero. Não pegam um módulo cujo índice voltou com menos perguntas do que
 #    tinha (ou cujo menu perdeu a entrada "Perguntas…") — o portal pode ter tirado do ar, e daí em diante
 #    tudo é derivação fiel até o servidor subir servindo menos do que existe.
 DEPOIS="$(jq '.coleta.items | length' "$SNAPSHOT")"
@@ -79,7 +81,7 @@ echo "🌳 derivando artefatos do snapshot (árvore docs/faqs)…"
 # 5. Re-vetoriza só as FAQs (rodada parcial: serviços e pareceres ficam como estão no manifesto).
 #    Se o snapshot de serviços tiver mudado sem re-vetorizar, o boot recusa nomeando `servicos` —
 #    aí é `scripts/build-packs.sh mg servicos`.
-echo "📦 re-vetorizando as FAQs do MG (~150 vetores)…"
+echo "📦 re-vetorizando as FAQs do MG (~310 vetores)…"
 "$ROOT/scripts/build-packs.sh" mg faqs
 
 # 6. Sobe o servidor. `--no-build`: o passo 3 já compilou o mesmo binário no mesmo target.
