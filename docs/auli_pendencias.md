@@ -1656,6 +1656,47 @@ no acervo.
 
 ---
 
+## 43. RJ: o portal da SEFAZ-RJ barra coleta automatizada — serviços parados em 25/07, FAQs em espera (aberta — 2026-11-02)
+
+**Fato (02/11/2026, 9 requisições com 1 s entre elas).** Os três hosts — `portal.`, `portal2.` e
+`www.fazenda.rj.gov.br` — respondem 200 com uma página que não é a pedida, em qualquer caminho, inclusive o
+`robots.txt` (não há como lê-lo):
+
+| UA | Resposta |
+|---|---|
+| AuliBot | página de "IP bloqueado" (1,6 KB, "bloqueia acessos provenientes desses endereços IP"). A mensagem engana: com outro UA, o mesmo IP recebe outra coisa |
+| o do kit (Firefox) | desafio JavaScript da proteção anti-robô na frente do portal (~45 KB, scripts `/TSPD/`, "Please enable JavaScript to view the page content") |
+
+Em 25/07/2026 a mesma URL do catálogo (`portal2.fazenda.rj.gov.br/nossos-servicos/`) veio normal com o UA do
+kit — é o cache do [`rj.rs`](auli-server/crates/scrapers/auli-scraper-rj/src/rj.rs), 62 KB.
+
+**Efeito.**
+
+1. **Serviços:** o acervo segue com os 91 de 25/07. A próxima coleta recebe o desafio; as guardas do `rj.rs`
+   (mínimo de 12 categorias e 60 ocorrências) devem pará-la com `Err` antes de gravar — esperado, não rodado.
+2. **FAQs:** a sondagem não chegou a nenhuma página. Passar exigiria executar o JavaScript do desafio
+   (navegador automatizado), isto é, contornar uma proteção anti-robô explícita — fora de questão sem
+   autorização.
+
+**O que se sabe das FAQs sem tocar o portal** (busca na web, 02/11/2026): não há página central; o conteúdo
+parece espalhado pelo WordPress multisite (subsites conhecidos: `/icms/`, `/consulta-tributaria/`,
+`/ouvidoria/`, `/junta-revisao-fiscal/`):
+
+- uma busca prévia de perguntas frequentes no "Fale Conosco" → "Legislação Tributária", por setor, tributo e
+  assunto ([gov.br, serviço 17187](https://www.gov.br/en/state-services/servico_estadual?id=17187));
+- um link "Dúvidas Frequentes" no bloco de "Fale Conosco" das portarias da SUPTRIB;
+- perguntas e respostas em páginas de subsite (`/icms/gia-icms/`);
+- PDFs em perguntas e respostas (cartilha do MEI, Manual NF-e) — PDF ficou fora nas outras entidades.
+
+**Caminhos.**
+
+1. Pedir à SEFAZ-RJ que libere o AuliBot identificado na proteção, ou que indique uma fonte aberta para o
+   catálogo e as FAQs — o precedente é a autorização da SEFAZ-RS (D-LEG-17).
+2. Enquanto isso, o mantenedor pode mapear as FAQs no navegador (uso humano) para o estudo ficar pronto.
+3. Reavaliar de tempos em tempos com 1 GET do catálogo pelo UA do kit — a proteção pode ser temporária.
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO) — ✅ resolvida em 01/11/2026
 
 Política da frota: separador sigla–UF sempre `-`. O `orgao` do **MG** passou de `"SEF/MG"` para
