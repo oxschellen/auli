@@ -12,6 +12,15 @@
 //!
 //! Guards D-RJ5: a raspagem falha alto (nunca degrada) se vier página capada — na descoberta o
 //! portal devolveu 1× a página vazia. Pela mesma razão, o cache só é gravado DEPOIS dos guards.
+//!
+//! ⚠️ ACESSO (D-RJ-WAF, 02/11/2026, docs/auli_pendencias.md §43): o portal passou a barrar coleta
+//! automatizada em dois portões — UA de robô (AuliBot, curl, `HeadlessChrome`) recebe uma página de
+//! "IP bloqueado" (o IP é o mesmo do navegador que abre a página), e qualquer outro UA recebe um
+//! desafio JavaScript da proteção anti-robô. Só um navegador que execute o desafio recebe o
+//! catálogo. Decisão do mantenedor: buscar a página por um Chromium headless — a única exceção da
+//! frota à regra "sem navegador headless" —, uma navegação por rodada. Antes, um GET simples pelo
+//! `ureq`: se o portal voltar a servir a página, o Chromium nem abre (o critério para desfazer a
+//! exceção).
 
 use std::collections::{HashMap, HashSet};
 use std::time::Duration;
@@ -88,18 +97,52 @@ pub fn scrape(
     Ok((catalogo.items, publicos_ordem))
 }
 
-/// Busca (ou lê do cache) a página do catálogo. Diferente do padrão dos outros scrapers, o fetch
-/// NÃO grava o cache — quem grava é o [`scrape`], depois dos guards (D-RJ5). Retorna
-/// `(html, veio_do_cache)`.
+/// Busca a página do catálogo: rede sempre; o cache só é lido com `--usecache`, e miss é erro
+/// (D-RJ-WAF-5 — o cache-first escondeu meses de bloqueio). O fetch NÃO grava o cache — quem grava
+/// é o [`scrape`], depois dos guards (D-RJ5). Retorna `(html, veio_do_cache)`.
 fn fetch_catalogo(data_dir: &str, use_cache: bool) -> Result<(String, bool)> {
-    if let Some(cached) =
-        auli_scraper_kit::cache::read_or_bail(data_dir, "servicos", CATALOGO_URL, use_cache)?
-    {
-        return Ok((cached, true));
+    if use_cache {
+        let html = auli_scraper_kit::cache::read(data_dir, "servicos", CATALOGO_URL)
+            .ok_or_else(|| anyhow!("cache miss para {CATALOGO_URL} (modo --usecache, sem rede)"))?;
+        return Ok((html, true));
     }
+    Ok((buscar_catalogo()?, false))
+}
+
+/// UA de navegador do Chromium (D-RJ-WAF): o headless novo se anuncia `HeadlessChrome`, que o
+/// portal barra junto com o AuliBot e o curl.
+const UA_NAVEGADOR: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
+/// Quanto o Chromium espera o menu aparecer — o desafio executa e recarrega a página (3,5 s medidos).
+const ESPERA_DO_MENU: Duration = Duration::from_secs(45);
+
+/// O que o portal devolveu. Só nomeia o erro: quem decide se a página serve são o parser e os
+/// guards D-RJ5 (D-RJ-WAF-4) — `TSPD` não serve de critério, a proteção injeta o script dela também
+/// na página boa.
+#[derive(Debug, PartialEq)]
+enum Resposta {
+    /// A página de "IP bloqueado" que o portal dá a UA de robô (AuliBot, curl, `HeadlessChrome`).
+    Bloqueio,
+    /// O desafio JavaScript da proteção anti-robô, ainda não resolvido.
+    Desafio,
+    Pagina,
+}
+
+fn classificar(html: &str) -> Resposta {
+    if html.contains("bloqueia acessos provenientes") {
+        Resposta::Bloqueio
+    } else if html.contains("Please enable JavaScript") {
+        Resposta::Desafio
+    } else {
+        Resposta::Pagina
+    }
+}
+
+/// Primeiro um GET simples, com o UA do kit: é o critério de saída da D-RJ-WAF — se o portal voltar a
+/// servir a página sem o desafio, o navegador nem abre. Senão, o Chromium.
+fn buscar_catalogo() -> Result<String> {
     let agent =
         auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
-    let body = auli_scraper_kit::http::get_string(
+    let html = auli_scraper_kit::http::get_string(
         &agent,
         CATALOGO_URL,
         &GetOpts {
@@ -107,7 +150,94 @@ fn fetch_catalogo(data_dir: &str, use_cache: bool) -> Result<(String, bool)> {
             ..Default::default()
         },
     )?;
-    Ok((body, false))
+    match classificar(&html) {
+        Resposta::Pagina => {
+            eprintln!(
+                "⚠️  RJ: o portal serviu o catálogo sem o desafio JavaScript — a exceção D-RJ-WAF (Chromium) pode cair."
+            );
+            Ok(html)
+        }
+        r => {
+            println!("RJ: GET simples → {r:?}; buscando pelo Chromium (D-RJ-WAF)");
+            buscar_com_chromium()
+        }
+    }
+}
+
+/// Uma navegação pelo Chromium headless: espera o menu de categorias e devolve o HTML renderizado.
+fn buscar_com_chromium() -> Result<String> {
+    use headless_chrome::{Browser, LaunchOptions};
+    use std::ffi::OsStr;
+
+    let chrome = caminho_do_chromium()?;
+    println!("RJ: Chromium {}", chrome.display());
+    let ua = format!("--user-agent={UA_NAVEGADOR}");
+    let opcoes = LaunchOptions::default_builder()
+        .path(Some(chrome))
+        .headless(true)
+        .window_size(Some((1366, 768)))
+        .idle_browser_timeout(Duration::from_secs(120))
+        .args(vec![OsStr::new(&ua), OsStr::new("--lang=pt-BR")])
+        .build()
+        .map_err(|e| anyhow!("opções do Chromium: {e}"))?;
+    // O `Browser` fecha o processo no drop, inclusive no caminho de erro (D-RJ-WAF-7).
+    let browser = Browser::new(opcoes)?;
+    let tab = browser.new_tab()?;
+    tab.navigate_to(CATALOGO_URL)?;
+    let menu = tab.wait_for_element_with_custom_timeout("a[href^='#']", ESPERA_DO_MENU);
+    let html = tab.get_content()?;
+    match (classificar(&html), menu) {
+        (Resposta::Pagina, Ok(_)) => Ok(html),
+        (Resposta::Bloqueio, _) => {
+            bail!(
+                "o portal barrou o Chromium pelo UA (a página de \"IP bloqueado\") — o UA_NAVEGADOR mudou?"
+            )
+        }
+        (r, _) => bail!(
+            "o desafio JavaScript não se resolveu em {}s ({r:?}, {} B) — a proteção passou a detectar o Chromium headless?",
+            ESPERA_DO_MENU.as_secs(),
+            html.len()
+        ),
+    }
+}
+
+/// O Chromium do Playwright (`npx playwright install chromium`): `AULI_CHROME_PATH`, se definida;
+/// senão a versão mais nova em `~/.cache/ms-playwright/` — o diretório leva o número da versão e muda
+/// a cada instalação, então não vale fixar o caminho.
+fn caminho_do_chromium() -> Result<std::path::PathBuf> {
+    if let Some(p) = std::env::var_os("AULI_CHROME_PATH") {
+        return Ok(p.into());
+    }
+    let raiz = std::path::Path::new(&std::env::var("HOME")?).join(".cache/ms-playwright");
+    let nomes: Vec<String> = std::fs::read_dir(&raiz)
+        .map(|d| {
+            d.filter_map(|e| e.ok()?.file_name().into_string().ok())
+                .collect()
+        })
+        .unwrap_or_default();
+    escolher_chromium(&nomes)
+        .map(|n| raiz.join(n).join("chrome-linux64/chrome"))
+        .filter(|p| p.is_file())
+        .ok_or_else(|| {
+            anyhow!(
+                "sem Chromium para o RJ (D-RJ-WAF): defina AULI_CHROME_PATH ou rode `npx playwright install chromium`"
+            )
+        })
+}
+
+/// O diretório `chromium-<N>` de maior `N`. O `chromium_headless_shell-*` fica de fora: é outro
+/// binário, o headless antigo.
+fn escolher_chromium(nomes: &[String]) -> Option<&str> {
+    nomes
+        .iter()
+        .filter_map(|n| {
+            Some((
+                n.strip_prefix("chromium-")?.parse::<u32>().ok()?,
+                n.as_str(),
+            ))
+        })
+        .max()
+        .map(|(_, n)| n)
 }
 
 /// Faz o parse da página inteira: menu → categorias na ordem; seção de cada categoria → itens;
@@ -530,5 +660,35 @@ mod tests {
         assert_eq!(canonical("#Cadastros"), None);
         assert_eq!(canonical("javascript:void(0)"), None);
         assert_eq!(canonical("mailto:x@y.br"), None);
+    }
+
+    // Recortes das respostas reais de 02/11/2026 (D-RJ-WAF): a página de "IP bloqueado" que o AuliBot
+    // recebe; o desafio JavaScript que o UA do kit recebe (sem o script ofuscado nem a imagem e o
+    // áudio do captcha); e o começo do catálogo que o Chromium recebe — com o script `TSPD` que a
+    // proteção injeta também na página boa.
+    const BLOQUEIO: &str = include_str!("../tests/fixtures/rj-bloqueio.html");
+    const DESAFIO: &str = include_str!("../tests/fixtures/rj-desafio.html");
+    const PAGINA_INICIO: &str = include_str!("../tests/fixtures/rj-pagina-inicio.html");
+
+    #[test]
+    fn classifica_bloqueio_desafio_e_pagina_mesmo_com_tspd() {
+        assert_eq!(classificar(BLOQUEIO), Resposta::Bloqueio);
+        assert_eq!(classificar(DESAFIO), Resposta::Desafio);
+        assert!(PAGINA_INICIO.contains("TSPD"));
+        assert_eq!(classificar(PAGINA_INICIO), Resposta::Pagina);
+    }
+
+    #[test]
+    fn chromium_mais_novo_do_playwright_sem_o_headless_shell() {
+        let nomes: Vec<String> = [
+            "chromium-1208",
+            "chromium_headless_shell-1300",
+            "chromium-1248",
+            "ffmpeg-1013",
+        ]
+        .map(String::from)
+        .to_vec();
+        assert_eq!(escolher_chromium(&nomes), Some("chromium-1248"));
+        assert_eq!(escolher_chromium(&["ffmpeg-1011".to_string()]), None);
     }
 }

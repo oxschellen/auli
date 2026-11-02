@@ -1656,7 +1656,7 @@ no acervo.
 
 ---
 
-## 43. RJ: o portal da SEFAZ-RJ barra coleta automatizada — serviços parados em 25/07, FAQs em espera (aberta — 2026-11-02)
+## 43. RJ: o portal da SEFAZ-RJ barra coleta automatizada — serviços de volta pela D-RJ-WAF, FAQs em espera (aberta — 2026-11-02)
 
 **Fato (02/11/2026, 9 requisições com 1 s entre elas).** Os três hosts — `portal.`, `portal2.` e
 `www.fazenda.rj.gov.br` — respondem 200 com uma página que não é a pedida, em qualquer caminho, inclusive o
@@ -1673,12 +1673,10 @@ kit — é o cache do [`rj.rs`](auli-server/crates/scrapers/auli-scraper-rj/src/
 
 **Efeito.**
 
-1. **Serviços:** o acervo segue com os 91 de 25/07. A coleta recebe o desafio e para com `Err` antes de gravar —
-   confirmado em 02/11/2026 com o cache tirado do caminho: "menu de categorias não encontrado (nenhuma âncora
-   interna válida) — markup mudou?"; snapshot e cache de 25/07 intactos.
-2. **FAQs:** a sondagem não chegou a nenhuma página. Passar exigiria executar o JavaScript do desafio
-   (navegador automatizado), isto é, contornar uma proteção anti-robô explícita — fora de questão sem
-   autorização.
+1. **Serviços:** a coleta pelo `ureq` recebe o desafio e para com `Err` antes de gravar — confirmado em
+   02/11/2026 com o cache tirado do caminho: "menu de categorias não encontrado (nenhuma âncora interna
+   válida) — markup mudou?"; snapshot e cache de 25/07 intactos. Resolvido pela D-RJ-WAF (abaixo).
+2. **FAQs:** a sondagem não chegou a nenhuma página — em espera (a D-RJ-WAF cobre só o catálogo).
 
 **O que se sabe das FAQs sem tocar o portal** (busca na web, 02/11/2026): não há página central; o conteúdo
 parece espalhado pelo WordPress multisite (subsites conhecidos: `/icms/`, `/consulta-tributaria/`,
@@ -1690,12 +1688,25 @@ parece espalhado pelo WordPress multisite (subsites conhecidos: `/icms/`, `/cons
 - perguntas e respostas em páginas de subsite (`/icms/gia-icms/`);
 - PDFs em perguntas e respostas (cartilha do MEI, Manual NF-e) — PDF ficou fora nas outras entidades.
 
-**Caminhos.**
+**Decisão D-RJ-WAF (mantenedor, 02/11/2026): o catálogo de serviços do RJ vem por um Chromium headless.**
+Sondagem do mantenedor com o Playwright: o Chromium completo, em modo headless novo e com UA de Chrome,
+executa o desafio e recebe o catálogo em ~3,5 s, idêntico ao modo com janela. Sem pedido à SEFAZ-RJ.
 
-1. Pedir à SEFAZ-RJ que libere o AuliBot identificado na proteção, ou que indique uma fonte aberta para o
-   catálogo e as FAQs — o precedente é a autorização da SEFAZ-RS (D-LEG-17).
-2. Enquanto isso, o mantenedor pode mapear as FAQs no navegador (uso humano) para o estudo ficar pronto.
-3. Reavaliar de tempos em tempos com 1 GET do catálogo pelo UA do kit — a proteção pode ser temporária.
+- **Só o `auli-scraper-rj`, só a página do catálogo, uma navegação por rodada** — a única exceção da frota à
+  regra "sem navegador headless". O `check-scraper-boundary.sh` barra `headless_chrome` em qualquer outro crate.
+- **Critério para desfazer, automático:** cada rodada tenta antes um GET simples pelo `ureq`; se o portal voltar
+  a servir a página, o Chromium nem abre (e o scraper avisa que a exceção pode cair).
+- **O parser decide se a página serve** (os guards D-RJ5 não mudaram). `TSPD` não é critério: a proteção injeta
+  o script dela também na página boa.
+- **Limite:** o corpo do desafio traz um captcha ("Qual é o Código da Imagem?") para quem não executa
+  JavaScript. Se o portal passar a exigi-lo, a exceção para ali — captcha não se resolve.
+- **Chromium:** o do Playwright (`npx playwright install chromium`), a versão mais nova em
+  `~/.cache/ms-playwright/`, ou `AULI_CHROME_PATH`.
+- **Operação:** a coleta roda pelo `atualizar-servicos.sh rj`, liberado numa regra de permissão local do
+  mantenedor (o modo automático do Claude Code barra o comando sem ela).
+- **Rodada de 02/11/2026:** o GET simples recebeu a página de bloqueio; o Chromium recebeu o catálogo — 14
+  categorias, 91 serviços. Em relação a 25/07, só o link do "SCDI – Representante Legal" mudou
+  (`scdi.fazenda.rj.gov.br/projetoCDI/` → `portal.fazenda.rj.gov.br/scdi/`). `--usecache` reproduz o snapshot.
 
 ---
 
