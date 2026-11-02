@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS e no MT, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT e no GO, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -86,7 +86,7 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ce** | SEFAZ-CE / Ceará | SPA Sydle ONE; API JSON `getChildren` (POST) | JSON | 1 | 382 | curta (~79) | direto | 6 | rustls |
 | **ms** | SEFAZ-MS / Mato Grosso do Sul | WordPress server-rendered; listagem própria, filtros `?usuario=`/`?categoria=`, `pp` alto | HTML | 5 | 276 | **vazia** (v1) | direto | 7 | rustls |
 | **mt** | SEFAZ-MT / Mato Grosso | X-Via Portal (SPA React); API pública `POST /v1/search/department`, sem token | JSON | 2 | 27 | rica (~168) | direto | 8 | rustls |
-| **go** | SEFAZ-GO / Goiás (Secr. Economia) | Portal Expresso (SPA); API WSO2 `servicosOrgaos/20`, token client_credentials anônimo | JSON | 1 | 94 | rica (inline) | direto | 8 | **curl (WAF JA3)** |
+| **go** | SEFAZ-GO / Goiás (Secr. Economia) | Portal Expresso (SPA); API WSO2 `servicosOrgaos/20`, token client_credentials anônimo | JSON | 1 | 103 | rica (inline) | direto | 8 | **curl (WAF JA3)** |
 | **pi** | SEFAZ-PI / Piauí | SPA Sydle ONE; API JSON `_search` (**GET**), catálogo "Carta de Serviços", Bearer anônimo do shell | JSON | 1 | 29 | curta | direto | 10 | rustls |
 | **am** | SEFAZ-AM / Amazonas | Next.js **App Router**; flight **RSC** (header `RSC: 1`), árvore `items`; público via 3 rotas de perfil | JSON (RSC) | 3 | 278 | curta (resumo) | direto | 9 | rustls |
 | **pa** | SEFA-PA / Pará | Catálogo estadual "paradigital" (API Prodepa/Spring); `GET /orgao/48` + `GET /servico/{id}`, anônimo | JSON | 3 | 34 | **rica** (etapas+requisitos) | direto | 8 | rustls |
@@ -330,7 +330,14 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **D-GO2** id=`go`, name/orgao=`SEFAZ-GO` (a SEFAZ virou Secretaria da Economia; o `go.txt` carrega
   a ponte). **D-GO4** Cenário A (público único "Serviços"); `classe` = categoria. **D-GO5** slug cru
   (braille `⠳` incluído). Identidade = `idServico`.
-- 94 serviços (120 ocorrências), 1 público. 8 testes. `ServicoRaw` direto.
+- 103 serviços (132 ocorrências, 02/11/2026), 1 público. 8 testes. `ServicoRaw` direto.
+- **FAQs** (`auli-scraper-go faqs`, `faqs.rs`): o SharePoint "Orientação Tributária"
+  (`orientacaotributaria.sefaz.go.gov.br`), outro host, sem o WAF do `api.go.gov.br` — `ureq` normal. A lista
+  "Perguntas Frequentes" num GET da `_api` anônima; o caminho da categoria (a REST só dá o nome do termo) vem do
+  formulário público do item (`DispForm.aspx`), um por termo (115). Link = o formulário de cada item; trilha
+  `Orientação Tributária (até <ano>) | <tema> | <termo>` (a FAQ está parada desde 2022); HTML do editor
+  SharePoint → texto como no SP. Sempre à rede. 1.298 perguntas (02/11/2026), 15 testes. Descoberta em
+  `docs/REGISTRO-scrapers.md#go-faqs`.
 
 ### pi — SEFAZ-PI (Piauí)
 

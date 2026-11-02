@@ -6,7 +6,11 @@
 // dos artefatos é o `auli-collections go`.
 //
 // Sobre o WAF/JA3 de api.go.gov.br e o uso de curl-subprocess na coleta, ver o header do go.rs.
+//
+// As FAQs vêm de outro host, o SharePoint "Orientação Tributária" da Economia-GO (`_api` anônima) —
+// `faqs.rs`.
 
+mod faqs;
 mod go;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
@@ -19,7 +23,7 @@ pub(crate) fn scraper_info() -> auli_contract::ScraperInfo {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-go [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-go [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -35,7 +39,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
-        other => return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into()),
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
+        other => {
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
+        }
     }
 
     println!(

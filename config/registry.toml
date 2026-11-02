@@ -155,7 +155,7 @@ name = "SEFAZ-GO"
 uf = "GO"
 state = "Goiás"
 prompt = "prompts/go.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "pi"
