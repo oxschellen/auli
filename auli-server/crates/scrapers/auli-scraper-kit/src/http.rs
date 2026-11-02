@@ -165,8 +165,12 @@ pub fn get_via_curl(url: &str, opts: &GetOpts) -> Result<String> {
 }
 
 /// Uma execução do curl. `-sS` (silencioso, mas mostra erro); `--fail-with-body` (status ≠ 0 em
-/// HTTP ≥ 400, ainda entregando o corpo no stdout p/ diagnóstico); UA padrão da frota; `Accept` e
+/// HTTP ≥ 400, ainda entregando o corpo no stdout p/ diagnóstico); UA de navegador do kit; `Accept` e
 /// headers extra do `GetOpts`. Args separados — sem shell.
+///
+/// D-FROTA-UA: o UA é fixo, sem parâmetro — o caminho curl só serve hosts com WAF (GO, DF, SE, RS),
+/// todos coletados assim desde antes da regra e nunca testados com o AuliBot; trocar pede recoleta
+/// verificada em cada um.
 fn run_curl_once(url: &str, opts: &GetOpts) -> Result<String> {
     let mut cmd = Command::new("curl");
     cmd.arg("-sS").arg("--fail-with-body");

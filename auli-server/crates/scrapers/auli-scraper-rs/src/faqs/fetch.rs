@@ -53,6 +53,9 @@ fn retry<T>(label: &str, mut op: impl FnMut() -> Result<T>) -> Result<T> {
 }
 
 /// Builds a ureq agent with a browser-like User-Agent. (Accept headers are set per request.)
+///
+/// D-FROTA-UA: UA de navegador por legado — anterior à regra "AuliBot por padrão" e nunca testado com
+/// o AuliBot neste portal. Trocar só com recoleta verificada (docs/auli_scraper_pendências.md §11).
 pub fn build_agent() -> Agent {
     auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, None)
 }

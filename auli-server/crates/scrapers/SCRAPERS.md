@@ -41,11 +41,18 @@ Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/
 | `kit::clean(s)` | zero-width + nbsp + squeeze | — |
 | `kit::clean_decoded(s)` / `kit::decode_entities(s)` | decode de entidades HTML + squeeze (pr/ba) — **sem** strip de zero-width | — |
 | `kit::cache::read_or_bail(dir, url, use_cache)` | cache-read + miss-vira-erro do `--usecache` | ce (terminador de paginação), rs-faqs (mensagem própria) |
-| `kit::USER_AGENT` | identidade de rede padrão (Firefox/124 Linux) | — (os 3 antigos Chrome eram cópia acidental; recoleta ao vivo confirmou ≡) |
+| `kit::USER_AGENT` | UA de navegador (Firefox/124 Linux) — a exceção da frota, só com motivo (D-FROTA-UA) | — (os 3 antigos Chrome eram cópia acidental; recoleta ao vivo confirmou ≡) |
 | `ScraperInfo::new(nome, versao)` (contrato) | substitui o `fn scraper_info()` boilerplate | — |
 
-**Regra do UA:** todo scraper usa `kit::USER_AGENT`. Uma divergência local (portal que exija outro
-UA) deve vir **com comentário do motivo** — senão é drift. As variantes *line-based* de limpeza
+**Regra do UA (D-FROTA-UA, decisão do mantenedor, 02/11/2026):** o padrão é o UA institucional
+`AuliBot/x.y (+url; contato)`, declarado em cada crate (como desde a D-PA-ROBOTS). O `kit::USER_AGENT`
+(navegador) só onde o portal exigir — o RJ responde ao AuliBot com "IP bloqueado"; o ServiceNow do MG
+omite o texto do artigo — ou por decisão registrada (robots restritivo: PE, BA, CE), sempre **com o
+motivo comentado no call site**. Os usos anteriores à regra, nunca testados com o AuliBot, ficam como
+estão e dizem isso no comentário; trocar só com recoleta verificada (lista em
+`docs/auli_scraper_pendências.md` §11). O `kit::http::get_via_curl` manda sempre o UA de navegador.
+
+As variantes *line-based* de limpeza
 (`clean_text`, que preserva quebras) têm semântica própria por formato e **ficam locais** (ba, mg,
 pr, rs).
 

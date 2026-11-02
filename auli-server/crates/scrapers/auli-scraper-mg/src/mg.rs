@@ -101,6 +101,8 @@ type ScrapeResult = (
     Vec<auli_contract::Publico>,
 );
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn std::error::Error>> {
+    // D-FROTA-UA: UA de navegador — mesmo host ServiceNow do CSM, que marca o AuliBot como robô
+    // (`isCrawlerBot`) e omite o texto do artigo (ver csm.rs); não testado na API dos serviços.
     let agent =
         auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 

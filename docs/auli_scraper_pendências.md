@@ -17,7 +17,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 8 | PA, ES, AL | Scraper estadual genérico, multi-órgão (D-PA-ACERVO, D-AL-1) | registrado, não implementado |
 | 9 | PI, RO | Scraper Sydle conecta-360 compartilhado (D-XX-SYDLE-COMPARTILHADO) | decisão de arquitetura em aberto |
 | 10 | kit | Camada 2 do kit (`validar_contagem`, `absolutize`, `cli::parse_args`) | TAREFA curta, não feita |
-| 11 | frota | User-Agent institucional para a frota toda | parcial — por entidade |
+| 11 | frota | User-Agent: AuliBot por padrão (D-FROTA-UA) | ✅ decidida e aplicada; restam os usos legados, a testar quando alguém tocar o scraper |
 | 12 | 16 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
 | 13 | ES | O scraper não ordena os itens | ajuste pequeno |
 | 14 | SP | FAQs: dois pontos da revisão do #179 | na próxima vez que alguém tocar o `faqs.rs` |
@@ -223,8 +223,25 @@ RO, RR e TO, nas FAQs de GO, MG (SPED), MS, MT, PR, SC e SP, nos pareceres de PR
 Seguem com o UA de navegador do kit os serviços de AM, BA, CE, DF, GO, MG, MS, MT, PE, PI, PR, RJ, RS, SC, SE e
 SP, as FAQs do RS e as do CSM do MG. Há casos em que o AuliBot
 **não** serve: o ServiceNow do MG marca o AuliBot como robô e omite o texto do artigo (auli_pendencias §42), e
-o RJ responde ao AuliBot com a página de "IP bloqueado" (§4 acima). O que resta decidir é se a frota inteira
-migra (com recoleta verificada) ou se a regra fica por entidade, registrada.
+o RJ responde ao AuliBot com a página de "IP bloqueado" (§4 acima).
+
+**Decisão D-FROTA-UA (mantenedor, 02/11/2026): a regra que existe vira oficial — AuliBot por padrão, UA de
+navegador só onde o portal exigir, com o motivo comentado no código.** Sem migração em massa. Aplicada no
+mesmo dia: a regra está no doc do `kit::USER_AGENT` e no `SCRAPERS.md` ("Regra do UA"), e cada call site do
+UA de navegador diz o porquê:
+
+| Motivo | Onde |
+|---|---|
+| o portal exige | RJ (o AuliBot recebe "IP bloqueado"); CSM do MG (o ServiceNow omite o texto do artigo para o AuliBot) |
+| mesmo host do caso acima, sem teste próprio | serviços do MG |
+| decisão registrada — robots restritivo a crawlers genéricos | PE (D-PE4), BA (D-BA4), CE |
+| **legado, nunca testado com o AuliBot** | serviços de AM, GO (token), MS, MT, PI, PR, RS, SC e SP; FAQs do RS |
+| **legado, caminho curl** (`get_via_curl` manda sempre o UA de navegador) | serviços de GO, DF, SE e RS; FAQs do RS (AJAX) |
+
+**O que fica aberto:** as duas linhas "legado". Não são violação a corrigir já, mas candidatas: quem tocar um
+desses scrapers testa o AuliBot no portal e, se o portal responder igual (recoleta com `--usecache` desligado
+e diff limpo contra o backup), troca e apaga o comentário de legado. No caminho curl, a troca pede antes um
+parâmetro de UA no `get_via_curl`.
 
 ## 12. Serviços sem atualização desde julho
 

@@ -220,6 +220,8 @@ fn fetch_recurso(
 /// Obtém o token client_credentials anônimo. Via **ureq** (o host de SSO não tem WAF): é um POST
 /// `x-www-form-urlencoded` (não JSON), então não usa `kit::http::post_json`; monta o agent do kit.
 fn fetch_token() -> Result<String> {
+    // D-FROTA-UA: UA de navegador por legado — anterior à regra "AuliBot por padrão" e nunca testado
+    // com o AuliBot neste portal. Trocar só com recoleta verificada (docs/auli_scraper_pendências.md §11).
     let agent =
         auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
     let basic = basic_auth(CLIENT_SECRET, CLIENT_PASS);

@@ -139,6 +139,9 @@ fn classificar(html: &str) -> Resposta {
 
 /// Primeiro um GET simples, com o UA do kit: é o critério de saída da D-RJ-WAF — se o portal voltar a
 /// servir a página sem o desafio, o navegador nem abre. Senão, o Chromium.
+///
+/// D-FROTA-UA: UA de navegador porque o portal responde ao AuliBot com a página de "IP bloqueado", não
+/// com o desafio (docs/auli_scraper_pendências.md §4).
 fn buscar_catalogo() -> Result<String> {
     let agent =
         auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));

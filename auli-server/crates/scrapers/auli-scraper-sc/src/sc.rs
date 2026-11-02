@@ -150,6 +150,8 @@ type ScrapeResult = (
     Vec<auli_contract::Publico>,
 );
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<ScrapeResult, Box<dyn std::error::Error>> {
+    // D-FROTA-UA: UA de navegador por legado — anterior à regra "AuliBot por padrão" e nunca testado
+    // com o AuliBot neste portal. Trocar só com recoleta verificada (docs/auli_scraper_pendências.md §11).
     let agent =
         auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 

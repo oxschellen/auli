@@ -27,6 +27,8 @@ pub fn extrair_descricoes_json(
     use_cache: bool,
 ) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     // Initialize the HTTP agent (ureq). Accept headers are set per request in fetch_html.
+    // D-FROTA-UA: UA de navegador por legado — anterior à regra "AuliBot por padrão" e nunca testado
+    // com o AuliBot neste portal. Trocar só com recoleta verificada (docs/auli_scraper_pendências.md §11).
     let http_client =
         auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 
