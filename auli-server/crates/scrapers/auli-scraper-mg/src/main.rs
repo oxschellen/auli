@@ -4,6 +4,7 @@
 // Conhece UMA entidade ("mg"); não lê o registry. Grava os snapshots de serviços (v3) e de FAQs; a
 // derivação dos artefatos é o `auli-collections mg`.
 
+mod csm;
 mod faqs;
 mod mg;
 

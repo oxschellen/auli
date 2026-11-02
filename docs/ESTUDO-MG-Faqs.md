@@ -1,7 +1,8 @@
 # ESTUDO-MG-Faqs — Perguntas Frequentes da SEF-MG (coleção `faqs` da entidade `mg`)
 
 **Data:** 2026-11-01 · **Escopo:** descoberta concluída para a fonte B (Portal SPED) e dimensionada para a fonte A
-(Base de Conhecimento do CSM), com a enumeração de A pendente (§6). Especificação para a 2ª coleção da entidade `mg`
+(Base de Conhecimento do CSM), com a enumeração de A pendente (§6). **Implementado:** B em 01/11/2026 (§10), A em
+02/11/2026 (§11). Especificação para a 2ª coleção da entidade `mg`
 (hoje só `servicos`, 149 itens) — 5ª entidade com FAQs (RS 1.947 · SC 1.306 · PR 1.321 · SP 2.665). · **Órgão:**
 Secretaria de Estado de Fazenda de Minas Gerais (SEF-MG).
 
@@ -284,3 +285,78 @@ itens de um `Menu` depois dos filhos, então a III.1 aparece no fim da III. Seç
   commit próprio, fora do squash deste PR. O `config/prompts/mg.txt` também escreve "SEF/MG" (2 vezes), na prosa.
 - **Fonte A (CSM, fase 2):** a sondagem do §6 usa UA de navegador, que é a D-MGFAQ-8 ainda não ratificada — não
   foi rodada.
+
+## 11. Fase 2 — fonte A, a base do CSM (02/11/2026)
+
+O mantenedor ratificou a D-MGFAQ-8 e decidiu coletar apesar do robots
+([auli_pendencias.md](auli_pendencias.md) §42). Código em
+[`csm.rs`](../auli-server/crates/scrapers/auli-scraper-mg/src/csm.rs); o `faqs.rs` só junta a base ao acervo e à
+árvore, depois dos módulos do SPED.
+
+### 11.1 Correções do §3 e do §6
+
+1. **Robots.** O estudo não olhou o `robots.txt` do `atendimento2`: é `User-agent: *` / `Disallow: /`, o host
+   inteiro — inclusive os serviços do `mg.rs`.
+2. **Enumeração (§3.2 i).** Nenhuma das três rotas: o card da base na home do CSM leva à página `kb_search`
+   ("Pesquisa de Base de Conhecimento"), que lista os 81 artigos para qualquer visitante. A página não traz os
+   resultados — o widget "Knowledge Result" os pede num POST (`/api/now/sp/widget/ff26f2b1…`), com o payload que o
+   `Knowledge Portal Service.jsdbx` do portal monta. O POST exige o cookie e o token `g_ck` que a página HTML
+   entrega a qualquer visitante, sem login: sem eles a resposta é `invalid_token: true` — o `total: null` da
+   tabela do §1. A `sn_km_api` responde 401. Com a janela `end: 100`, um POST traz a base inteira, com a
+   contagem do próprio portal (`meta.count` = 81).
+3. **A base de serviços.** Sem o filtro, a busca devolve 235: a base "SRE - Serviços públicos"
+   (`bccaaf011bbec61029f686afe54bcbfc`), que a home não mostra, é a dos serviços — os 153 do cache do `mg.rs` vêm
+   todos dela. O filtro pela base `f18a2fc…` é obrigatório.
+4. **Identidade.** A lista identifica o artigo pelo `sys_kb_id`, não pelo número KB; a página do artigo é pedida
+   por ele, e o número (`KB00…`) vem da página. O link segue a D-MGFAQ-2 (`sysparm_article=<número>`), que
+   sobrevive às versões.
+5. **As três naturezas, uma por categoria:** *DF-e - Correção de Erros / Rejeições* 61 (pergunta única, artigo de
+   modelo com seções), *Sintegra - PED* 1 (a compilação: tabela de **100 pares P./R.**, numerados de 1 a 100 sem
+   buraco) e *Orientações Tributárias DOLT/SUTRI* 19 (texto livre). Na rejeição, a seção "Descrição do Erro" vem
+   **cortada em ~40 caracteres** e o "Assunto" (só na 690) repete o título; o título (`shortDesc`) é a pergunta e
+   coincide com o da lista nos 81 — 6 títulos param em 100 caracteres, o limite do campo na própria base.
+6. **Entidades.** O editor do CSM emite entidades numéricas (`&#34;` 178, `&#61;` 123, `&#43;` 6 nos 62 artigos
+   coletados), que o `decode_entities` do kit não trata. O SPED não tem nenhuma.
+
+### 11.2 Decisões
+
+- **D-MGFAQ-8 (ratificada, 02/11/2026):** no `atendimento2`, o UA do kit, como os serviços — o AuliBot recebe a
+  página sem o texto (`isCrawlerBot`). O SPED segue com o AuliBot.
+- **D-MGFAQ-13 — Enumeração da fonte A:** GET da página `kb_search` (cookie + `g_ck`) → POST ao "Knowledge
+  Result" filtrado pela base → cada artigo pela page API (`kb_article_view&sys_kb_id=…`, sem sessão, como no
+  `mg.rs`), widget `edx_article_header`. 1 s entre requisições: 64 por rodada (1 + 1 + 62 — as orientações não são
+  baixadas). Guardas: sessão recusada, base vazia, menos itens que o `meta.count`, artigo de outra base, artigo sem
+  exatamente uma categoria, artigo repetido, página servida a robô, artigo sem número — todos `Err` antes de
+  gravar. Rede sempre; `--usecache` lê a lista e os artigos do cache, sem sessão (D-MGFAQ-10).
+- **D-MGFAQ-14 — Natureza pela categoria, lista fechada no código:** categoria nova é `Err` (a natureza dela é
+  decisão, não palpite). As **orientações da DOLT/SUTRI ficam fora**: são documentos de 4 a 65 mil caracteres, de
+  2004 a 2016, orientação tributária e não FAQ (§3.2 ii).
+- **D-MGFAQ-15 — Modelo:** rejeição → pergunta = título, resposta = "Resposta para o Erro" (sem ela, `Err`);
+  compilação → um `FaqRaw` por par, pergunta sem o `N)` (D-MGFAQ-11), numeração conferida de 1 a N, todas com o
+  link do artigo (não há âncora; o nome do `.md` é hash de link + pergunta, então não colide); trilha `SRE - Dúvidas
+  Frequentes | <categoria>`. As rejeições saem **pelo título**: a lista vem por visualizações, que mudam a cada
+  rodada, e mudariam o snapshot sem a base mudar.
+
+### 11.3 Árvore
+
+A raiz ganha um 3º filho, ao lado do NF-e e da NFC-e: `Menu` "SRE - Dúvidas Frequentes" (url = a busca filtrada
+pela base) → um `Faq` por categoria, DF-e (61) e Sintegra - PED (100).
+
+### 11.4 Rodada de 02/11/2026
+
+- SPED 149 (idêntico: os 149 vetores foram reaproveitados) + CSM 161 = **310**. 81 artigos na lista; 62 baixados.
+- As 161: pares (link, pergunta) únicos; 62 links (61 rejeições + o PED); 0 pergunta ou resposta vazia; nenhuma tag
+  nem entidade sobrando; respostas de 4 ("Sim.", no PED) a 2.965 caracteres.
+- `--usecache`: árvore idêntica byte a byte; snapshot idêntico a menos do `coletado_em`.
+- 310 `.md`; pack `mg-faqs` com 149 vetores reaproveitados e 161 novos. Smoke `/v1/retrieve kind=faqs entity=mg`:
+  "erro 215 falha no schema" → Rejeição 215; "rejeição 539 duplicidade" → 539; "registro 54 na aquisição de
+  material de uso e consumo" → o par do PED; "posso cancelar uma NF-e vinculada a um MDF-e?" → Rejeição 690, com
+  as do SPED sobre cancelamento logo depois; "NFC-e em contingência" → a do SPED — todas em 1º. "Quem é obrigado
+  a entregar o Sintegra" traz 5 pares do PED, com "Dispensa… aos obrigados à EFD" em 2º.
+- 43 testes no crate (20 do CSM); cada guarda do `csm.rs` foi desligada e o teste dela falhou.
+
+### 11.5 Fora
+
+- **As 19 orientações da DOLT/SUTRI** — candidatas a uma coleção própria, como os pareceres; algumas têm blocos
+  de perguntas e respostas dentro (a ITCD 002/2006, a mais vista, se chama "Dúvidas Frequentes").
+- **"Comunicados do Portal do Contribuinte"**, a outra base da home, tem 0 artigos.

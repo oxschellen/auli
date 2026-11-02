@@ -210,7 +210,12 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   NF-e e NFC-e são FAQ em HTML; CT-e, CT-e OS, MDF-e e EFD apontam para fora). Índice = autoridade (seção,
   sub-tópico, âncora); a pergunta é localizada na página de respostas pela âncora (`name`/`id`) ou, sem ela, pelo
   `N.`; link = o do índice (`respostas_<romano>/index.html#<âncora>`). Sempre à rede (cache só com
-  `--usecache`). 149 perguntas (01/11/2026), 19 testes. Descoberta em `docs/REGISTRO-scrapers.md#mg-faqs`.
+  `--usecache`). 149 perguntas (01/11/2026), 20 testes. Descoberta em `docs/REGISTRO-scrapers.md#mg-faqs`.
+- **FAQs, 2ª fonte** (`csm.rs`): a base "SRE - Dúvidas Frequentes" da Base de Conhecimento do mesmo CSM.
+  `robots.txt` = `Disallow: /` — coleta por decisão do mantenedor (`docs/auli_pendencias.md` §42), UA do kit.
+  A lista vem de um POST ao widget "Knowledge Result", com a sessão anônima (cookie + token `g_ck` da página
+  `kb_search`); cada artigo pela page API. Natureza pela categoria (lista fechada): 61 rejeições de DF-e, os
+  100 pares P./R. do PED; as 19 orientações da DOLT/SUTRI ficam fora. 161 perguntas (02/11/2026), 20 testes.
 
 ### pe — SEFAZ-PE (Pernambuco)
 
@@ -605,6 +610,6 @@ no navegador** (a lição do CE: um `pageSize` errado escondeu 24% do catálogo)
 ## 6. Dívidas conhecidas
 
 - **Cobertura de testes desigual:** todos os crates têm testes (3–8) desde a rodada sc/sp/pr, mas
-  o **mg tem só 3** nos serviços (as FAQs têm 19) e nenhum exercita a paginação/loop de coleta ponta a ponta (só funções puras).
+  o **mg tem só 3** nos serviços (as FAQs têm 40) e nenhum exercita a paginação/loop de coleta ponta a ponta (só funções puras).
 - **pe — descrições vazias** (menu-only, D-PE1). Fase 2 (corpo das páginas) melhoraria o RAG.
 - **rj — descrições vazias** (v1, D-RJ3). Página não tem corpo; exigiria outra fonte.

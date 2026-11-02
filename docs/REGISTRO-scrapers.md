@@ -35,7 +35,7 @@
 - [SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)](#sc-faqs)
 - [PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)](#pr-faqs)
 - [SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)](#sp-faqs)
-- [MG FAQs — Perguntas Frequentes do Portal SPED MG (portalsped.fazenda.mg.gov.br/spedmg)](#mg-faqs)
+- [MG FAQs — Perguntas Frequentes do Portal SPED MG e da Base de Conhecimento do CSM](#mg-faqs)
 
 ---
 
@@ -1936,19 +1936,17 @@ portal; quem abre a pergunta desses dois cai no erro do SharePoint. O `sefaziden
 
 <a id="mg-faqs"></a>
 
-# MG FAQs — Perguntas Frequentes do Portal SPED MG (portalsped.fazenda.mg.gov.br/spedmg)
+# MG FAQs — Perguntas Frequentes do Portal SPED MG e da Base de Conhecimento do CSM
 
-**Discovery e implantação:** 01/11/2026. Estudo, medições e decisões D-MGFAQ-1..12:
-[`docs/ESTUDO-MG-Faqs.md`](ESTUDO-MG-Faqs.md) (§10 = a revisão do censo e a implementação). Coleção `faqs` do
-`auli-scraper-mg` (`auli-scraper-mg faqs`, ou `all` = serviços + FAQs). **149 perguntas** (NF-e 87, NFC-e 62)
-na rodada de 01/11.
+**Discovery e implantação:** SPED em 01/11/2026, CSM em 02/11/2026. Estudo, medições e decisões
+D-MGFAQ-1..15: [`docs/ESTUDO-MG-Faqs.md`](ESTUDO-MG-Faqs.md) (§10 = o SPED, §11 = o CSM). Coleção `faqs` do
+`auli-scraper-mg` (`auli-scraper-mg faqs`, ou `all` = serviços + FAQs). **310 perguntas** na rodada de 02/11:
+SPED 149 (NF-e 87, NFC-e 62) e CSM 161 (rejeições de DF-e 61, Sintegra - PED 100).
 
-## Fonte
+## Fonte 1 — o Portal SPED MG (`faqs.rs`)
 
-O Portal SPED MG, outro host que o CSM ServiceNow dos serviços: OpenCms exportando HTML estático (sem API, sem
-AJAX, `robots.txt` 404). A SEF-MG tem uma segunda base de FAQ — a Base de Conhecimento do CSM, 81 artigos em
-"SRE - Dúvidas Frequentes" — que ficou para a fase 2: a enumeração exige login e o conteúdo só sai com UA de
-navegador (o ServiceNow marca `AuliBot` como `isCrawlerBot`). Ver o estudo, §3.
+Outro host que o CSM ServiceNow dos serviços: OpenCms exportando HTML estático (sem API, sem AJAX, `robots.txt`
+404).
 
 - **Módulos:** a barra da home (`<a class="menu menu-N" href="/spedmg/<sigla>/" title="…">`) — 15. O nome vem da
   sigla e do `title`: "NF-e - Nota Fiscal Eletrônica".
@@ -1962,7 +1960,7 @@ navegador (o ServiceNow marca `AuliBot` como `isCrawlerBot`). Ver o estudo, §3.
   O link vai para `respostas_<romano>/index.html#<âncora>`.
 - **Respostas:** uma página por seção, exportada do Word, cortada entre o `<div id="conteudo">` e o menu lateral.
 
-## As armadilhas
+## As armadilhas do SPED
 
 1. **A âncora é por página, não por módulo.** `#1` existe na I e na II do NF-e; a NFC-e usa `#a1`, `#b1`… (a letra
    da seção). A identidade é (página, âncora), e o link é o do índice, exato.
@@ -1982,6 +1980,33 @@ navegador (o ServiceNow marca `AuliBot` como `isCrawlerBot`). Ver o estudo, §3.
    entidades são decodificadas depois (a regra do SP); célula vira espaço; 3 `href` relativos ganham o host.
    "novo conteúdo" (marcador editorial em vermelho, na IX.3) fica, como está.
 
+## Fonte 2 — a base "SRE - Dúvidas Frequentes" do CSM (`csm.rs`)
+
+O mesmo ServiceNow dos serviços (`atendimento2.fazenda.mg.gov.br/csm`). **`robots.txt` = `Disallow: /`** no host
+inteiro: a coleta é decisão do mantenedor, sem autorização da SEF-MG ([auli_pendencias.md](auli_pendencias.md)
+§42). 81 artigos em três categorias; a natureza vem da categoria, numa lista fechada no código:
+
+| Categoria | Artigos | Vira |
+|---|---|---|
+| DF-e - Correção de Erros / Rejeições | 61 | 61 perguntas: o título ("Rejeição 215: Falha no schema XML.") e a seção "Resposta para o Erro" |
+| Sintegra - PED | 1 | 100 perguntas: um par P./R. da tabela por pergunta, sem o `N)` |
+| Orientações Tributárias DOLT/SUTRI | 19 | fora — documentos de 4 a 65 mil caracteres, não FAQ (não são baixados) |
+
+As armadilhas do CSM, na mesma numeração:
+
+6. **A lista só vem com sessão.** A página `kb_search` não traz os resultados: o widget "Knowledge Result" os pede
+   num POST que exige o cookie e o token `g_ck` que a página HTML entrega a qualquer visitante (sem login). Sem
+   eles, `invalid_token: true`. Um GET da página abre a sessão; o POST, com a janela `end: 100`, traz a base inteira
+   e a contagem do portal (`meta.count`).
+7. **Filtrar pela base.** Sem o filtro a busca devolve 235: a base "SRE - Serviços públicos" é a dos serviços do
+   `mg.rs`, já no acervo.
+8. **Robô não recebe o texto.** Com o AuliBot, o ServiceNow responde `isCrawlerBot: true` e omite o artigo: o
+   módulo usa o UA do kit, como os serviços (D-MGFAQ-8).
+9. **O que a página do artigo engana:** a "Descrição do Erro" vem cortada em ~40 caracteres (a pergunta é o
+   título, que para em 100 em 6 deles — limite da base); o "Assunto" (só na 690) repete o título; o editor emite
+   entidades numéricas (`&#34;`, `&#61;`, `&#43;`), decodificadas antes das do kit. A lista vem por visualizações:
+   as rejeições saem pelo título, para o snapshot só mudar quando a base muda.
+
 ## Guardas e transporte
 
 - `Err` antes de gravar qualquer arquivo: home sem módulo; página sem `#conteudo` ou sem menu lateral; link de
@@ -1990,11 +2015,18 @@ navegador (o ServiceNow marca `AuliBot` como `isCrawlerBot`). Ver o estudo, §3.
   do índice — a menor medida é 0,91); página de "Perguntas…" que linka páginas do SPED mas nenhuma de respostas
   (índice com markup novo — sem isto o NF-e sumiria com um aviso); zero perguntas no total; qualquer chamada que
   falhe. Resposta vazia só avisa (0 em 01/11).
-- **Sempre à rede**, como no SC, no PR e no SP: o cache em `data/mg/raw/cache/faqs/` só é lido com `--usecache`,
-  que reproduz a árvore byte a byte e o snapshot a menos do `coletado_em`. Os serviços do MG seguem cache-first.
-- 37 GETs com o UA `AuliBot` e 1 s de cortesia, ~45 s.
-- Saída: `data/mg/raw/mg-faqs-tree.json` (raiz → `Menu` por módulo → seção: `Faq` sem sub-tópico, `Menu` com um
-  `Faq` por sub-tópico quando tem; a III.1 do NF-e, que vem antes do primeiro sub-tópico, fica nos `faq_items` do `Menu`
-  da seção, e a aba a mostra depois dos filhos) e `data/mg/mg-faqs-snapshot.json` (um `FaqRaw` por pergunta,
-  trilha `<módulo> | <seção>` ou `<módulo> | <seção> | <sub-tópico>`), nessa ordem e atômicos.
+- `Err` antes de gravar, no CSM: sessão recusada; busca vazia ou com menos itens que o `meta.count`; artigo de
+  outra base, sem exatamente uma categoria, de categoria fora da lista ou repetido; página servida a robô ou sem o
+  número do artigo; rejeição sem "Resposta para o Erro"; tabela do PED sem pares P./R. alternados ou com buraco
+  na numeração; pergunta ou resposta vazia.
+- **Sempre à rede**, como no SC, no PR e no SP: o cache em `data/mg/raw/cache/faqs/` só é lido com `--usecache`
+  (no CSM, a lista e os artigos, sem sessão), que reproduz a árvore byte a byte e o snapshot a menos do
+  `coletado_em`. Os serviços do MG seguem cache-first.
+- SPED: 37 GETs com o UA `AuliBot`. CSM: 64 requisições (a página, o POST, 62 artigos) com o UA do kit. 1 s de
+  cortesia nos dois, ~2 min.
+- Saída: `data/mg/raw/mg-faqs-tree.json` (raiz → `Menu` por módulo do SPED → seção: `Faq` sem sub-tópico, `Menu`
+  com um `Faq` por sub-tópico quando tem; a III.1 do NF-e, que vem antes do primeiro sub-tópico, fica nos
+  `faq_items` do `Menu` da seção, e a aba a mostra depois dos filhos; depois, `Menu` "SRE - Dúvidas Frequentes" → um
+  `Faq` por categoria) e `data/mg/mg-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<módulo> | <seção>`,
+  `<módulo> | <seção> | <sub-tópico>` ou `SRE - Dúvidas Frequentes | <categoria>`), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-mg-faqs.sh` (guarda de encolhimento contra o `.anterior`).

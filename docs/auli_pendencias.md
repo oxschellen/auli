@@ -1623,6 +1623,37 @@ Registro em [REGISTRO-scrapers.md#sp-faqs](REGISTRO-scrapers.md#sp-faqs); estudo
    a evidência para filtrar pela categoria estará na seção ADERÊNCIA dos logs — e o filtro é uma lista
    fechada de categorias no `faqs.rs`, com teste.
 
+## 42. MG: o `atendimento2` declara `Disallow: /` — robots desconsiderado (✅ decidida e aplicada — 2026-11-02)
+
+**Fato.** `https://atendimento2.fazenda.mg.gov.br/robots.txt` = `User-agent: *` / `Disallow: /`
+(verificado em 02/11/2026). Vale para o host inteiro, inclusive o catálogo de onde o
+[`mg.rs`](auli-server/crates/scrapers/auli-scraper-mg/src/mg.rs) tira os 153 serviços — que até hoje
+não tinha registro de robots.
+
+**Decisão do mantenedor (02/11/2026): desconsiderar**, no padrão da D-PA-ROBOTS (conteúdo público, LAI,
+baixo volume), cobrindo os serviços e a fase 2 das FAQs do MG — a base "SRE - Dúvidas Frequentes" do
+CSM, 81 artigos ([ESTUDO-MG-Faqs.md](ESTUDO-MG-Faqs.md) §3; ratifica a D-MGFAQ-8). Diferente dos
+pareceres do RS, que também estão sob `Disallow: /`: lá a coleta se apoia na autorização da própria
+SEFAZ-RS; aqui não há autorização da SEF-MG.
+
+Duas exceções à D-PA-ROBOTS, ambas impostas pelo portal:
+
+1. **UA de navegador** (o `USER_AGENT` do kit), não o AuliBot: o ServiceNow marca o AuliBot como
+   `isCrawlerBot` e omite o texto do artigo. Os serviços já usam o UA do kit no mesmo host.
+2. **Sessão anônima.** A lista da base só vem do POST ao widget "Knowledge Result"
+   (`/api/now/sp/widget/ff26f2b1db12220099f93691f0b8f5ce`, payload no formato do
+   `Knowledge Portal Service.jsdbx`), que exige o cookie e o token `g_ck` que a página HTML entrega a
+   qualquer visitante — sem login, sem credencial. Sem eles a resposta é `invalid_token: true` (é o
+   "vazio" do estudo); a `sn_km_api` responde 401.
+
+**Mitigações:** cortesia ≥1 s sem paralelismo, cache, coleta rara (64 requisições: 1 página, 1 POST, 62
+artigos — as orientações não são baixadas). **Filtrar pela base** `f18a2fc11bbec61029f686afe54bcbed`: sem filtro a busca devolve 235, porque
+inclui a "SRE - Serviços públicos" (`bccaaf011bbec61029f686afe54bcbfc`), que é a base dos serviços já
+no acervo.
+
+**Aplicada (02/11/2026)** no [`csm.rs`](auli-server/crates/scrapers/auli-scraper-mg/src/csm.rs): a lista trouxe
+81 de 81 (`meta.count`), 62 artigos baixados (as 19 orientações da DOLT/SUTRI ficam fora), 161 perguntas. Medições e decisões em [ESTUDO-MG-Faqs.md](ESTUDO-MG-Faqs.md) §11.
+
 ---
 
 ## D-NAMING (pendência separada — MG, NÃO é do GO) — ✅ resolvida em 01/11/2026
