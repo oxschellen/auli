@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 6 de **FAQs** (SC, PR, SP, MG, MS e MT). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 7 de **FAQs** (SC, PR, SP, MG, MS, MT e GO). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -38,6 +38,7 @@
 - [MG FAQs — Perguntas Frequentes do Portal SPED MG e da Base de Conhecimento do CSM](#mg-faqs)
 - [MS FAQs — Perguntas Frequentes da FAQ do Fale Conosco MS (www.faleconosco.ms.gov.br/faq)](#ms-faqs)
 - [MT FAQs — Dúvidas do programa Nota MT (www.sefaz.mt.gov.br/notamt/duvida)](#mt-faqs)
+- [GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)](#go-faqs)
 
 ---
 
@@ -2125,3 +2126,53 @@ o AuliBot passa.
 - Saída: `data/mt/raw/mt-faqs-tree.json` (raiz → `Menu` Nota MT → `Faq` por grupo, tudo com o link da página,
   itens sem `url`) e `data/mt/mt-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-mt-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+# GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)
+
+**Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-GOFAQ-1..10:
+[`docs/ESTUDO-GO-Faqs.md`](ESTUDO-GO-Faqs.md). Coleção `faqs` do `auli-scraper-go` (`auli-scraper-go faqs`, ou
+`all` = serviços + FAQs). **1.298 perguntas** em 115 termos de categoria (44 temas) na rodada de 02/11.
+
+## Fonte
+
+O site "Orientação Tributária" da Economia-GO, um SharePoint 16 instalado no órgão, linkado pela página de orientação
+tributária do `goias.gov.br`. A REST `_api` é anônima: `GET /_api/web/lists/getbytitle('Perguntas Frequentes')/items`
+com `$top=5000` traz a lista inteira (`Pergunta0` e `Resposta` em HTML, `CategoriaId` = o `TermGuid`, o campo oculto
+`m611689e352b49adae244c5880ecdf12` = `Nome|TermGuid`, `Modified`). Sem `robots.txt` (404). A mesma `_api` lista a
+biblioteca `Pareceres` (1.266 documentos) — fora desta coleção.
+
+## As armadilhas
+
+1. **O host "canônico" está quebrado.** A página declara `orientacaotributaria.economia.go.gov.br` como canônico, mas
+   ele responde 404 a tudo; o site e os links são do `…sefaz.go.gov.br`.
+2. **A REST não dá o caminho da categoria.** O `Label` do campo de taxonomia é o índice na lista oculta (`"3"`), o
+   campo oculto dá só o nome do termo, e "Informações Gerais" nomeia ~20 termos de temas diferentes. A lista oculta
+   da taxonomia exige login (401); `TaxCatchAll` e `FieldValuesAsText` não servem; o `owssvr.dll` é barrado pelo WAF
+   (403). O caminho ("Decreto nº 4.852/97 - RCTE:Informações Gerais") vem do **formulário público do item**
+   (`DispForm.aspx?ID=`), que embute o item em JSON com a categoria pelo caminho (`IsPathRendered`): um formulário
+   por termo, o do menor `Id`.
+3. **Termo renomeado.** O campo oculto guarda o nome de quando o item foi salvo: 3 itens de 2018 dizem
+   "Informações Fiscais" num termo que hoje é "Informações Gerais". Vale o formulário; a conferência que pega
+   formulário mal lido é por termo (o caminho termina no nome que algum item dá ao termo).
+4. **A FAQ está parada.** O site avisa "atualizadas até 31/12/2019" (07/07/2021); há itens alterados até 26/08/2022.
+   A trilha abre com `Orientação Tributária (até <ano da alteração mais recente>)` (decisão do mantenedor).
+5. **Perguntas repetidas** (49 textos, 99 itens) → o link é o formulário de cada item.
+6. **HTML do editor SharePoint** (o mesmo das FAQs do SP): `&#58;` no lugar de `:` até nos `href`, links relativos
+   para PDFs de pareceres e manuais, tabelas, imagens, símbolos matemáticos (`&#119872;`). Respostas só com imagem
+   (6) viram o link da imagem.
+7. **Dados pessoais no formulário:** autor e editor (nome e e-mail de servidores). O scraper só lê o `"Categoria"`.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: resposta da `_api` fora do formato; `__next` (a lista passou de 5.000);
+  lista vazia; `Id` repetido; pergunta vazia; item sem categoria ou sem o nome do termo; formulário sem exatamente
+  um `"Categoria"`; caminho com nível vazio ou que não termina no nome de nenhum item do termo; qualquer GET que
+  falhe. Avisos: itens com nome antigo do termo (3), respostas vazias (0).
+- **Sempre à rede**; o cache em `data/go/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- 116 GETs (a lista + 115 formulários) pelo `ureq`, UA `AuliBot`, 1 s de cortesia, ~2 min. O WAF JA3 do GO é só do
+  `api.go.gov.br` (serviços).
+- Saída: `data/go/raw/go-faqs-tree.json` (raiz → `Menu` com a marca do site → os níveis do caminho; nós na home do
+  site, que é pública — a página de FAQ exige login —, itens com o formulário) e `data/go/go-faqs-snapshot.json`
+  (um `FaqRaw` por pergunta), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-go-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).

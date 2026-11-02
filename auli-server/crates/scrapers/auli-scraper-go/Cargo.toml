@@ -21,3 +21,6 @@ anyhow = "1"
 # scraper (html5ever) só para decodificar as entidades HTML das descrições (`&ccedil;`, `&atilde;`,
 # … fora da tabela fixa do kit::decode_entities). Ver `html_to_text` no go.rs.
 scraper = "0.27.0"
+# As FAQs (`faqs.rs`) vêm do SharePoint "Orientação Tributária": o regex converte o HTML do editor e
+# acha a categoria no formulário do item.
+regex = "1"
