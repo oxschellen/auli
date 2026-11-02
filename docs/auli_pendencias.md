@@ -1600,6 +1600,31 @@ que proíbe a síntese entre documentos, e o corte para 5 serviços + 10 FAQs.
 
 ---
 
+## 41. FAQs do SP: dois pontos deixados pela revisão do #179 (aberta — 2026-11-02)
+
+Registro em [REGISTRO-scrapers.md#sp-faqs](REGISTRO-scrapers.md#sp-faqs); estudo em
+[ESTUDO-SP-Faqs.md](ESTUDO-SP-Faqs.md) §9. Nenhum dos dois justifica PR sozinho.
+
+1. **Lista ausente derruba a rodada inteira.** O `buscar_todas` do
+   [`faqs.rs`](auli-server/crates/scrapers/auli-scraper-sp/src/faqs.rs) propaga qualquer falha de chamada,
+   e um subsite sem a lista `Perguntas Frequentes` responde 404 — então um Home novo criado sem FAQ
+   (plausível: 31 das 95 listas já estão vazias) para a coleta toda por um subsite irrelevante. Em
+   01/11/2026 nenhum dos 95 subsites com `URLHome` carecia da lista, por isso não morde hoje. O 404 da
+   `_api` para `getByTitle` é inequívoco ("a lista não existe", nunca "lista vazia", que é 200 com
+   `results: []`): **rebaixar esse caso a aviso + pular, mantendo `Err` para qualquer outro status.**
+   Pede um GET que veja o status (o `get_string` do kit retenta o 404 três vezes e devolve `Err`), um
+   marcador no cache para o `--usecache` reproduzir o pulo, e um teste. Fazer na próxima vez que alguém
+   tocar o arquivo.
+2. **Observar nos logs de auditoria as FAQs de público interno (D-SPFAQ-7).** Entrou "ingerir todos",
+   como o portal mostra. Pela categoria do Home na `Homes 360`, as claramente internas são **62 das
+   2.665** (planejamento e execução orçamentária e financeira 41, trabalho a distância 12, entidades da
+   administração 4, segurança da informação 3, RH 1, financiamento público 1; "previsão orçamentária e
+   arrecadação", 58, é duvidosa). Se elas começarem a aparecer no top-10 de perguntas de contribuinte,
+   a evidência para filtrar pela categoria estará na seção ADERÊNCIA dos logs — e o filtro é uma lista
+   fechada de categorias no `faqs.rs`, com teste.
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO)
 
 Política da frota: separador sigla–UF sempre `-`. Normalizar o `orgao` do **MG** `"SEF/MG"` →
