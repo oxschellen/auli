@@ -57,7 +57,7 @@ export const ENTITIES: Entity[] = [
     name: "SEF-MG",
     uf: "MG",
     state: "Minas Gerais",
-    collections: ["servicos"],
+    collections: ["servicos", "faqs"],
   },
   {
     id: "pe",

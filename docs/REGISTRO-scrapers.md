@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 3 de **FAQs** (SC, PR e SP). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 4 de **FAQs** (SC, PR, SP e MG). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -35,6 +35,7 @@
 - [SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)](#sc-faqs)
 - [PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)](#pr-faqs)
 - [SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)](#sp-faqs)
+- [MG FAQs — Perguntas Frequentes do Portal SPED MG (portalsped.fazenda.mg.gov.br/spedmg)](#mg-faqs)
 
 ---
 
@@ -1930,3 +1931,70 @@ O link do botão "copiar link" leva a uma página inexistente em dois subsites: 
 perguntas, página 404) e `evolucao-funcional` (1 pergunta, 401 — intranet). O scraper usa o mesmo formato do
 portal; quem abre a pergunta desses dois cai no erro do SharePoint. O `sefazidentity` redireciona (301) para
 `www.sfp.sp.gov.br` e funciona.
+
+---
+
+<a id="mg-faqs"></a>
+
+# MG FAQs — Perguntas Frequentes do Portal SPED MG (portalsped.fazenda.mg.gov.br/spedmg)
+
+**Discovery e implantação:** 01/11/2026. Estudo, medições e decisões D-MGFAQ-1..12:
+[`docs/ESTUDO-MG-Faqs.md`](ESTUDO-MG-Faqs.md) (§10 = a revisão do censo e a implementação). Coleção `faqs` do
+`auli-scraper-mg` (`auli-scraper-mg faqs`, ou `all` = serviços + FAQs). **149 perguntas** (NF-e 87, NFC-e 62)
+na rodada de 01/11.
+
+## Fonte
+
+O Portal SPED MG, outro host que o CSM ServiceNow dos serviços: OpenCms exportando HTML estático (sem API, sem
+AJAX, `robots.txt` 404). A SEF-MG tem uma segunda base de FAQ — a Base de Conhecimento do CSM, 81 artigos em
+"SRE - Dúvidas Frequentes" — que ficou para a fase 2: a enumeração exige login e o conteúdo só sai com UA de
+navegador (o ServiceNow marca `AuliBot` como `isCrawlerBot`). Ver o estudo, §3.
+
+- **Módulos:** a barra da home (`<a class="menu menu-N" href="/spedmg/<sigla>/" title="…">`) — 15. O nome vem da
+  sigla e do `title`: "NF-e - Nota Fiscal Eletrônica".
+- **Entrada de FAQ:** o menu lateral de cada módulo. Seis têm "Perguntas e Respostas", com o caminho que cada um
+  quis (`nfe/Perguntas-Frequentes/`, `cte/faq/`, `cteos/Perguntas-e-Respostas/`, `efd/faq/`, `mdfe/perguntas/`…) —
+  não dá para adivinhar a URL. **Só NF-e e NFC-e são FAQ em HTML no SPED**: a página do CT-e e a do CT-e OS
+  apontam para o portal nacional do CT-e, a do MDF-e para o da SVRS, e a da EFD para dois PDFs e um `.docx`. O
+  scraper avisa esses quatro e segue; os outros nove não têm a entrada.
+- **Índice:** título de seção em `<p><strong>` (romano: "I. Conceito, uso e obrigatoriedade da NF-e") e, abaixo,
+  uma tabela: linha com o número e o link é pergunta; linha sem link é **sub-tópico** (no NF-e, os 8 da seção III).
+  O link vai para `respostas_<romano>/index.html#<âncora>`.
+- **Respostas:** uma página por seção, exportada do Word, cortada entre o `<div id="conteudo">` e o menu lateral.
+
+## As armadilhas
+
+1. **A âncora é por página, não por módulo.** `#1` existe na I e na II do NF-e; a NFC-e usa `#a1`, `#b1`… (a letra
+   da seção). A identidade é (página, âncora), e o link é o do índice, exato.
+2. **Cada página de respostas é de um jeito.** Âncora `<a name="N">` (NF-e), `<a id="aN">` (NFC-e), nenhuma (NF-e
+   VIII e IX, e a 1ª pergunta da I), pergunta numerada em texto ("8. É possível…") ou só pelo `<ol start="2">`
+   (NFC-e I), pergunta e resposta no **mesmo `<p>`** separadas por `<br>` (NF-e VIII). A pergunta é localizada
+   pela âncora que o índice anuncia, trocada por uma marca antes da conversão para texto; sem ela, pela primeira
+   linha, depois da pergunta anterior, que começa com o `N.` do índice. As âncoras que o índice não anuncia
+   (`emissao`, os `OLE_LINK` do Word) são ignoradas. Nas 7 sem âncora, o link abre o topo da página, como no portal.
+3. **O índice e a página não escrevem a pergunta igual** (9 de 149: "ás"/"às", "IEmpresa"/"Empresa", "–
+   NF-e"/"(NF-e)"). O texto vem da página, que é o que se lê no destino do link e tem as correções; o do índice
+   serve de conferência.
+4. **O sub-tópico é do índice.** A página o repete como "• Título" antes da pergunta que o abre (6 dos 8) ou o
+   omite ("Pessoa Física", "Novas Informações com Versão 3.10"). A linha "• <sub-tópico>" no fim de uma resposta
+   sai; no meio, é texto.
+5. **HTML do editor:** só `&nbsp;` e `&gt;` como entidades e nenhum `<` cru nas 17 páginas → toda tag sai e as
+   entidades são decodificadas depois (a regra do SP); célula vira espaço; 3 `href` relativos ganham o host.
+   "novo conteúdo" (marcador editorial em vermelho, na IX.3) fica, como está.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: home sem módulo; página sem `#conteudo` ou sem menu lateral; link de
+  pergunta do índice fora de linha de tabela (contagem crua ≠ parseados); (página, âncora) repetida; pergunta do
+  índice não localizada na página; linha localizada que não é a pergunta do índice (menos da metade das palavras
+  do índice — a menor medida é 0,91); página de "Perguntas…" que linka páginas do SPED mas nenhuma de respostas
+  (índice com markup novo — sem isto o NF-e sumiria com um aviso); zero perguntas no total; qualquer chamada que
+  falhe. Resposta vazia só avisa (0 em 01/11).
+- **Sempre à rede**, como no SC, no PR e no SP: o cache em `data/mg/raw/cache/faqs/` só é lido com `--usecache`,
+  que reproduz a árvore byte a byte e o snapshot a menos do `coletado_em`. Os serviços do MG seguem cache-first.
+- 37 GETs com o UA `AuliBot` e 1 s de cortesia, ~45 s.
+- Saída: `data/mg/raw/mg-faqs-tree.json` (raiz → `Menu` por módulo → seção: `Faq` sem sub-tópico, `Menu` com um
+  `Faq` por sub-tópico quando tem; a III.1 do NF-e, que vem antes do primeiro sub-tópico, fica nos `faq_items` do `Menu`
+  da seção, e a aba a mostra depois dos filhos) e `data/mg/mg-faqs-snapshot.json` (um `FaqRaw` por pergunta,
+  trilha `<módulo> | <seção>` ou `<módulo> | <seção> | <sub-tópico>`), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-mg-faqs.sh` (guarda de encolhimento contra o `.anterior`).
