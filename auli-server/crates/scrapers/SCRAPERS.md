@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG e no MS, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -283,7 +283,13 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   cap-detect por `pp` + piso 240. `N` = âncoras distintas do "Todos" (dinâmico).
 - **D-MS2 — identidade `link`** (único por construção). **D-MS4 — v1 sem descrição** (a listagem é
   título+link). **D-MS6 — rótulos fiéis** (inclui o slug-typo `comunicacao-e-transparencia`).
-- 276 serviços (601 ocorrências), 5 públicos. 7 testes. `ServicoRaw` direto.
+- 282 serviços (647 ocorrências, 02/11/2026), 5 públicos. 7 testes. `ServicoRaw` direto.
+- **FAQs** (`auli-scraper-ms faqs`, `faqs.rs`): a FAQ do Fale Conosco MS (`www.faleconosco.ms.gov.br/faq`),
+  outro host — AngularJS sobre uma API REST pública (POST `recursos/faq/<ação>`, corpo `[{key, value}]`).
+  Assuntos (com a contagem `qtdeFaq`, a guarda) → subtemas → perguntas; a lista traz só a prévia da resposta, a
+  inteira é `getrespostafaq` por pergunta (1.656 POSTs, ~30 min). Link = subtema + `?idFaq=`; HTML do Word → texto
+  pelo parser. Sempre à rede. 1.200 perguntas (02/11/2026), 9 testes. Descoberta em
+  `docs/REGISTRO-scrapers.md#ms-faqs`.
 
 ### mt — SEFAZ-MT (Mato Grosso)
 

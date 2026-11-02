@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 4 de **FAQs** (SC, PR, SP e MG). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 5 de **FAQs** (SC, PR, SP, MG e MS). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -36,6 +36,7 @@
 - [PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)](#pr-faqs)
 - [SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)](#sp-faqs)
 - [MG FAQs — Perguntas Frequentes do Portal SPED MG e da Base de Conhecimento do CSM](#mg-faqs)
+- [MS FAQs — Perguntas Frequentes da FAQ do Fale Conosco MS (www.faleconosco.ms.gov.br/faq)](#ms-faqs)
 
 ---
 
@@ -2030,3 +2031,54 @@ As armadilhas do CSM, na mesma numeração:
   `Faq` por categoria) e `data/mg/mg-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<módulo> | <seção>`,
   `<módulo> | <seção> | <sub-tópico>` ou `SRE - Dúvidas Frequentes | <categoria>`), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-mg-faqs.sh` (guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="ms-faqs"></a>
+
+# MS FAQs — Perguntas Frequentes da FAQ do Fale Conosco MS (www.faleconosco.ms.gov.br/faq)
+
+**Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-MSFAQ-1..12:
+[`docs/ESTUDO-MS-Faqs.md`](ESTUDO-MS-Faqs.md) (§8 = a sondagem da API e a implementação). Coleção `faqs` do
+`auli-scraper-ms` (`auli-scraper-ms faqs`, ou `all` = serviços + FAQs). **1.200 perguntas** em 71 assuntos e 384
+subtemas na rodada de 02/11.
+
+## Fonte
+
+O site da SEFAZ-MS (WordPress) não tem FAQ própria — as páginas de tema linkam "Perguntas Frequentes – SEFAZ MS" para
+a FAQ do Fale Conosco, uma aplicação AngularJS 1.2 sobre uma API REST pública: POST
+`https://www.faleconosco.ms.gov.br/faq/recursos/faq/<ação>` com corpo `[{"key": …, "value": …}]`, sem sessão. Sem
+`robots.txt` (404); o AuliBot passa.
+
+- **Assuntos:** `listassunto` → 71, cada um com `qtdeFaq`, a contagem do portal (a guarda natural).
+- **Subtemas:** `listdetalhamentoassunto` (`idAssunto`) → 384 ao todo (o NF-e tem 24).
+- **Perguntas:** `listfaqpordetalhamentoassunto` (`idAssunto`, `idDetalhamentoAssunto`) → `id`, `pergunta` e uma
+  prévia da resposta.
+- **Resposta:** `getrespostafaq` (`idFaq`) → `{"data": ["<html>"]}`.
+
+## As armadilhas
+
+1. **A resposta da lista é uma prévia.** Cortada em ~100 caracteres, no meio da tag e do link; a inteira é uma
+   chamada por pergunta — 1.200 das 1.656 requisições da rodada.
+2. **A página de ouvidoria (`ouvidoria.jsf`) não é o catálogo.** Lista 70 assuntos; a API tem 71 — faltam BP-e (26
+   perguntas) e NFGas (1).
+3. **Sem rota por pergunta.** A pergunta abre num clique dentro da página do subtema. O link é o do subtema com
+   `?idFaq=<id>`, que o AngularJS 1.2 ignora na rota (abre o subtema) e que separa no acervo as duas perguntas que o
+   portal repete no mesmo subtema em versões diferentes.
+4. **HTML do Word.** Comentários condicionais com `<xml>` e `<style>`, e entidades nomeadas que o kit não conhece
+   (`&ndash;`, `&ordm;`, `&sect;`, `&ldquo;`…) → o texto sai pelo parser HTML (`scraper`), que decodifica tudo e
+   descarta os comentários.
+5. **A ordem dos assuntos é da API**, e não é alfabética nem por id: a coleta ordena assuntos e subtemas pelo nome e
+   as perguntas pelo `id`.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: lista de assuntos vazia; resposta fora do formato `{"data": [...]}`;
+  perguntas únicas de um assunto ≠ `qtdeFaq`; acervo vazio; pergunta sem texto; qualquer chamada que falhe. Avisos:
+  subtema sem perguntas, resposta vazia (0 e 0 em 02/11).
+- **Sempre à rede**; o cache em `data/ms/raw/cache/faqs/` (chave = a url da ação com os parâmetros na query) só é
+  lido com `--usecache`, que reproduz a árvore byte a byte e o snapshot a menos do `coletado_em`.
+- 1.656 POSTs com o UA `AuliBot` e 1 s de cortesia, ~30 min.
+- Saída: `data/ms/raw/ms-faqs-tree.json` (raiz → `Menu` por assunto → `Faq` por subtema) e
+  `data/ms/ms-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<assunto> | <subtema>`), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-ms-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).

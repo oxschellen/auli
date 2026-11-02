@@ -139,7 +139,7 @@ name = "SEFAZ-MS"
 uf = "MS"
 state = "Mato Grosso do Sul"
 prompt = "prompts/ms.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "mt"
