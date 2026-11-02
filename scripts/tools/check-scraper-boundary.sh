@@ -26,3 +26,15 @@ if [ -n "$hits" ]; then
 fi
 
 echo "✅ fronteira OK: nada fora de crates/scrapers/ depende do auli-scraper-kit."
+
+# Navegador headless: a ÚNICA exceção da frota é o auli-scraper-rj (D-RJ-WAF, auli_pendencias.md
+# §43 — o portal da SEFAZ-RJ só serve o catálogo a quem executa o desafio JavaScript). Qualquer
+# outra dependência de `headless_chrome` precisa de decisão própria, não de um `cargo add`.
+hits="$(grep -rn --include=Cargo.toml -E '^\s*headless_chrome\s*=' "$CRATES" \
+          | grep -v "/auli-scraper-rj/Cargo.toml:" || true)"
+if [ -n "$hits" ]; then
+  echo "❌ headless_chrome fora do auli-scraper-rj, a única exceção registrada (D-RJ-WAF):"
+  echo "$hits"
+  exit 1
+fi
+echo "✅ headless: só o auli-scraper-rj depende de headless_chrome (D-RJ-WAF)."

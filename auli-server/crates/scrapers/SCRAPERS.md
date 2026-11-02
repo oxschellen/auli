@@ -17,8 +17,10 @@ Todos os scrapers seguem o mesmo esqueleto:
 
 - **Um crate binário por entidade** (D-F2.1). Cada um conhece só o seu `ENTITY` e **não lê o
   registry** — a entidade é hard-coded no crate.
-- **Sem navegador headless.** Nenhum crate depende de `headless_chrome` (o RS já usou, hoje não).
-  Doutrina vigente: *discovery-first; API JSON > HTML server-side; navegador nunca*.
+- **Sem navegador headless — uma exceção.** Só o `auli-scraper-rj` depende de `headless_chrome` (D-RJ-WAF,
+  02/11/2026: o portal da SEFAZ-RJ só serve o catálogo a quem executa o desafio JavaScript da proteção
+  anti-robô); o `check-scraper-boundary.sh` barra qualquer outro. O RS já usou, hoje não. Doutrina vigente:
+  *discovery-first; API JSON > HTML server-side; navegador só por exceção registrada*.
 - Dependem de **`auli-contract`** (tipos + I/O do snapshot, shape per-público) +
   **`auli-scraper-kit`** (o cardápio comum abaixo) — **nunca** de `fastembed`/`ort`/vector-store.
   Recíproca (D-C1): nada fora de `scrapers/` depende do kit.
@@ -80,7 +82,7 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **mg** | SEF-MG / Minas Gerais | ServiceNow CSM (API JSON) | JSON | 3 | 148 | rica (~3625) | agregada | 3 | rustls |
 | **pe** | SEFAZ-PE / Pernambuco | SharePoint 2013 on-prem; menu `#menu_servicos`, 1 GET | HTML | 3 | 38 | **vazia** (menu-only) | agregada | 6 | rustls |
 | **ba** | SEFAZ-BA / Bahia | ASP clássico; listagem + fichas de detalhe | HTML | 1 | 204 | rica (~1649) | agregada | 5 | **native-tls** |
-| **rj** | SEFAZ-RJ / Rio de Janeiro | WordPress server-rendered; 1 página, 1 GET | HTML | 1 | 91 | **vazia** (v1) | direto | 8 | rustls |
+| **rj** | SEFAZ-RJ / Rio de Janeiro | WordPress; 1 página, Chromium headless (D-RJ-WAF) | HTML | 1 | 91 | **vazia** (v1) | direto | 10 | rustls |
 | **ce** | SEFAZ-CE / Ceará | SPA Sydle ONE; API JSON `getChildren` (POST) | JSON | 1 | 382 | curta (~79) | direto | 6 | rustls |
 | **ms** | SEFAZ-MS / Mato Grosso do Sul | WordPress server-rendered; listagem própria, filtros `?usuario=`/`?categoria=`, `pp` alto | HTML | 5 | 276 | **vazia** (v1) | direto | 7 | rustls |
 | **mt** | SEFAZ-MT / Mato Grosso | X-Via Portal (SPA React); API pública `POST /v1/search/department`, sem token | JSON | 2 | 27 | rica (~168) | direto | 8 | rustls |
@@ -238,14 +240,18 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 
 ### rj — SEFAZ-RJ (Rio de Janeiro)
 
-- **WordPress server-rendered** (`portal2.fazenda.rj.gov.br/nossos-servicos/`), **UMA página, 1 GET**.
+- **WordPress server-rendered** (`portal2.fazenda.rj.gov.br/nossos-servicos/`), **UMA página**.
+- **D-RJ-WAF (02/11/2026):** o portal barra UA de robô (página de "IP bloqueado") e dá aos demais um
+  desafio JavaScript. A página vem por um **Chromium headless** (o do Playwright, ou `AULI_CHROME_PATH`),
+  depois de um GET simples pelo `ureq` que é o critério para desfazer a exceção: se o portal voltar a servir a
+  página, o Chromium nem abre. Rede sempre; cache só com `--usecache`. `docs/auli_pendencias.md` §43.
 - **Parser agnóstico de CSS do tema:** menu = maior grupo de âncoras internas sob o mesmo contêiner;
   seção = alvo da âncora (3 formatos cobertos por teste).
 - **D-RJ2 — identidade `(link, titulo)`:** o link não é único (CISC 2×, DARJ/ITD compartilham URL);
   mesmo par em várias categorias → um serviço com N ocorrências. `ServicoRaw` direto.
 - **D-RJ3:** sem descrições (página não tem corpo). **D-RJ4:** público único "Serviços", classe =
   categoria. **D-RJ5:** guards (mín. 12 categorias / 60 ocorrências), cache pós-guards.
-- 91 serviços (14 categorias). **8 testes** (o maior da frota).
+- 91 serviços (14 categorias). **10 testes**.
 
 ### ce — SEFAZ-CE (Ceará)
 

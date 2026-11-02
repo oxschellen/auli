@@ -1,5 +1,6 @@
 // auli-scraper-rj — scraper da SEFAZ-RJ (serviços, catálogo "Nossos Serviços" do portal2,
-// WordPress server-rendered). Sem headless Chrome, sem API: uma página, um GET, parse HTML.
+// WordPress server-rendered). Sem API: uma página, parse HTML — buscada por um Chromium headless
+// quando o portal exige o desafio JavaScript (D-RJ-WAF; ver o `rj.rs`).
 //
 // Conhece UMA entidade ("rj"); não lê o registry. Grava o snapshot de serviços (v3); a derivação dos
 // artefatos é o `auli-collections rj`.
