@@ -4,6 +4,11 @@ Registro dos assuntos em aberto **após** o merge do `auli-contract` (PR #3) no 
 fez a **struct tipada** (`auli_contract::Table<P>`) virar a fonte única do dado: o scraper grava o
 contrato em `data/<id>/raw/<id>-<kind>.json` e o `auli update` o consome.
 
+> **02/11/2026 — as pendências de scrapers saíram daqui** para
+> [auli_scraper_pendências.md](auli_scraper_pendências.md). No lugar de cada uma ficou um ponteiro, com o
+> título e o número da seção mantidos, para as citações do código (`auli_pendencias.md §36`, `§41`, `§43`…)
+> continuarem chegando ao texto.
+
 > **Revisão 2026-07-02 (pós fases 1 e 2).** O modelo evoluiu: o **snapshot v2**
 > (um por coleção: `data/<id>/<id>-<kind>-snapshot.json`, tipos em `auli_contract::snapshot`) virou a fronteira
 > scraper→collections; a coleta saiu para os binários **`auli-scraper-<e>`** e o
@@ -170,16 +175,8 @@ Exceções que ficam locais (com comentário): `fetch` do ba (charset latin1 + n
 API ServiceNow: headers + `Value` + parse-antes-de-cachear) e do rs-faqs (cache path-based próprio +
 retry genérico); o `clean_text` line-based (ba/mg/pr/rs); e o cache-terminador de paginação do ce.
 
-**Pendências abertas (fora desta TAREFA):**
-
-- **Camada 2 (2º-consumidor já satisfeito, extrair em TAREFA curta):** `kit::validar_contagem(unicos,
-  total, min, dica)` — o invariante dinâmico de ce (`hits`) e mt (`resultTotal`); `kit::absolutize(base,
-  href)` — o miolo comum de `canonical` de rj/sp/pe; `kit::cli::parse_args()` — o parse de
-  `[--usecache] <cmd>` repetido nos `main.rs`. (Nota: `ms` foi re-ancorado em `união⊆Todos`, então o
-  `validar_contagem` tem 2 consumidores reais — ce, mt —, não 3.)
-- **`AuliBot/x.y (+url)` institucional:** avaliar um User-Agent identificável para a frota toda (hoje
-  todos usam o Firefox/124 de navegador). Decisão de projeto — muda a identidade de rede em todos os
-  portais, exige recoleta verificada.
+**Pendências abertas (fora desta TAREFA)** — Camada 2 do kit e User-Agent institucional na frota: movidas
+para [auli_scraper_pendências.md](auli_scraper_pendências.md) §10 e §11.
 
 ---
 
@@ -249,7 +246,8 @@ Portal `www.sefaz.am.gov.br/portfolio-servicos` = **Next.js App Router (RSC)**. 
   `$a/$b/$c` no mesmo payload); expandir os accordions no browser NÃO dispara rede. → o scraper nunca
   precisa de navegador (headless foi usado só para _provar_ isso na descoberta).
 - **D-AM3 — escopo = só a listagem:** por decisão, coletamos só o `resumo` curto da listagem (não os
-  278 detalhes). O conteúdo rico do detalhe fica para uma eventual **v2** — ver **D-AM-V2** abaixo.
+  278 detalhes). O conteúdo rico do detalhe fica para uma eventual **v2** — ver **D-AM-V2** abaixo
+  (movida para [auli_scraper_pendências.md](auli_scraper_pendências.md) §5).
 - **D-AM4 — público:** 3 rotas de perfil (`pessoa-fisica/juridica/orgaos-publicos`) com **sobreposição**
   (pf∩pj=98); `ocorrencias` = {público × classe} por pertencimento. **classe** = categoria de topo (19).
   `agendaveis` NÃO é público (a rota devolve os 278) — atributo, ignorado como faceta. **Duplicatas**
@@ -260,38 +258,7 @@ Portal `www.sefaz.am.gov.br/portfolio-servicos` = **Next.js App Router (RSC)**. 
 
 ### D-AM-V2 — descrição rica do detalhe (pendência aberta, NÃO feita)
 
-A v1 usa só o `description` curto da listagem (≈1 frase). O AM publica, por serviço, uma **descrição
-rica** (o diferencial do portal) que hoje NÃO entra no snapshot. Recuperá-la é a **v2 do `am`** — sem
-navegador (a descoberta provou zero-XHR: todo o conteúdo é server-rendered no RSC do detalhe).
-
-**Fonte:** `GET https://www.sefaz.am.gov.br/portfolio-servicos/detalhes/{id}?profile=todos` com header
-`RSC: 1` (mesmo transporte da v1). No flight, o objeto **`serviceDetails`** (extrair por âncora
-`"serviceDetails":{` + balanceamento) traz o mapa de seções:
-
-| campo em `serviceDetails` | seção | forma |
-|---|---|---|
-| `resumo` | O que é | texto plano (inline) |
-| `perfis[]` | A quem se destina | array de strings (= o público, já temos via rotas) |
-| `comoProcederHtml` | Passo a passo / Como proceder | **ref de chunk `$a`** |
-| `documentacaoHtml` | Documentação necessária | **ref de chunk `$b`** |
-| `legislacaoHtml` | Legislação Aplicada | HTML inline |
-| `perguntasRespostasHtml` | Perguntas Frequentes | **ref de chunk `$c`** |
-| `setorResponsavel{nome,sigla}` + `email` + `phone` + `tempoMedioEmDias` | Contato | campos escalares |
-| `visibleSections[]` | quais seções existem | enum (ex.: id 63 não tem `PERGUNTAS_FREQUENTES`) |
-
-**Trabalho técnico da v2 (o que a v1 evitou):**
-
-1. **Resolver refs de chunk do flight:** `"$a"/"$b"/"$c"` apontam para chunks-texto no MESMO payload,
-   no formato `a:T<hexlen>,<html>` — **alguns colados ao chunk anterior sem `\n`** (o parser tem de
-   varrer por `<ref>:T<hexlen>,` e ler `hexlen` bytes, não confiar em quebra de linha).
-2. **Decodificar entidades HTML** (`&ccedil;`, `&atilde;`, `&ordm;`…) e limpar as tags — a tabela fixa
-   do `kit::decode_entities` NÃO cobre tudo; usar **html5ever (crate `scraper`)**, mesma lição do GO.
-3. Montar a `descricao` concatenando as seções presentes (`visibleSections`) num texto uniforme.
-
-**Custo/risco:** **~278 GETs** (um por serviço, cacheáveis; cortesia entre eles) — mais pesado que
-qualquer scraper atual. Os **39 serviços link-only** (externo/submenu) NÃO têm página de detalhe → sem
-`serviceDetails`; a v2 mantém para eles só o `resumo` da listagem. Guard sugerido: um piso de seções
-não-vazias por serviço para pegar regressão de parser. Evidência e amostras em `docs/REGISTRO-scrapers.md#am` (Fase 3).
+Movida para [auli_scraper_pendências.md](auli_scraper_pendências.md) §5.
 
 ## 14. Entidade `pa` (SEFA-PA) integrada — ✅ **resolvida (15ª entidade)**
 
@@ -312,12 +279,8 @@ o candidato `portal-digital` estava fora do ar (522) e o Joomla foi extinto.
   "Tributos e empresas"); `publico` via flags `cidadao/empresa/estado` (sobrepostos → 3 públicos,
   `ocorrencias` = público × classe); `link` = `paradigital.pa.gov.br/servico/{id}`; órgão "SEFA-PA".
   54 ocorrências (Cidadão 21 / Empresa 30 / Estado 3). 8 testes.
-- **⏳ D-PA-ACERVO (aberta, NÃO feita):** o paradigital é um catálogo estadual **multi-tenant com 63
-  órgãos** sob o MESMO contrato (`/orgao/{idOrgao}` + `/servico/{id}`). Um **scraper estadual genérico**
-  parametrizado por `idOrgao` cobriria os 63 órgãos sem novo código — oportunidade forte para o Acervo.
-  Registrado; não implementado (foge do modelo "1 entidade = 1 órgão" atual).
-- **⏳ D-PA-PORTALDIGITAL (aberta):** `portal-digital.sefa.pa.gov.br` (SPA SEFA-específica, ids Mongo
-  ObjectId) estava em 522 na coleta. Se voltar, reavaliar (pode ter conteúdo próprio).
+- **⏳ D-PA-ACERVO e D-PA-PORTALDIGITAL (abertas):** movidas para
+  [auli_scraper_pendências.md](auli_scraper_pendências.md) §8 e §6.
 
 ## 15. Entidade `es` (SEFAZ-ES) integrada — ✅ **resolvida (16ª entidade)**
 
@@ -358,15 +321,7 @@ Agência Virtual = SPA **Sydle ONE geração "conecta-360" (= molde PI, NÃO o C
 
 ### D-XX-SYDLE-COMPARTILHADO (aberta — a decisão de arquitetura mais importante)
 
-**PI e RO são a MESMA geração Sydle ONE (conecta-360):** mesmo contrato `_search`, mesmas classes de
-plataforma (conteúdo `5cd32901…`, catálogo `5ca3bca7…`, classification `5d66ec59…`). Diferem só em
-`{BASE_API_URL host, app, catálogo _id, prefixo-de-link}`. → oportunidade de **um scraper parametrizável
-cobrindo PI + RO** (e futuros conecta-360). **O CE NÃO entra** — é a geração antiga (`getChildren`,
-classes diferentes, tenant por header `X-Explorer-Account-Token`). **Não decidir/refatorar sem alinhar:**
-o trade-off é DRY (1 crate, N estados) × acoplar 2 estados a um contrato de terceiros que evolui. O
-"3º tenant PA/portal-digital" ficou **inconclusivo** (estava em 522 na descoberta do PA; usamos o
-paradigital/Prodepa — outra plataforma). Correlato ao D-AM-V2: RO/PI têm `contentHtml` inline para uma
-eventual descrição rica v2.
+Movida para [auli_scraper_pendências.md](auli_scraper_pendências.md) §9.
 
 ## 17. Entidade `to` (SEFAZ-TO) integrada — ✅ **resolvida (18ª entidade)**
 
@@ -480,8 +435,7 @@ AngularJS/IIS transacional. Descoberta em `docs/REGISTRO-scrapers.md#rn`.
   `titulo`/`Matéria`/categoria vêm com entidades HTML → `html_to_text`. `link` = `acf.link`
   (absolutizado se relativo; permalink quando `false`); identidade = link; público único; classe =
   categoria WP. `ServicoRaw` direto, UA AuliBot.
-- **D-RN-ACERVO (aberta):** RN é intrinsecamente menu-only (molde RJ/PE, mas via API JSON limpa).
-  Reavaliar se/quando o RN publicar uma Carta descritiva ou a UVT expor um catálogo público.
+- **D-RN-ACERVO (aberta):** movida para [auli_scraper_pendências.md](auli_scraper_pendências.md) §7.
 - 15 serviços (5 ricos), 4 classes. 4 testes.
 
 ## 23. Entidade `pb` (SEFAZ-PB) integrada — ✅ **resolvida (24ª entidade)**
@@ -519,8 +473,7 @@ Abertos", sem auth). Descoberta/validação em `docs/REGISTRO-scrapers.md#al`.
   {WEB,TELEFONE,APLICATIVO-MOVEL,E-MAIL} (não o chutado PRESENCIAL/EMAIL/APP) + fallback; textos com tags
   **entity-encodadas** (`&lt;b&gt;`) → strip antes E depois do decode; público fallback = **"Contribuinte"**
   (não "Serviços": slug `servicos` colidiria com o arquivo agregado `al-servicos.json`).
-- **D-AL-1 (escopo SEFAZ-only, aberta):** o portal é multi-órgão (1664 serviços/71 órgãos) → **D-PA-ACERVO
-  puro**; basta relaxar o filtro `organ_id` para virar scraper estadual genérico. Não implementado.
+- **D-AL-1 (escopo SEFAZ-only, aberta):** movida para [auli_scraper_pendências.md](auli_scraper_pendências.md) §8.
 - 60 serviços, 166 ocorrências, 7 públicos, 3 classes, descrição rica (~1030). 6 testes.
 
 ## 25. Entidade `se` (SEFAZ-SE) integrada — ✅ **resolvida (26ª entidade)**
@@ -1374,23 +1327,7 @@ número vivo é o frontend, que já lê as contagens dos índices em tempo de ex
 
 ## 36. Cache dos scrapers: o remédio é **validação na leitura**, não atomicidade (aberta — 2026-08-11)
 
-Levantada pela auditoria de escrita não atômica do item 7 (PR #143), e deliberadamente **não
-corrigida ali** — a correção óbvia resolveria o sintoma menor e deixaria o maior de pé.
-
-O [`cache::write`](auli-server/crates/scrapers/auli-scraper-kit/src/cache.rs) grava HTML por URL com
-`fs::write` direto. Uma queda no meio deixa HTML **parcial** — que **parseia**, produzindo coleta
-silenciosamente incompleta a partir de um arquivo que ninguém suspeita. Mas tornar a escrita atômica
-não resolve o caso maior: um cache **válido porém obsoleto** passa em qualquer verificação de
-integridade estrutural, e nenhum `rename` o pega.
-
-Há um segundo argumento contra a atomicidade aqui, do desenho do próprio kit: o `write` é
-_best-effort_ por contrato — se falha, loga e a coleta segue. Escrita atômica só mudaria o modo de
-falha de "arquivo pela metade" para "arquivo ausente", e **ausente o `read` já sabe tratar** (ele
-devolve `None` para arquivo vazio ou ilegível, e o scraper refaz a requisição).
-
-**O desenho, se virar TAREFA:** validação de completude na LEITURA — um sentinela escrito por último,
-ou tamanho/hash no nome do arquivo. E merece **medição antes**: com que frequência o cache é lido
-depois de uma interrupção? Se for raro, a dívida pode ficar registrada e não ser paga.
+Movida para [auli_scraper_pendências.md](auli_scraper_pendências.md) §15.
 
 ---
 
@@ -1602,26 +1539,7 @@ que proíbe a síntese entre documentos, e o corte para 5 serviços + 10 FAQs.
 
 ## 41. FAQs do SP: dois pontos deixados pela revisão do #179 (aberta — 2026-11-02)
 
-Registro em [REGISTRO-scrapers.md#sp-faqs](REGISTRO-scrapers.md#sp-faqs); estudo em
-[ESTUDO-SP-Faqs.md](ESTUDO-SP-Faqs.md) §9. Nenhum dos dois justifica PR sozinho.
-
-1. **Lista ausente derruba a rodada inteira.** O `buscar_todas` do
-   [`faqs.rs`](auli-server/crates/scrapers/auli-scraper-sp/src/faqs.rs) propaga qualquer falha de chamada,
-   e um subsite sem a lista `Perguntas Frequentes` responde 404 — então um Home novo criado sem FAQ
-   (plausível: 31 das 95 listas já estão vazias) para a coleta toda por um subsite irrelevante. Em
-   01/11/2026 nenhum dos 95 subsites com `URLHome` carecia da lista, por isso não morde hoje. O 404 da
-   `_api` para `getByTitle` é inequívoco ("a lista não existe", nunca "lista vazia", que é 200 com
-   `results: []`): **rebaixar esse caso a aviso + pular, mantendo `Err` para qualquer outro status.**
-   Pede um GET que veja o status (o `get_string` do kit retenta o 404 três vezes e devolve `Err`), um
-   marcador no cache para o `--usecache` reproduzir o pulo, e um teste. Fazer na próxima vez que alguém
-   tocar o arquivo.
-2. **Observar nos logs de auditoria as FAQs de público interno (D-SPFAQ-7).** Entrou "ingerir todos",
-   como o portal mostra. Pela categoria do Home na `Homes 360`, as claramente internas são **62 das
-   2.665** (planejamento e execução orçamentária e financeira 41, trabalho a distância 12, entidades da
-   administração 4, segurança da informação 3, RH 1, financiamento público 1; "previsão orçamentária e
-   arrecadação", 58, é duvidosa). Se elas começarem a aparecer no top-10 de perguntas de contribuinte,
-   a evidência para filtrar pela categoria estará na seção ADERÊNCIA dos logs — e o filtro é uma lista
-   fechada de categorias no `faqs.rs`, com teste.
+Movida para [auli_scraper_pendências.md](auli_scraper_pendências.md) §14.
 
 ## 42. MG: o `atendimento2` declara `Disallow: /` — robots desconsiderado (✅ decidida e aplicada — 2026-11-02)
 
@@ -1658,55 +1576,8 @@ no acervo.
 
 ## 43. RJ: o portal da SEFAZ-RJ barra coleta automatizada — serviços de volta pela D-RJ-WAF, FAQs em espera (aberta — 2026-11-02)
 
-**Fato (02/11/2026, 9 requisições com 1 s entre elas).** Os três hosts — `portal.`, `portal2.` e
-`www.fazenda.rj.gov.br` — respondem 200 com uma página que não é a pedida, em qualquer caminho, inclusive o
-`robots.txt` (não há como lê-lo):
-
-| UA | Resposta |
-|---|---|
-| AuliBot | página de "IP bloqueado" (1,6 KB, "bloqueia acessos provenientes desses endereços IP"). A mensagem engana: com outro UA, o mesmo IP recebe outra coisa |
-| o do kit (Firefox) | desafio JavaScript da proteção anti-robô na frente do portal (~45 KB, scripts `/TSPD/`, "Please enable JavaScript to view the page content") |
-| Chrome/130 | o mesmo desafio (50,6 KB: `TSPD` 3×, nenhum `wp-content`) — não é o Firefox/124 envelhecido do kit que dispara a proteção |
-
-Em 25/07/2026 a mesma URL do catálogo (`portal2.fazenda.rj.gov.br/nossos-servicos/`) veio normal com o UA do
-kit — é o cache do [`rj.rs`](auli-server/crates/scrapers/auli-scraper-rj/src/rj.rs), 62 KB.
-
-**Efeito.**
-
-1. **Serviços:** a coleta pelo `ureq` recebe o desafio e para com `Err` antes de gravar — confirmado em
-   02/11/2026 com o cache tirado do caminho: "menu de categorias não encontrado (nenhuma âncora interna
-   válida) — markup mudou?"; snapshot e cache de 25/07 intactos. Resolvido pela D-RJ-WAF (abaixo).
-2. **FAQs:** a sondagem não chegou a nenhuma página — em espera (a D-RJ-WAF cobre só o catálogo).
-
-**O que se sabe das FAQs sem tocar o portal** (busca na web, 02/11/2026): não há página central; o conteúdo
-parece espalhado pelo WordPress multisite (subsites conhecidos: `/icms/`, `/consulta-tributaria/`,
-`/ouvidoria/`, `/junta-revisao-fiscal/`):
-
-- uma busca prévia de perguntas frequentes no "Fale Conosco" → "Legislação Tributária", por setor, tributo e
-  assunto ([gov.br, serviço 17187](https://www.gov.br/en/state-services/servico_estadual?id=17187));
-- um link "Dúvidas Frequentes" no bloco de "Fale Conosco" das portarias da SUPTRIB;
-- perguntas e respostas em páginas de subsite (`/icms/gia-icms/`);
-- PDFs em perguntas e respostas (cartilha do MEI, Manual NF-e) — PDF ficou fora nas outras entidades.
-
-**Decisão D-RJ-WAF (mantenedor, 02/11/2026): o catálogo de serviços do RJ vem por um Chromium headless.**
-Sondagem do mantenedor com o Playwright: o Chromium completo, em modo headless novo e com UA de Chrome,
-executa o desafio e recebe o catálogo em ~3,5 s, idêntico ao modo com janela. Sem pedido à SEFAZ-RJ.
-
-- **Só o `auli-scraper-rj`, só a página do catálogo, uma navegação por rodada** — a única exceção da frota à
-  regra "sem navegador headless". O `check-scraper-boundary.sh` barra `headless_chrome` em qualquer outro crate.
-- **Critério para desfazer, automático:** cada rodada tenta antes um GET simples pelo `ureq`; se o portal voltar
-  a servir a página, o Chromium nem abre (e o scraper avisa que a exceção pode cair).
-- **O parser decide se a página serve** (os guards D-RJ5 não mudaram). `TSPD` não é critério: a proteção injeta
-  o script dela também na página boa.
-- **Limite:** o corpo do desafio traz um captcha ("Qual é o Código da Imagem?") para quem não executa
-  JavaScript. Se o portal passar a exigi-lo, a exceção para ali — captcha não se resolve.
-- **Chromium:** o do Playwright (`npx playwright install chromium`), a versão mais nova em
-  `~/.cache/ms-playwright/`, ou `AULI_CHROME_PATH`.
-- **Operação:** a coleta roda pelo `atualizar-servicos.sh rj`, liberado numa regra de permissão local do
-  mantenedor (o modo automático do Claude Code barra o comando sem ela).
-- **Rodada de 02/11/2026:** o GET simples recebeu a página de bloqueio; o Chromium recebeu o catálogo — 14
-  categorias, 91 serviços. Em relação a 25/07, só o link do "SCDI – Representante Legal" mudou
-  (`scdi.fazenda.rj.gov.br/projetoCDI/` → `portal.fazenda.rj.gov.br/scdi/`). `--usecache` reproduz o snapshot.
+Movida para [auli_scraper_pendências.md](auli_scraper_pendências.md) §4 (texto integral, inclusive a
+decisão D-RJ-WAF citada no `auli-scraper-rj`, no `atualizar-servicos.sh` e no `check-scraper-boundary.sh`).
 
 ---
 
