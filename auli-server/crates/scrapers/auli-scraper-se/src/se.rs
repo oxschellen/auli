@@ -78,6 +78,8 @@ fn load(data_dir: &str, use_cache: bool) -> Result<(String, bool), Box<dyn std::
     }
     let body = auli_scraper_kit::http::get_via_curl(
         CARTA_URL,
+        // D-FROTA-UA: UA de navegador por legado, nunca testado com o AuliBot neste host.
+        auli_scraper_kit::USER_AGENT,
         &GetOpts {
             log_prefix: "SE",
             ..Default::default()

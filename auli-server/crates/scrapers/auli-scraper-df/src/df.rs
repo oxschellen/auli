@@ -134,6 +134,9 @@ fn load(
     }
     let body = auli_scraper_kit::http::get_via_curl(
         url,
+        // D-FROTA-UA: UA de navegador por legado. O host aceita o AuliBot pelo curl (sondagem das FAQs,
+        // 02/11/2026), mas trocar aqui pede recoleta verificada dos serviços.
+        auli_scraper_kit::USER_AGENT,
         &GetOpts {
             log_prefix: "DF",
             ..Default::default()

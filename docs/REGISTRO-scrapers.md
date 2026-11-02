@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 7 de **FAQs** (SC, PR, SP, MG, MS, MT e GO). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 8 de **FAQs** (SC, PR, SP, MG, MS, MT, GO e DF). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -39,6 +39,7 @@
 - [MS FAQs — Perguntas Frequentes da FAQ do Fale Conosco MS (www.faleconosco.ms.gov.br/faq)](#ms-faqs)
 - [MT FAQs — Dúvidas do programa Nota MT (www.sefaz.mt.gov.br/notamt/duvida)](#mt-faqs)
 - [GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)](#go-faqs)
+- [DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e](#df-faqs)
 
 ---
 
@@ -2176,3 +2177,59 @@ biblioteca `Pareceres` (1.266 documentos) — fora desta coleção.
   site, que é pública — a página de FAQ exige login —, itens com o formulário) e `data/go/go-faqs-snapshot.json`
   (um `FaqRaw` por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-go-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+# DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e
+
+**Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-DFFAQ-1..10:
+[`docs/ESTUDO-DF-Faqs.md`](ESTUDO-DF-Faqs.md). Coleção `faqs` do `auli-scraper-df` (`auli-scraper-df faqs`, ou
+`all` = serviços + FAQs). **993 perguntas** na rodada de 02/11: 900 da Receita (22 temas, 81 tipos de atendimento) e
+93 do ISS/NFS-e (6 seções).
+
+## Fonte
+
+- **(A) Receita** — `www.receita.fazenda.df.gov.br/aplicacoes/perguntasfrequentes/` (ColdFusion, o host da Carta de
+  Serviços): `perguntasfrequentes.cfm` é uma casca com um formulário por tema (`codAssunto` + o `select` dos tipos de
+  atendimento); as perguntas chegam por `POST perguntasFreqBusca_div.cfm` (`selectTipoAtendimento`, `codAssunto`,
+  `buscaPergunta`), com `tipo=0` = o tema inteiro. `robots.txt`: `Allow: /`.
+- **(B) ISS/NFS-e** — `iss.fazenda.df.gov.br/online/Default/PerguntasFrequentes.aspx` (ASP.NET, plataforma terceirizada
+  sob o domínio oficial): uma página, `<h5>` por seção e pares `div.accordionHeader`/`div.accordionContent`. Sem
+  `robots.txt` (404).
+- Fora: o site do Nota Legal (403 ao AuliBot; o tema está na Receita com 58 perguntas).
+
+## As armadilhas
+
+1. **O WAF JA3 da Carta vale para a FAQ** (mesmo host): o `ureq` leva reset; o curl passa — e passa com o AuliBot.
+   O kit ganhou o POST de formulário pelo curl e o UA como parâmetro do caminho curl.
+2. **Respostas truncadas no meio de um comentário do Word.** O banco corta o campo em ~64 KB; 3 respostas acabam
+   num `<!-- [if gte mso 9]><xml>…` sem `-->`. Num parse único do fragmento, o comentário aberto engole as perguntas
+   seguintes (no navegador, o tema ITCD mostra 13 das 28). O fragmento é cortado nos embrulhos de cada pergunta
+   (`div#collapsePerguntasFrequentes`, id repetido) antes do parse.
+3. **Lixo do Word nas respostas** — CSS `mso-` e XML em comentários condicionais (33 respostas): o conversor tira
+   `<style>`, `<script>` e comentários inteiros. O `html_to_text` dos serviços não serve (deixa o CSS vazar e apaga
+   os links).
+4. **`href` que não é endereço:** caminho de arquivo do Outlook (`file:///C:/Users/…`), um parágrafo inteiro no lugar
+   da URL, `javascript:` no ISS — só `http(s)` e `mailto` entram no texto.
+5. **Prefixo "R."** em 723 respostas, com variantes (`R:`, `R .`, `R.:`, colado, dobrado, `R` sem pontuação) — sai só
+   no começo.
+6. **Perguntas de texto repetido:** 50 textos em mais de um id na Receita (30 com respostas diferentes), 18 entre
+   seções do ISS. A app não tem endereço por pergunta → o link leva o id (`#collapse<id>`) na Receita e a seção
+   (`#<slug>`) no ISS; senão um `.md` sobrescreveria outro.
+7. **O ISS não tem identidade estável:** os GUIDs dos itens mudam a cada carga. Repetição dentro da mesma seção (2,
+   uma só com outras quebras de linha) sai uma vez; resposta diferente de verdade é `Err`.
+8. **Os tipos de atendimento não são as classes dos serviços** (0 de 81): são a taxonomia do Atendimento Virtual. O
+   sufixo `" - serviço"` (49 rótulos) sai da trilha.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: menos de 18 temas; tema repetido ou sem título na casca; `codAssunto` ou
+  tipo não numérico; embrulho sem exatamente um `div.card`, card sem link ou sem resposta; tipo com pergunta fora do
+  tema; id repetido entre temas; pergunta vazia; menos de 800 perguntas da Receita ou de 80 do ISS; repetição
+  divergente na mesma seção do ISS; erro do ColdFusion; qualquer chamada que falhe. Avisos: pergunta em dois tipos
+  (fica o primeiro; 0), tema sem perguntas (0), repetição na seção do ISS (2), resposta vazia (0).
+- **Sempre à rede**; o cache em `data/df/raw/cache/faqs/` (chave = URL + campos do POST) só é lido com `--usecache`,
+  que reproduz a árvore byte a byte e o snapshot a menos do `coletado_em`.
+- Receita pelo curl (1 GET + 103 POSTs), ISS pelo `ureq` (1 GET); UA `AuliBot`, 1 s de cortesia, ~2 min.
+- Saída: `data/df/raw/df-faqs-tree.json` (raiz → `Receita-DF` → temas → tipos, e `ISS/NFS-e` → seções, na ordem do
+  portal; nós na página da fonte, itens com o link de cada pergunta) e `data/df/df-faqs-snapshot.json` (um `FaqRaw`
+  por pergunta), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-df-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).

@@ -9,8 +9,6 @@ use std::time::Duration;
 
 use anyhow::{Result, anyhow};
 
-use crate::USER_AGENT;
-
 /// Opções de fetch. `Default` = 3 tentativas, backoff base 800ms (×2 a cada falha), sem `Accept`,
 /// sem prefixo de log.
 pub struct GetOpts<'a> {
@@ -135,14 +133,45 @@ pub fn post_json(
 ///
 /// Aproxima o comportamento de [`get_string`]: honra `opts.accept`, `opts.headers`, `opts.attempts`
 /// e `opts.base_delay` (mesmo backoff ×2). `opts.log_prefix` prefixa o log de retry.
-pub fn get_via_curl(url: &str, opts: &GetOpts) -> Result<String> {
+///
+/// O User-Agent vem de quem chama (D-FROTA-UA): o call site diz qual e por quê — o AuliBot por padrão,
+/// o [`crate::USER_AGENT`] de navegador só com o motivo comentado.
+pub fn get_via_curl(url: &str, user_agent: &str, opts: &GetOpts) -> Result<String> {
     ensure_curl_available()?;
     println!("Fetching (curl): {}", url);
+    com_retry_curl(
+        "ao buscar",
+        url,
+        opts,
+        &args_curl(url, user_agent, &[], opts),
+    )
+}
 
+/// POST de formulário (`application/x-www-form-urlencoded`) via **subprocess `curl`** — o mesmo caminho
+/// e as mesmas garantias do [`get_via_curl`], para os hosts com WAF JA3 que recebem formulário (as FAQs
+/// do DF). Cada par vai num `--data-urlencode nome=valor`: o curl codifica o valor e faz o POST.
+pub fn post_form_via_curl(
+    url: &str,
+    user_agent: &str,
+    form: &[(&str, &str)],
+    opts: &GetOpts,
+) -> Result<String> {
+    ensure_curl_available()?;
+    println!("Posting (curl): {}", url);
+    com_retry_curl(
+        "no POST",
+        url,
+        opts,
+        &args_curl(url, user_agent, form, opts),
+    )
+}
+
+/// Retry/backoff do caminho curl. Corpo vazio conta como falha.
+fn com_retry_curl(oque: &str, url: &str, opts: &GetOpts, args: &[String]) -> Result<String> {
     let mut delay = opts.base_delay;
     let mut last = anyhow!("sem tentativa");
     for attempt in 1..=opts.attempts {
-        match run_curl_once(url, opts) {
+        match run_curl_once(args) {
             Ok(body) if !body.trim().is_empty() => return Ok(body),
             Ok(_) => last = anyhow!("resposta vazia"),
             Err(e) => last = e,
@@ -157,33 +186,41 @@ pub fn get_via_curl(url: &str, opts: &GetOpts) -> Result<String> {
         }
     }
     Err(anyhow!(
-        "falha ao buscar {} via curl após {} tentativas: {}",
+        "falha {} {} via curl após {} tentativas: {}",
+        oque,
         url,
         opts.attempts,
         last
     ))
 }
 
-/// Uma execução do curl. `-sS` (silencioso, mas mostra erro); `--fail-with-body` (status ≠ 0 em
-/// HTTP ≥ 400, ainda entregando o corpo no stdout p/ diagnóstico); UA de navegador do kit; `Accept` e
-/// headers extra do `GetOpts`. Args separados — sem shell.
-///
-/// D-FROTA-UA: o UA é fixo, sem parâmetro — o caminho curl só serve hosts com WAF (GO, DF, SE, RS),
-/// todos coletados assim desde antes da regra e nunca testados com o AuliBot; trocar pede recoleta
-/// verificada em cada um.
-fn run_curl_once(url: &str, opts: &GetOpts) -> Result<String> {
-    let mut cmd = Command::new("curl");
-    cmd.arg("-sS").arg("--fail-with-body");
-    cmd.arg("-A").arg(USER_AGENT);
+/// Os argumentos do curl. `-sS` (silencioso, mas mostra erro); `--fail-with-body` (status ≠ 0 em
+/// HTTP ≥ 400, ainda entregando o corpo no stdout p/ diagnóstico); o UA de quem chama; `Accept` e
+/// headers extra do `GetOpts`; os campos do formulário, se houver. Args separados — sem shell.
+fn args_curl(url: &str, user_agent: &str, form: &[(&str, &str)], opts: &GetOpts) -> Vec<String> {
+    let mut args: Vec<String> = vec![
+        "-sS".into(),
+        "--fail-with-body".into(),
+        "-A".into(),
+        user_agent.into(),
+    ];
     if let Some(a) = opts.accept {
-        cmd.arg("-H").arg(format!("Accept: {}", a));
+        args.extend(["-H".into(), format!("Accept: {}", a)]);
     }
     for (k, v) in opts.headers {
-        cmd.arg("-H").arg(format!("{}: {}", k, v));
+        args.extend(["-H".into(), format!("{}: {}", k, v)]);
     }
-    cmd.arg("--").arg(url); // `--` encerra as flags: a URL nunca é confundida com opção.
+    for (k, v) in form {
+        args.extend(["--data-urlencode".into(), format!("{}={}", k, v)]);
+    }
+    args.extend(["--".into(), url.into()]); // `--` encerra as flags: a URL nunca é confundida com opção.
+    args
+}
 
-    let out = cmd
+/// Uma execução do curl com os argumentos de [`args_curl`].
+fn run_curl_once(args: &[String]) -> Result<String> {
+    let out = Command::new("curl")
+        .args(args)
         .output()
         .map_err(|e| anyhow!("falha ao executar curl: {}", e))?;
     if !out.status.success() {
@@ -234,6 +271,55 @@ mod tests {
         assert!(o.accept.is_none());
         assert!(o.headers.is_empty());
         assert_eq!(o.log_prefix, "");
+    }
+
+    #[test]
+    fn args_curl_do_get_levam_o_ua_de_quem_chama_e_a_url_depois_do_separador() {
+        let opts = GetOpts {
+            accept: Some("application/json"),
+            headers: &[("Referer", "https://x/")],
+            ..Default::default()
+        };
+        assert_eq!(
+            args_curl("https://h/p", "AuliBot/0.1", &[], &opts),
+            [
+                "-sS",
+                "--fail-with-body",
+                "-A",
+                "AuliBot/0.1",
+                "-H",
+                "Accept: application/json",
+                "-H",
+                "Referer: https://x/",
+                "--",
+                "https://h/p"
+            ]
+        );
+    }
+
+    #[test]
+    fn args_curl_do_post_mandam_cada_campo_num_data_urlencode() {
+        let args = args_curl(
+            "https://h/busca.cfm",
+            "AuliBot/0.1",
+            &[("codAssunto", "24"), ("buscaPergunta", "")],
+            &GetOpts::default(),
+        );
+        assert_eq!(
+            args,
+            [
+                "-sS",
+                "--fail-with-body",
+                "-A",
+                "AuliBot/0.1",
+                "--data-urlencode",
+                "codAssunto=24",
+                "--data-urlencode",
+                "buscaPergunta=",
+                "--",
+                "https://h/busca.cfm"
+            ]
+        );
     }
 
     #[test]

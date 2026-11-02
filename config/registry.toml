@@ -235,7 +235,7 @@ name = "SEFAZ-DF"
 uf = "DF"
 state = "Distrito Federal"
 prompt = "prompts/df.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "rn"
