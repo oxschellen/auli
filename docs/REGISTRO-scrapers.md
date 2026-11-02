@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 5 de **FAQs** (SC, PR, SP, MG e MS). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 6 de **FAQs** (SC, PR, SP, MG, MS e MT). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -37,6 +37,7 @@
 - [SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)](#sp-faqs)
 - [MG FAQs — Perguntas Frequentes do Portal SPED MG e da Base de Conhecimento do CSM](#mg-faqs)
 - [MS FAQs — Perguntas Frequentes da FAQ do Fale Conosco MS (www.faleconosco.ms.gov.br/faq)](#ms-faqs)
+- [MT FAQs — Dúvidas do programa Nota MT (www.sefaz.mt.gov.br/notamt/duvida)](#mt-faqs)
 
 ---
 
@@ -2082,3 +2083,45 @@ a FAQ do Fale Conosco, uma aplicação AngularJS 1.2 sobre uma API REST pública
 - Saída: `data/ms/raw/ms-faqs-tree.json` (raiz → `Menu` por assunto → `Faq` por subtema) e
   `data/ms/ms-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<assunto> | <subtema>`), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-ms-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+# MT FAQs — Dúvidas do programa Nota MT (www.sefaz.mt.gov.br/notamt/duvida)
+
+**Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-MTFAQ-1..9:
+[`docs/ESTUDO-MT-Faqs.md`](ESTUDO-MT-Faqs.md). Coleção `faqs` do `auli-scraper-mt` (`auli-scraper-mt faqs`, ou
+`all` = serviços + FAQs). **135 perguntas** em 9 grupos na rodada de 02/11.
+
+## Fonte
+
+A FAQ do Nota MT, o programa de cidadania fiscal da SEFAZ-MT. A página `notamt/duvida` é um shell Angular; o módulo
+da dúvida (chunk lazy) chama `GET https://www.sefaz.mt.gov.br/notamt/api/duvidas` — sem sessão, sem corpo — e
+agrupa o resultado num acordeão. **Uma chamada** traz tudo: `id`, `descDuvida`, `descResposta` (a resposta
+inteira), `descGrupoDuvida` (`"3 - PRÊMIOS E ENTIDADES"`), `statusDuvida` (`{ativo, valor, id}`) e
+`numrOrdemDuvida`. O `robots.txt` do host é inalcançável (o https redireciona para o http e de volta, em laço);
+o AuliBot passa.
+
+## As armadilhas
+
+1. **Não é o site institucional.** O `www5.sefaz.mt.gov.br` (Liferay) tem um hub "Perguntas frequentes" e PDFs
+   "FAQ <tema>", mas declara `Disallow: /` para todo robô que não seja Google ou Bing — fase 2, pendente da decisão
+   de robots (D-MTFAQ-3). O catálogo X-Via dos serviços não tem FAQ.
+2. **Sem rota por pergunta.** O SPA só tem a rota `duvida`: todas as 135 perguntas têm o mesmo link, e o nome do
+   `.md` (pergunta + hash de link e pergunta) depende só da pergunta — repetida, um arquivo sobrescreveria o outro.
+   Guarda `Err` (0 repetidas em 02/11).
+3. **A ordem da API é embaralhada.** A coleta ordena os grupos pelo número do prefixo e as perguntas pela
+   `numrOrdemDuvida` (uma sem ordem, a 136, vai para o fim do grupo; o `id` desempata).
+4. **HTML simples e às vezes malformado** (`</li>•item</li></br>`): `<br>`, listas, `<b>`, dois links. Conversão
+   por regex (link → `texto "url"`, bloco → quebra de linha, resto sai); nenhuma entidade em 02/11.
+5. **Grupo sozinho não diz de quê.** "PROGRAMA" e "CADASTRO" são do Nota MT: a trilha é `Nota MT | <GRUPO>` (entra
+   no texto vetorizado) e a árvore tem o nível do programa (a aba de FAQs começa pelos filhos da raiz).
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: resposta fora do formato (array de dúvidas com todos os campos); `id`
+  repetido; grupo fora de `N - NOME`; acervo vazio (nenhuma dúvida ativa); pergunta sem texto; pergunta repetida;
+  a chamada que falhe. Avisos: dúvidas inativas (ficam fora), resposta vazia (0 e 0 em 02/11).
+- **Sempre à rede**; o cache em `data/mt/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- 1 GET com o UA `AuliBot`, segundos.
+- Saída: `data/mt/raw/mt-faqs-tree.json` (raiz → `Menu` Nota MT → `Faq` por grupo, tudo com o link da página,
+  itens sem `url`) e `data/mt/mt-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-mt-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).

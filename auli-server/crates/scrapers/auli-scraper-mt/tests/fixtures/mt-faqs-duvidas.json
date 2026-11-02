@@ -1,0 +1,86 @@
+[
+  {
+    "id": 136,
+    "descDuvida": "Como receber o prêmio?",
+    "descResposta": "O pagamento será realizado mediante <b>depósito</b> em conta corrente ou conta poupança de mesma titularidade do premiado.",
+    "descGrupoDuvida": "3 - PRÊMIOS E ENTIDADES",
+    "statusDuvida": {
+      "ativo": true,
+      "valor": "Ativo",
+      "id": 1
+    },
+    "numrOrdemDuvida": null
+  },
+  {
+    "id": 338,
+    "descDuvida": "Onde informar os meus dados bancários? ",
+    "descResposta": "O usuário deve acessar o Nota MT (www.nota.mt.gov.br), ir ao Menu Meus Dados => Conta Bancária, inserir os dados e clicar em <b>Salvar</b>.<br><b>Atenção</b>: Antes de Salvar, verifique se os dados informados estão corretos. Caso as informações incluídas estejam com algum erro, corrija os dados e clique na opção <b>Salvar</b>.\r\nObservação: por motivos técnicos, não são aceitas no cadastro contas poupanças do Banco SICREDI, nem contas do banco digital Mercado Pago e PicPay .",
+    "descGrupoDuvida": "5 - PAGAMENTO DOS PRÊMIOS",
+    "statusDuvida": {
+      "ativo": true,
+      "valor": "Ativo",
+      "id": 1
+    },
+    "numrOrdemDuvida": 1
+  },
+  {
+    "id": 179,
+    "descDuvida": "Quanto tempo tenho para receber meu prêmio?",
+    "descResposta": "Os consumidores contemplados nos sorteios terão o prazo de 90 (noventa) dias para atenderem as condições estabelecidas para o recebimento dos seus prêmios, contados a partir da homologação do resultado do sorteio, que será publicada no Diário Oficial do Estado. ",
+    "descGrupoDuvida": "3 - PRÊMIOS E ENTIDADES",
+    "statusDuvida": {
+      "ativo": true,
+      "valor": "Ativo",
+      "id": 1
+    },
+    "numrOrdemDuvida": 2
+  },
+  {
+    "id": 193,
+    "descDuvida": " Empresas do Simples Nacional estão obrigadas a aderir?",
+    "descResposta": "Sim.",
+    "descGrupoDuvida": "6 - EMPRESAS",
+    "statusDuvida": {
+      "ativo": true,
+      "valor": "Ativo",
+      "id": 1
+    },
+    "numrOrdemDuvida": 2
+  },
+  {
+    "id": 138,
+    "descDuvida": "Quais os meus benefícios como cidadão?",
+    "descResposta": "<ul> \n<li>Participação em sorteios com prêmios em dinheiro;</li>\n<li>Facilidade na identificação de seus documentos fiscais pela disponibilização de extrato eletrônico de suas compras;</li>\n<li>Exercício do consumo solidário, uma vez que ao se cadastrar no Programa, você indica uma instituição beneficente para ser contemplada;</li>\n<li>Oportunidade de exercer a cidadania fiscal;</li>\n<li>Possibilidade de guarda, consulta e até impressão de cópia do documento fiscal, a qualquer tempo.</li>\n</li>•Menor preço, pesquisa de preços de produtos baseando-se em valores de venda nos estabelecimentos comerciais do Estado de Mato Grosso;</li></br>\n</li>•Desconto IPVA, resgate de pontos para abatimento no valor do IPVA do usuário cadastrado no Nota MT, podendo o desconto concedido ser de R$100,00 (cem reais) ou alternativamente de 10% (dez por cento) do valor do IPVA, limitado R$700,00.</li>\n</ul>\n",
+    "descGrupoDuvida": "1 - PROGRAMA",
+    "statusDuvida": {
+      "ativo": true,
+      "valor": "Ativo",
+      "id": 1
+    },
+    "numrOrdemDuvida": 2
+  },
+  {
+    "id": 178,
+    "descDuvida": "Fui sorteado. Como faço para receber meu prêmio?",
+    "descResposta": "O pagamento será realizado mediante depósito em conta corrente ou conta poupança de mesma titularidade do premiado",
+    "descGrupoDuvida": "3 - PRÊMIOS E ENTIDADES",
+    "statusDuvida": {
+      "ativo": true,
+      "valor": "Ativo",
+      "id": 1
+    },
+    "numrOrdemDuvida": 1
+  },
+  {
+    "id": 540,
+    "descDuvida": "Como faço para resgatar meus pontos e obter o desconto?",
+    "descResposta": "O usuário deve acessar a área restrita do Portal Nota MT e selecionar o ícone “Desconto IPVA onde está liberado o ícone “Resgatar Pontos”. <br><br>Ao selecionar o ícone “Resgatar Pontos” será liberada a aba para selecionar o veículo, pela placa registrada, e para indicar a quantidade de desconto solicitado, limitado alternativamente a 10% (dez por cento) do valor do IPVA ou R$100,00 (cem reais). <br><br>Quando o crédito utilizado no desconto IPVA for de 10% (dez por cento) do imposto lançado, não poderá ser superior a R$700,00 (setecentos reais). <br><br>O portal do conhecimento disponibiliza informação passo a passo para resgate dos pontos. Para acessar o conteúdo do Portal do Conhecimento <a href=\"https://sac.sefaz.mt.gov.br/citsmart/pages/knowledgeBasePortal/knowledgeBasePortal.load#/knowledge/19156\">clique aqui</a>.",
+    "descGrupoDuvida": "9 - DESCONTO IPVA",
+    "statusDuvida": {
+      "ativo": true,
+      "valor": "Ativo",
+      "id": 1
+    },
+    "numrOrdemDuvida": 9
+  }
+]

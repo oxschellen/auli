@@ -147,7 +147,7 @@ name = "SEFAZ-MT"
 uf = "MT"
 state = "Mato Grosso"
 prompt = "prompts/mt.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "go"
