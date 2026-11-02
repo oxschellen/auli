@@ -45,9 +45,9 @@ const LIST_ID: &str = "F286D0D1-5624-47DA-A856-A8571296EB7F";
 /// Árvore de documentos (G5): um `.md` por consulta inédita. Fonte a partir da G5b.
 const DOCS_DIR: &str = "../data/sp/docs/pareceres";
 const CACHE_DIR: &str = "../data/sp/raw/cache/pareceres";
-const UA: &str =
+pub(crate) const UA: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
-const COURTESY: Duration = Duration::from_millis(1000);
+pub(crate) const COURTESY: Duration = Duration::from_millis(1000);
 const PAGE_SIZE: usize = 200;
 const MIN_YEAR: i32 = 2012;
 const MIN_PARECERES: usize = 10000; // guarda contra coleta truncada (esperado ~15–20 k)
@@ -253,7 +253,7 @@ fn normalize_lines(s: &str) -> String {
 }
 
 /// Decodifica entidades HTML (nomeadas comuns pt-BR + numéricas decimais e hexadecimais).
-fn decode_html(s: &str) -> String {
+pub(crate) fn decode_html(s: &str) -> String {
     let s = RE_DEC.replace_all(s, |c: &regex::Captures| {
         c[1].parse::<u32>()
             .ok()

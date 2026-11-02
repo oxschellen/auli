@@ -1,0 +1,112 @@
+{
+ "d": {
+  "results": [
+   {
+    "__metadata": {
+     "id": "b65b722d-708f-4932-a766-7219830fc0c4",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/gia/_api/Web/Lists(guid'a9a89b37-7252-49a6-9085-723545f6334f')/Items(82)",
+     "etag": "\"3\"",
+     "type": "SP.Data.Perguntas_x0020_FrequentesListItem"
+    },
+    "Id": 82,
+    "Title": "\"Erro ao migrar o banco\" ao abrir o programa GIA e mensagem indicativa que a base de dados está inoperante",
+    "Resposta": "<div class=\"ExternalClass84A077048E074FBA858632050902B256\"><p>​Se, ao abrir o programa GIA, é exibida uma&#160;mensagem do tipo &quot;Erro ao migrar o banco&quot; ou no rodapé do programa existe mensagem indicando que o banco de dados está inoperante, é necessário instalar o Microsoft SQL Server Compact 4.0 SP1 disponível em&#160;https&#58;//www.microsoft.com/pt-br/download/details.aspx?id=30709.<br></p></div>",
+    "Assunto": {
+     "__metadata": {
+      "type": "Collection(Edm.String)"
+     },
+     "results": [
+      "Erros",
+      "Uso do Programa"
+     ]
+    },
+    "ID": 82,
+    "Modified": "2022-11-18T16:41:13Z"
+   },
+   {
+    "__metadata": {
+     "id": "52a19e59-7e9c-456d-b6ba-aee004339874",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/gia/_api/Web/Lists(guid'a9a89b37-7252-49a6-9085-723545f6334f')/Items(64)",
+     "etag": "\"17\"",
+     "type": "SP.Data.Perguntas_x0020_FrequentesListItem"
+    },
+    "Id": 64,
+    "Title": "Como faço para informar o valor Substituído quando atuo na condição de Substituído Tributário?",
+    "Resposta": "<div class=\"ExternalClassAA8248BB371344A9A673815EA6ABC6A4\"><p>​Quando um contribuinte adquire ou vende uma mercadoria na condição de substituído tributário, ele deve escriturar registros C197 conforme exemplo abaixo&#58;</p><p>\n      <img alt=\"Exemplo C197 para substituido tributário\" src=\"/servicos/gia/PublishingImages/4-Substituído%201.JPG\" style=\"width&#58;100%;\" />\n   </p><p style=\"text-align&#58;center;\"><img alt=\"Exemplo C197 para substituido tributário\" src=\"/servicos/gia/PublishingImages/4-Substituído%202.JPG\" style=\"width&#58;60%;\" /></p></div>",
+    "Assunto": {
+     "__metadata": {
+      "type": "Collection(Edm.String)"
+     },
+     "results": [
+      "GIA da EFD"
+     ]
+    },
+    "ID": 64,
+    "Modified": "2021-09-10T19:08:51Z"
+   },
+   {
+    "__metadata": {
+     "id": "80a92285-0c5a-4c83-9940-1a14f80f38db",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/gia/_api/Web/Lists(guid'a9a89b37-7252-49a6-9085-723545f6334f')/Items(71)",
+     "etag": "\"5\"",
+     "type": "SP.Data.Perguntas_x0020_FrequentesListItem"
+    },
+    "Id": 71,
+    "Title": "Como faço para informar valor de ICMS Substituído numa operação de entrada com ICMS retido anteriormente e IPI destacado, porém sem direito a crédito do IPI?",
+    "Resposta": "<div class=\"ExternalClass5C936E97A4EE4145B936A7E640309E0C\"><p>​Devem ser lançados dois ajustes&#58;</p><ul><li>C197 com o ajuste SP90090278 informando o valor do ICMS Substituído no campo VL_ICMS</li><li>C197 com o ajuste&#160; SP90090104 informando no campo VL_OUTROS o valor da coluna Outras (Valor total da nota – IPI – valor do ICMS Substituído)</li></ul><p>Exemplo&#58;</p><p>|C195|000001||</p><p>|C197|SP90090278|CFOP||||valor do ICMS Substituído||</p><p>|C195|000002||</p><p>|C197|SP90090104|CFOP|||1|0|Valor total da nota – IPI – valor do ICMS Substituído|<br></p><p><br></p></div>",
+    "Assunto": {
+     "__metadata": {
+      "type": "Collection(Edm.String)"
+     },
+     "results": [
+      "GIA da EFD"
+     ]
+    },
+    "ID": 71,
+    "Modified": "2021-09-10T19:09:19Z"
+   },
+   {
+    "__metadata": {
+     "id": "70e51cdb-58bf-4d2e-8a75-48b9fc936bcb",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/gia/_api/Web/Lists(guid'a9a89b37-7252-49a6-9085-723545f6334f')/Items(80)",
+     "etag": "\"2\"",
+     "type": "SP.Data.Perguntas_x0020_FrequentesListItem"
+    },
+    "Id": 80,
+    "Title": "Principais Divergências e Inconsistências",
+    "Resposta": "<div class=\"ExternalClassD9B2FC594B744B909311B3D43DB16E75\"><p>​Para saber quando ocorrem e como corrigir as principais divergências e inconsistências, acesse a página&#160;<a href=\"/servicos/gia/Paginas/GIAEFD-divergencias-inconsistencias.aspx\">Eliminação da GIA - Principais Divergências e Inconsistências.</a><br></p></div>",
+    "Assunto": {
+     "__metadata": {
+      "type": "Collection(Edm.String)"
+     },
+     "results": [
+      "GIA da EFD"
+     ]
+    },
+    "ID": 80,
+    "Modified": "2022-02-07T20:19:08Z"
+   },
+   {
+    "__metadata": {
+     "id": "8fe943fc-528c-4926-82b4-fa0f5e7766f6",
+     "uri": "https://portal.fazenda.sp.gov.br/servicos/gia/_api/Web/Lists(guid'a9a89b37-7252-49a6-9085-723545f6334f')/Items(98)",
+     "etag": "\"2\"",
+     "type": "SP.Data.Perguntas_x0020_FrequentesListItem"
+    },
+    "Id": 98,
+    "Title": "Sou contribuinte do setor de combustíveis e comercializo biodiesel (B100). Como devo escriturar no SPED e lançar na GIA?",
+    "Resposta": "<div class=\"ExternalClassFB44EAA19DC7494795A0D7AE06839EAB\"><p>​</p><p style=\"text-align&#58;justify;\">Para emissão do Documento fiscal, devem ser observadas as orientações constantes nesta página do CONFAZ&#58;&#160;&#160;&#160;&#160; <br><a href=\"https&#58;//www.confaz.fazenda.gov.br/tributacao-monofasica\">https&#58;//www.confaz.fazenda.gov.br/tributacao-monofasica</a></p><p style=\"text-align&#58;justify;\">Para escrituração no SPED devem ser seguidas as orientações descritas na <a href=\"http&#58;//sped.rfb.gov.br/arquivo/show/7265\">Nota Orientativa 01/2023 v 1.4 - ICMS Monofásico</a> e na <a href=\"https&#58;//legislacaoadm.intra.fazenda.sp.gov.br/Paginas/Portaria-SRE-54-de-2024.aspx\">Portaria SRE 54/ 2024</a>. A seguir consta um exemplo de escrituração e o posterior lançamento na GIA.</p><table cellspacing=\"0\" width=\"100%\" class=\"ms-rteTable-default\"><tbody><tr><td class=\"ms-rteTable-default\" style=\"width&#58;50%;\"><strong>C190 (SPED)</strong></td><td class=\"ms-rteTable-default\" style=\"width&#58;50%;\">​</td></tr><tr><td class=\"ms-rteTable-default\">CST_ICMS </td><td class=\"ms-rteTable-default\">53</td></tr><tr><td class=\"ms-rteTable-default\">CFOP</td><td class=\"ms-rteTable-default\">5652</td></tr><tr><td class=\"ms-rteTable-default\">ALIQ_ICMS</td><td class=\"ms-rteTable-default\">1,0635</td></tr><tr><td class=\"ms-rteTable-default\">VL_OPR</td><td class=\"ms-rteTable-default\">100</td></tr><tr><td class=\"ms-rteTable-default\">VL_BC_ICMS</td><td class=\"ms-rteTable-default\">0</td></tr><tr><td class=\"ms-rteTable-default\">VL_ICMS</td><td class=\"ms-rteTable-default\">30</td></tr><tr><td class=\"ms-rteTable-default\">VL_BC_ICMS ST</td><td class=\"ms-rteTable-default\">0</td></tr><tr><td class=\"ms-rteTable-default\">VL_ICMS_ST</td><td class=\"ms-rteTable-default\">0</td></tr><tr><td class=\"ms-rteTable-default\">VL_RED_BC</td><td class=\"ms-rteTable-default\">&#160;0</td></tr><tr><td class=\"ms-rteTable-default\">VL_IPI</td><td class=\"ms-rteTable-default\">&#160;0</td></tr></tbody></table><p>&#160;</p><p style=\"text-align&#58;justify;\">Com base na escrituração, deve-se fazer os cálculos do item 5, Anexo VIII, da <a href=\"https&#58;//legislacao.fazenda.sp.gov.br/Paginas/pcat1472009.aspx\">Portaria CAT 147/2009</a>. Aplicando as fórmulas propostas&#58;</p><ul><li>o valor da coluna “Isentas/Não Tributadas&quot; é igual a 0 (zero), uma vez que a operação não possui os CSTs 30, 40 e 41, e não há redução de base de cálculo;</li><li>o valor da Coluna “Outras&quot; pode ser calculado a partir dos campos do registro C190. </li></ul><p>Outras = VL_OPR - VL_BC_ICMS - VL_ICMS_ST - VL_RED_BC - VL_IPI - ICMS_ST (substituído)</p><p>Outras = 100 -0 – 0 – 0 – 0 – 0</p><p>Outras = 100</p><p style=\"text-align&#58;justify;\">&#160;</p><p style=\"text-align&#58;justify;\">A conclusão é que <span style=\"text-decoration&#58;underline;\"><strong>não são necessários</strong></span> os ajustes SP90090104 ou SP90090278.</p><p style=\"text-align&#58;justify;\">&#160;</p><p style=\"text-align&#58;justify;\">Os cálculos acima conduzirão aos valores abaixo descritos no “formato&quot; GIA, que devem ser informados na GIA, nos termos do artigo 4º, Anexo IV, da Portaria CAT 92/98.</p><table cellspacing=\"0\" width=\"100%\" class=\"ms-rteTable-default\"><tbody><tr><td class=\"ms-rteTable-default\" style=\"width&#58;50%;\"><strong>Lançamento CFOP (GIA)</strong></td><td class=\"ms-rteTable-default\" style=\"width&#58;50%;\">​</td></tr><tr><td class=\"ms-rteTable-default\">CFOP</td><td class=\"ms-rteTable-default\">5652</td></tr><tr><td class=\"ms-rteTable-default\">Valor contábil</td><td class=\"ms-rteTable-default\">100</td></tr><tr><td class=\"ms-rteTable-default\">Base de Cálculo</td><td class=\"ms-rteTable-default\">0</td></tr><tr><td class=\"ms-rteTable-default\">Imposto</td><td class=\"ms-rteTable-default\">30</td></tr><tr><td class=\"ms-rteTable-default\">Isentas/ NT</td><td class=\"ms-rteTable-default\">0</td></tr><tr><td class=\"ms-rteTable-default\">Outras</td><td class=\"ms-rteTable-default\">100</td></tr><tr><td class=\"ms-rteTable-default\">Substituto</td><td class=\"ms-rteTable-default\">0</td></tr><tr><td class=\"ms-rteTable-default\">Substituído </td><td class=\"ms-rteTable-default\">0</td></tr><tr><td class=\"ms-rteTable-default\">Outros impostos </td><td class=\"ms-rteTable-default\">0​<br></td></tr></tbody></table><p><br></p></div>",
+    "Assunto": {
+     "__metadata": {
+      "type": "Collection(Edm.String)"
+     },
+     "results": [
+      "GIA da EFD"
+     ]
+    },
+    "ID": 98,
+    "Modified": "2024-08-22T16:51:25Z"
+   }
+  ]
+ }
+}
