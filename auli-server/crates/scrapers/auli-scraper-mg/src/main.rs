@@ -1,9 +1,10 @@
-// auli-scraper-mg — scraper da SEF-MG (serviços, portal ServiceNow CSM, API JSON). Sem headless
-// Chrome.
+// auli-scraper-mg — scraper da SEF-MG (serviços, portal ServiceNow CSM, API JSON — e as FAQs do
+// Portal SPED MG, outro host, HTML estático). Sem headless Chrome.
 //
-// Conhece UMA entidade ("mg"); não lê o registry. Grava o snapshot de serviços (v3); a derivação dos
-// artefatos é o `auli-collections mg`.
+// Conhece UMA entidade ("mg"); não lê o registry. Grava os snapshots de serviços (v3) e de FAQs; a
+// derivação dos artefatos é o `auli-collections mg`.
 
+mod faqs;
 mod mg;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
@@ -11,7 +12,7 @@ pub const ENTITY: &str = "mg";
 const DATA_DIR: &str = "../data/mg/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-mg [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-mg [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -27,8 +28,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        // As duas coleções de atendimento (D-MGFAQ-7).
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
         }
     }
 

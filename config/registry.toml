@@ -99,7 +99,7 @@ name = "SEF-MG"
 uf = "MG"
 state = "Minas Gerais"
 prompt = "prompts/mg.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "pe"

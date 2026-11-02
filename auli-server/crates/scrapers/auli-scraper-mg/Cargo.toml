@@ -3,9 +3,9 @@ name = "auli-scraper-mg"
 version = "0.1.0"
 edition = "2024"
 
-# Scraper da SEF-MG (serviços, portal ServiceNow CSM). SEM headless_chrome: a Service Portal page
-# API (`/api/now/sp/page`) devolve JSON completo com o header `X-Portal`. Depende de auli-contract +
-# o kit — nunca de fastembed/ort.
+# Scraper da SEF-MG (serviços, portal ServiceNow CSM; FAQs, Portal SPED MG em OpenCms). SEM
+# headless_chrome: a Service Portal page API (`/api/now/sp/page`) devolve JSON completo com o header
+# `X-Portal`, e o SPED é HTML estático. Depende de auli-contract + o kit — nunca de fastembed/ort.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
