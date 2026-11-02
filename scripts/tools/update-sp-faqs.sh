@@ -2,8 +2,9 @@
 # update-sp-faqs.sh — atualiza as FAQs do SP de ponta a ponta:
 #   re-scrape → deriva a árvore → re-vetoriza os packs → sobe o servidor.
 #
-# Irmão do `update-sc-faqs.sh` e do `update-pr-faqs.sh`: aqui também não há cache a apagar. A coleta das
-# FAQs do SP vai SEMPRE à rede (D-SPFAQ-8); o cache em data/sp/raw/cache/faqs/ só é lido com `--usecache`.
+# Irmão do `update-sc-faqs.sh` e do `update-pr-faqs.sh`. A coleta das FAQs do SP vai SEMPRE à rede
+# (D-SPFAQ-8) e o cache em data/sp/raw/cache/faqs/ só é lido com `--usecache`; mesmo assim ele é apagado
+# antes da coleta.
 #
 # Uso:   scripts/tools/update-sp-faqs.sh              # scrape + rebuild + sobe servidor
 #        scripts/tools/update-sp-faqs.sh --no-serve   # para antes de subir o servidor
@@ -35,6 +36,15 @@ fi
 # anterior (primeira coleta) não há com o que comparar.
 ANTES=0
 [ -f "$SNAPSHOT.anterior" ] && ANTES="$(jq '.coleta.items | length' "$SNAPSHOT.anterior")"
+
+# Cache apagado antes da coleta — regra de todo script de atualização de serviços e de FAQs (decisão do
+# mantenedor, 02/11/2026). Este scraper já vai sempre à rede; apagado, o cache guarda só esta coleta,
+# que é o que o `--usecache` reproduz. Só o de faqs: os outros namespaces de data/sp/raw/cache/ ficam.
+CACHE="$ROOT/data/sp/raw/cache/faqs"
+if [ -d "$CACHE" ]; then
+  echo "🗑️  apagando o cache de faqs ($(find "$CACHE" -type f | wc -l) arquivos)"
+  rm -rf "$CACHE"
+fi
 
 # 1. Re-scrape das faqs → grava data/sp/raw/sp-faqs-tree.json e data/sp/sp-faqs-snapshot.json.
 echo "🕸️  scrapeando faqs do SP…"

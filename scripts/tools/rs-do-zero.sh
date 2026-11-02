@@ -16,7 +16,7 @@ main() {
   # Apaga os caches das duas coleções, o que é o que "do zero" significa aqui: o scraper é cache-first
   # sempre, e a flag --usecache só decide o que fazer no miss — nunca ignora um arquivo que exista.
   echo "Etapa 1/13 — 🗑️  apagando os caches de serviços e faqs"
-  # rm -rf /home/ubu/Desktop/auli/data/rs/raw/cache/servicos /home/ubu/Desktop/auli/data/rs/raw/cache/faqs
+  rm -rf /home/ubu/Desktop/auli/data/rs/raw/cache/servicos /home/ubu/Desktop/auli/data/rs/raw/cache/faqs
   echo
 
   # Todos os passos seguintes resolvem `data/` pelo diretório corrente, e o esperado é `auli-server/`.
@@ -34,7 +34,7 @@ main() {
   # Raspa as duas coleções — `all` é faqs seguido de serviços — direto da rede, já que o cache sumiu.
   # Grava só os snapshots em data/rs/; nada aqui chega ainda ao índice que o servidor lê.
   echo "Etapa 4/13 — 🕸️  raspando faqs e serviços do portal (~2.500 páginas, tudo da rede)"
-  # cargo run --release -p auli-scraper-rs -- all
+  cargo run --release -p auli-scraper-rs -- all
   echo
 
   # Atualiza o TARF sem recoletar: a listagem inteira volta da rede (46 GETs, ~1 min a 1 req/s),

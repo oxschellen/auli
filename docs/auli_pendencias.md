@@ -1666,6 +1666,7 @@ no acervo.
 |---|---|
 | AuliBot | página de "IP bloqueado" (1,6 KB, "bloqueia acessos provenientes desses endereços IP"). A mensagem engana: com outro UA, o mesmo IP recebe outra coisa |
 | o do kit (Firefox) | desafio JavaScript da proteção anti-robô na frente do portal (~45 KB, scripts `/TSPD/`, "Please enable JavaScript to view the page content") |
+| Chrome/130 | o mesmo desafio (50,6 KB: `TSPD` 3×, nenhum `wp-content`) — não é o Firefox/124 envelhecido do kit que dispara a proteção |
 
 Em 25/07/2026 a mesma URL do catálogo (`portal2.fazenda.rj.gov.br/nossos-servicos/`) veio normal com o UA do
 kit — é o cache do [`rj.rs`](auli-server/crates/scrapers/auli-scraper-rj/src/rj.rs), 62 KB.

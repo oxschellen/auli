@@ -8,7 +8,7 @@
 #
 # Ciclo por entidade:
 #   1. backup de `data/<id>` (para o diff do passo 4 e para poder voltar atrás)
-#   2. scrape        → grava o snapshot
+#   2. scrape        → apaga o cache de serviços e raspa da rede → grava o snapshot
 #   3. process       → materializa `docs/servicos/*.md` + reescreve os artefatos de `raw/`
 #   4. diff de `raw/` contra o backup
 #   5. build-packs   → OBRIGATÓRIO: mexer em `docs/` muda o `docs_hashes` daquela coleção e o boot recusa até re-vetorizar
@@ -52,6 +52,16 @@ atualizar() {
   fi
   tail -1 "/tmp/$ID-build.log"
 
+  # Cache apagado antes da coleta — regra de todo script de atualização de serviços e de FAQs (decisão
+  # do mantenedor, 02/11/2026). Vários scrapers de serviços são cache-first (RJ, MG, PR, MS…): com o
+  # cache no lugar, "atualizar" repetia a coleta anterior em silêncio — foi assim que o bloqueio do
+  # portal do RJ ficou escondido (auli_pendencias.md §43). Só o de serviços; o backup do passo 1 o
+  # guarda, e o rollback lá embaixo o devolve.
+  local cache="$ROOT/data/$ID/raw/cache/servicos"
+  if [ -d "$cache" ]; then
+    echo "════════ $ID: apagando o cache de serviços ($(find "$cache" -type f | wc -l) arquivos)"
+    rm -rf "$cache"
+  fi
   echo "════════ $ID: scrape (rede)"
   if ! "./target/release/auli-scraper-$ID" servicos > "/tmp/$ID-scrape.log" 2>&1; then
     echo "❌ $ID: scrape falhou — últimas linhas:"; tail -5 "/tmp/$ID-scrape.log"; return 1

@@ -2,10 +2,10 @@
 # update-mg-faqs.sh — atualiza as FAQs do MG de ponta a ponta:
 #   re-scrape → deriva a árvore → re-vetoriza os packs → sobe o servidor.
 #
-# Irmão do `update-sc-faqs.sh`, do `update-pr-faqs.sh` e do `update-sp-faqs.sh`: aqui também não há cache
-# a apagar. A coleta das FAQs do MG — o SPED e a base "SRE - Dúvidas Frequentes" do CSM — vai SEMPRE à
-# rede (D-MGFAQ-10); o cache em data/mg/raw/cache/faqs/ só é lido com `--usecache`. (Os SERVIÇOS do MG
-# são cache-first: este script não os toca.)
+# Irmão do `update-sc-faqs.sh`, do `update-pr-faqs.sh` e do `update-sp-faqs.sh`. A coleta das FAQs do MG
+# — o SPED e a base "SRE - Dúvidas Frequentes" do CSM — vai SEMPRE à rede (D-MGFAQ-10) e o cache em
+# data/mg/raw/cache/faqs/ só é lido com `--usecache`; mesmo assim ele é apagado antes da coleta. (Os
+# SERVIÇOS do MG são do `atualizar-servicos.sh`: este script não os toca.)
 #
 # Uso:   scripts/tools/update-mg-faqs.sh              # scrape + rebuild + sobe servidor
 #        scripts/tools/update-mg-faqs.sh --no-serve   # para antes de subir o servidor
@@ -37,6 +37,15 @@ fi
 # anterior (primeira coleta) não há com o que comparar.
 ANTES=0
 [ -f "$SNAPSHOT.anterior" ] && ANTES="$(jq '.coleta.items | length' "$SNAPSHOT.anterior")"
+
+# Cache apagado antes da coleta — regra de todo script de atualização de serviços e de FAQs (decisão do
+# mantenedor, 02/11/2026). Este scraper já vai sempre à rede; apagado, o cache guarda só esta coleta,
+# que é o que o `--usecache` reproduz. Só o de faqs: os outros namespaces de data/mg/raw/cache/ ficam.
+CACHE="$ROOT/data/mg/raw/cache/faqs"
+if [ -d "$CACHE" ]; then
+  echo "🗑️  apagando o cache de faqs ($(find "$CACHE" -type f | wc -l) arquivos)"
+  rm -rf "$CACHE"
+fi
 
 # 1. Re-scrape das faqs → grava data/mg/raw/mg-faqs-tree.json e data/mg/mg-faqs-snapshot.json.
 echo "🕸️  scrapeando faqs do MG…"
