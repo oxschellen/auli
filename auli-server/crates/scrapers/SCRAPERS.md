@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG e no MS, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS e no MT, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -307,6 +307,11 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   resultTotal` + piso 15. Sem paginação (1 POST traz o catálogo do órgão inteiro).
 - 27 serviços (42 ocorrências), 2 públicos. 8 testes. `ServicoRaw` direto. Escopo = só o órgão
   SEFAZ (a Carta PDF ~85 é fonte GPAS divergente — só cross-check, D-MT1).
+- **FAQs** (`auli-scraper-mt faqs`, `faqs.rs`): a FAQ do programa Nota MT (`www.sefaz.mt.gov.br/notamt/duvida`),
+  outro host — Angular sobre uma API REST pública, `GET notamt/api/duvidas`, uma chamada com tudo. Grupos pelo
+  número do prefixo, perguntas pela ordem do portal; link único (a página), daí a guarda de pergunta repetida;
+  trilha `Nota MT | <GRUPO>`; HTML simples → texto por regex. Sempre à rede. 135 perguntas (02/11/2026), 13
+  testes. Descoberta em `docs/REGISTRO-scrapers.md#mt-faqs`.
 
 ### go — SEFAZ-GO (Goiás / Secretaria de Estado da Economia)
 

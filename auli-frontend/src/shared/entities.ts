@@ -99,7 +99,7 @@ export const ENTITIES: Entity[] = [
     name: "SEFAZ-MT",
     uf: "MT",
     state: "Mato Grosso",
-    collections: ["servicos"],
+    collections: ["servicos", "faqs"],
   },
   {
     id: "go",
