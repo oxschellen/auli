@@ -18,7 +18,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 9 | PI, RO | Scraper Sydle conecta-360 compartilhado (D-XX-SYDLE-COMPARTILHADO) | decisão de arquitetura em aberto |
 | 10 | kit | Camada 2 do kit (`validar_contagem`, `absolutize`, `cli::parse_args`; conversor HTML das FAQs) | TAREFA curta, não feita |
 | 11 | frota | User-Agent: AuliBot por padrão (D-FROTA-UA) | ✅ decidida e aplicada; restam os usos legados, a testar quando alguém tocar o scraper |
-| 12 | 14 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
+| 12 | 13 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
 | 13 | ES | O scraper não ordena os itens | ajuste pequeno |
 | 14 | SP | FAQs: dois pontos da revisão do #179 | na próxima vez que alguém tocar o `faqs.rs` |
 | 15 | kit | Cache: validação de completude na leitura | medir antes de virar TAREFA |
@@ -261,9 +261,9 @@ Data da última coleta no snapshot de serviços (`coleta.coletado_em`):
 
 | Coleta | Entidades |
 |---|---|
-| 25/07/2026 | ac, al, ba, ce, ma, pa, pb, pe, rn, ro, rr, se, to |
+| 25/07/2026 | ac, al, ce, ma, pa, pb, pe, rn, ro, rr, se, to |
 | 02/08/2026 | ap |
-| 31/10–03/11/2026 | as demais (sc, pr, rs, sp, df, es, go, mg, ms, mt, rj, am, pi) |
+| 31/10–03/11/2026 | as demais (sc, pr, rs, sp, df, es, go, mg, ms, mt, rj, am, pi, ba) |
 
 **Próximo passo.** `scripts/tools/atualizar-servicos.sh <id>` por entidade (faz backup, apaga o cache, coleta,
 deriva e refaz os vetores). Comparar com o backup em `/tmp/auli-atualizacao/<id>` **por link e título**, não
@@ -278,6 +278,12 @@ nenhuma mudança de público ou classe. O 283º, sem rota de perfil, entrou depo
 o `_id`); "Serviço de Atendimento ao Consumidor (SAC)" virou "…ao Cidadão (SAC)". O IPVA agora vive em "Temas e
 categorias - Portal Institucional" (`69653110…`, 14 temas, o do IPVA com 12 subtemas) — taxonomia do portal,
 fora do escopo Carta-only.
+
+**BA (03/11/2026):** 205 → 208 — 3 novos ("Celebração de Transação por Adesão e Emissão de DAE", "Combustíveis -
+Autorização para Emissão de NF-e de Ajuste de Estoque", "Senha de Acesso aos Sistemas Sefaz - Recuperação da Frase
+Lembrete"), nenhum removido nem renomeado, 10 descrições editadas (as três fichas de Senha passam a orientar o
+acesso pelo Gov.br), nenhuma mudança de público ou classe. A classe do primeiro novo, "por Adesão e Emissão de
+DAE", é o `<small>` do próprio portal, no padrão do irmão "…por Adesão ou Individual…".
 
 ## 13. ES — ordem dos itens
 
