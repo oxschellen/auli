@@ -46,6 +46,10 @@ const ORGAO: &str = "SEFAZ-AM";
 const CLASSE_FALLBACK: &str = "Geral";
 /// Cortesia entre GETs.
 const COURTESY: Duration = Duration::from_millis(300);
+/// Público decidido pelo mantenedor para serviço da listagem que não está em nenhuma rota de perfil (a página dele
+/// também traz `perfis` vazio). Vale só enquanto o portal não o puser numa rota (docs/auli_scraper_pendências.md
+/// §17, 02/11/2026).
+const PUBLICO_SEM_ROTA: [(i64, &[&str]); 1] = [(3223, &["Pessoa Física", "Pessoa Jurídica"])];
 /// Guard (princípio D-RJ5): mínimo de serviços. Folga sob os 278 observados; rejeita catálogo capado.
 const MIN_SERVICOS: usize = 250;
 
@@ -253,16 +257,25 @@ fn build_servicos(todos: &[Leaf], perfil_sets: &[(&str, HashSet<i64>)]) -> Vec<S
         if titulo.is_empty() {
             continue;
         }
-        let ocorrencias: Vec<Ocorrencia> = perfil_sets
+        let mut publicos: Vec<&str> = perfil_sets
             .iter()
             .filter(|(_, set)| set.contains(&leaf.id))
-            .map(|(nome, _)| Ocorrencia {
-                publico: (*nome).to_string(),
+            .map(|(nome, _)| *nome)
+            .collect();
+        if publicos.is_empty()
+            && let Some((_, decididos)) = PUBLICO_SEM_ROTA.iter().find(|(id, _)| *id == leaf.id)
+        {
+            publicos = decididos.to_vec();
+        }
+        let ocorrencias: Vec<Ocorrencia> = publicos
+            .into_iter()
+            .map(|publico| Ocorrencia {
+                publico: publico.to_string(),
                 classe: leaf.categoria.clone(),
             })
             .collect();
         if ocorrencias.is_empty() {
-            // Não observado (todo serviço de `todos` está em ≥1 perfil); avisa se o portal mudar.
+            // Raro (em 02/11/2026, só o 3223, que tem público decidido); avisa se o portal mudar.
             eprintln!(
                 "⚠️  AM: serviço {} ({}) sem público em nenhuma rota de perfil — pulando.",
                 leaf.id, titulo
@@ -382,6 +395,29 @@ mod tests {
         let items = build_servicos(&todos, &perfis);
         assert_eq!(items.len(), 1, "só o 63 tem público");
         assert_eq!(items[0].ocorrencias.len(), 1);
+    }
+
+    #[test]
+    fn servico_sem_rota_com_publico_decidido_entra_com_ele() {
+        let todos = vec![Leaf {
+            id: 3223,
+            name: "Regularização de Pagamentos Efetuados IPVA".into(),
+            description: String::new(),
+            url: "/portfolio-servicos/detalhes/3223?profile=todos".into(),
+            categoria: "IPVA e Veículos".into(),
+        }];
+        let publicos = |perfis: &[(&str, HashSet<i64>)]| -> Vec<String> {
+            build_servicos(&todos, perfis)[0]
+                .ocorrencias
+                .iter()
+                .map(|o| o.publico.clone())
+                .collect()
+        };
+        let sem_rota: Vec<(&str, HashSet<i64>)> = vec![("Pessoa Física", HashSet::new())];
+        assert_eq!(publicos(&sem_rota), ["Pessoa Física", "Pessoa Jurídica"]);
+        // Se o portal o puser numa rota, vale o portal.
+        let com_rota: Vec<(&str, HashSet<i64>)> = vec![("Órgãos Públicos", HashSet::from([3223]))];
+        assert_eq!(publicos(&com_rota), ["Órgãos Públicos"]);
     }
 
     #[test]

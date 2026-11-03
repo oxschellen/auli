@@ -380,6 +380,8 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   **Escopo: só a listagem** (resumo curto); o conteúdo rico do detalhe ficou de fora por decisão.
 - 278 serviços, 423 ocorrências, 3 públicos (PF 147 / PJ 210 / Órgãos 66). 9 testes. `ServicoRaw` direto.
   Links: 239 detalhe / 34 externo / 4 submenu / 1 interno. Detalhes de descoberta em `docs/REGISTRO-scrapers.md#am`.
+- 02/11/2026: 283 serviços. O 3223, na listagem mas em nenhuma rota de perfil, entra com PF e PJ por decisão do
+  mantenedor (`PUBLICO_SEM_ROTA`; `docs/auli_scraper_pendências.md` §17); outro serviço sem rota é pulado, com aviso.
 - **FAQs** (`auli-scraper-am faqs`, `faqs.rs`): a seção "Perguntas Frequentes" do detalhe de cada página da árvore
   (serviços e categorias com página), no flight RSC do detalhe — o campo `perguntasRespostasHtml` é inline ou uma
   referência `$x` a um bloco de texto do mesmo flight (lido em bytes, de linha em linha: os blocos vêm colados).

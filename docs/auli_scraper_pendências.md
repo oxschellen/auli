@@ -23,7 +23,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 14 | SP | FAQs: dois pontos da revisão do #179 | na próxima vez que alguém tocar o `faqs.rs` |
 | 15 | kit | Cache: validação de completude na leitura | medir antes de virar TAREFA |
 | 16 | AM | Perguntas e Respostas do GCC (D-AMFAQ-6) | sondar o XHR da casca Struts2 |
-| 17 | AM | Serviço da listagem sem nenhum público (3223) — fica fora do snapshot | decisão do mantenedor |
+| 17 | AM | Serviço da listagem sem nenhum público (3223) | ✅ decidida: PF e PJ (02/11) |
 
 ---
 
@@ -270,7 +270,7 @@ deriva e refaz os vetores). Comparar com o backup em `/tmp/auli-atualizacao/<id>
 pela posição. Depois, `./start_server.sh` e `scripts/deploy-frontend.sh`.
 
 **AM (02/11/2026):** 278 → 282 — 4 novos, nenhum removido, 8 renomeados (mesmo link), 4 descrições editadas,
-nenhuma mudança de público ou classe. A listagem tem 283: o 283º ficou fora (§17).
+nenhuma mudança de público ou classe. O 283º, sem rota de perfil, entrou depois com PF e PJ (§17) → 283.
 
 ## 13. ES — ordem dos itens
 
@@ -338,7 +338,7 @@ que entraram são as do Portfólio de Serviços.
 **Próximo passo.** Abrir a página num navegador, capturar o XHR que traz as perguntas e ver se ele é um GET/POST
 anônimo que o `ureq` repete. Se for, é a 2ª fonte do `faqs.rs` do AM, nos moldes da 2ª fonte do DF.
 
-## 17. AM — serviço da listagem sem nenhum público (aberta — 2026-11-02)
+## 17. AM — serviço da listagem sem nenhum público (✅ decidida — 2026-11-02)
 
 Na atualização dos serviços de 02/11/2026, o 3223 "Regularização de Pagamentos Efetuados IPVA"
 (`/portfolio-servicos/detalhes/3223`) está na listagem `/portfolio-servicos/todos`, mas em nenhuma das 3 rotas de
@@ -348,5 +348,6 @@ do `am.rs` ainda diz "não observado"). O inverso também segue: o 1436 está nu
 
 A própria página de detalhe também não declara público (`"perfis":[]` no `serviceDetails`).
 
-**Decisão do mantenedor.** Deixar fora (o portal não o oferece a nenhum público), ou dar a ele os três públicos. Se
-entrar, o comentário do `am.rs` e o teste `build_pula_servico_sem_publico` mudam junto.
+**Decisão do mantenedor (02/11/2026): o 3223 é de Pessoa Física e Pessoa Jurídica.** Está no `am.rs` como
+`PUBLICO_SEM_ROTA`, aplicado só quando o serviço não está em nenhuma rota — se o portal o puser numa, vale o portal.
+Outro serviço sem rota continua pulado, com aviso. Com ele, 283 serviços.
