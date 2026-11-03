@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 8 de **FAQs** (SC, PR, SP, MG, MS, MT, GO e DF). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 9 de **FAQs** (SC, PR, SP, MG, MS, MT, GO, DF e AM). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -40,6 +40,7 @@
 - [MT FAQs — Dúvidas do programa Nota MT (www.sefaz.mt.gov.br/notamt/duvida)](#mt-faqs)
 - [GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)](#go-faqs)
 - [DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e](#df-faqs)
+- [AM FAQs — Perguntas Frequentes das páginas do Portfólio de Serviços (www.sefaz.am.gov.br)](#am-faqs)
 
 ---
 
@@ -2086,6 +2087,10 @@ a FAQ do Fale Conosco, uma aplicação AngularJS 1.2 sobre uma API REST pública
   `data/ms/ms-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<assunto> | <subtema>`), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-ms-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
 
+---
+
+<a id="mt-faqs"></a>
+
 # MT FAQs — Dúvidas do programa Nota MT (www.sefaz.mt.gov.br/notamt/duvida)
 
 **Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-MTFAQ-1..9:
@@ -2127,6 +2132,10 @@ o AuliBot passa.
 - Saída: `data/mt/raw/mt-faqs-tree.json` (raiz → `Menu` Nota MT → `Faq` por grupo, tudo com o link da página,
   itens sem `url`) e `data/mt/mt-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-mt-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="go-faqs"></a>
 
 # GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)
 
@@ -2177,6 +2186,10 @@ biblioteca `Pareceres` (1.266 documentos) — fora desta coleção.
   site, que é pública — a página de FAQ exige login —, itens com o formulário) e `data/go/go-faqs-snapshot.json`
   (um `FaqRaw` por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-go-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="df-faqs"></a>
 
 # DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e
 
@@ -2233,3 +2246,61 @@ biblioteca `Pareceres` (1.266 documentos) — fora desta coleção.
   portal; nós na página da fonte, itens com o link de cada pergunta) e `data/df/df-faqs-snapshot.json` (um `FaqRaw`
   por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-df-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="am-faqs"></a>
+
+# AM FAQs — Perguntas Frequentes das páginas do Portfólio de Serviços (www.sefaz.am.gov.br)
+
+**Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-AMFAQ-1..10:
+[`docs/ESTUDO-AM-Faqs.md`](ESTUDO-AM-Faqs.md). Coleção `faqs` do `auli-scraper-am` (`auli-scraper-am faqs`, ou
+`all` = serviços + FAQs). **176 perguntas** na rodada de 02/11, de 47 das 306 páginas da árvore (285 lidas, 109 cópias
+entre páginas irmãs).
+
+## Fonte
+
+- **A seção "Perguntas Frequentes" do detalhe** de cada página do Portfólio de Serviços —
+  `GET /portfolio-servicos/detalhes/{id}` com `RSC: 1` (o flight RSC, o mesmo transporte dos serviços). No
+  `serviceDetails`, `visibleSections` diz se a seção aparece e `perguntasRespostasHtml` traz o HTML — inline ou como
+  referência `"$c"` a um bloco de texto `c:T<tamanho hex>,<html>` do mesmo flight.
+- O índice é a árvore `items` de `/portfolio-servicos/todos` (a dos serviços): os 243 serviços com detalhe e as 63
+  categorias com página — uma delas, a 302, tem perguntas. `robots.txt`: não existe (404).
+- Fora: o Portal do Servidor Fazendário (64 páginas no mesmo flight, 5 com FAQ — RH dos servidores); as Perguntas e
+  Respostas do GCC (casca Struts2-jQuery, conteúdo por JS — pendência); a FAQ do Portal NFC-e (PDF de 2017).
+
+## As armadilhas
+
+1. **Os blocos de texto do flight vêm colados** (`…</p>b:T…`, sem `\n`) e o tamanho é em **bytes**. Buscar `c:T`
+   direto acharia o `1c:T` (os ids de linha são hex e passam de 30 num detalhe): o flight é lido de linha em linha
+   desde o começo.
+2. **Seção oculta com marcação no campo** (a 1143: 1.264 bytes de `<p>&nbsp;</p>`): o portão é `visibleSections`, não
+   o campo.
+3. **O flight da listagem tem mais do que a árvore:** 370 ids em URLs de detalhe, 64 deles no bloco
+   `linksPortalServidorFazendario`. O índice é a árvore `items`, como nos serviços.
+4. **HTML de editor livre.** Perguntas numeradas `1)`, `1.`, `1 -`, `1 –` em `<p>`, `<h3>`, `<div>` ou `<li>`; pergunta
+   e resposta no mesmo `<p>`, separadas por `<br>` (às vezes `<br data-start=…>`); `<div>` aninhado; tabela e
+   listas na resposta; comentários do Word (4 páginas); links (16 páginas). O conversor das FAQs do DF dá as linhas.
+5. **Número que não é pergunta:** `2.1)` é subtítulo dentro da resposta do REDAR; o REDAR tem 2 tópicos numerados sem
+   "?" em 5 (viram a pergunta inteira); um passo a passo numerado sem "?" não pode virar perguntas — daí a regra dos
+   50 %.
+6. **Seção sem nenhuma pergunta** (302, texto corrido sobre regime especial) → 1 FAQ, "Dúvidas frequentes — <nome>".
+7. **Cópias entre páginas irmãs:** o Refis em 5 páginas, parcelamentos, REDAR, certidões, PCD, IE — ficam na de menor
+   id.
+8. **`?profile=…` e `?gerarTaxa=true&profile=…`** nas URLs da árvore: o detalhe é o mesmo (conferido no 882); o link
+   sai sem query, como o dos serviços.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: flight sem a âncora; `visibleSections` ou `perguntasRespostasHtml` fora de
+  "uma vez só"; seção visível com o campo `null`, com referência que não leva a um bloco ou com HTML sem texto;
+  referência RSC de outro tipo; pergunta sem resposta; a mesma pergunta duas vezes na página com respostas diferentes;
+  menos de 280 páginas, de 40 com perguntas ou de 150 perguntas; qualquer GET que falhe. Avisos: numeração fora de
+  ordem (0), linhas antes da primeira pergunta (0).
+- **Sempre à rede**; o cache em `data/am/raw/cache/faqs/` (chave = URL) só é lido com `--usecache`, que reproduz a
+  árvore byte a byte e o snapshot a menos do `coletado_em`.
+- `ureq`, UA `AuliBot`, 1 s de cortesia; 307 GETs (~230 KB cada), ~13 min.
+- Saída: `data/am/raw/am-faqs-tree.json` (raiz → categorias de topo → páginas, na ordem do portfólio; a categoria com
+  perguntas próprias as tem no próprio nó; nós no detalhe, ou na listagem quando a categoria não tem perguntas) e
+  `data/am/am-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-am-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).

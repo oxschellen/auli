@@ -22,6 +22,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 13 | ES | O scraper não ordena os itens | ajuste pequeno |
 | 14 | SP | FAQs: dois pontos da revisão do #179 | na próxima vez que alguém tocar o `faqs.rs` |
 | 15 | kit | Cache: validação de completude na leitura | medir antes de virar TAREFA |
+| 16 | AM | Perguntas e Respostas do GCC (D-AMFAQ-6) | sondar o XHR da casca Struts2 |
 
 ---
 
@@ -152,7 +153,11 @@ navegador (a descoberta provou zero-XHR: todo o conteúdo é server-rendered no 
 3. Montar a `descricao` concatenando as seções presentes (`visibleSections`) num texto uniforme.
 
 **Custo/risco:** **~278 GETs** (um por serviço, cacheáveis; cortesia entre eles) — mais pesado que
-qualquer scraper atual. Os **39 serviços link-only** (externo/submenu) NÃO têm página de detalhe → sem
+qualquer scraper atual. **(02/11/2026)** As FAQs do AM já leem esses detalhes (`auli-scraper-am/src/faqs.rs`,
+[ESTUDO-AM-Faqs.md](ESTUDO-AM-Faqs.md)): o portão `visibleSections`, o valor único de um campo do
+`serviceDetails` (`valor_unico`) e a referência `$x` → bloco de texto, lida em bytes de linha em linha
+(`bloco_de_texto`). A v2 reusa os três e o cache de detalhes de `data/am/raw/cache/faqs/` — rodando junto com as
+FAQs, não custa rede. A árvore tem hoje 243 serviços com detalhe (eram 239). Os **39 serviços link-only** (externo/submenu) NÃO têm página de detalhe → sem
 `serviceDetails`; a v2 mantém para eles só o `resumo` da listagem. Guard sugerido: um piso de seções
 não-vazias por serviço para pegar regressão de parser. Evidência e amostras em `docs/REGISTRO-scrapers.md#am` (Fase 3).
 
@@ -210,9 +215,9 @@ _Era item da §10 do [auli_pendencias.md](auli_pendencias.md) (extração das fu
 Conferido em 02/11/2026: nenhuma das três existe no kit.
 
 **Candidata nova (02/11/2026):** o conversor HTML → texto das FAQs (`html_para_texto`: `<style>`/comentários fora,
-link → `texto "url"`, bloco → linha, entidades no fim) tem **três cópias** — SP, GO e DF (a do DF com o filtro de
-`http(s)`/`mailto` e sem duplicar a URL quando ela é o texto do link). Já passou do 2º consumidor; ao extrair,
-levar as melhorias do DF e provar SP e GO byte a byte com `--usecache`.
+link → `texto "url"`, bloco → linha, entidades no fim) tem **quatro cópias** — SP, GO, DF e AM (a do DF com o filtro de
+`http(s)`/`mailto` e sem duplicar a URL quando ela é o texto do link; a do AM é a do DF, sem mudança). Já passou do
+2º consumidor; ao extrair, levar as melhorias do DF e provar SP, GO e AM byte a byte com `--usecache`.
 
 ## 11. User-Agent institucional para a frota
 
@@ -317,3 +322,14 @@ devolve `None` para arquivo vazio ou ilegível, e o scraper refaz a requisição
 **O desenho, se virar TAREFA:** validação de completude na LEITURA — um sentinela escrito por último,
 ou tamanho/hash no nome do arquivo. E merece **medição antes**: com que frequência o cache é lido
 depois de uma interrupção? Se for raro, a dívida pode ficar registrada e não ser paga.
+
+## 16. AM — Perguntas e Respostas do GCC (D-AMFAQ-6)
+
+_Aberta em 02/11/2026, no estudo das FAQs do AM ([ESTUDO-AM-Faqs.md](ESTUDO-AM-Faqs.md))._
+
+`sistemas.sefaz.am.gov.br/gcc/menucontribuinte/publico/perguntasRespostas.action` responde 200 (12.830 B), mas é
+só a casca Struts2-jQuery (`jQuery.struts2_jquery…`, 1 link, texto vazio): o conteúdo chega por JS. As FAQs do AM
+que entraram são as do Portfólio de Serviços.
+
+**Próximo passo.** Abrir a página num navegador, capturar o XHR que traz as perguntas e ver se ele é um GET/POST
+anônimo que o `ureq` repete. Se for, é a 2ª fonte do `faqs.rs` do AM, nos moldes da 2ª fonte do DF.

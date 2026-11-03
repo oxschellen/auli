@@ -31,9 +31,9 @@ use auli_scraper_kit::clean;
 use auli_scraper_kit::http::GetOpts;
 use serde::Deserialize;
 
-const BASE: &str = "https://www.sefaz.am.gov.br";
+pub(crate) const BASE: &str = "https://www.sefaz.am.gov.br";
 /// Listagem completa (sem paginação): a árvore de 278 serviços.
-const LISTA_URL: &str = "https://www.sefaz.am.gov.br/portfolio-servicos/todos";
+pub(crate) const LISTA_URL: &str = "https://www.sefaz.am.gov.br/portfolio-servicos/todos";
 /// Rotas de perfil: (segmento da URL, nome do público, slug). A ordem define `publicos_ordem`.
 const PERFIS: [(&str, &str, &str); 3] = [
     ("pessoa-fisica", "Pessoa Física", "pessoa-fisica"),
@@ -51,17 +51,17 @@ const MIN_SERVICOS: usize = 250;
 
 /// Um nó da árvore `items` (categoria/subcategoria/serviço). Só os campos que usamos.
 #[derive(Debug, Deserialize)]
-struct Node {
+pub(crate) struct Node {
     #[serde(default)]
-    id: Option<i64>,
+    pub(crate) id: Option<i64>,
     #[serde(default)]
-    name: Option<String>,
+    pub(crate) name: Option<String>,
     #[serde(default)]
     description: Option<String>,
     #[serde(default)]
-    url: Option<String>,
+    pub(crate) url: Option<String>,
     #[serde(default)]
-    children: Vec<Node>,
+    pub(crate) children: Vec<Node>,
 }
 
 /// Um serviço-folha achatado da árvore (categoria de topo já resolvida).
@@ -147,14 +147,17 @@ fn load_flight(
             url
         );
     }
-    let body = fetch_flight(agent, url)?;
+    let body = fetch_flight(agent, url, ANCORA_LISTA)?;
     pending.push((url.to_string(), body.clone()));
     sleep(COURTESY);
     Ok(body)
 }
 
+/// A âncora do flight da listagem e das rotas de perfil.
+pub(crate) const ANCORA_LISTA: &str = "\"items\":[";
+
 /// GET com header `RSC: 1` -> o flight cru. Retenta com backoff (via kit).
-fn fetch_flight(agent: &ureq::Agent, url: &str) -> Result<String> {
+pub(crate) fn fetch_flight(agent: &ureq::Agent, url: &str, ancora: &str) -> Result<String> {
     println!("GET (RSC): {}", url);
     let body = auli_scraper_kit::http::get_string(
         agent,
@@ -165,10 +168,11 @@ fn fetch_flight(agent: &ureq::Agent, url: &str) -> Result<String> {
             ..Default::default()
         },
     )?;
-    // Defesa: o flight bom carrega a âncora da listagem. Sem ela = página de erro/markup mudou.
-    if !body.contains("\"items\":[") {
+    // Defesa: o flight bom carrega a âncora da página. Sem ela = página de erro/markup mudou.
+    if !body.contains(ancora) {
         bail!(
-            "flight sem a âncora \"items\" ({}) — erro/HTML? primeiros bytes: {:?}",
+            "flight sem a âncora {} ({}) — erro/HTML? primeiros bytes: {:?}",
+            ancora,
             url,
             body.chars().take(60).collect::<String>()
         );
@@ -177,7 +181,7 @@ fn fetch_flight(agent: &ureq::Agent, url: &str) -> Result<String> {
 }
 
 /// Extrai e desserializa o array `items` do flight (âncora única `{"items":[`).
-fn parse_items(flight: &str) -> Result<Vec<Node>> {
+pub(crate) fn parse_items(flight: &str) -> Result<Vec<Node>> {
     const KEY: &str = "{\"items\":[";
     let i = flight
         .find(KEY)

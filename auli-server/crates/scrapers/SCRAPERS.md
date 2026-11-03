@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO e no DF, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF e no AM, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -380,6 +380,14 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   **Escopo: só a listagem** (resumo curto); o conteúdo rico do detalhe ficou de fora por decisão.
 - 278 serviços, 423 ocorrências, 3 públicos (PF 147 / PJ 210 / Órgãos 66). 9 testes. `ServicoRaw` direto.
   Links: 239 detalhe / 34 externo / 4 submenu / 1 interno. Detalhes de descoberta em `docs/REGISTRO-scrapers.md#am`.
+- **FAQs** (`auli-scraper-am faqs`, `faqs.rs`): a seção "Perguntas Frequentes" do detalhe de cada página da árvore
+  (serviços e categorias com página), no flight RSC do detalhe — o campo `perguntasRespostasHtml` é inline ou uma
+  referência `$x` a um bloco de texto do mesmo flight (lido em bytes, de linha em linha: os blocos vêm colados).
+  Portão = `visibleSections`. HTML de editor livre → linhas (conversor das FAQs do DF); pergunta = linha numerada
+  (`1)`/`1.`/`1 -`, não `2.1)`) quando ≥ 50 % delas têm "?", senão a linha com "?"; sem nenhuma, 1 FAQ pela página.
+  Cópias idênticas entre páginas ficam na de menor id. Escopo = a árvore do `servicos` (o Portal do Servidor
+  Fazendário do mesmo flight fica fora). AuliBot. 176 perguntas de 47 páginas (306 lidas, 109 cópias, 02/11/2026),
+  20 testes. Descoberta em `docs/REGISTRO-scrapers.md#am-faqs`.
 
 ### pa — SEFA-PA (Pará)
 
