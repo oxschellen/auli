@@ -102,7 +102,7 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ro** | SEFIN-RO / Rondônia | Agência Virtual (Sydle ONE conecta-360, molde PI); `GET _search`, catálogo "Serviços", Bearer anônimo | JSON | 1 | 194 | curta | direto | 8 | rustls |
 | **to** | SEFAZ-TO / Tocantins | Carta de Serviços (ASP.NET/IIS, HTML); `listar_servico.aspx?cod_empresa=37` + detalhe por span `lbl*` | HTML | 4 | 45 | **rica** (Carta) | direto | 8 | rustls |
 | **ma** | SEFAZ-MA / Maranhão | Portal SGC (Angular + Spring); login anônimo público + `GET /portal/servicos` + `conteudos/{id}` | JSON | 4 | 38 | **rica** (conteúdo) | direto | 6 | **rustls + cert** |
-| **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 4 | rustls |
+| **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 5 | **rustls + cert** |
 | **ac** | SEFAZ-AC / Acre | WordPress + Elementor; Carta (`page_id=6732`) → 17 posts (`?p=`), corpo em `.elementor-widget-theme-post-content` | HTML | 1 | 17 | **rica** (post) | direto | 4 | **rustls + cert** |
 | **df** | SEFAZ-DF / Distrito Federal | Carta de Serviços (ColdFusion); a listagem embute a **árvore JS inteira** (1 fetch → 472), detalhe `servico.cfm` accordion `.panel-body` | HTML | 2 | 472 | **rica** (~893) | direto | 4 | **curl (WAF JA3)** |
 | **rn** | SEFAZ-RN / Rio Grande do Norte | WordPress + SPA React; WP REST `wp/v2/servicos` (15 cards), enriquece os que linkam `/postagem/` com o ACF `Matéria` | JSON | 1 | 15 | **parcial** (5/15, post) | direto | 4 | rustls |
@@ -488,7 +488,10 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - 5 categorias = **classe** (Cadastro 10 / ICMS 15 / ITCMD 2 / Regime Especial 5 / Veículos 17);
   público único "Serviços". `link` = `…/#/categorias/{slug}/{route}`; identidade = link. É a **fonte mais
   frágil da frota** (parse de JS webpack), mas as chaves estáveis a tornam robusta na prática.
-- 49 serviços. 4 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#ap`.
+- **⚠️ Gotcha TLS (certificado de 09/2026):** o leaf é emitido pelo **Soluti V2 GR46 OV TLS CA 2025**, mas o
+  servidor manda intermediários GlobalSign que não são o emissor → rustls recusa (`UnknownIssuer`). Fix: embutir
+  o Soluti (baixado do AIA do leaf) como trust anchor no rustls (`RootCerts::new_with_certs`), como o AC.
+- 49 serviços. 5 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#ap`.
 
 ### ac — SEFAZ-AC (Acre)
 
