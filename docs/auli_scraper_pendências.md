@@ -18,11 +18,12 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 9 | PI, RO | Scraper Sydle conecta-360 compartilhado (D-XX-SYDLE-COMPARTILHADO) | decisão de arquitetura em aberto |
 | 10 | kit | Camada 2 do kit (`validar_contagem`, `absolutize`, `cli::parse_args`; conversor HTML das FAQs) | TAREFA curta, não feita |
 | 11 | frota | User-Agent: AuliBot por padrão (D-FROTA-UA) | ✅ decidida e aplicada; restam os usos legados, a testar quando alguém tocar o scraper |
-| 12 | 16 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
+| 12 | 15 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
 | 13 | ES | O scraper não ordena os itens | ajuste pequeno |
 | 14 | SP | FAQs: dois pontos da revisão do #179 | na próxima vez que alguém tocar o `faqs.rs` |
 | 15 | kit | Cache: validação de completude na leitura | medir antes de virar TAREFA |
 | 16 | AM | Perguntas e Respostas do GCC (D-AMFAQ-6) | sondar o XHR da casca Struts2 |
+| 17 | AM | Serviço da listagem sem nenhum público (3223) — fica fora do snapshot | decisão do mantenedor |
 
 ---
 
@@ -260,13 +261,16 @@ Data da última coleta no snapshot de serviços (`coleta.coletado_em`):
 
 | Coleta | Entidades |
 |---|---|
-| 25/07/2026 | ac, al, am, ba, ce, ma, pa, pb, pe, pi, rn, ro, rr, se, to |
+| 25/07/2026 | ac, al, ba, ce, ma, pa, pb, pe, pi, rn, ro, rr, se, to |
 | 02/08/2026 | ap |
-| 31/10–02/11/2026 | as demais (sc, pr, rs, sp, df, es, go, mg, ms, mt, rj) |
+| 31/10–02/11/2026 | as demais (sc, pr, rs, sp, df, es, go, mg, ms, mt, rj, am) |
 
 **Próximo passo.** `scripts/tools/atualizar-servicos.sh <id>` por entidade (faz backup, apaga o cache, coleta,
 deriva e refaz os vetores). Comparar com o backup em `/tmp/auli-atualizacao/<id>` **por link e título**, não
 pela posição. Depois, `./start_server.sh` e `scripts/deploy-frontend.sh`.
+
+**AM (02/11/2026):** 278 → 282 — 4 novos, nenhum removido, 8 renomeados (mesmo link), 4 descrições editadas,
+nenhuma mudança de público ou classe. A listagem tem 283: o 283º ficou fora (§17).
 
 ## 13. ES — ordem dos itens
 
@@ -333,3 +337,16 @@ que entraram são as do Portfólio de Serviços.
 
 **Próximo passo.** Abrir a página num navegador, capturar o XHR que traz as perguntas e ver se ele é um GET/POST
 anônimo que o `ureq` repete. Se for, é a 2ª fonte do `faqs.rs` do AM, nos moldes da 2ª fonte do DF.
+
+## 17. AM — serviço da listagem sem nenhum público (aberta — 2026-11-02)
+
+Na atualização dos serviços de 02/11/2026, o 3223 "Regularização de Pagamentos Efetuados IPVA"
+(`/portfolio-servicos/detalhes/3223`) está na listagem `/portfolio-servicos/todos`, mas em nenhuma das 3 rotas de
+perfil (PF, PJ, Órgãos Públicos). O público do AM sai do pertencimento às rotas, e o `build_servicos` do `am.rs`
+pula serviço sem público, com aviso — por isso o snapshot tem 282 dos 283. Em julho não havia caso assim (o comentário
+do `am.rs` ainda diz "não observado"). O inverso também segue: o 1436 está numa rota de perfil e não na listagem.
+
+A própria página de detalhe também não declara público (`"perfis":[]` no `serviceDetails`).
+
+**Decisão do mantenedor.** Deixar fora (o portal não o oferece a nenhum público), ou dar a ele os três públicos. Se
+entrar, o comentário do `am.rs` e o teste `build_pula_servico_sem_publico` mudam junto.
