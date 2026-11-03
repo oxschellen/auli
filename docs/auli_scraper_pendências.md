@@ -18,7 +18,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 9 | PI, RO | Scraper Sydle conecta-360 compartilhado (D-XX-SYDLE-COMPARTILHADO) | decisão de arquitetura em aberto |
 | 10 | kit | Camada 2 do kit (`validar_contagem`, `absolutize`, `cli::parse_args`; conversor HTML das FAQs) | TAREFA curta, não feita |
 | 11 | frota | User-Agent: AuliBot por padrão (D-FROTA-UA) | ✅ decidida e aplicada; restam os usos legados, a testar quando alguém tocar o scraper |
-| 12 | 15 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
+| 12 | 14 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
 | 13 | ES | O scraper não ordena os itens | ajuste pequeno |
 | 14 | SP | FAQs: dois pontos da revisão do #179 | na próxima vez que alguém tocar o `faqs.rs` |
 | 15 | kit | Cache: validação de completude na leitura | medir antes de virar TAREFA |
@@ -261,9 +261,9 @@ Data da última coleta no snapshot de serviços (`coleta.coletado_em`):
 
 | Coleta | Entidades |
 |---|---|
-| 25/07/2026 | ac, al, ba, ce, ma, pa, pb, pe, pi, rn, ro, rr, se, to |
+| 25/07/2026 | ac, al, ba, ce, ma, pa, pb, pe, rn, ro, rr, se, to |
 | 02/08/2026 | ap |
-| 31/10–02/11/2026 | as demais (sc, pr, rs, sp, df, es, go, mg, ms, mt, rj, am) |
+| 31/10–03/11/2026 | as demais (sc, pr, rs, sp, df, es, go, mg, ms, mt, rj, am, pi) |
 
 **Próximo passo.** `scripts/tools/atualizar-servicos.sh <id>` por entidade (faz backup, apaga o cache, coleta,
 deriva e refaz os vetores). Comparar com o backup em `/tmp/auli-atualizacao/<id>` **por link e título**, não
@@ -271,6 +271,13 @@ pela posição. Depois, `./start_server.sh` e `scripts/deploy-frontend.sh`.
 
 **AM (02/11/2026):** 278 → 282 — 4 novos, nenhum removido, 8 renomeados (mesmo link), 4 descrições editadas,
 nenhuma mudança de público ou classe. O 283º, sem rota de perfil, entrou depois com PF e PJ (§17) → 283.
+
+**PI (03/11/2026):** 30 → 28 — saíram da Carta de Serviços os três de IPVA ("Notificações de débitos de IPVA",
+"Notificações de lançamento IPVA", "Pagamento IPVA"), que a busca anônima não acha mais no CMS, com nenhum pai; entrou
+"SIAFE-PI"; o "Acervo Normativo" foi recriado (mesmo texto, `_id` novo, sem `friendlyUrl` → o link passa a ser
+o `_id`); "Serviço de Atendimento ao Consumidor (SAC)" virou "…ao Cidadão (SAC)". O IPVA agora vive em "Temas e
+categorias - Portal Institucional" (`69653110…`, 14 temas, o do IPVA com 12 subtemas) — taxonomia do portal,
+fora do escopo Carta-only.
 
 ## 13. ES — ordem dos itens
 
