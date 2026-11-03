@@ -179,7 +179,7 @@ GCC perguntasRespostas.action → 200, 12.830 B, casca Struts2-jQuery sem conte�
 - **Smoke** `/v1/retrieve kind=faqs entity=am` numa instância temporária: 5/5 em 1º (renovação da isenção de IPVA PCD,
   parcelamento de IPVA, REDAR, débitos do Refis 2025, NF-e Avulsa).
 - **Conferência humana** (portão da F2): 502 "Quando posso parcelar meu IPVA?" (pergunta e resposta separadas por
-  `<br>`), 4302 "Quais débitos podem ser incluídos no Refis 2025?" e 446 (uma pergunta sem número) — a conferir no
-  site pelo mantenedor.
+  `<br>`), 4302 "Quais débitos podem ser incluídos no Refis 2025?" e 446 (uma pergunta sem número) — conferidas no
+  site pelo mantenedor em 02/11/2026: ok.
 
 Fontes: `docs/REGISTRO-scrapers.md#am` e `#am-faqs`, `auli-scraper-am/src/{am,faqs}.rs`.
