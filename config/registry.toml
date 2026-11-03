@@ -171,7 +171,7 @@ name = "SEFAZ-AM"
 uf = "AM"
 state = "Amazonas"
 prompt = "prompts/am.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "pa"
