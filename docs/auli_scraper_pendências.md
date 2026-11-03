@@ -18,7 +18,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 9 | PI, RO | Scraper Sydle conecta-360 compartilhado (D-XX-SYDLE-COMPARTILHADO) | decisão de arquitetura em aberto |
 | 10 | kit | Camada 2 do kit (`validar_contagem`, `absolutize`, `cli::parse_args`; conversor HTML das FAQs) | TAREFA curta, não feita |
 | 11 | frota | User-Agent: AuliBot por padrão (D-FROTA-UA) | ✅ decidida e aplicada; restam os usos legados, a testar quando alguém tocar o scraper |
-| 12 | 12 entidades | Serviços sem atualização desde 25/07 (AP desde 02/08) | falta rodar |
+| 12 | frota | Serviços sem atualização desde 25/07 (AP desde 02/08) | ✅ feita: as 27 atualizadas entre 31/10 e 03/11 (AP com o fix de TLS do #190) |
 | 13 | ES | O scraper não ordena os itens | ajuste pequeno |
 | 14 | SP | FAQs: dois pontos da revisão do #179 | na próxima vez que alguém tocar o `faqs.rs` |
 | 15 | kit | Cache: validação de completude na leitura | medir antes de virar TAREFA |
@@ -255,17 +255,16 @@ e diff limpo contra o backup), troca e apaga o comentário de legado. O caminho 
 desde as FAQs do DF (02/11/2026), e o host da Carta de Serviços do DF já mostrou que aceita o AuliBot pelo curl —
 os serviços do DF são o candidato mais barato.
 
-## 12. Serviços sem atualização desde julho
+## 12. Serviços sem atualização desde julho (✅ feita — 2026-11-03)
 
 Data da última coleta no snapshot de serviços (`coleta.coletado_em`):
 
 | Coleta | Entidades |
 |---|---|
-| 25/07/2026 | ac, al, ma, pa, pb, pe, rn, ro, rr, se, to |
-| 02/08/2026 | ap |
-| 31/10–03/11/2026 | as demais (sc, pr, rs, sp, df, es, go, mg, ms, mt, rj, am, pi, ba, ce) |
+| 31/10–02/11/2026 | sc, pr, rs, sp, df, es, go, mg, ms, mt, rj, am |
+| 03/11/2026 | pi, ba, ce, ac, al, ma, pa, pb, pe, rn, ro, rr, se, to, ap |
 
-**Próximo passo.** `scripts/tools/atualizar-servicos.sh <id>` por entidade (faz backup, apaga o cache, coleta,
+**Como atualizar.** `scripts/tools/atualizar-servicos.sh <id>` por entidade (faz backup, apaga o cache, coleta,
 deriva e refaz os vetores). Comparar com o backup em `/tmp/auli-atualizacao/<id>` **por link e título**, não
 pela posição. Depois, `./start_server.sh` e `scripts/deploy-frontend.sh`.
 
@@ -293,6 +292,30 @@ link muda junto, então parear pelo `_id` do fim do link): "Recepcionar Document
 Consulta Tributária", "…Declaração de Livre Trânsito (DLT)" → "…Declaração de Conteúdo Eletrônica (DCe)"; 3
 descrições editadas. O `hits` caiu junto (393 → 384) e o gap do índice segue 10, então a queda é do catálogo, não
 da paginação.
+
+**Os 12 de julho (03/11/2026):**
+
+- **AL, PA, PB, AP:** idênticos byte a byte (60, 34, 101, 49). O AP só passou depois do fix de TLS (#190): o
+  certificado novo do portal (09/2026) é do Soluti V2 GR46, e o servidor manda intermediários que não são o
+  emissor (`UnknownIssuer`) → o Soluti entrou como trust anchor, como no AC.
+- **AC:** 17 → 19 — o post da "Certidão Negativa de Débitos" (`?p=322`) foi trocado por um novo, "Certidão Negativa
+  de Débito" (`?p=24450`); entraram "Certidão Negativa de Débito Inventário" e "Certidão da Dívida Ativa".
+- **MA:** 38 = 38 — 5 descrições editadas (ITCD ganhou o aviso do módulo novo).
+- **PE:** 35 = 35 — "ICD - Causa Mortis e Doações" → "ITCMD - Causa Mortis e Doação"; o "IPVA" passou a apontar
+  para o e-Fisco (`PRConsultarResumoIPVA`).
+- **RN:** 15 = 15 — 2 links de `uvt.set.rn.gov.br` → `uvt.sefaz.rn.gov.br`; o card "Carta de Serviços" agora
+  aponta para um design no Canva (é o `acf.link` do próprio portal).
+- **RO:** 194 → 193 — 4 removidos ("Adesão ao REFAZ ICMS 2026 (até 31/07/2026)", "Solicitação da Inclusão" e "…da
+  Alteração de Produtos na Pauta Fiscal", "Protocolo de entrada e trânsito"), 3 novos ("Dúvidas sobre Indeferimento
+  da Opção pelo Simples Nacional", "Calculadora de Rendimentos Recebidos Acumuladamente (RRA)", "Sefin App"), 5
+  renomeados (4 com slug novo, pareados pelo `_id`), 4 descrições editadas. Os 3 novos vêm com a descrição de
+  enchimento do portal (`ㅤ`, U+3164), como 3 antigos — é o portal, não o scraper.
+- **RR:** 17 = 17 — saiu "Gerar CSC da NFC-e", entrou "Consultar NFC-e" (Cidadão e Empresa).
+- **SE:** 91 = 91 — 20 descrições editadas, quase todas por links que migraram de `www.sefaz.se.gov.br` para
+  `portais-fazendario.apps.sefaz.se.gov.br` (26 de 47). A Carta (`servicos_cidadao.aspx`) ainda está no `www`; se ela
+  migrar também, o scraper do SE muda de host.
+- **TO:** 45 → 47 — 2 novos: "Autorizar Envio de Escrituração Fiscal Digital Substitutiva (Retificadora)" em 1ª e
+  em 2ª Instância (classe "Novos Serviços Fiscais").
 
 ## 13. ES — ordem dos itens
 
