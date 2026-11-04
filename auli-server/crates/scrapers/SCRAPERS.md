@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF e no AM, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM e no CE, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -273,6 +273,17 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **D-CE2 — identidade `_id`:** o `identifier` (slug) não é único; link canônico
   `…/servico-geral+<identifier>+<_id>`. Descrição **inline** na listagem → sem chamada de detalhe.
 - 382 serviços, 1 público ("Serviços", classe "Geral"). Guard mín. 350. 6 testes. `ServicoRaw` direto.
+- **FAQs** (`auli-scraper-ce faqs`, `faqs.rs`): os artigos "Principais Dúvidas sobre …" do catálogo irmão
+  `conteudo-geral`, pela mesma API — `getChildren` (o `build_body`/`fetch_page` dos serviços, com raiz e `path`) lista
+  428 conteúdos, o nome seleciona os de FAQ (`d[úu]vidas|pergunta|faq`, 96) e o **`getItem`** (o único método de
+  leitura liberado ao anônimo) traz o `contentMarkdown`. Um bloco `section-wrapper` por pergunta, em dois templates:
+  2026 (pergunta em `<h2>`, resposta HTML com entidades) e 2024 (pergunta na linha `## `, resposta markdown — a
+  quebra de linha do fonte é quebra; no HTML, espaço). A resposta começa depois da linha da tag `<sy-collapse>` (o
+  `ref="(r) => …"` do template de 2024 tem `>` no atributo). `url` = artigo + `#section-<slug>` (sem a âncora, 59
+  perguntas repetidas no mesmo artigo com outra resposta dariam o mesmo `.md`). Cópias (a menos de espaços) ficam
+  no artigo de menor `_id`. Artigos `HTML`/sem seções ficam fora com log (3). AuliBot (os serviços seguem com o UA
+  de navegador). 2.706 perguntas de 93 artigos (3.179 lidas, 473 cópias, 03/11/2026), 14 testes. Descoberta em
+  `docs/REGISTRO-scrapers.md#ce-faqs`.
 - POC de discovery em `~/Desktop/poc-ce/` (fora do repo).
 
 ### ms — SEFAZ-MS (Mato Grosso do Sul)

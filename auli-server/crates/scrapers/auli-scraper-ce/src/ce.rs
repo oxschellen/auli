@@ -36,17 +36,19 @@ use auli_scraper_kit::clean;
 use auli_scraper_kit::http::GetOpts;
 use serde::Deserialize;
 
-const BASE: &str = "https://portalservicos.sefaz.ce.gov.br";
+pub(crate) const BASE: &str = "https://portalservicos.sefaz.ce.gov.br";
 /// Shell público de onde extraímos o Bearer anônimo (efêmero).
 const SHELL_URL: &str = "https://portalservicos.sefaz.ce.gov.br/";
 /// Endpoint do método público de catálogo (classe API do service-desk + método `getChildren`).
-const GETCHILDREN_URL: &str = "https://portalservicos.sefaz.ce.gov.br/api/1/servicedesk-embedded/_classId/5cd5e83d59f8170cd4dc2c43/getChildren";
+pub(crate) const GETCHILDREN_URL: &str = "https://portalservicos.sefaz.ce.gov.br/api/1/servicedesk-embedded/_classId/5cd5e83d59f8170cd4dc2c43/getChildren";
 /// `application` no corpo (≠ do header de tenant abaixo).
-const APP_IN_BODY: &str = "sefaz-ceara";
+pub(crate) const APP_IN_BODY: &str = "sefaz-ceara";
 /// Tenant no header `X-Explorer-Account-Token`.
-const ORG_HEADER: &str = "sefazce";
+pub(crate) const ORG_HEADER: &str = "sefazce";
 /// `_id` do catálogo `servico-geral` (= o ObjectId da URL de listagem).
 const CATALOGO_ID: &str = "648af76264778b7336c470a3";
+/// `path` do catálogo no corpo do `getChildren`.
+const CATALOGO_PATH: &str = "servico-geral";
 
 /// `pageSize` PEQUENO de propósito: com o sort antigo (inválido), pageSize maior entregava MENOS
 /// (10→382, 100→292, 500→0). O 10 é o que o próprio front usa. Não aumentar sem re-medir a
@@ -74,22 +76,22 @@ const MIN_SERVICOS: usize = 350;
 
 /// Uma página da resposta de `getChildren`.
 #[derive(Debug, Deserialize)]
-struct Page {
+pub(crate) struct Page {
     #[serde(default)]
     hits: i64,
     #[serde(rename = "return", default)]
-    items: Vec<Item>,
+    pub(crate) items: Vec<Item>,
 }
 
 /// Um item de serviço do `return[]`. Só os campos que usamos; serde ignora o resto.
 #[derive(Debug, Deserialize)]
-struct Item {
+pub(crate) struct Item {
     #[serde(rename = "_id")]
-    id: String,
+    pub(crate) id: String,
     #[serde(default)]
-    identifier: String,
+    pub(crate) identifier: String,
     #[serde(default)]
-    name: String,
+    pub(crate) name: String,
     #[serde(default)]
     description: String,
 }
@@ -144,7 +146,13 @@ pub fn scrape(
                 if token.is_none() {
                     token = Some(fetch_token(&agent)?);
                 }
-                let body = fetch_page(&agent, token.as_ref().unwrap(), page)?;
+                let body = fetch_page(
+                    &agent,
+                    token.as_ref().unwrap(),
+                    CATALOGO_ID,
+                    CATALOGO_PATH,
+                    page,
+                )?;
                 fetched_any = true;
                 (body, false)
             }
@@ -198,7 +206,7 @@ pub fn scrape(
 }
 
 /// Extrai o Bearer token anônimo do shell público (`"Authorization":"Bearer …"`). Efêmero.
-fn fetch_token(agent: &ureq::Agent) -> Result<String> {
+pub(crate) fn fetch_token(agent: &ureq::Agent) -> Result<String> {
     println!("Fetching token (shell): {}", SHELL_URL);
     let shell = auli_scraper_kit::http::get_string(
         agent,
@@ -211,8 +219,15 @@ fn fetch_token(agent: &ureq::Agent) -> Result<String> {
     parse_token(&shell)
 }
 
-/// POST `getChildren` de uma página; devolve o corpo JSON cru. Retenta com backoff.
-fn fetch_page(agent: &ureq::Agent, token: &str, page: u32) -> Result<String> {
+/// POST `getChildren` de uma página da raiz `raiz` (`path` = `caminho`); devolve o corpo JSON cru. Retenta com
+/// backoff. As FAQs usam a mesma chamada sobre o catálogo `conteudo-geral`.
+pub(crate) fn fetch_page(
+    agent: &ureq::Agent,
+    token: &str,
+    raiz: &str,
+    caminho: &str,
+    page: u32,
+) -> Result<String> {
     println!("POST getChildren (página {})", page);
     auli_scraper_kit::http::post_json(
         agent,
@@ -221,7 +236,7 @@ fn fetch_page(agent: &ureq::Agent, token: &str, page: u32) -> Result<String> {
             ("Authorization", token),
             ("X-Explorer-Account-Token", ORG_HEADER),
         ],
-        &build_body(page),
+        &build_body(raiz, caminho, page),
         &GetOpts {
             log_prefix: "CE",
             accept: Some("application/json"),
@@ -234,12 +249,12 @@ fn fetch_page(agent: &ureq::Agent, token: &str, page: u32) -> Result<String> {
 /// Corpo mínimo do POST `getChildren`. `params.sorters` usa o formato verbatim do front por
 /// fidelidade e dá ordem estável entre páginas; **não** afeta a completude (ver header do módulo:
 /// 382 distintos com qualquer sorter — ou sem nenhum). Qualquer campo válido serve.
-fn build_body(page: u32) -> serde_json::Value {
+fn build_body(raiz: &str, caminho: &str, page: u32) -> serde_json::Value {
     serde_json::json!({
         "application": APP_IN_BODY,
-        "id": CATALOGO_ID,
-        "rootId": CATALOGO_ID,
-        "path": "servico-geral",
+        "id": raiz,
+        "rootId": raiz,
+        "path": caminho,
         "view": "list",
         "params": {
             "filters": {},
@@ -269,7 +284,7 @@ fn parse_token(shell: &str) -> Result<String> {
 }
 
 /// Parseia uma página `{ hits, return[] }`.
-fn parse_page(json: &str) -> Result<Page> {
+pub(crate) fn parse_page(json: &str) -> Result<Page> {
     serde_json::from_str::<Page>(json).map_err(|e| anyhow!("JSON de getChildren inválido: {}", e))
 }
 
@@ -439,8 +454,11 @@ mod tests {
     #[test]
     fn build_body_envia_sorter_estavel() {
         // Sem sorter válido a paginação do ES é instável (perde itens) — o campo é contrato.
-        let body = build_body(3);
+        let body = build_body(CATALOGO_ID, CATALOGO_PATH, 3);
         assert_eq!(body["params"]["pageIndex"], 3);
+        assert_eq!(body["id"], CATALOGO_ID);
+        assert_eq!(body["rootId"], CATALOGO_ID);
+        assert_eq!(body["path"], "servico-geral");
         assert_eq!(
             body["params"]["sorters"]["sort"]["name._current.keyword"], "asc",
             "sorters.sort deve carregar um campo válido e estável"

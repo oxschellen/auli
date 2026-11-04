@@ -233,9 +233,9 @@ serves an incomplete TLS chain that has to be pinned. Each crate documents its p
 The cache is **cache-first always** — `--usecache` only changes what a miss does (bail vs. network).
 A genuine re-scrape therefore means deleting that collection's cache first, which is what
 `scripts/tools/update-rs-faqs.sh` does before running the six-step scrape → derive → vectorize chain.
-The SC, PR, SP, MG, MS, MT, GO, DF and AM FAQs are the exception: they always go to the network and read the cache only under
+The SC, PR, SP, MG, MS, MT, GO, DF, AM and CE FAQs are the exception: they always go to the network and read the cache only under
 `--usecache` (`scripts/tools/update-sc-faqs.sh`, `update-pr-faqs.sh`, `update-sp-faqs.sh`, `update-mg-faqs.sh`,
-`update-ms-faqs.sh`, `update-mt-faqs.sh`, `update-go-faqs.sh`, `update-df-faqs.sh`, `update-am-faqs.sh`).
+`update-ms-faqs.sh`, `update-mt-faqs.sh`, `update-go-faqs.sh`, `update-df-faqs.sh`, `update-am-faqs.sh`, `update-ce-faqs.sh`).
 
 ```bash
 cd auli-server
@@ -308,7 +308,7 @@ Required variables panic at startup if missing.
 | **TARF**      | Rulings of the state tax court (2nd instance)  | Chat (dedicated query type) + tab + **MCP**     | RS |
 | **Pareceres** | Legal/technical opinions                       | Chat (dedicated query type) + tab + **MCP**     | SP, PR, SC, RS |
 | **Serviços**  | The secretariat's service catalog, by audience | Chat (RAG) + Serviços tab                       | all 27 states |
-| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | RS, SC, PR, SP, MG, MS, MT, GO, DF, AM |
+| **FAQs**      | Official frequently-asked questions            | Chat (RAG) + FAQs tab                           | RS, SC, PR, SP, MG, MS, MT, GO, DF, AM, CE |
 | **Notas**     | Administrative/tax notes                       | Notas tab (reference)                           | RS |
 | **Conteúdos** | Misc reference materials                       | Conteúdos tab (reference)                       | RS |
 
@@ -327,9 +327,9 @@ related. **Notas and Conteúdos** remain reference-only navigation.
 - **Working today:** RAG chat for the configured state, the full UI (chat, reference tabs,
   downloads, connector guides, state selection with map), local embeddings, an MCP server for
   external assistants. **All 27 registered states have serviços collected**, pareceres for four,
-  FAQs for RS, SC, PR, SP, MG, MS, MT, GO, DF and AM, and — for RS — the TARF acórdãos (collection closed 2026-08-09). The backend is open (no
+  FAQs for RS, SC, PR, SP, MG, MS, MT, GO, DF, AM and CE, and — for RS — the TARF acórdãos (collection closed 2026-08-09). The backend is open (no
   auth) and database-free — it serves from packs alone.
-- **In progress:** FAQs beyond RS, SC, PR, SP, MG, MS, MT, GO, DF and AM, automated scraping of notas, and a controlled vocabulary for the
+- **In progress:** FAQs beyond RS, SC, PR, SP, MG, MS, MT, GO, DF, AM and CE, automated scraping of notas, and a controlled vocabulary for the
   legal-provision graph.
 
 For the precise active-vs-modeled breakdown (routes, auth flows, cross-repo divergences), see
