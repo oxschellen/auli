@@ -1,7 +1,8 @@
 # ESTUDO-frontend-dependencies-update — Atualização das dependências do `auli-frontend`
 
-**Data:** 05/11/2026 · **Status:** medido em clone limpo do `main` (`62e5b73`, PR #192); patch pronto,
-aguarda `git am` + conferência local.
+**Data:** 05/11/2026 · **Status:** medido em clone limpo do `main` (`62e5b73`, PR #192); aplicado na
+branch `chore/frontend-deps-update` e revisado em 05/11 (§10). **Merge só a partir de 12/11/2026**
+(§10.2).
 **Escopo:** só `auli-frontend/package.json` e `package-lock.json`. Nenhuma linha de `src/` muda.
 
 **Convenção:** como nos demais estudos, distingo **medido** (saiu de execução real neste clone),
@@ -18,7 +19,7 @@ aguarda `git am` + conferência local.
 de código. O `npm audit` cai de **20 vulnerabilidades (9 altas)** para **7 moderadas**, todas no
 mesmo `minimatch` interno do typescript-eslint (ferramenta de lint, nunca vai ao navegador).
 Ficam de fora **ESLint 10** (o `eslint-plugin-react` ainda não o suporta — falha dura, §5.5) e
-**TypeScript 7** (o compilador nativo em Go, publicado hoje; o typescript-eslint o recusa
+**TypeScript 7** (o compilador nativo em Go, no ar desde 08/07/2026; o typescript-eslint o recusa
 explicitamente, §5.6). Nenhum dos dois é bloqueio de segurança ou de produto.
 
 ## 2. Linha de base (medido)
@@ -112,10 +113,13 @@ Peers: `vitest >= 0.32`, `@testing-library/dom >=10 <11`, Node ≥ 22 — todos 
 ### 5.2 `jsdom` 30 — sobe, com uma exigência de ambiente
 
 **Medido:** isolado, 274 testes passam. `jsdom@30.1.3` declara `engines.node = ^22.22.2 || ^24.15.0
-|| >=26`. O CI (`node-version: "22"`) pega o 22 mais novo e passa. **Não verificado:** a versão de
-Node do Desktop Server e do VPS — conferir `node -v` antes do `npm ci` (§8). Se for < 22.22.2, o
-`npm ci` avisa (`EBADENGINE`) mas instala; a opção segura é subir o Node, não segurar o jsdom.
-Efeito colateral bom: traz `undici` 7.30.2 (fecha as 3 CVEs de DoS do `undici` da base).
+|| >=26`. O CI (`node-version: "22"`) pega o 22 mais novo e passa. Abaixo disso o `npm ci` avisa
+(`EBADENGINE`) e instala, mas **os testes quebram** (medido na revisão, Node 22.13.0): o jsdom 30
+traz `undici` **8.12.4**, cujo `lib/interceptor/decompress.js` chama `zlib.createZstdDecompress` —
+que só existe a partir do Node 22.15 —, e os 15 arquivos de teste em jsdom morrem ao carregar
+(`Cannot read properties of undefined (reading 'bind')`). O Desktop Server subiu para 22.23.4 em
+05/11 (§10). O VPS não importa: o `deploy-frontend.sh` builda local e só sobe `dist/` estático.
+O `undici` 7.30.2 citado na §4.1 é o do jsdom 29 após o `npm audit fix`, não o do jsdom 30.
 
 ### 5.3 `vitest` 5 — sobe
 
@@ -164,23 +168,25 @@ para este patch:
 3. Remover o `eslint-plugin-react` (projeto em TS estrito perde pouco: `jsx-key`,
    `no-unknown-property`, `display-name`…). Não recomendo sem medir o que ele pega hoje.
 
-### 5.6 `typescript` 7 — não agora (publicado hoje; recusado explicitamente)
+### 5.6 `typescript` 7 — não agora (recusado explicitamente)
 
-`typescript@7.0.2` (05/11/2026, 08:20 UTC) é o **compilador nativo** (porte em Go): o pacote npm
-virou um *launcher* de 3,6 MB cujo `lib/` tem só `getExePath.js`/`tsc.js`, e o binário vem de
+`typescript@7.0.2` (08/07/2026; o que saiu em 05/11 foi o nightly `7.1.0-dev.20261105.1`) é o
+**compilador nativo** (porte em Go): o pacote npm virou um *launcher* de ~2,5 MB descompactado cujo
+`lib/` tem só `getExePath.js`/`tsc.js`, e o binário vem de
 `@typescript/typescript-<plataforma>` (18 pacotes por plataforma como `dependencies`).
 
 **Medido:** `typescript-eslint@8.72.1` declara `typescript: >=4.8.4 <6.1.0` → ERESOLVE. Forçando,
 o `tsc --noEmit` roda (2,7 s) mas o `eslint` morre com `Error: typescript-eslint does not support
 TS 7.0`. **Deduzido:** mesmo o TS **6.1+** está fora da faixa do typescript-eslint hoje; `6.0.3` é
-o teto. Reavaliar quando o typescript-eslint publicar suporte (acompanhar o changelog; o 8.x saiu
-em 02/11 ainda com `<6.1.0`).
+o teto. Reavaliar quando o typescript-eslint publicar suporte (acompanhar o changelog; o 8.72.1, de
+26/10 e ainda o `latest` em 05/11, segue com `<6.1.0` — quatro meses depois do TS 7).
 
 ### 5.7 Conjunto aprovado, testado junto (medido)
 
 Fase 1 + jest-dom 7 + jsdom 30 + vitest 5 + framer-motion 14: tsc ok · lint ok · **274 testes**
 passam · build 1,03–1,13 s · `npm ls` limpo · audit **7 moderadas** · `npm outdated` lista só
-`eslint` e `typescript`.
+`eslint` e `typescript` — e, desde 05/11 12:15 UTC, o `jsdom` 31.0.0, que fica de fora (mesma
+exigência de Node do 30, recém-publicado, e o 30 já cobre o que o patch precisa).
 
 Bundles finais (gzip): react **64,8** · chakra **104,3** · utils **86,8** · index **61,0** · icons 4,7
 · runtime 0,4 — total ≈ **322 kB** contra ≈ 302 kB na base (**+20 kB, +6,6%**).
@@ -236,20 +242,26 @@ Ficam como estão (deliberado): `eslint ^9.39.4`, `typescript ^6.0.3`, `eslint-p
 
 ## 7. Como aplicar (no `~/Desktop/auli`)
 
+Já aplicado na branch `chore/frontend-deps-update` (o `git am` do arquivo
+`0001-frontend-atualizar-depend-ncias-Fase-1-semver-4-majo.patch` exige apagar antes a cópia solta
+deste ESTUDO em `docs/`, que o patch cria). Depois do merge (a partir de 12/11, §10.2):
+
 ```bash
-git am 0001-frontend-atualizar-dependencias.patch
+git switch main && git pull --ff-only
 cd auli-frontend
-node -v                      # §5.2: jsdom 30 quer ≥ 22.22.2
-npm ci                       # instala exatamente o lock do patch; se o npm for 10 e reclamar: npx -y npm@11 ci
+node -v && npm -v            # §5.2: ≥ 22.22.2; npm 11 (§3)
+npm ci                       # OBRIGATÓRIO antes do deploy (abaixo)
 npm run lint && npm test && npm run build
 npm audit                    # esperado: 7 moderate (minimatch do typescript-eslint)
 ```
 
-Depois, PR normal — o workflow `frontend` roda os mesmos quatro passos. O `deploy-frontend.sh`
-não muda (passo 5 continua `npm run build`). Bump de versão do `package.json` (`0.1.67` → `0.1.68`)
-fica a seu critério; o `__APP_VERSION__` sai dali.
+O `deploy-frontend.sh` não muda, mas **não reinstala dependências**: o passo 5 roda `npm run build`
+sobre o `node_modules` que estiver lá. Sem o `npm ci`, o deploy publica as versões antigas. Bump de
+versão do `package.json` (`0.1.67` → `0.1.68`) fica a seu critério; o `__APP_VERSION__` sai dali.
 
 ## 8. O que não foi verificado (fazer antes do deploy)
+
+Os itens 1–3 foram fechados na revisão de 05/11 (§10.3).
 
 1. **Smoke visual do framer-motion 14** no `npm run dev`: abrir/fechar um item em cada accordion
    (Pareceres, Serviços, Conteúdos, FAQs, Legislação), ver se a saída (`AnimatePresence`) anima e
@@ -272,3 +284,53 @@ fica a seu critério; o `__APP_VERSION__` sai dali.
   (`npm i -g npm@11`) para as próximas atualizações.
 - O `eslint@9` já consta como fora de suporte no registro. Não é urgente (ferramenta local), mas a
   decisão da §5.5 (esperar × `@eslint-react` × remover) vai se impor em algum momento.
+
+## 10. Revisão (05/11/2026)
+
+Feita sobre o patch aplicado num worktree limpo, com o ciclo completo e conferência no registro npm.
+
+### 10.1 Ambiente
+
+O Desktop Server estava em **Node 22.13.0**: com ele, o patch instala com 8 avisos `EBADENGINE`
+(jsdom 30 e dependências) e **186 de 280 testes** rodam — os 15 arquivos em jsdom morrem (§5.2).
+Com o jsdom mantido em 29, 274 passam, com o mesmo audit (7 moderadas): o jsdom 30 não compra
+segurança. Decisão de Carlos: subir o Node (alinha com o CI, que usa o 22 mais novo). Feito em
+05/11 — `nvm install 22` → **22.23.4**, e `npm i -g npm@11` → **11.21.2** (o `--latest-npm` do nvm
+não trocou o npm 10.9.9 do Node 22; ver §3). Com isso, o patch como está: `tsc` ok · lint ok ·
+**280/280 testes** (com os dados de `public/` presentes; 274 + 6 pulados num clone sem eles) ·
+build ok · audit 7 moderadas · `npm ls` limpo · `npm ci` não altera o lock.
+
+### 10.2 Cadeia de suprimento: lock limpo, mas versões recentes demais → merge a partir de 12/11
+
+O lock está limpo: as 759 entradas resolvem em `registry.npmjs.org` com `sha512`, nenhuma ganhou
+script de instalação (só o `fsevents` de antes). Os 5 pacotes novos se explicam: `@zag-js/hotkeys`
+e `@zag-js/toc` vêm do Chakra (via `@ark-ui/react`, runtime); `bippy`, `playwright-core` e
+`is-unicode-supported` vêm do `react-doctor` (dev).
+
+Mas 216 versões mudam, e várias têm horas ou dias: `vite` 8.3.6 e `undici` 8.12.4 (05/11),
+`framer-motion`/`motion-dom` 14.9.1 (04/11), `@chakra-ui/react` 3.38.0 (03/11), `vitest` 5.1.0,
+`@vitejs/plugin-react` 6.2.1 e `react-doctor` 0.9.22 (02/11). Versão recém-publicada é a janela em
+que pacote sequestrado costuma aparecer, e nenhuma correção de segurança depende delas (o `vite` está
+corrigido desde a 8.3 de setembro; a 8.3.5 é de 21/10). Seis dos pisos do `package.json` são
+dessas versões, então um `npm install --before=` sozinho não resolve. Em vez de rebaixar os pisos,
+**o merge espera até 12/11/2026**: aí tudo no lock tem ao menos uma semana de registro público.
+
+### 10.3 O que a §8 deixava aberto
+
+- **framer-motion 14** (Chrome headless, `main` × patch, Serviços/FAQs/Pareceres/Conteúdos): abrir e
+  fechar animam igual ao 12 (~220 ms, a saída do `AnimatePresence` roda), e com
+  `prefers-reduced-motion: reduce` abre e fecha instantâneo nos dois. A Legislação não foi medida
+  (o roteiro não achou a região animada, nem no `main`).
+- **Dev server/HMR:** sobe; editar um `.tsx` atualiza a página sem recarregar (estado preservado).
+- **Node do VPS:** irrelevante (§5.2).
+- **Novo:** no dev, o React 19.3 passa a logar `Encountered a script tag while rendering React
+  component` — é o `<script>` de tema que o `next-themes` 0.4.6 (já o `latest`) renderiza. Só no dev:
+  o build de produção (`vite preview`) não loga nada. O `<svg> attribute height: "auto"` do mapa já
+  existia no `main`.
+
+### 10.4 Correções neste ESTUDO
+
+TS 7.0.2 é de 08/07/2026, não "de hoje" (§1, §5.6), e o pacote tem ~2,5 MB, não 3,6; o
+typescript-eslint 8.72.1 é de 26/10, não 02/11; o jsdom 30 traz `undici` 8.12.4, não 7.30.2, e em
+Node < 22.15 os testes quebram em vez de só avisar (§5.2); o jsdom 31.0.0 saiu em 05/11 (§5.7); o
+nome do arquivo do patch e o passo obrigatório de `npm ci` antes do deploy (§7).
