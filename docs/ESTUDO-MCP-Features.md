@@ -69,8 +69,9 @@ manuais depois, em tarefa própria.
   `bg.subtle`, caixa com borda e `overflowX="auto"`). Nomes de ferramenta em `<Text as="code">`. A
   coluna de exemplos em itálico com cor `fg` (não `fg.muted`: itálico + cinza cai abaixo de 4,5:1 em
   13px). O selo "Bloco novo" do mockup **não** entra.
-- **D-MCPUI-6 — Sem NAVI.** Doutrina do repositório: nenhuma menção ao órgão no código, comentários
-  ou prosa; "o chat deste portal", "quem atende".
+- **D-MCPUI-6 — Sem o nome da unidade de atendimento.** Doutrina do repositório
+  (`check-sem-navi.sh`): nenhuma menção ao órgão no código, comentários ou prosa; "o chat deste
+  portal", "quem atende".
 - **D-MCPUI-7 — Sem rota, sem estado novo.** O bloco é estático na tela `aberto === null`; não
   aparece no leitor de manual.
 
@@ -192,7 +193,7 @@ comentário HTML, que o leitor do portal exibe como texto (ver §8).
 - [ ] O manual do Claude tem a seção de §4.2 no ponto indicado; as frases-exemplo são iguais às do
       TSX.
 - [ ] Nenhum total numérico novo em prosa ou código (D-MCPUI-4).
-- [ ] Nenhuma ocorrência de "NAVI" (D-MCPUI-6).
+- [ ] Nenhuma menção à unidade de atendimento (D-MCPUI-6).
 - [ ] `lint`, `tsc`, `vitest`, `build`, `check-sem-navi` e markdownlint passam; teste novo falha sob
       mutação.
 - [ ] Modo escuro: a caixa usa `bg.resumo` (que já tem `_dark`) e a borda o token `border`
