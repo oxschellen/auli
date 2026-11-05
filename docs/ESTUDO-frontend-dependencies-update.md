@@ -1,8 +1,8 @@
 # ESTUDO-frontend-dependencies-update — Atualização das dependências do `auli-frontend`
 
 **Data:** 05/11/2026 · **Status:** medido em clone limpo do `main` (`62e5b73`, PR #192); aplicado na
-branch `chore/frontend-deps-update` e revisado em 05/11 (§10). **Merge só a partir de 12/11/2026**
-(§10.2).
+branch `chore/frontend-deps-update` e revisado em 05/11 (§10). A revisão propôs esperar até 12/11/2026;
+**Carlos decidiu mergear em 05/11** (PR #193, §10.2).
 **Escopo:** só `auli-frontend/package.json` e `package-lock.json`. Nenhuma linha de `src/` muda.
 
 **Convenção:** como nos demais estudos, distingo **medido** (saiu de execução real neste clone),
@@ -244,7 +244,7 @@ Ficam como estão (deliberado): `eslint ^9.39.4`, `typescript ^6.0.3`, `eslint-p
 
 Já aplicado na branch `chore/frontend-deps-update` (o `git am` do arquivo
 `0001-frontend-atualizar-depend-ncias-Fase-1-semver-4-majo.patch` exige apagar antes a cópia solta
-deste ESTUDO em `docs/`, que o patch cria). Depois do merge (a partir de 12/11, §10.2):
+deste ESTUDO em `docs/`, que o patch cria). Depois do merge:
 
 ```bash
 git switch main && git pull --ff-only
@@ -300,7 +300,7 @@ não trocou o npm 10.9.9 do Node 22; ver §3). Com isso, o patch como está: `ts
 **280/280 testes** (com os dados de `public/` presentes; 274 + 6 pulados num clone sem eles) ·
 build ok · audit 7 moderadas · `npm ls` limpo · `npm ci` não altera o lock.
 
-### 10.2 Cadeia de suprimento: lock limpo, mas versões recentes demais → merge a partir de 12/11
+### 10.2 Cadeia de suprimento: lock limpo, mas versões recentes demais
 
 O lock está limpo: as 759 entradas resolvem em `registry.npmjs.org` com `sha512`, nenhuma ganhou
 script de instalação (só o `fsevents` de antes). Os 5 pacotes novos se explicam: `@zag-js/hotkeys`
@@ -312,8 +312,11 @@ Mas 216 versões mudam, e várias têm horas ou dias: `vite` 8.3.6 e `undici` 8.
 `@vitejs/plugin-react` 6.2.1 e `react-doctor` 0.9.22 (02/11). Versão recém-publicada é a janela em
 que pacote sequestrado costuma aparecer, e nenhuma correção de segurança depende delas (o `vite` está
 corrigido desde a 8.3 de setembro; a 8.3.5 é de 21/10). Seis dos pisos do `package.json` são
-dessas versões, então um `npm install --before=` sozinho não resolve. Em vez de rebaixar os pisos,
-**o merge espera até 12/11/2026**: aí tudo no lock tem ao menos uma semana de registro público.
+dessas versões, então um `npm install --before=` sozinho não resolve. A proposta foi, em vez de
+rebaixar os pisos, esperar até 12/11/2026, quando tudo no lock teria ao menos uma semana de registro
+público. **Decisão de Carlos (05/11): mergear já**, aceitando o risco residual — projetos grandes e
+vigiados, lock conferido, nenhuma versão recolhida até o merge. Se alguma dessas versões for
+recolhida depois, o `npm ci` passa a falhar, e a correção é trocar o piso e regerar o lock.
 
 ### 10.3 O que a §8 deixava aberto
 
