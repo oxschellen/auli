@@ -26,7 +26,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 17 | AM | Serviço da listagem sem nenhum público (3223) | ✅ decidida: PF e PJ (02/11) |
 | 18 | CE | Os 332 conteúdos do `conteudo-geral` que não são FAQ (Parecer CECON, Comunicados COTRI, Notas Explicativas…) | candidatos a coleção própria (D-CEFAQ-7) |
 | 19 | CE | FAQ nova fora da convenção de nome (aviso do D-CEFAQ-2) | medir: `getItem` dos 332 |
-| 20 | RS | FAQs: o índice novo `/perguntas-frequentes` como guarda e plano B; botões, cópias e links por pergunta (D-RSFAQ-1..6) | estudo feito (06/11); decisões propostas, nada implementado |
+| 20 | RS | FAQs: o índice novo `/perguntas-frequentes` como guarda e plano B (D-RSFAQ-2, -6); duas páginas que nunca entraram | D-RSFAQ-3..5 feitas (06/11); guarda e plano B em aberto |
 
 ---
 
@@ -458,4 +458,12 @@ IBS, que o índice não lista. A trilha sai dele igual ao breadcrumb em 94% das 
 - **D-RSFAQ-6** — plano B se o `-antigo` sair: o índice + a caminhada do menu `/faq-piloto-rtc-ibs`; antes, medir a
   defasagem do índice (1 GET semanal por 2–3 semanas).
 
-**Próximo passo.** Decidir as D-RSFAQ-1..5; as 2..5 cabem num PR só no `auli-scraper-rs`.
+**06/11/2026 — D-RSFAQ-3..5 feitas** (botões fora das respostas, uma ocorrência por painel, link por pergunta):
+1.990 → 1.883 FAQs, respostas iguais às antigas menos o texto dos botões — [ESTUDO-RS-Faqs-Indice.md
+§11](ESTUDO-RS-Faqs-Indice.md).
+
+**Achado da mesma rodada:** `/faq-nfcom` e `/manual-para-declaracao-de-itcd-faq` nunca entraram no acervo (nem em
+agosto): o ureq recusa o corpo ("stream did not contain valid UTF-8"), e o índice também não as lista. Sondar a
+codificação (e se são FAQ) antes de decidir.
+
+**Próximo passo.** Decidir a D-RSFAQ-2 (guarda pelo índice); a D-RSFAQ-6 só se o `-antigo` sair do ar.
