@@ -555,6 +555,9 @@ robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot.
   `curl` — allowlist por fingerprint TLS, como o GO. Toda a coleta via `kit::http::get_via_curl`
   (subprocess curl; requer `curl` no PATH). A cadeia de certificados em si fecha (o bloqueio é do
   ClientHello do ureq).
+- **UA:** o `AuliBot` da frota (`crate::UA`) nas duas coleções desde 06/11/2026 — na troca, a recoleta
+  devolveu os 475 serviços idênticos aos de 02/11 (+1 novo do portal). Até ali os serviços iam com o UA de
+  navegador, por legado.
 - **público** = `codTipoPessoa`: Cidadão (6/22, 168 svc) e Empresa (7/8, 304 svc); **classe** =
   subcategoria; `link` = a URL absoluta do `servico.cfm` (única por serviço); identidade = `codServico`.
 - 472 serviços, 142 classes, descrição rica (~893). 4 testes. `ServicoRaw` direto. Descoberta em

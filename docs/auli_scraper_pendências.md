@@ -250,17 +250,22 @@ UA de navegador diz o porquê:
 | mesmo host do caso acima, sem teste próprio | serviços do MG |
 | decisão registrada — robots restritivo a crawlers genéricos | BA (D-BA4), CE |
 | **legado, nunca testado com o AuliBot** | serviços de AM, GO (token), MS, MT, PI, PR, RS, SC e SP; FAQs do RS |
-| **legado, caminho curl** (o call site passa o `kit::USER_AGENT` explícito) | serviços de GO, DF, SE e RS; FAQs do RS (AJAX) |
+| **legado, caminho curl** (o call site passa o `kit::USER_AGENT` explícito) | serviços de GO, SE e RS; FAQs do RS (AJAX) |
 
 **O que fica aberto:** as duas linhas "legado". Não são violação a corrigir já, mas candidatas: quem tocar um
 desses scrapers testa o AuliBot no portal e, se o portal responder igual (recoleta com `--usecache` desligado
 e diff limpo contra o backup), troca e apaga o comentário de legado. O caminho curl recebe o UA como parâmetro
-desde as FAQs do DF (02/11/2026), e o host da Carta de Serviços do DF já mostrou que aceita o AuliBot pelo curl —
-os serviços do DF são o candidato mais barato.
+desde as FAQs do DF (02/11/2026).
 
 **06/11/2026 — serviços de PE no AuliBot (D-PE4).** O motivo da linha "robots restritivo" caducou (o
 robots da SEFAZ-PE libera `*`); a troca veio com recoleta verificada — snapshot idêntico ao de 03/11, fora o
 `coletado_em` — e PE saiu da tabela.
+
+**06/11/2026 — serviços do DF no AuliBot.** Era o candidato mais barato da linha "caminho curl" (o host já
+aceitava o AuliBot nas FAQs). A recoleta com o AuliBot devolveu os 475 serviços idênticos aos de 02/11 (UA de
+navegador) e 1 novo do portal (Consultar NFS-e, `codServico=1453`). O HTML mudou também nos links do cabeçalho e
+dos anexos (`http://mobile.receita…`, `http://static…`), que o scraper não extrai — mudança do host inteiro desde
+02/11, não do UA: a casca das FAQs, pedida com o AuliBot nos dois dias, mostra a mesma troca. DF saiu da tabela.
 
 ## 12. Serviços sem atualização desde julho (✅ feita — 2026-11-03)
 
