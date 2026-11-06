@@ -181,7 +181,9 @@ const NavItem = ({
     gap="10px"
     w="100%"
     px="12px"
-    py="8px"
+    // 6px dá 34px de item (era 8px → 38px): 10% mais baixo, para a lista caber melhor na altura
+    // de um notebook.
+    py="6px"
     borderRadius="8px"
     cursor={item.disabled ? "not-allowed" : "pointer"}
     fontSize="0.9rem"
@@ -201,7 +203,7 @@ const NavItem = ({
 );
 
 /**
- * A lista de navegação (grupos + rodapé). Usada na sidebar (desktop) e no drawer (mobile).
+ * A lista de navegação, por grupos. Usada na sidebar (desktop) e no drawer (mobile).
  *
  * `idPrefix` existe porque `hideBelow`/`hideFrom` escondem por CSS, não desmontam: com o drawer
  * aberto as DUAS listas ficam no DOM ao mesmo tempo, e sem prefixos distintos haveria dois
