@@ -76,7 +76,11 @@ fn run_faqs(use_cache: bool) -> errors::Result<()> {
     faqs::run(&faqs::FaqSource {
         id: ENTITY.to_string(),
         base_url: "https://atendimento.receita.rs.gov.br".to_string(),
-        root_url: "https://atendimento.receita.rs.gov.br/perguntas-frequentes".to_string(),
+        // Desde nov/2026 `/perguntas-frequentes` é um índice novo (sem `data-matriz-source-uri`, sem
+        // painéis: ~1.850 perguntas inline em ~230 páginas) — a caminhada o classifica como `Geral` e
+        // colhe zero. O portal preservou a raiz `categoriafaq` em `-antigo`; as páginas-filhas não
+        // mudaram de URL. Se o `-antigo` sumir, a guarda de zero FAQs em `faqs::run` é quem avisa.
+        root_url: "https://atendimento.receita.rs.gov.br/perguntas-frequentes-antigo".to_string(),
         root_title: "Perguntas Frequentes".to_string(),
         data_dir: DATA_DIR.to_string(),
         cache_dir: format!("{}/cache/faqs", DATA_DIR),

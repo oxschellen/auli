@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 9 de **FAQs** (SC, PR, SP, MG, MS, MT, GO, DF e AM). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 12 de **FAQs** (RS, SC, PR, SP, MG, MS, MT, GO, DF, AM, MA e PE). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -32,6 +32,7 @@
 - [TO — Carta de Serviços SEFAZ-TO (servicos.to.gov.br)](#to)
 - [RS Pareceres — Portal de Legislação / Consultas Formais Respondidas](#rs-pareceres)
 - [TARF — Tribunal Administrativo de Recursos Fiscais do RS (tarf.sefaz.rs.gov.br)](#tarf)
+- [RS FAQs — Perguntas Frequentes do Portal de Serviços da Receita (atendimento.receita.rs.gov.br)](#rs-faqs)
 - [SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)](#sc-faqs)
 - [PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)](#pr-faqs)
 - [SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)](#sp-faqs)
@@ -1717,6 +1718,67 @@ direta:
 **ACÓRDÃO 066/26** (`aa0f538a-fb65-4d2b-ada4-08deb7f7f86a`, pedido de esclarecimento) saiu da listagem
 do portal e não reaparece com outro id. A árvore é append-only, então ele continua no acervo e
 citável pelo chat; tirá-lo é decisão humana (apagar o `.md` e rodar o `build-packs.sh rs`).
+
+---
+
+<a id="rs-faqs"></a>
+
+# RS FAQs — Perguntas Frequentes do Portal de Serviços da Receita (atendimento.receita.rs.gov.br)
+
+**Scraper:** coleção `faqs` do `auli-scraper-rs` (`auli-scraper-rs faqs`, ou `all` = FAQs + serviços), a
+primeira coleção de FAQs do acervo — anterior ao REGISTRO, e por isso sem seção até a troca de raiz de
+06/11/2026, registrada aqui. Módulo `src/faqs/` (`mod.rs` caminha, `fetch.rs` busca, `html.rs` extrai).
+
+## Fonte
+
+Portal "Matriz" da PROCERGS. Cada página declara em `data-matriz-source-uri` a chamada AJAX que traz o seu
+miolo (`/_service/conteudo/pagedlistfilho?id=<N>&templatename=<template>`), e o **template** diz o que a
+página é: `pagina.listapagina.categoriafaq[.comnavegacao]` = **menu** (filhos = categorias ou listas),
+`pagina.listapagina.sanfona.comnavegacao` = **lista de FAQ** (sanfona de pergunta/resposta); qualquer outro
+template é `Geral` (nó sem filhos e sem itens). O scraper lê a raiz, pede o AJAX com `currentPage=1&pageSize=100`,
+fatia o `body` (JSON) por `class="panel panel-default"` e desce recursivamente pelos menus; a trilha (`origin`)
+vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 menus, 251 listas, 19 `Geral`) e
+644 arquivos no cache — ~650 requisições por rodada.
+
+## As armadilhas
+
+1. **O F5 na frente do `_service/*` (desde out/2026)** rejeita o ureq pela impressão do cliente e devolve o
+   desafio JS do Bot Defense **com HTTP 200** (`window["bobcmn"]`/TSPD); o bloqueio do ASM é
+   `<title>Request Rejected</title>`. Por isso o AJAX vai por `get_via_curl` com o `Accept` de um `$.getJSON`
+   (`application/json, text/javascript, */*; q=0.01`), as páginas seguem no ureq, e nenhuma das duas páginas
+   do F5 entra no cache (cache-first SEMPRE: gravada uma vez, envenenaria todas as rodadas seguintes) — na
+   página quem a recusa é `f5::bloqueio_f5`; no AJAX, o desafio não é JSON e a leitura do `body` falha antes
+   de gravar. As páginas de conteúdo ainda passam com UA de navegador (D-FROTA-UA: legado,
+   nunca testado com `AuliBot` neste host).
+2. **A raiz mudou de template em nov/2026.** `/perguntas-frequentes` virou um **índice novo**: sem
+   `data-matriz-source-uri`, sem `panel panel-default`, ~5 MB com **1.854 perguntas de 233 páginas inline**
+   (links `/<página>#panel-<N>`, 2.701 "Publicação:") agrupadas em seis acordeões (`#abx-icms`, `-ipva`,
+   `-itcd`, `-taxas`, `-nfg`, `-ecac`). A caminhada o classifica como `Geral` e colhe **zero** — o que a
+   guarda de `faqs::run` transforma em erro sem tocar snapshot nem árvore. O portal preservou a raiz antiga em
+   **`/perguntas-frequentes-antigo`** (`id=108&templatename=pagina.listapagina.categoriafaq.comnavegacao`) — o
+   **mesmo nó**: no cache de 01/11 a raiz `/perguntas-frequentes` declarava exatamente esse `id=108` —, e as
+   páginas-filhas não mudaram de URL; a raiz do scraper passou a apontar para lá (06/11/2026). O 1º nível da
+   árvore é o que o `body` do `id=108` lista (17 nós em 01/11), não a barra "Seções" das páginas de categoria.
+   "-antigo" é nome de página em despedida: se sumir, a mesma guarda avisa. O índice novo é candidato a fonte
+   futura (um GET em vez de ~650 requisições; invariante dinâmico de graça: âncoras `#panel` == perguntas
+   colhidas), mas perde a trilha do breadcrumb e mostra menos: 1.854 perguntas de 233 páginas, contra 1.990 de
+   251 listas na árvore de 01/11 — o estudo à parte (não patch) tem de explicar a diferença.
+3. **Queda parcial é silenciosa.** Erro ao caminhar uma página vira `eprintln!` e o laço segue; falha no AJAX
+   devolve nó vazio — uma categoria que caia leva a subárvore inteira. Vale também para o F5: abaixo da raiz,
+   o desafio/bloqueio é um erro como outro qualquer (`Error walking` / `Error fetching body`). Quem pega isso é a guarda de
+   encolhimento de `scripts/tools/update-rs-faqs.sh` (compara com o `.anterior`).
+
+## Guardas e transporte
+
+- `Err` sem gravar nada: zero FAQs na caminhada; página da **raiz** que devolva o desafio/bloqueio do F5.
+  Nas páginas-filhas, e no AJAX de qualquer nó, o mesmo erro só derruba a subárvore daquele nó (armadilha 3)
+  — o AJAX da raiz leva a árvore toda, e aí quem para é a guarda de zero FAQs.
+- Cache-first sempre (`data/rs/raw/cache/faqs/`, página e `_body` por URL); `--usecache` = miss vira erro.
+  Trocar a raiz cria um arquivo de cache novo para ela; o das filhas continua válido.
+- `retry` 3× com backoff; AJAX por `curl`, páginas por ureq; UA de navegador nos dois.
+- Saída: `data/rs/raw/rs-faqs-tree.json` (a árvore que a aba de FAQs consome — único artefato sem outra
+  fonte) e `data/rs/rs-faqs-snapshot.json`, nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-rs-faqs.sh` (apaga o cache antes; guarda de encolhimento).
 
 ---
 
