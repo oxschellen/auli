@@ -41,6 +41,7 @@
 - [GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)](#go-faqs)
 - [DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e](#df-faqs)
 - [AM FAQs — Perguntas Frequentes das páginas do Portfólio de Serviços (www.sefaz.am.gov.br)](#am-faqs)
+- [MA FAQs — Perguntas Frequentes do Portal SGC (portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes)](#ma-faqs)
 
 ---
 
@@ -2304,3 +2305,59 @@ entre páginas irmãs).
   perguntas próprias as tem no próprio nó; nós no detalhe, ou na listagem quando a categoria não tem perguntas) e
   `data/am/am-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-am-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="ma-faqs"></a>
+
+# MA FAQs — Perguntas Frequentes do Portal SGC (portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes)
+
+**Discovery e implantação:** 06/11/2026. Estudo, medições e decisões D-MAFAQ-1..4:
+[`docs/ESTUDO-MA-Faqs.md`](ESTUDO-MA-Faqs.md). Coleção `faqs` do `auli-scraper-ma` (`auli-scraper-ma faqs`, ou
+`all` = serviços + FAQs). **336 perguntas** em 20 raízes e 55 subcategorias na rodada de 06/11.
+
+## Fonte
+
+A página "Perguntas Frequentes" do Portal SGC — o mesmo SPA Angular sobre a API Spring dos serviços (`#ma`). O módulo
+da página (chunk lazy `src_app_portal_faq_faq_module_ts`, achado pelo mapa de chunks do `runtime.js`) chama
+`GET /sgc/api/faq/perguntas/faq?publicado=true` com o mesmo token anônimo (login com as credenciais públicas do
+bundle, header `AuthorizationPortal`); sem token, 401. **Uma chamada** traz tudo: `id`, `pergunta` (texto puro),
+`resposta` (HTML de editor rico), `ativo`, `publicado` e `categoria` (`{id, nome, ordem, ativo, publico,
+categoriaPai}`). Nenhum host da SEFAZ-MA tem `robots.txt` (404).
+
+## As armadilhas
+
+1. **O filtro é obrigatório e é o único que vale.** Sem `publicado=true` vêm 353 itens: os 17 a mais são da categoria
+   inativa "DFE.02 - CANAL VERDE", que a página não mostra — e que dizem `publicado: true` no próprio item. A coleta
+   manda o filtro exatamente como a página e não filtra por flag nenhum do lado dela.
+2. **A `categoriaPai` aninhada vem rasa.** Dentro de uma subcategoria, a mãe chega com `ordem: null` e `ativo: false`
+   (valores de omissão); na pergunta pendurada direto na raiz, a mesma categoria vem completa (`ordem` 0–20). Nome e
+   ordem da raiz saem só daí — como na página, que só desenha um grupo que tem pergunta própria. Por isso toda raiz
+   com subcategorias tem 1 pergunta de apresentação ("Sobre o IPVA", "Sobre a EFD"…), e subcategoria cuja raiz não
+   tem nenhuma é `Err` (a página não a mostraria).
+3. **Sem rota por pergunta.** O template é um acordeão (`ngbCollapse` + `innerHTML`) sem `id`, âncora nem parâmetro:
+   as 336 têm o link da página, e o nome do `.md` (pergunta + hash de link e pergunta) depende só da pergunta. Duas
+   "Sobre a seção" (RTC e Ativação de Novas Empresas) colidiriam → a pergunta que aparece em mais de uma raiz ganha o
+   nome da raiz entre parênteses (D-MAFAQ-2); repetida dentro da mesma raiz é `Err`.
+4. **Espaços nos nomes** (`" REFIS - …"`, `"NOVO SISTEMA DE  DOWNLOAD …"`) e nas perguntas (`"IP.01.001 -  Qual…"`):
+   normalizados. **`U+FEFF`** colado ao texto em 6 respostas: removido (o `clean` do kit não o tira).
+5. **HTML de editor rico**: `<p>`, `<br>`, `<strong>`, listas, 370 links, muito `<p><br></p>`; sem imagem nem iframe.
+   Conversão por regex (link → `texto "url"`, bloco → quebra de linha, entidades decodificadas, linhas vazias fora).
+   Três `href` vêm malformados na fonte (um e-mail sem `mailto:`, um host sem esquema, um trecho de texto) e ficam
+   como vieram.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: resposta fora do formato; `id` repetido; categoria sem nome; categoria de
+  três níveis; subcategoria sem raiz com pergunta própria; acervo vazio; pergunta sem texto; pergunta repetida
+  depois da desambiguação; o login ou a chamada que falhe. Aviso: resposta vazia depois da conversão (0 em 06/11).
+- **Sempre à rede**; o cache em `data/ma/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- 1 login + 1 GET com o UA `AuliBot`, segundos. O agente é o dos serviços, com o intermediário GlobalSign embutido;
+  desde 11/2026 o `portal-sgc` manda a cadeia inteira, e a âncora segue valendo (mesmo emissor).
+- Ordem: raízes pela `ordem`, subcategorias pelo `id` (como a página), perguntas pelo texto (`id` desempata).
+- Saída: `data/ma/raw/ma-faqs-tree.json` (raiz → `Faq` por raiz sem subcategoria, `Menu` com a pergunta de
+  apresentação e um `Faq` por subcategoria nas outras; tudo com o link da página, itens sem `url`) e
+  `data/ma/ma-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<raiz>` ou `<raiz> | <subcategoria>`), nessa
+  ordem e atômicos.
+- Atualização: `scripts/tools/update-ma-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
