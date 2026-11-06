@@ -86,8 +86,8 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
   Nas consultas de Serviços + FAQs, a resposta traz a **lista das fontes consultadas** —
   recolhida, com os mesmos rótulos da citação no texto (`[Serviço 2]`) e o veredito da triagem.
 - **Navegação por abas** (sem recarga de página), em três grupos: **Acervo** (Serviços, FAQs,
-  Pareceres, Acórdãos TARF, Notas, Conteúdos), **Integrações** (Conectar sua IA, Downloads) e o
-  Chat, mais o Sobre no rodapé — com o estado de cada aba preservado ao alternar. Aba de coleção que
+  Pareceres, Acórdãos TARF, Notas, Conteúdos, Sobre), **Integrações** (Conectar sua IA, Downloads) e
+  o Chat — com o estado de cada aba preservado ao alternar. Aba de coleção que
   a entidade não tem some.
 - **Páginas de referência** por estado, com **busca no cliente**:
   - **Serviços** — agrupados por classe, em acordeões, com abas por público.

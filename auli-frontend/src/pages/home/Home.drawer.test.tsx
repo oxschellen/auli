@@ -44,8 +44,7 @@ describe("drawer de seções (mobile)", () => {
 
   it("do tablist até cada tab só há elementos presentacionais no caminho", () => {
     // O `tablist` exige `tab` como filhos possuídos, e o agrupamento visual mete um div (o
-    // invólucro), um p (o título) e mais um div (o espaçador do rodapé) no meio. Todos os três
-    // levam `role="none"`. A descida para no `tab` — o que está DENTRO do botão (ícone, span) é
+    // invólucro) e um p (o título) no meio. Os dois levam `role="none"`. A descida para no `tab` — o que está DENTRO do botão (ícone, span) é
     // conteúdo dele, não filho do tablist.
     montar();
     const intrusos = (el: Element): string[] =>
@@ -65,5 +64,19 @@ describe("drawer de seções (mobile)", () => {
     // "Critérios" entrar como a quinta dele (D-TRIB-10) e 16 até "Livros" entrar como a sexta
     // (D-TRIB-22).
     expect(lista.querySelectorAll('[role="tab"]')).toHaveLength(17);
+  });
+});
+
+describe("grupos da sidebar", () => {
+  it("o Sobre fecha o grupo Acervo, logo depois de Conteúdos", () => {
+    // Antes ele ficava sozinho no pé da sidebar, e em tela de notebook (768 px) caía abaixo da
+    // dobra. O grupo é o invólucro cujo título é "Acervo".
+    montar();
+    const lista = screen.getAllByRole("tablist")[0];
+    const titulo = [...lista.querySelectorAll("p")].find((p) => p.textContent === "Acervo");
+    const abas = [...(titulo?.parentElement?.querySelectorAll('[role="tab"]') ?? [])].map(
+      (aba) => aba.textContent,
+    );
+    expect(abas.slice(-2)).toEqual(["Conteúdos", "Sobre"]);
   });
 });

@@ -45,8 +45,8 @@ import { hasCollection } from "../../shared/entities";
 import type { Collection } from "../../shared/entities";
 import { SIDEBAR_WIDTH } from "../../shared/layout";
 
-/** Grupo de navegação. `null` = topo (sem título); `rodape` cola no pé da sidebar. */
-type Grupo = null | "acervo" | "tributum" | "integracoes" | "rodape";
+/** Grupo de navegação. `null` = topo (sem título). */
+type Grupo = null | "acervo" | "tributum" | "integracoes";
 
 /** As seções, agrupadas para a sidebar. `collection: null` = sempre disponível
  *  (`chat` fala com o RAG da entidade, `about` é estático, `downloads` lista TODOS os
@@ -70,6 +70,9 @@ const TABS: {
   { id: "legislacao", label: "Legislação", Component: LegislacaoList, collection: "legislacao", grupo: "acervo", Icone: MdOutlineMenuBook },
   { id: "notas", label: "Notas", Component: NotasList, collection: "notas", grupo: "acervo", Icone: MdOutlineStickyNote2 },
   { id: "conteudos", label: "Conteúdos", Component: ConteudosList, collection: "conteudos", grupo: "acervo", Icone: MdOutlineLibraryBooks },
+  // O Sobre fechava a sidebar, colado no pé; com o grupo Tributum ela passou da altura de tela de
+  // notebook (768 px) e ele ficava abaixo da dobra, sem pista de que a lista rolava.
+  { id: "about", label: "Sobre", Component: About, collection: null, grupo: "acervo", Icone: MdInfoOutline },
   { id: "tributum-criterios", label: "Critérios", Component: CriteriosTributum, collection: null, grupo: "tributum", Icone: MdOutlineRule },
   { id: "tributum-artigos", label: "Artigos e estudos", Component: ArtigosLista, collection: null, grupo: "tributum", Icone: MdOutlineArticle },
   { id: "tributum-instituicoes", label: "Instituições", Component: InstituicoesLista, collection: null, grupo: "tributum", Icone: MdOutlineAccountBalance },
@@ -78,10 +81,9 @@ const TABS: {
   { id: "tributum-livros", label: "Livros", Component: LivrosLista, collection: null, grupo: "tributum", Icone: MdOutlineAutoStories },
   { id: "mcp", label: "Conectar sua IA", Component: McpList, collection: null, grupo: "integracoes", Icone: MdOutlinePower },
   { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null, grupo: "integracoes", Icone: MdOutlineFileDownload },
-  { id: "about", label: "Sobre", Component: About, collection: null, grupo: "rodape", Icone: MdInfoOutline },
 ];
 
-/** Títulos e ordem dos grupos na sidebar (o `rodape` é tratado à parte, colado no pé). */
+/** Títulos e ordem dos grupos na sidebar. */
 const GRUPOS: { id: Grupo; titulo: string | null }[] = [
   { id: null, titulo: null },
   { id: "acervo", titulo: "Acervo" },
@@ -241,22 +243,6 @@ const NavList = ({
           ))}
       </Box>
     ))}
-    {/* Espaçador que empurra o rodapé para o pé — presentacional pelo mesmo motivo dos
-        invólucros de grupo acima: é filho direto do tablist e não é um `tab`. */}
-    <Box flex="1" role="none" />
-    {menuItems
-      .filter((t) => t.grupo === "rodape")
-      .map((item) => (
-        <NavItem
-          key={item.id}
-          item={item}
-          idPrefix={idPrefix}
-          isActive={item.id === selectedId}
-          onSelect={() => onSelect(item.id)}
-          onKeyDown={onKeyDown}
-          tabRef={(el) => (tabRefs.current[item.id] = el)}
-        />
-      ))}
   </Flex>
 );
 
