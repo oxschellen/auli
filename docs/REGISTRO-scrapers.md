@@ -2472,7 +2472,7 @@ use=reference`; ~35 robôs nomeados com `Disallow: /`, não o AuliBot.
   numeração que pula; número repetido; pergunta sem resposta; par (link, pergunta) repetido; um GET que falhe.
 - **Sempre à rede**; o cache em `data/pe/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
   byte e o snapshot a menos do `coletado_em`.
-- `ureq` com o UA `AuliBot` (D-FROTA-UA, D-PEFAQ-5) — a D-PE4 dos serviços (UA de navegador) não muda.
+- `ureq` com o UA `AuliBot` (D-FROTA-UA, D-PEFAQ-5) — o mesmo `crate::UA` dos serviços desde 06/11/2026 (D-PE4).
 - Saída: `data/pe/raw/pe-faqs-tree.json` (raiz → um `Faq` por tributo; item com `url` só quando tem âncora) e
   `data/pe/pe-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha = o tributo), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-pe-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
