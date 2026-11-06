@@ -47,7 +47,7 @@ Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/
 **Regra do UA (D-FROTA-UA, decisão do mantenedor, 02/11/2026):** o padrão é o UA institucional
 `AuliBot/x.y (+url; contato)`, declarado em cada crate (como desde a D-PA-ROBOTS). O `kit::USER_AGENT`
 (navegador) só onde o portal exigir — o RJ responde ao AuliBot com "IP bloqueado"; o ServiceNow do MG
-omite o texto do artigo — ou por decisão registrada (robots restritivo: PE, BA, CE), sempre **com o
+omite o texto do artigo — ou por decisão registrada (robots restritivo: BA, CE), sempre **com o
 motivo comentado no call site**. Os usos anteriores à regra, nunca testados com o AuliBot, ficam como
 estão e dizem isso no comentário; trocar só com recoleta verificada (lista em
 `docs/auli_scraper_pendências.md` §11). O caminho curl (`kit::http::get_via_curl` e `post_form_via_curl`) recebe
@@ -143,8 +143,9 @@ não são reaproveitadas).
 
 ### Robots / etiqueta
 
-Portais com robots restritivo (PE, BA, CE) usam **User-Agent de navegador** e coleta de baixíssima
-frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
+Portais com robots restritivo (BA, CE) usam **User-Agent de navegador** e coleta de baixíssima
+frequência (cortesia entre fetches). São catálogos públicos, coleta rara. PE saiu da lista em 06/11/2026: o
+robots dele libera `*` (D-PE4); os serviços de PE seguem com o UA de navegador por legado.
 
 ---
 
@@ -236,7 +237,8 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **Descrições vazias** (menu-only); fase 2 (corpo das páginas `/Servicos/...`) ficou para depois.
 - 38 serviços, 3 públicos (Cidadãos/Empresas/Municípios). Agregada (e-Fisco aparece nos 3 públicos
   → 3 ocorrências). Links externos (efisco, gnre, arevirtualws) preservados. 6 testes.
-- **D-PE4:** UA de navegador, robots restritivo, 1 GET + cache.
+- **D-PE4:** UA de navegador por legado (o robots.txt, revisto em 06/11/2026, libera `*`; as FAQs do mesmo
+  host já usam o AuliBot), 1 GET + cache.
 - **FAQs** (`auli-scraper-pe faqs`, `faqs.rs`): as páginas "Perguntas e Respostas" do IPVA e do ITCMD — lista
   curada de 2 páginas de publicação (a `_api` e o `listdata.svc` dão 403), corpo no único `div[id$="_RichHtmlField"]`.
   DOM → linhas (tabela de várias células vira uma linha com ` | `; link vira `texto "url"`, relativo absolutizado);

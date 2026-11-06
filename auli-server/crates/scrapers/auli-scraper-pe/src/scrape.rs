@@ -18,9 +18,10 @@ const BASE: &str = "https://www.sefaz.pe.gov.br";
 // A home renderiza o menu global completo (verificado também em páginas internas — o menu vem da
 // masterpage `master2013`, presente em todas).
 const SEED_URL: &str = "https://www.sefaz.pe.gov.br/";
-// D-PE4: UA de navegador (o `kit::USER_AGENT` da frota — o robots.txt do portal é restritivo a
-// crawlers genéricos; a coleta é de baixíssima frequência e volume mínimo — 1 GET por rodada na
-// fase 1).
+// D-PE4: UA de navegador (o `kit::USER_AGENT` da frota) por legado (D-FROTA-UA). O motivo original,
+// um robots.txt restritivo a crawlers genéricos, caducou: revisto em 06/11/2026, ele libera `*` (ver
+// `main.rs`), e as FAQs do mesmo host já vão com o AuliBot. Trocar só com recoleta verificada. A
+// coleta é de baixíssima frequência e volume mínimo — 1 GET por rodada na fase 1.
 // Cortesia entre fetches de rede (irrelevante na fase 1 com 1 GET; vale para uma futura fase 2).
 const COURTESY: Duration = Duration::from_millis(400);
 /// D-PE2: itens de topo (sem subgrupo) recebem esta classe; itens sob subgrupo recebem o texto do

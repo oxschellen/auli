@@ -8,8 +8,10 @@
 //
 // D-PE1 (fase 1): coleta SÓ o menu (1 requisição na home). As páginas de detalhe
 // (`/Servicos/...`, corpo em `div.ms-rtestate-field`) ficam para uma fase 2, se o RAG precisar.
-// D-PE4 (etiqueta): o robots.txt do portal é restritivo a crawlers genéricos; esta coleta é de
-// baixíssima frequência e volume mínimo (1 GET por rodada na fase 1), com cache em disco.
+// D-PE4 (etiqueta): coleta de baixíssima frequência e volume mínimo (1 GET por rodada na fase 1),
+// com cache em disco. O robots.txt (gerido pela Cloudflare, revisto em 06/11/2026) libera
+// `User-agent: *` com `Content-Signal: search=yes,ai-train=no,use=reference` e só barra robôs
+// nomeados, não o AuliBot — não é mais restritivo a crawlers genéricos, como esta nota dizia.
 //
 // As FAQs vêm das páginas "Perguntas e Respostas" do IPVA e do ITCMD, no mesmo portal — `faqs.rs`.
 

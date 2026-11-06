@@ -248,11 +248,12 @@ UA de navegador diz o porquê:
 |---|---|
 | o portal exige | RJ (o AuliBot recebe "IP bloqueado"); CSM do MG (o ServiceNow omite o texto do artigo para o AuliBot) |
 | mesmo host do caso acima, sem teste próprio | serviços do MG |
-| decisão registrada — robots restritivo a crawlers genéricos | PE (D-PE4), BA (D-BA4), CE |
+| decisão registrada — robots restritivo a crawlers genéricos | BA (D-BA4), CE |
+| motivo caducou — o robots libera `*` (revisto em 06/11/2026) e o AuliBot já passa no mesmo host (FAQs) | serviços de PE (D-PE4) |
 | **legado, nunca testado com o AuliBot** | serviços de AM, GO (token), MS, MT, PI, PR, RS, SC e SP; FAQs do RS |
 | **legado, caminho curl** (o call site passa o `kit::USER_AGENT` explícito) | serviços de GO, DF, SE e RS; FAQs do RS (AJAX) |
 
-**O que fica aberto:** as duas linhas "legado". Não são violação a corrigir já, mas candidatas: quem tocar um
+**O que fica aberto:** as duas linhas "legado" e a dos serviços de PE. Não são violação a corrigir já, mas candidatas: quem tocar um
 desses scrapers testa o AuliBot no portal e, se o portal responder igual (recoleta com `--usecache` desligado
 e diff limpo contra o backup), troca e apaga o comentário de legado. O caminho curl recebe o UA como parâmetro
 desde as FAQs do DF (02/11/2026), e o host da Carta de Serviços do DF já mostrou que aceita o AuliBot pelo curl —

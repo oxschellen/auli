@@ -101,8 +101,8 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    // D-FROTA-UA: UA de navegador — robots.txt restritivo a crawlers genéricos, como PE (D-PE4) e BA
-    // (D-BA4); ver "Robots / etiqueta" no SCRAPERS.md.
+    // D-FROTA-UA: UA de navegador — robots.txt restritivo a crawlers genéricos, como BA (D-BA4); ver
+    // "Robots / etiqueta" no SCRAPERS.md.
     let agent =
         auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
 

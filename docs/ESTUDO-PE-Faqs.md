@@ -38,8 +38,8 @@ a `pe` tem só `servicos`** (menu global da home, 1 GET por rodada, D-PE1).
 **`robots.txt`** (`www.sefaz.pe.gov.br`, "Cloudflare Managed content"): `User-agent: *` → `Allow: /` com
 `Content-Signal: search=yes,ai-train=no,use=reference` (`ai-input` sem sinal: "nem concede nem restringe"). Seguem
 `Disallow: /` para ~35 robôs nomeados (GPTBot, ClaudeBot, CCBot, Google-Extended…); o AuliBot não está entre eles. A
-D-PE4 do scraper de serviços ("robots restritivo a crawlers genéricos", UA de navegador) descreve um arquivo que não é
-mais este. Ver D-PEFAQ-5.
+D-PE4 do scraper de serviços ("robots restritivo a crawlers genéricos", UA de navegador) descrevia um arquivo que não é
+mais este (nota corrigida em 06/11/2026). Ver D-PEFAQ-5.
 
 **Sobreposição com `servicos`:** nenhuma. O scraper de serviços só lê o menu global; os itens dele apontam para as
 páginas de entrada `/Servicos/IPVA` e `/Servicos/ICD`, sem descrição — as páginas de P&R não estão no acervo.
