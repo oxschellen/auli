@@ -1,5 +1,5 @@
 // auli-scraper-df — scraper da SEFAZ-DF (serviços, receita.fazenda.df.gov.br — Carta de Serviços).
-// Sem headless: a listagem ColdFusion embute a árvore inteira do catálogo (472 serviços) como um
+// Sem headless: a listagem ColdFusion embute a árvore inteira do catálogo (~476 serviços) como um
 // objeto JS; cada `servico.cfm` traz a descrição rica num accordion.
 //
 // As FAQs vêm de duas fontes — as Perguntas e Respostas do Portal da Receita (mesmo host) e as do sistema
