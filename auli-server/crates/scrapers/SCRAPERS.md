@@ -155,7 +155,9 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **FAQs e pareceres** além de serviços (`auli-scraper-rs [--usecache] faqs|servicos|pareceres`).
 - **Serviços:** API JSON do Tudo Fácil (`fazenda.rs.gov.br/_service/tudofacil/capaservicos`) — não
   precisa mais de headless Chrome (era o único que usava).
-- **FAQs:** `atendimento.receita.rs.gov.br/perguntas-frequentes`, via AJAX.
+- **FAQs:** `atendimento.receita.rs.gov.br/perguntas-frequentes-antigo`, via AJAX (raiz `categoriafaq`
+  preservada pelo portal; desde nov/2026 `/perguntas-frequentes` é um índice novo com as perguntas inline,
+  candidato a fonte futura).
 - **Pareceres** (Consultas Formais Respondidas): Portal de Legislação (`legislacao.sefaz.rs.gov.br`,
   ASP.NET WebForms/IIS, windows-1252) via **curl subprocess** (ureq recebe resposta degradada; cookie
   de sessão obrigatório, senão o servidor pendura). O filtro "Consultas Formais Respondidas" é **estado
