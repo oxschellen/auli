@@ -107,7 +107,7 @@ name = "SEFAZ-PE"
 uf = "PE"
 state = "Pernambuco"
 prompt = "prompts/pe.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "ba"

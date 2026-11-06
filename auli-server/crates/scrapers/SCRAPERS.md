@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM e no MA, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA e em PE, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -235,6 +235,13 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - 38 serviços, 3 públicos (Cidadãos/Empresas/Municípios). Agregada (e-Fisco aparece nos 3 públicos
   → 3 ocorrências). Links externos (efisco, gnre, arevirtualws) preservados. 6 testes.
 - **D-PE4:** UA de navegador, robots restritivo, 1 GET + cache.
+- **FAQs** (`auli-scraper-pe faqs`, `faqs.rs`): as páginas "Perguntas e Respostas" do IPVA e do ITCMD — lista
+  curada de 2 páginas de publicação (a `_api` e o `listdata.svc` dão 403), corpo no único `div[id$="_RichHtmlField"]`.
+  DOM → linhas (tabela de várias células vira uma linha com ` | `; link vira `texto "url"`, relativo absolutizado);
+  pergunta = linha cujo número continua a sequência (`N. ` ou `N.M - ` com "?"), resposta até a próxima ou o `<hr>`
+  (rodapé do IPVA fora). Link da página, com `#N` onde há `<a name="N">`. Trilha = o tributo. UA AuliBot: o
+  `robots.txt` de hoje (Cloudflare) libera `*` com `ai-train=no, use=reference`. Sempre à rede. 59 perguntas
+  (06/11/2026), 20 testes. Descoberta em `docs/REGISTRO-scrapers.md#pe-faqs`.
 
 ### ba — SEFAZ-BA (Bahia)
 
