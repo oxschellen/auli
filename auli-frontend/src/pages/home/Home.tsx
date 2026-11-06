@@ -190,8 +190,11 @@ const NavItem = ({
     fontFamily="body"
     fontWeight={isActive ? "600" : "500"}
     textAlign="left"
-    color={item.disabled ? "fg.disabled" : isActive ? "accent" : "fg.muted"}
-    bg={isActive ? "bg.subtle" : "transparent"}
+    // Ativa: fundo azul (`bg.navActive`), barra de acento à esquerda e texto em `accent.strong`.
+    // O `bg.subtle` de antes era quase da cor do `bg.app` da sidebar e o destaque sumia no claro.
+    color={item.disabled ? "fg.disabled" : isActive ? "accent.strong" : "fg.muted"}
+    bg={isActive ? "bg.navActive" : "transparent"}
+    boxShadow={isActive ? "inset 3px 0 0 var(--chakra-colors-accent)" : undefined}
     _hover={item.disabled || isActive ? undefined : { bg: "bg.subtle", color: "fg" }}
     transition="color 0.15s ease, background 0.15s ease"
   >
