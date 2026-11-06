@@ -235,8 +235,8 @@ robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot.
 - **SharePoint 2013 on-prem**, server-side. Fase 1 raspa **só o menu global `#menu_servicos`**
   (1 GET) — **D-PE1**.
 - **Descrições vazias** (menu-only); fase 2 (corpo das páginas `/Servicos/...`) ficou para depois.
-- 38 serviços, 3 públicos (Cidadãos/Empresas/Municípios). Agregada (e-Fisco aparece nos 3 públicos
-  → 3 ocorrências). Links externos (efisco, gnre, arevirtualws) preservados. 6 testes.
+- 35 serviços em 40 ocorrências, 3 públicos (Cidadãos 9 / Empresas 22 / Municípios 9; os mesmos números
+  desde ago/2026). Agregada (e-Fisco aparece nos 3 públicos → 3 ocorrências; DAE 10, DAE 20 e GNRE Online em 2). Links externos (efisco, gnre, arevirtualws) preservados. 6 testes.
 - **D-PE4:** UA `AuliBot` desde 06/11/2026 (o robots.txt libera `*`; na troca, recoleta com snapshot
   idêntico ao do UA de navegador), 1 GET + cache.
 - **FAQs** (`auli-scraper-pe faqs`, `faqs.rs`): as páginas "Perguntas e Respostas" do IPVA e do ITCMD — lista
