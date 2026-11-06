@@ -70,6 +70,10 @@ const config = defineConfig({
           // itens além daqui". Escura no claro e clara no escuro — sombra preta some sobre o
           // `bg.app` escuro.
           scrollCue: { value: { base: "rgba(15,23,42,0.18)", _dark: "rgba(255,255,255,0.16)" } },
+          // Item ATIVO da lista de seções. Azul da marca nos dois modos; o escuro é fundo o bastante
+          // para o `accent.strong` (brand.400) passar de 4,5:1 sobre ele — no #1e3a5f da bolha do
+          // usuário ficaria em 3,8.
+          navActive: { value: { base: "{colors.brand.50}", _dark: "#172a42" } },
         },
         fg: {
           DEFAULT: { value: { base: "{colors.ink}", _dark: "#ffffff" } },
