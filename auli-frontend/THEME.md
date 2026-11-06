@@ -44,6 +44,7 @@ don't reach for a raw value or an off-list Chakra default.
 | `bg.inverted` | Header / nav (black in **both** modes) | `#000000` | `#000000` |
 | `bg.overlay` | Translucent hover overlay on any surface | `rgba(0,0,0,.06)` | `rgba(255,255,255,.1)` |
 | `bg.highlight` | Search-term highlight (`<mark>`) — translucent, so it reads on any surface. Amber, not `accent`: marked text in the link color would read as clickable | `rgba(250,204,21,.45)` | `rgba(250,204,21,.28)` |
+| `bg.scrollCue` | Edge shadow of the section list (sidebar/drawer) while it has more items past the edge — dark in light mode, light in dark mode, where a black shadow would vanish | `rgba(15,23,42,.18)` | `rgba(255,255,255,.16)` |
 | `bg.mapInactive` | Brazil map: inert / unavailable state fill | `#e2e8f0` | `#9aa0a6` |
 | `bg.mapActive` | Brazil map: selectable state fill | `#3f9df2` | `#3f9df2` |
 | `bg.mapActiveHover` | Brazil map: hover/focus fill | `#2dd4bf` | `#2dd4bf` |
