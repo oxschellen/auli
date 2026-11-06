@@ -15,6 +15,11 @@
 //! `descricao` é um template literal HTML autocontido (traz "o que é" + Quem Pode/Setor/Tipo) →
 //! `html_to_text`. Modelagem (Cenário A): público único "Serviços"; `classe` = a categoria; `link` =
 //! `…/#/categorias/{slug}/{route}`; identidade = o link.
+//!
+//! **⚠️ Gotcha TLS (certificado de 09/2026):** o leaf é emitido pelo **Soluti V2 GR46 OV TLS CA 2025**,
+//! mas o servidor manda intermediários GlobalSign que não são o emissor → rustls recusa
+//! (`UnknownIssuer`). Fix: embutir o Soluti como trust anchor no rustls (`RootCerts::new_with_certs`),
+//! como o AC e o MA. PEM abaixo.
 
 use std::collections::HashSet;
 use std::time::Duration;
@@ -25,11 +30,53 @@ use auli_scraper_kit::clean;
 use auli_scraper_kit::http::GetOpts;
 use regex::Regex;
 use scraper::Html;
+use ureq::tls::{Certificate, RootCerts, TlsConfig};
 
 const USER_AGENT: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 
 const BASE: &str = "https://www.sefaz.ap.gov.br";
+/// Intermediário **Soluti V2 GR46 OV TLS CA 2025** (emissor real do leaf; o servidor manda outros).
+/// Embutido como trust anchor no rustls (ver header). Baixado do AIA do leaf
+/// (`secure.globalsign.com/cacert/solutiv2gr46ovtlsca2025.crt`); válido até 10/12/2030.
+const SOLUTI_GR46_PEM: &str = "-----BEGIN CERTIFICATE-----
+MIIGljCCBH6gAwIBAgIRAITPJ5FMkeWDpYX+XLYhUNYwDQYJKoZIhvcNAQEMBQAw
+RjELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExHDAaBgNV
+BAMTE0dsb2JhbFNpZ24gUm9vdCBSNDYwHhcNMjUxMjEwMDMyMzU0WhcNMzAxMjEw
+MDAwMDAwWjBuMQswCQYDVQQGEwJCUjE3MDUGA1UEChMuU09MVVRJIC0gU09MVUNP
+RVMgRU0gTkVHT0NJT1MgSU5URUxJR0VOVEVTIFMvQTEmMCQGA1UEAxMdU29sdXRp
+IFYyIEdSNDYgT1YgVExTIENBIDIwMjUwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAw
+ggIKAoICAQDNh9xMkqegOwoNTB+DFYmlw0OtYwyuvpGwgKmfOnA6tLkdYGoJ9+mB
+Dcy6621d/oqmwq4cuZ7smAnb52A7M9rmeQoa7CKVYJoRNOQUAFNge9O9HNeLsAZ9
+CttKFtFMXMUj9atksNOMoVy4X92ajs1eVPxRZ2R3rrIocqHRDVNC8q28zo8cASFX
+fyHvGrcwjOOYweGh/WxmCidXyeqczwTjlpbKUmXgxXKgCuc+QIHk+7zh7ZaMpDXy
+V1wl+yRbAHIp+GASMjS0ytx3ClB4Y34nEEBU8xyKTF4GCaSrGSNj27RFqOW3/Kpf
+QFlUd55GgnHsNDXGE8GDZUhMVrqoE8YOHmHxId0e33/H0M6rtef4HsUjiIB0/A6/
+iREl/gdH/MA/0GydzOxCnHfLqnbZNGRkABH0Dh/fmFGK3iY6DExNsW+WhO1PnJ/B
+aotWyCBIq8mfrdhEfUDwgxSepif6pZZGGzpNVvlvDAjIz8Gt4BQm6XOgmnHu/yJF
+yG6b4yMnzhOz4PbsVFqqKoBxf6AuXsuVIy3PA7X+MbIA72EYNKcJHPD6F0WYPM0R
+Yclns8AB4eTTaCSYj5vhSkQJihP85xSoNpTk9UlziIFd1k5521xnQ1ZvCViV80nS
+njpdfKQM5550aHUo1zuqt4mzYtoaXLYOG4/216LbE+SrqJn5ucgQmwIDAQABo4IB
+VTCCAVEwDgYDVR0PAQH/BAQDAgGGMBMGA1UdJQQMMAoGCCsGAQUFBwMBMBIGA1Ud
+EwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFNSAvAzgFCq5bM3gCQtkvdFSfCdPMB8G
+A1UdIwQYMBaAFANcq3OBh6jMsKbVlOI2lkn/BZksMHsGCCsGAQUFBwEBBG8wbTAu
+BggrBgEFBQcwAYYiaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vcm9vdHI0NjA7
+BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQv
+cm9vdHI0Ni5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxz
+aWduLmNvbS9yb290cjQ2LmNybDAhBgNVHSAEGjAYMAgGBmeBDAECAjAMBgorBgEE
+AaAyCgECMA0GCSqGSIb3DQEBDAUAA4ICAQA+Ot3b34EWBJl1dkX38cPgbsH6sdrK
+oJNpNtakrgEy2I+yBdblCDUQgiW6jJhyzZgdeMlH7FiQCfrEJIECH/5n3k0E/XQG
+836sUnSb2C1kqrGw575S2VUnPu75BlBhCFVM7pzGZCnIoTqWm5maHkZPnOay3Ily
+Iy2S7x4EBRlCTfbxKtUerbD/CUFWWZbC7Mdj5Xc8smao7ZK6tTqG2y9ajjSxkgoO
+evhl7jiZq2/uZR/2ebGY9vsQ209timQeH9fUZV20/ErOGKMQSJHPBLXk6oVQ3MCz
+oUP52zBAaoGwdi+oZRmBehptfOTEb0e9IlaK+3oMg2IZa93SafSi//8pCu/bWpD2
+5snBaz1Vvgbb6R68aY7eaN9spft0Dm/ip3gNJClHwEfIwXgL7hfLoKv7iVnQa8qo
+WDj/7bu5I7eY6cdaHGxmAQ6midgjG9k2zi9l6mETlDazGZLyznreGYALxOyFbgXs
+/mEJgregBCviHI7X9KslDmQ/tY1LlqpbPujAj+21hoqY7IVqFJD1FhJowwaiBbow
+ez2qWA3VZfyEr8tXJBJ4HC5gM7hWkQCaqm9uWrywAMZc+BU/AJ/qYGOJUtKOjZE9
+pEOjdj1rQkfDad3BkZuQ+sXnRfDnfV+SdoSVyAviWFQymdxt0KeNx/8r2DMbjBYg
+7bXEJxdHjod9Iw==
+-----END CERTIFICATE-----";
 /// Nome (estável) do chunk lazy das categorias; o hash é descoberto via runtime.
 const CHUNK_NAME: &str = "src_app_modules_landing_page_categorias_categorias_routes_ts";
 
@@ -66,7 +113,7 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = build_agent();
 
     // O chunk é a fonte; cache lógico. Rede = descoberta em 3 saltos (shell → runtime → chunk).
     let (chunk, fetched) = match auli_scraper_kit::cache::read(
@@ -116,6 +163,19 @@ pub fn scrape(
 }
 
 /// Descobre a URL do chunk: shell → `runtime.<hash>.js` → mapa nome→hash → `<CHUNK_NAME>.<hash>.js`.
+/// Agent `ureq` com o intermediário Soluti embutido como trust anchor (rustls). Resolve a cadeia
+/// quebrada do servidor sem desabilitar a verificação.
+fn build_agent() -> ureq::Agent {
+    let cert = Certificate::from_pem(SOLUTI_GR46_PEM.as_bytes()).expect("Soluti PEM válido");
+    let roots = RootCerts::new_with_certs(&[cert]);
+    ureq::Agent::config_builder()
+        .user_agent(USER_AGENT)
+        .timeout_global(Some(Duration::from_secs(30)))
+        .tls_config(TlsConfig::builder().root_certs(roots).build())
+        .build()
+        .into()
+}
+
 fn descobrir_chunk_url(agent: &ureq::Agent) -> Result<String> {
     let shell = fetch(agent, &format!("{}/", BASE))?;
     let runtime_name = Regex::new(r"runtime\.[a-f0-9]+\.js")
@@ -323,6 +383,11 @@ mod tests {
         "#;
         let items = build_servicos(&parse_servicos(c));
         assert_eq!(items.len(), 1);
+    }
+
+    #[test]
+    fn agent_com_soluti_constroi() {
+        let _ = build_agent(); // o PEM embutido é válido.
     }
 
     #[test]
