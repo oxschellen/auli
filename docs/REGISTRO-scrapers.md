@@ -42,6 +42,7 @@
 - [DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e](#df-faqs)
 - [AM FAQs — Perguntas Frequentes das páginas do Portfólio de Serviços (www.sefaz.am.gov.br)](#am-faqs)
 - [MA FAQs — Perguntas Frequentes do Portal SGC (portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes)](#ma-faqs)
+- [PE FAQs — Perguntas e Respostas do IPVA e do ITCMD (www.sefaz.pe.gov.br/Servicos/…/Perguntas-e-Respostas.aspx)](#pe-faqs)
 
 ---
 
@@ -2361,3 +2362,54 @@ categoriaPai}`). Nenhum host da SEFAZ-MA tem `robots.txt` (404).
   `data/ma/ma-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<raiz>` ou `<raiz> | <subcategoria>`), nessa
   ordem e atômicos.
 - Atualização: `scripts/tools/update-ma-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="pe-faqs"></a>
+
+# PE FAQs — Perguntas e Respostas do IPVA e do ITCMD (www.sefaz.pe.gov.br/Servicos/…/Perguntas-e-Respostas.aspx)
+
+**Discovery e implantação:** 06/11/2026. Estudo, medições e decisões D-PEFAQ-1..6:
+[`docs/ESTUDO-PE-Faqs.md`](ESTUDO-PE-Faqs.md). Coleção `faqs` do `auli-scraper-pe` (`auli-scraper-pe faqs`, ou
+`all` = serviços + FAQs). **59 perguntas** (IPVA 40, ITCMD 19) na rodada de 06/11.
+
+## Fonte
+
+Duas páginas de publicação do mesmo SharePoint 2013 dos serviços: `/Servicos/IPVA/Paginas/Perguntas-e-Respostas.aspx`
+e `/Servicos/ICD/Paginas/Perguntas-e-Respostas.aspx`, ambas atualizadas para 2025/2026 (EC 137/2025, LC 563/2025). A
+`_api` e o `listdata.svc` respondem 403 ("Acesso Negado") → HTML server-side, lista curada (molde PA/PR), 2 GETs de
+~800 KB com 1 s entre eles. O corpo de cada página é o único `div.ms-rtestate-field[id$="_RichHtmlField"]`.
+`robots.txt` gerido pela Cloudflare: `User-agent: *` → `Allow: /`, `Content-Signal: search=yes,ai-train=no,
+use=reference`; ~35 robôs nomeados com `Disallow: /`, não o AuliBot.
+
+## As armadilhas
+
+1. **A pergunta é o número, não o negrito.** O negrito é irregular (`<b>` depois de `<a name>`, número e texto em
+   `<strong>` separados, `<strong>` partido no meio da palavra). A coleta segmenta pela sequência: `N. ` com N = a
+   anterior + 1 abre pergunta; `N.M - ` com N = a atual, M = o subitem seguinte e texto terminado em "?" também
+   (IPVA 5.1; ITCMD 11.1, 11.2). Os 4.1/4.2 do ITCMD não terminam em "?" — são partes da resposta 4.
+2. **As respostas têm listas numeradas** (IPVA: 14 linhas; ITCMD: 2) que recomeçam em 1 e nunca alcançam a pergunta
+   seguinte. Número acima do esperado é `Err` (a numeração pulou); o número da pergunta atual repetido numa linha
+   com "?" também — seria o sinal de uma lista que "roubou" a vez da pergunta.
+3. **Espaço depois do ponto.** Na tabela de alíquotas do ITCMD, "19.600,00" e "34.600,00" casariam "19." e "34.".
+4. **Tabelas são resposta** (calendário de vencimentos do IPVA, alíquotas do ITCMD): as células embrulham o texto em
+   `<p>`, então linha com mais de uma célula vira UMA linha, células com ` | `. Linha de uma célula só (as caixas
+   "IMPORTANTE") segue como bloco.
+5. **O IPVA fecha com `<hr>` + rodapé** da Gerência de IPVA ("O órgão que normatiza… Estamos prontos a lhe prestar
+   serviços"): o `<hr>` corta a resposta até a próxima pergunta. O que vem antes da 1ª pergunta também sai (ITCMD:
+   a nota da LC 563/2025).
+6. **Entidades numéricas** (`&#58;` ~2,6 mil vezes, `&#160;`) e `U+200B` em rajadas: DOM (html5ever) + `clean`, não
+   regex + `decode_entities`.
+7. **Âncoras parciais.** 16 das 39 perguntas de 1º nível do IPVA têm `<a name="N">`: essas levam `página#N`; as outras
+   (e todo o ITCMD) levam a página.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: página sem o campo de conteúdo ou com mais de um; página sem pergunta;
+  numeração que pula; número repetido; pergunta sem resposta; par (link, pergunta) repetido; um GET que falhe.
+- **Sempre à rede**; o cache em `data/pe/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- `ureq` com o UA `AuliBot` (D-FROTA-UA, D-PEFAQ-5) — a D-PE4 dos serviços (UA de navegador) não muda.
+- Saída: `data/pe/raw/pe-faqs-tree.json` (raiz → um `Faq` por tributo; item com `url` só quando tem âncora) e
+  `data/pe/pe-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha = o tributo), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-pe-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).

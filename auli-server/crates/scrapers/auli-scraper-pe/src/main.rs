@@ -10,7 +10,10 @@
 // (`/Servicos/...`, corpo em `div.ms-rtestate-field`) ficam para uma fase 2, se o RAG precisar.
 // D-PE4 (etiqueta): o robots.txt do portal é restritivo a crawlers genéricos; esta coleta é de
 // baixíssima frequência e volume mínimo (1 GET por rodada na fase 1), com cache em disco.
+//
+// As FAQs vêm das páginas "Perguntas e Respostas" do IPVA e do ITCMD, no mesmo portal — `faqs.rs`.
 
+mod faqs;
 mod scrape;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
@@ -18,7 +21,7 @@ pub const ENTITY: &str = "pe";
 const DATA_DIR: &str = "../data/pe/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-pe [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-pe [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -34,8 +37,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
         }
     }
 
