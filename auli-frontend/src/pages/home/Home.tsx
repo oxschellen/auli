@@ -45,8 +45,8 @@ import { hasCollection } from "../../shared/entities";
 import type { Collection } from "../../shared/entities";
 import { SIDEBAR_WIDTH } from "../../shared/layout";
 
-/** Grupo de navegação. `null` = topo (sem título); `rodape` cola no pé da sidebar. */
-type Grupo = null | "acervo" | "tributum" | "integracoes" | "rodape";
+/** Grupo de navegação. `null` = topo (sem título). */
+type Grupo = null | "acervo" | "tributum" | "integracoes";
 
 /** As seções, agrupadas para a sidebar. `collection: null` = sempre disponível
  *  (`chat` fala com o RAG da entidade, `about` é estático, `downloads` lista TODOS os
@@ -70,6 +70,9 @@ const TABS: {
   { id: "legislacao", label: "Legislação", Component: LegislacaoList, collection: "legislacao", grupo: "acervo", Icone: MdOutlineMenuBook },
   { id: "notas", label: "Notas", Component: NotasList, collection: "notas", grupo: "acervo", Icone: MdOutlineStickyNote2 },
   { id: "conteudos", label: "Conteúdos", Component: ConteudosList, collection: "conteudos", grupo: "acervo", Icone: MdOutlineLibraryBooks },
+  // O Sobre fechava a sidebar, colado no pé; com o grupo Tributum ela passou da altura de tela de
+  // notebook (768 px) e ele ficava abaixo da dobra, sem pista de que a lista rolava.
+  { id: "about", label: "Sobre", Component: About, collection: null, grupo: "acervo", Icone: MdInfoOutline },
   { id: "tributum-criterios", label: "Critérios", Component: CriteriosTributum, collection: null, grupo: "tributum", Icone: MdOutlineRule },
   { id: "tributum-artigos", label: "Artigos e estudos", Component: ArtigosLista, collection: null, grupo: "tributum", Icone: MdOutlineArticle },
   { id: "tributum-instituicoes", label: "Instituições", Component: InstituicoesLista, collection: null, grupo: "tributum", Icone: MdOutlineAccountBalance },
@@ -78,10 +81,33 @@ const TABS: {
   { id: "tributum-livros", label: "Livros", Component: LivrosLista, collection: null, grupo: "tributum", Icone: MdOutlineAutoStories },
   { id: "mcp", label: "Conectar sua IA", Component: McpList, collection: null, grupo: "integracoes", Icone: MdOutlinePower },
   { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null, grupo: "integracoes", Icone: MdOutlineFileDownload },
-  { id: "about", label: "Sobre", Component: About, collection: null, grupo: "rodape", Icone: MdInfoOutline },
 ];
 
-/** Títulos e ordem dos grupos na sidebar (o `rodape` é tratado à parte, colado no pé). */
+/**
+ * Pista de rolagem dos dois containers da lista de seções (sidebar e drawer): uma sombra na borda
+ * de baixo enquanto há itens abaixo, e na de cima depois de rolar. A lista passa da altura de uma
+ * tela de notebook (num 768 px, o navegador deixa ~650), e sem a pista o último grupo ficava abaixo
+ * da dobra sem nada dizer que ela rolava.
+ *
+ * CSS puro: as duas capas (`local`) rolam com o conteúdo e, ao chegar a uma ponta, tapam a sombra
+ * (`scroll`, presa à borda) daquele lado. Sem rolagem, as capas tapam as duas e nada aparece. Cor
+ * de fundo via `bgColor`, não `bg`: o `bg` é o atalho `background` e apagaria as camadas.
+ */
+const PISTA_DE_ROLAGEM = {
+  bgColor: "bg.app",
+  backgroundImage: [
+    "linear-gradient(var(--chakra-colors-bg-app) 30%, transparent)",
+    "linear-gradient(transparent, var(--chakra-colors-bg-app) 70%)",
+    "radial-gradient(farthest-side at 50% 0, var(--chakra-colors-bg-scroll-cue), transparent)",
+    "radial-gradient(farthest-side at 50% 100%, var(--chakra-colors-bg-scroll-cue), transparent)",
+  ].join(", "),
+  backgroundPosition: "center top, center bottom, center top, center bottom",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "100% 40px, 100% 40px, 100% 14px, 100% 14px",
+  backgroundAttachment: "local, local, scroll, scroll",
+} as const;
+
+/** Títulos e ordem dos grupos na sidebar. */
 const GRUPOS: { id: Grupo; titulo: string | null }[] = [
   { id: null, titulo: null },
   { id: "acervo", titulo: "Acervo" },
@@ -155,15 +181,19 @@ const NavItem = ({
     gap="10px"
     w="100%"
     px="12px"
-    py="8px"
+    // 6px dá 34px de item (era 8px → 38px): 10% mais baixo, para a lista caber melhor na altura
+    // de um notebook.
+    py="6px"
     borderRadius="8px"
     cursor={item.disabled ? "not-allowed" : "pointer"}
     fontSize="0.9rem"
     fontFamily="body"
     fontWeight={isActive ? "600" : "500"}
     textAlign="left"
-    color={item.disabled ? "fg.disabled" : isActive ? "accent" : "fg.muted"}
-    bg={isActive ? "bg.subtle" : "transparent"}
+    // Ativa: fundo azul (`bg.navActive`) e texto em `accent.strong`, sem barra lateral. O
+    // `bg.subtle` de antes era quase da cor do `bg.app` da sidebar e o destaque sumia no claro.
+    color={item.disabled ? "fg.disabled" : isActive ? "accent.strong" : "fg.muted"}
+    bg={isActive ? "bg.navActive" : "transparent"}
     _hover={item.disabled || isActive ? undefined : { bg: "bg.subtle", color: "fg" }}
     transition="color 0.15s ease, background 0.15s ease"
   >
@@ -175,7 +205,7 @@ const NavItem = ({
 );
 
 /**
- * A lista de navegação (grupos + rodapé). Usada na sidebar (desktop) e no drawer (mobile).
+ * A lista de navegação, por grupos. Usada na sidebar (desktop) e no drawer (mobile).
  *
  * `idPrefix` existe porque `hideBelow`/`hideFrom` escondem por CSS, não desmontam: com o drawer
  * aberto as DUAS listas ficam no DOM ao mesmo tempo, e sem prefixos distintos haveria dois
@@ -241,22 +271,6 @@ const NavList = ({
           ))}
       </Box>
     ))}
-    {/* Espaçador que empurra o rodapé para o pé — presentacional pelo mesmo motivo dos
-        invólucros de grupo acima: é filho direto do tablist e não é um `tab`. */}
-    <Box flex="1" role="none" />
-    {menuItems
-      .filter((t) => t.grupo === "rodape")
-      .map((item) => (
-        <NavItem
-          key={item.id}
-          item={item}
-          idPrefix={idPrefix}
-          isActive={item.id === selectedId}
-          onSelect={() => onSelect(item.id)}
-          onKeyDown={onKeyDown}
-          tabRef={(el) => (tabRefs.current[item.id] = el)}
-        />
-      ))}
   </Flex>
 );
 
@@ -342,7 +356,7 @@ export const Home = () => {
         // sidebar termina para não invadi-la. Ver `shared/layout.ts`.
         w={SIDEBAR_WIDTH}
         flexShrink={0}
-        bg="bg.app"
+        {...PISTA_DE_ROLAGEM}
         borderRight="1px solid var(--chakra-colors-border)"
         p="10px 8px"
         overflowY="auto"
@@ -406,7 +420,7 @@ export const Home = () => {
               bottom={0}
               left={0}
               w="240px"
-              bg="bg.app"
+              {...PISTA_DE_ROLAGEM}
               borderRight="1px solid var(--chakra-colors-border)"
               p="10px 8px"
               overflowY="auto"

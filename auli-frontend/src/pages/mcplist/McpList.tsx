@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Box, Button, Flex, Stack, Table, Text } from "@chakra-ui/react";
 import { MdArrowBack, MdMenuBook } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
@@ -50,6 +50,99 @@ const MANUAIS: Manual[] = [
     quemConfigura:
       "A TI — é preciso construir um agente no Copilot Studio e ter aprovação de administrador",
     arquivo: "manual-auli-mcp-copilot-studio.md",
+  },
+];
+
+/** Uma ferramenta do servidor MCP, como o bloco "O que dá para pedir" a apresenta. */
+interface Ferramenta {
+  /** Nome exato da `#[tool]` ("listar_entidades"). */
+  nome: string;
+  /** ReactNode porque carrega `<Text as="code">` e ênfase. */
+  oQueFaz: ReactNode;
+  /** Frases que levam o assistente a esta ferramenta. */
+  exemplo: ReactNode;
+}
+
+/** Frase-exemplo entre aspas e em itálico. As aspas vão na string, iguais às do manual. */
+const frase = (texto: string) => (
+  <Text as="em" fontStyle="italic">
+    {`"${texto}"`}
+  </Text>
+);
+
+/**
+ * As cinco ferramentas do `/mcp`. "O que faz" resume — não copia — as `description` das `#[tool]`
+ * em `auli-server/crates/auli-cli/src/mcp.rs`, que é a fonte. As frases-exemplo são as mesmas da
+ * seção "As cinco ferramentas, e como pedi-las" de `manuais/manual-auli-mcp-claude.md`; manter as
+ * duas em sincronia ao editar. Sem totais: envelhecem, e o `listar_entidades` os dá na hora.
+ */
+const FERRAMENTAS: Ferramenta[] = [
+  {
+    nome: "listar_entidades",
+    oQueFaz: (
+      <>
+        Quais estados têm acervo e o que cada um tem (pareceres, TARF, legislação, serviços, FAQs),
+        com os totais. Sem parâmetros.
+      </>
+    ),
+    exemplo: frase("Quais estados têm acervo no Auli, e o que cada um tem?"),
+  },
+  {
+    nome: "buscar_pareceres",
+    oQueFaz: (
+      <>
+        Busca por sentido na jurisprudência de uma UF. Devolve número, assunto, sinopse e link —{" "}
+        <Text as="strong">sem o corpo</Text>. Parâmetros: <Text as="code">uf</Text>,{" "}
+        <Text as="code">pergunta</Text>, <Text as="code">top_k</Text> (1 a 20, padrão 5) e{" "}
+        <Text as="code">colecao</Text>: <Text as="code">pareceres</Text> (padrão) ou{" "}
+        <Text as="code">tarf</Text>.
+      </>
+    ),
+    exemplo: (
+      <>
+        {frase("Em Santa Catarina, o que já foi respondido sobre crédito de ICMS na energia elétrica?")}{" "}
+        — ou, para os acórdãos: {frase("O que o TARF do RS já decidiu sobre…")}. Quer mais
+        resultados? {frase("Traga os 15 mais próximos.")}
+      </>
+    ),
+  },
+  {
+    nome: "obter_parecer",
+    oQueFaz: (
+      <>
+        O texto integral de <Text as="strong">um</Text> documento, pelo número exato que a busca
+        devolveu, na mesma coleção. O assistente só a usa se você pedir o texto completo.
+      </>
+    ),
+    // Sem exemplo "pelo número": a ferramenta exige o título exato que a busca devolveu
+    // ("RESPOSTA À CONSULTA TRIBUTÁRIA 23333/2021"), que ninguém digita de cabeça.
+    exemplo: (
+      <>
+        {frase("Me mostre o texto completo do mais relevante.")} — ou{" "}
+        {frase("Abra a íntegra do segundo da lista.")}
+      </>
+    ),
+  },
+  {
+    nome: "consultar_servicos_faqs",
+    oQueFaz: (
+      <>
+        Para dúvidas de <Text as="strong">como fazer</Text>: devolve, num bloco só, até 5 serviços e
+        10 FAQs da UF mais próximos da pergunta — o mesmo contexto que o chat deste portal usa.
+      </>
+    ),
+    exemplo: frase("No Rio Grande do Sul, como faço para emitir a segunda via da guia do IPVA?"),
+  },
+  {
+    nome: "buscar_legislacao",
+    oQueFaz: (
+      <>
+        Para o que a <Text as="strong">lei</Text> diz: pares pergunta/resposta sobre a norma, cada um
+        com o dispositivo citado ({`"Art. 18-A, § 2º"`}) e o link oficial. Disponível só onde{" "}
+        <Text as="code">listar_entidades</Text> o reporta.
+      </>
+    ),
+    exemplo: frase("O que a lei do RS exige de uma locadora para pagar a alíquota menor de IPVA?"),
   },
 ];
 
@@ -169,6 +262,78 @@ export function McpList() {
               </Table.Root>
             </Box>
           </Stack>
+
+          {/* Borda pelo token `border`, não `brand.50`: o primitivo não tem `_dark` e viraria um
+              contorno claro sobre o `bg.resumo` escuro. */}
+          <Box
+            bg="bg.resumo"
+            border="1px solid var(--chakra-colors-border)"
+            borderRadius="10px"
+            py="16px"
+            px="18px"
+          >
+            <Stack gap={2}>
+              <Text as="h2" fontSize="0.95rem" fontWeight="700" color="fg">
+                O que dá para pedir
+              </Text>
+              <Text fontSize="0.9rem" color="fg" lineHeight="1.6">
+                Depois de conectado, você não chama ferramenta nenhuma: pergunta em português e o
+                assistente escolhe qual usar. Mas ajuda saber o que existe por baixo — são cinco
+                ferramentas, e a frase certa leva à ferramenta certa. Diga sempre{" "}
+                <Text as="strong">o estado</Text>: quatro das cinco ferramentas exigem a UF, e sem
+                ela o assistente tem de escolher uma por conta ou perguntar qual.
+              </Text>
+              <Box
+                border="1px solid var(--chakra-colors-border)"
+                borderRadius="8px"
+                overflowX="auto"
+              >
+                {/* `px`/`py` explícitos repõem o padding do `size="sm"`: o reset `* { padding: 0 }`
+                    do index.css, sem camada, vence o recipe do Chakra, que vive em `@layer`. Sem
+                    isso as colunas de texto corrido encostam uma na outra. */}
+                <Table.Root size="sm" aria-label="Ferramentas do servidor MCP">
+                  <Table.Header>
+                    <Table.Row bg="bg.subtle">
+                      <Table.ColumnHeader color="fg" fontWeight="700" px={2} py={2}>
+                        Ferramenta
+                      </Table.ColumnHeader>
+                      <Table.ColumnHeader color="fg" fontWeight="700" px={2} py={2} minW="16rem">
+                        O que faz
+                      </Table.ColumnHeader>
+                      <Table.ColumnHeader color="fg" fontWeight="700" px={2} py={2} minW="16rem">
+                        Diga, por exemplo
+                      </Table.ColumnHeader>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    {FERRAMENTAS.map((f) => (
+                      <Table.Row key={f.nome}>
+                        <Table.Cell color="fg" px={2} py={2} whiteSpace="nowrap" verticalAlign="top">
+                          <Text as="code">{f.nome}</Text>
+                        </Table.Cell>
+                        <Table.Cell color="fg" px={2} py={2} verticalAlign="top">
+                          {f.oQueFaz}
+                        </Table.Cell>
+                        <Table.Cell color="fg" px={2} py={2} verticalAlign="top">
+                          {f.exemplo}
+                        </Table.Cell>
+                      </Table.Row>
+                    ))}
+                  </Table.Body>
+                </Table.Root>
+              </Box>
+              <Text fontSize="0.9rem" color="fg" lineHeight="1.6">
+                O encadeamento típico é <Text as="code">listar_entidades</Text> →{" "}
+                <Text as="code">buscar_pareceres</Text> → <Text as="code">obter_parecer</Text>: o
+                assistente descobre o que existe, busca, e só então abre a íntegra do que você
+                escolheu. Qual das três frentes responde decide-se pelo tipo de pergunta: a{" "}
+                <Text as="strong">legislação</Text> diz o que a norma determina; os{" "}
+                <Text as="strong">pareceres</Text> e acórdãos, como a Receita e o tribunal a
+                interpretam num caso; os <Text as="strong">serviços e FAQs</Text>, como fazer a
+                coisa no portal.
+              </Text>
+            </Stack>
+          </Box>
 
           <Stack gap={2}>
             <Text as="h2" fontSize="0.95rem" fontWeight="700" color="fg">

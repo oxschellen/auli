@@ -66,6 +66,14 @@ const config = defineConfig({
           // it lands on (canvas, app, subtle) without a per-surface variant. Amber on purpose:
           // `accent` is the link color here, and marking matches in it would read as clickable.
           highlight: { value: { base: "rgba(250,204,21,0.45)", _dark: "rgba(250,204,21,0.28)" } },
+          // Pista de rolagem da lista de seções (sidebar/drawer): a sombra na borda que diz "há mais
+          // itens além daqui". Escura no claro e clara no escuro — sombra preta some sobre o
+          // `bg.app` escuro.
+          scrollCue: { value: { base: "rgba(15,23,42,0.18)", _dark: "rgba(255,255,255,0.16)" } },
+          // Item ATIVO da lista de seções. Azul da marca nos dois modos; o escuro é fundo o bastante
+          // para o `accent.strong` (brand.400) passar de 4,5:1 sobre ele — no #1e3a5f da bolha do
+          // usuário ficaria em 3,8.
+          navActive: { value: { base: "{colors.brand.50}", _dark: "#172a42" } },
         },
         fg: {
           DEFAULT: { value: { base: "{colors.ink}", _dark: "#ffffff" } },

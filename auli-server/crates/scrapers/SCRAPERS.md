@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM e no CE, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE e no CE, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -102,7 +102,7 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ro** | SEFIN-RO / Rondônia | Agência Virtual (Sydle ONE conecta-360, molde PI); `GET _search`, catálogo "Serviços", Bearer anônimo | JSON | 1 | 194 | curta | direto | 8 | rustls |
 | **to** | SEFAZ-TO / Tocantins | Carta de Serviços (ASP.NET/IIS, HTML); `listar_servico.aspx?cod_empresa=37` + detalhe por span `lbl*` | HTML | 4 | 45 | **rica** (Carta) | direto | 8 | rustls |
 | **ma** | SEFAZ-MA / Maranhão | Portal SGC (Angular + Spring); login anônimo público + `GET /portal/servicos` + `conteudos/{id}` | JSON | 4 | 38 | **rica** (conteúdo) | direto | 6 | **rustls + cert** |
-| **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 4 | rustls |
+| **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 5 | **rustls + cert** |
 | **ac** | SEFAZ-AC / Acre | WordPress + Elementor; Carta (`page_id=6732`) → 17 posts (`?p=`), corpo em `.elementor-widget-theme-post-content` | HTML | 1 | 17 | **rica** (post) | direto | 4 | **rustls + cert** |
 | **df** | SEFAZ-DF / Distrito Federal | Carta de Serviços (ColdFusion); a listagem embute a **árvore JS inteira** (1 fetch → 472), detalhe `servico.cfm` accordion `.panel-body` | HTML | 2 | 472 | **rica** (~893) | direto | 4 | **curl (WAF JA3)** |
 | **rn** | SEFAZ-RN / Rio Grande do Norte | WordPress + SPA React; WP REST `wp/v2/servicos` (15 cards), enriquece os que linkam `/postagem/` com o ACF `Matéria` | JSON | 1 | 15 | **parcial** (5/15, post) | direto | 4 | rustls |
@@ -155,7 +155,9 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - **FAQs e pareceres** além de serviços (`auli-scraper-rs [--usecache] faqs|servicos|pareceres`).
 - **Serviços:** API JSON do Tudo Fácil (`fazenda.rs.gov.br/_service/tudofacil/capaservicos`) — não
   precisa mais de headless Chrome (era o único que usava).
-- **FAQs:** `atendimento.receita.rs.gov.br/perguntas-frequentes`, via AJAX.
+- **FAQs:** `atendimento.receita.rs.gov.br/perguntas-frequentes-antigo`, via AJAX (raiz `categoriafaq`
+  preservada pelo portal; desde nov/2026 `/perguntas-frequentes` é um índice novo com as perguntas inline,
+  candidato a fonte futura).
 - **Pareceres** (Consultas Formais Respondidas): Portal de Legislação (`legislacao.sefaz.rs.gov.br`,
   ASP.NET WebForms/IIS, windows-1252) via **curl subprocess** (ureq recebe resposta degradada; cookie
   de sessão obrigatório, senão o servidor pendura). O filtro "Consultas Formais Respondidas" é **estado
@@ -235,6 +237,13 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - 38 serviços, 3 públicos (Cidadãos/Empresas/Municípios). Agregada (e-Fisco aparece nos 3 públicos
   → 3 ocorrências). Links externos (efisco, gnre, arevirtualws) preservados. 6 testes.
 - **D-PE4:** UA de navegador, robots restritivo, 1 GET + cache.
+- **FAQs** (`auli-scraper-pe faqs`, `faqs.rs`): as páginas "Perguntas e Respostas" do IPVA e do ITCMD — lista
+  curada de 2 páginas de publicação (a `_api` e o `listdata.svc` dão 403), corpo no único `div[id$="_RichHtmlField"]`.
+  DOM → linhas (tabela de várias células vira uma linha com ` | `; link vira `texto "url"`, relativo absolutizado);
+  pergunta = linha cujo número continua a sequência (`N. ` ou `N.M - ` com "?"), resposta até a próxima ou o `<hr>`
+  (rodapé do IPVA fora). Link da página, com `#N` onde há `<a name="N">`. Trilha = o tributo. UA AuliBot: o
+  `robots.txt` de hoje (Cloudflare) libera `*` com `ai-train=no, use=reference`. Sempre à rede. 59 perguntas
+  (06/11/2026), 20 testes. Descoberta em `docs/REGISTRO-scrapers.md#pe-faqs`.
 
 ### ba — SEFAZ-BA (Bahia)
 
@@ -485,6 +494,13 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   CERTIFICATE→Certidões); `classe` = "Geral" (sem categoria). `link` = `linkExterno` / página de conteúdo.
 - 38 serviços, 4 públicos (Empresa 22 / Cidadão 10 / Órgão Público 2 / Certidões 4). 6 testes.
   `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#ma`.
+- **FAQs** (`auli-scraper-ma faqs`, `faqs.rs`): a página "Perguntas Frequentes" do mesmo portal
+  (`/portal/perguntas-frequentes`), mesmo login e mesmo token — `GET /sgc/api/faq/perguntas/faq?publicado=true`,
+  uma chamada com tudo (sem o filtro vêm também as perguntas de uma categoria inativa). Árvore de dois níveis
+  (raiz → subcategoria); nome e ordem da raiz lidos da pergunta pendurada direto nela (a `categoriaPai`
+  aninhada vem rasa, `ordem: null`). Link único (a página), daí a guarda de pergunta repetida — a repetida em
+  duas raízes ganha o nome da raiz (D-MAFAQ-2). Trilha `<raiz> | <subcategoria>`; HTML → texto por regex.
+  Sempre à rede. 336 perguntas (06/11/2026), 18 testes. Descoberta em `docs/REGISTRO-scrapers.md#ma-faqs`.
 
 ### ap — SEFAZ-AP (Amapá)
 
@@ -499,7 +515,10 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
 - 5 categorias = **classe** (Cadastro 10 / ICMS 15 / ITCMD 2 / Regime Especial 5 / Veículos 17);
   público único "Serviços". `link` = `…/#/categorias/{slug}/{route}`; identidade = link. É a **fonte mais
   frágil da frota** (parse de JS webpack), mas as chaves estáveis a tornam robusta na prática.
-- 49 serviços. 4 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#ap`.
+- **⚠️ Gotcha TLS (certificado de 09/2026):** o leaf é emitido pelo **Soluti V2 GR46 OV TLS CA 2025**, mas o
+  servidor manda intermediários GlobalSign que não são o emissor → rustls recusa (`UnknownIssuer`). Fix: embutir
+  o Soluti (baixado do AIA do leaf) como trust anchor no rustls (`RootCerts::new_with_certs`), como o AC.
+- 49 serviços. 5 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#ap`.
 
 ### ac — SEFAZ-AC (Acre)
 

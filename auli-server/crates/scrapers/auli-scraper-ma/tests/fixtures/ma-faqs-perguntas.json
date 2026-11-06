@@ -1,0 +1,274 @@
+[
+ {
+  "id": 742,
+  "pergunta": "RTC.03.008 - Como localizar meus débitos junto à Secretaria de Estado da Fazenda do Maranhão?",
+  "resposta": "<p><strong>Explicação:</strong></p><p><br></p><ul><li><strong>Para empresas contribuinte do Estado:</strong></li></ul><p>A consulta de débitos pode ser feita através do SEFAZNET.</p><p>Outra opção é ir a uma de nossas agências de atendimento. Para consultar os locais de nossas agências, <a href=\"https://portal-sgc.sefaz.ma.gov.br/portal/contato\" rel=\"noopener noreferrer\" target=\"_blank\">clique aqui.</a></p><p><br></p><ul><li><strong>Para empresas <u>NÃO</u> contribuintes do Estado:</strong></li></ul><p>A consulta dos débitos deve ser feita em uma agência de atendimento da SEFAZ MA. Para consultar os locais de nossas agências, <a href=\"https://portal-sgc.sefaz.ma.gov.br/portal/contato\" rel=\"noopener noreferrer\" target=\"_blank\">clique aqui.</a></p><p><br></p><p><strong>Orientações:</strong></p><p><br></p><ul><li>Para obter maiores explicações sobre o acesso e uso do SEFAZNET, consulte em nosso <a href=\"https://portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes\" rel=\"noopener noreferrer\" target=\"_blank\">FAQ</a> o menu <em>SEFAZNET &gt; DTE.05 – Consulta de Débitos e Conta Fiscal.</em></li><li>Empresas contribuintes do Estado = Empresas com inscrição estadual;</li><li>Mesmo empresas com inscrição estadual BAIXADA podem ter acesso ao SEFAZNET normalmente.</li><li>Todas as orientações quanto ao uso do SEFAZNET estão disponíveis em nosso <a href=\"https://portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes\" rel=\"noopener noreferrer\" target=\"_blank\">FAQ</a> &gt; menu SEFAZNET.</li><li>No momento do atendimento, o requerente deve estar munido de original do documento de identidade ou documento de identidade e procuração, caso seja o procurador.</li></ul><p><br></p><p><strong>Palavras-chave: </strong>Simples Nacional, opção, débitos, SEFAZNET.</p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 304,
+   "nome": "RTC.03 – Opção pelo Simples Nacional e Regime Híbrido",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": {
+    "id": 289,
+    "nome": "REFORMA TRIBUTÁRIA DO CONSUMO - RTC",
+    "ativo": false,
+    "publico": false,
+    "categoriaPai": null,
+    "categorias": [],
+    "ordem": null
+   },
+   "categorias": [],
+   "ordem": null
+  }
+ },
+ {
+  "id": 70,
+  "pergunta": "f) Como tratar da suspensão de débitos tributários discutidos em juízo? ",
+  "resposta": "<p>A ASJUR - Assessoria Jurídica é o setor responsável por débitos em discussão judicial (casos de suspensão tributária, citações judiciais, depósitos em juízo, seguro-garantia, etc.). Seguem os contatos:&nbsp;</p><p>E-mail: asjur@sefaz.ma.gov.br</p><p>Telefone: 98 3217-4579</p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 31,
+   "nome": "SUBSTITUIÇÃO TRIBUTÁRIA",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": null,
+   "categorias": [],
+   "ordem": 17
+  }
+ },
+ {
+  "id": 211,
+  "pergunta": "Sobre o IPVA",
+  "resposta": "<p>O <strong>Imposto sobre a Propriedade de Veículos Automotores (IPVA)</strong> é um tributo estadual cobrado anualmente dos proprietários de veículos registrados no Estado.</p><p><br></p><p>No Maranhão, é regulado pela <a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=2e774d84-6990-4fd3-bdfb-863829fd3c08\" rel=\"noopener noreferrer\" target=\"_blank\">Lei nº 7.799/2002</a>, em seu CAPÍTULO II.</p><p><br></p><p>Esse imposto incide sobre a propriedade de veículos automotores, como carros, motocicletas, caminhões e ônibus.</p><p><br></p><p>Os recursos arrecadados com o IPVA são destinados ao financiamento de serviços públicos, sendo repartidos entre o Estado e o município onde o veículo está registrado.</p><p><br></p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 41,
+   "nome": "IPVA",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": null,
+   "categorias": [],
+   "ordem": 5
+  }
+ },
+ {
+  "id": 682,
+  "pergunta": "Sobre a seção",
+  "resposta": "<p>Esta seção reúne as principais perguntas e respostas sobre o novo processo de ativação da Inscrição Estadual no Estado do Maranhão, conforme as alterações promovidas pela <a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=c4b9c7ce-ba59-4a5c-8d9d-45c23d7ddde8\" rel=\"noopener noreferrer\" target=\"_blank\">Portaria nº 212/2026-GABIN.</a></p><p><br></p><p>O objetivo é orientar contribuintes e servidores sobre as novas regras, prazos, documentação exigida e procedimentos relacionados à ativação, promovendo maior segurança jurídica, uniformidade das informações e agilidade no atendimento.</p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 283,
+   "nome": "ATIVAÇÃO DE NOVAS EMPRESAS – PORTARIA nº 212/2026",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": null,
+   "categorias": [],
+   "ordem": 2
+  }
+ },
+ {
+  "id": 501,
+  "pergunta": "REF.07.003 – O que acontece se o benefício for perdido?",
+  "resposta": "<p><strong>Explicação:</strong></p><p><br></p><p>Os descontos concedidos podem ser cancelados, com recomposição do débito conforme a legislação.</p><p><br></p><p><strong>Orientações:</strong></p><p><br></p><p>Caso o contribuinte tenha seu parcelamento cancelado, todo o desconto concedido é desfeito e o débito retorna ao valor original (antes dos benefícios), abatendo-se apenas o que já foi efetivamente pago.</p><p><br></p><p><u>Exemplo didático:</u></p><p><br></p><ul><li>Débito original: R$ 100.000,00</li><li>Desconto concedido: R$ 30.000,00</li><li>Valor com desconto: R$ 70.000,00 (parcelado em 10x de R$ 7.000,00)</li><li>O contribuinte pagou 5 parcelas:</li><li>Total pago: R$ 35.000,00</li><li>Com o cancelamento do parcelamento:</li><li>O desconto de R$ 30.000,00 é perdido</li><li>O débito volta para R$ 100.000,00</li><li>Deduz-se apenas o valor pago (R$ 35.000,00)</li><li>Saldo final para eventual novo parcelamento: R$ 65.000,00</li></ul><p><br></p><p><strong>Resumo: o pagamento é abatido do valor original da dívida, e não do valor com desconto.</strong></p><p><br></p><p><strong>Palavras-chave:</strong> perda, beneficio, cancelamento, parcelamento.</p><p><br></p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 210,
+   "nome": "REF.07 – Manutenção do Benefício",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": {
+    "id": 203,
+    "nome": " REFIS - PROGRAMA DE PAGAMENTO E PARCELAMENTO DE DÉBITOS DE ICMS",
+    "ativo": false,
+    "publico": false,
+    "categoriaPai": null,
+    "categorias": [],
+    "ordem": null
+   },
+   "categorias": [],
+   "ordem": null
+  }
+ },
+ {
+  "id": 299,
+  "pergunta": "Tire suas dúvidas sobre o Comércio Exterior",
+  "resposta": "<ul><li><a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=9a82e35d-d732-4a60-8f0f-f32c404cc27b\" rel=\"noopener noreferrer\" target=\"_blank\"><u>Declaração única de Importações - DUIMP</u></a></li><li><a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=f8f2e1c6-d51a-4248-89e5-f1893b748542\" rel=\"noopener noreferrer\" target=\"_blank\"><u>Dúvidas sobre Exportações</u></a></li><li><a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=fdc63e48-9e0d-4247-b51b-28bc43414f6a\" rel=\"noopener noreferrer\" target=\"_blank\"><u>Dúvidas sobre Importações</u></a></li></ul>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 104,
+   "nome": "COMÉRCIO EXTERIOR",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": null,
+   "categorias": [],
+   "ordem": 14
+  }
+ },
+ {
+  "id": 663,
+  "pergunta": "IP.BENEF.01.001 - Quem pode participar do benefício de redução de multas e juros de IPVA?",
+  "resposta": "<p><strong>Explicação:</strong></p><p><br></p><p>Podem participar do programa os proprietários de veículos que possuam <strong>débitos de IPVA referentes ao exercício de 2025 e anos anteriores</strong>.<strong> </strong></p><p><strong><span class=\"ql-cursor\">﻿</span></strong></p><p><strong>Palavras-chave:</strong> IPVA, benefício, débitos</p><p><br></p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 264,
+   "nome": "IP.BENEF.01 – Principais regras e formas de adesão",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": {
+    "id": 263,
+    "nome": "REFIS - PROGRAMA DE PAGAMENTO E PARCELAMENTO DE DÉBITOS DE IPVA",
+    "ativo": false,
+    "publico": false,
+    "categoriaPai": null,
+    "categorias": [],
+    "ordem": null
+   },
+   "categorias": [],
+   "ordem": null
+  }
+ },
+ {
+  "id": 698,
+  "pergunta": "Sobre a seção",
+  "resposta": "<p>Esta seção reúne as principais perguntas e respostas sobre a Reforma Tributária do consumo, abordando as mudanças relacionadas ao IBS (Imposto sobre Bens e Serviços), à CBS (Contribuição sobre Bens e Serviços) e aos novos procedimentos que serão implementados gradualmente durante o período de transição. </p><p><br></p><p>O objetivo é orientar contribuintes e servidores sobre as novas regras, promovendo informações claras, uniformes e alinhadas à legislação vigente.</p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 289,
+   "nome": "REFORMA TRIBUTÁRIA DO CONSUMO - RTC",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": null,
+   "categorias": [],
+   "ordem": 3
+  }
+ },
+ {
+  "id": 212,
+  "pergunta": "IP.01.001 -  Qual a periodicidade do IPVA?",
+  "resposta": "<p>O IPVA é um <strong>imposto de cobrança anual. </strong></p><p><br></p><p>No caso de veículos usados, o fato gerador ocorre no <strong>primeiro dia útil de cada ano</strong>, momento em que surge a obrigação de pagamento do imposto pelo proprietário do veículo.</p><p><br></p><p>Para veículos novos, o fato gerador do IPVA ocorre <strong>na data da aquisição do veículo.</strong></p><p><br></p><p><strong>Palavras-chave: </strong>Periodicidade, IPVA, fato gerador</p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 145,
+   "nome": "IP.01 - Conceitos Gerais",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": {
+    "id": 41,
+    "nome": "IPVA",
+    "ativo": false,
+    "publico": false,
+    "categoriaPai": null,
+    "categorias": [],
+    "ordem": null
+   },
+   "categorias": [],
+   "ordem": null
+  }
+ },
+ {
+  "id": 71,
+  "pergunta": "b) Como corrigir a competência ou código de receita constantes em uma GNRE e/ou DARE?",
+  "resposta": "<p>Caso o pagamento tenha sido realizado com algum erro como, por exemplo, competência ou código de receita, será necessário entrar em contato com a Cotea/Arrecadação e solicitar os devidos ajustes. </p><p>Seguem dados para envio da solicitação e respectivos comprovantes: </p><p>E-mail: <a href=\"mailto:cotea@sefaz.ma.gov.br\" rel=\"noopener noreferrer\" target=\"_blank\">cotea@sefaz.ma.gov.br</a></p><p>Telefones: 98 3217-4594/ 3217-4560 / 3219 9084</p><p><br></p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 31,
+   "nome": "SUBSTITUIÇÃO TRIBUTÁRIA",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": null,
+   "categorias": [],
+   "ordem": 17
+  }
+ },
+ {
+  "id": 482,
+  "pergunta": "Sobre o REFIS",
+  "resposta": "<p><strong>Base legal: </strong><a href=\"https://sistemas1.sefaz.ma.gov.br/portalsefaz/files?codigo=27245\" rel=\"noopener noreferrer\" target=\"_blank\">Lei nº 12.591/2025</a><strong>, </strong><a href=\"https://sistemas1.sefaz.ma.gov.br/portalsefaz/jsp/pagina/pagina.jsf?codigo=97\" rel=\"noopener noreferrer\" target=\"_blank\">Regulamento do ICMS do Maranhão (RICMS/MA).</a></p><p><br></p><p><strong>Explicação:</strong></p><p><br></p><p>Esta seção tem como objetivo orientar os contribuintes sobre o Programa de Pagamento e Parcelamento de Créditos Tributários (REFIS), instituído no âmbito da Secretaria de Estado da Fazenda do Maranhão (SEFAZ/MA), destinado à regularização de débitos relacionados ao ICMS e ao ICM.</p><p><br></p><p>Ao aderir ao programa, o contribuinte deverá observar os requisitos legais, como o reconhecimento dos débitos incluídos e a desistência de eventuais discussões administrativas ou judiciais, quando aplicável.</p><p><br></p><p>Nesta seção, são apresentadas as principais regras, condições, procedimentos e dúvidas frequentes relacionadas ao REFIS, com o objetivo de facilitar o entendimento e promover a regularização fiscal de forma simples, transparente e orientada.</p><p><br></p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 203,
+   "nome": " REFIS - PROGRAMA DE PAGAMENTO E PARCELAMENTO DE DÉBITOS DE ICMS",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": null,
+   "categorias": [],
+   "ordem": 0
+  }
+ },
+ {
+  "id": 733,
+  "pergunta": "RTC.03.005 – Se uma empresa optante pelo Simples Nacional optar pelo regime regular de apuração do IBS e da CBS, a partir de quando essa opção produzirá efeitos?",
+  "resposta": "<p><strong>Explicação:</strong></p><p><br></p><p>Caso a empresa realize a opção pelo regime de apuração do IBS e CBS (regime regular ou \"híbrido\") no mês de setembro, os efeitos da sua opção ocorrerão apenas a partir de 1º de janeiro do ano-calendário seguinte.</p><p><br></p><p><strong>Orientações:</strong></p><p><br></p><ul><li>A opção feita em setembro de 2026 produzirá efeitos a partir de 1º de janeiro de 2027.</li><li>Se a mesma opção fosse realizada no mês de março, os efeitos teriam início em 1º de julho do mesmo ano.</li></ul><p><br></p><p><strong>Palavras-chave:</strong> regime regular, IBS, CBS, setembro, efeitos, ano seguinte.</p><p><br></p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 304,
+   "nome": "RTC.03 – Opção pelo Simples Nacional e Regime Híbrido",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": {
+    "id": 289,
+    "nome": "REFORMA TRIBUTÁRIA DO CONSUMO - RTC",
+    "ativo": false,
+    "publico": false,
+    "categoriaPai": null,
+    "categorias": [],
+    "ordem": null
+   },
+   "categorias": [],
+   "ordem": null
+  }
+ },
+ {
+  "id": 662,
+  "pergunta": "Benefício Fiscal de IPVA 2025 e anos anteriores",
+  "resposta": "<p>Trata-se de um programa que concede redução de multas e juros para débitos de IPVA referentes ao exercício de 2025 e anos anteriores, visando a regularização fiscal dos contribuintes.</p><p><br></p><p><a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=26dcf82e-886e-4552-a2e1-fe57b16842d5\" rel=\"noopener noreferrer\" target=\"_blank\"><u>Nota de orientação sobre benefício de IPVA</u></a></p><p><a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=23843238-cdb1-4563-9164-0155a86f31fa\" rel=\"noopener noreferrer\" target=\"_blank\"><u>Manual com passo a passo para emissão de DARE de IPVA à vista</u></a></p><p><a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=d57a3861-87a6-4f2c-9393-496480dea1aa\" rel=\"noopener noreferrer\" target=\"_blank\"><u>Manual com passo a passo para realizar parcelamento de IPVA</u></a></p><p><a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=8b461378-666d-451d-be99-8fd70fcca41b\" rel=\"noopener noreferrer\" target=\"_blank\"><u>Formulário de solicitação de cancelamento de parcelamento de IPVA</u></a></p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 263,
+   "nome": "REFIS - PROGRAMA DE PAGAMENTO E PARCELAMENTO DE DÉBITOS DE IPVA",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": null,
+   "categorias": [],
+   "ordem": 1
+  }
+ },
+ {
+  "id": 695,
+  "pergunta": "AT.04.001 – Quais empresas estão dispensadas desse procedimento?",
+  "resposta": "<p><strong>Explicação:</strong></p><p><br></p><p>Não se aplica o procedimento de ativação previsto na <a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=c4b9c7ce-ba59-4a5c-8d9d-45c23d7ddde8\" rel=\"noopener noreferrer\" target=\"_blank\">Portaria nº 212/2026-GABIN</a> às seguintes empresas:</p><p><br></p><ul><li>Microempreendedor Individual (MEI);</li><li>Inova Simples;</li><li>Filiais pertencentes ao mesmo grupo econômico cuja matriz esteja regular;</li><li>Empresas do comércio de combustíveis submetidas ao regime específico previsto na legislação.</li></ul><p><br></p><p><strong>Orientações:</strong></p><p><br></p><ul><li>Para entender melhor as mudanças ocorridas, consulte nossa <a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=27e920ae-1286-4e29-a144-c2270171b957\" rel=\"noopener noreferrer\" target=\"_blank\">Nota de Orientação</a>.</li><li>Acesso ao <a href=\"https://ui-sgc.sefaz.ma.gov.br/sgc/api/portal/arquivos/public/identificador?identificador=3c12740c-9b19-46ad-9b78-8ebbfbb79d57\" rel=\"noopener noreferrer\" target=\"_blank\">formulário padrão de requerimento.</a></li></ul><p>&nbsp;</p><p><strong>Palavras-chave:</strong> dispensa, MEI, Inova Simples.</p>",
+  "ativo": true,
+  "publicado": true,
+  "categoria": {
+   "id": 287,
+   "nome": "AT.04 – Empresas dispensadas",
+   "ativo": true,
+   "publico": false,
+   "categoriaPai": {
+    "id": 283,
+    "nome": "ATIVAÇÃO DE NOVAS EMPRESAS – PORTARIA nº 212/2026",
+    "ativo": false,
+    "publico": false,
+    "categoriaPai": null,
+    "categorias": [],
+    "ordem": null
+   },
+   "categorias": [],
+   "ordem": null
+  }
+ }
+]

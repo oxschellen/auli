@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 9 de **FAQs** (SC, PR, SP, MG, MS, MT, GO, DF e AM). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 13 de **FAQs** (RS, SC, PR, SP, MG, MS, MT, GO, DF, AM, MA, PE e CE). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -32,6 +32,7 @@
 - [TO — Carta de Serviços SEFAZ-TO (servicos.to.gov.br)](#to)
 - [RS Pareceres — Portal de Legislação / Consultas Formais Respondidas](#rs-pareceres)
 - [TARF — Tribunal Administrativo de Recursos Fiscais do RS (tarf.sefaz.rs.gov.br)](#tarf)
+- [RS FAQs — Perguntas Frequentes do Portal de Serviços da Receita (atendimento.receita.rs.gov.br)](#rs-faqs)
 - [SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)](#sc-faqs)
 - [PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)](#pr-faqs)
 - [SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)](#sp-faqs)
@@ -41,6 +42,8 @@
 - [GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)](#go-faqs)
 - [DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e](#df-faqs)
 - [AM FAQs — Perguntas Frequentes das páginas do Portfólio de Serviços (www.sefaz.am.gov.br)](#am-faqs)
+- [MA FAQs — Perguntas Frequentes do Portal SGC (portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes)](#ma-faqs)
+- [PE FAQs — Perguntas e Respostas do IPVA e do ITCMD (www.sefaz.pe.gov.br/Servicos/…/Perguntas-e-Respostas.aspx)](#pe-faqs)
 - [CE FAQs — Perguntas e respostas do Portal de Serviços da SEFAZ-CE (portalservicos.sefaz.ce.gov.br)](#ce-faqs)
 
 ---
@@ -1719,6 +1722,67 @@ citável pelo chat; tirá-lo é decisão humana (apagar o `.md` e rodar o `build
 
 ---
 
+<a id="rs-faqs"></a>
+
+# RS FAQs — Perguntas Frequentes do Portal de Serviços da Receita (atendimento.receita.rs.gov.br)
+
+**Scraper:** coleção `faqs` do `auli-scraper-rs` (`auli-scraper-rs faqs`, ou `all` = FAQs + serviços), a
+primeira coleção de FAQs do acervo — anterior ao REGISTRO, e por isso sem seção até a troca de raiz de
+06/11/2026, registrada aqui. Módulo `src/faqs/` (`mod.rs` caminha, `fetch.rs` busca, `html.rs` extrai).
+
+## Fonte
+
+Portal "Matriz" da PROCERGS. Cada página declara em `data-matriz-source-uri` a chamada AJAX que traz o seu
+miolo (`/_service/conteudo/pagedlistfilho?id=<N>&templatename=<template>`), e o **template** diz o que a
+página é: `pagina.listapagina.categoriafaq[.comnavegacao]` = **menu** (filhos = categorias ou listas),
+`pagina.listapagina.sanfona.comnavegacao` = **lista de FAQ** (sanfona de pergunta/resposta); qualquer outro
+template é `Geral` (nó sem filhos e sem itens). O scraper lê a raiz, pede o AJAX com `currentPage=1&pageSize=100`,
+fatia o `body` (JSON) por `class="panel panel-default"` e desce recursivamente pelos menus; a trilha (`origin`)
+vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 menus, 251 listas, 19 `Geral`) e
+644 arquivos no cache — ~650 requisições por rodada.
+
+## As armadilhas
+
+1. **O F5 na frente do `_service/*` (desde out/2026)** rejeita o ureq pela impressão do cliente e devolve o
+   desafio JS do Bot Defense **com HTTP 200** (`window["bobcmn"]`/TSPD); o bloqueio do ASM é
+   `<title>Request Rejected</title>`. Por isso o AJAX vai por `get_via_curl` com o `Accept` de um `$.getJSON`
+   (`application/json, text/javascript, */*; q=0.01`), as páginas seguem no ureq, e nenhuma das duas páginas
+   do F5 entra no cache (cache-first SEMPRE: gravada uma vez, envenenaria todas as rodadas seguintes) — na
+   página quem a recusa é `f5::bloqueio_f5`; no AJAX, o desafio não é JSON e a leitura do `body` falha antes
+   de gravar. As páginas de conteúdo ainda passam com UA de navegador (D-FROTA-UA: legado,
+   nunca testado com `AuliBot` neste host).
+2. **A raiz mudou de template em nov/2026.** `/perguntas-frequentes` virou um **índice novo**: sem
+   `data-matriz-source-uri`, sem `panel panel-default`, ~5 MB com **1.854 perguntas de 233 páginas inline**
+   (links `/<página>#panel-<N>`, 2.701 "Publicação:") agrupadas em seis acordeões (`#abx-icms`, `-ipva`,
+   `-itcd`, `-taxas`, `-nfg`, `-ecac`). A caminhada o classifica como `Geral` e colhe **zero** — o que a
+   guarda de `faqs::run` transforma em erro sem tocar snapshot nem árvore. O portal preservou a raiz antiga em
+   **`/perguntas-frequentes-antigo`** (`id=108&templatename=pagina.listapagina.categoriafaq.comnavegacao`) — o
+   **mesmo nó**: no cache de 01/11 a raiz `/perguntas-frequentes` declarava exatamente esse `id=108` —, e as
+   páginas-filhas não mudaram de URL; a raiz do scraper passou a apontar para lá (06/11/2026). O 1º nível da
+   árvore é o que o `body` do `id=108` lista (17 nós em 01/11), não a barra "Seções" das páginas de categoria.
+   "-antigo" é nome de página em despedida: se sumir, a mesma guarda avisa. O índice novo é candidato a fonte
+   futura (um GET em vez de ~650 requisições; invariante dinâmico de graça: âncoras `#panel` == perguntas
+   colhidas), mas perde a trilha do breadcrumb e mostra menos: 1.854 perguntas de 233 páginas, contra 1.990 de
+   251 listas na árvore de 01/11 — o estudo à parte (não patch) tem de explicar a diferença.
+3. **Queda parcial é silenciosa.** Erro ao caminhar uma página vira `eprintln!` e o laço segue; falha no AJAX
+   devolve nó vazio — uma categoria que caia leva a subárvore inteira. Vale também para o F5: abaixo da raiz,
+   o desafio/bloqueio é um erro como outro qualquer (`Error walking` / `Error fetching body`). Quem pega isso é a guarda de
+   encolhimento de `scripts/tools/update-rs-faqs.sh` (compara com o `.anterior`).
+
+## Guardas e transporte
+
+- `Err` sem gravar nada: zero FAQs na caminhada; página da **raiz** que devolva o desafio/bloqueio do F5.
+  Nas páginas-filhas, e no AJAX de qualquer nó, o mesmo erro só derruba a subárvore daquele nó (armadilha 3)
+  — o AJAX da raiz leva a árvore toda, e aí quem para é a guarda de zero FAQs.
+- Cache-first sempre (`data/rs/raw/cache/faqs/`, página e `_body` por URL); `--usecache` = miss vira erro.
+  Trocar a raiz cria um arquivo de cache novo para ela; o das filhas continua válido.
+- `retry` 3× com backoff; AJAX por `curl`, páginas por ureq; UA de navegador nos dois.
+- Saída: `data/rs/raw/rs-faqs-tree.json` (a árvore que a aba de FAQs consome — único artefato sem outra
+  fonte) e `data/rs/rs-faqs-snapshot.json`, nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-rs-faqs.sh` (apaga o cache antes; guarda de encolhimento).
+
+---
+
 <a id="sc-faqs"></a>
 
 # SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)
@@ -2305,6 +2369,113 @@ entre páginas irmãs).
   perguntas próprias as tem no próprio nó; nós no detalhe, ou na listagem quando a categoria não tem perguntas) e
   `data/am/am-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-am-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="ma-faqs"></a>
+
+# MA FAQs — Perguntas Frequentes do Portal SGC (portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes)
+
+**Discovery e implantação:** 06/11/2026. Estudo, medições e decisões D-MAFAQ-1..4:
+[`docs/ESTUDO-MA-Faqs.md`](ESTUDO-MA-Faqs.md). Coleção `faqs` do `auli-scraper-ma` (`auli-scraper-ma faqs`, ou
+`all` = serviços + FAQs). **336 perguntas** em 20 raízes e 55 subcategorias na rodada de 06/11.
+
+## Fonte
+
+A página "Perguntas Frequentes" do Portal SGC — o mesmo SPA Angular sobre a API Spring dos serviços (`#ma`). O módulo
+da página (chunk lazy `src_app_portal_faq_faq_module_ts`, achado pelo mapa de chunks do `runtime.js`) chama
+`GET /sgc/api/faq/perguntas/faq?publicado=true` com o mesmo token anônimo (login com as credenciais públicas do
+bundle, header `AuthorizationPortal`); sem token, 401. **Uma chamada** traz tudo: `id`, `pergunta` (texto puro),
+`resposta` (HTML de editor rico), `ativo`, `publicado` e `categoria` (`{id, nome, ordem, ativo, publico,
+categoriaPai}`). Nenhum host da SEFAZ-MA tem `robots.txt` (404).
+
+## As armadilhas
+
+1. **O filtro é obrigatório e é o único que vale.** Sem `publicado=true` vêm 353 itens: os 17 a mais são da categoria
+   inativa "DFE.02 - CANAL VERDE", que a página não mostra — e que dizem `publicado: true` no próprio item. A coleta
+   manda o filtro exatamente como a página e não filtra por flag nenhum do lado dela.
+2. **A `categoriaPai` aninhada vem rasa.** Dentro de uma subcategoria, a mãe chega com `ordem: null` e `ativo: false`
+   (valores de omissão); na pergunta pendurada direto na raiz, a mesma categoria vem completa (`ordem` 0–20). Nome e
+   ordem da raiz saem só daí — como na página, que só desenha um grupo que tem pergunta própria. Por isso toda raiz
+   com subcategorias tem 1 pergunta de apresentação ("Sobre o IPVA", "Sobre a EFD"…), e subcategoria cuja raiz não
+   tem nenhuma é `Err` (a página não a mostraria).
+3. **Sem rota por pergunta.** O template é um acordeão (`ngbCollapse` + `innerHTML`) sem `id`, âncora nem parâmetro:
+   as 336 têm o link da página, e o nome do `.md` (pergunta + hash de link e pergunta) depende só da pergunta. Duas
+   "Sobre a seção" (RTC e Ativação de Novas Empresas) colidiriam → a pergunta que aparece em mais de uma raiz ganha o
+   nome da raiz entre parênteses (D-MAFAQ-2); repetida dentro da mesma raiz é `Err`.
+4. **Espaços nos nomes** (`" REFIS - …"`, `"NOVO SISTEMA DE  DOWNLOAD …"`) e nas perguntas (`"IP.01.001 -  Qual…"`):
+   normalizados. **`U+FEFF`** colado ao texto em 6 respostas: removido (o `clean` do kit não o tira).
+5. **HTML de editor rico**: `<p>`, `<br>`, `<strong>`, listas, 370 links, muito `<p><br></p>`; sem imagem nem iframe.
+   Conversão por regex (link → `texto "url"`, bloco → quebra de linha, entidades decodificadas, linhas vazias fora).
+   Três `href` vêm malformados na fonte (um e-mail sem `mailto:`, um host sem esquema, um trecho de texto) e ficam
+   como vieram.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: resposta fora do formato; `id` repetido; categoria sem nome; categoria de
+  três níveis; subcategoria sem raiz com pergunta própria; acervo vazio; pergunta sem texto; pergunta repetida
+  depois da desambiguação; o login ou a chamada que falhe. Aviso: resposta vazia depois da conversão (0 em 06/11).
+- **Sempre à rede**; o cache em `data/ma/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- 1 login + 1 GET com o UA `AuliBot`, segundos. O agente é o dos serviços, com o intermediário GlobalSign embutido;
+  desde 11/2026 o `portal-sgc` manda a cadeia inteira, e a âncora segue valendo (mesmo emissor).
+- Ordem: raízes pela `ordem`, subcategorias pelo `id` (como a página), perguntas pelo texto (`id` desempata).
+- Saída: `data/ma/raw/ma-faqs-tree.json` (raiz → `Faq` por raiz sem subcategoria, `Menu` com a pergunta de
+  apresentação e um `Faq` por subcategoria nas outras; tudo com o link da página, itens sem `url`) e
+  `data/ma/ma-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha `<raiz>` ou `<raiz> | <subcategoria>`), nessa
+  ordem e atômicos.
+- Atualização: `scripts/tools/update-ma-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="pe-faqs"></a>
+
+# PE FAQs — Perguntas e Respostas do IPVA e do ITCMD (www.sefaz.pe.gov.br/Servicos/…/Perguntas-e-Respostas.aspx)
+
+**Discovery e implantação:** 06/11/2026. Estudo, medições e decisões D-PEFAQ-1..6:
+[`docs/ESTUDO-PE-Faqs.md`](ESTUDO-PE-Faqs.md). Coleção `faqs` do `auli-scraper-pe` (`auli-scraper-pe faqs`, ou
+`all` = serviços + FAQs). **59 perguntas** (IPVA 40, ITCMD 19) na rodada de 06/11.
+
+## Fonte
+
+Duas páginas de publicação do mesmo SharePoint 2013 dos serviços: `/Servicos/IPVA/Paginas/Perguntas-e-Respostas.aspx`
+e `/Servicos/ICD/Paginas/Perguntas-e-Respostas.aspx`, ambas atualizadas para 2025/2026 (EC 137/2025, LC 563/2025). A
+`_api` e o `listdata.svc` respondem 403 ("Acesso Negado") → HTML server-side, lista curada (molde PA/PR), 2 GETs de
+~800 KB com 1 s entre eles. O corpo de cada página é o único `div.ms-rtestate-field[id$="_RichHtmlField"]`.
+`robots.txt` gerido pela Cloudflare: `User-agent: *` → `Allow: /`, `Content-Signal: search=yes,ai-train=no,
+use=reference`; ~35 robôs nomeados com `Disallow: /`, não o AuliBot.
+
+## As armadilhas
+
+1. **A pergunta é o número, não o negrito.** O negrito é irregular (`<b>` depois de `<a name>`, número e texto em
+   `<strong>` separados, `<strong>` partido no meio da palavra). A coleta segmenta pela sequência: `N. ` com N = a
+   anterior + 1 abre pergunta; `N.M - ` com N = a atual, M = o subitem seguinte e texto terminado em "?" também
+   (IPVA 5.1; ITCMD 11.1, 11.2). Os 4.1/4.2 do ITCMD não terminam em "?" — são partes da resposta 4.
+2. **As respostas têm listas numeradas** (IPVA: 14 linhas; ITCMD: 2) que recomeçam em 1 e nunca alcançam a pergunta
+   seguinte. Número acima do esperado é `Err` (a numeração pulou); o número da pergunta atual repetido numa linha
+   com "?" também — seria o sinal de uma lista que "roubou" a vez da pergunta.
+3. **Espaço depois do ponto.** Na tabela de alíquotas do ITCMD, "19.600,00" e "34.600,00" casariam "19." e "34.".
+4. **Tabelas são resposta** (calendário de vencimentos do IPVA, alíquotas do ITCMD): as células embrulham o texto em
+   `<p>`, então linha com mais de uma célula vira UMA linha, células com ` | `. Linha de uma célula só (as caixas
+   "IMPORTANTE") segue como bloco.
+5. **O IPVA fecha com `<hr>` + rodapé** da Gerência de IPVA ("O órgão que normatiza… Estamos prontos a lhe prestar
+   serviços"): o `<hr>` corta a resposta até a próxima pergunta. O que vem antes da 1ª pergunta também sai (ITCMD:
+   a nota da LC 563/2025).
+6. **Entidades numéricas** (`&#58;` ~2,6 mil vezes, `&#160;`) e `U+200B` em rajadas: DOM (html5ever) + `clean`, não
+   regex + `decode_entities`.
+7. **Âncoras parciais.** 16 das 39 perguntas de 1º nível do IPVA têm `<a name="N">`: essas levam `página#N`; as outras
+   (e todo o ITCMD) levam a página.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: página sem o campo de conteúdo ou com mais de um; página sem pergunta;
+  numeração que pula; número repetido; pergunta sem resposta; par (link, pergunta) repetido; um GET que falhe.
+- **Sempre à rede**; o cache em `data/pe/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- `ureq` com o UA `AuliBot` (D-FROTA-UA, D-PEFAQ-5) — a D-PE4 dos serviços (UA de navegador) não muda.
+- Saída: `data/pe/raw/pe-faqs-tree.json` (raiz → um `Faq` por tributo; item com `url` só quando tem âncora) e
+  `data/pe/pe-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha = o tributo), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-pe-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
 
 ---
 

@@ -89,6 +89,26 @@ Numa conversa nova, com o conector ligado, escreva:
 A resposta deve listar os quatro estados com as quantidades da tabela acima. Se listou, está
 funcionando.
 
+## As cinco ferramentas, e como pedi-las
+
+Você não chama ferramenta nenhuma: pergunta em português e o Claude escolhe qual usar. Mas ajuda
+saber o que existe por baixo — são cinco, e a frase certa leva à ferramenta certa. Diga sempre **o
+estado**: quatro das cinco ferramentas exigem a UF, e sem ela o Claude tem de escolher uma por conta
+ou perguntar qual.
+
+[//]: # (manter em sincronia com auli-frontend/src/pages/mcplist/McpList.tsx — FERRAMENTAS)
+
+| Ferramenta | O que faz | Diga, por exemplo |
+|---|---|---|
+| `listar_entidades` | Quais estados têm acervo e o que cada um tem, com os totais. Sem parâmetros. | *"Quais estados têm acervo no Auli, e o que cada um tem?"* |
+| `buscar_pareceres` | Busca por sentido na jurisprudência de uma UF. Devolve número, assunto, sinopse e link — **sem o corpo**. Aceita `top_k` (1 a 20, padrão 5) e `colecao`: `pareceres` (padrão) ou `tarf`. | *"Em Santa Catarina, o que já foi respondido sobre crédito de ICMS na energia elétrica?"* — ou *"O que o TARF do RS já decidiu sobre…"*. Quer mais? *"Traga os 15 mais próximos."* |
+| `obter_parecer` | O texto integral de **um** documento, pelo número exato que a busca devolveu, na mesma coleção. O Claude só a usa se você pedir o texto completo. | *"Me mostre o texto completo do mais relevante."* — ou *"Abra a íntegra do segundo da lista."* |
+| `consultar_servicos_faqs` | Para dúvidas de **como fazer**: até 5 serviços e 10 FAQs da UF mais próximos da pergunta, num bloco só. | *"No Rio Grande do Sul, como faço para emitir a segunda via da guia do IPVA?"* |
+| `buscar_legislacao` | Para o que a **lei** diz: pares pergunta/resposta com o dispositivo citado e o link oficial. Disponível só onde `listar_entidades` o reporta. | *"O que a lei do RS exige de uma locadora para pagar a alíquota menor de IPVA?"* |
+
+O encadeamento típico é `listar_entidades` → `buscar_pareceres` → `obter_parecer`: o Claude descobre
+o que existe, busca, e só então abre a íntegra do que você escolheu.
+
 ## Como perguntar bem
 
 São três frentes — a **legislação**, os **pareceres e consultas tributárias** e os **serviços de
