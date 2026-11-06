@@ -104,7 +104,7 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **ma** | SEFAZ-MA / Maranhão | Portal SGC (Angular + Spring); login anônimo público + `GET /portal/servicos` + `conteudos/{id}` | JSON | 4 | 38 | **rica** (conteúdo) | direto | 6 | **rustls + cert** |
 | **ap** | SEFAZ-AP / Amapá | SPA Angular; catálogo **hardcoded no bundle JS** (`mock*` no chunk lazy, descoberto via runtime) | JS (bundle) | 1 | 49 | **rica** (embutida) | direto | 5 | **rustls + cert** |
 | **ac** | SEFAZ-AC / Acre | WordPress + Elementor; Carta (`page_id=6732`) → 17 posts (`?p=`), corpo em `.elementor-widget-theme-post-content` | HTML | 1 | 17 | **rica** (post) | direto | 4 | **rustls + cert** |
-| **df** | SEFAZ-DF / Distrito Federal | Carta de Serviços (ColdFusion); a listagem embute a **árvore JS inteira** (1 fetch → 472), detalhe `servico.cfm` accordion `.panel-body` | HTML | 2 | 472 | **rica** (~893) | direto | 4 | **curl (WAF JA3)** |
+| **df** | SEFAZ-DF / Distrito Federal | Carta de Serviços (ColdFusion); a listagem embute a **árvore JS inteira** (1 fetch → 476), detalhe `servico.cfm` accordion `.panel-body` | HTML | 2 | 476 | **rica** (~1.077) | direto | 4 | **curl (WAF JA3)** |
 | **rn** | SEFAZ-RN / Rio Grande do Norte | WordPress + SPA React; WP REST `wp/v2/servicos` (15 cards), enriquece os que linkam `/postagem/` com o ACF `Matéria` | JSON | 1 | 15 | **parcial** (5/15, post) | direto | 4 | rustls |
 | **pb** | SEFAZ-PB / Paraíba | Carta de Serviços (PHP); `servicos.php` accordion → `saibamais.php?id=N` ficha rica (pares `<h3>/<h6>`) | HTML | 2 | 101 | **rica** (~1584) | direto | 4 | rustls |
 | **al** | SEFAZ-AL / Alagoas | Portal Alagoas Digital (API REST pública, "Dados Abertos"); `organs.json`→`services.json?organ_id`→`services/{id}.json` | JSON | 7 | 60 | **rica** (~1030) | direto | 6 | rustls |
@@ -547,7 +547,7 @@ robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot.
 - **Carta de Serviços em ColdFusion** (`receita.fazenda.df.gov.br/aplicacoes/CartaServicos/`). Achado
   central: **qualquer** `listaSubCategorias.cfm?...` (independente dos params) embute a **árvore
   inteira** do catálogo como um objeto JS — subcategorias mapeando para
-  `{'item':[{'url':'…servico.cfm?…','desc':'Título'}, …]}`. Logo **1 fetch** enumera os **472**
+  `{'item':[{'url':'…servico.cfm?…','desc':'Título'}, …]}`. Logo **1 fetch** enumera os **476**
   serviços; cada `servico.cfm` traz a descrição rica num **accordion** (`div.panel-body`: Descrição,
   prazo, requisitos, canais, legislação). Parse por regex dos tuplos `url`/`desc`; a **classe** é a
   chave-pai imediata (subcategoria, 142 distintas). Sem headless.
@@ -555,10 +555,13 @@ robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot.
   `curl` — allowlist por fingerprint TLS, como o GO. Toda a coleta via `kit::http::get_via_curl`
   (subprocess curl; requer `curl` no PATH). A cadeia de certificados em si fecha (o bloqueio é do
   ClientHello do ureq).
-- **público** = `codTipoPessoa`: Cidadão (6/22, 168 svc) e Empresa (7/8, 304 svc); **classe** =
+- **UA:** o `AuliBot` da frota (`crate::UA`) nas duas coleções desde 06/11/2026 — na troca, a recoleta
+  devolveu os 475 serviços idênticos aos de 02/11 (+1 novo do portal). Até ali os serviços iam com o UA de
+  navegador, por legado.
+- **público** = `codTipoPessoa`: Cidadão (6/22, 171 svc) e Empresa (7/8, 305 svc); **classe** =
   subcategoria; `link` = a URL absoluta do `servico.cfm` (única por serviço); identidade = `codServico`.
-- 472 serviços, 142 classes, descrição rica (~893). 4 testes. `ServicoRaw` direto. Descoberta em
-  `docs/REGISTRO-scrapers.md#df`. (02/11/2026: 475 serviços, 139 classes.)
+- 476 serviços (06/11/2026; 472 na descoberta), 139 classes, descrição rica (~1.077). 4 testes. `ServicoRaw`
+  direto. Descoberta em `docs/REGISTRO-scrapers.md#df`.
 - **FAQs** (`auli-scraper-df faqs`, `faqs.rs`): duas fontes. As Perguntas e Respostas do Portal da Receita (mesmo
   host, mesmo WAF → curl, agora com o AuliBot): a casca dá os temas e os tipos de atendimento, e as perguntas chegam
   por POST de formulário (`kit::http::post_form_via_curl`) — o tema inteiro e cada tipo, que vira o 3º nível da

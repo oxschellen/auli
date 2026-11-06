@@ -1,5 +1,5 @@
 // auli-scraper-df — scraper da SEFAZ-DF (serviços, receita.fazenda.df.gov.br — Carta de Serviços).
-// Sem headless: a listagem ColdFusion embute a árvore inteira do catálogo (472 serviços) como um
+// Sem headless: a listagem ColdFusion embute a árvore inteira do catálogo (~476 serviços) como um
 // objeto JS; cada `servico.cfm` traz a descrição rica num accordion.
 //
 // As FAQs vêm de duas fontes — as Perguntas e Respostas do Portal da Receita (mesmo host) e as do sistema
@@ -14,6 +14,10 @@ mod faqs;
 /// A entidade que este scraper conhece (um crate binário por entidade).
 pub const ENTITY: &str = "df";
 const DATA_DIR: &str = "../data/df/raw";
+/// A identidade da frota (D-FROTA-UA), nas duas coleções; os dois hosts a aceitam (FAQs: sondagem de
+/// 02/11/2026; serviços: recoleta verificada de 06/11/2026).
+pub(crate) const UA: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // CLI: auli-scraper-df [--usecache] servicos|faqs|all   (omitido -> servicos)

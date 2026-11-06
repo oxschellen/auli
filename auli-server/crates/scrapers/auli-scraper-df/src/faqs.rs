@@ -29,9 +29,6 @@ const ISS: &str = "https://iss.fazenda.df.gov.br/online/Default/PerguntasFrequen
 const FONTE_RECEITA: &str = "Receita-DF";
 const FONTE_ISS: &str = "ISS/NFS-e";
 
-/// A identidade das FAQs da frota (D-FROTA-UA); os dois hosts a aceitam (sondagem de 02/11/2026).
-const UA: &str =
-    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 const COURTESY: Duration = Duration::from_millis(1000);
 
 /// Pisos (estudo §4, revistos na F0): 22 temas, 900 perguntas da Receita e 95 do ISS em 02/11/2026.
@@ -67,7 +64,7 @@ pub fn run(data_dir: &str, use_cache: bool) -> Result<()> {
     piso(perguntas.len(), MIN_RECEITA, "pergunta(s) da Receita")?;
     let da_receita = perguntas.len();
 
-    let agent = auli_scraper_kit::build_agent(UA, Some(Duration::from_secs(60)));
+    let agent = auli_scraper_kit::build_agent(crate::UA, Some(Duration::from_secs(60)));
     let iss = com_cache(data_dir, ISS, use_cache, || {
         auli_scraper_kit::http::get_string(
             &agent,
@@ -114,14 +111,14 @@ fn buscar_receita(data_dir: &str, consulta: Option<(u32, u32)>, use_cache: bool)
     let busca = format!("{RECEITA}/perguntasFreqBusca_div.cfm");
     let corpo = match consulta {
         None => com_cache(data_dir, &casca, use_cache, || {
-            auli_scraper_kit::http::get_via_curl(&casca, UA, &opts)
+            auli_scraper_kit::http::get_via_curl(&casca, crate::UA, &opts)
         })?,
         Some((tema, tipo)) => {
             let chave = format!("{busca}?codAssunto={tema}&selectTipoAtendimento={tipo}");
             com_cache(data_dir, &chave, use_cache, || {
                 auli_scraper_kit::http::post_form_via_curl(
                     &busca,
-                    UA,
+                    crate::UA,
                     &[
                         ("selectTipoAtendimento", &tipo.to_string()),
                         ("codAssunto", &tema.to_string()),

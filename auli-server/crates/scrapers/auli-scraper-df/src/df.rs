@@ -3,7 +3,7 @@
 //! O portal da Receita/SEEC-DF expõe a Carta em `receita.fazenda.df.gov.br/aplicacoes/CartaServicos/`
 //! (app ColdFusion). Achado central: **qualquer** `listaSubCategorias.cfm?...` (independente dos
 //! params) embute a **árvore inteira** do catálogo como um objeto JS — subcategorias mapeando para
-//! `{'item':[{'url':'…servico.cfm?…','desc':'Título'}, …]}`. Logo **1 fetch** enumera os 472 serviços.
+//! `{'item':[{'url':'…servico.cfm?…','desc':'Título'}, …]}`. Logo **1 fetch** enumera os ~476 serviços.
 //! Cada `servico.cfm` traz a descrição rica num accordion (`div.panel-body`).
 //!
 //! Modelagem: `titulo` = `desc` da árvore; `classe` = subcategoria (chave-pai imediata); `publico` =
@@ -30,9 +30,9 @@ const HOST: &str = "https://www.receita.fazenda.df.gov.br";
 const LISTA_URL: &str = "https://www.receita.fazenda.df.gov.br/aplicacoes/CartaServicos/listaSubCategorias.cfm?codCategoriaServico=6&codTipoPessoa=6";
 
 const ORGAO: &str = "SEFAZ-DF";
-/// Cortesia entre GETs (a listagem + 472 detalhes).
+/// Cortesia entre GETs (a listagem + ~476 detalhes).
 const COURTESY: Duration = Duration::from_millis(300);
-/// Guard: piso de serviços (o catálogo tem ~472).
+/// Guard: piso de serviços (o catálogo tem ~476).
 const MIN_SERVICOS: usize = 400;
 
 const PUB_CIDADAO: &str = "Cidadão";
@@ -134,9 +134,9 @@ fn load(
     }
     let body = auli_scraper_kit::http::get_via_curl(
         url,
-        // D-FROTA-UA: UA de navegador por legado. O host aceita o AuliBot pelo curl (sondagem das FAQs,
-        // 02/11/2026), mas trocar aqui pede recoleta verificada dos serviços.
-        auli_scraper_kit::USER_AGENT,
+        // D-FROTA-UA: o AuliBot da frota (`crate::UA`) desde 06/11/2026, com recoleta verificada; até ali,
+        // o UA de navegador por legado.
+        crate::UA,
         &GetOpts {
             log_prefix: "DF",
             ..Default::default()
