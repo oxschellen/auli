@@ -1,8 +1,9 @@
 # ESTUDO-RS-Faqs-Indice — o índice novo `/perguntas-frequentes` como fonte das FAQs do RS
 
 **Data:** 2026-11-06 (1 GET do índice com o UA AuliBot, comparado com a coleta de 06/11 pela raiz `-antigo`). ·
-**Estado:** **estudo — nada implementado.** A coleta segue pela caminhada da raiz `/perguntas-frequentes-antigo`
-(#201). · **Origem:** [TAREFA-RS-FAQS-RAIZ.md](TAREFA-RS-FAQS-RAIZ.md) §1 e
+**Estado:** **D-RSFAQ-3..5 implementadas em 06/11/2026** (§11: botões fora das respostas, uma ocorrência por
+painel, link por pergunta); D-RSFAQ-2 (guarda) e D-RSFAQ-6 (plano B) em aberto. A coleta segue pela caminhada da
+raiz `/perguntas-frequentes-antigo` (#201). · **Origem:** [TAREFA-RS-FAQS-RAIZ.md](TAREFA-RS-FAQS-RAIZ.md) §1 e
 [REGISTRO-scrapers.md#rs-faqs](REGISTRO-scrapers.md#rs-faqs), armadilha 2 ("candidato a fonte futura… estudo à
 parte"). · **Pendência:** [auli_scraper_pendências.md](auli_scraper_pendências.md) §20.
 
@@ -190,3 +191,31 @@ As D-RSFAQ-2..5 cabem num PR só no `auli-scraper-rs`; a D-RSFAQ-6 só se o `-an
 
 Os scripts da análise ficaram fora do repositório (descartáveis); os números acima são da coleta de 06/11/2026 e do
 índice baixado no mesmo dia.
+
+## 11. Implementação das D-RSFAQ-3..5 (06/11/2026)
+
+No `auli-scraper-rs` (`src/faqs/`), sem mudar a fonte nem a caminhada:
+
+- **D-RSFAQ-3:** o conversor de HTML (`html_to_text_with_links`) descarta o `<button>…</button>` inteiro. São só os
+  2 botões de UI por painel (3.980 no cache de 06/11, todos `copiarLink`/`copiar`); a linha "Publicação:" fica.
+- **D-RSFAQ-5:** `extract_panel_anchor` lê o `panel-N` do link do título (`href="#panel-N"`, só dígitos) e o item sai
+  com `url = <página>#panel-N`; painel sem id fica com o link da página.
+- **D-RSFAQ-4:** `flatten_faqs_raw` guarda uma ocorrência por `panel-N` (a primeira na ordem da caminhada). A árvore
+  da aba de FAQs não muda; o log da coleta diz quantas cópias ficaram só nela.
+
+Verificação, com o cache da rodada de 06/11 (a mesma entrada, então toda diferença é do código):
+
+- 1.990 → **1.883** FAQs; os 107 que saem são exatamente as cópias do §3. A primeira ocorrência é a página canônica
+  do índice em 7 dos 9 casos (nas outras, `/faq-nff-produtor-rural` e `/link-erros-na-assinatura`, as duas URLs
+  abrem o mesmo painel).
+- Todo item com link único `#panel-N`; todo item com par no snapshot anterior (mesma página e pergunta), com a
+  **resposta igual à antiga menos o texto dos botões** (0 outras diferenças) e a **trilha igual**; nenhuma resposta
+  com "Copiar".
+- A árvore: as mesmas 251 páginas e 1.990 itens, agora com link por pergunta.
+- Os nomes dos `.md` mudam todos (o hash é de link + título), então o pack `rs-faqs` é re-vetorizado por inteiro uma
+  vez.
+
+A mesma rodada mostrou duas páginas que **nunca entraram no acervo** (não estão na árvore de agosto nem na de
+06/11, e o índice também não as lista): `/faq-nfcom` e `/manual-para-declaracao-de-itcd-faq` — o ureq recusa o
+corpo ("stream did not contain valid UTF-8"), provavelmente outra codificação. Fica registrado na pendência §20.
+

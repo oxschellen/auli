@@ -157,8 +157,10 @@ robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot.
 - **Serviços:** API JSON do Tudo Fácil (`fazenda.rs.gov.br/_service/tudofacil/capaservicos`) — não
   precisa mais de headless Chrome (era o único que usava).
 - **FAQs:** `atendimento.receita.rs.gov.br/perguntas-frequentes-antigo`, via AJAX (raiz `categoriafaq`
-  preservada pelo portal; desde nov/2026 `/perguntas-frequentes` é um índice novo com as perguntas inline,
-  candidato a fonte futura).
+  preservada pelo portal; desde nov/2026 `/perguntas-frequentes` é um índice novo com as perguntas inline —
+  estudado como guarda e plano B, `docs/ESTUDO-RS-Faqs-Indice.md`). Link por pergunta (`<página>#panel-N`), uma
+  ocorrência por painel no snapshot (o portal tem páginas-alias) e resposta sem o texto dos botões de UI
+  (D-RSFAQ-3..5).
 - **Pareceres** (Consultas Formais Respondidas): Portal de Legislação (`legislacao.sefaz.rs.gov.br`,
   ASP.NET WebForms/IIS, windows-1252) via **curl subprocess** (ureq recebe resposta degradada; cookie
   de sessão obrigatório, senão o servidor pendura). O filtro "Consultas Formais Respondidas" é **estado

@@ -73,6 +73,22 @@ pub fn extract_panel_body_text(panel_html: &str) -> String {
     html_to_text_with_links(inner)
 }
 
+/// O id do painel (`panel-N`) lido do link do título (`href="#panel-N"`): é a âncora que o portal usa
+/// para abrir a pergunta (`<página>#panel-N`, o que o botão "Copiar link" copia) — D-RSFAQ-5.
+pub fn extract_panel_anchor(panel_html: &str) -> Option<String> {
+    const MARKER: &str = r##"href="#panel-"##;
+    let inner = extract_element_inner_html(panel_html, "panel-title", "h4");
+    let start = inner.find(MARKER)? + MARKER.len();
+    let digits: String = inner[start..]
+        .chars()
+        .take_while(|c| c.is_ascii_digit())
+        .collect();
+    if digits.is_empty() || !inner[start + digits.len()..].starts_with('"') {
+        return None;
+    }
+    Some(format!("panel-{digits}"))
+}
+
 /// Title text of a menu item, read from the element matching `class_attr` up to its `</div>`.
 pub fn extract_question_title_from_class(html_chunk: &str, class_attr: &str) -> String {
     if let Some(class_pos) = html_chunk.find(class_attr)
@@ -145,7 +161,7 @@ fn extract_element_inner_html<'a>(html: &'a str, class_attr: &str, tag_name: &st
 /// Converts an HTML fragment to plain text.
 /// `<a href="...">text</a>` becomes `[text](url)`.
 /// Block-level tags (`<p>`, `<li>`, `<br>`, `<ul>`, `<ol>`) insert newlines.
-/// All other tags are stripped.
+/// `<button>…</button>` is dropped with its text. All other tags are stripped.
 fn html_to_text_with_links(html: &str) -> String {
     let mut result = String::new();
     let mut pos = 0;
@@ -185,6 +201,15 @@ fn html_to_text_with_links(html: &str) -> String {
                     pos = content_start + close_offset + 4;
                     continue;
                 }
+            }
+
+            // Botões de UI ("Copiar link", "Copiar resposta" — 2 por painel) não são conteúdo:
+            // some o elemento inteiro, texto incluído (D-RSFAQ-3).
+            if rest.starts_with("<button")
+                && let Some(close_offset) = rest.find("</button>")
+            {
+                pos += close_offset + "</button>".len();
+                continue;
             }
 
             // Other tags: strip, but insert newline for block elements

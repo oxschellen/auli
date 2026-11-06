@@ -1769,6 +1769,14 @@ vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 me
    devolve nó vazio — uma categoria que caia leva a subárvore inteira. Vale também para o F5: abaixo da raiz,
    o desafio/bloqueio é um erro como outro qualquer (`Error walking` / `Error fetching body`). Quem pega isso é a guarda de
    encolhimento de `scripts/tools/update-rs-faqs.sh` (compara com o `.anterior`).
+4. **Botões de UI dentro do painel.** Depois da linha "Publicação:", cada `panel-body` tem `<button
+   onclick="copiarLink(N)">Copiar link</button>` e `<button onclick="copiar(N)">Copiar resposta</button>` (2 por
+   painel, nenhum outro `<button>` no acervo). Até 06/11/2026 o texto deles entrava em toda resposta — e nos
+   vetores; o conversor agora descarta o `<button>` inteiro (D-RSFAQ-3).
+5. **Páginas-alias.** O portal publica alguns painéis em duas URLs (`/integracao` e `/notaintegrada`,
+   `/1-2-declaracao-de-conteudo-eletronica-dc-e` e `/faq-dc-e`…), e a caminhada visita as duas: em 06/11/2026, 107 dos
+   1.990 itens eram cópias. O `panel-N` é global, então o snapshot fica com a primeira ocorrência de cada painel na
+   ordem da caminhada (D-RSFAQ-4); a árvore da aba de FAQs segue com as duas páginas, como o portal.
 
 ## Guardas e transporte
 
@@ -1779,7 +1787,9 @@ vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 me
   Trocar a raiz cria um arquivo de cache novo para ela; o das filhas continua válido.
 - `retry` 3× com backoff; AJAX por `curl`, páginas por ureq; UA de navegador nos dois.
 - Saída: `data/rs/raw/rs-faqs-tree.json` (a árvore que a aba de FAQs consome — único artefato sem outra
-  fonte) e `data/rs/rs-faqs-snapshot.json`, nessa ordem e atômicos.
+  fonte) e `data/rs/rs-faqs-snapshot.json`, nessa ordem e atômicos. Cada pergunta com o próprio link,
+  `<página>#panel-N` — o hash que o portal usa para abrir o painel (`expandirAccordionPorHash`) e o que o botão
+  "Copiar link" copia (D-RSFAQ-5); o snapshot sem as cópias de painel (armadilha 5).
 - Atualização: `scripts/tools/update-rs-faqs.sh` (apaga o cache antes; guarda de encolhimento).
 
 ---

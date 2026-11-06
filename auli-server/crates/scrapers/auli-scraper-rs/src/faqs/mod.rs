@@ -13,6 +13,9 @@
 //   - The actual list/FAQ markup is loaded from an AJAX endpoint (`<base><source_uri>&...&pageSize=100`)
 //     that returns JSON with the rendered HTML in a `body` field.
 //   - We recurse through menus, collecting FAQ question/answer pairs at the leaves.
+//   - Each question has its own link, `<page>#panel-N` (the portal opens the panel from the hash); the
+//     same panel can sit on two URLs (alias pages), and the snapshot keeps it once. Decisions D-RSFAQ-3..5
+//     in docs/ESTUDO-RS-Faqs-Indice.md.
 
 mod fetch;
 mod html;
@@ -62,6 +65,11 @@ pub fn run(source: &FaqSource) -> Result<()> {
     // fonte. Queda parcial (uma subárvore) continua passando: quem a pega é o guard dos
     // `scripts/tools/update-rs-*.sh`, que guarda o snapshot anterior.
     let faqs = flatten_faqs_raw(&tree);
+    println!(
+        "FAQs: {} ({} cópias do mesmo painel em outra URL ficam só na árvore)",
+        faqs.len(),
+        contar_itens(&tree) - faqs.len()
+    );
     if faqs.is_empty() {
         return Err(format!(
             "nenhuma FAQ colhida a partir de {} — snapshot e árvore anteriores mantidos",
@@ -94,30 +102,50 @@ pub fn run(source: &FaqSource) -> Result<()> {
 }
 
 /// Achata a árvore em `Vec<FaqRaw>` para o snapshot: começa pelos filhos da raiz e emite um `FaqRaw`
-/// por `FaqItem` de cada nó-folha `Faq`, na ordem em que aparecem. Não materializa `text_to_embed`
-/// (isso é do [`process`]).
+/// por `FaqItem` de cada nó-folha `Faq`, na ordem em que aparecem, com o link da pergunta (o da página
+/// quando o item não tem). Não materializa `text_to_embed` (isso é do [`process`]).
+///
+/// D-RSFAQ-4: o portal publica alguns painéis em duas URLs (página-alias — `/integracao` e
+/// `/notaintegrada` são o mesmo conteúdo), e a caminhada colhe as duas. O snapshot fica com uma
+/// ocorrência por painel (`panel-N`), a primeira na ordem da caminhada. A árvore da aba de FAQs não muda:
+/// mostra as duas páginas, como o portal.
 pub fn flatten_faqs_raw(root: &FaqNode) -> Vec<auli_contract::FaqRaw> {
     let mut out = Vec::new();
+    let mut paineis = HashSet::new();
     for child in &root.children {
-        collect_faqs_raw(child, &mut out);
+        collect_faqs_raw(child, &mut paineis, &mut out);
     }
     out
 }
 
-fn collect_faqs_raw(node: &FaqNode, out: &mut Vec<auli_contract::FaqRaw>) {
+fn collect_faqs_raw(
+    node: &FaqNode,
+    paineis: &mut HashSet<String>,
+    out: &mut Vec<auli_contract::FaqRaw>,
+) {
     if node.page_type == PageType::Faq {
         for item in &node.faq_items {
+            if let Some((_, painel)) = item.url.as_deref().and_then(|u| u.rsplit_once('#'))
+                && !paineis.insert(painel.to_string())
+            {
+                continue;
+            }
             out.push(auli_contract::FaqRaw {
                 pergunta: item.pergunta.clone(),
                 resposta: item.resposta.clone(),
                 origin: node.origin.clone(),
-                url: node.url.clone(),
+                url: item.url.clone().unwrap_or_else(|| node.url.clone()),
             });
         }
     }
     for child in &node.children {
-        collect_faqs_raw(child, out);
+        collect_faqs_raw(child, paineis, out);
     }
+}
+
+/// Quantos `FaqItem` a árvore tem (com as cópias de painel que o snapshot descarta).
+fn contar_itens(node: &FaqNode) -> usize {
+    node.faq_items.len() + node.children.iter().map(contar_itens).sum::<usize>()
 }
 
 /// Walk the portal and return the FAQ tree without writing anything.
@@ -181,7 +209,7 @@ fn walk(
         PageType::Faq => {
             node.origin = html::extract_breadcrumbs(&page_html);
             node.title = html::extract_page_title(&page_html);
-            node.faq_items = extract_faq_items(&body_html);
+            node.faq_items = extract_faq_items(url, &body_html);
         }
         PageType::Menu => {
             for item in extract_menu_items(&source.base_url, &body_html) {
@@ -235,8 +263,10 @@ fn extract_menu_items(base_url: &str, html: &str) -> Vec<MenuItem> {
     items
 }
 
-/// Extracts question/answer pairs from a FAQ page's AJAX body (one per `panel panel-default`).
-fn extract_faq_items(html: &str) -> Vec<FaqItem> {
+/// Extracts question/answer pairs from a FAQ page's AJAX body (one per `panel panel-default`). Each item
+/// links to its own question, `<page_url>#panel-N` (D-RSFAQ-5); a panel without an id keeps `url: None`
+/// (the page link).
+fn extract_faq_items(page_url: &str, html: &str) -> Vec<FaqItem> {
     let mut items = Vec::new();
 
     for panel in panels(html) {
@@ -248,7 +278,7 @@ fn extract_faq_items(html: &str) -> Vec<FaqItem> {
         items.push(FaqItem {
             pergunta,
             resposta,
-            url: None,
+            url: html::extract_panel_anchor(panel).map(|a| format!("{page_url}#{a}")),
         });
     }
 
@@ -378,5 +408,95 @@ mod tests {
         assert!(r.is_err(), "coleta com 0 FAQs tem de ser erro");
         assert_eq!(snapshot_depois, "SNAPSHOT BOM");
         assert_eq!(arvore_depois, "ARVORE BOA");
+    }
+
+    /// Recorte real: os 2 primeiros painéis do AJAX de `/alerta-de-divergencia` (06/11/2026), com os botões.
+    const BODY_RECORTE: &str = include_str!("../../tests/fixtures/rs-faqs-body-recorte.html");
+
+    /// D-RSFAQ-5 e D-RSFAQ-3: cada pergunta com o próprio link (`#panel-N`), e a resposta sem o texto dos
+    /// botões "Copiar link" / "Copiar resposta" — mas com a linha "Publicação:", que é conteúdo.
+    #[test]
+    fn extract_faq_items_link_por_pergunta_e_resposta_sem_os_botoes() {
+        let page = "https://atendimento.receita.rs.gov.br/alerta-de-divergencia";
+        let items = extract_faq_items(page, BODY_RECORTE);
+        assert_eq!(items.len(), 2);
+        assert_eq!(
+            items.iter().map(|i| i.url.as_deref()).collect::<Vec<_>>(),
+            [
+                Some(format!("{page}#panel-1695").as_str()),
+                Some(format!("{page}#panel-1696").as_str()),
+            ]
+        );
+        assert!(
+            items[0]
+                .pergunta
+                .contains("O que é o Alerta de Divergência?")
+        );
+        for item in &items {
+            assert!(
+                !item.resposta.contains("Copiar"),
+                "texto de botão na resposta: {}",
+                item.resposta
+            );
+            assert!(
+                item.resposta.ends_with("Publicação: 13/07/2022 às 12h50m"),
+                "{}",
+                item.resposta
+            );
+        }
+    }
+
+    fn com_url(pergunta: &str, url: &str) -> FaqItem {
+        FaqItem {
+            pergunta: pergunta.to_string(),
+            resposta: format!("resposta de {pergunta}"),
+            url: Some(url.to_string()),
+        }
+    }
+
+    /// D-RSFAQ-4: o mesmo painel em duas URLs (página-alias) entra no snapshot uma vez, pela primeira página
+    /// da caminhada; a árvore segue com as duas.
+    #[test]
+    fn flatten_descarta_a_copia_do_mesmo_painel_em_outra_url() {
+        let mut alias = faq_leaf("https://x/alias", "Inicial | A", &[]);
+        alias.faq_items = vec![
+            com_url("q7", "https://x/alias#panel-7"),
+            com_url("q8", "https://x/alias#panel-8"),
+        ];
+        let mut canonica = faq_leaf("https://x/canonica", "Inicial | B", &[]);
+        canonica.faq_items = vec![
+            com_url("q7", "https://x/canonica#panel-7"),
+            com_url("q9", "https://x/canonica#panel-9"),
+        ];
+        let root = menu("root", vec![alias, menu("m", vec![canonica])]);
+
+        let raw = flatten_faqs_raw(&root);
+        assert_eq!(
+            raw.iter().map(|f| f.url.as_str()).collect::<Vec<_>>(),
+            [
+                "https://x/alias#panel-7",
+                "https://x/alias#panel-8",
+                "https://x/canonica#panel-9"
+            ]
+        );
+        assert_eq!(raw[2].origin, "Inicial | B");
+        assert_eq!(contar_itens(&root), 4, "a árvore guarda as duas cópias");
+    }
+
+    #[test]
+    fn extract_panel_anchor_so_o_id_numerico_do_titulo() {
+        let titulo = |href: &str| format!(r#"<h4 class="panel-title"><a href="{href}">x</a></h4>"#);
+        assert_eq!(
+            html::extract_panel_anchor(&titulo("#panel-12")).as_deref(),
+            Some("panel-12")
+        );
+        assert_eq!(html::extract_panel_anchor(&titulo("#panel-12-2")), None);
+        assert_eq!(html::extract_panel_anchor(&titulo("#outra")), None);
+        assert_eq!(
+            html::extract_panel_anchor(
+                r##"<div class="panel-body"><a href="#panel-3">x</a></div>"##
+            ),
+            None
+        );
     }
 }
