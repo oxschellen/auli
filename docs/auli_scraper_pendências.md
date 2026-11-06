@@ -26,6 +26,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 17 | AM | Serviço da listagem sem nenhum público (3223) | ✅ decidida: PF e PJ (02/11) |
 | 18 | CE | Os 332 conteúdos do `conteudo-geral` que não são FAQ (Parecer CECON, Comunicados COTRI, Notas Explicativas…) | candidatos a coleção própria (D-CEFAQ-7) |
 | 19 | CE | FAQ nova fora da convenção de nome (aviso do D-CEFAQ-2) | medir: `getItem` dos 332 |
+| 20 | RS | FAQs: o índice novo `/perguntas-frequentes` como guarda e plano B; botões, cópias e links por pergunta (D-RSFAQ-1..6) | estudo feito (06/11); decisões propostas, nada implementado |
 
 ---
 
@@ -434,3 +435,27 @@ da convenção —, mas isso pede o `getItem` dos 332 (~2,5 min por rodada), e a
 
 **Próximo passo.** Medir uma vez: `getItem` dos 332 e contar os blocos. Se nenhum tiver seções, a pendência fecha; se
 algum tiver, decidir entre ampliar o filtro de nome e ler todos a cada rodada.
+
+## 20. RS — o índice novo das FAQs e três defeitos da coleta atual (D-RSFAQ-1..6)
+
+_Aberta em 06/11/2026, depois da troca de raiz do #201. Estudo: [ESTUDO-RS-Faqs-Indice.md](ESTUDO-RS-Faqs-Indice.md)._
+
+O `/perguntas-frequentes` novo é uma página só (5 MB, 1 GET, passa com o AuliBot) com 1.854 perguntas canônicas de
+233 páginas, com o mesmo `panel-N` do AJAX de cada página. Todo painel dele está na coleta pela raiz `-antigo`, com o
+mesmo texto (1.845 de 1.846); a coleta tem a mais 107 cópias (o mesmo painel em duas URLs) e as 29 do Piloto RTC –
+IBS, que o índice não lista. A trilha sai dele igual ao breadcrumb em 94% das páginas. Contra: é gerado, não ao vivo
+(publicação mais recente 30/10 × 06/11 nas páginas).
+
+**Proposta (decisão do mantenedor):**
+
+- **D-RSFAQ-1** — a caminhada pela raiz `-antigo` segue sendo a fonte.
+- **D-RSFAQ-2** — o índice vira guarda: 1 GET por rodada; página inteira do índice ausente da coleta é `Err` (pega a
+  queda silenciosa de subárvore), painel isolado é aviso, índice indisponível é aviso.
+- **D-RSFAQ-3** — tirar das respostas o texto dos botões "Copiar link" / "Copiar resposta": hoje está nas **1.990**
+  (e já estava nas 1.947 de agosto), e vai para os `.md` e para os vetores.
+- **D-RSFAQ-4** — deduplicar por `panel-N` (−107).
+- **D-RSFAQ-5** — link por pergunta (`<página>#panel-N`), junto com a D-RSFAQ-3 para re-vetorizar uma vez só.
+- **D-RSFAQ-6** — plano B se o `-antigo` sair: o índice + a caminhada do menu `/faq-piloto-rtc-ibs`; antes, medir a
+  defasagem do índice (1 GET semanal por 2–3 semanas).
+
+**Próximo passo.** Decidir as D-RSFAQ-1..5; as 2..5 cabem num PR só no `auli-scraper-rs`.

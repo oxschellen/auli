@@ -1753,17 +1753,18 @@ vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 me
    nunca testado com `AuliBot` neste host).
 2. **A raiz mudou de template em nov/2026.** `/perguntas-frequentes` virou um **índice novo**: sem
    `data-matriz-source-uri`, sem `panel panel-default`, ~5 MB com **1.854 perguntas de 233 páginas inline**
-   (links `/<página>#panel-<N>`, 2.701 "Publicação:") agrupadas em seis acordeões (`#abx-icms`, `-ipva`,
-   `-itcd`, `-taxas`, `-nfg`, `-ecac`). A caminhada o classifica como `Geral` e colhe **zero** — o que a
+   (links `/<página>#panel-<N>`, 2.701 "Publicação:") agrupadas em oito acordeões (`#abx-icms`, `-ipva`,
+   `-itcd`, `-taxas`, `-nfg`, `-ecac`, `-cert`, `-pref`). A caminhada o classifica como `Geral` e colhe **zero** — o que a
    guarda de `faqs::run` transforma em erro sem tocar snapshot nem árvore. O portal preservou a raiz antiga em
    **`/perguntas-frequentes-antigo`** (`id=108&templatename=pagina.listapagina.categoriafaq.comnavegacao`) — o
    **mesmo nó**: no cache de 01/11 a raiz `/perguntas-frequentes` declarava exatamente esse `id=108` —, e as
    páginas-filhas não mudaram de URL; a raiz do scraper passou a apontar para lá (06/11/2026). O 1º nível da
    árvore é o que o `body` do `id=108` lista (17 nós em 01/11), não a barra "Seções" das páginas de categoria.
-   "-antigo" é nome de página em despedida: se sumir, a mesma guarda avisa. O índice novo é candidato a fonte
-   futura (um GET em vez de ~650 requisições; invariante dinâmico de graça: âncoras `#panel` == perguntas
-   colhidas), mas perde a trilha do breadcrumb e mostra menos: 1.854 perguntas de 233 páginas, contra 1.990 de
-   251 listas na árvore de 01/11 — o estudo à parte (não patch) tem de explicar a diferença.
+   "-antigo" é nome de página em despedida: se sumir, a mesma guarda avisa. O índice novo foi estudado em
+   [`ESTUDO-RS-Faqs-Indice.md`](ESTUDO-RS-Faqs-Indice.md) (06/11/2026): o `panel-N` dele é o mesmo do AJAX, todo
+   painel dele está na coleta com o mesmo texto, a trilha sai igual em 94% das páginas, e a diferença 1.990 →
+   1.854 são 107 cópias da caminhada (o mesmo painel em duas URLs) e as 29 do Piloto RTC – IBS, que ele não lista.
+   Ele é gerado, não ao vivo; fica como guarda e plano B (D-RSFAQ-1..6, pendências §20).
 3. **Queda parcial é silenciosa.** Erro ao caminhar uma página vira `eprintln!` e o laço segue; falha no AJAX
    devolve nó vazio — uma categoria que caia leva a subárvore inteira. Vale também para o F5: abaixo da raiz,
    o desafio/bloqueio é um erro como outro qualquer (`Error walking` / `Error fetching body`). Quem pega isso é a guarda de
