@@ -83,6 +83,30 @@ const TABS: {
   { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null, grupo: "integracoes", Icone: MdOutlineFileDownload },
 ];
 
+/**
+ * Pista de rolagem dos dois containers da lista de seções (sidebar e drawer): uma sombra na borda
+ * de baixo enquanto há itens abaixo, e na de cima depois de rolar. A lista passa da altura de uma
+ * tela de notebook (num 768 px, o navegador deixa ~650), e sem a pista o último grupo ficava abaixo
+ * da dobra sem nada dizer que ela rolava.
+ *
+ * CSS puro: as duas capas (`local`) rolam com o conteúdo e, ao chegar a uma ponta, tapam a sombra
+ * (`scroll`, presa à borda) daquele lado. Sem rolagem, as capas tapam as duas e nada aparece. Cor
+ * de fundo via `bgColor`, não `bg`: o `bg` é o atalho `background` e apagaria as camadas.
+ */
+const PISTA_DE_ROLAGEM = {
+  bgColor: "bg.app",
+  backgroundImage: [
+    "linear-gradient(var(--chakra-colors-bg-app) 30%, transparent)",
+    "linear-gradient(transparent, var(--chakra-colors-bg-app) 70%)",
+    "radial-gradient(farthest-side at 50% 0, var(--chakra-colors-bg-scroll-cue), transparent)",
+    "radial-gradient(farthest-side at 50% 100%, var(--chakra-colors-bg-scroll-cue), transparent)",
+  ].join(", "),
+  backgroundPosition: "center top, center bottom, center top, center bottom",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "100% 40px, 100% 40px, 100% 14px, 100% 14px",
+  backgroundAttachment: "local, local, scroll, scroll",
+} as const;
+
 /** Títulos e ordem dos grupos na sidebar. */
 const GRUPOS: { id: Grupo; titulo: string | null }[] = [
   { id: null, titulo: null },
@@ -328,7 +352,7 @@ export const Home = () => {
         // sidebar termina para não invadi-la. Ver `shared/layout.ts`.
         w={SIDEBAR_WIDTH}
         flexShrink={0}
-        bg="bg.app"
+        {...PISTA_DE_ROLAGEM}
         borderRight="1px solid var(--chakra-colors-border)"
         p="10px 8px"
         overflowY="auto"
@@ -392,7 +416,7 @@ export const Home = () => {
               bottom={0}
               left={0}
               w="240px"
-              bg="bg.app"
+              {...PISTA_DE_ROLAGEM}
               borderRight="1px solid var(--chakra-colors-border)"
               p="10px 8px"
               overflowY="auto"
