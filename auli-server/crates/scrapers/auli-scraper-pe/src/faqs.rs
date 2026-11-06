@@ -29,17 +29,13 @@ const PAGINAS: &[(&str, &str)] = &[
     ("ITCMD", "/Servicos/ICD/Paginas/Perguntas-e-Respostas.aspx"),
 ];
 
-/// A identidade das FAQs da frota (D-FROTA-UA). O `robots.txt` do portal libera `*`, com os sinais
-/// `ai-train=no` (o Auli não treina) e `use=reference` (o Auli responde com o link) — D-PEFAQ-5.
-const UA: &str =
-    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 /// Cortesia entre as duas páginas.
 const CORTESIA: Duration = Duration::from_secs(1);
 
 /// Coleta as FAQs e grava a árvore do frontend (`<id>-faqs-tree.json`) e o snapshot. As duas páginas são
 /// coletadas e conferidas antes de qualquer gravação: rodada que falha deixa os arquivos anteriores intactos.
 pub fn run(data_dir: &str, use_cache: bool) -> Result<()> {
-    let agent = auli_scraper_kit::build_agent(UA, Some(Duration::from_secs(60)));
+    let agent = auli_scraper_kit::build_agent(crate::UA, Some(Duration::from_secs(60)));
     let mut paginas = Vec::new();
     for (i, (tributo, caminho)) in PAGINAS.iter().enumerate() {
         if i > 0 && !use_cache {

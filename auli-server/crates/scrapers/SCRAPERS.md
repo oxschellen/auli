@@ -145,7 +145,7 @@ não são reaproveitadas).
 
 Portais com robots restritivo (BA, CE) usam **User-Agent de navegador** e coleta de baixíssima
 frequência (cortesia entre fetches). São catálogos públicos, coleta rara. PE saiu da lista em 06/11/2026: o
-robots dele libera `*` (D-PE4); os serviços de PE seguem com o UA de navegador por legado.
+robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot.
 
 ---
 
@@ -237,8 +237,8 @@ robots dele libera `*` (D-PE4); os serviços de PE seguem com o UA de navegador 
 - **Descrições vazias** (menu-only); fase 2 (corpo das páginas `/Servicos/...`) ficou para depois.
 - 38 serviços, 3 públicos (Cidadãos/Empresas/Municípios). Agregada (e-Fisco aparece nos 3 públicos
   → 3 ocorrências). Links externos (efisco, gnre, arevirtualws) preservados. 6 testes.
-- **D-PE4:** UA de navegador por legado (o robots.txt, revisto em 06/11/2026, libera `*`; as FAQs do mesmo
-  host já usam o AuliBot), 1 GET + cache.
+- **D-PE4:** UA `AuliBot` desde 06/11/2026 (o robots.txt libera `*`; na troca, recoleta com snapshot
+  idêntico ao do UA de navegador), 1 GET + cache.
 - **FAQs** (`auli-scraper-pe faqs`, `faqs.rs`): as páginas "Perguntas e Respostas" do IPVA e do ITCMD — lista
   curada de 2 páginas de publicação (a `_api` e o `listdata.svc` dão 403), corpo no único `div[id$="_RichHtmlField"]`.
   DOM → linhas (tabela de várias células vira uma linha com ` | `; link vira `texto "url"`, relativo absolutizado);

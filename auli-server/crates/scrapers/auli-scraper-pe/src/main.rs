@@ -21,6 +21,11 @@ mod scrape;
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
 pub const ENTITY: &str = "pe";
 const DATA_DIR: &str = "../data/pe/raw";
+/// A identidade da frota (D-FROTA-UA), nas duas coleções. O `robots.txt` do portal libera `*`, com os
+/// sinais `ai-train=no` (o Auli não treina) e `use=reference` (o Auli responde com o link) — D-PE4,
+/// D-PEFAQ-5.
+pub(crate) const UA: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // CLI: auli-scraper-pe [--usecache] servicos|faqs|all   (omitido -> servicos)

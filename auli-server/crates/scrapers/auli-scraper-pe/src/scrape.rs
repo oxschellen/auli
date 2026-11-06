@@ -18,10 +18,10 @@ const BASE: &str = "https://www.sefaz.pe.gov.br";
 // A home renderiza o menu global completo (verificado também em páginas internas — o menu vem da
 // masterpage `master2013`, presente em todas).
 const SEED_URL: &str = "https://www.sefaz.pe.gov.br/";
-// D-PE4: UA de navegador (o `kit::USER_AGENT` da frota) por legado (D-FROTA-UA). O motivo original,
-// um robots.txt restritivo a crawlers genéricos, caducou: revisto em 06/11/2026, ele libera `*` (ver
-// `main.rs`), e as FAQs do mesmo host já vão com o AuliBot. Trocar só com recoleta verificada. A
-// coleta é de baixíssima frequência e volume mínimo — 1 GET por rodada na fase 1.
+// D-PE4: UA `AuliBot` da frota (`crate::UA`, D-FROTA-UA) desde 06/11/2026. Até ali ia o UA de
+// navegador, pelo robots.txt que se dizia restritivo — revisto, ele libera `*` (ver `main.rs`). Recoleta
+// verificada na troca: snapshot idêntico ao do UA de navegador (03/11), fora o `coletado_em`. A coleta é
+// de baixíssima frequência e volume mínimo — 1 GET por rodada na fase 1.
 // Cortesia entre fetches de rede (irrelevante na fase 1 com 1 GET; vale para uma futura fase 2).
 const COURTESY: Duration = Duration::from_millis(400);
 /// D-PE2: itens de topo (sem subgrupo) recebem esta classe; itens sob subgrupo recebem o texto do
@@ -48,8 +48,7 @@ struct MenuItem {
 
 /// Raspa os serviços do PE e devolve os per-público (na ordem do menu) + a ordem dos públicos.
 pub fn scrape(data_dir: &str, use_cache: bool) -> Result<(PerPublicoServicos, Vec<Publico>)> {
-    let agent =
-        auli_scraper_kit::build_agent(auli_scraper_kit::USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(crate::UA, Some(Duration::from_secs(30)));
 
     // 1. Seed: a home, com o menu global.
     let seed = fetch(&agent, data_dir, SEED_URL, use_cache)?;
