@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF e no AM, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM e no MA, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -474,6 +474,13 @@ frequência (cortesia entre fetches). São catálogos públicos, coleta rara.
   CERTIFICATE→Certidões); `classe` = "Geral" (sem categoria). `link` = `linkExterno` / página de conteúdo.
 - 38 serviços, 4 públicos (Empresa 22 / Cidadão 10 / Órgão Público 2 / Certidões 4). 6 testes.
   `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#ma`.
+- **FAQs** (`auli-scraper-ma faqs`, `faqs.rs`): a página "Perguntas Frequentes" do mesmo portal
+  (`/portal/perguntas-frequentes`), mesmo login e mesmo token — `GET /sgc/api/faq/perguntas/faq?publicado=true`,
+  uma chamada com tudo (sem o filtro vêm também as perguntas de uma categoria inativa). Árvore de dois níveis
+  (raiz → subcategoria); nome e ordem da raiz lidos da pergunta pendurada direto nela (a `categoriaPai`
+  aninhada vem rasa, `ordem: null`). Link único (a página), daí a guarda de pergunta repetida — a repetida em
+  duas raízes ganha o nome da raiz (D-MAFAQ-2). Trilha `<raiz> | <subcategoria>`; HTML → texto por regex.
+  Sempre à rede. 336 perguntas (06/11/2026), 18 testes. Descoberta em `docs/REGISTRO-scrapers.md#ma-faqs`.
 
 ### ap — SEFAZ-AP (Amapá)
 

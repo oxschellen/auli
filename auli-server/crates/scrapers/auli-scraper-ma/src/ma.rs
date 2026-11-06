@@ -35,8 +35,8 @@ use ureq::tls::{Certificate, RootCerts, TlsConfig};
 const USER_AGENT: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 
-const FRONT_BASE: &str = "https://portal-sgc.sefaz.ma.gov.br";
-const API_BASE: &str = "https://portal-sgc.sefaz.ma.gov.br/sgc/api";
+pub(crate) const FRONT_BASE: &str = "https://portal-sgc.sefaz.ma.gov.br";
+pub(crate) const API_BASE: &str = "https://portal-sgc.sefaz.ma.gov.br/sgc/api";
 /// Filtros obrigatórios do catálogo (sem eles → 500). `pageSize` alto traz o catálogo todo numa GET.
 const SERVICOS_QUERY: &str = "nomeServico=&flgTipoServico=&flgDestaqueNovo=&flgPublicado=true\
     &flgPaginaPrincipal=&flgLocal=PORTAL&notOutros=false&page=0&pageSize=1000&sortOrder=&sortField=";
@@ -223,7 +223,7 @@ pub fn scrape(
 
 /// Agent `ureq` com o intermediário GlobalSign embutido como trust anchor (rustls padrão). Resolve a
 /// cadeia incompleta do servidor sem desabilitar a verificação nem usar native-tls.
-fn build_agent() -> Agent {
+pub(crate) fn build_agent() -> Agent {
     let cert = Certificate::from_pem(GLOBALSIGN_INTERMEDIATE_PEM.as_bytes())
         .expect("intermediário PEM válido");
     let roots = RootCerts::new_with_certs(&[cert]);
@@ -281,7 +281,7 @@ fn load(
 }
 
 /// Login anônimo (credenciais públicas do bundle) → devolve o `authtoken` (já com "Bearer ").
-fn login(agent: &Agent) -> Result<String> {
+pub(crate) fn login(agent: &Agent) -> Result<String> {
     println!("MA: login anônimo (cliente público {})", ID_CLIENTE);
     let body =
         serde_json::json!({ "id_cliente": ID_CLIENTE, "senha": SENHA_PUBLICA, "portal": true });
