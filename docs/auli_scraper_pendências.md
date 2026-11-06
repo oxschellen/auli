@@ -24,6 +24,8 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 15 | kit | Cache: validação de completude na leitura | medir antes de virar TAREFA |
 | 16 | AM | Perguntas e Respostas do GCC (D-AMFAQ-6) | sondar o XHR da casca Struts2 |
 | 17 | AM | Serviço da listagem sem nenhum público (3223) | ✅ decidida: PF e PJ (02/11) |
+| 18 | CE | Os 332 conteúdos do `conteudo-geral` que não são FAQ (Parecer CECON, Comunicados COTRI, Notas Explicativas…) | candidatos a coleção própria (D-CEFAQ-7) |
+| 19 | CE | FAQ nova fora da convenção de nome (aviso do D-CEFAQ-2) | medir: `getItem` dos 332 |
 
 ---
 
@@ -216,9 +218,10 @@ _Era item da §10 do [auli_pendencias.md](auli_pendencias.md) (extração das fu
 Conferido em 02/11/2026: nenhuma das três existe no kit.
 
 **Candidata nova (02/11/2026):** o conversor HTML → texto das FAQs (`html_para_texto`: `<style>`/comentários fora,
-link → `texto "url"`, bloco → linha, entidades no fim) tem **quatro cópias** — SP, GO, DF e AM (a do DF com o filtro de
-`http(s)`/`mailto` e sem duplicar a URL quando ela é o texto do link; a do AM é a do DF, sem mudança). Já passou do
-2º consumidor; ao extrair, levar as melhorias do DF e provar SP, GO e AM byte a byte com `--usecache`.
+link → `texto "url"`, bloco → linha, entidades no fim) tem **cinco cópias** — SP, GO, DF, AM e CE (a do DF com o filtro de
+`http(s)`/`mailto` e sem duplicar a URL quando ela é o texto do link; a do AM é a do DF, sem mudança; a do CE é a do AM
+com o modo `markdown`, em que a quebra de linha do fonte também vira quebra). Já passou do 2º consumidor; ao extrair,
+levar as melhorias do DF e o modo do CE e provar SP, GO, AM e CE byte a byte com `--usecache`.
 
 ## 11. User-Agent institucional para a frota
 
@@ -396,3 +399,29 @@ A própria página de detalhe também não declara público (`"perfis":[]` no `s
 **Decisão do mantenedor (02/11/2026): o 3223 é de Pessoa Física e Pessoa Jurídica.** Está no `am.rs` como
 `PUBLICO_SEM_ROTA`, aplicado só quando o serviço não está em nenhuma rota — se o portal o puser numa, vale o portal.
 Outro serviço sem rota continua pulado, com aviso. Com ele, 283 serviços.
+
+## 18. CE — o resto do catálogo `conteudo-geral` (D-CEFAQ-7)
+
+_Aberta em 03/11/2026, na implantação das FAQs do CE ([ESTUDO-CE-Faqs.md](ESTUDO-CE-Faqs.md))._
+
+As FAQs leem 96 dos 428 conteúdos do `conteudo-geral`. Os outros 332, pela mesma API (`getChildren` + `getItem`), são
+na maioria textos interpretativos: **78 "Parecer CECON"** (e mais alguns "Parecer nº …"), 71 Comunicados COTRI, 38
+Notas Explicativas, 28 Comunicados NUPAF, 12 Normas de Execução e ~104 avulsos (Instruções Normativas, portarias,
+páginas de tema como "Prazos relacionados ao ICMS", itens da Malha Fiscal). O estudo chamava todos de "COMUNICADO
+COTRI"; a contagem por nome é de 03/11/2026.
+
+**Próximo passo.** Os Pareceres CECON são o candidato mais forte: é a coleção `pareceres` que SP, PR, SC e RS já têm,
+sem custo de descoberta (o transporte é o das FAQs). Estudo próprio para o shape do `contentMarkdown` deles e para
+separar o que é parecer do que é comunicado.
+
+## 19. CE — FAQ nova fora da convenção de nome (D-CEFAQ-2)
+
+_Aberta em 03/11/2026, na implantação das FAQs do CE ([ESTUDO-CE-Faqs.md](ESTUDO-CE-Faqs.md))._
+
+A seleção dos artigos de FAQ é pelo nome (`d[úu]vidas|pergunta|faq`), o critério editorial da SEFAZ-CE. O estudo
+previa avisar quando um conteúdo de nome fora do padrão tivesse ≥ 3 blocos `section-wrapper` — sinal de FAQ nova fora
+da convenção —, mas isso pede o `getItem` dos 332 (~2,5 min por rodada), e a recomendação do estudo foi ficar só nos
+96. Não implementado.
+
+**Próximo passo.** Medir uma vez: `getItem` dos 332 e contar os blocos. Se nenhum tiver seções, a pendência fecha; se
+algum tiver, decidir entre ampliar o filtro de nome e ler todos a cada rodada.

@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 12 de **FAQs** (RS, SC, PR, SP, MG, MS, MT, GO, DF, AM, MA e PE). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 13 de **FAQs** (RS, SC, PR, SP, MG, MS, MT, GO, DF, AM, MA, PE e CE). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -44,6 +44,7 @@
 - [AM FAQs — Perguntas Frequentes das páginas do Portfólio de Serviços (www.sefaz.am.gov.br)](#am-faqs)
 - [MA FAQs — Perguntas Frequentes do Portal SGC (portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes)](#ma-faqs)
 - [PE FAQs — Perguntas e Respostas do IPVA e do ITCMD (www.sefaz.pe.gov.br/Servicos/…/Perguntas-e-Respostas.aspx)](#pe-faqs)
+- [CE FAQs — Perguntas e respostas do Portal de Serviços da SEFAZ-CE (portalservicos.sefaz.ce.gov.br)](#ce-faqs)
 
 ---
 
@@ -2475,3 +2476,180 @@ use=reference`; ~35 robôs nomeados com `Disallow: /`, não o AuliBot.
 - Saída: `data/pe/raw/pe-faqs-tree.json` (raiz → um `Faq` por tributo; item com `url` só quando tem âncora) e
   `data/pe/pe-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha = o tributo), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-pe-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="ce-faqs"></a>
+
+# CE FAQs — Perguntas e respostas do Portal de Serviços da SEFAZ-CE (portalservicos.sefaz.ce.gov.br)
+
+**Discovery e implantação:** 03/11/2026. Estudo, medições e decisões D-CEFAQ-1..10:
+[`docs/ESTUDO-CE-Faqs.md`](ESTUDO-CE-Faqs.md). Coleção `faqs` do `auli-scraper-ce` (`auli-scraper-ce faqs`, ou `all` =
+serviços + FAQs). **2.706 perguntas** na rodada de 03/11, de 93 dos 96 artigos de FAQ (3.179 lidas, 473 cópias).
+
+## Fonte
+
+- **Os artigos de FAQ do catálogo `conteudo-geral`** ("Conteúdo - Geral", `_id 648af6fc64778b7336bf45d3`), o irmão do
+  `servico-geral` dos serviços, na mesma API do Sydle ONE (`…/api/1/servicedesk-embedded/_classId/5cd5e83d…/`), com o
+  mesmo Bearer anônimo do shell:
+  - `POST getChildren` (o corpo dos serviços com `id`/`rootId` = a raiz e `path` = `conteudo-geral`; `pageSize` 10,
+    até a página vazia): 43 páginas com itens + a vazia, **428 conteúdos** (`hits` diz 438 — o mesmo índice inflado
+    dos serviços);
+  - seleção pelo nome, `(?i)d[úu]vidas|pergunta|faq` (D-CEFAQ-2): **96 artigos** (a lista está no fim desta seção);
+  - `POST getItem` `{"application":"sefaz-ceara","id":"<_id>"}` por artigo: o artigo inteiro. É o único método de
+    leitura liberado ao anônimo — `get`, `getContent`, `getPage`, `getArticle`, `getDocument`, `getById` e `getFaq` dão
+    403 `ERROR_USER_UNAUTHORIZED_TO_EXECUTE_METHOD`; `getChildren` com o `_id` do artigo dá `hits: 0` (é folha).
+- O campo é o **`contentMarkdown`**. O `content`, ao lado, é um derivado com perda: sem as perguntas e com o
+  `handleState(r)"` do atributo no texto.
+- Fora (D-CEFAQ-7): `www.sefaz.ce.gov.br/perguntas-frequentes/` (301 → `www.ce.gov.br/sefaz/perguntas-frequentes/`, que
+  não responde); as FAQs do **DAE** (`servicos.sefaz.ce.gov.br/internet/dae/…`) e da **NFA**
+  (`www2.sefaz.ce.gov.br/nfaweb/perguntasFrequentes.do`) — o handshake TLS 1.2/1.3 não fecha; os PDFs "Perguntas
+  Frequentes 7.x" (a FAQ federal da EFD, espelhada); a wiki do Siafe. Os 332 conteúdos do `conteudo-geral` que não
+  são FAQ (Pareceres CECON, Comunicados COTRI, Notas Explicativas…) são pendência própria (§18 das pendências).
+
+## As armadilhas
+
+1. **Dois templates.** O de 2026 (85 artigos): pergunta em `<h2>` no `div.heading`, resposta em HTML com entidades
+   (48 diferentes, de `&atilde;` a `&clubs;` — decodificadas pelo html5ever). O de 2024 (8 artigos — CTe,
+   Geração/Exclusão de Débitos, Localização e Liberação, Alteração EFD, Procedimentos de Escrituração, Restituição de
+   Taxas, isenções, Representação fiscal): pergunta na linha `## ` e resposta em **markdown**, onde a quebra de linha é
+   estrutura (listas `- C860 …`, itens `a)`, parágrafos — 116 respostas multi-linha em texto puro). No HTML a quebra
+   do fonte é espaço; no markdown, quebra.
+2. **`>` dentro do atributo.** A tag do template de 2024 é `<sy-collapse ref="(r) => handleState(r)" … trigger-by=…>`:
+   a resposta começa depois da **linha** da tag, não no primeiro `>`. A `<sy-collapse>` nunca fecha — a resposta vai
+   até o fim do bloco, e o último bloco traz o `<script>` do botão "Expandir todas" (sai inteiro).
+3. **A resposta pode ter `<h2>` próprio** ("Quais os canais de atendimento sobre mercadorias em trânsito?", template de
+   2024, com `<h2>Unidades de atendimento</h2>` na resposta): a pergunta é procurada só no cabeçalho, antes da linha
+   da `<sy-collapse>`.
+4. **A mesma pergunta duas vezes no artigo.** O portal sufixa a âncora (`…-2`; 187 âncoras com sufixo), e 59 dessas
+   repetições têm **outra resposta**. Com o `url` do artigo, dariam o mesmo `.md` (nome = slug da pergunta + hash de
+   url + pergunta) e o `process` recusaria: o `url` é o artigo **com a âncora**, `…/<identifier>+<_id>#section-<slug>`.
+5. **Âncora repetida sem sufixo** (1, na Escrituração): `ICMS/IPI` e `ICMS|IPI` dão o mesmo slug, com respostas
+   diferentes. As duas entram, com aviso — a pergunta difere, o `.md` também.
+6. **Cópias** — entre artigos e dentro do mesmo artigo (o Diferimento repete 5 das suas 17): 473. Comparadas a menos
+   de espaços (7 grupos só diferem por um `<br>` no meio da frase); ficam no artigo de menor `_id`. A "Restituição de
+   Taxas" inteira está em outro artigo e some da árvore. Os dois pares de artigos de mesmo nome ("Dúvidas sobre a
+   Legislação", "Dúvidas sobre ICMS relacionado aos combustíveis") **não** são duplicatas inteiras: cada um fica com
+   perguntas próprias.
+7. **Artigos de FAQ sem seções** (3, `contentFormat: HTML`): "Bancos Conveniados e PIX" (lista), "Desvinculação de
+   débitos" (`-`) e "Reforma Tributária – Perguntas e Respostas pelo Ministério da Fazenda" (link para o gov.br).
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: listagem com `_id` repetido ou acima de 80 páginas; `getItem` com outro
+  `_id` ou corpo que não é o envelope; artigo com nº de âncoras `id="section-` ≠ nº de blocos; bloco sem âncora, sem o
+  seu `<sy-collapse>` (ou com o gatilho fora da tag), sem pergunta ou sem resposta; mais de 10 artigos sem seções;
+  a mesma pergunta na mesma âncora com respostas diferentes; menos de 80 artigos com perguntas ou de 2.400 perguntas;
+  qualquer chamada que falhe. Avisos: âncora repetida (1); artigo sem seções (3, com o nome).
+- **Sempre à rede**; o cache em `data/ce/raw/cache/faqs/` (chave = URL do método + `#conteudo-geral&page=N` ou
+  `#<_id>`) só é lido com `--usecache`, que reproduz a árvore byte a byte e o snapshot a menos do `coletado_em`.
+- `ureq`, UA `AuliBot` (os serviços do CE seguem com o UA de navegador, decisão registrada), 400 ms de cortesia;
+  1 GET (shell) + 44 POSTs `getChildren` + 96 POSTs `getItem`, ~1 min.
+- Saída: `data/ce/raw/ce-faqs-tree.json` (raiz → artigos, na ordem da listagem → perguntas; o nó aponta para o artigo,
+  a pergunta para a sua âncora) e `data/ce/ce-faqs-snapshot.json` (um `FaqRaw` por pergunta: `origin` = o nome do
+  artigo, íntegro), nessa ordem e atômicos.
+- Conferência: uma implementação independente em Python sobre o cache da rodada dá o mesmo snapshot, item a item.
+- Atualização: `scripts/tools/update-ce-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+## Os 96 artigos de FAQ (03/11/2026, na ordem da listagem)
+
+Perguntas = as que ficam no acervo depois das cópias.
+
+| # | Artigo | `_id` | Perguntas |
+|---|---|---|---|
+| 1 | Dúvidas Gerais sobre IPVA | `650360ffd048b208a5468b09` | 7 |
+| 2 | Dúvidas acerca da Contribuição sobre Bens e Serviços (CBS) | `66f690ee6e78d03226d13ead` | 6 |
+| 3 | Dúvidas acerca do Fundo Nacional de Desenvolvimento Nacional | `66f690f36e78d03226d1819b` | 7 |
+| 4 | Dúvidas acerca do Imposto sobre Bens e Serviços (IBS) | `66f690fa6e78d03226d2c565` | 27 |
+| 5 | Dúvidas de Acesso e Erros do Sistema | `6a198b2060562f7e9f0d7451` | 8 |
+| 6 | Dúvidas em relação a serviços e mercadorias do exterior | `6504811762f08b64cdd5f1bc` | 19 |
+| 7 | Dúvidas gerais outros temas decorrentes da Reforma Tributária | `66f691002712ed018a0d0f5c` | 5 |
+| 8 | Dúvidas gerais sobre o IPVA 2026 | `658d6441555b84511e3d79d6` | 8 |
+| 9 | Dúvidas gerais sobre o SIMBA | `66f1bb8015b7d474f44d7fb7` | 10 |
+| 10 | Dúvidas sobre Devolução do ICMS | `670fc29ac24b754fd8f02bca` | 9 |
+| 11 | Dúvidas sobre ICMS relacionado aos combustíveis | `6504811a62f08b64cdd63f4b` | 26 |
+| 12 | Dúvidas sobre ICMS relacionado aos combustíveis | `67d42a3e03bb4b5b8b3af690` | 31 |
+| 13 | Dúvidas sobre ICMS relacionado aos serviços de comunicação | `6504811b62f08b64cdd64cd8` | 29 |
+| 14 | Dúvidas sobre ICMS relacionado à energia elétrica | `6504811a62f08b64cdd63edb` | 14 |
+| 15 | Dúvidas sobre Liberação de Mercadorias | `6504811a62f08b64cdd63f1b` | 23 |
+| 16 | Dúvidas sobre Procedimentos para Emissão e Escrituração de Documentos Fiscais de Contribuintes no Regime Normal de ICMS | `671f9464bee91b2025a12e41` | 21 |
+| 17 | Dúvidas sobre Regras de Transição decorrentes da Reforma Tributária | `66f6910525a1cd0148581e23` | 21 |
+| 18 | Dúvidas sobre Suspensão e Cassação | `6504811962f08b64cdd62ce8` | 15 |
+| 19 | Dúvidas sobre a Legislação | `650360f5d048b208a541c4b4` | 57 |
+| 20 | Dúvidas sobre a Legislação | `6504811862f08b64cdd5fbaf` | 12 |
+| 21 | Dúvidas sobre a devedor contumaz e suas implicações | `66f1bb7015b7d474f44bf388` | 8 |
+| 22 | Dúvidas sobre a não-cumulatividade do ICMS | `6504811762f08b64cdd56aa9` | 8 |
+| 23 | Dúvidas sobre a responsabilidade solidária do ICMS | `6504811762f08b64cdd564fd` | 9 |
+| 24 | Dúvidas sobre a transferência de crédito do ICMS | `6504811a62f08b64cdd62d2b` | 15 |
+| 25 | Dúvidas sobre alterações na Constituição Federal decorrentes da Reforma Tributária | `66f691ac2712ed018a1cdb69` | 9 |
+| 26 | Dúvidas sobre alterações no Ato das Disposições Constitucionais Transitórias (ADCT) decorrentes da Reforma Tributária | `66f690e825a1cd0148538852` | 7 |
+| 27 | Dúvidas sobre cálculos e valores relacionados ao ICMS | `6504811862f08b64cdd61434` | 42 |
+| 28 | Dúvidas sobre diferimento do ICMS | `6504811762f08b64cdd578ba` | 12 |
+| 29 | Dúvidas sobre isenções | `6503592f49e79469ba11764a` | 8 |
+| 30 | Dúvidas sobre isenções e descontos | `650360efd048b208a53df6f1` | 27 |
+| 31 | Dúvidas sobre isenções, descontos e benefícios | `6504811862f08b64cdd5fd69` | 25 |
+| 32 | Dúvidas sobre o local da operação e da prestação | `6504811762f08b64cdd5f209` | 19 |
+| 33 | Dúvidas sobre os contribuintes do ICMS | `6504811762f08b64cdd5f20b` | 12 |
+| 34 | Dúvidas sobre produtos específicos | `6504811862f08b64cdd5f75d` | 15 |
+| 35 | Dúvidas sobre reduções da base de cálculo | `6504811762f08b64cdd57367` | 9 |
+| 36 | Dúvidas sobre representação fiscal para fins penais em Ilícitos Penais Cometidos por Meio de Fraudes Fiscais e suas implicações para o contribuinte | `66f1bb55542b7404da08e65f` | 3 |
+| 37 | Dúvidas sobre transporte de mercadorias e passageiros | `6504811862f08b64cdd5fd4c` | 25 |
+| 38 | Perguntas e Respostas Frequentes | `6638d071ccb4702dbe021ca7` | 27 |
+| 39 | Principais Dúvidas Sobre BPe - Bilhete de Passagem Eletronico | `64da50f7170f5a26dc5ea02a` | 20 |
+| 40 | Principais Dúvidas Sobre Pagamento de IPVA | `64da50f6170f5a26dc5e9135` | 15 |
+| 41 | Principais Dúvidas sobre Acompanhamento Processual | `64da5102170f5a26dc5efb8f` | 6 |
+| 42 | Principais Dúvidas sobre Alteração e Atualização EFD | `64da510a170f5a26dc5f3761` | 75 |
+| 43 | Principais Dúvidas sobre Alteração e atualização Cadastral | `64da50f7170f5a26dc5e9e84` | 15 |
+| 44 | Principais Dúvidas sobre Aproveitamento e Compensação de Crédito/Débito | `64da5103170f5a26dc5f0776` | 28 |
+| 45 | Principais Dúvidas sobre Autorregularização | `64de7ebdd29b0c14e1a7136e` | 14 |
+| 46 | Principais Dúvidas sobre Bancos Conveniados e PIX | `6501e95d3c373727041947fe` | sem seções |
+| 47 | Principais Dúvidas sobre CTe - Conhecimento de Transporte Eletrônico | `64da50f7170f5a26dc5e9ea5` | 46 |
+| 48 | Principais Dúvidas sobre Cadastro de Empresa | `64da50f7170f5a26dc5e9e65` | 44 |
+| 49 | Principais Dúvidas sobre Compensação, Restituição e Ressarcimento | `64da5104170f5a26dc5f152a` | 12 |
+| 50 | Principais Dúvidas sobre Consulta | `64da50f8170f5a26dc5eb6f7` | 45 |
+| 51 | Principais Dúvidas sobre Consultas Processuais | `64da5106170f5a26dc5f23a3` | 29 |
+| 52 | Principais Dúvidas sobre Consultas de operações e prestações registradas no SITRAM | `64da5106170f5a26dc5f23c7` | 64 |
+| 53 | Principais Dúvidas sobre Contribuinte de Outra UF | `64da50ea170f5a26dc5e655a` | 2 |
+| 54 | Principais Dúvidas sobre Credenciamento de Empresa | `64da5103170f5a26dc5f091a` | 2 |
+| 55 | Principais Dúvidas sobre Desvinculação de débitos | `64da5026170f5a26dc5c717e` | sem seções |
+| 56 | Principais Dúvidas sobre Editais | `64da50ec170f5a26dc5e6e4c` | 4 |
+| 57 | Principais Dúvidas sobre Envio, Incorporação e Retificação de EFD | `64da5109170f5a26dc5f3282` | 53 |
+| 58 | Principais Dúvidas sobre Exclusão/Desenquadramento do SIMEI/Simples Nacional | `64de7861d29b0c14e16135d6` | 20 |
+| 59 | Principais Dúvidas sobre Exoneração, Correção ou Impugnação de Débitos | `64da50fc170f5a26dc5ed956` | 1 |
+| 60 | Principais Dúvidas sobre Geração/Exclusão de Débitos | `64da5107170f5a26dc5f289f` | 3 |
+| 61 | Principais Dúvidas sobre Informação Geral e Legislação | `64da5100170f5a26dc5eefa5` | 91 |
+| 62 | Principais Dúvidas sobre Isenção e Dispensa de ICMS | `64da5102170f5a26dc5efc82` | 22 |
+| 63 | Principais Dúvidas sobre Isenção, Dispensa, Não-incidência e Anistia de IPVA | `64da50ec170f5a26dc5e6e13` | 9 |
+| 64 | Principais Dúvidas sobre Livros e Documentos Fiscais | `64da50ff170f5a26dc5ee817` | 38 |
+| 65 | Principais Dúvidas sobre Localização e Liberação de mercadoria | `64da5107170f5a26dc5f2e1c` | 21 |
+| 66 | Principais Dúvidas sobre MDFe - Manifesto Eletrônico de Cargas | `64da50f6170f5a26dc5e914e` | 17 |
+| 67 | Principais Dúvidas sobre MFe - Módulo Fiscal Eletrônico/CFe - Cupom Fiscal Eletrônico | `64da50f8170f5a26dc5eb79d` | 56 |
+| 68 | Principais Dúvidas sobre NF3e - Nota Fiscal de Energia Elétrica Eletrônica | `65034342bbf1401cc0760cea` | 22 |
+| 69 | Principais Dúvidas sobre NFAe - Nota Fiscal Avulsa Eletrônica | `64da50f6170f5a26dc5e913d` | 22 |
+| 70 | Principais Dúvidas sobre NFCe - Nota Fiscal de Consumidor Eletrônica | `64da50f7170f5a26dc5e9b08` | 26 |
+| 71 | Principais Dúvidas sobre NFe - Nota Fiscal Eletrônica | `64da5102170f5a26dc5efa67` | 138 |
+| 72 | Principais Dúvidas sobre Obrigatoriedade/Dispensa de Registro | `64da5109170f5a26dc5f34f4` | 195 |
+| 73 | Principais Dúvidas sobre Opção ao Regime | `64de7848d29b0c14e15dfb68` | 16 |
+| 74 | Principais Dúvidas sobre Pagamento e Parcelamento | `64de7855d29b0c14e161008a` | 17 |
+| 75 | Principais Dúvidas sobre Pagamento e Parcelamento de Taxas | `6501c806a8327f2a095fb583` | 24 |
+| 76 | Principais Dúvidas sobre Pagamento, Parcelamento e Autorregularização do ICMS | `64da5103170f5a26dc5f08aa` | 58 |
+| 77 | Principais Dúvidas sobre Procedimentos de Escrituração | `64da510a170f5a26dc5f377d` | 252 |
+| 78 | Principais Dúvidas sobre Regimes Especiais de Tributação e Recolhimento | `64da5107170f5a26dc5f2908` | 20 |
+| 79 | Principais Dúvidas sobre Restituição de Taxas | `6501c993a8327f2a09a51c14` | 0 (só cópias) |
+| 80 | Principais Dúvidas sobre Restituição e Ressarcimento | `64da50ea170f5a26dc5e655c` | 2 |
+| 81 | Principais Dúvidas sobre Substituição Tributária | `64da50ee170f5a26dc5e75b7` | 27 |
+| 82 | Principais Dúvidas sobre Tributação e Alíquotas de Produtos | `64da5104170f5a26dc5f1727` | 302 |
+| 83 | Principais Dúvidas sobre [FECOP] Fundo Estadual de Combate à Pobreza | `64da50fe170f5a26dc5edf02` | 4 |
+| 84 | Principais Dúvidas sobre a Descontinuação do MFe - Módulo Fiscal Eletrônico | `680f5d580b24775f91469fbe` | 13 |
+| 85 | Principais Dúvidas sobre a utilização de Sistemas de ICMS | `64da5104170f5a26dc5f1688` | 46 |
+| 86 | Principais Dúvidas sobre o Centro de Memória | `64da50fe170f5a26dc5edfa4` | 7 |
+| 87 | Principais Dúvidas sobre o Programa Empreendedor Legal ? Moda Ceará | `66b5148c46c6e1738b274a26` | 4 |
+| 88 | Principais Dúvidas sobre o Simples Nacional | `64de7ea9d29b0c14e1a6c200` | 47 |
+| 89 | Principais dúvidas do Menu: Manifestação do Destinatário | `6a2830ec26fd8047bca34a14` | 2 |
+| 90 | Principais dúvidas sobre DIMP - Declaração de Informações de Meios de Pagamentos | `692079c24745cf1198617e25` | 14 |
+| 91 | Principais dúvidas sobre SITRAM e Ambiente Seguro | `64da5105170f5a26dc5f20b6` | 32 |
+| 92 | Principais dúvidas sobre a emissão de DAE de pagamento de ITCD01 | `68f255822bfc484943cac302` | 12 |
+| 93 | Principais dúvidas sobre o Atendimento por agendamento | `680fda2fc5e9af5e784df4cd` | 15 |
+| 94 | Principais dúvidas sobre o Menu: Downloads | `6a28349cc78eb856cb55c60e` | 1 |
+| 95 | Reforma Tributária – Perguntas e Respostas pelo Ministério da Fazenda | `66faa50d1cbb061624cd362e` | sem seções |
+| 96 | Principais Dúvidas sobre Ouvidoria e Corregedoria | `64da50ee170f5a26dc5e7586` | 1 |

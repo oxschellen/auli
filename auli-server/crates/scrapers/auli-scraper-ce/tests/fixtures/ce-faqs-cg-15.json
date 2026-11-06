@@ -1,0 +1,55 @@
+{
+ "hits": 438,
+ "return": [
+  {
+   "_id": "6504811862f08b64cdd5fd69",
+   "identifier": "duvidas-sobre-isencoes-descontos-e-beneficios",
+   "name": "Dúvidas sobre isenções, descontos e benefícios"
+  },
+  {
+   "_id": "6504811762f08b64cdd5f209",
+   "identifier": "duvidas-sobre-o-local-da-operacao-e-da-prestacao",
+   "name": "Dúvidas sobre o local da operação e da prestação"
+  },
+  {
+   "_id": "6504811762f08b64cdd5f20b",
+   "identifier": "duvidas-sobre-os-contribuintes-do-icms",
+   "name": "Dúvidas sobre os contribuintes do ICMS"
+  },
+  {
+   "_id": "6504811862f08b64cdd5f75d",
+   "identifier": "duvidas-sobre-produtos-especificos",
+   "name": "Dúvidas sobre produtos específicos"
+  },
+  {
+   "_id": "6504811762f08b64cdd57367",
+   "identifier": "duvidas-sobre-reducoes-da-base-de-calculo",
+   "name": "Dúvidas sobre reduções da base de cálculo"
+  },
+  {
+   "_id": "66f1bb55542b7404da08e65f",
+   "identifier": "duvidas-sobre-representacao-fiscal-para-fins-penais-em-ilicitos-penais-cometidos-por-meio-de-fraudes-fiscais-e-suas-implicacoes-para-o-contribuinte",
+   "name": "Dúvidas sobre representação fiscal para fins penais em Ilícitos Penais Cometidos por Meio de Fraudes Fiscais e suas implicações para o contribuinte"
+  },
+  {
+   "_id": "6504811862f08b64cdd5fd4c",
+   "identifier": "duvidas-sobre-transporte-de-mercadorias-e-passageiros",
+   "name": "Dúvidas sobre transporte de mercadorias e passageiros"
+  },
+  {
+   "_id": "6501be56c88bcd0e6baf1415",
+   "identifier": "emissoes-de-dae",
+   "name": "Emissões de DAE"
+  },
+  {
+   "_id": "699c52042caf9b657f8e2a45",
+   "identifier": "emitir-certificado-de-regularidade",
+   "name": "Emitir Certificado de Regularidade"
+  },
+  {
+   "_id": "6504811762f08b64cdd5f226",
+   "identifier": "entenda-a-substituicao-tributaria",
+   "name": "Entenda a Substituição Tributária"
+  }
+ ]
+}

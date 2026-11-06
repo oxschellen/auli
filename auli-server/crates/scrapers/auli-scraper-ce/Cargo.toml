@@ -6,7 +6,8 @@ edition = "2024"
 # Scraper da SEFAZ-CE (serviços, "Portal de Serviços" — SPA Sydle ONE). SEM headless: a listagem
 # vem da API JSON `getChildren` (POST), catálogo `servico-geral`. Token Bearer anônimo é extraído
 # fresh do shell público a cada rodada (efêmero). Depende de auli-contract + o kit — nunca de
-# fastembed/ort. Decisões D-CE1..4 no plano-scraper-ce.md / PR.
+# fastembed/ort. Decisões D-CE1..4 no plano-scraper-ce.md / PR. As FAQs (`faqs.rs`) são os artigos de perguntas e
+# respostas do catálogo `conteudo-geral`, pela mesma API (`getChildren` + `getItem`) — docs/ESTUDO-CE-Faqs.md.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
@@ -14,3 +15,5 @@ ureq = { version = "3", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 anyhow = "1"
+scraper = "0.27.0"   # html5ever: entidades do HTML das FAQs (`faqs.rs`)
+regex = "1"          # blocos das FAQs → pergunta, âncora e resposta; HTML → texto

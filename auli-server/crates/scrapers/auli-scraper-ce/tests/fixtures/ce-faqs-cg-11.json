@@ -1,0 +1,55 @@
+{
+ "hits": 438,
+ "return": [
+  {
+   "_id": "670d6b8ee2a07b31e7f4f964",
+   "identifier": "comunicado-cotri-n-31-2024-pecas-de-veiculos",
+   "name": "Comunicado COTRI nº 31/2024 (Peças de veículos)"
+  },
+  {
+   "_id": "6740bc81899c6423ff9327fa",
+   "identifier": "comunicado-cotri-n-32-2024-estabelecimento-grafico",
+   "name": "Comunicado COTRI nº 32/2024 (Estabelecimento gráfico)"
+  },
+  {
+   "_id": "673b8cb383d90f527286d280",
+   "identifier": "credenciamento-temporario",
+   "name": "Credenciamento temporário"
+  },
+  {
+   "_id": "6814b14bcd5ba77779bbef77",
+   "identifier": "difal-diferencial-de-aliquotas-autorregularizacao",
+   "name": "DIFAL (Diferencial de Alíquotas) - Autorregularização"
+  },
+  {
+   "_id": "670fc31e2945525a3c21feb8",
+   "identifier": "da-fiscalizacao-do-icms",
+   "name": "Da Fiscalização do ICMS"
+  },
+  {
+   "_id": "67dd983b5be1a26d97dca86c",
+   "identifier": "decreto-n-34-605-2022-regime-especial-de-fiscalizacao-e-controle",
+   "name": "Decreto nº 34.605/2022 - Regime Especial de Fiscalização e Controle"
+  },
+  {
+   "_id": "670fc1b7c24b754fd8cd24ee",
+   "identifier": "definicao-do-local-de-incidencia-do-icms",
+   "name": "Definição do Local de Incidência do ICMS"
+  },
+  {
+   "_id": "670fc526c24b754fd8552246",
+   "identifier": "destino-das-mercadorias-retidas-devolucao-leilao-doacao-ou-descarte",
+   "name": "Destino das Mercadorias Retidas: Devolução, Leilão, Doação ou Descarte"
+  },
+  {
+   "_id": "6ae3310caddc324a85ba8944",
+   "identifier": "detran-ce",
+   "name": "Detran/CE"
+  },
+  {
+   "_id": "6504811c62f08b64cdd652d2",
+   "identifier": "documentos-livros-e-informacoes-fiscais",
+   "name": "Documentos, Livros e Informações Fiscais"
+  }
+ ]
+}
