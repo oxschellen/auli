@@ -1048,7 +1048,7 @@ workspace com cache —, e a ordem de grandeza do caminho barato já está medid
 
 ---
 
-## 34. Dependências Rust: lockfile atualizado, **`fastembed`/`ort` segurados** (parcial — 2026-08-04)
+## 34. Dependências Rust: lockfile atualizado, **`fastembed`/`ort` segurados** (parcial — 2026-08-04; 2º refresh 2026-11-05, §34.6)
 
 Análise minuciosa de tudo que dava para subir no workspace. O lockfile andou (PR #124, um arquivo,
 nenhuma linha de código); o embedder **não**, de propósito — e o motivo é o miolo desta seção.
@@ -1165,6 +1165,65 @@ local — 483 testes, os três `--ignored` do embedder contra o modelo real, e `
 
 Desde 21/08/2026 isso deixou de ser um estado provisório: a §33.1 registra a decisão de **não**
 criar o gate. Este parágrafo descreve, portanto, o desenho escolhido — não uma lacuna a fechar.
+
+### 34.6 Segundo refresh do lockfile (05/11/2026) — ✅ resolvido
+
+**Por quê:** o `cargo-audit` (compilado numa pasta temporária, base RustSec de 05/11) acusava **21
+vulnerabilidades** no lock do `main`: `rustls` 0.23.43 (4 — RUSTSEC-2026-0349, rebaixamento para
+troca de chave clássica; -0348, até 1 GiB alocado antes da autenticação; -0346, `Debug` expõe
+segredos; -0285, mensagens de handshake TLS 1.3 aceitas fora do nível de cifra), `rustls-webpki`
+0.103.13 (-0382, intermediários desconfiados), `webpki-roots`/`webpki-root-certs` 1.0.9 (-0381/-0383,
+emSign), `h2` 0.4.15 (-0258), `zstd`/`zstd-safe`/`zstd-sys` (4, mais 10 avisos de unsoundness),
+`quinn-proto` 0.11.16 (5 — não compila, só está no lock, como na §34.1) e `zip` 8.6.0 (4). Mais o
+unsound do `tokio` 1.53.1 (-0386), o `chacha20` 0.10.1 retirado e o `paste` sem manutenção. O
+`rustls` e o `webpki` entram no servidor (chamadas ao LLM, download do modelo) e em todos os
+scrapers.
+
+**O que entrou:** a receita da §34.2, sem tirar nem pôr — `cargo update` (157 pacotes) e
+`cargo update -p fastembed --precise 5.17.2`, que traz o `ort` de volta a 2.0.0-rc.12. Na árvore
+compilada do `fastembed`, 56 dos 181 pacotes mudaram, e **nenhum do caminho numérico**: `ort`,
+`ort-sys`, `tokenizers`, `ndarray`, `safetensors` e `half` ficaram onde estavam. **21 → 4**: sobram os
+quatro do `zip` 8.6.0 (RUSTSEC-2026-0367/-0368/-0369/-0429), todos em `extract()`/`ZipStreamReader`.
+O código só **escreve** zip (`ZipWriter` no [bundle.rs](auli-server/crates/auli-cli/src/bundle.rs));
+o `ZipArchive` aparece só nos testes, sem `extract`. Não são exploráveis aqui e somem com o `zip` 9.
+Fica o `paste`, sem correção upstream.
+
+**Verificação** (rustc 1.98.0): `cargo test --workspace` — **817 passaram**, 0 falhas, 10
+ignorados, sem warnings —, os três `--ignored` do embedder contra o modelo real e
+`cargo fmt --check`. E as duas sondas byte a byte que esta seção pede, cada uma com o binário de
+antes (release, lock antigo) contra o novo (debug, lock novo), sem tocar no `target/release` do
+servidor no ar:
+
+- **Vetores:** o `rr` re-vetorizado do zero (pasta vazia, os 17 registros embedados de verdade). O
+  `rr-servicos.json` saiu **idêntico** entre os dois binários **e** ao de produção; o manifesto
+  difere só no `built_at`.
+- **Zips:** `auli bundle` das 27 entidades pelos dois binários — os **27 zips idênticos**
+  (`zlib-rs` 0.6.7 → 0.6.8, `miniz_oxide` 0.8 → 0.9, `flate2` e `crc32fast` não mudaram a saída);
+  o `downloads.json` difere só no `gerado_em`. É a mesma checagem da §34.3, agora para todo o
+  acervo.
+
+**Recência:** 24 dos 154 crates que mudaram têm menos de uma semana de registro. Entre os que
+compilam aqui: `ureq` 3.5.1 (02/11 — todos os scrapers), `openssl` 0.10.82 (01/11, o `native-tls`),
+`toml` 1.2.0 (04/11), `winnow` 1.0.5 e `mime` 0.3.18 (05/11), além do `cc` 1.11.0, que só roda no
+build. Nenhuma correção de segurança depende deles: as versões que fecham os avisos são de 06 a
+23/10 (`h2` 0.4.20 de 06/10, `rustls` 0.23.46 de 14/10, `zstd` de 16/10, `tokio` 1.54.1 de 21/10).
+Como no frontend (PR #193), esperar uma semana antes do merge é escolha, não requisito.
+
+**O que segue aberto** (atualiza a §34.4):
+
+- **`zip` 8.6 → 9.4** limpa os quatro avisos restantes. Exige repetir a sonda dos zips acima.
+- **`cloakrs` `=0.3.0`**: saíram 0.3.1 e 0.3.2 (22–23/09) e 0.4.0 (29/09). O teste `#[ignore]` de
+  [auli-anon/src/lib.rs](auli-server/crates/auli-anon/src/lib.rs) ("defeito upstream em
+  cloakrs-patterns 0.3.0") pode estar resolvido na 0.3.x — vale conferir antes de qualquer coisa,
+  porque é o anonimizador.
+- **`fastembed` 7.6.0** (com `ort` rc.15): continua tarefa própria — `STRATEGY_VERSION` + re-ingestão.
+- **`rmcp` 3.9.0**: continua migração de protocolo, não bump.
+- **`tower-http`**: o estreitamento de `full` para `["cors"]` segue em aberto, e o `full` arrasta para
+  o build compressão (zstd, brotli) — parte do que esta auditoria apontou. Depois dele, a 0.7.1.
+- **`scraper` 0.27 → 0.29** (19 crates de scraper): não avaliado.
+- **`sha2` 0.11.1**: a recusa da §34.4 foi medida na 0.11.0; não reconferida.
+- **Toolchain:** rustc 1.99.1 disponível; pela §33, trocar de `rustc` não move vetores.
+- **Teste de vetor-ouro:** continua sem existir. Desta vez a sonda do `rr` fez o papel dele.
 
 ---
 
