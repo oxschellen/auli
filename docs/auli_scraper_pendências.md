@@ -227,6 +227,11 @@ link → `texto "url"`, bloco → linha, entidades no fim) tem **cinco cópias**
 com o modo `markdown`, em que a quebra de linha do fonte também vira quebra). Já passou do 2º consumidor; ao extrair,
 levar as melhorias do DF e o modo do CE e provar SP, GO, AM e CE byte a byte com `--usecache`.
 
+**07/11/2026 — estudado:** [ESTUDO-kit-html-para-texto.md](ESTUDO-kit-html-para-texto.md). Não são cinco cópias: são
+12 funções em 10 variantes (só DF, AM e ES idênticas). Num laboratório com os caches (a base reproduz a produção nas
+12), a função única muda 395 das 13.449 FAQs, todas com causa conhecida, sem perder palavra visível, e corrige dois
+defeitos com efeito no acervo de hoje (SC e CE) e um latente. Propostas D-KITHTML-1..8, aguardando decisão.
+
 ## 11. User-Agent institucional para a frota
 
 _Era item da §10 do [auli_pendencias.md](auli_pendencias.md)._
