@@ -227,7 +227,7 @@ name = "SEFAZ-AC"
 uf = "AC"
 state = "Acre"
 prompt = "prompts/ac.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "df"

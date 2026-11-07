@@ -580,6 +580,11 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
 - **classe** = categoria; público único "Serviços"; `link` = `…/?p={post}`; identidade = o post.
 - 17 serviços, 4 classes (Geral 6 / Notas Fiscais 3 / Cadastros 4 / IPVA 4). 4 testes. `ServicoRaw`
   direto. Descoberta em `docs/REGISTRO-scrapers.md#ac`.
+- **FAQs** (`auli-scraper-ac faqs`, `faqs.rs`, D-ACFAQ-1 A): a SEFAZ-AC não tem FAQ própria; a única é a aba "PERGUNTAS
+  FREQUENTES" do post "Isenção de ICMS para PCD" (`?p=9727`), que também é ficha de serviço. Só a aba é lida
+  (`.elementor-toggle-item` com esse título); pergunta = linha em negrito terminada em "?" (`kit::linhas`), com os
+  negritos partidos por `<br>` juntados antes. Trilha e link = o post. R36 como âncora (`ac::build_agent`), AuliBot.
+  1 GET. 17 perguntas (07/11/2026), 7 testes. `docs/REGISTRO-scrapers.md#ac-faqs`.
 
 ---
 
