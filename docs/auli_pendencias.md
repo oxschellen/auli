@@ -1640,6 +1640,37 @@ decisão D-RJ-WAF citada no `auli-scraper-rj`, no `atualizar-servicos.sh` e no `
 
 ---
 
+## 44. O `robots.txt` deixa de ser critério de coleta — regra geral da frota (D-FROTA-ROBOTS) (✅ decidida — 2026-11-07)
+
+**Decisão do mantenedor (07/11/2026): ignorar o `robots.txt` como regra geral da frota.** Vale para todo portal
+de SEFAZ, para qualquer coleção (serviços, FAQs, pareceres…) e para os casos futuros, sem decisão caso a caso. O
+fundamento é o da D-PA-ROBOTS: conteúdo público (LAI), baixo volume, coleta rara.
+
+**O que não muda — as mitigações da D-PA-ROBOTS continuam obrigatórias:** UA institucional AuliBot com contato
+(D-FROTA-UA; UA de navegador só onde o portal exigir, com o motivo no código), cortesia ≥ 1 s entre requisições
+sem paralelismo, cache (cada URL uma vez por rodada) e **nunca autenticar**. O `robots.txt` continua sendo lido e
+registrado no estudo de cada fonte, como fato, mas não barra a coleta.
+
+**O que a regra fecha:**
+
+- os registros caso a caso — D-PA-ROBOTS, D-ES-ROBOTS, D-AC-ROBOTS, D-BA4 e §42 (MG) — passam a ser
+  instâncias desta regra;
+- a **D-MTFAQ-3** (`www5` do MT, `Disallow: /` para `*`): a parte de robots está decidida
+  ([auli_scraper_pendências.md](auli_scraper_pendências.md) §1);
+- as **FAQs da SEFAZ-BA** (`Disallow: /` nos dois hosts), que a triagem de 07/11/2026 deixou à espera desta
+  decisão.
+
+**O que a regra não fecha:**
+
+- os bloqueios impostos pelo portal, que não são robots: o WAF do RJ (D-RJ-WAF), o JA3 do GO e do DF, o
+  ServiceNow do MG que omite o texto para o AuliBot;
+- os pareceres do RS seguem apoiados na autorização da SEFAZ-RS, não nesta regra;
+- o motivo "robots restritivo" que BA e CE davam para o UA de navegador deixa de existir. Os dois viram
+  candidatos ao AuliBot, com recoleta verificada como a de PE (#202). Não foi feito
+  ([auli_scraper_pendências.md](auli_scraper_pendências.md) §11).
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO) — ✅ resolvida em 01/11/2026
 
 Política da frota: separador sigla–UF sempre `-`. O `orgao` do **MG** passou de `"SEF/MG"` para

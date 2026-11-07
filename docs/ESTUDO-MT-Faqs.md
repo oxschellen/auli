@@ -121,6 +121,8 @@ repetido a cada página ("PERGUNTAS FREQUENTES CADASTRO") entrando na resposta; 
   **D-PA-ROBOTS** (política: conteúdo público/LAI, baixo volume, AuliBot + cortesia ≥1 s, nunca autenticar),
   **D-AC-ROBOTS** e **§42** (MG, `atendimento2`, `Disallow: /`, sem autorização do órgão — o caso mais parecido). Se
   desconsiderado, honrar o `Crawl-delay: 30` declarado: com poucos PDFs custa minutos e é a mitigação natural.
+  **✅ 07/11/2026 — robots decidido pela regra geral D-FROTA-ROBOTS** (`auli_pendencias.md` §44): o `www5` não é
+  mais barrado pelo robots; a proposta do `Crawl-delay` segue para a fase 2.
 - **D-MTFAQ-4** — Guardas: §2 (v1) e §2b (fase 2).
 - **D-MTFAQ-5** — Rede sempre; cache só com `--usecache` (miss = erro). O `update-mt-faqs.sh` apaga `cache/faqs`
   antes de coletar (regra da frota, 02/11).

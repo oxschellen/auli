@@ -7,7 +7,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 
 | # | Entidade | Pendência | Estado |
 |---|---|---|---|
-| 1 | MT | FAQs fase 2 — PDFs e hub do site institucional (`www5`) | decisão do mantenedor sobre o `robots.txt` (D-MTFAQ-3) |
+| 1 | MT | FAQs fase 2 — PDFs e hub do site institucional (`www5`) | robots decidido (D-FROTA-ROBOTS, 07/11); falta a sondagem da §5.2 do estudo e a decisão sobre PDF |
 | 2 | MT | Outras bases de conhecimento não sondadas (`conecta`, CITSmart) | nenhuma sondagem feita |
 | 3 | GO | Biblioteca **Pareceres** (1.266 documentos) como coleção `pareceres` | estudo próprio — são arquivos |
 | 4 | RJ | FAQs | em espera — proteção anti-robô; a D-RJ-WAF cobre só o catálogo |
@@ -40,11 +40,13 @@ A fase 1 (Nota MT, 135 perguntas, PR #185) está no ar. A fase 2 é o site insti
 - PDFs "FAQ Cadastro" e "FAQ ITCD" (perguntas numeradas), na mesma pasta de documentos;
 - "Perguntas e respostas CIB", em outra pasta.
 
-**Bloqueio.** O `robots.txt` do `www5` libera Googlebot e Bingbot e, para `User-agent: *`, declara
-`Disallow: /` e `Crawl-delay: 30`. Até a decisão, o `www5` não é acessado.
+**Robots.** O `robots.txt` do `www5` libera Googlebot e Bingbot e, para `User-agent: *`, declara
+`Disallow: /` e `Crawl-delay: 30`. **07/11/2026 — decidido pela regra geral D-FROTA-ROBOTS**
+([auli_pendencias.md](auli_pendencias.md) §44): o robots não barra a coleta. A proposta do estudo de honrar o
+`Crawl-delay: 30` (D-MTFAQ-3) segue como proposta para a fase 2.
 
-**Próximo passo.** Se a decisão for coletar, rodar a sondagem da §5.2 do estudo na máquina do mantenedor e
-avaliar os PDFs (PDF ficou fora em todas as outras entidades até aqui).
+**Próximo passo.** Rodar a sondagem da §5.2 do estudo na máquina do mantenedor e avaliar os PDFs (PDF ficou
+fora em todas as outras entidades até aqui).
 
 Referência: [ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §2b, §3 (D-MTFAQ-3) e §5.2.
 
@@ -268,6 +270,11 @@ aceitava o AuliBot nas FAQs). A recoleta com o AuliBot devolveu os 475 serviços
 navegador) e 1 novo do portal (Consultar NFS-e, `codServico=1453`). O HTML mudou também nos links do cabeçalho e
 dos anexos (`http://mobile.receita…`, `http://static…`), que o scraper não extrai — mudança do host inteiro desde
 02/11, não do UA: a casca das FAQs, pedida com o AuliBot nos dois dias, mostra a mesma troca. DF saiu da tabela.
+
+**07/11/2026 — a linha "robots restritivo" perde o motivo (D-FROTA-ROBOTS).** Com o robots fora dos critérios
+de coleta ([auli_pendencias.md](auli_pendencias.md) §44), BA e CE já não têm razão registrada para o UA de
+navegador. Passam a candidatos ao AuliBot, com o mesmo critério das linhas "legado": recoleta sem cache e diff
+limpo contra o backup. Não foi feito.
 
 ## 12. Serviços sem atualização desde julho (✅ feita — 2026-11-03)
 

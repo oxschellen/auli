@@ -143,9 +143,15 @@ não são reaproveitadas).
 
 ### Robots / etiqueta
 
+**Regra do robots (D-FROTA-ROBOTS, decisão do mantenedor, 07/11/2026):** o `robots.txt` não é critério de
+coleta — vale para todo portal e toda coleção (`docs/auli_pendencias.md` §44). Ficam obrigatórias as
+mitigações da D-PA-ROBOTS: UA AuliBot (regra do UA acima), cortesia ≥ 1 s sem paralelismo, cache, nunca
+autenticar. O robots de cada fonte continua registrado no estudo, como fato.
+
 Portais com robots restritivo (BA, CE) usam **User-Agent de navegador** e coleta de baixíssima
 frequência (cortesia entre fetches). São catálogos públicos, coleta rara. PE saiu da lista em 06/11/2026: o
-robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot.
+robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot. Desde a D-FROTA-ROBOTS, BA e CE
+não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com recoleta verificada.
 
 ---
 
