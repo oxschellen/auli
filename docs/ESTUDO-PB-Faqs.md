@@ -1,7 +1,7 @@
 # ESTUDO-PB-Faqs — Perguntas frequentes da SEFAZ-PB (coleção `faqs` da entidade `pb`)
 
-**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~30 GETs). · **Estado:** proposta v1, aguardando
-decisão (§5). · **Órgão:** Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB; o portal se chama "SER/PB"). ·
+**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~30 GETs). · **Estado:** **v1 implementada (07/11/2026) — 9 páginas, 200 perguntas** (§8); D-PBFAQ-1 decidida na opção C
+(sem a DeSTDA), D-PBFAQ-2..8 como propostas. · **Órgão:** Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB; o portal se chama "SER/PB"). ·
 **Hoje a `pb` tem só `servicos`** (Carta de Serviços em `cartaservico.sefaz.pb.gov.br`, 101 fichas —
 [REGISTRO-scrapers.md#pb](REGISTRO-scrapers.md#pb)).
 
@@ -21,7 +21,8 @@ decisão (§5). · **Órgão:** Secretaria de Estado da Fazenda da Paraíba (SEF
 > está sendo protegido de spambots…") viram o endereço visível; a tabela de anexos sai; o prefixo "R –" de 42 respostas
 > sai; e os subgrupos da Substituição Tributária ("COMÉRCIO EXTERIOR - PERGUNTAS FREQUENTES"…) vão para a trilha.
 >
-> Recomendação: **v1 = as 10 páginas, 205 perguntas** (D-PBFAQ-1..8), com o texto pelo conversor do kit.
+> Decisão do mantenedor (07/11/2026): **v1 = 9 páginas, 200 perguntas** — as 10 menos a DeSTDA, que a PB deixou de
+> aceitar desde a competência de janeiro de 2026 (D-PBFAQ-1, opção C). Texto pelo conversor do kit.
 
 ---
 
@@ -80,8 +81,8 @@ corpo inteiro quando a página não tem abas.
   da P42 ("… 215 kB").
 
 **Segmentação por linha.** O HTML da seção vira linhas: tag de bloco e `<br>` quebram a linha. Cada linha guarda se
-**todo o texto com letras** está em destaque: dentro de `<strong>`, `<b>`, `<h1>`–`<h6>` ou `<span>` com
-`font-weight: bold`. Trecho sem letra fora do negrito não desfaz o destaque. Isso cobre o "1" de "13" que o editor
+**todo o texto com letras** está em destaque: dentro de `<strong>`, `<b>` ou `<h1>`–`<h6>` (o `<span>` em negrito da
+Cobrança Automática está dentro de um `<strong>`). Trecho sem letra fora do negrito não desfaz o destaque. Isso cobre o "1" de "13" que o editor
 deixou fora do `<strong>` na ST e o `“` solto depois do "?" na DeSTDA.
 
 - **Pergunta** = linha em destaque que termina em "?" (sem contar aspas e espaços finais).
@@ -127,9 +128,16 @@ seção. A MDF-e não tem a 6, e isso é da página.
 
 ## 5. Decisões propostas (D-PBFAQ-*)
 
-- **D-PBFAQ-1 — Escopo = as 10 páginas, 205 perguntas**, inclusive as que pararam no tempo (GIM cita até 2020,
-  DeSTDA 2016, Cobrança Automática 2015): o portal ainda as publica e linka, e o acervo ingere como está. Alternativa:
-  só as que citam 2025–2026 (Cadastro, SPED, ST, Simples — 148).
+- **D-PBFAQ-1 — Escopo.** ✅ **Decidida em 07/11/2026: opção C — 9 páginas, 200 perguntas, sem a DeSTDA.** As três
+  opções que estavam na mesa:
+  - **A** — as 10 páginas (205), fiel ao portal; o risco é responder sobre a DeSTDA como se ela valesse.
+  - **B** — só as que citam 2025–2026 (Cadastro, SPED, ST, Simples — 148). Critério fraco: "não cita ano" não é
+    "obsoleta" (MDF-e, NFA-e e AIDF são procedimentos sem data).
+  - **C** — todas menos o que se sabe obsoleto: a **DeSTDA (5)**. Segundo a SEFAZ-PB (notícias de dez/2025 sobre o
+    Decreto 47.732/2025), o módulo EFD/OIE substitui a DeSTDA e a GIA-ST, que deixaram de ser aceitas a partir da
+    competência de janeiro de 2026. A GIM continua (para quem não é obrigado à EFD), e a Cobrança Automática (DIFAL
+    da EC 87/2015, de 2015) fica, porque não se verificou que as 4 respostas estejam erradas. Reincluir é uma linha da
+    lista curada.
 - **D-PBFAQ-2 — Uma regra de segmentação para as 10** (linha em destaque + "?", só as numeradas quando a maioria é
   numerada), sem configuração por página além de `(caminho, aba, nome)`.
 - **D-PBFAQ-3 — Grupos da ST na trilha**, sem o sufixo " - PERGUNTAS FREQUENTES".
@@ -165,3 +173,25 @@ grep -c 'class="tab-pane' cad.html                                              
 grep -c 'id="cloak' cad.html                                                     # 18 e-mails protegidos
 curl -sS -A "$UA" -o /dev/null -w '%{http_code} %{redirect_url}\n' "$H/info/documentos-fiscais/nf-e"   # 302 → error?r=NDA0
 ```
+
+## 8. Implementação (07/11/2026)
+
+`auli-scraper-pb/src/faqs.rs` (`auli-scraper-pb faqs` ou `all`), D-PBFAQ-1 na opção C e D-PBFAQ-2..8 como propostas,
+com dois ajustes que a implementação mostrou:
+
+- **Link aberto fecha na quebra de linha.** O portal deixa `<a href="mailto:cacgr1@…">` aberto até o endereço da linha
+  seguinte; levado adiante, o conversor colava as duas linhas no texto do link ("…gov.brAv. Presidente…"). O percurso
+  fecha o link na quebra.
+- **Sem a regra do `<span>` em negrito.** O `<span>` em negrito da Cobrança Automática está dentro de um `<strong>`; sem
+  a regra, as 200 perguntas saem iguais, e ela saiu.
+- **A pergunta é o texto puro da linha**, sem a URL dos links que alguns `<h4>` têm ("enviar uma FAC"); a resposta passa
+  pelo conversor do kit.
+
+Números da rodada à rede (9 GETs): 200 perguntas — Cadastro 64, SPED 42, ST 30, MDF-e 17, NFA-e 16, Simples 12, GIM 10,
+AIDF 5, Cobrança 4 —, os mesmos títulos, na mesma ordem, do protótipo do estudo. Respostas: 0 vazias, nenhuma tag,
+entidade, e-mail protegido ou tabela de anexos no texto, nenhum prefixo "R"; mín. 4 caracteres, mediana 583, máx.
+4.718. Aviso único: a numeração da MDF-e (sem a 6). `--usecache`: árvore idêntica byte a byte, snapshot idêntico a menos
+do `coletado_em`. 200 `.md` com nomes únicos e 200 vetores; os 106 artefatos de serviços saíram com o mesmo md5. Smoke
+`/v1/retrieve` (5 perguntas parafraseadas): o alvo em 1º em 4; na da EFD ("quais empresas são obrigadas a enviar…")
+em 5º, atrás de vizinhas da mesma página. Testes: 21 novos sobre as páginas reais e acordeões mínimos; 15 mutações,
+uma por regra, todas pegas.

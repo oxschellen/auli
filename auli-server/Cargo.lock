@@ -503,6 +503,7 @@ dependencies = [
  "auli-scraper-kit",
  "regex",
  "scraper",
+ "serde_json",
  "ureq",
 ]
 

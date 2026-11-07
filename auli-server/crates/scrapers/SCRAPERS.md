@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE, no CE, no RN e no ES, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE, no CE, no RN, no ES e na PB, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -627,6 +627,12 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   público × classe.
 - 101 serviços, 164 ocorrências, 51 classes, descrição rica (~1584). 4 testes. `ServicoRaw` direto.
   UA AuliBot. Descoberta em `docs/REGISTRO-scrapers.md#pb`.
+- **FAQs** (`auli-scraper-pb faqs`, `faqs.rs`): do portal institucional (Joomla), não da Carta — uma lista curada de 9
+  páginas de informação (Cadastro em 10 abas, SPED, Substituição Tributária, MDF-e, NFA-e, Simples, GIM, AIDF,
+  Cobrança Automática). Cada uma marca a pergunta de um jeito; a seção vira linhas (bloco e `<br>` quebram) e pergunta
+  é a linha toda em negrito que termina em "?", só as numeradas quando a maioria é numerada. E-mail protegido do
+  Joomla → o texto visível; tabela de anexos fora; prefixo "R –" fora; grupos da ST na trilha. Resposta pelo
+  conversor do kit. 9 GETs. 200 perguntas (07/11/2026), 21 testes. `docs/REGISTRO-scrapers.md#pb-faqs`.
 
 ---
 

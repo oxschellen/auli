@@ -47,6 +47,7 @@
 - [CE FAQs — Perguntas e respostas do Portal de Serviços da SEFAZ-CE (portalservicos.sefaz.ce.gov.br)](#ce-faqs)
 - [RN FAQs — FAQ do programa Nota Potiguar (np.sefaz.rn.gov.br/portal)](#rn-faqs)
 - [ES FAQs — portal Receita Orienta (s1-internet.sefaz.es.gov.br/ReceitaOrienta)](#es-faqs)
+- [PB FAQs — páginas de informação do portal institucional (www.sefaz.pb.gov.br/info/…)](#pb-faqs)
 
 ---
 
@@ -2766,3 +2767,54 @@ Sem `robots.txt` (404). HTML servido pronto, sem token nem JavaScript para o con
 - Saída: `data/es/raw/es-faqs-tree.json` (raiz → categoria → assunto → subassunto; item com o link da pergunta) e
   `data/es/es-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-es-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="pb-faqs"></a>
+
+# PB FAQs — páginas de informação do portal institucional (www.sefaz.pb.gov.br/info/…)
+
+**Discovery e implantação:** 07/11/2026. Estudo, medições e decisões D-PBFAQ-1..8:
+[`docs/ESTUDO-PB-Faqs.md`](ESTUDO-PB-Faqs.md). Coleção `faqs` do `auli-scraper-pb` (`auli-scraper-pb faqs`, ou `all` =
+serviços + FAQs). **200 perguntas** na rodada de 07/11, de 9 páginas.
+
+## Fonte
+
+O portal institucional (Joomla) não tem FAQ central: as perguntas estão em páginas de informação, uma lista curada de
+9 (a 10ª, DeSTDA, ficou fora — a PB deixou de aceitar a declaração desde a competência de janeiro de 2026, D-PBFAQ-1).
+`robots.txt` padrão do Joomla (só as pastas do sistema). Corpo em `div.item-page div.content-text`; as abas são do
+plugin Tabs da Regular Labs (`.tab-pane` com `.nn_tabs-title`), todas no HTML. 9 GETs (~1,3 MB) com 1 s.
+
+## As armadilhas
+
+1. **Cada página marca a pergunta de um jeito** (`<h4>`, `<strong>`, `<b>`, `<li><strong>`; "1.", "1 -", "P1.", sem
+   número), e muitas vezes no mesmo `<p>` da resposta, separada por `<br>`. A seção vira **linhas** (bloco e `<br>`
+   quebram), e pergunta é a linha cujo texto com letras está todo em destaque e termina em "?".
+2. **Subtítulos em negrito dentro das respostas** ("Sim. Mas o que fazer?" no REDESIM): quando a maioria das perguntas
+   da seção é numerada, só as numeradas contam.
+3. **Negrito partido pelo editor** (`1<strong>3 - Como…?</strong>` na ST) e **aspas depois do "?"** (DeSTDA): trecho sem
+   letra fora do negrito não desfaz o destaque; o "?" é conferido sem aspas e espaços finais.
+4. **E-mail protegido do Joomla** (36 nas páginas): `<span id="cloak…">Este endereço de email está sendo protegido de
+   spambots…</span><script>…</script>`. A coleta monta o `addy_text…` do script e põe o texto visível (num deles o
+   `mailto` do portal tem erro de digitação, e o texto está certo).
+5. **Link aberto até a linha seguinte** (`<a href="mailto:…">` sem fechar antes do endereço): o percurso fecha o link na
+   quebra.
+6. **Tabela de anexos** do `com_attachments` dentro do corpo (SPED): fica fora.
+7. **Grupos da ST** ("COMÉRCIO EXTERIOR - PERGUNTAS FREQUENTES"…): viram trilha, sem o sufixo, e saem da resposta anterior.
+8. **Índice antes das perguntas** (Simples): só o número está em negrito, então não é pergunta; o que vem antes da 1ª
+   pergunta sai.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: o GET que falhe; página sem corpo; aba da FAQ que sumiu; página sem pergunta;
+  pergunta sem resposta; par (link, pergunta) repetido; e-mail protegido que sobrou no texto; menos de 180 perguntas
+  (piso). Aviso: numeração que pula ou repete (a MDF-e não tem a 6).
+- **Sempre à rede**; o cache em `data/pb/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- `ureq`/rustls (TLS 1.2, GCM, cadeia completa) com o UA AuliBot (`crate::UA`, D-PBFAQ-8).
+- Pergunta = o texto puro da linha (sem URL); resposta pelo conversor do kit (`kit::html::html_para_texto`), sem o
+  prefixo "R –"/"R."/"R:" (42).
+- Saída: `data/pb/raw/pb-faqs-tree.json` (raiz → página → aba-assunto ou grupo) e `data/pb/pb-faqs-snapshot.json` (um
+  `FaqRaw` por pergunta; trilha `Página | Aba` no Cadastro e na Cobrança, `Página [| Grupo]` nas outras; link com
+  `#<id da aba>` quando a FAQ está numa aba), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-pb-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
