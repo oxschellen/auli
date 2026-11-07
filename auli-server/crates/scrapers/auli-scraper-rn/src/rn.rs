@@ -23,9 +23,6 @@ use scraper::Html;
 use serde_json::Value;
 use ureq::Agent;
 
-const USER_AGENT: &str =
-    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
-
 const BASE: &str = "https://www.sefaz.rn.gov.br";
 const SERVICOS_URL: &str = "https://www.sefaz.rn.gov.br/wp-json/wp/v2/servicos?per_page=100";
 
@@ -43,7 +40,7 @@ pub fn scrape(
     data_dir: &str,
     use_cache: bool,
 ) -> Result<(Vec<ServicoRaw>, Vec<Publico>), Box<dyn std::error::Error>> {
-    let agent = auli_scraper_kit::build_agent(USER_AGENT, Some(Duration::from_secs(30)));
+    let agent = auli_scraper_kit::build_agent(crate::UA, Some(Duration::from_secs(30)));
     let mut pending: Vec<(String, String)> = Vec::new();
 
     // 1) Os 15 cards do CPT `servicos`.

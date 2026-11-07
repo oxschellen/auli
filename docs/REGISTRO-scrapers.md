@@ -1,7 +1,7 @@
 # REGISTRO-scrapers — como cada portal foi investigado
 
 > **Documento de MANUTENÇÃO, não de arquivo.** Um relatório por fonte: 14 de **serviços** por
-> entidade + 1 de **pareceres** (RS), o **TARF** e 13 de **FAQs** (RS, SC, PR, SP, MG, MS, MT, GO, DF, AM, MA, PE e CE). Cada seção registra como o portal foi investigado, o que ele
+> entidade + 1 de **pareceres** (RS), o **TARF** e 14 de **FAQs** (RS, SC, PR, SP, MG, MS, MT, GO, DF, AM, MA, PE, CE e RN). Cada seção registra como o portal foi investigado, o que ele
 > tem de peculiar e por que o scraper faz o que faz — coisas que o CÓDIGO usa mas não explica, e que
 > não estão documentadas em lugar nenhum do lado de lá.
 >
@@ -45,6 +45,7 @@
 - [MA FAQs — Perguntas Frequentes do Portal SGC (portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes)](#ma-faqs)
 - [PE FAQs — Perguntas e Respostas do IPVA e do ITCMD (www.sefaz.pe.gov.br/Servicos/…/Perguntas-e-Respostas.aspx)](#pe-faqs)
 - [CE FAQs — Perguntas e respostas do Portal de Serviços da SEFAZ-CE (portalservicos.sefaz.ce.gov.br)](#ce-faqs)
+- [RN FAQs — FAQ do programa Nota Potiguar (np.sefaz.rn.gov.br/portal)](#rn-faqs)
 
 ---
 
@@ -2664,3 +2665,49 @@ Perguntas = as que ficam no acervo depois das cópias.
 | 94 | Principais dúvidas sobre o Menu: Downloads | `6a28349cc78eb856cb55c60e` | 1 |
 | 95 | Reforma Tributária – Perguntas e Respostas pelo Ministério da Fazenda | `66faa50d1cbb061624cd362e` | sem seções |
 | 96 | Principais Dúvidas sobre Ouvidoria e Corregedoria | `64da50ee170f5a26dc5e7586` | 1 |
+
+---
+
+<a id="rn-faqs"></a>
+
+# RN FAQs — FAQ do programa Nota Potiguar (np.sefaz.rn.gov.br/portal)
+
+**Discovery e implantação:** 06/11/2026. Estudo, medições e decisões D-RNFAQ-1..7:
+[`docs/ESTUDO-RN-Faqs.md`](ESTUDO-RN-Faqs.md). Coleção `faqs` do `auli-scraper-rn` (`auli-scraper-rn faqs`, ou `all`
+= serviços + FAQs). **23 perguntas** na rodada de 06/11.
+
+## Fonte
+
+O site da SEFAZ-RN (WordPress, `#rn`) não tem FAQ tributária: nenhum tipo de conteúdo de FAQ no `wp-json`, a Loteria
+Estadual (29 perguntas) fora do escopo, e as "FAQs" de IPVA e ITCD são PDFs. A FAQ está no **Nota Potiguar**, o
+programa de cidadania fiscal: `np.sefaz.rn.gov.br` → `/portal`, AngularJS sobre IIS/ASP.NET, sem `robots.txt` (404).
+O HTML das telas vem escrito no próprio bundle — `js/templates.js` (~1 MB, nome fixo), um módulo por tela que chama
+`$templateCache.put("<tela>", "…" + "…" + …)`. A da coleta é `components/oaplicativo/views/faq.html` (rota
+`#/o-aplicativo/faq`): `<h3>` por pergunta e a resposta nos `<p>`/`<ul>` até o próximo `<h3>`. **1 GET**.
+
+## As armadilhas
+
+1. **Duas telas de FAQ.** "O Aplicativo" (23) e "Comunicação" (`components/comunicacao/views/faq.html`, rota
+   `#/comunicacao/faq`, 22): as 22 também estão na primeira, 10 com a mesma resposta e 12 em redação mais curta. A
+   coleta lê "O Aplicativo" (tem o desconto no IPVA e as respostas atualizadas) e usa a outra só como conferência:
+   pergunta dela que falte na v1 é aviso no log.
+2. **O HTML é JavaScript.** O argumento do `put` é uma concatenação de literais de string com escapes (`\"`, `\n`,
+   `\uXXXX`); o scraper os lê um a um (literal, `+`, literal… até `)`), sem `eval` e sem regex sobre o JS inteiro.
+   Literal sem fim ou um token que não seja `+`/`)` é `Err`.
+3. **Sem âncora por pergunta.** O app usa `hashPrefix("")` e a rota é da tela: as 23 têm o mesmo link,
+   `https://np.sefaz.rn.gov.br/portal/#/o-aplicativo/faq`, e a pergunta é a identidade do `.md` (repetida é `Err`).
+4. **PDF ao lado.** A tela linka `downloads/manuais/faq-np.pdf` ("Perguntas e Respostas — NOVO!", 4,9 MB, de
+   20/07/2023); PDF fica fora (D-RNFAQ-3).
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: o GET que falhe; o `templates.js` sem a tela; literal quebrado; `<h3>`
+  vazio; tela sem pergunta; pergunta sem resposta; menos de 15 perguntas (piso); pergunta repetida. Aviso: pergunta só
+  na tela de conferência, ou a de conferência ilegível.
+- **Sempre à rede**; o cache em `data/rn/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- `ureq` com o UA AuliBot do crate (`crate::UA`, o mesmo dos serviços), 1 GET, segundos.
+- Saída: `data/rn/raw/rn-faqs-tree.json` (raiz `Menu` → um `Faq` "Nota Potiguar" com as 23, itens sem `url`) e
+  `data/rn/rn-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha "Nota Potiguar"), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-rn-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
