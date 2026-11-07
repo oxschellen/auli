@@ -16,7 +16,6 @@ use std::time::Duration;
 
 use anyhow::{Context, Result, anyhow, bail};
 use regex::Regex;
-use scraper::Html;
 use serde::Deserialize;
 use ureq::Agent;
 
@@ -359,73 +358,21 @@ fn no(titulo: &str, trilha: &str, ramo: &Ramo) -> FaqNode {
     }
 }
 
-static OCULTO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?is)<style\b.*?</style>|<script\b.*?</script>|<svg\b.*?</svg>|<!--.*?-->")
-        .unwrap()
-});
-static ESPACO_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\s+").unwrap());
-static IMG_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r#"(?is)<img\b[^>]*?\ssrc\s*=\s*["']([^"']*)["'][^>]*>"#).unwrap());
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)</?(?:p|div|br|hr|li|ul|ol|tr|table|tbody|thead|h[1-6]|blockquote)\b[^>]*>")
-        .unwrap()
-});
-static CELULA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</?t[dh]\b[^>]*>").unwrap());
-static TAG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<[^>]+>").unwrap());
-
-/// HTML do editor SharePoint → texto, como nas FAQs do SP (o mesmo editor; `auli-scraper-sp/src/faqs.rs`):
-/// `<a href="url">texto</a>` vira `texto "url"`, `<img src>` vira `"url"`, tag de bloco vira quebra de linha,
-/// célula vira espaço. O espaço cru do HTML é colapsado antes de os blocos virarem linha; toda tag sai, e as
-/// entidades — também as dos `href` e `src` — são decodificadas no fim, uma vez, no texto inteiro, pelo
-/// parser HTML, que conhece todas (`&#58;` no lugar de `:`; `&#119872;` dos símbolos matemáticos). Links
-/// relativos (`/Pareceres/…`, `/Manuais/…`, imagens) ganham o host.
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): links da raiz com o host do
+/// `BASE`.
 fn html_para_texto(s: &str) -> String {
-    let visivel = OCULTO_RE.replace_all(s, "");
-    let corrido = ESPACO_RE.replace_all(&visivel, " ");
-    let com_imagens = IMG_RE.replace_all(&corrido, |c: &regex::Captures| {
-        format!("\"{}\"", absoluta(c[1].trim()))
-    });
-    let com_links = LINK_RE.replace_all(&com_imagens, |c: &regex::Captures| {
-        let href = c[1].trim();
-        let texto = clean(&TAG_RE.replace_all(&c[2], ""));
-        if href.is_empty() || href.starts_with('#') || href.starts_with("javascript:") {
-            texto
-        } else if texto.is_empty() {
-            format!("\"{}\"", absoluta(href))
-        } else {
-            format!("{texto} \"{}\"", absoluta(href))
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    let com_celulas = CELULA_RE.replace_all(&com_quebras, " ");
-    let sem_tags = TAG_RE.replace_all(&com_celulas, "");
-    decodificar(&sem_tags)
-        .lines()
-        .map(clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(BASE),
+            quebras_do_fonte: false,
+        },
+    )
 }
 
 /// Uma pergunta numa linha só.
 fn uma_linha(s: &str) -> String {
     clean(&html_para_texto(s).replace('\n', " "))
-}
-
-fn decodificar(s: &str) -> String {
-    Html::parse_fragment(s).root_element().text().collect()
-}
-
-/// `/Pareceres/…` → `https://orientacaotributaria.sefaz.go.gov.br/Pareceres/…`; o resto como veio.
-fn absoluta(url: &str) -> String {
-    if url.starts_with('/') {
-        format!("{BASE}{url}")
-    } else {
-        url.to_string()
-    }
 }
 
 #[cfg(test)]

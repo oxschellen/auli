@@ -1834,7 +1834,7 @@ JS não chamam API externa: os dados saem do `getServerSideProps`, pelo `/_next/
    **completada pelas perguntas**, e a trilha sobe por `SuperiorHierarquicoID`. Rodada de 01/11:
    4 trilhas de 1 nível, 513 de 2, 789 de 3.
 3. **HTML às vezes.** `Questao`/`Resposta` vêm ora em texto puro com `\n`, ora em HTML (`p`, `br`, `a`,
-   `font`, `span`, `strong` + entidades; 22 de 67 em Benefícios Fiscais). O `html_para_texto` converte
+   `font`, `span`, `strong` + entidades; 22 de 67 em Benefícios Fiscais). O `html_para_texto` (desde 07/11/2026, o do kit, com `quebras_do_fonte`) converte
    `<a href>` → `texto "url"`, bloco → quebra de linha, tira o resto e decodifica as entidades. O texto
    puro passa sem mudar, inclusive as quebras no meio da frase que vêm da fonte. Nenhum `[[url âncora]]`
    (o formato dos serviços) no acervo.
@@ -2761,8 +2761,8 @@ Sem `robots.txt` (404). HTML servido pronto, sem token nem JavaScript para o con
 - **Sempre à rede**; o cache em `data/es/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
   byte e o snapshot a menos do `coletado_em`.
 - `ureq`/rustls (TLS 1.2, GCM, cadeia completa com o Sectigo OV R36) com o UA AuliBot (`crate::UA`, D-ESFAQ-8).
-- Resposta pelo `html_para_texto` na variante do DF (link → `texto "url"`, bloco e `<hr>` → linha, entidades no
-  fim); "Atualizado em" fica (645 respostas).
+- Resposta pelo conversor do kit (`kit::html::html_para_texto`; link → `texto "url"`, bloco e `<hr>` → linha,
+  entidades no fim); "Atualizado em" fica (645 respostas).
 - Saída: `data/es/raw/es-faqs-tree.json` (raiz → categoria → assunto → subassunto; item com o link da pergunta) e
   `data/es/es-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-es-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).

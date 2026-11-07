@@ -398,7 +398,7 @@ fn consolidar(paginas: &[(Referente, Vec<Card>)]) -> Result<Vec<FaqRaw>> {
     Ok(faqs)
 }
 
-/// Tag de estrutura que a lista fechada do `TAG_RE` não tira — se aparecer, sai literal na resposta.
+/// Tag de estrutura que sobrou na resposta convertida (o conversor do kit só tira tag de nome HTML conhecido).
 static TAG_SOBRANDO_RE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
         r"(?i)</?(?:table|thead|tbody|tr|td|th|h[1-6]|blockquote|pre|code|iframe|form|input|select|textarea)\b",
@@ -414,55 +414,16 @@ fn respostas_com_tag_sobrando(paginas: &[(Referente, Vec<Card>)]) -> Vec<u32> {
         .collect()
 }
 
-static IMG_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r#"(?is)<img\b[^>]*?\ssrc\s*=\s*["']([^"']*)["'][^>]*>"#).unwrap());
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?i)</?(?:br|center|div|hr|li|ol|p|ul)\b[^>]*>").unwrap());
-/// Lista fechada (D-PRFAQ-5): o vocabulário medido nas 1.321 respostas, mais folga. Qualquer outro
-/// `<…>` é texto — o `<` de menu ("Cadastro < Alteração Cadastral") e o `<Consulta Pendencias>` da
-/// FAQ 1775, que o `<[^>]+>` do SC apagaria.
-static TAG_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(
-        r"(?i)</?(?:a|b|br|center|div|em|font|hr|i|img|li|ol|p|span|strong|sub|sup|u|ul)\b[^>]*>",
-    )
-    .unwrap()
-});
-
-/// HTML → texto, na convenção do SC: `<a href="url">texto</a>` vira `texto "url"`, tag de bloco vira
-/// quebra de linha, entidades são decodificadas e linhas vazias descartadas. Duas diferenças: só as
-/// tags da lista fechada saem, e `<img src>` vira `"<url absoluta>"`, como a âncora vazia — 3
-/// respostas são só uma tabela em imagem.
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): a quebra do fonte é estrutura nas
+/// respostas do SAC.
 fn html_para_texto(s: &str) -> String {
-    let com_imagens = IMG_RE.replace_all(s, |c: &regex::Captures| {
-        let src = decode_entities(c[1].trim());
-        if src.starts_with('/') {
-            format!("\"{HOST}{src}\"")
-        } else {
-            format!("\"{src}\"")
-        }
-    });
-    let com_links = LINK_RE.replace_all(&com_imagens, |c: &regex::Captures| {
-        let href = decode_entities(c[1].trim());
-        let texto = clean(&decode_entities(&TAG_RE.replace_all(&c[2], "")));
-        if href.is_empty() || href.starts_with('#') || href.starts_with("javascript:") {
-            texto
-        } else if texto.is_empty() {
-            format!("\"{href}\"")
-        } else {
-            format!("{texto} \"{href}\"")
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    let sem_tags = TAG_RE.replace_all(&com_quebras, "");
-    decode_entities(&sem_tags)
-        .lines()
-        .map(clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(HOST),
+            quebras_do_fonte: true,
+        },
+    )
 }
 
 fn url_do_referente(rid: u32) -> String {
@@ -721,7 +682,7 @@ mod tests {
     #[test]
     fn tag_fora_da_lista_fechada_so_avisa() {
         assert!(respostas_com_tag_sobrando(&paginas()).is_empty());
-        // O que sobraria de uma tabela na resposta depois da conversão (o `TAG_RE` não tira `<table>`).
+        // Uma tabela que sobrasse na resposta convertida.
         let mut p = paginas();
         p[0].1[0].paineis[1].resposta = "Veja a tabela: <table>x</table>".to_string();
         assert_eq!(respostas_com_tag_sobrando(&p), vec![1334]);
@@ -802,13 +763,14 @@ mod tests {
     #[test]
     fn menor_que_de_menu_fica_no_texto() {
         // FAQ 2274 (referente 30): o `<` é a seta do caminho de menu. O `<b>` adiante fecharia o
-        // `<[^>]+>` do SC, que apagaria o caminho até ele (o `<br>` não: vira quebra antes).
+        // `<[^>]+>` do SC, que apagaria o caminho até ele (o `<br>` não: vira quebra antes). O link cujo
+        // texto é a URL sai uma vez só (D-KITHTML-2).
         let r = r#"A comunicação deverá ser efetuada por meio do formulário do cadastro eletrônico, disponível na área restrita do <a href="https://receita.pr.gov.br/login" target="_blank">https://receita.pr.gov.br/login</a> - Receita/PR, menu Cadastro de Contribuintes < Alteração Cadastral < Dados Cadastrais. Fica <b>dispensado o envio de qualquer documento</b>, conforme disposto no no § 9º do art 17 da NPF 092/2017."#;
         assert_eq!(
             html_para_texto(r),
             "A comunicação deverá ser efetuada por meio do formulário do cadastro eletrônico, \
-             disponível na área restrita do https://receita.pr.gov.br/login \
-             \"https://receita.pr.gov.br/login\" - Receita/PR, menu Cadastro de Contribuintes < \
+             disponível na área restrita do \"https://receita.pr.gov.br/login\" - Receita/PR, \
+             menu Cadastro de Contribuintes < \
              Alteração Cadastral < Dados Cadastrais. Fica dispensado o envio de qualquer documento, \
              conforme disposto no no § 9º do art 17 da NPF 092/2017."
         );

@@ -486,40 +486,19 @@ fn consolidar(modulos: &[ModuloFaq]) -> Result<Vec<FaqRaw>> {
     Ok(faqs)
 }
 
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)</?(?:br|div|h[1-6]|hr|li|ol|p|table|tbody|thead|tr|ul)\b[^>]*>").unwrap()
-});
-static CELULA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</?t[dh]\b[^>]*>").unwrap());
 static TAG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<[^>]+>").unwrap());
 static NUMERICA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"&#(\d+);").unwrap());
 
-/// HTML → texto, na convenção da frota: `<a href="url">texto</a>` vira `texto "url"` (relativo ganha o
-/// `base`), tag de bloco vira quebra de linha, célula vira espaço, linhas vazias saem. Toda tag sai, como
-/// no SP (D-MGFAQ-6): nas 17 páginas de 01/11/2026 não há `<` cru (o `>` do texto vem como `&gt;`), e
-/// as entidades só são decodificadas depois.
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): links da raiz com o host da
+/// página.
 pub(crate) fn html_para_texto(s: &str, base: &str) -> String {
-    let com_links = LINK_RE.replace_all(s, |c: &regex::Captures| {
-        let href = decodificar(c[1].trim());
-        let texto = uma_linha(&c[2]);
-        if href.is_empty() || href.starts_with('#') || href.starts_with("javascript:") {
-            texto
-        } else if texto.is_empty() {
-            format!("\"{}\"", absoluta_em(base, &href))
-        } else {
-            format!("{texto} \"{}\"", absoluta_em(base, &href))
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    let com_celulas = CELULA_RE.replace_all(&com_quebras, " ");
-    decodificar(&TAG_RE.replace_all(&com_celulas, ""))
-        .lines()
-        .map(clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(base),
+            quebras_do_fonte: false,
+        },
+    )
 }
 
 /// Um trecho curto (texto de link, linha do índice) numa linha só, sem tag.

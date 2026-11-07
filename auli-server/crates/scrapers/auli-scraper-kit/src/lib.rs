@@ -8,6 +8,7 @@
 //! - [`aggregate_servicos`] (+ [`descricao_body`], [`PerPublicoServicos`]): agrega os serviços
 //!   per-público em `ServicoRaw` para o snapshot;
 //! - [`faqtree`]: a árvore `<id>-faqs-tree.json` que a aba de FAQs do frontend lê.
+//! - [`html`]: o HTML das respostas de FAQ em texto ([`html::html_para_texto`]), uma regra só para a frota.
 //!
 //! A **fronteira** (tipos, versão, caminho e I/O do snapshot — incluindo o shape per-público
 //! `ServicoPerPublico`) mora no `auli-contract` (D-C1): produtor e consumidor usam as mesmas
@@ -17,6 +18,7 @@
 pub mod cache;
 pub mod docs;
 pub mod faqtree;
+pub mod html;
 pub mod http;
 
 mod agent;

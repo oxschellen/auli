@@ -40,6 +40,7 @@ Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/
 | `kit::http::post_json(agent, url, headers, body, &GetOpts)` | POST JSON com retry (ce/mt) | — |
 | `kit::clean(s)` | zero-width + nbsp + squeeze | — |
 | `kit::clean_decoded(s)` / `kit::decode_entities(s)` | decode de entidades HTML + squeeze (pr/ba) — **sem** strip de zero-width | — |
+| `kit::html::html_para_texto(s, Opcoes { base, quebras_do_fonte })` | HTML das respostas de FAQ → texto: bloco vira linha, link vira `texto "url"` (uma vez só quando o texto é a URL), tag HTML sai, `<` que é texto fica, entidades decodificadas uma vez (D-KITHTML-1..8, `docs/ESTUDO-kit-html-para-texto.md`). `kit::html::endereco(href, base)` decide se um `href` vale ir para o texto | pe e rn (percorrem o DOM); o `tarf.rs` do rs (outro contrato) |
 | `kit::cache::read_or_bail(dir, url, use_cache)` | cache-read + miss-vira-erro do `--usecache` | ce (terminador de paginação), rs-faqs (mensagem própria) |
 | `kit::USER_AGENT` | UA de navegador (Firefox/124 Linux) — a exceção da frota, só com motivo (D-FROTA-UA) | — (os 3 antigos Chrome eram cópia acidental; recoleta ao vivo confirmou ≡) |
 | `ScraperInfo::new(nome, versao)` (contrato) | substitui o `fn scraper_info()` boilerplate | — |
@@ -416,7 +417,7 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
 - **FAQs** (`auli-scraper-am faqs`, `faqs.rs`): a seção "Perguntas Frequentes" do detalhe de cada página da árvore
   (serviços e categorias com página), no flight RSC do detalhe — o campo `perguntasRespostasHtml` é inline ou uma
   referência `$x` a um bloco de texto do mesmo flight (lido em bytes, de linha em linha: os blocos vêm colados).
-  Portão = `visibleSections`. HTML de editor livre → linhas (conversor das FAQs do DF); pergunta = linha numerada
+  Portão = `visibleSections`. HTML de editor livre → linhas (o conversor do kit, `kit::html`); pergunta = linha numerada
   (`1)`/`1.`/`1 -`, não `2.1)`) quando ≥ 50 % delas têm "?", senão a linha com "?"; sem nenhuma, 1 FAQ pela página.
   Cópias idênticas entre páginas ficam na de menor id. Escopo = a árvore do `servicos` (o Portal do Servidor
   Fazendário do mesmo flight fica fora). AuliBot. 176 perguntas de 47 páginas (306 lidas, 109 cópias, 02/11/2026),
@@ -460,7 +461,7 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   categorias → cada categoria lista os assuntos → cada assunto é uma página com o acordeão inteiro (`heading{ID}_faq`
   direto no assunto; `heading{SID}_sa` → `heading{ID}_saf` no subassunto; resposta no `.card-body.user-content`,
   anexo no `.card-footer`). A busca `BuscaV2` fica fora: devolve também o que o portal despublicou. Resposta pelo
-  `html_para_texto` do DF; trilha `Categoria | Assunto [| Subassunto]` (a categoria some quando tem um assunto só, de
+  conversor do kit (`kit::html`); trilha `Categoria | Assunto [| Subassunto]` (a categoria some quando tem um assunto só, de
   mesmo nome); link = página + `#heading{ID}_…`. `ureq`/rustls, UA AuliBot, 52 GETs com 1 s. 1.003 perguntas
   (07/11/2026), 20 testes. `docs/REGISTRO-scrapers.md#es-faqs`.
 

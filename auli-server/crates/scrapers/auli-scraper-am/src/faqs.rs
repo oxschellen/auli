@@ -14,7 +14,6 @@ use std::time::Duration;
 
 use anyhow::{Context, Result, anyhow, bail};
 use regex::Regex;
-use scraper::Html;
 use serde::de::DeserializeOwned;
 
 use auli_contract::FaqRaw;
@@ -444,75 +443,16 @@ fn no(titulo: &str, trilha: &str, ramo: &Ramo) -> FaqNode {
     }
 }
 
-static OCULTO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?is)<style\b.*?</style>|<script\b.*?</script>|<svg\b.*?</svg>|<!--.*?-->")
-        .unwrap()
-});
-static ESPACO_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\s+").unwrap());
-static IMG_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r#"(?is)<img\b[^>]*?\ssrc\s*=\s*["']([^"']*)["'][^>]*>"#).unwrap());
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)</?(?:p|div|br|hr|li|ul|ol|tr|table|tbody|thead|h[1-6]|blockquote)\b[^>]*>")
-        .unwrap()
-});
-static CELULA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</?t[dh]\b[^>]*>").unwrap());
-static TAG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<[^>]+>").unwrap());
-
-/// HTML da seção → texto, como nas FAQs do SP, do GO e do DF (D-AMFAQ-2): o HTML é de editor livre, com
-/// comentários do Word em 4 páginas e links em 16 (02/11/2026). `<style>`, `<script>` e comentários saem
-/// inteiros; `<a href="url">texto</a>` vira `texto "url"` (ou só `"url"`, quando o texto é a própria URL),
-/// `<img src>` vira `"url"`, tag de bloco vira quebra de linha, célula vira espaço; as entidades são
-/// decodificadas no fim, uma vez, pelo parser HTML. Só endereço `http(s)` e `mailto` entra no texto.
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): links da raiz com o host do
+/// `am::BASE`.
 fn html_para_texto(s: &str, base: &str) -> String {
-    let visivel = OCULTO_RE.replace_all(s, "");
-    let corrido = ESPACO_RE.replace_all(&visivel, " ");
-    let com_imagens = IMG_RE.replace_all(&corrido, |c: &regex::Captures| {
-        match endereco(c[1].trim(), base) {
-            Some(url) => format!("\"{url}\""),
-            None => String::new(),
-        }
-    });
-    let com_links = LINK_RE.replace_all(&com_imagens, |c: &regex::Captures| {
-        let texto = clean(&TAG_RE.replace_all(&c[2], ""));
-        match endereco(c[1].trim(), base) {
-            Some(url) if texto.is_empty() || texto == url => format!("\"{url}\""),
-            Some(url) => format!("{texto} \"{url}\""),
-            None => texto,
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    let com_celulas = CELULA_RE.replace_all(&com_quebras, " ");
-    let sem_tags = TAG_RE.replace_all(&com_celulas, "");
-    decodificar(&sem_tags)
-        .lines()
-        .map(clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
-}
-
-/// O endereço que vale pôr no texto: `http(s)` e `mailto` como vieram, caminho da raiz com o host da `base`;
-/// o resto (`file:`, `javascript:`, âncora, lixo) não.
-fn endereco(href: &str, base: &str) -> Option<String> {
-    let minusculo = href.to_ascii_lowercase();
-    if minusculo.starts_with("http://")
-        || minusculo.starts_with("https://")
-        || minusculo.starts_with("mailto:")
-    {
-        Some(href.to_string())
-    } else if href.starts_with('/') && !href.starts_with("//") {
-        let host = base.splitn(4, '/').take(3).collect::<Vec<_>>().join("/");
-        Some(format!("{host}{href}"))
-    } else {
-        None
-    }
-}
-
-fn decodificar(s: &str) -> String {
-    Html::parse_fragment(s).root_element().text().collect()
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(base),
+            quebras_do_fonte: false,
+        },
+    )
 }
 
 #[cfg(test)]

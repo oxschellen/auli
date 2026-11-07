@@ -11,12 +11,10 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
-use std::sync::LazyLock;
 use std::thread::sleep;
 use std::time::Duration;
 
 use anyhow::{Result, anyhow, bail};
-use regex::Regex;
 use serde::Deserialize;
 use ureq::Agent;
 
@@ -339,39 +337,16 @@ fn consolidar(raizes: &[AssuntoNo], buscas: Vec<(i64, BuscaApi)>) -> Result<Cons
     })
 }
 
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)<\s*/?\s*(p|br|div|li|ul|ol|tr|table|h[1-6])\b[^>]*>").unwrap()
-});
-static TAG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<[^>]+>").unwrap());
-
-/// HTML (ou texto puro) → texto (D-SCFAQ-7): `<a href="url">texto</a>` vira `texto "url"` (a
-/// convenção do `normalize_links`), tag de bloco vira quebra de linha, as demais tags saem, entidades
-/// são decodificadas e linhas vazias descartadas. Texto puro só passa pelo `clean` de cada linha.
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): a quebra do fonte é estrutura: as
+/// alíneas "a)", "b)" vêm em texto corrido.
 fn html_para_texto(s: &str) -> String {
-    let com_links = LINK_RE.replace_all(s, |c: &regex::Captures| {
-        let href = auli_scraper_kit::decode_entities(c[1].trim());
-        let texto = auli_scraper_kit::clean(&auli_scraper_kit::decode_entities(
-            &TAG_RE.replace_all(&c[2], ""),
-        ));
-        if href.is_empty() || href.starts_with('#') || href.starts_with("javascript:") {
-            texto
-        } else if texto.is_empty() {
-            format!("\"{href}\"")
-        } else {
-            format!("{texto} \"{href}\"")
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    let sem_tags = TAG_RE.replace_all(&com_quebras, "");
-    auli_scraper_kit::decode_entities(&sem_tags)
-        .lines()
-        .map(auli_scraper_kit::clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(BASE),
+            quebras_do_fonte: true,
+        },
+    )
 }
 
 /// Link oficial da pergunta: a busca por número devolve exatamente ela.

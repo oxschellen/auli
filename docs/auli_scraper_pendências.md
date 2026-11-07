@@ -230,7 +230,8 @@ levar as melhorias do DF e o modo do CE e provar SP, GO, AM e CE byte a byte com
 **07/11/2026 — estudado:** [ESTUDO-kit-html-para-texto.md](ESTUDO-kit-html-para-texto.md). Não são cinco cópias: são
 12 funções em 10 variantes (só DF, AM e ES idênticas). Num laboratório com os caches (a base reproduz a produção nas
 12), a função única muda 395 das 13.449 FAQs, todas com causa conhecida, sem perder palavra visível, e corrige dois
-defeitos com efeito no acervo de hoje (SC e CE) e um latente. Propostas D-KITHTML-1..8, aguardando decisão.
+defeitos com efeito no acervo de hoje (SC e CE) e um latente. **✅ Extraído em 07/11/2026** (D-KITHTML-1..8
+aprovadas): `auli_scraper_kit::html`; as 12 cópias saíram — [ESTUDO-kit-html-para-texto.md](ESTUDO-kit-html-para-texto.md) §10.
 
 ## 11. User-Agent institucional para a frota
 
