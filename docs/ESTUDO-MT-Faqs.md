@@ -1,8 +1,9 @@
 # ESTUDO-MT-Faqs — Perguntas Frequentes da SEFAZ-MT (coleção `faqs` da entidade `mt`)
 
 **Data:** 2026-11-02 (descoberta) · revisado em 2026-11-02 após sondagem (§5.1). · **Estado:** **v1 implementada
-— FAQ do Nota MT, API JSON anônima, 135 perguntas** (§2, §8). **Fase 2 sondada em 07/11/2026 (§9): proposta,
-aguardando decisão** — a hipótese da §2b (os PDFs "FAQ <tema>") não se confirmou como fonte principal. · **Órgão:** Secretaria de Estado de Fazenda de Mato Grosso
+— FAQ do Nota MT, API JSON anônima, 135 perguntas** (§2, §8). **Fase 2 sondada e implementada em 07/11/2026 (§9,
+§10): as páginas de perguntas das áreas do site da SEFAZ (48) e o Portal MT (11), 194 perguntas no MT** — a
+hipótese da §2b (os PDFs "FAQ <tema>") não se confirmou como fonte principal. · **Órgão:** Secretaria de Estado de Fazenda de Mato Grosso
 (SEFAZ-MT). · **Hoje a `mt` tem só `servicos`** (X-Via, 27 itens, descrição rica; recoletado sem cache em 02/11).
 
 > **TL;DR — duas fontes de FAQ de verdade, de formas opostas.**
@@ -225,7 +226,8 @@ Portal do Conhecimento (o `Crawl-delay` que os dois declaram, como a D-MTFAQ-3 p
 > ainda baixam, mas são de **28/09/2017** e nada os linka. O que há de atual:
 >
 > 1. **Três páginas "Perguntas frequentes" de áreas de serviço do `www5`**, em HTML: Contencioso Administrativo
->    Tributário (**21**), Declarações Fiscais — DIMP (**11**) e Documentos Fiscais — NFA-e (**15**): **47**.
+>    Tributário (**21**), Declarações Fiscais — DIMP (**11**) e Documentos Fiscais — NFA-e (**15**): **47**. (A NFA-e
+>    tem 16; a contagem certa é 48 — §10.)
 > 2. **A FAQ do portal estadual X-Via** (`portal.mt.gov.br/perguntas-frequentes`), por API JSON aberta: `POST /v1/faq`
 >    com o id da SEFAZ devolve **11** perguntas, todas alteradas em fev–mar/2026.
 
@@ -293,3 +295,72 @@ ID=$(curl -s -A "$UA" https://portal.mt.gov.br/v1/department/secretaria-de-estad
 curl -s -A "$UA" -H 'Content-Type: application/json' -X POST https://portal.mt.gov.br/v1/faq \
   -d "{\"uo\":[\"$ID\"]}" | jq 'length'                                                   # 11
 ```
+
+## 10. Fase 2 — implementação (07/11/2026)
+
+**Decidido pelo usuário em 07/11: D-MTFAQ-10 = A**; D-MTFAQ-11 a -14 como propostas, com os desvios abaixo.
+Registro em [`REGISTRO-scrapers.md#mt-faqs`](REGISTRO-scrapers.md#mt-faqs).
+
+O `faqs.rs` passa a ter três fontes, cada uma um ramo da árvore (raiz → `Menu` por fonte → `Faq` por grupo): o Nota
+MT, sem mudança; o site da SEFAZ (`faqs/site.rs`); e o Portal MT (`faqs/portal.rs`). As chamadas passam todas pela
+`Rede`: cache por URL (no POST, URL e corpo) e cortesia por host, 30 s no `www5` e 1 s nos outros.
+
+- **`www5`:** "Todos os Serviços" → as áreas (`a[href*="/servicos?c="]`, sem repetir o link; menos de 15 é o layout
+  que mudou, `Err`) → o item "Perguntas frequentes" do menu da área (`div.mosaic-relateds-list`; o texto comparado
+  sem diferença de maiúscula e com os espaços normalizados) → a página, lida dentro do único `div.mosaic-content`
+  com o `kit::linhas`; o "Resposta:" do começo da resposta sai. Duas áreas que levem à mesma página: ela entra uma
+  vez. Página sem pergunta: aviso. Dependência nova do crate: `scraper` (html5ever).
+- **Portal MT:** `GET /v1/department/<slug>` → o id → `POST /v1/faq {"uo": [<id>]}`. Grupo = a categoria, ou o tipo
+  quando não há ("Institucional"), na ordem do nome; dentro dele, na ordem do id (a API não garante ordem); link =
+  a página da pergunta.
+
+**Desvios em relação à §9:**
+
+1. **A NFA-e tem 16 perguntas, não 15.** A sondagem contou errado: a página numera de 1 a 16 (`<ol start>`). A 6ª
+   vem partida em dois negritos ("…da NFA-" + "e?"), e o `kit::linhas` junta as duas. O `www5` dá **48**, a fase 2
+   **59** e o MT **194**.
+2. **Trilha do `www5` sem o sufixo:** `SEFAZ-MT | <área>`, e não `… | Perguntas frequentes` (D-MTFAQ-14). Toda página
+   da fonte é de perguntas frequentes, e a raiz da árvore já tem esse nome; o sufixo repetiria as mesmas duas
+   palavras nos 48 textos vetorizados.
+3. **Trilha do Portal MT só com a categoria** (`Portal MT | <categoria>`, como a D-MTFAQ-14), sem o serviço que a
+   tabela da §9.2 sugeria. 10 das 11 têm serviço, mas é o serviço do catálogo a que a pergunta foi pendurada
+   ("Inscrever no Cadastro de Contribuintes Eletrônicos…" para "Quem é considerado contribuinte do ICMS em MT?"),
+   não o assunto dela.
+4. **Pergunta inativa no Portal MT = aviso e fora**, e não `Err` (§9.2): o mesmo tratamento das dúvidas inativas do
+   Nota MT. Pergunta de outro órgão continua `Err`.
+5. **Página de área sem pergunta = aviso** (D-MTFAQ-11), e não `Err` como a lista de guardas da §9.2 dizia. Área que
+   ganhe ou perca o item "Perguntas frequentes" não tem aviso próprio: pergunta a mais só aumenta o total, e a menos
+   cai na guarda de encolhimento do `update-mt-faqs.sh`.
+6. O nó da árvore se chama "SEFAZ-MT", e não "Site da SEFAZ": o mesmo nome da trilha.
+
+**Rodada de laboratório** (07/11, rede, diretório isolado): 30 GETs ao `www5` com 30 s entre eles ("Todos os
+Serviços", as 24 áreas, as 5 páginas de perguntas), 1 GET e 1 POST ao Portal MT, 1 GET ao Nota MT; **194
+perguntas em 15 grupos**. Avisos: Autorregularização e ITCD sem pergunta.
+
+**Testes:** 21 → 40. O `www5` com 6 páginas reais de 07/11, sem `<script>`, `<style>` e comentários ("Todos os
+Serviços", uma área com o item, uma sem, a NFA-e, o Contencioso e a página vazia da Autorregularização), e um site
+de mentira de 15 áreas para o `coletar`, servido por uma `Rede` só de cache; o Portal MT com as duas respostas reais;
+as três fontes juntas na consolidação e na árvore. Mutação, 31 defeitos plantados um a um: 30 derrubam
+um teste. Entre eles: sem o mínimo de áreas, sem a deduplicação das páginas e das áreas, sem o filtro do link de ícone,
+com o item procurado fora do menu, com a comparação sensível a maiúscula ou a espaço, sem a exigência de um só bloco
+de conteúdo, sem o corte do "Resposta:", com link relativo tratado como absoluto, sem a guarda de órgão, com as
+inativas dentro, sem a ordem do id, sem o link da pergunta, com o id do órgão fixo, com a chave de cache do POST sem o
+corpo, e com o link e a trilha errados na consolidação e na árvore. O que sobrevive é tirar uma fonte da lista do
+`run`, que é a entrada de rede e não tem teste unitário (como na fase 1); a rodada de produção a cobre, com a
+contagem por fonte no log.
+
+**`--usecache`** sobre o cache da rodada de laboratório: árvore idêntica byte a byte; snapshot idêntico a menos do
+`coletado_em`.
+
+**Rodada de produção** (07/11, `update-mt-faqs.sh --no-serve`, cache apagado antes): **194 perguntas** em 15 grupos
+— Nota MT 135 (os mesmos 9 grupos), `www5` 48 (Contencioso 21, Declarações Fiscais 11, Documentos Fiscais 16),
+Portal MT 11 (Comunicação e Transparência 5, Finanças e Tributação 5, Institucional 1). A guarda de encolhimento
+passou (194 contra 135). O pack reaproveitou os 135 vetores do Nota MT e vetorizou as 59 novas; os serviços,
+rederivados pelo `auli-collections mt`, seguem com 27.
+
+**Smoke** (`/v1/retrieve`, `mt`/`faqs`, top 3, servidor de laboratório): o alvo em 1º em 5 de 6 — "O que é a NFA-e e
+quem é obrigado a usar?" (as duas perguntas da NFA-e em 1º e 2º), "Como contestar o lançamento…" (Contencioso, 0,282),
+"Quem deve entregar a DIMP?", "Quem é considerado contribuinte do ICMS em MT?" (Portal MT, 0,235) e o desconto do
+IPVA (Nota MT, sem regressão). Em "prazos para cancelar uma nota fiscal avulsa eletrônica", as duas de cancelamento
+da NFA-e vêm em 2º e 3º, atrás de "Consultei minha nota fiscal eletrônica e ela aparece como cancelada…" do Nota MT
+(0,364 contra 0,400).

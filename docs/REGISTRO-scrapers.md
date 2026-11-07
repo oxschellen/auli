@@ -38,7 +38,7 @@
 - [SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)](#sp-faqs)
 - [MG FAQs — Perguntas Frequentes do Portal SPED MG e da Base de Conhecimento do CSM](#mg-faqs)
 - [MS FAQs — Perguntas Frequentes da FAQ do Fale Conosco MS (www.faleconosco.ms.gov.br/faq)](#ms-faqs)
-- [MT FAQs — Dúvidas do programa Nota MT (www.sefaz.mt.gov.br/notamt/duvida)](#mt-faqs)
+- [MT FAQs — Nota MT, site da SEFAZ (www5) e Portal MT](#mt-faqs)
 - [GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)](#go-faqs)
 - [DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e](#df-faqs)
 - [AM FAQs — Perguntas Frequentes das páginas do Portfólio de Serviços (www.sefaz.am.gov.br)](#am-faqs)
@@ -2209,11 +2209,12 @@ a FAQ do Fale Conosco, uma aplicação AngularJS 1.2 sobre uma API REST pública
 
 <a id="mt-faqs"></a>
 
-# MT FAQs — Dúvidas do programa Nota MT (www.sefaz.mt.gov.br/notamt/duvida)
+# MT FAQs — Nota MT, site da SEFAZ (www5) e Portal MT
 
-**Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-MTFAQ-1..9:
-[`docs/ESTUDO-MT-Faqs.md`](ESTUDO-MT-Faqs.md). Coleção `faqs` do `auli-scraper-mt` (`auli-scraper-mt faqs`, ou
-`all` = serviços + FAQs). **135 perguntas** em 9 grupos na rodada de 02/11.
+**Discovery e implantação:** 02/11/2026 (Nota MT) e 07/11/2026 (fase 2: site da SEFAZ e Portal MT). Estudo,
+medições e decisões D-MTFAQ-1..14: [`docs/ESTUDO-MT-Faqs.md`](ESTUDO-MT-Faqs.md) (§8 e §10). Coleção `faqs` do
+`auli-scraper-mt` (`auli-scraper-mt faqs`, ou `all` = serviços + FAQs). **194 perguntas** em 15 grupos de três
+fontes na rodada de 07/11: Nota MT 135, site da SEFAZ 48, Portal MT 11.
 
 ## Fonte
 
@@ -2224,11 +2225,23 @@ inteira), `descGrupoDuvida` (`"3 - PRÊMIOS E ENTIDADES"`), `statusDuvida` (`{at
 `numrOrdemDuvida`. O `robots.txt` do host é inalcançável (o https redireciona para o http e de volta, em laço);
 o AuliBot passa.
 
+O **site da SEFAZ** (`www5.sefaz.mt.gov.br`, Liferay): a página "Todos os Serviços" (`/servicos`) lista as 24
+áreas de serviço; o menu de cada área (`div.mosaic-relateds-list`) tem, ou não, o item "Perguntas frequentes"; a
+página dele traz as perguntas em negrito, terminadas em "?", no `div.mosaic-content` (`kit::linhas`). Em 07/11, 5
+áreas têm o item: Contencioso Administrativo Tributário (21), Declarações Fiscais — DIMP (11) e Documentos Fiscais
+— NFA-e (16) com perguntas; Autorregularização com a página vazia; ITCD apontando para o Portal do Conhecimento,
+que não as tem mais. O `robots.txt` declara `Crawl-delay: 30`, honrado.
+
+O **Portal MT** (`portal.mt.gov.br`, X-Via, o portal do Estado): `GET /v1/department/secretaria-de-estado-de-fazenda`
+dá o id da SEFAZ, e `POST /v1/faq {"uo": [<id>]}` as perguntas dela (11 em 07/11), com a resposta em HTML, a
+categoria, o tipo e o status; cada pergunta tem a página própria, `/perguntas-frequentes/<id>`.
+
 ## As armadilhas
 
-1. **Não é o site institucional.** O `www5.sefaz.mt.gov.br` (Liferay) tem um hub "Perguntas frequentes" e PDFs
-   "FAQ <tema>", mas declara `Disallow: /` para todo robô que não seja Google ou Bing — fase 2, pendente da decisão
-   de robots (D-MTFAQ-3). O catálogo X-Via dos serviços não tem FAQ.
+1. **O hub "Perguntas frequentes" do `www5` não tem perguntas.** Ele manda para um Portal do Conhecimento que foi
+   refeito sem elas (404), e os PDFs "FAQ Cadastro" e "FAQ ITCD" são de 2017 e nada os linka (fora, D-MTFAQ-10).
+   As perguntas atuais estão nas páginas das áreas de serviço, que se acham pelo menu de cada área — nunca por
+   lista no código (D-MTFAQ-11). O catálogo X-Via dos serviços não tem FAQ; a FAQ do portal do Estado, sim.
 2. **Sem rota por pergunta.** O SPA só tem a rota `duvida`: todas as 135 perguntas têm o mesmo link, e o nome do
    `.md` (pergunta + hash de link e pergunta) depende só da pergunta — repetida, um arquivo sobrescreveria o outro.
    Guarda `Err` (0 repetidas em 02/11).
@@ -2237,18 +2250,30 @@ o AuliBot passa.
 4. **HTML simples e às vezes malformado** (`</li>•item</li></br>`): `<br>`, listas, `<b>`, dois links. Conversão
    por regex (link → `texto "url"`, bloco → quebra de linha, resto sai); nenhuma entidade em 02/11.
 5. **Grupo sozinho não diz de quê.** "PROGRAMA" e "CADASTRO" são do Nota MT: a trilha é `Nota MT | <GRUPO>` (entra
-   no texto vetorizado) e a árvore tem o nível do programa (a aba de FAQs começa pelos filhos da raiz).
+   no texto vetorizado) e a árvore tem o nível da fonte (a aba de FAQs começa pelos filhos da raiz). As outras
+   fontes seguem o molde: `SEFAZ-MT | <área>` e `Portal MT | <categoria>` (sem categoria, o tipo: "Institucional").
+6. **Uma pergunta partida em dois negritos.** A 6ª da NFA-e vem como `<strong>…da NFA-</strong><strong>e?</strong>`;
+   o `kit::linhas` junta as duas. A sondagem tinha contado 15; a página numera de 1 a 16.
+7. **"Resposta:" no começo.** O Contencioso abre toda resposta com `<strong>Resposta:</strong>`; sai na coleta.
+8. **30 s entre as chamadas ao `www5`** (`Crawl-delay`): 30 GETs, **~15 minutos** por rodada. Nos outros hosts, 1 s.
+9. **O id da SEFAZ no X-Via não é fixo no código:** vem do `GET` do órgão a cada rodada. Pergunta de outro órgão na
+   resposta é a API que mudou o filtro (`Err`).
 
 ## Guardas e transporte
 
 - `Err` antes de gravar qualquer arquivo: resposta fora do formato (array de dúvidas com todos os campos); `id`
-  repetido; grupo fora de `N - NOME`; acervo vazio (nenhuma dúvida ativa); pergunta sem texto; pergunta repetida;
-  a chamada que falhe. Avisos: dúvidas inativas (ficam fora), resposta vazia (0 e 0 em 02/11).
+  repetido; grupo fora de `N - NOME`; acervo vazio (nenhuma dúvida ativa); pergunta sem texto; pergunta repetida
+  no mesmo link; a chamada que falhe. No `www5`: menos de 15 áreas em "Todos os Serviços"; página de perguntas sem
+  exatamente um `div.mosaic-content`; pergunta sem resposta; nenhuma área com perguntas. No X-Via: órgão ou FAQ
+  fora do formato; pergunta de outro órgão; nenhuma pergunta. Avisos: dúvidas e perguntas inativas (ficam fora),
+  página de área sem pergunta (Autorregularização e ITCD em 07/11), resposta vazia.
 - **Sempre à rede**; o cache em `data/mt/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
   byte e o snapshot a menos do `coletado_em`.
-- 1 GET com o UA `AuliBot`, segundos.
-- Saída: `data/mt/raw/mt-faqs-tree.json` (raiz → `Menu` Nota MT → `Faq` por grupo, tudo com o link da página,
-  itens sem `url`) e `data/mt/mt-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
+- UA `AuliBot`: 1 GET ao Nota MT, 30 ao `www5` (30 s entre eles), 1 GET e 1 POST ao X-Via (cache por URL e
+  corpo); ~15 minutos.
+- Saída: `data/mt/raw/mt-faqs-tree.json` (raiz → `Menu` por fonte → `Faq` por grupo; o grupo leva o link da página,
+  e o item do Portal MT, o da própria pergunta) e `data/mt/mt-faqs-snapshot.json` (um `FaqRaw` por pergunta),
+  nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-mt-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
 
 ---

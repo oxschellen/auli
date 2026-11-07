@@ -365,11 +365,18 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   resultTotal` + piso 15. Sem paginação (1 POST traz o catálogo do órgão inteiro).
 - 27 serviços (42 ocorrências), 2 públicos. 8 testes. `ServicoRaw` direto. Escopo = só o órgão
   SEFAZ (a Carta PDF ~85 é fonte GPAS divergente — só cross-check, D-MT1).
-- **FAQs** (`auli-scraper-mt faqs`, `faqs.rs`): a FAQ do programa Nota MT (`www.sefaz.mt.gov.br/notamt/duvida`),
-  outro host — Angular sobre uma API REST pública, `GET notamt/api/duvidas`, uma chamada com tudo. Grupos pelo
-  número do prefixo, perguntas pela ordem do portal; link único (a página), daí a guarda de pergunta repetida;
-  trilha `Nota MT | <GRUPO>`; HTML simples → texto por regex. Sempre à rede. 135 perguntas (02/11/2026), 13
-  testes. Descoberta em `docs/REGISTRO-scrapers.md#mt-faqs`.
+- **FAQs** (`auli-scraper-mt faqs`, `faqs.rs`), três fontes, cada uma um ramo da árvore:
+  - a FAQ do programa Nota MT (`www.sefaz.mt.gov.br/notamt/duvida`): Angular sobre uma API REST pública,
+    `GET notamt/api/duvidas`, uma chamada com tudo. Grupos pelo número do prefixo, perguntas pela ordem do portal;
+    link único (a página), daí a guarda de pergunta repetida; trilha `Nota MT | <GRUPO>`;
+  - as páginas "Perguntas frequentes" das áreas de serviço do site da SEFAZ (`www5`, Liferay; `faqs/site.rs`):
+    "Todos os Serviços" → o menu de cada área → a página, lida com o `kit::linhas`; 30 s entre as chamadas
+    (`Crawl-delay`), ~15 minutos; trilha `SEFAZ-MT | <área>`;
+  - as perguntas da SEFAZ na FAQ do Portal MT (X-Via; `faqs/portal.rs`): o id do órgão pelo `GET`, as perguntas
+    pelo `POST /v1/faq`; link da própria pergunta; trilha `Portal MT | <categoria>`.
+
+  Sempre à rede. 194 perguntas (07/11/2026: 135 + 48 + 11), 40 testes. Descoberta em
+  `docs/REGISTRO-scrapers.md#mt-faqs`.
 
 ### go — SEFAZ-GO (Goiás / Secretaria de Estado da Economia)
 

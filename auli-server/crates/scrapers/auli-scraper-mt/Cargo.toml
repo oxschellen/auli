@@ -8,7 +8,8 @@ edition = "2024"
 # Keycloak — o `#error=login_required` do shell é ruído do silent-SSO). Cada item já traz descrição
 # rica inline, categoria (classe) e `targets` (públicos), então NÃO há chamada de detalhe. Depende
 # de auli-contract + o kit — nunca de fastembed/ort. Decisões D-MT1..5 em docs/auli_pendencias.md / PR.
-# As FAQs (`faqs.rs`) vêm da API JSON da FAQ do Nota MT; o regex converte o HTML simples das respostas.
+# As FAQs (`faqs.rs`) vêm de três fontes: a API JSON da FAQ do Nota MT, as páginas de perguntas das áreas de serviço
+# do site da SEFAZ (www5) e a FAQ do Portal MT (X-Via) — docs/ESTUDO-MT-Faqs.md.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
@@ -16,3 +17,4 @@ ureq = { version = "3", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 anyhow = "1"
+scraper = "0.27.0"   # html5ever: as páginas de perguntas do site da SEFAZ (www5)

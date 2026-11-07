@@ -2,10 +2,12 @@
 # update-mt-faqs.sh — atualiza as FAQs do MT de ponta a ponta:
 #   re-scrape → deriva a árvore → re-vetoriza os packs → sobe o servidor.
 #
-# Irmão do `update-ms-faqs.sh`. A coleta das FAQs do MT — a FAQ do programa Nota MT, UMA chamada à API,
-# segundos — vai SEMPRE à rede (D-MTFAQ-5) e o cache em data/mt/raw/cache/faqs/ só é lido com
-# `--usecache`; mesmo assim ele é apagado antes da coleta. (Os SERVIÇOS do MT são do
-# `atualizar-servicos.sh`: este script não os toca.)
+# Irmão do `update-ms-faqs.sh`. A coleta das FAQs do MT — a FAQ do programa Nota MT (1 chamada à API), as páginas
+# "Perguntas frequentes" das áreas de serviço do site da SEFAZ (www5: "Todos os Serviços", as ~24 áreas e as páginas
+# de perguntas, ~30 GETs com os 30 s de `Crawl-delay` que o site declara, ~15 MINUTOS) e as perguntas da SEFAZ no
+# Portal MT (X-Via, 2 chamadas) — vai SEMPRE à rede (D-MTFAQ-5) e o cache em data/mt/raw/cache/faqs/ só é lido com
+# `--usecache`; mesmo assim ele é apagado antes da coleta. (Os SERVIÇOS do MT são do `atualizar-servicos.sh`: este
+# script não os toca.)
 #
 # Uso:   scripts/tools/update-mt-faqs.sh              # scrape + rebuild + sobe servidor
 #        scripts/tools/update-mt-faqs.sh --no-serve   # para antes de subir o servidor
@@ -51,10 +53,11 @@ fi
 echo "🕸️  scrapeando faqs do MT…"
 ( cd "$SERVER" && cargo run --release -p auli-scraper-mt -- faqs )
 
-# 2. Guard de completude. As guardas do scraper (`faqs.rs`, D-MTFAQ-4) param ANTES de gravar quando a
-#    chamada falha, a API muda de formato, uma dúvida ou pergunta vem repetida ou o total é zero. Não
-#    pegam um grupo inteiro que sumiu, nem dúvidas que o portal desativou — o portal pode ter tirado do
-#    ar, e daí em diante tudo é derivação fiel até o servidor subir servindo menos do que existe.
+# 2. Guard de completude. As guardas do scraper (`faqs.rs`, D-MTFAQ-4) param ANTES de gravar quando uma
+#    chamada falha, uma API muda de formato, uma dúvida ou pergunta vem repetida, uma fonte fica sem
+#    pergunta, o site lista menos de 15 áreas ou uma página de perguntas perde o bloco de conteúdo. Não
+#    pegam um grupo ou uma área inteira que sumiu, nem dúvidas que o portal desativou — o portal pode ter
+#    tirado do ar, e daí em diante tudo é derivação fiel até o servidor subir servindo menos do que existe.
 DEPOIS="$(jq '.coleta.items | length' "$SNAPSHOT")"
 echo "🔢 FAQs no snapshot: $DEPOIS (antes: $ANTES)"
 if [ "$ANTES" -gt 0 ] && [ "$DEPOIS" -lt "$ANTES" ]; then
@@ -62,7 +65,7 @@ if [ "$ANTES" -gt 0 ] && [ "$DEPOIS" -lt "$ANTES" ]; then
   echo "   tirou do ar, ou a coleta falhou —, e o snapshot não distingue as duas."
   echo "   O estado bom está guardado. Para voltar a ele:"
   echo "     mv \"$SNAPSHOT.anterior\" \"$SNAPSHOT\" && mv \"$TREE.anterior\" \"$TREE\""
-  echo "   Compare as linhas 'MT FAQs: <grupo>: N perguntas' do log acima com as da rodada anterior"
+  echo "   Compare as linhas 'MT FAQs: <fonte> | <grupo>: N perguntas' do log acima com as da rodada anterior"
   echo "   e rode de novo (a comparação segue contra o estado bom)."
   echo "   Se a queda for real, apague as duas cópias .anterior e rode de novo."
   exit 1
@@ -88,7 +91,7 @@ echo "🌳 derivando artefatos do snapshot (árvore docs/faqs)…"
 # 5. Re-vetoriza só as FAQs (rodada parcial: serviços e pareceres ficam como estão no manifesto).
 #    Se o snapshot de serviços tiver mudado sem re-vetorizar, o boot recusa nomeando `servicos` —
 #    aí é `scripts/build-packs.sh mt servicos`.
-echo "📦 re-vetorizando as FAQs do MT (~135 vetores)…"
+echo "📦 re-vetorizando as FAQs do MT (~194 vetores)…"
 "$ROOT/scripts/build-packs.sh" mt faqs
 
 # 6. Sobe o servidor. `--no-build`: o passo 3 já compilou o mesmo binário no mesmo target.
