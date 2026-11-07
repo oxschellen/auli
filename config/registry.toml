@@ -251,7 +251,7 @@ name = "SEFAZ-PB"
 uf = "PB"
 state = "Paraíba"
 prompt = "prompts/pb.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "al"

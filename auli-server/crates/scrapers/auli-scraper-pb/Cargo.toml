@@ -14,4 +14,5 @@ auli-scraper-kit = { path = "../auli-scraper-kit" }
 ureq = "3"           # tipo do Agent devolvido por kit::build_agent (GET simples, sem json)
 anyhow = "1"
 scraper = "0.27.0"   # html5ever: texto das fichas + entidades
-regex = "1"          # parse da listagem (accordion) e dos pares do detalhe
+regex = "1"          # parse da listagem (accordion) e dos pares do detalhe; o e-mail protegido das FAQs
+serde_json = "1"     # a árvore das FAQs (`faqs.rs`) para o frontend
