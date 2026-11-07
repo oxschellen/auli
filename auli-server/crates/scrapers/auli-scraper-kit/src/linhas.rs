@@ -30,6 +30,9 @@ pub const CLOAK_TEXTO: &str = "protegido de spambots";
 /// Numeração da pergunta: "1.", "1 -", "1 –", "1)", "P1.", "11.a-", "1.1 -".
 static NUM_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?i)^P?(\d+)(?:\.[a-z0-9]+)?\s*(?:[.\-–)]|\s[-–])\s*").unwrap());
+/// O número seguido só de espaço ("49 Deve ser gerado…?", no SINTEGRA da BA): vale só na pergunta em destaque que
+/// continua a numeração.
+static NUM_SOLTO_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(\d+)\s+[^\W\d_]").unwrap());
 /// Título de subgrupo ("COMÉRCIO EXTERIOR - PERGUNTAS FREQUENTES").
 static GRUPO_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?i)PERGUNTAS\s+(?:FREQUENTES|E\s+RESPOSTAS)").unwrap());
@@ -39,6 +42,8 @@ static SUFIXO_GRUPO_RE: LazyLock<Regex> = LazyLock::new(|| {
 /// O "R –", "R." ou "R:" que abre a resposta. "R$" não casa.
 static PREFIXO_R_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^R\s*[-–.:]\s*").unwrap());
 static LETRA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"[^\W\d_]").unwrap());
+/// A nota entre parênteses depois do "?" ("…da NF-e? (atualizado em 31/12/08)", na NF-e da BA).
+static NOTA_FINAL_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\s*\([^()]*\)$").unwrap());
 
 /// Troca cada e-mail protegido pelo texto que o navegador mostra: o `addy_text…` do script, cujos pedaços vêm entre
 /// aspas, com entidades e às vezes com um `<span>` de cor. O texto visível vale mais que o `mailto`: na PB, um `mailto`
@@ -232,6 +237,12 @@ fn sem_fecho(s: &str) -> &str {
     s.trim_end_matches(|c: char| c.is_whitespace() || matches!(c, '"' | '“' | '”' | '\''))
 }
 
+/// Termina em "?", a menos das aspas e de uma nota entre parênteses depois dele.
+fn termina_em_interrogacao(l: &Linha) -> bool {
+    let t = sem_fecho(&l.texto);
+    t.ends_with('?') || sem_fecho(&NOTA_FINAL_RE.replace(t, "")).ends_with('?')
+}
+
 fn numerada(l: &Linha) -> bool {
     NUM_RE.is_match(&l.texto)
 }
@@ -240,13 +251,13 @@ fn numero(texto: &str) -> Option<u32> {
     NUM_RE.captures(texto).and_then(|c| c[1].parse().ok())
 }
 
-/// As linhas → perguntas. Pergunta = linha em destaque que termina em "?"; quando a maioria é numerada, só as
+/// As linhas → perguntas. Pergunta = linha em destaque que termina em "?" (a nota entre parênteses depois dele não
+/// conta); quando a maioria é numerada, só as
 /// numeradas (no Cadastro da PB, "Sim. Mas o que fazer?" é subtítulo de resposta). Numa seção **sem nenhuma** pergunta
 /// em destaque, valem as linhas numeradas que terminam em "?" (o PIX, o Parcelamento e as Imunidades do PA). Grupo =
 /// linha em destaque sem "?" com "PERGUNTAS FREQUENTES"/"PERGUNTAS E RESPOSTAS", depois da 1ª pergunta. Resposta = as
 /// linhas até a próxima pergunta ou grupo; o que vem antes da 1ª pergunta (título, introdução, índice) sai.
 pub fn segmentar(linhas: &[Linha]) -> Vec<Bruta> {
-    let termina_em_interrogacao = |l: &Linha| sem_fecho(&l.texto).ends_with('?');
     let mut perguntas: Vec<usize> = linhas
         .iter()
         .enumerate()
@@ -264,13 +275,26 @@ pub fn segmentar(linhas: &[Linha]) -> Vec<Bruta> {
     let numeradas = perguntas.iter().filter(|&&i| numerada(&linhas[i])).count();
     if !perguntas.is_empty() && numeradas * 2 >= perguntas.len() {
         // Seção numerada: só as numeradas — e também a linha em destaque que continua a numeração sem terminar em "?"
-        // ("8. A consulta … pode ser feita de duas formas:", "2- Qualquer valor deve ser retificado? Mesmo que …", no PA).
+        // ("8. A consulta … pode ser feita de duas formas:", "2- Qualquer valor deve ser retificado? Mesmo que …", no PA),
+        // desde que tenha letra: o número sozinho em negrito ("10.") é item de lista dentro da resposta (o SINTEGRA da
+        // BA numera os tipos de registro assim). A pergunta marcada com o número sem separador ("49 Deve…?") entra se
+        // continua a numeração.
         let marcadas: HashSet<usize> = perguntas.iter().copied().collect();
         perguntas.clear();
         let mut ultimo: Option<u32> = None;
         for (i, l) in linhas.iter().enumerate() {
-            let Some(n) = numero(&l.texto) else { continue };
-            if marcadas.contains(&i) || (l.negrito && ultimo.is_some_and(|u| n == u + 1)) {
+            let solto = || {
+                NUM_SOLTO_RE
+                    .captures(&l.texto)
+                    .and_then(|c| c[1].parse().ok())
+                    .filter(|&n| marcadas.contains(&i) && ultimo.is_some_and(|u| n == u + 1))
+            };
+            let Some(n) = numero(&l.texto).or_else(solto) else {
+                continue;
+            };
+            if marcadas.contains(&i)
+                || (l.negrito && LETRA_RE.is_match(&l.texto) && ultimo.is_some_and(|u| n == u + 1))
+            {
                 perguntas.push(i);
                 ultimo = Some(n);
             }
@@ -386,6 +410,55 @@ mod tests {
         // O número que não continua a sequência, sem "?", fica na resposta — e a lista numerada sem negrito também.
         let bs = segmentado("<p><b>1. Um?</b></p><p><b>3. Passo três</b></p><p>2. passo dois</p>");
         assert_eq!(titulos(&bs), ["1. Um?"]);
+    }
+
+    #[test]
+    fn nota_entre_parenteses_depois_do_ponto_de_interrogacao() {
+        // A NF-e da BA: as três primeiras da seção têm a data da revisão depois do "?" e nenhuma antes as numera.
+        let bs = segmentado(
+            "<p>Introdução.</p><p><b>1. Como funciona? </b><b>(atualizado em 31/12/08)</b></p><p>Assim.</p>\
+             <p><b>2. E o prazo?</b></p><p>Curto.</p><p><b>Nota (rodapé)</b></p>",
+        );
+        assert_eq!(
+            titulos(&bs),
+            [
+                "1. Como funciona? (atualizado em 31/12/08)",
+                "2. E o prazo?"
+            ]
+        );
+        // O negrito com parênteses e sem "?" segue na resposta.
+        assert_eq!(bs[1].resposta_html, "Curto.<br>Nota (rodapé)");
+    }
+
+    #[test]
+    fn numero_sozinho_em_negrito_e_item_da_resposta() {
+        // O SINTEGRA da BA: a resposta da 9 lista os tipos de registro com o número em negrito numa célula própria.
+        let html = "<p><b>9. Quais registros informar?</b></p><p>Os tipos:</p><p><b>10.</b></p><p>Registro 61.</p>\
+                    <p><b>11.</b></p><p>Registro 70.</p><p><b>10. Quem envia?</b></p><p>Todos.</p>";
+        let bs = segmentado(html);
+        assert_eq!(
+            titulos(&bs),
+            ["9. Quais registros informar?", "10. Quem envia?"]
+        );
+        assert!(bs[0].resposta_html.contains("Registro 70."));
+    }
+
+    #[test]
+    fn numero_sem_separador_na_pergunta_que_continua_a_numeracao() {
+        // O SINTEGRA da BA: "49 Deve…?" (sem ponto) entre a 48 e a 50. Fora da sequência, segue na resposta.
+        let html = "<p><b>48. Quais registros?</b></p><p>O 61.</p><p><b>49 Deve ser um por nota?</b></p><p>Não.</p>\
+                    <p><b>50. Desde quando?</b></p><p>2004.</p><p><b>2004 Mudou algo?</b></p><p>Nada.</p>";
+        let bs = segmentado(html);
+        assert_eq!(
+            titulos(&bs),
+            [
+                "48. Quais registros?",
+                "49 Deve ser um por nota?",
+                "50. Desde quando?"
+            ]
+        );
+        assert_eq!(bs[0].resposta_html, "O 61.");
+        assert!(bs[2].resposta_html.contains("2004 Mudou algo?"));
     }
 
     #[test]

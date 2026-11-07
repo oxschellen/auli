@@ -1,7 +1,7 @@
 # ESTUDO-BA-Faqs — FAQs da SEFAZ-BA (coleção `faqs` da entidade `ba`)
 
-**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de ~1 s, ~120 GETs). · **Estado:** proposta, aguardando
-decisão (§5). · **Órgão:** Secretaria da Fazenda do Estado da Bahia (SEFAZ-BA). · **Hoje a `ba` tem só `servicos`**
+**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de ~1 s, ~120 GETs). · **Estado:** decidido (07/11:
+D-BAFAQ-1 A; 2–5 como propostas) e implementado (§7). · **Órgão:** Secretaria da Fazenda do Estado da Bahia (SEFAZ-BA). · **Hoje a `ba` tem só `servicos`**
 (Carta de Serviços do `portal.sefaz.ba.gov.br` — [REGISTRO-scrapers.md#ba](REGISTRO-scrapers.md#ba)). Destravada pela
 D-FROTA-ROBOTS: o `portal` tem `robots.txt` com `Disallow: /`.
 
@@ -113,3 +113,32 @@ curl -sS -A "$UA" -o aliquota.pdf https://portal.sefaz.ba.gov.br/contribuinte/tr
 # o site novo: o leaf é do Sectigo R36 sem o intermediário (o PEM está no auli-scraper-ac)
 curl -sS --cacert r36.pem -A "$UA" "https://www.sefaz.ba.gov.br/wp-json/wp/v2/pages/13458" | jq -r .content.rendered | grep -c elementor-tab-title
 ```
+
+## 7. Implementação (07/11/2026)
+
+`auli-scraper-ba faqs`; `scripts/tools/update-ba-faqs.sh`; detalhes em
+[REGISTRO-scrapers.md#ba-faqs](REGISTRO-scrapers.md#ba-faqs). A modelagem é a da §4, com estes ajustes:
+
+- **Data (D-BAFAQ-2).** PDFs: o mês da criação (`pdfinfo`), "Alíquota (abr/2020)" — a NFC-e fica "(mai/2019)", o mês da
+  capa (23/05/2019), e não "(Versão 1.6, 23/05/2019)". Páginas HTML: o `Last-Modified`, só quando é posterior à
+  migração (08/2023) — hoje, só o ITD ("ITD (mai/2025)"); uma página que a SEFAZ editar passa a mostrar a data sozinha.
+- **Segmentação (D-BAFAQ-3)** — o que a fonte pediu além do previsto: as páginas são windows-1252 rotulado de latin1; a
+  pergunta vem também em `<span>` de classe CSS negrita e com só o número em negrito; no SINTEGRA, os subtítulos
+  "Registro Tipo NN – …" viram o grupo das perguntas seguintes, e saem o "topo ˆ", o índice e o rodapé. Três regras
+  novas no `kit::linhas` (a nota entre parênteses depois do "?" não conta; o número sozinho em negrito é item da
+  resposta; o número sem separador, "49 Deve…?", vale na pergunta marcada que continua a numeração), com o PA, a PB, o
+  AC, o RO e o PI idênticos à produção. Nos PDFs, o número seguido de dígito ("13.780/12") não abre pergunta, o romano
+  em caixa alta só abre seção seguido da pergunta esperada, e o inciso e a alínea no começo da linha abrem parágrafo.
+- **`kit::pdf`** (novo): o `pdftotext` do PI subiu para o kit e ganhou o `pdfinfo` (a data de criação). O PI, coletado
+  pela rede com o kit, ficou idêntico à produção (134).
+
+**Resultado da rodada de 07/11.** **830** perguntas (a estimativa era ~830): Inspetoria 383 em HTML e 106 em PDF,
+Legislação 275, Contencioso 10, site novo 56. Contra a §2–3: AIDF 18 (est. 19), NFC-e 44 (vai até a 45 e não tem a 6 —
+aviso), taxa de incêndio 11 (o PDF tem 11), NF-e 140 (est. 136). As irregularidades de numeração restantes são da fonte
+e ficam: DPD 10.1/10.2, SINTEGRA 18.1, uma seção da NF-e sem a 14 e com duas 15. 37 GETs. `--usecache` reproduz a árvore
+byte a byte e o snapshot a menos do `coletado_em`. Smoke (`/v1/retrieve`, faqs): o alvo em 1º em 5 de 6 (SINTEGRA 64 e
+49, taxa de incêndio, ITD, Balcão Virtual); no AIDF, em 2º, atrás da pergunta vizinha que dá a mesma resposta.
+
+**Testes.** 22 no `faqs.rs` (fontes reais: o menu, o SINTEGRA, o texto de 3 PDFs, o Cadastro Sincronizado; sintéticos:
+a NF-e, o Balcão Virtual, as guardas) e 3 no `kit::linhas`; 40 mutações (cada regra e cada guarda), todas pegas. Uma
+condição que nenhum dado exercitava e que não mudava o resultado saiu (a seção do PDF dentro de uma pergunta aberta).

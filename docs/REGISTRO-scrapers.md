@@ -53,6 +53,7 @@
 - [RO FAQs — as seções-pergunta das fichas da Agência Virtual (agenciavirtual.sefin.ro.gov.br)](#ro-faqs)
 - [PI FAQs — as páginas de Documentos Eletrônicos e o PDF da FAQ da EFD (portal.sefaz.pi.gov.br)](#pi-faqs)
 - [AC FAQs — a aba de perguntas do post "Isenção de ICMS para PCD" (sefaz.ac.gov.br)](#ac-faqs)
+- [BA FAQs — o "Perguntas e Respostas" do Plantão Fiscal (portal.sefaz.ba.gov.br) e três páginas do site novo](#ba-faqs)
 
 ---
 
@@ -3039,4 +3040,66 @@ documento (D-ACFAQ-1, opção A). 1 GET.
   o snapshot a menos do `coletado_em`.
 - UA AuliBot (o do `ac.rs`), `ureq`/rustls com o R36.
 - Atualização: `scripts/tools/update-ac-faqs.sh`.
+
+---
+
+<a id="ba-faqs"></a>
+
+# BA FAQs — o "Perguntas e Respostas" do Plantão Fiscal (portal.sefaz.ba.gov.br) e três páginas do site novo
+
+**Discovery e implantação:** 07/11/2026. Estudo e decisões D-BAFAQ-1..5: [`docs/ESTUDO-BA-Faqs.md`](ESTUDO-BA-Faqs.md).
+Coleção `faqs` do `auli-scraper-ba` (`auli-scraper-ba faqs`, ou `all`). **830 perguntas** na rodada de 07/11.
+
+## Fonte
+
+As páginas de ICMS, IPVA, ITD e Taxas do site novo (`www.sefaz.ba.gov.br`, WordPress) linkam o "Perguntas e Respostas"
+do Plantão Fiscal, que continua no portal antigo: `portal.sefaz.ba.gov.br/default/perguntas_respostas/`, um frameset
+cujo `menu.htm` tem um `<select>` por menu. Entram (D-BAFAQ-1 A) os menus **Inspetoria** (15 páginas HTML e 4 PDFs),
+**Legislação** (13 PDFs, de 04/2020) e **Contencioso** (1 página), pela lista `PLANTAO` do `faqs.rs`; ficam fora as
+**Finanças Públicas** (para órgãos do Estado e fornecedores), a TEF ("Conteúdo em Atualização"), o Simples Nacional (404)
+e a NFC-e 1.1 (2015, superada pela 1.6 — D-BAFAQ-4). Do site novo: as "Dúvidas Frequentes" do **Balcão Virtual** (27, em
+3 abas), o **Cadastro Sincronizado** (18), pela API do WordPress, e o PDF da **taxa de incêndio** (11). 37 GETs.
+
+Trilha: `Plantão Fiscal | <menu> | <página>` (+ a seção da NF-e, o grupo do SINTEGRA, a seção da NFC-e) ou
+`Site da SEFAZ-BA | <página>` (+ a aba do Balcão). Os PDFs levam o mês da criação no nome ("Alíquota (abr/2020)",
+D-BAFAQ-2); as páginas HTML, o do `Last-Modified` só quando é posterior à migração de 27/08/2023, que deu a mesma data a
+quase todas — hoje, só o ITD ("ITD (mai/2025)"). Link: a página (sem âncora), o PDF com `#page=N`, ou a âncora do item no
+Balcão.
+
+## As armadilhas
+
+1. **windows-1252 rotulado de iso-8859-1**: "–" e as aspas curvas vêm em 0x80–0x9F. A faixa vai pela tabela do
+   windows-1252, o resto é latin1.
+2. **A página inteira é tabela de layout**, e o `kit::linhas` trata uma tabela como uma linha só: as tags de tabela viram
+   `<div>` antes da segmentação.
+3. **Três jeitos de marcar a pergunta**: `<strong>` (o comum), um `<span>` de classe que o `<style>` declara em negrito
+   (a 64 do SINTEGRA) e só o número em negrito ("`<strong>23. </strong>Como…?`"). Os dois últimos viram `<strong>` antes.
+4. **SINTEGRA**: os números sozinhos em negrito ("10."…"19.") listam tipos de registro dentro de uma resposta, e a 49 vem
+   sem ponto ("49 Deve…?") — duas regras novas do `kit::linhas` (o número exige letra; o número sem separador vale na
+   pergunta marcada que continua a numeração). Os subtítulos "Registro Tipo NN – …" ficam no fim da resposta anterior:
+   saem dela e viram o grupo das perguntas seguintes ("Quem informa esse registro?" só faz sentido com ele). Saem também
+   o "topo ˆ", o índice de registros e os dois links do rodapé.
+5. **NF-e em seções expansíveis** (`div.switchcontent`, título no link `expandcontent('NN')` — com entidades); as três
+   primeiras perguntas de uma seção têm "(Atualizado em 31/12/08)" depois do "?": o `kit::linhas` passou a ignorar a nota
+   entre parênteses no fim.
+6. **PDFs** (`kit::pdf`): a pergunta é a linha na margem (recuo até 3) com o número seguinte; o salto de um é aviso (a
+   NFC-e pula a 6); "13.780/12 e Ajuste SINIEF…" no começo da linha é decreto, não a pergunta 13; romano em caixa alta
+   só abre seção se a próxima linha for a pergunta esperada ("I - CARGA DE INCÊNDIO…" é item); a resposta pode abrir com
+   "Resposta:"/"RESP.", e os parágrafos saem do recuo relativo do `-layout` (inciso e alínea no começo da linha abrem
+   parágrafo).
+7. **Balcão Virtual**: o `id` do cabeçalho do acordeão se repete entre as abas (as mesmas perguntas, a resposta de cada
+   canal); a âncora é o `aria-controls`.
+8. **TLS**: o `portal` só negocia TLS 1.2 com cifras CBC (o `native-tls` dos serviços); o `www` manda o leaf do Sectigo
+   R36 sem o intermediário (o R36 como âncora rustls, o PEM do AC).
+
+## Guardas e transporte
+
+- `Err` antes de gravar: página ou PDF sem pergunta; pergunta sem resposta; (link, pergunta) repetido; seção da NF-e sem
+  título; Balcão com abas ≠ acordeões; menos de 700. Opção nova no `menu.htm` (fora de `PLANTAO` e da lista de fora) é
+  aviso.
+- **Sempre à rede**; o cache em `data/ba/raw/cache/faqs/` só é lido com `--usecache` (dos PDFs, o texto extraído e a data
+  de criação — o `--usecache` não precisa do poppler; das páginas, também o `Last-Modified`).
+- UA AuliBot (`crate::UA`; os serviços da BA seguem com o UA de navegador, por legado), 1 s entre os GETs. Exige o
+  `pdftotext` e o `pdfinfo` (poppler-utils).
+- Atualização: `scripts/tools/update-ba-faqs.sh` (confere o poppler antes).
 

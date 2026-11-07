@@ -9,15 +9,21 @@
 //
 // D-BA4 (etiqueta): o robots.txt do portal é restritivo a crawlers genéricos; coleta de
 // baixíssima frequência, ~207 GETs por rodada com cortesia de 500ms e cache em disco.
+//
+// As FAQs são o "Perguntas e Respostas" do Plantão Fiscal (no mesmo portal) e três páginas do site novo — `faqs.rs`.
 
+mod faqs;
 mod scrape;
 
 /// A entidade que este scraper conhece (D-F2.1 — um crate binário por entidade).
 pub const ENTITY: &str = "ba";
 const DATA_DIR: &str = "../data/ba/raw";
+/// A identidade da frota (D-FROTA-UA) nas FAQs — D-BAFAQ-5. Os serviços seguem com o UA de navegador por legado.
+pub(crate) const UA: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-ba [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-ba [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -33,8 +39,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
         }
     }
 

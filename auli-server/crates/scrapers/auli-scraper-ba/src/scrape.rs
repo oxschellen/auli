@@ -56,7 +56,7 @@ struct Ficha {
 
 /// Agent `ureq` com backend **native-tls (OpenSSL)**, não o rustls padrão: o servidor da SEFAZ-BA
 /// só negocia ciphers TLS 1.2 CBC (sem AEAD/GCM), que o rustls não suporta — ver nota no Cargo.toml.
-fn build_agent_native_tls(user_agent: &str, timeout: Duration) -> Agent {
+pub(crate) fn build_agent_native_tls(user_agent: &str, timeout: Duration) -> Agent {
     Agent::config_builder()
         .user_agent(user_agent)
         .timeout_global(Some(timeout))
