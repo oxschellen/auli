@@ -1,0 +1,265 @@
+                                               Estado do Rio Grande do Sul
+                                               Secretaria da Fazenda
+                                               Receita Estadual
+
+
+             PERGUNTAS FREQUENTES – CONVÊNIO ICMS 201/17
+
+
+    1) Quais são as principais informações a serem enviadas pelo arquivo do convênio 201?
+
+O Convênio 201 implementou dois arquivos auxiliares:
+
+I - Arquivo de Carregamento de Créditos em Terminais Telefônicos Pré-pagos, contendo
+informações obtidas diretamente da plataforma de controle de créditos, devendo espelhar os
+valores totais das recargas realizadas;
+
+II - Arquivo de Fatura, contendo informações relativas às faturas comerciais cujos valores
+superem os respectivos documentos fiscais emitidos.
+
+Cada um desses arquivos contém informações específicas, as quais estão previstas no Anexo
+Único deste convênio.
+
+Há informações mais objetivas, como o CPF do usuário, número da fatura comercial; e há
+também informações menos objetivas, como a descrição do serviço prestado. Nesse ponto, a
+informação precisa ser a mais clara possível, de forma a possibilitar a identificação de cada um
+dos serviços prestados ao cliente e sua correta tributação (conforme previsto no artigo 74, I da
+Resolução nº 632/2014 da Anatel).
+
+
+    2) Quando ocorre a hipótese de dispensa de envio do arquivo e qual procedimento para
+       enviar tal dispensa?
+
+A dispensa é prevista para ambos os arquivos (Créditos pré-pagos e Fatura), e ela ocorre da
+seguinte maneira:
+
+I - Arquivo de Carregamento de Créditos em Terminais Telefônicos Pré-pagos: quando os
+documentos fiscais emitidos corresponderem exatamente aos valores das recargas realizadas;
+
+II - Arquivo de Fatura: quando as faturas comerciais corresponderem exatamente aos valores
+dos respectivos documentos fiscais emitidos.
+
+Portanto, caso não haja diferença entre valores de recargas ou de faturas em relação aos
+documentos fiscais (modelos 21 e 22 – ICMS), restará dispensada a entrega dos arquivos. Isso
+ocorre devido ao próprio objetivo do Convênio 201, que é a transmissão de informações que
+não estão nos documentos fiscais (modelos 21 e 22 – ICMS), mas que constam como cobranças
+nas faturas dos clientes.
+
+Entretanto, ainda que não necessite envio de arquivos, é preciso que o contribuinte transmita o
+Recibo de Entrega, declarando em campo específico deste documento que não há diferença de
+valores. A seguir, imagem do campo relativo à dispensa:
+                                             Estado do Rio Grande do Sul
+                                             Secretaria da Fazenda
+                                             Receita Estadual
+
+
+
+
+Assim, o prazo para entrega da dispensa é idêntico ao estabelecido para entrega dos arquivos
+do Convênio 201. Deverá ser realizada trimestralmente, até o último dia do mês subsequente
+ao último mês do trimestre (conforme IN DRP 045/98, Título I, Capítulo XXXIV, Item 5.3 – b),
+podendo ser feita, atualmente, através de protocolo eletrônico conforme Carta de Serviços:
+https://atendimento.receita.rs.gov.br/st-nf-e-de-comunicacao-arquivo-auxiliar-convenio-201-
+17.
+
+
+
+    3) Quais informações que constam unicamente no convênio 201 que não são
+       informadas no convênio 115?
+
+Ambos os convênios possuem layout específico, cada um com seus objetivos. O convênio 115 é
+específico para emissão de documentos fiscais de Energia Elétrica e Comunicações. Já o
+Convênio 201 objetiva informar cobranças que estão vinculadas aos serviços de
+telecomunicações, mas que não estão presentes nos documentos fiscais.
+
+
+
+    4) Qual é o nível de detalhamento esperado para que as descrições dos itens das faturas
+       estejam em conformidade com o estabelecido pelo Convênio?
+
+O nível de detalhamento das informações prestadas deve ser o suficiente para a identificação
+clara do serviço prestado ao cliente. Por meio dessa informação, o fisco poderá analisar se a
+tributação de cada serviço está correta.
+
+Na imagem exemplificativa a seguir, a descrição dos itens da fatura está bastante genérica,
+impossibilitando a identificação do serviço prestado (arquivo não conforme).
+
+
+
+
+Já na imagem abaixo, o detalhamento da descrição de cada item na fatura é suficiente para que
+se identifique cada um dos serviços prestados (arquivo conforme).
+                                                Estado do Rio Grande do Sul
+                                                Secretaria da Fazenda
+                                                Receita Estadual
+
+Portanto, cada serviço cobrado na fatura do cliente, de acordo com o que foi contratado, precisa
+ser claramente descrito nos arquivos deste convênio, sem agregações genéricas.
+
+
+
+    5) Quais são os principais erros de conteúdo dos arquivos?
+
+A partir da imagem a seguir, vamos explorar os principais erros:
+
+
+
+
+    1. A descrição dos itens na fatura está genérica, não sendo possível identificar cada serviço
+       prestado ao cliente;
+    2. Diferença entre o valor total da fatura e a soma dos valores dos itens. O valor total da
+       fatura foi de 100,00 reais, mas a soma do valor de cada item foi 110,00 reais. Não pode
+       haver diferença entre esses valores;
+    3. Utilização de caracteres especiais, como o cedilha, acento, ponto;
+    4. Separação de casas decimais. Não se deve separar as casas decimais, seja com ponto ou
+       com vírgula.
+
+Agora, corrigindo os erros apontados, temos o seguinte exemplo:
+
+
+
+
+    1.   É possível identificar cada um dos serviços prestados;
+    2.   O somatório dos itens é igual ao valor total da fatura – 100,00 reais;
+    3.   Foram removidos os caracteres especiais;
+    4.   Não há separação das casas decimais.
+
+
+
+    6) Qual é a estrutura no nome do arquivo?
+
+O Convênio 201/17 prevê a forma como o arquivo deve ser nomeado, definindo o
+sequenciamento, a quantidade e o tipo de caractere na estrutura do nome do arquivo. Temos
+então as seguintes regras:
+
+    •    Para Arquivos de Carregamento de Créditos em Terminais Telefônicos Pré-pagos:
+                               Estado do Rio Grande do Sul
+                               Secretaria da Fazenda
+                               Receita Estadual
+
+
+
+
+•   Para Arquivos de Fatura:
+                                              Estado do Rio Grande do Sul
+                                              Secretaria da Fazenda
+                                              Receita Estadual
+
+    7) Qual é a estrutura do conteúdo do arquivo?
+
+Além das regras relacionadas ao nome dos arquivos, há também as definições de como as
+informações devem ser estruturadas em cada arquivo. Cada campo possui regras específicas,
+sendo necessário que o contribuinte observe cada uma delas para que a transmissão seja
+recepcionada.
+
+A seguir temos as tabelas com as definições gerais dos campos de cada tipo de arquivo. Para
+encontrar as regras especificas de cada campo, o contribuinte deve acessar o próprio convênio,
+mais precisamente nos itens 3.4 e 4.4.
+
+(https://www.confaz.fazenda.gov.br/legislacao/convenios/2017/CV201_17)
+
+   •   Para Arquivos de Carregamento de Créditos em Terminais Telefônicos Pré-pagos
+
+
+
+
+   •   Para Arquivos de Fatura
+                                             Estado do Rio Grande do Sul
+                                             Secretaria da Fazenda
+                                             Receita Estadual
+
+
+
+
+    8) Qual é o formato de codificação?
+
+Codificação ASCII - ISO 8859-1 (Latin-1) (conforme item 2.1.5 do Anexo Único do Convênio ICMS
+201/17) porém são aceitos arquivos no formato ANSI e UTF-8. Ainda, solicitamos que os campos
+não possuam caracteres especiais. (ç, acentos, dentre outros).
+
+
+
+    9) Quais são os principais erros de estrutura?
+   • Número incorreto de caracteres na linha, que deve ser 238;
+   • Formato da data dentro do arquivo, cuja forma correta é DDMMAAAA. Exemplo correto
+       a seguir:
+                                             Estado do Rio Grande do Sul
+                                             Secretaria da Fazenda
+                                             Receita Estadual
+
+
+
+
+   •   CPF e CNPJ inválidos.
+   •   Série constante nos arquivos diferente da série constante na identificação do arquivo.
+       Ex: série no arquivo “U ” (seguido de dois espaços vazios) e na identificação “U00” ou
+       apenas “U”
+   •   O padrão do convenio 201 exige que ao final de cada linha seja colocado um “enter”
+       (CR/LF). Muitos contribuintes não colocam esse “enter” ao final da última linha para
+       indicar o final do arquivo, isso gera erros na hora da validação do arquivo.
+                “2.1.3 Tamanho dos arquivos: 238 bytes para o Arquivo de Carregamento de
+                Créditos em Terminais Telefônicos Pré-pagos e 238 bytes para o Arquivo de
+                Fatura de Serviços de Comunicação e de Telecomunicações, acrescidos de CR/LF
+                (Carriage Return/Line Feed) ao final de cada registro;”
+
+               Forma correta:
+
+
+
+
+    10) Qual é o meio de envio de arquivo?
+
+Por meio de protocolo eletrônico no e-cac do contribuinte. Utilizar formulário de recibo
+atualizado disponível em https://receita.fazenda.rs.gov.br/conteudo/14068/arquivo-auxiliar-
+convenio-201-17.
+
+
+
+    11) Quais são os principais erros no envio do recibo dentro do protocolo eletrônico?
+   • Não estar em formato P7S;
+   • Não conter todas as informações necessárias, tal qual identificação correta dos arquivos
+       transmitidos, declaração completa de dispensa, caso seja hipótese de tal;
+   • Identificação correta do emitente, inclusive devendo o CNPJ ser idêntico ao constante
+       na identificação do arquivo.
+
+
+
+    12) Qual é o prazo de envio?
+
+Trimestralmente, até o último dia do mês subsequente ao último mês de cada trimestre. Ex: 30
+de abril para os arquivos de Janeiro, Fevereiro e Março.
+                                              Estado do Rio Grande do Sul
+                                              Secretaria da Fazenda
+                                              Receita Estadual
+
+    13) Qual é a penalidade em caso de não envio?
+
+A penalidade está prevista na lei do Procedimento Tributário Administrativo – Lei 6.537/73:
+
+Art. 11 - Pela prática das infrações tributárias formais a seguir enumeradas, são cominadas as
+seguintes multas:
+         IV -infrações relativas a informações devidas por contribuintes:
+
+               e) omitir informações em meio eletrônico ou prestar informações incorretas ou
+               em desacordo com a legislação tributária, exceto se houver previsão de infração
+               específica em uma das demais alíneas deste inciso:
+
+                       1 - quando ocorrer fornecimento de informações em padrão diferente do
+                       exigido pela legislação tributária: multa de 0,5% do valor das respectivas
+                       operações ou prestações, não inferior a 60 UPF-RS por período de
+                       apuração a que se referirem as informações
+
+                       2 - quando não houver a entrega de arquivos com informações devidas
+                       no local, na forma ou no prazo previstos ou quando ocorrer omissão de
+                       informações ou prestação de informações incorretas: multa de 1% do
+                       valor das respectivas operações ou prestações, não inferior a 120 UPF-
+                       RS por período de apuração a que se referirem as informações;
+
+    14) Legislação compilada:
+
+CONVENIO 201/17: https://www.confaz.fazenda.gov.br/legislacao/convenios/2017/CV201_17
+
+Instrução Normativa 45/98 Título I Capítulo XXXIV item 5.0
+
+https://atendimento.receita.rs.gov.br/pessoa-juridica/servicos?servico=1935
+

@@ -1,0 +1,1554 @@
+       PERGUNTAS E RESPOSTAS
+
+           BEBIDAS
+Grupo Especializado Setorial de Bebidas (GES-BEB)
+
+
+
+
+               Atualizado em 28/07/2026
+                                                                        SUMÁRIO
+INTRODUÇÃO ................................................................................................................................................................... 6
+PERGUNTAS E RESPOSTAS .......................................................................................................................................... 7
+   1.       ABRANGÊNCIA GES BEBIDAS E DEFINIÇÕES BÁSICAS ..................................................................... 7
+        1.1.        Qual é a abrangência do GES Bebidas? ................................................................................... 7
+        1.2.        Como é organizada a fiscalização do setor de bebidas no RS? ................................................ 7
+        1.3.        O que são consideradas Bebidas Frias? ................................................................................... 7
+        1.4.    Qual a diferença entre bebida energética (composto líquido pronto para consumo) e bebida
+        hidroeletrolítica? .................................................................................................................................... 7
+        1.5.        O que são consideradas Bebidas Quentes? ............................................................................. 7
+        1.6.        O que são consideradas Bebidas enquadradas em produtos alimentícios? .............................. 7
+   2.       LEGISLAÇÃO SUBSTITUIÇÃO TRIBUTÁRIA ............................................................................................. 8
+        2.1.        Qual é a legislação referente às operações com bebidas frias? ................................................ 8
+        2.2.        Qual é a legislação referente às operações com bebidas quentes? .......................................... 8
+        2.3.    Qual é a legislação referente às operações com bebidas enquadradas em produtos
+        alimentícios? ......................................................................................................................................... 8
+   3.       ALÍQUOTAS ....................................................................................................................................................... 9
+        3.1.        Quais são as alíquotas internas das bebidas no RS?................................................................ 9
+        3.2.        Qual a classificação e a alíquota dos chás prontos para o consumo com frutas? ..................... 9
+        3.3.        Qual a classificação e a alíquota do produto kombucha? .......................................................... 9
+        3.4.   Qual alíquota possuem as bebidas hidroeletrolíticas e bebidas energéticas? Elas estão sujeitas
+        à Substituição Tributária? .................................................................................................................... 10
+        3.5.        Qual alíquota é aplicada às bebidas vegetais?........................................................................ 10
+        3.6.        Qual alíquota é aplicada ao Leite de Coco? ............................................................................ 10
+   4.       SUBSTITUIÇÃO TRIBUTÁRIA ...................................................................................................................... 11
+        4.1.   Qual é o procedimento para a formação da base de cálculo da substituição tributária para as
+        operações com bebidas frias, exceto água mineral ou potável? .......................................................... 11
+        4.2.   Qual é o procedimento para a inclusão de mercadorias na Lista Preço Final ao Consumidor
+        (PFC) de bebidas frias?....................................................................................................................... 11
+        4.3.   As operações com bebidas hidroeletrolíticas e energéticas e com xarope ou extrato
+        concentrado destinado ao preparo de refrigerante em máquina pré-mix ou post-mix para destinatários
+        do RS estão abrangidas pelo regime de substituição tributária? ......................................................... 11
+        4.4.    As operações com águas, classificadas no NCM 2201XXXX, estão sujeitas à Substituição
+        Tributária? ........................................................................................................................................... 11
+        4.5.   Qual é o procedimento para a formação da base de cálculo da substituição tributária para as
+        operações com bebidas quentes, exceto vinhos e espumantes? ........................................................ 11
+        4.6.     Sou substituto tributário e ao realizar uma operação de venda com uma bebida submetida ao
+        regime de substituição tributária constatei que o valor da minha operação própria é superior ao valor
+        do PFC determinado para a bebida. Como irei calcular o valor do ICMS devido por substituição
+        tributária? ............................................................................................................................................ 12
+
+
+                                                    GES-BEB | 1ª Delegacia da Receita Estadual
+                                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                                                                                              2
+     4.7.    Como é definido o PFC das bebidas quentes, exceto vinhos e espumantes, para fins de
+     definição da base de cálculo da substituição tributária? ...................................................................... 12
+     4.8.       Vinhos e espumantes estão sujeitos ao regime de substituição tributária? ............................. 12
+     4.9.     Espumantes sem álcool para destinatários do RS estão sujeitos ao regime de substituição
+     tributária? ............................................................................................................................................ 12
+     4.10. Deve ser feito o ajuste da MVA nas operações com bebidas quentes de outras unidades da
+     federação para o RS? ......................................................................................................................... 12
+     4.11.      Quais são as MVAs utilizadas na formação da base de cálculo das bebidas quentes?........... 12
+     4.12. Como a MVA deve ser ajustada, caso a alíquota interna ou o percentual de carga tributária
+     efetiva praticada pelo contribuinte substituto forem diferentes do apresentado no RICMS e não
+     estiverem expressamente previstos na coluna destinada à MVA para as operações interestaduais? . 13
+     4.13. Quando ocorrem as pesquisas de preços para a determinação dos PFCs e quais os
+     respectivos períodos de vigência?....................................................................................................... 13
+     4.14. Qual é o procedimento para cada tipo de situação de operação com bebidas sujeitas à
+     substituição tributária fabricadas no RS?............................................................................................. 13
+     4.15. Qual é o procedimento para cada tipo de situação de operação com bebidas sujeitas à
+     substituição tributária fabricadas em outra unidade da federação? ..................................................... 14
+     4.16. Qual é o procedimento para as operações que destinem bebidas para o RS por contribuintes
+     estabelecidos em Estados NÃO signatários de convênio ou protocolo de substituição tributária?....... 15
+     4.17. Qual é o procedimento que deve ser adotado nas transferências internas, com bebidas, do
+     industrializador para estabelecimento atacadista? .............................................................................. 15
+     4.18. Qual é o procedimento para as vendas realizadas fora do estabelecimento do contribuinte,
+     como é o caso de vendas ambulantes, foodtrucks, feiras e festivais? ................................................. 15
+5.       BENEFÍCIO FISCAL ÀS MICROCERVEJARIAS GAÚCHAS .................................................................. 17
+     5.1.       Existe benefício fiscal para as microcervejarias? .................................................................... 17
+     5.2.       Quais são os benefícios fiscais concedidos às microcervejarias gaúchas? ............................. 17
+     5.3.       O que é considerado uma microcervejaria? ............................................................................ 17
+     5.4.       O que é considerado cerveja ou chope artesanal? .................................................................. 17
+     5.5.       Há limite mensal em litros para as saídas de cervejas e chopes com benefício? .................... 17
+     5.6.   Qual é o procedimento quando a microcervejaria ultrapassar o limite de saída de 200.000
+     (duzentos mil) litros por mês de cerveja e chope? ............................................................................... 17
+     5.7.   O que acontece quando a microcervejaria ultrapassar o limite de produção anual de cerveja e
+     chope? 18
+     5.8.   Microcervejarias que possuam débitos com a Fazenda Estadual podem usufruir de créditos
+     presumidos?........................................................................................................................................ 18
+     5.9.   É necessária a autorização prévia da Receita Estadual para a utilização dos benefícios para as
+     microcervejarias? ................................................................................................................................ 18
+     5.12. As microcervejarias enquadradas no Simples Nacional podem apropriar o crédito presumido
+     relativo ao ICMS na operação própria? ............................................................................................... 18
+     5.13. Qual é o procedimento no caso do recebimento em devolução de mercadorias beneficiadas
+     com o crédito presumido na operação de saída? ................................................................................ 19
+     5.14. Qual é o procedimento no caso do recebimento em devolução de mercadorias beneficiadas
+     com a redução da base de cálculo na operação de saída? ................................................................. 19
+
+
+                                              GES-BEB | 1ª Delegacia da Receita Estadual
+                                    Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                                CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                                                                              3
+     5.15.      Qual é o procedimento para a apropriação dos benefícios das microcervejarias gaúchas? .... 19
+     5.16. Os benefícios das microcervejarias gaúchas também se aplicam às operações sujeitas à
+     substituição tributária dentro do Estado do RS? .................................................................................. 19
+     5.17.      Os benefícios das microcervejarias gaúchas também se aplicam às operações interestaduais?
+                20
+     5.18. Microcervejarias estabelecidas em outras unidades da federação têm direito a se beneficiar no
+     cálculo do ICMS-ST devido ao Estado do RS? ................................................................................... 20
+     5.19. Como é calculado o crédito fiscal presumido pela microcervejaria gaúcha enquadrada na
+     categoria GERAL? .............................................................................................................................. 20
+     5.20. Como é calculado o crédito fiscal presumido previsto no RICMS/RS, livro I, artigo 32, CCIX
+     pela microcervejaria gaúcha optante pelo SIMPLES NACIONAL? ...................................................... 21
+     5.21. Encomendante, contribuinte de ICMS, pretende comercializar cerveja com marca própria. Para
+     isso, firmou acordo com uma microcervejaria estabelecida do RS para que esta realize a produção.
+     Quais são os procedimentos que devem ser realizados? .................................................................... 23
+     5.22. A microcervejaria pode também manter os créditos relativos à entrada de bens, mercadoria e
+     serviços? ............................................................................................................................................. 23
+     5.23. Há alguma alteração relativa ao AMPARA/RS para as empresas que utilizarem quaisquer dos
+     benefícios das microcervejarias? ........................................................................................................ 23
+     5.24. A microcervejaria Encomendante, localizada no RS, pode se beneficiar do crédito presumido
+     de 13%? .............................................................................................................................................. 23
+     5.25. Como é calculado o benefício da Redução da Base de Cálculo previsto para as
+     microcervejarias que aderirem ao benefício? ...................................................................................... 24
+     5.26.      Quais são as diferenças entre os benefícios disponíveis para as microcervejarias? ............... 25
+6.       BENEFÍCIOS FISCAIS PARA SAÍDAS INTERESTADUAIS .................................................................... 26
+     6.1.       Há crédito presumido nas saídas interestaduais de cerveja, chope e refrigerantes? ............... 26
+7.       BENEFÍCIO FISCAL AO VINHO E DERIVADOS DA UVA E DO VINHO .............................................. 27
+     7.1.   Qual é a legislação referente aos créditos presumidos para vinho e derivados da uva e do
+     vinho? 27
+     7.2.       Qual é a definição legal de vinho, para efeito do benefício fiscal previsto nesses incisos? ..... 27
+     7.3.       Existe benefício fiscal relativo à taxa destinada ao FUNDOVITIS? ......................................... 27
+     7.4.       Existe benefício fiscal para as saídas internas de vinho? ........................................................ 27
+     7.5.       Existe benefício fiscal também para as saídas internas de sucos de uva? .............................. 27
+     7.6.       Que empresas não podem se beneficiar dos créditos presumidos? ........................................ 28
+     7.7.   Existe limite para o valor total de apropriação de créditos presumidos em cada período de
+     apuração pela empresa beneficiária? .................................................................................................. 28
+     7.8.    Quais são os códigos devem ser utilizados no Anexo 03 da GIA para a apropriação dos
+     créditos presumidos para vinho e derivados da uva e do vinho? ......................................................... 28
+     7.9.   Como é o cálculo de crédito presumido do inciso LXXVIII, referente às saídas internas de
+     vinho de produção própria? ................................................................................................................. 28
+     7.10. Como é o cálculo de crédito presumido do inciso LXXVIII, referente às saídas internas de
+     vinho de produção própria, caso a empresa utilize sucos de terceiros em parte de sua produção? .... 28
+     7.11. Como é o cálculo de crédito presumido do inciso XCIV, referente às saídas internas de suco
+     de uva de produção própria? ............................................................................................................... 28
+
+                                              GES-BEB | 1ª Delegacia da Receita Estadual
+                                    Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                                CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                                                                             4
+     7.12. Como é o cálculo de crédito presumido do inciso XCIV, referente às saídas internas de suco
+     de uva de produção própria, caso a empresa utilize sucos de terceiros em parte da sua produção? .. 29
+8.       BENEFÍCIO FISCAL PARA A CACHAÇA ................................................................................................... 30
+     8.1.       Existe algum benefício nas saídas internas de cachaça?........................................................ 30
+     8.2.       A isenção nas saídas de cachaça do Art. 9, CCXL, estende-se ao AMPARA? ....................... 30
+     8.3.    Como é realizado o enquadramento como microprodutor rural produtor de cachaça? Como é
+     realizada a formalização e a obtenção de Inscrição Estadual?............................................................ 30
+     8.4.    Uma vez que o microprodutor rural produtor de cachaça já esteja enquadrado, como devem
+     ser emitidas as notas fiscais relativas às operações acobertadas pela isenção? ................................ 30
+     8.5.   É necessária a emissão de nota de entrada (contra nota) nas compras por revendedor de
+     cachaça? ............................................................................................................................................. 30
+     8.6.    Se o microprodutor vender cachaça para um revendedor (mercado, loja etc.), a operação será
+     isenta? 31
+     8.7.   O revendedor de cachaça está obrigado ao recolhimento de ICMS ST e AMPARA ST pela sua
+     comercialização? Como deve ser feito o cálculo? ............................................................................... 31
+     8.8.  As vendas interestaduais de cachaça possuem a isenção prevista no Art. 9, CCXL, do Livro I
+     do RICMS/RS? .................................................................................................................................... 31
+9.       REGIME DIFERENCIADO DE APURAÇÃO PARA BARES E RESTAURANTES ............................... 32
+     9.1.       Existe regime diferenciado de apuração para bares, restaurantes e estabelecimento similares?
+                32
+     9.2.       O que deve ser considerado como receita bruta auferida no período? .................................... 32
+     9.3.   Em relação a mercadorias sujeitas ao regime de substituição tributária, como a empresa deve
+     proceder? ............................................................................................................................................ 32
+
+
+
+
+                                              GES-BEB | 1ª Delegacia da Receita Estadual
+                                    Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                                CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                                                                            5
+                                          INTRODUÇÃO
+     Com o objetivo de esclarecer aos contribuintes eventuais dúvidas e visando facilitar o correto
+cumprimento da legislação tributária, a Receita Estadual do RS, por meio dos Grupos
+Especializados Setoriais (GES), consolidou as principais perguntas e respostas aplicáveis aos
+respectivos setores de atuação. Dessa forma, procura-se prestar um serviço de informação ao
+contribuinte, de modo que este possa consultar o documento quando haja dúvidas acerca da
+tributação referente à atividade específica.
+     O escopo apresentado nesse documento não exaure todo o conjunto normativo referente à
+jurisdição da Secretaria da Fazenda do Rio Grande do Sul. Para acessar o inteiro teor da legislação,
+acesse o Portal de Legislação e Jurisprudência no site da Receita Estadual.
+     Este documento não se reveste de caráter de Consulta Formal, conforme Lei Estadual
+nº 6.537/73, título II, capítulo IV, seção I. As informações aqui dispostas devem ser confirmadas
+na legislação correspondente antes de sua aplicação.
+     Dúvidas específicas podem ser encaminhadas ao Plantão Fiscal Virtual, em Fale Conosco no
+Portal de Serviços da Receita Estadual.
+     Em caso de necessidade de formulação de Consulta Formal, acesse o protocolo eletrônico no
+portal da Receita Estadual.
+
+
+
+
+                              GES-BEB | 1ª Delegacia da Receita Estadual
+                       Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                   CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                  6
+                               PERGUNTAS E RESPOSTAS
+
+1. ABRANGÊNCIA GES BEBIDAS E DEFINIÇÕES BÁSICAS
+1.1. Qual é a abrangência do GES Bebidas?
+R.: O Grupo Especializado Setorial de Bebidas (GES Bebidas) orienta, monitora e fiscaliza os contribuintes
+que atuam na fabricação e na comercialização de bebidas relativamente às questões tributárias no RS. Os
+produtos que estão no foco do GES são classificados em bebidas frias, bebidas quentes e bebidas
+enquadradas em produtos alimentícios, conforme definido a seguir.
+
+1.2. Como é organizada a fiscalização do setor de bebidas no RS?
+R.: Ela é realizada por um grupo de Auditores-Fiscais da Receita Estadual (AFRE) e Analistas Tributários da
+Receita Estadual (ATRE) especializados nas questões dos tributos estaduais incidentes sobre as operações
+fiscais dos estabelecimentos industriais e comerciais que atuam no setor de bebidas.
+
+1.3. O que são consideradas Bebidas Frias?
+R.: Refrigerante, bebida hidroeletrolítica, bebida energética, cerveja, cerveja sem álcool, chope, xaropes e
+concentrados para refrigerantes, águas saborizadas e aromatizadas. Ver RICMS/RS, apêndice II, seção III,
+item I.
+
+1.4. Qual a diferença entre bebida energética (composto líquido pronto para consumo) e
+bebida hidroeletrolítica?
+R.: Bebida Energética é o produto que contém como ingrediente(s) principal(is): inositol, glucoronolactona,
+taurina e/ou cafeína, podendo ser adicionado de vitaminas e/ou minerais até 100% da Ingestão Diária
+Recomendada (IDR) na porção do produto. Pode ainda ser adicionado de outro(s) ingrediente(s), desde que
+não descaracterize(m) o produto. Esses produtos podem conter as expressões “bebida energética” ou
+“energy drink” na rotulagem. O uso de qualquer outra expressão pode ser autorizado após avaliação, caso
+a caso, pela Anvisa. Ver Resolução RDC ANVISA/MS 273/2005.
+
+Já a bebida hidroeletrolítica é composta à base d’água, sais minerais e carboidratos e têm a função de repor
+líquidos, eletrólitos e carboidratos que costumam ser perdidos, principalmente, pelo suor durante atividade
+física intensa, como no caso de uma corrida competitiva.
+
+1.5. O que são consideradas Bebidas Quentes?
+R.: Bebidas alcoólicas, exceto cerveja e chope. Ver RICMS/RS, apêndice II, seção III, item XXXII.
+
+1.6. O que são consideradas Bebidas enquadradas em produtos alimentícios?
+R.: Sucos de frutas, ou mistura de sucos de frutas, água de coco, refrescos e outras bebidas não alcoólicas,
+néctares de frutas e outras bebidas não alcoólicas prontas para beber, bebidas prontas à base de mate ou
+chá, bebidas prontas à base de café e bebidas alimentares prontas à base de soja, leite ou cacau, inclusive
+bebidas lácteas. Ver RICMS/RS, apêndice II, seção III, item XXX, números 10, 11 e 91 a 96. Tal dispositivo
+foi revogado pelo art. 2º (Alteração 5973) do Decreto 56.633, de 29/08/22. (DOE 30/08/22) - Efeitos a partir
+de 01/10/22 - Conv. ICMS 142/18.), excluindo dessa forma tais bebidas da Substituição Tributária.
+
+
+
+
+                                GES-BEB | 1ª Delegacia da Receita Estadual
+                         Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                     CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                           7
+2. LEGISLAÇÃO SUBSTITUIÇÃO TRIBUTÁRIA
+2.1. Qual é a legislação referente às operações com bebidas frias?
+R.: Devem ser consultados os RICMS/RS, livro III, artigos 90 a 92 e INSTRUÇÃO NORMATIVA DRP 045/98,
+TÍTULO I, CAPÍTULO IX, SEÇÃO 20.1 Obs: Excluídas as águas minerais de NCMs 2201xxxx da ST a partir
+de 01/10/2022.
+
+2.2. Qual é a legislação referente às operações com bebidas quentes?
+R.: Devem ser consultados os RICMS/RS, livro III, artigos 225 a 228, e INSTRUÇÃO NORMATIVA DRP
+045/98, TÍTULO I, CAPÍTULO IX, SEÇÃO 21.1
+
+2.3. Qual é a legislação referente às operações com bebidas enquadradas em produtos
+alimentícios?
+R.: Devem ser consultados os RICMS/RS, livro III, artigos 217 a 220, o Protocolo ICMS 95/2009 e também
+o Protocolo ICMS 188/2009. Obs: Excluídas as bebidas enquadradas em produtos alimentícios da ST a partir
+de 01/10/2022.
+
+
+
+
+                               GES-BEB | 1ª Delegacia da Receita Estadual
+                        Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                    CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                      8
+3. ALÍQUOTAS
+3.1. Quais são as alíquotas internas das bebidas no RS?
+R.: Alíquotas internas atuais das bebidas são:
+    • 18%: Refrigerantes. Ver RICMS/RS, livro I, artigo 27, III.
+    • 17%: Vinho e derivados da uva e do vinho, assim definidos na Lei Federal nº 7.678, de 08/11/88;
+        sidra e filtrado doce de maçã; aguardentes de cana (NCM 2208.40.00); água mineral; sucos de frutas
+        não fermentados, sem adição de álcool, com ou sem adição de açúcar ou de outros edulcorantes;
+        bebidas alimentares à base de soja ou de leite; néctares, refrescos ou bebidas de frutas. Ver
+        RICMS/RS, livro I, artigo 27, X, conforme exceções no RICMS/RS, apêndice I, seção I, item IV.
+    • 25%: Demais bebidas. Ver RICMS/RS, livro I, artigo 27, I.
+
+                                                            Alíquota    Base de Cálculo    Ajuste
+                                   Mercadoria                                                           Benefício Fiscal
+                                                            interna         da ST           MVA
+                                                                                                           Sim, para
+                                                                                            Não
+                                Cerveja e Chope             25% + 2%*      PFC/MVA                      microcervejarias
+                                                                                                           gaúchas.
+                                   Água Mineral               17%          Não há ST        Não             Não há.
+           FRIAS
+
+
+
+
+                                    Refrigerante              18%          PFC/MVA          Não             Não há.
+                             Bebidas Hidroeletrolíticas       25%          PFC/MVA          Não             Não há.
+                               Bebidas Energéticas            25%          PFC/MVA          Não             Não há.
+                              Espumante sem álcool
+                                                              18%          PFC/MVA          Não             Não há.
+                                    (refrigerante)
+                              Demais Bebidas Frias            25%          PFC/MVA          Não             Não há.
+                                Vinho e Espumante           17% + 2%*      Não há ST         -               Sim.
+           QUENTES
+
+
+
+
+                          Derivados da uva e do vinho,
+                          sidra e filtrado doce de maça,
+                                                            17% + 2%*      PFC /MVA         Sim             Não há.
+                            aguardente de cana (NCM
+                                     2208.40.00)
+                             Demais Bebidas Quentes         25% + 2%*      PFC /MVA         Sim             Não há.
+                               Sucos de frutas não
+                           fermentados, sem adição de
+           ALIMENTÍCIAS
+
+
+
+
+                          álcool, com ou sem adição de
+                               açúcar ou de outros                                                      Sim, para sucos
+                                                              17%         Não há ST.        Não
+                              edulcorantes; bebidas                                                         de uva.
+                          alimentares à base de soja ou
+                          de leite; e néctares, refrescos
+                               ou bebidas de frutas.
+                          Demais bebidas enquadradas
+                                                              25%         Não há ST.        Não             Não há.
+                             em produtos alimentícios
+*Obs: A partir de 1º de janeiro de 2016, aplica-se alíquota adicional de 2% (AMPARA/RS) nas saídas internas
+a consumidor final de bebidas alcóolicas e cerveja sem álcool. Ver RICMS/RS, livro I, artigo 27, § único, “a”.
+
+3.2. Qual a classificação e a alíquota dos chás prontos para o consumo com frutas?
+R.: Os chás prontos para o consumo com frutas, não podem ser classificados como sucos de frutas ou
+refrescos, visto que o suco de frutas não é elemento preponderante em sua composição. Neste caso, eles
+enquadram-se como chá pronto para o consumo, conforme análise conjunta dos Decreto Federal 6871/2009,
+anexo, artigos 22 e 32, em conjunto com IN MAPA 19/2013, artigos 13 e 17 c/c anexo II e com IN MAPA
+19/2013, artigos 26 e 27.
+
+Possui, assim, alíquota de 25%, conforme previsto no RICMS/RS, livro I, artigo 27, I combinado com o
+RICMS/RS, apêndice I, seção I, item IV.
+
+3.3. Qual a classificação e a alíquota do produto kombucha?
+R.: A bebida denominada comercialmente como kombucha é uma bebida não alcóolica, pronta para o
+consumo, preparada através da fermentação de bactérias e leveduras, à base, principalmente, de chá e
+
+                                             GES-BEB | 1ª Delegacia da Receita Estadual
+                                     Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                                 CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                                           9
+mate. Enquadra-se no NCM 2202.99.00, conforme disposto na Solução de Consulta COSIT 98316/2019 e
+na Solução de Consulta COSIT 98130/2020, emitidos pela Receita Federal do Brasil, referente à
+classificação da mercadoria.
+
+   Possui, assim, alíquota de 25%, conforme previsto no RICMS/RS, livro I, artigo 27, I combinado com o
+RICMS/RS, apêndice I, seção I, item IV.
+
+3.4. Qual alíquota possuem as bebidas hidroeletrolíticas e bebidas energéticas? Elas estão
+sujeitas à Substituição Tributária?
+R.: Essas bebidas possuem alíquota de 25%, conforme previsto no RICMS/RS, livro I, artigo 27, I
+combinado com o RICMS/RS, apêndice I, seção I, item IV e estão sujeitas a ST, conforme previsto no
+RICMS/RS, apêndice II, seção III, item I.
+
+
+
+3.5. Qual alíquota é aplicada às bebidas vegetais?
+
+R.: Em regra, as bebidas vegetais estão sujeitas à alíquota de 25%, pois enquadram-se na alíquota geral
+prevista para bebidas nos termos do RICMS/RS, livro I, artigo 27, I.
+
+Entretanto, às bebidas alimentares à base de soja aplica-se a alíquota modal, uma vez que estão
+expressamente contempladas na exceção do RICMS/RS, livro I, artigo 27, I combinado com o RICMS/RS,
+apêndice I, seção I, item IV.
+
+3.6. Qual alíquota é aplicada ao Leite de Coco?
+
+R.: Aplica-se a alíquota interna de 25% às operações com água de coco e leite de coco, consoante o
+disposto no RICMS/RS, livro I, artigo 27, I, combinado com o item IV da Seção I do seu Apêndice I.
+
+
+
+
+                               GES-BEB | 1ª Delegacia da Receita Estadual
+                        Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                    CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                     10
+4. SUBSTITUIÇÃO TRIBUTÁRIA
+4.1. Qual é o procedimento para a formação da base de cálculo da substituição tributária para
+as operações com bebidas frias, exceto água mineral ou potável?
+R.: Deve ser utilizado o Preço Final ao Consumidor (PFC) publicado na IN DRP 045/98, apêndice XXXVI,
+seção I (*); ou, na falta deste, a Margem de Valor Agregado (MVA), prevista no RICMS/RS, livro III, artigo
+92, III, “a”.
+
+A consulta da Lista de Preços Finais ao Consumidos (PFC) – Bebida Fria – está disponível no link
+https://secweb.procergs.com.br/rda/visualiza/, utilizando a Chave e CRC (Certificado de Registro Cadastral)
+indicados no site da Receita Estadual clicando em:
+
+Empresas > Bebida Fria - Serviços PFC (Preço Final a Consumidor) > Lista de Preços Finais ao Consumidor
+(PFC) > Pesquisar Lista Atual e Histórico da Lista de Preços Finais ao Consumidor (PFC) – Bebidas Frias
+
+4.2. Qual é o procedimento para a inclusão de mercadorias na Lista Preço Final ao
+Consumidor (PFC) de bebidas frias?
+R.: Por requerimento do substituto tributário poderão ocorrer modificações na lista de preços finais ao
+consumidor divulgada, conforme IN DRP 045/98, título I, capítulo IX, seção 20.0, subitem 20.1.3. A empresa
+deve seguir o procedimento disponível no link:                https://atendimento.receita.rs.gov.br/pessoa-
+juridica/servicos?servico=2087
+
+Observação: o PFC publicado pela Receita Estadual servirá como base de cálculo de ST a todo substituto
+tributário e não somente ao fabricante daquela bebida fria.
+
+Observação: os PFCs na lista divulgada são aglomerados por CNPJ8 apenas como critério de organização
+e não para uso exclusivo daquela empresa, conforme observação anterior.
+
+Observação: a utilização dos valores indicados na lista de preços finais ao consumidor fica condicionada
+ao correto preenchimento da NF-e, incluindo GTIN, descrição da mercadoria e demais elementos que
+permitam a completa identificação do item correspondente na lista vigente.
+
+
+4.3. As operações com bebidas hidroeletrolíticas e energéticas e com xarope ou extrato
+concentrado destinado ao preparo de refrigerante em máquina pré-mix ou post-mix para
+destinatários do RS estão abrangidas pelo regime de substituição tributária?
+R.: Sim, conforme análise do RICMS/RS, livro III, artigos 90 a 92 e do RICMS/RS, apêndice II, seção III,
+item I.
+
+4.4. As operações com águas, classificadas no NCM 2201XXXX, estão sujeitas à Substituição
+Tributária?
+R.: Não, desde 01/10/2022, as operações com águas classificadas no NCM 2201XXXX, não estão mais
+sujeitas à Substituição Tributária.
+
+4.5. Qual é o procedimento para a formação da base de cálculo da substituição tributária para
+as operações com bebidas quentes, exceto vinhos e espumantes?
+R.: Deve ser utilizado o PFC publicado na IN DRP 045/1998, apêndice XXXVI, seção II. A base de cálculo
+da ST das mercadorias não listadas deve ser definida considerando a MVA, conforme art. 228, II, do Livro
+III, do Decreto nº 37.699/97
+
+
+                                GES-BEB | 1ª Delegacia da Receita Estadual
+                         Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                     CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                         11
+4.6. Sou substituto tributário e ao realizar uma operação de venda com uma bebida
+submetida ao regime de substituição tributária constatei que o valor da minha operação
+própria é superior ao valor do PFC determinado para a bebida. Como irei calcular o valor do
+ICMS devido por substituição tributária?
+R.: Nas operações internas ou interestaduais, destinadas ao RS:
+
+a) com bebidas quentes, quando o valor da operação própria for igual ou superior a 90% do PFC ou do preço
+final a consumidor sugerido pelo remetente, a base de cálculo será calculada pelo somatório das seguintes
+parcelas (ver RICMS/RS, livro III, artigo 228, III):
+      - o preço praticado pelo remetente;
+      - o montante dos valores de frete, seguro, impostos, contribuições e outros encargos transferíveis ou
+      cobrados do destinatário, ainda que por terceiros; e
+      - a MVA, inclusive lucro, relativa às operações ou prestações subsequentes.
+
+b) com bebidas frias, deve ser informado o PFC aplicável no campo BC ICMS-ST da NF-e, mesmo que o
+valor do ICMS-ST seja igual a zero.
+
+
+4.7. Como é definido o PFC das bebidas quentes, exceto vinhos e espumantes, para fins de
+definição da base de cálculo da substituição tributária?
+R.: A Receita Estadual adota para as bebidas quentes, exceto vinhos e espumantes, pesquisa de preços
+encomendada pelas entidades representativas do setor de bebidas. Residualmente, para as bebidas não
+contempladas nessa pesquisa, por solicitação do substituto tributário ou por decisão do fisco, podem ser
+realizadas pesquisas internas pela Receita Estadual do RS com base nas notas fiscais de estabelecimentos
+varejistas. As regras para a determinação do PFC nas operações com bebidas quentes estão descritas na
+IN DRP 045/1998, título I, capítulo IX, seção 21.0. Os resultados são publicados, anualmente, na IN DRP
+045/1998, apêndice XXXVI, seção II.
+
+4.8. Vinhos e espumantes estão sujeitos ao regime de substituição tributária?
+R.: A partir de 01/08/2019, vinhos e espumantes, não estão mais sujeitos ao regime de substituição tributária,
+conforme estipulado pelo Decreto 54736/2019.
+
+4.9. Espumantes sem álcool para destinatários do RS estão sujeitos ao regime de
+substituição tributária?
+R.: Sim, visto que ele se enquadra em uma espécie de refrigerante, conforme análise do RICMS/RS, livro
+III, artigos 90 a 92 e do RICMS/RS, apêndice II, seção III, item I.
+
+4.10.  Deve ser feito o ajuste da MVA nas operações com bebidas quentes de outras
+unidades da federação para o RS?
+R.: Sim, conforme previsto no RICMS/RS, livro III, artigo 228, II. Ver pergunta seguinte.
+
+4.11.    Quais são as MVAs utilizadas na formação da base de cálculo das bebidas quentes?
+R.: A tabela abaixo apresenta as MVAs originais e ajustadas aplicáveis nas operações internas e
+interestaduais com bebidas quentes, prevista no RICMS/RS, livro III, artigo 228, II.
+
+                                         Alíquota                  Margem de Valor Agregado (%)
+               Mercadoria
+                                        Interna +      Operação Interna   Alíquota na Operação Interestadual
+
+
+                                   GES-BEB | 1ª Delegacia da Receita Estadual
+                            Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                        CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                               12
+                                         Ampara/RS
+                                                                                        12%                  4%
+                                            (%)
+           Filtrados doces, exceto           19                  46,61                  55,44              69,57
+          aqueles classificados no
+         CEST 02.024.00, sangrias e           27                 46,95                  72,42              88,09
+                    sidras
+                                              19                 61,38                  71,10               86,65
+               Demais bebidas
+                                              27                 61,75                  89,78              107,04
+
+
+
+
+4.12.    Como a MVA deve ser ajustada, caso a alíquota interna ou o percentual de carga
+tributária efetiva praticada pelo contribuinte substituto forem diferentes do apresentado no
+RICMS e não estiverem expressamente previstos na coluna destinada à MVA para as
+operações interestaduais?
+R.: O contribuinte deverá ajustar os percentuais de MVA previstas para operações internas segundo a fórmula:
+
+                                                   (1+𝑀𝑉𝐴 𝑆𝑇 𝑜𝑟𝑖𝑔𝑖𝑛𝑎𝑙) ×(1−𝐴𝑙𝑞 𝑖𝑛𝑡𝑒𝑟)
+                            𝑀𝑉𝐴 𝐴𝑗𝑢𝑠𝑡𝑎𝑑𝑎 =                   (1−𝐴𝐿𝑄 𝑖𝑛𝑡𝑟𝑎)
+                                                                                        − 1 , onde:
+
+a) "MVA ST original" é a margem de valor agregado a ser utilizada nas operações internas prevista no RICMS;
+b) "ALQ inter" é a alíquota interestadual aplicada na operação;
+c) "ALQ intra" é a alíquota interna ou o percentual de carga tributária efetiva, quando este for inferior à alíquota interna,
+praticada pelo contribuinte substituto nas operações com as mesmas mercadorias.
+
+Deverá ser aplicada a "MVA ST original", sem o ajuste acima, quando a "ALQ intra" for inferior à "ALQ inter",
+ou nas operações promovidas por contribuinte substituto optante pelo Simples Nacional.
+Ver RICMS/RS, apêndice II, seção III, nota 04.
+
+4.13.   Quando ocorrem as pesquisas de preços para a determinação dos PFCs e quais os
+respectivos períodos de vigência?
+R.: Abaixo apresentamos um resumo sobre as pesquisas de preços que são utilizadas para a formação dos
+PFCs. Essas datas estão sujeitas a alterações, conforme pré-acordado com o setor.
+
+                  Tipo de Bebida            Pesquisadora            Mês da Pesquisa             Vigência dos PFCs
+
+                                            FINK, Shopping               Fevereiro                1°/04 a 30/11
+                   Bebidas Frias
+                                           Brasil e Fundacte              Outubro                 1°/12 a 31/03
+                  Bebidas Quentes
+                                                   FIPE             Agosto a Outubro
+                     Nacionais
+                                                                                                  1°/02 a 31/01
+                  Bebidas Quentes
+                                           Receita Estadual         Agosto a Outubro
+                    Regionais*
+
+
+*Obs.: São chamadas de bebidas quentes regionais aquelas não abrangidas pela pesquisa realizada pela
+FIPE.
+
+4.14.   Qual é o procedimento para cada tipo de situação de operação com bebidas sujeitas
+à substituição tributária fabricadas no RS?
+R.: Para as bebidas fabricadas no RS podem ocorrer uma das seguintes situações:
+
+
+a) nas operações que envolvem a venda do Fabricante (RS) para o Comerciante e posteriormente ao
+Consumidor Final, deve o Fabricante proceder ao destaque do ICMS normal (próprio), reter e recolher o
+ICMS por substituição tributária da etapa seguinte (imposto devido pelo Comerciante).
+
+                                      GES-BEB | 1ª Delegacia da Receita Estadual
+                             Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                         CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                                          13
+b) nas operações que envolvem somente o Fabricante (RS) e o Consumidor Final (*) localizado no Estado
+de RS (venda direta), deve o Fabricante apenas proceder ao destaque do ICMS normal, aplicando a alíquota
+interna da mercadoria no documento fiscal da operação. Operação não sujeita à substituição tributária.
+    (*) Obs.: Vale ressaltar que será contribuinte, conforme RICMS/RS, livro I, artigo 12, qualquer adquirente
+    pessoa, física ou jurídica, que realize, com habitualidade ou em volume que caracterize intuito comercial,
+    operações de circulação de mercadoria.
+
+
+c) nas operações que envolvem somente o Fabricante (RS) e o Consumidor Final localizado em outra
+Unidade da Federação (venda direta), deve o Fabricante proceder ao destaque do ICMS normal (alíquota
+interestadual de 12%, 7% ou 4%) e recolher o diferencial de alíquota para o estado de destino, conforme
+previsto na Emenda Constitucional 87/15. Operação não sujeita à substituição tributária.
+
+
+d) nas operações que envolvem somente o Fabricante (RS) e Empresa/Contribuinte (RS) para consumo
+próprio, como por exemplo, o chope oferecido para brindes em recepções, inaugurações, feiras e outros
+eventos. A Empresa/Contribuinte adquirente equipara-se ao consumidor final. O Fabricante deve proceder
+ao destaque do ICMS normal, aplicando a alíquota interna da mercadoria no documento fiscal da operação.
+
+
+e) nas operações que envolvem somente o Fabricante (RS) e Empresa/Contribuinte localizado em outra
+Unidade da Federação, para consumo próprio, o Fabricante procede ao destaque do ICMS normal, aplicando
+a alíquota interestadual de 12% ou 7%, conforme o Estado de destino, ou ainda 4% nas operações com
+bens e mercadorias importadas, não submetidas a industrialização. A Empresa/Contribuinte, adquirente da
+mercadoria, localizado em outra UF, deverá recolher a diferença de alíquota (entre a alíquota interestadual
+destacada no documento fiscal e a alíquota interna no Estado de destino, nos casos de Estados não
+signatários). Operação sujeita à Substituição Tributária por diferencial de alíquota (*).
+    (*) Obs.: O Fisco da UF do adquirente, no caso de Estado signatário, exige o recolhimento da diferença
+    por Substituição Tributária do Fabricante.
+
+
+f) nas operações que envolvem o Fabricante (RS), para o Comerciante de outra UF e posteriormente o
+Consumidor Final de outra UF, deve o Fabricante proceder ao destaque do ICMS normal (próprio), aplicando
+a alíquota interestadual de 12% ou 7%, conforme o Estado de destino, ou ainda 4% nas operações com
+bens e mercadorias importadas, não submetidas a industrialização. Deve reter e recolher (em GNRE ou com
+sua Inscrição Estadual de Substituto Tributário na UF de destino) o ICMS por Substituição Tributária da etapa
+seguinte para o Estado destinatário, observando a MVA e a Alíquota Interna da UF do adquirente.
+
+
+Atenção: o substituto tributário deve assegurar-se que, nas vendas a consumidor final (CPF ou
+Empresa/Não-Contribuinte), o destinatário não está tentando burlar a substituição tributária. É o caso, por
+exemplo, de contribuintes de fato, os quais adquirem mercadorias em quantidade e habitualidade que
+caracterizem a prática de comércio. Nessas situações deve ser recolhido o ICMS de responsabilidade.
+
+
+4.15.   Qual é o procedimento para cada tipo de situação de operação com bebidas sujeitas
+à substituição tributária fabricadas em outra unidade da federação?
+R.: Para as bebidas fabricadas em outra unidade da federação e adquirente localizado no RS podem ocorrer
+uma das seguintes situações:
+
+
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                           14
+a) nas operações que envolvem o Fabricante (outra UF), para o Comerciante (RS) e posteriormente o
+Consumidor Final (RS), deve o Fabricante proceder ao destaque do ICMS normal (próprio), aplicando a
+alíquota interestadual de 12% ou 4%. Reter e recolher (em GNRE ou com sua Inscrição Estadual de
+Substituto Tributário no RS) o ICMS por substituição tributária da etapa seguinte, observando a Margem de
+Valor Agregado (MVA) ou Preço Final a Consumidor (PFC) e a Alíquota interna da mercadoria no RS.
+
+b) nas operações que envolvem somente o Fabricante (outra UF) e Empresa/Contribuinte, localizado em
+RS, para consumo próprio, o Fabricante procede ao destaque do ICMS normal, aplicando a alíquota
+interestadual de 12% ou 4%. A Empresa/Contribuinte em RS, adquirente da mercadoria, deverá recolher a
+diferença de alíquota (entre a alíquota interestadual de 12% ou 4% destacada no documento fiscal e a
+alíquota interna aplicável à mercadoria) nos casos de Estados não signatários. Nos casos de Estado
+signatário, o Fabricante (outra UF) deve reter e recolher a diferença de alíquota por substituição tributária
+para o RS.
+
+c) nas operações que envolvem somente o Fabricante (outra UF) e Consumidor Final (*), localizado no RS,
+o Fabricante procede ao destaque do ICMS normal, aplicando a alíquota interestadual de 12% ou 4% e deve
+recolher o diferencial de alíquota para o RS, conforme previsto na Emenda Constitucional 87/2015.
+    (*) Obs.: Vale ressaltar que será contribuinte, conforme RICMS/RS, livro I, artigo 12, qualquer adquirente
+    pessoa, física ou jurídica, que realize, com habitualidade ou em volume que caracterize intuito comercial,
+    operações de circulação de mercadoria.
+
+
+Atenção: o substituto tributário deve assegurar-se que, nas vendas a consumidor final (CPF ou
+Empresa/Não-Contribuinte), o destinatário não está tentando burlar a substituição tributária. É o caso, por
+exemplo, de contribuintes de fato, os quais adquirem mercadorias em quantidade e habitualidade que
+caracterizem a prática de comércio. Nessas situações deve ser recolhido o ICMS de responsabilidade.
+
+
+4.16.   Qual é o procedimento para as operações que destinem bebidas para o RS por
+contribuintes estabelecidos em Estados NÃO signatários de convênio ou protocolo de
+substituição tributária?
+R.: Nas operações que envolvam Estados NÃO signatários de convênio ou protocolo, o destinatário de
+mercadorias estabelecido no RS será o responsável pelo recolhimento do imposto devido nas etapas
+seguintes de circulação, observando o PFC ou a MVA Ajustada. Ver as regras previstas nos RICMS/RS,
+livro III, artigos 53-A e 53-B.
+
+4.17.  Qual é o procedimento que deve ser adotado nas transferências internas, com
+bebidas, do industrializador para estabelecimento atacadista?
+R.: Nas operações internas, com bebidas, do industrializador para estabelecimento atacadista não se aplica
+a substituição tributária, conforme RICMS/RS, livro III, artigo 9º, I, nota 01, “j”. Neste caso, o substituto
+tributário será o estabelecimento destinatário. Visto que não há a ST nessa operação, difere-se o pagamento
+do imposto devido na transferência interna para o destinatário da mercadoria, conforme RICMS/RS, livro III,
+artigo 1º.
+
+4.18.   Qual é o procedimento para as vendas realizadas fora do estabelecimento do
+contribuinte, como é o caso de vendas ambulantes, foodtrucks, feiras e festivais?
+R.: Nas saídas de mercadorias para vendas ambulantes devem ser seguidas as regras previstas no IN DRP
+045/1998, título I, capítulo XIX.
+
+
+
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                           15
+       GES-BEB | 1ª Delegacia da Receita Estadual
+Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+            CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                   16
+5. BENEFÍCIO FISCAL ÀS MICROCERVEJARIAS GAÚCHAS
+5.1. Existe benefício fiscal para as microcervejarias?
+R.: Sim, existem três benefícios fiscais disponíveis para as microcervejarias gaúchas, sendo que elas podem
+optar por apenas um deles.
+
+5.2. Quais são os benefícios fiscais concedidos às microcervejarias gaúchas?
+R.: 1º benefício (RICMS/RS, livro I, artigo 32, CCIX): concede crédito presumido, no período de 1º de janeiro
+de 2024 a 31 de dezembro de 2028, às microcervejarias, em montante igual ao que resultar da aplicação do
+percentual de 13% (treze por cento) sobre o valor da base de cálculo do imposto incidente nas saídas
+internas de cerveja e chope artesanais, de produção própria.
+2º benefício (RICMS/RS, livro I, artigo 32, CCXXVI): concede, a partir de 1º de janeiro de 2025, às
+microcervejarias, nas saídas de cervejas e chopes artesanais, de produção própria, sujeitas à alíquota de
+25%, em montante igual ao que resultar do percentual de 13% (treze por cento) sobre o valor utilizado para
+o cálculo do débito próprio. Esse crédito presumido estende-se às saídas promovidas por
+estabelecimento encomendante quando a industrialização for realizada sob encomenda em
+estabelecimento de terceiros localizado neste Estado, desde que atenda ao pré-requisitos estabelecidos no
+referido dispositivo do RICMS/RS. Ainda, fica vedada a apropriação, pelo estabelecimento que realizar a
+industrialização por encomenda, deste crédito fiscal presumido e daquele previsto no inciso CCIX.
+3° benefício (RICMS/RS, livro I, artigo 23, XCVIII): concede, a partir de 1º de março de 2025, às
+microcervejarias, nas saídas internas de cervejas e chopes, de produção própria, promovidas por
+fabricantes, relativa ao débito próprio e ao débito de responsabilidade por substituição tributária, inclusive de
+contribuintes optantes pelo Simples Nacional, em valor que resulte em carga tributária na operação
+equivalente a 8% (oito por cento).
+
+5.3. O que é considerado uma microcervejaria?
+R: Há diferentes definições de microcervejaria para fins de utilização dos benefícios, conforme abaixo:
+1º benefício (RICMS/RS, livro I, artigo 32, CCIX, NOTA 02, “a”): a empresa cuja soma da produção anual
+de cerveja e chope artesanal não seja superior a 5 (cinco) milhões de litros, considerando-se todos os
+seus estabelecimentos, inclusive aqueles pertencentes às coligadas ou à controladora;
+2º benefício (RICMS/RS, livro I, artigo 32, CCXXVI, NOTA 02, “a”): a empresa cuja produção anual de
+cerveja e chope, correspondente ao somatório da produção de todos os seus estabelecimentos, inclusive os
+de coligadas e o da controladora, não seja superior a 5 (cinco) milhões de litros;
+3° benefício (RICMS/RS, livro I, artigo 23, XCVIII, NOTA 01): a empresa cuja produção anual de cerveja e
+chope, correspondente ao somatório da produção de todos os seus estabelecimentos, inclusive de empresas
+interdependentes, além da produção por encomenda em estabelecimento de terceiros, não seja superior a
+6 (seis) milhões de litros.
+
+5.4. O que é considerado cerveja ou chope artesanal?
+R.: O conceito de cerveja ou chope artesanal refere-se ao produto elaborado a partir de mosto cujo extrato
+primitivo contenha, no mínimo, 80% (oitenta por cento) de cereais maltados ou extrato de malte, conforme
+registro do produto no Ministério da Agricultura, Pecuária e Abastecimento.
+
+5.5. Há limite mensal em litros para as saídas de cervejas e chopes com benefício?
+R.: Para os créditos presumidos dos incisos CCIX e CCXXVI do RICMS/RS, livro I, artigo 32, os benefícios
+ficam limitados à saída de 200.000 (duzentos mil) litros por mês, considerando a soma dos dois produtos
+mencionados (cerveja e chope artesanais). Ver RICMS/RS, livro I, artigo 32, CCIX e CCXXVI, NOTA 01.
+
+5.6. Qual é o procedimento quando a microcervejaria ultrapassar o limite de saída de 200.000
+     (duzentos mil) litros por mês de cerveja e chope?
+R.: O crédito presumido deverá considerar apenas as saídas dos primeiros 200.000 (duzentos mil) litros
+mensais de cerveja e chope artesanais. Sobre o excedente não é permitida a utilização do crédito presumido.
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                              17
+5.7. O que acontece quando a microcervejaria ultrapassar o limite de produção anual de
+     cerveja e chope?
+R.: Existem três situações possíveis, dependendo do benefício pelo qual a empresa tenha optado.
+1º benefício (RICMS/RS, livro I, artigo 32, CCIX NOTA 03, “b”): se for excedido o limite anual previsto (5
+milhões de litros), o valor do crédito fiscal presumido apropriado no ano corrente deverá ser estornado no
+respectivo período de apuração, acrescido de juros moratórios, nos termos do art. 69 da Lei nº 6.537, de 27
+de fevereiro de 1973.
+Observação: se a empresa iniciar suas atividades no ano corrente, o limite previsto será proporcional ao
+número de meses de atividade.
+2º benefício (RICMS/RS, livro I, artigo 32, CCXXVI, NOTA 07): a empresa perde o benefício a partir do mês
+subsequente.
+3° benefício (RICMS/RS, livro I, artigo 23, XCVIII, NOTA 06): a empresa perde o benefício a partir do 1º dia
+do mês subsequente à ocorrência.
+
+5.8. Microcervejarias que possuam débitos com a Fazenda Estadual podem usufruir de
+     créditos presumidos?
+R.: Não, fica vedada a apropriação de crédito fiscal presumido por contribuinte que tenha crédito tributário
+constituído inscrito como Dívida Ativa. Ver RICMS/RS, livro I, artigo 32, NOTA 05.
+
+5.9. É necessária a autorização prévia da Receita Estadual para a utilização dos benefícios
+     para as microcervejarias?
+R.: 1º benefício (RICMS/RS, livro I, artigo 32, CCIX): não é necessária autorização.
+2º benefício (RICMS/RS, livro I, artigo 32, CCXXVI, NOTA 04): deverá ser celebrado Termo de Acordo com
+o Estado do Rio Grande do Sul, conforme previsto na NOTA 04 deste dispositivo. O estabelecimento
+encomendante localizado neste Estado, para usufruir desse crédito presumido, deve atender,
+adicionalmente, às exigências estabelecidas na NOTA 06 do RICMS/RS, Livro I, Artigo 32, CCXXVI.
+3° benefício (RICMS/RS, livro I, artigo 23, XCVIII, NOTA 05): a empresa deverá formalizar a opção no site
+da Receita Estadual através do link abaixo no Portal e-CAC:
+
+Opção à Base de Cálculo Reduzida - Microcervejarias (Art. 23, XCVIII) - Portal de Serviços da Receita
+
+Além disso, a empresa deverá, no final do último dia do mês anterior ao início da produção de efeitos da
+opção, inventariar o estoque das mercadorias e estornar o valor do crédito de imposto correspondente ao
+estoque das mercadorias, conforme detalhamento previsto na NOTA 05 do referido inciso.
+
+5.10.   As empresas optantes pelo Simples Nacional podem usufruir dos benefícios das
+    microcervejarias?
+R.: Sim, as microcervejarias gaúchas podem usufruir do benefício previsto no RICMS/RS, livro I, artigo 32,
+CCIX e do benefício previsto no RICMS/RS, livro I, artigo 23, XCVIII no que tange ao débito de
+responsabilidade por Substituição Tributária.
+
+5.11.      Para passarem a utilizar a Redução de Base de Cálculo, as microcervejarias enquadradas
+     no Simples Nacional precisam inventariar o estoque das mercadorias previsto no RICMS/RS,
+     livro I, artigo 23, XCVIII, NOTA 05, alínea “b”?
+R: A empresa deve atentar aos dispositivos aos quais ela se enquadra, não necessitando atender aos
+critérios aplicáveis às empresas da categoria GERAL, caso ela não pertença.
+
+5.12.   As microcervejarias enquadradas no Simples Nacional podem apropriar o crédito
+    presumido relativo ao ICMS na operação própria?
+R.: Não, as microempresas e as empresas de pequeno porte optantes pelo Simples Nacional não podem
+utilizar ou destinar qualquer valor a título de incentivo fiscal na operação própria. Para o cálculo do ICMS-ST
+devido por microcervejarias, ver perguntas específicas.
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                            18
+5.13.  Qual é o procedimento no caso do recebimento em devolução de mercadorias
+    beneficiadas com o crédito presumido na operação de saída?
+R.: Deverá ser estornado o crédito presumido que for apropriado por ocasião da saída de mercadorias, nos
+casos de desfazimento da venda ou no recebimento de mercadorias em devolução.
+
+5.14.  Qual é o procedimento no caso do recebimento em devolução de mercadorias
+    beneficiadas com a redução da base de cálculo na operação de saída?
+R: Em caso de devolução de mercadoria que saiu com a redução de base de cálculo prevista no RICMS/RS,
+livro I, artigo 23, XCVIII, a empresa deve seguir o procedimento previsto no manual de Devolução e Retorno
+de Mercadorias, disponível no link Devolução e Retorno de Mercadorias - Portal de Serviços da Receita.
+
+5.15.  Qual é o procedimento para a apropriação dos benefícios das microcervejarias
+    gaúchas?
+R.: 1º benefício (RICMS/RS, livro I, artigo 32, CCIX): A apropriação do crédito fiscal presumido será
+registrada, no respectivo mês, diretamente na Escrituração Fiscal Digital - EFD ICMS/IPI, se a empresa
+estiver enquadrada na modalidade Geral (permitido para ICMS Próprio e ICMS-ST) ou na DeSTDA, se
+optante pelo Simples Nacional (permitido somente para ICMS-ST), conforme IN DRP 45/98, itens 18.1.2 e
+18.1.3. Em caso de dúvidas sobre a escrituração da EFD, é possível consultar o Manual de Créditos
+Presumidos disponível no site da Receita Estadual: https://atendimento.receita.rs.gov.br/central-de-
+conteudo
+Observação 1: o valor apurado deve considerar:
+     - o limite do volume mensal de 200.000 (duzentos mil) litros, nas saídas de cerveja e chope artesanais
+     (80% ou mais de cereais maltados ou extrato de malte) que estão sujeitas à alíquota de 25%; e
+     - o estorno nas operações de desfazimento da venda ou de mercadorias em devolução.
+Observação 2: a partir de 01/03/2022, empresas optantes pelo Simples Nacional deverão apurar o crédito
+presumido diretamente na DeSTDA e não na NF-e.
+Observação 3: o contribuinte do Simples Nacional deverá informar na DeSTDA apenas o valor apurado do
+imposto, ou seja, o valor líquido do ICMS-ST após as deduções legais previstas.
+2º benefício (RICMS/RS, livro I, artigo 32, CCXXVI): A apropriação do crédito fiscal presumido será
+registrada, no respectivo mês, diretamente na Escrituração Fiscal Digital - EFD ICMS/IPI, conforme IN DRP
+45/98, item 18.2.2. Em caso de dúvidas sobre a escrituração da EFD, é possível consultar o Manual de
+Créditos Presumidos disponível no site da Receita Estadual: https://atendimento.receita.rs.gov.br/central-de-
+conteudo
+Observação 1: o valor apurado deve considerar:
+     - o limite do volume mensal de 200.000 (duzentos mil) litros, nas saídas de cerveja e chope artesanais
+     (80% ou mais de cereais maltados ou extrato de malte) que estão sujeitas à alíquota de 25%; e
+     - o estorno nas operações de desfazimento da venda ou de mercadorias em devolução.
+Observação 2: o contribuinte do Simples Nacional NÃO pode utilizar este benefício, visto que é aplicado
+apenas sobre o ICMS Próprio.
+3° benefício (RICMS/RS, livro I, artigo 23, XCVIII): a base de cálculo reduzida deve ser informada
+diretamente na Nota fiscal de Saída da mercadoria.
+
+5.16.   Os benefícios das microcervejarias gaúchas também se aplicam às operações
+    sujeitas à substituição tributária dentro do Estado do RS?
+R.: 1º benefício (RICMS/RS, livro I, artigo 32, CCIX): sim, o crédito presumido de 13% abrange a parcela
+relativa ao imposto retido por ST, ou seja, é o mesmo que onerar a operação em 12%.
+2º benefício (RICMS/RS, livro I, artigo 32, CCXXVI): este benefício abrange apenas a parcela relativa ao
+cálculo do débito fiscal próprio. Portanto, NÃO se aplica à parcela referente à substituição tributária.
+3° benefício (RICMS/RS, livro I, artigo 23, XCVIII): sim, a RBC pode ser utilizada em relação ao débito de
+responsabilidade por substituição tributária.
+
+
+
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                          19
+5.17.   Os benefícios acima, das microcervejarias gaúchas também se aplicam às
+    operações interestaduais?
+R.: Não, esses benefícios são concedidos apenas nas saídas INTERNAS de cervejas e chopes. Em relação
+à substituição tributária, como o ICMS-ST da operação interestadual pertence ao Estado de destino, a
+legislação gaúcha não pode conceder benefício sobre o imposto devido à outra unidade da federação.
+
+5.18.  Microcervejarias estabelecidas em outras unidades da federação têm direito a se
+    beneficiar no cálculo do ICMS-ST devido ao Estado do RS?
+R.: Não, os benefícios fiscais são concedidos apenas às microcervejarias que estão estabelecidas no Rio
+Grande do Sul.
+
+5.19.  Como é calculado o crédito fiscal presumido pela microcervejaria gaúcha
+    enquadrada na categoria GERAL?
+R.: Segue abaixo exemplo de cálculo e as devidas observações:
+
+                                                                              BC ICMS            BC ICMS-ST
+         Dia                                                   Quantidade (suj. à alíq. 25%)
+                    Produto          Operações Internas (*2)                                   (suj. à alíq. 25%)
+         (*1)                                                    (litros)
+                                                                                  (*3)                 (*3)
+
+          01    Cerv. Artesanal AA           Venda              100.000       R$ 700.000         R$ 1.500.000
+
+                                            Devolução
+                 Chopp Artesanal
+          03                             (vendido no mês          30.000      R$ 300.000          R$ 540.000
+                      BB
+                                             anterior)
+
+          12    Cerv. Artesanal AA           Venda                85.000      R$ 595.000         R$ 1.275.000
+
+
+          15    Cerv. Artesanal AA         Devolução              20.000      R$ 140.000          R$ 300.000
+
+                 Chopp Artesanal
+          21                                 Venda              100.000      R$ 1.000.000        R$ 1.800.000
+                      BB
+
+
+
+                                                               Apuração      Cálculo para        Cálculo para
+                                                                (litros)      BC ICMS            BC ICMS-ST
+
+                                                                100.000       R$ 700.000         R$ 1.500.000
+
+
+                                                                 -30.000      -R$ 300.000        -R$ 540.000
+                 ... (continuação)   →
+                                                                  85.000      R$ 595.000         R$ 1.275.000
+
+
+                                                                 -20.000      -R$ 140.000        -R$ 300.000
+
+
+                                                                  65.000      R$ 650.000         R$ 1.170.000
+
+
+                                        Limite Mensal (*4)      200.000      R$ 1.505.000        R$ 3.105.000
+
+                                               Retirar BC ICMS
+                                                                                 R$ 0           -R$ 1.505.000
+                                        (Duplicidade de Aplicação) (*5)
+
+                                              BC para Aplicação              R$ 1.505.000        R$ 1.600.000
+
+
+
+
+                                     GES-BEB | 1ª Delegacia da Receita Estadual
+                            Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                        CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                                    20
+                                       Crédito Presumido (*6)      13%         R$ 195.650         R$ 208.000
+
+
+         Observações:
+         (*1) Conforme RICMS/RS, livro I, artigo 32, CCIX e CCXXVI, NOTA 01, fica limitado aos
+         primeiros 200.000 litros mensais, ou seja, deverá ser respeitada a ordem cronológica das
+         operações para o cálculo do benefício.
+
+         (*2) Conforme respondido nos questionamentos específicos, somente é assegurado estes
+         créditos fiscais presumidos nas operações INTERNAS tributadas.
+
+         (*3) Conforme RICMS/RS, livro I, artigo 32, CCIX e CCXXVI, caput, este benefício
+         somente poderá ser aplicado sobre o valor utilizado para cálculo do imposto nas
+         operações internas de chope e cerveja artesanais.
+
+         (*4) Conforme RICMS/RS, livro I, artigo 32, CCIX e CCXXVI, caput combinado com
+         NOTA 01, fica limitado aos primeiros 200.000 litros mensais sobre a BC ICMS
+         (enquadramento Geral) e também sobre a BC ICMS-ST (enquadramentos Geral e
+         Simples Nacional). Observação: O benefício previsto no RICMS/RS, livro I, artigo 32,
+         CCXXVI, aplica-se apenas sobre a parcela do ICMS próprio.
+
+         (*5) Assim como o ICMS-ST é calculado deduzindo o ICMS Próprio, segundo RICMS/RS,
+         livro III, artigo 15, caput e NOTA 02, deverá ser deduzida a BC ICMS (ou BC ICMS
+         Presumida, se Simples Nacional) da parcela de responsabilidade por substituição
+         tributária para cálculo do benefício previsto no RICMS/RS, livro I, artigo 32, CCIX.
+
+         (*6) A apropriação destes créditos fiscais presumidos será registrada, no respectivo mês,
+         diretamente na EFD (ver IN DRP 45/98 e Manual de Escrituração de Créditos
+         Presumidos), se a empresa estiver enquadrada na modalidade Geral (permitido sobre BC
+         ICMS e BC ICMS-ST), ou na DeSTDA, se optante pelo Simples Nacional (permitido
+         somente sobre BC ICMS-ST).
+         Observação: o contribuinte do Simples Nacional deverá informar na DeSTDA apenas o
+         valor apurado do imposto, ou seja, o valor líquido do ICMS-ST após as deduções legais
+         previstas.
+
+5.20.  Como é calculado o crédito fiscal presumido previsto no RICMS/RS, livro I, artigo 32,
+    CCIX pela microcervejaria gaúcha optante pelo SIMPLES NACIONAL?
+R.: O crédito presumido a ser abatido do ICMS ST devido na DeSTDA deve ser calculado da seguinte forma:
+
+                      Crédito Presumido = (BC ICMS ST – BC ICMS Presumido) x 13%.
+
+A seguir, apresentamos um exemplo detalhado de cálculo, considerando devoluções:
+
+
+                                                                                BC ICMS          BC ICMS-ST
+          Dia                           Operações Internas      Quantidade
+                     Produto                                                 (suj. à al. 25%)   (suj. à al. 25%)
+          (*1)                                 (*2)               (litros)
+                                                                                    (*3)               (*3)
+
+          01     Cerv. Artesanal AA            Venda             100.000       R$ 700.000        R$ 1.500.000
+
+                                             Devolução
+                  Chopp Artesanal
+          03                              (vendido no mês         30.000       R$ 300.000        R$ 540.000
+                       BB
+                                              anterior)
+
+
+
+                                      GES-BEB | 1ª Delegacia da Receita Estadual
+                            Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                        CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                                   21
+ 12   Cerv. Artesanal AA            Venda             85.000      R$ 595.000        R$ 1.275.000
+
+
+ 15   Cerv. Artesanal AA          Devolução           20.000      R$ 140.000         R$ 300.000
+
+       Chopp Artesanal
+ 21                                 Venda             100.000    R$ 1.000.000       R$ 1.800.000
+            BB
+
+
+
+                                                     Apuração    Cálculo para       Cálculo para
+                                                      (litros)    BC ICMS           BC ICMS-ST
+
+                                                      100.000     R$ 700.000        R$ 1.500.000
+
+
+                                                      -30.000     -R$ 300.000       -R$ 540.000
+       ... (continuação)    →
+                                                      85.000      R$ 595.000        R$ 1.275.000
+
+
+                                                      -20.000     -R$ 140.000       -R$ 300.000
+
+
+                                                      65.000      R$ 650.000        R$ 1.170.000
+
+
+                              Limite Mensal (*4)      200.000    R$ 1.505.000       R$ 3.105.000
+
+                                     Retirar BC ICMS
+                                                                     R$ 0           -R$ 1.505.000
+                              (Duplicidade de Aplicação) (*5)
+
+                                    BC para Aplicação            R$ 1.505.000       R$ 1.600.000
+
+
+                            Crédito Presumido (*6)      13%       R$ 195.650         R$ 208.000
+
+
+Observações:
+(*1) Conforme RICMS/RS, livro I, artigo 32, CCIX, NOTA 01, fica limitado aos primeiros
+200.000 litros mensais, ou seja, deverá ser respeitada a ordem cronológica das
+operações para o cálculo do benefício.
+
+(*2) Conforme respondido nos questionamentos específicos, somente é assegurado este
+crédito fiscal presumido nas operações internas tributadas.
+
+(*3) Conforme RICMS/RS, livro I, artigo 32, CCIX, caput, este benefício somente poderá
+ser aplicado sobre as saídas internas de cerveja e chope artesanais, de produção
+própria;
+
+(*4) Conforme RICMS/RS, livro I, artigo 32, CCIX, caput combinado com NOTA 01, fica
+limitado aos primeiros 200.000 litros mensais sobre a BC ICMS (enquadramento Geral)
+e também sobre a BC ICMS-ST (enquadramentos Geral e Simples Nacional).
+
+(*5) Assim como o ICMS-ST é calculado deduzindo o ICMS Próprio, segundo
+RICMS/RS, livro III, artigo 15, caput e NOTA 02, deverá ser deduzida a BC ICMS (ou
+BC ICMS Presumida, se Simples Nacional) da parcela de responsabilidade por
+substituição tributária para cálculo deste benefício.
+
+                           GES-BEB | 1ª Delegacia da Receita Estadual
+                 Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                             CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                    22
+          (*6) O contribuinte do Simples Nacional deverá informar na DeSTDA apenas o valor
+          apurado do imposto, ou seja, o valor líquido do ICMS-ST após as deduções legais
+          previstas.
+
+          (*7) O contribuinte deverá manter à disposição da Receita Estadual, para ser entregue,
+          sempre que solicitada, planilha, em meio eletrônico, relacionando as informações sobre
+          as operações e os documentos referentes ao crédito fiscal presumido apropriado,
+          conforme item 18.1.3.1 da IN DRP 45/98.
+
+5.21.   Encomendante, contribuinte de ICMS, pretende comercializar cerveja com marca
+    própria. Para isso, firmou acordo com uma microcervejaria estabelecida do RS para que
+    esta realize a produção. Quais são os procedimentos que devem ser realizados?
+R.: A microcervejaria realiza a industrialização com matéria-prima (embalagem, malte, rótulo etc.) adquirida
+por ela, mas com a marca e especificações da empresa Encomendante. Nesse caso, não está caracterizada
+a industrialização por encomenda, mas sim uma venda. A microcervejaria gaúcha que atenda os requisitos
+exigidos no RICMS/RS poderá usufruir do benefício do qual for optante.
+Para calcular o valor devido a título de ICMS-ST, a microcervejaria gaúcha deve ainda utilizar o PFC
+publicado pela Receita Estadual ou, na falta deste, a MVA.
+Atenção: caso a empresa Encomendante solicite que a entrega seja realizada direto ao varejista, a
+microcervejaria gaúcha deve realizar o procedimento de venda à ordem.
+Atenção: poderá a empresa Encomendante ser outra microcervejaria ou qualquer outro contribuinte de
+ICMS, devendo, de todo modo, observar ser substituída ou também substituta tributária, conforme
+RICMS/RS, livro III, artigo 11.
+
+5.22.  A microcervejaria pode também manter os créditos relativos à entrada de bens,
+    mercadoria e serviços?
+R.: 1º e 2º benefícios (RICMS/RS, livro I, artigo 32, CCIX e CCXXVI): sim, além da apropriação do crédito
+presumido, a microcervejaria pertencente ao regime Geral de tributação fica autorizada à manutenção
+integral dos créditos relativos à entrada de bens, mercadoria e serviços.
+3° benefício (RICMS/RS, livro I, artigo 23, XCVIII): é vedado o aproveitamento de quaisquer outros créditos
+ou benefícios fiscais, inclusive créditos por entrada de bem, para as empresas optantes por este benefício.
+
+5.23.   Há alguma alteração relativa ao AMPARA/RS para as empresas que utilizarem
+    quaisquer dos benefícios das microcervejarias?
+R.: Não, esses benefícios não abrangem a parte relativa ao AMPARA/RS, que deve ser destacada e paga
+integralmente sem nenhuma redução.
+Ver: RICMS, Livro I, Art. 23, NOTA 08; RICMS, Livro I, Art. 27, parágrafo único; e RICMS, Livro III, Art. 15,
+NOTA 04.
+
+5.24.   A microcervejaria Encomendante, localizada no RS, pode se beneficiar do crédito
+    presumido de 13%?
+R.: Sim, a partir de 01/01/2025, observadas as exigências previstas no RICMS/RS, livro I, artigo 32, inciso
+CCXXVI, conforme NOTA 04 e NOTA 06 do referido inciso.
+NOTA 04 – A utilização do benefício fica condicionada:
+a) à celebração de Termo de Acordo com o Estado do Rio Grande do Sul no qual serão estabelecidos
+compromissos de geração de empregos e poderão ser estabelecidas outras exigências ou condições para
+a concessão, a manutenção ou a fruição do benefício fiscal;
+b) a que a análise da situação econômico-financeira da empresa indique capacidade de pagamento
+compatível com o imposto calculado sobre operações estimadas para um período correspondente a 6 (seis)
+meses;
+
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                          23
+c) ao regular cumprimento da obrigação tributária principal, no prazo e na forma previstos na legislação
+estadual; e
+d) ao cumprimento das obrigações tributárias acessórias previstas na legislação, em especial as que regem
+a regularidade na entrega de informações de natureza cadastral e econômico-fiscais, bem como a emissão
+de documentos fiscais e escrituração dos livros fiscais e a sua respectiva guarda.
+NOTA 06 - A utilização do benefício por estabelecimento encomendante previsto na nota 05:
+a) fica condicionada à observância, pelo estabelecimento encomendante, das condicionantes estabelecidas
+na nota 04;
+b) fica condicionada à comprovação de utilização, pelo encomendante, de marca exclusiva da cerveja e
+chope artesanais, distinta da indústria e de outros encomendantes;
+c) veda a apropriação, pelo estabelecimento que realizar a industrialização por encomenda, deste crédito
+fiscal presumido e daquele previsto no inciso CCIX
+d) fica condicionada à comprovação, pelo estabelecimento encomendante, da anuência pelo
+estabelecimento que realizar a industrialização por encomenda.
+
+
+5.25.   Como é calculado o benefício da Redução da Base de Cálculo previsto para as
+    microcervejarias que aderirem ao benefício?
+Exemplo: supondo uma venda de 100 itens pelo valor de R$ 10,00 e considerando o valor de PFC de R$
+20,00, o cálculo seria:
+
+Para empresas optantes pelo Simples Nacional:
+
+                                              SIMPLES NACIONAL
+                                                                            Cálculo
+           Quantidade              100
+           Alíquota Cerveja        25%
+           Alíquota Efetiva        8%
+           Valor operação          R$ 1.000,00                           R$ 10,00 x 100
+                                                             (Valor da operação x alíquota efetiva) /
+           BC ICMS Reduzida
+                                   R$ 320,00                             alíquota cerveja
+           Presumida
+                                                                    (R$ 1000,00 x 0,08) / 0,25
+                                                          BC Reduzida Presumida x alíquota cerveja
+           ICMS Presumido          R$ 80,00
+                                                                     R$ 320,00 x 0,25
+           BC ICMS ST              R$ 2.000,00
+                                                           (BC ICMS ST x alíquota efetiva) / alíquota
+           BC ICMS ST
+                                   R$ 640,00                              cerveja
+           REDUZIDA
+                                                                  (R$ 2000,00 x 0,08) / 0,25
+                                                          (BC ICMS ST Reduzida x alíquota cerveja) –
+           ICMS ST                 R$ 80,00                           ICMS Presumido
+                                                                  (R$640,00 x 0,25) – 80,00
+                                                                 BC ICMS ST x alíquota 2%
+           AMPARA ST               R$ 40,00
+                                                                     R$ 2000,00 x 0,02
+
+
+           Observação 1: para o contribuinte substituto optante pelo Simples Nacional, para a
+           apuração do valor presumido relativo ao débito fiscal próprio previsto no Livro III, art.
+           15, NOTA 02, aplica-se a redução de base de cálculo prevista neste inciso.
+           Observação 2: a Redução da Base Cálculo não se estende ao cálculo do AMPARA.
+
+Para empresas optantes pelo Regime Geral:
+
+
+                                GES-BEB | 1ª Delegacia da Receita Estadual
+                         Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                     CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                        24
+                                                           GERAL
+                                                                                        Cálculo
+                      Quantidade             100
+                   Alíquota Cerveja          25%
+                    Alíquota Efetiva         8%
+                    Valor operação           R$ 1.000,00                             R$ 10,00 x 100
+
+                                                                              (Valor da operação x alíquota
+                  BC ICMS Reduzida           R$ 320,00
+                                                                                 efetiva) / alíquota cerveja
+                                                                                (R$ 1000,00 x 0,08) / 0,25
+                                                                             BC Reduzida x alíquota cerveja
+                         ICMS                R$ 80,00
+                                                                                      R$ 320,00 x 0,25
+                   BC ICMS ST (PFC)          R$ 2.000,00                                R$ 20,00 x 100
+                                                                             (BC ICMS ST x alíquota efetiva)
+                 BC ICMS ST REDUZIDA R$ 640,00                                        / alíquota cerveja
+                                                                                (R$ 2000,00 x 0,08) / 0,25
+                                                                                (BC ICMS ST Reduzida x
+                                                                                 alíquota cerveja) – ICMS
+                       ICMS ST               R$ 80,00                                     Presumido
+                                                                                  (R$640,00 x 0,25) – 80
+                                                                              (R$ 640,00 x 0,25) – R$ 80,00
+                                                                               BC ICMS ST x alíquota 2%
+                     AMPARA ST               R$ 40,00
+                                                                                    R$ 2.000,00 x 0,02
+
+Observação: a Redução da Base Cálculo não se estende ao cálculo do AMPARA.
+
+5.26.     Quais são as diferenças entre os benefícios disponíveis para as microcervejarias?
+    Na tabela abaixo, encontram-se as principais diferenças para a utilização de cada benefício:
+
+                           Art. 23, XCVIII                 Art. 32, CCIX              Art. 32, CCXXVI
+        Origem          Conv. ICMS 134/2024                  57.935/24                    57.965/24
+    Vigência            a partir de 01/03/2025     de 01/01/2024 a 31/12/2028 a partir de 01/01/2025
+                        Redução de base de
+         Tipo                                            Crédito presumido           Crédito presumido
+                             cálculo
+ Alíquota efetiva                8%                             12%                          12%
+Limite anual para
+  definição de            6 milhões de litros            5 milhões de litros          5 milhões de litros
+ microcervejaria
+  Ano referência               Anterior                       Corrente                    Anterior
+                       Recolhimento normal a                                        Perda do benefício a
+Excedido o limite                                  Necessário estornar o valor
+                       partir do 1º dia do mês                                         partir do mês
+     anual                                             apropriado no ano
+                             subsequente                                               subsequente
+ Chope artesanal                   -                            Sim                         Sim
+ Limite mensal                     -                        200 mil litros              200 mil litros
+    Impostos
+                         ICMS próprio + ST               ICMS próprio + ST              ICMS próprio
+   abrangidos
+   Categorias
+                      Geral + Simples Nacional      Geral + Simples Nacional                Geral
+  beneficiadas
+ Encomendante               Não previsto                    Não previsto                     Sim
+
+
+                                       GES-BEB | 1ª Delegacia da Receita Estadual
+                             Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                         CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                               25
+  Formalização
+                       Termo de Opção                 Não prevista              Termo de Acordo
+   para fruição
+ Uso de outros        Vedados quaisquer                                       Vedados demais
+                                               Vedados demais benefícios
+   créditos ou       créditos ou benefícios                                 benefícios relativos às
+                                              relativos às microcervejarias
+benefícios fiscais           fiscais                                          microcervejarias
+    Forma de
+                             NF-e                   EFD e DeSTDA                      EFD
+    utilização
+
+
+6. BENEFÍCIOS FISCAIS PARA SAÍDAS INTERESTADUAIS
+6.1. Há crédito presumido nas saídas interestaduais de cerveja, chope e refrigerantes?
+R.: Sim, no período de 1º de janeiro de 2026 a 31 de dezembro de 2028, nas saídas interestaduais de
+cerveja, chope e refrigerantes, em montante igual ao que resultar da aplicação do percentual de 75% (setenta
+e cinco por cento) sobre o valor do imposto devido na operação, conforme condições no RICMS, livro I, artigo
+32, CCXXVIII.
+
+A apropriação deste crédito fiscal presumido exclui a apropriação de quaisquer outros créditos fiscais,
+devendo ocorrer o estorno proporcional, a ser calculado na forma prevista na nota 02.
+
+O valor do estorno será definido pela aplicação do índice encontrado pela divisão do volume comercializado
+em operações interestaduais pelo volume total comercializado, em operações internas e interestaduais, no
+mês de apuração do imposto, sobre o valor total do crédito próprio apropriado no mesmo período, excluindo
+dessa base os créditos oriundos de aquisições de fornecedores deste Estado e de recebimento de cerveja,
+chope e refrigerantes em transferências de outras unidades fabris localizadas neste Estado.
+
+A apropriação deste crédito fiscal presumido fica condicionada: a) à contribuição do estabelecimento
+beneficiário, em montante equivalente a 3% (três por cento) do valor do crédito fiscal presumido apropriado
+no ano, para fundo estabelecido em instruções baixadas pela Receita Estadual; b) à celebração de Termo
+de Acordo com o Estado do Rio Grande do Sul, prevendo, no mínimo, os seguintes compromissos: 1 -
+realização de investimentos para ampliar a produção de cerveja, chope ou refrigerantes em unidades
+industriais da empresa localizadas no Estado; 2 - manutenção da arrecadação de ICMS, considerado o
+débito próprio, o débito de responsabilidade por substituição tributária e o AMPARA/RS, em cada ano, no
+mínimo, em valor igual ao arrecadado no ano anterior à data do protocolo de celebração do Termo de Acordo,
+corrigido pela variação do Índice Nacional de Preços ao Consumidor Amplo - IPCA, acrescido de 3% (três
+por cento) ao ano; 3 - recolhimento de valor equivalente ao complemento, quando não atingido o patamar
+de arrecadação previsto no número 2.
+
+Os recolhimentos de que tratam a nota 03, "a" e "b", 3: a) deverão ser realizados anualmente, até o dia 31
+de janeiro do ano subsequente ao da apropriação do crédito fiscal presumido; b) quando não realizados no
+prazo previsto na alínea "a": 1 - implicam a suspensão automática do benefício, sem necessidade de
+notificação prévia; 2 - na hipótese do número 1, poderão ser recolhidos com acréscimo de juros moratórios,
+nos termos previstos no art. 69 da Lei nº 6.537, de 27 de fevereiro de 1973;3 - se recolhidos conforme
+disposto no número 2 e antes do início de qualquer medida de fiscalização, o benefício fica restabelecido
+com efeitos retroativos, desde o início da suspensão.
+
+O recolhimento de que trata a nota 03, "a" realizado em valor superior ao previsto na legislação ou em
+hipótese não prevista na legislação será considerado mera liberalidade, não conferindo direito de
+compensação ou restituição do valor recolhido, exceto quando, posteriormente ao recolhimento, ocorrer
+desfazimento da venda ou recebimento de mercadoria em devolução, hipótese em que os valores
+correspondentes à venda desfeita ou à devolução poderão ser compensados nos períodos de apuração
+seguintes.
+
+
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                         Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                     CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                         26
+Fica permitida a fruição cumulativa deste crédito fiscal presumido com o previsto no inciso CCIII.
+
+
+
+7. BENEFÍCIO FISCAL AO VINHO E DERIVADOS DA UVA E DO VINHO
+7.1. Qual é a legislação referente aos créditos presumidos para vinho e derivados da uva e
+do vinho?
+R.: Deve ser consultado o RICMS/RS, livro I, artigo 32:
+    • Inciso XIX, referente à taxa de inspeção, controle, fiscalização ou promoção do vinho e de derivados
+       da uva e do vinho (Fundo de Desenvolvimento da Vitivinicultura – FUNDOVITIS);
+    • Inciso LXXVIII, referente às saídas de vinho;
+    • Inciso XCIV, referente às saídas de sucos de uva;
+    • Inciso CLXVIII, referente às saídas de vinho. Expirado em 31/12/2020.
+
+7.2. Qual é a definição legal de vinho, para efeito do benefício fiscal previsto nesses incisos?
+R.: Vinho é a bebida obtida pela fermentação alcoólica do mosto simples de uva sã, fresca e madura. Mosto
+simples de uva é o produto obtido pelo esmagamento ou prensagem da uva sã, fresca e madura, com a
+presença ou não de suas partes sólidas. A denominação vinho é privativa do produto a que se refere a sua
+definição, sendo vedada sua utilização para produtos obtidos de quaisquer outras matérias-primas.
+Fundamentação: Lei Federal 7678/1988, artigos 3º e 4º.
+
+7.3. Existe benefício fiscal relativo à taxa destinada ao FUNDOVITIS?
+R.: Sim, conforme previsto no RICMS/RS, livro I, artigo 32, XIX, as indústrias vinícolas e as produtoras de
+derivados da uva e do vinho podem se apropriar de crédito presumido, limitado ao valor devido e pago em
+razão da incidência da taxa de inspeção, controle, fiscalização ou promoção do vinho e de derivados da uva
+e do vinho (item 7 do Título VI da tabela anexa à Lei n° 8.109, de 19/12/85).
+Essa taxa é calculada por uva industrializada, conforme abaixo:
+
+                                       Tipo de Uva                              UPF-RS / tonelada
+                        uva vinífera, exceto se industrializada por EPP                2,6271
+                  uva americana e híbrida, exceto se industrializada por EPP           4,3786
+                       uva americana e híbrida, industrializada por EPP                0,5254
+                             uva vinífera, industrializada por EPP                     0,8757
+
+
+7.4. Existe benefício fiscal para as saídas internas de vinho?
+R.: Sim, existe crédito presumido para as saídas internas de vinho, de produção própria, no RICMS/RS, livro
+I, artigo 32, LXXVIII. Existia também o crédito presumido do inciso CLXVIII, mas ele expirou em 31/12/2020
+e desde então não pode ser mais utilizado.
+O primeiro concede, aos fabricantes, crédito presumido de 5% sobre a base de cálculo do ICMS próprio das
+saídas internas de vinho de produção própria.
+O segundo concedeu, aos fabricantes, de 2016 a 2020, crédito presumido complementar de 2% sobre a
+base de cálculo do ICMS próprio das saídas de vinho de produção própria.
+
+
+7.5. Existe benefício fiscal também para as saídas internas de sucos de uva?
+R.: Sim, também há previsão de crédito presumido para as saídas internas de sucos de uva, de produção
+própria, no RICMS/RS, livro I, artigo 32, XCIV. Aos estabelecimentos fabricantes, assegura-se crédito
+presumido de 5% sobre a base de cálculo do ICMS próprio das saídas internas de uva de produção própria.
+
+
+
+
+                                  GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                        27
+7.6. Que empresas não podem se beneficiar dos créditos presumidos?
+R.: Contribuintes que tenham crédito tributário constituído inscrito em Dívida Ativa, exceto se esse crédito:
+    • Estiver parcelado ou garantido por depósito em dinheiro, fiança bancário, seguro garantia, hipoteca
+       ou penhora de bens imóveis devidamente registrados no Registro de Imóveis;
+    • For objeto de composição celebrada com base na penhora do faturamento da empresa devedora nos
+       termos da Portaria n° 531, de 24/10/12, da PGE.
+Ver RICMS/RS, livro I, artigo 32, nota 05.
+
+
+7.7. Existe limite para o valor total de apropriação de créditos presumidos em cada período
+de apuração pela empresa beneficiária?
+R.: Sim, em cada período de apuração, o valor total de apropriação de créditos fiscais presumidos pela
+empresa fica limitado ao valor do imposto por ela devido antes da apropriação. Ver RICMS/RS, livro I, artigo
+32, nota 02.
+Atenção: Essa limitação não se aplica para os créditos presumidos dos incisos XIX e CLXVIII do artigo 32,
+Livro I do RICMS.
+
+
+7.8. Quais são os códigos devem ser utilizados no Anexo 03 da GIA para a apropriação dos
+créditos presumidos para vinho e derivados da uva e do vinho?
+R.: Para a apropriação desses benefícios fiscais devem ser utilizados os seguintes códigos no Anexo 03 da
+GIA:
+   • Código 23: Crédito Presumido do inciso XIX do Art. 32;
+   • Código 84: Crédito Presumido do inciso LXXVIII do Art. 32;
+   • Código 101: Crédito Presumido do inciso XCIV do Art. 32;
+   • Código 175: Crédito Presumido do inciso CLXVIII do Art. 32. Expirado em 31/12/2020.
+
+7.9. Como é o cálculo de crédito presumido do inciso LXXVIII, referente às saídas internas
+de vinho de produção própria?
+R.: Suponha uma operação de saída interna de vinho, de produção própria, no valor de R$ 1.000. Para o
+cálculo do crédito presumido deve ser seguido o seguinte procedimento:
+Valor ICMS próprio destacado na NFE = 1.000 x 17%          R$ 170
+(-) Crédito Presumido inciso LXXVIII = 1.000 x 5%          (R$ 50)
+
+7.10.   Como é o cálculo de crédito presumido do inciso LXXVIII, referente às saídas
+internas de vinho de produção própria, caso a empresa utilize sucos de terceiros em parte
+de sua produção?
+R.: Suponha uma operação de saída interna de vinho no valor de R$ 1.000, sendo que apenas 40% da
+composição corresponde a sua produção própria e sendo o restante (60%) composto por vinho a granel
+adquirido de terceiros. Para o cálculo do crédito presumido deve ser seguido o seguinte procedimento:
+Valor ICMS próprio destacado na NFE = 1.000 x 17%            R$ 170
+(-) Crédito Presumido inciso LXXVIII = 1.000 x 5% x 40%      (R$ 20)
+
+7.11.  Como é o cálculo de crédito presumido do inciso XCIV, referente às saídas internas
+de suco de uva de produção própria?
+R.: Suponha uma operação de saída interna de suco de uva, de produção própria, no valor de R$ 1.000.
+Para o cálculo do crédito presumido deve ser seguido o seguinte procedimento:
+Valor ICMS próprio destacado na NFE = 1.000 x 17%         R$ 170
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                          28
+(-) Crédito Presumido inciso XCIV = 1.000 x 5%                 (R$ 50)
+7.12.  Como é o cálculo de crédito presumido do inciso XCIV, referente às saídas internas
+de suco de uva de produção própria, caso a empresa utilize sucos de terceiros em parte da
+sua produção?
+R.: Suponha uma operação de saída interna de uva no valor de R$ 1.000, sendo que apenas 40% da
+composição corresponde a sua produção própria e sendo o restante (60%) composto por suco adquirido de
+terceiros. Para o cálculo do crédito presumido deve ser seguido o seguinte procedimento:
+Valor ICMS próprio destacado na NFE = 1.000 x 17%           R$ 170
+(-) Crédito Presumido inciso LXXVIII = 1.000 x 5% x 40%     (R$ 20)
+
+
+
+
+                               GES-BEB | 1ª Delegacia da Receita Estadual
+                        Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                    CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                  29
+8. BENEFÍCIO FISCAL PARA A CACHAÇA
+8.1. Existe algum benefício nas saídas internas de cachaça?
+Sim, há isenção nas saídas internas, de 01/05/2025 a 31/12/2026, promovidas por microprodutor rural,
+decorrentes de vendas de cachaça, com destino a consumidor final, desde que obtida da industrialização
+de sua produção e observadas as condições do Programa da Agroindústria Familiar do Estado do Rio
+Grande do Sul, criado pelo Decreto nº 49.341, de 5 de julho de 2012. Ver RICMS/RS, Livro I, Título II,
+Capítulo IV, Art. 9, CCXL.
+
+8.2. A isenção nas saídas de cachaça do Art. 9, CCXL, estende-se ao AMPARA?
+Sim, há isenção também do AMPARA nas saídas de microprodutor rural destinadas a consumidor final.
+
+8.3. Como é realizado o enquadramento como microprodutor rural produtor de cachaça?
+Como é realizada a formalização e a obtenção de Inscrição Estadual?
+A solicitação de inscrição estadual para Produtor Rural deve ser feita conforme orientações disponíveis em
+Solicitar Inscrição para Produtor Rural - Portal de Serviços da Receita. O requerente poderá solicitar o
+enquadramento como microprodutor rural na própria solicitação de inscrição, bastando preencher o
+"Formulário de Declaração de Enquadramento e Desenquadramento de Microprodutor Rural",
+disponibilizado no link acima.
+
+Para enquadrar-se como microprodutor rural, devem ser atendidas as exigências estabelecidas no art. 2º, II,
+da Lei 10.045/93:
+• estejam inscritos no CGC/TE;
+• sejam possuidores, a qualquer título, por si, seus sócios, parceiros, meeiros, cônjuges ou filhos menores,
+de área rural de até 04 (quatro) módulos fiscais, quantificados na legislação em vigor;
+• tenham receita bruta, em cada ano-calendário, não superior a 15.000 (quinze mil) UPF-RS;
+
+Caso o contribuinte já possua inscrição estadual e deseje somente efetuar o enquadramento na categoria
+de Microprodutor Rural, basta seguir as orientações disponíveis em Cadastro - Alterações Cadastrais de
+Produtor Rural - Portal de Serviços da Receita.
+
+8.4. Uma vez que o microprodutor rural produtor de cachaça já esteja enquadrado, como
+devem ser emitidas as notas fiscais relativas às operações acobertadas pela isenção?
+O microprodutor rural poderá emitir nota fiscal de produtor modelo 4, devendo se atentar para os prazos de
+início de obrigatoriedade de NF-e previstos no art. 26-A, II, "j" e "k". Nos casos em que for emitida NF-e, as
+notas fiscais acobertadas pela isenção do Art. 9°, CCXL, do Livro I, devem utilizar NCM 2208.4000, CEST
+02.004.00 (Cachaças e Aguardentes) e o CST 40 (isenção). Além disso, a descrição do produto deve ser
+clara, contendo o tipo de bebida (cachaça), nome da marca, embalagem (pet, vidro), volume (ml) e demais
+informações necessárias para a identificação do produto. Nos campos cEAN e cEANTrib deve ser informado
+o GTIN da mercadoria, conforme Cadastro Centralizado de GTIN (CCG).
+
+8.5. É necessária a emissão de nota de entrada (contra nota) nas compras por revendedor de
+cachaça?
+A nota de entrada, ou contranota, prevista no Art. 26, I, "g", do Livro II, do RICMS, deve ser emitida pelo
+revendedor que adquira cachaça de produtor rural, nas operações realizadas ao abrigo do diferimento do
+pagamento do imposto com substituição tributária, nos termos do que prevê o Art. 1º do Livro III, e item III,
+da Seção I, do Apêndice II, do RICMS. Ou seja, a contranota é exigida somente nas operações promovidas
+por produtor rural com destino a um contribuinte inscrito.
+Nas vendas realizadas diretamente a consumidor final não existe previsão para emissão de contranota.
+
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                           30
+8.6. Se o microprodutor vender cachaça para um revendedor (mercado, loja etc.), a operação
+será isenta?
+Não, essa operação não será isenta, visto que o benefício é limitado às vendas a consumidor final. Nas
+saídas de cachaça de produção própria, efetuada por microprodutor a estabelecimentos inscritos no
+CGC/TE, localizados neste Estado, o pagamento do imposto fica diferido para a etapa posterior, hipótese
+em que a responsabilidade pelo referido pagamento fica transferida ao destinatário da mercadoria. Ver Livro
+III, Art. 1º e Apêndice II, Seção I, item III, do RICMS.
+
+8.7. O revendedor de cachaça está obrigado ao recolhimento de ICMS ST e AMPARA ST pela
+sua comercialização? Como deve ser feito o cálculo?
+Sim, o revendedor que adquirir cachaça de microprodutor rural, será o responsável pela substituição
+tributária e pelo AMPARA ST, os quais serão devidos no momento da entrada da mercadoria no
+estabelecimento, conforme previsão expressa no Livro III, Art. 9º, inciso I, nota 01, alínea "l" do RICMS.
+
+Exemplo: Suponha uma venda de 10 litros de cachaça de um microprodutor para um revendedor por R$ 100
+e considerando o valor hipotético de PFC de R$ 25,00 por litro. O cálculo do ICMS ST e AMPARA ST devem
+seguir o seguinte procedimento:
+
+ICMS ST = R$ 250,00 x 17% = R$ 42,50
+AMPARA ST = R$ 250,00 x 2% = R$ 5,00
+Valor total a ser recolhido pelo revendedor = R$ 47,50
+
+8.8. As vendas interestaduais de cachaça possuem a isenção prevista no Art. 9, CCXL, do
+Livro I do RICMS/RS?
+Não, as vendas interestaduais não estão cobertas por essa isenção e devem ser tributadas normalmente.
+
+
+
+
+                                GES-BEB | 1ª Delegacia da Receita Estadual
+                         Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                     CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                        31
+9. REGIME DIFERENCIADO DE APURAÇÃO PARA BARES E RESTAURANTES
+9.1. Existe regime diferenciado de apuração para bares, restaurantes e estabelecimento
+similares?
+R.: Sim, no período de 01/01/2025 a 31/12/2028, bares, restaurantes e estabelecimentos similares,
+enquadrados na categoria Geral, poderão apurar o montante do imposto devido aplicando, sobre a receita
+bruta auferida no período de apuração, o percentual de 3,5%, conforme condições no RICMS/RS, livro I,
+artigo 38-A.
+
+9.2. O que deve ser considerado como receita bruta auferida no período?
+R.: Considera-se receita bruta auferida o valor total das saídas de mercadorias, incluídas as sujeitas ao
+regime de substituição tributária, e das prestações de serviços promovidas, excluídos os valores
+correspondentes a:
+     - prestações de serviços compreendidas na competência tributária dos municípios;
+     - descontos incondicionais concedidos;
+     - devoluções de mercadorias adquiridas;
+     - transferências em operações internas;
+     - gorjeta, limitado a 10% do valor da conta, e discriminado no documento fiscal.
+
+9.3. Em relação a mercadorias sujeitas ao regime de substituição tributária, como a empresa
+deve proceder?
+R.: A empresa não pode:
+     - realizar qualquer tipo de ajuste do imposto retido por ST;
+     - aderir ao Regime Optativo de Tributação da ST (ROT-ST);
+     - exigir a restituição do imposto;
+     - utilizar qualquer crédito que caracterize discordância com a definição da base de cálculo.
+
+
+
+
+                                 GES-BEB | 1ª Delegacia da Receita Estadual
+                          Rua Siqueira Campos, 1184 – 10º andar – Centro – Porto Alegre/RS
+                                      CEP 90010-000 Fone: + 55 51 3214-5080
+                                                                                                      32
+

@@ -1,0 +1,752 @@
+          PERGUNTAS E RESPOSTAS
+
+   COMUNICAÇÕES
+Grupo Especializado Setorial de Comunicações (GES-COM)
+
+
+
+
+                  Atualizado em 15/07/2022
+Sumário
+INTRODUÇÃO .............................................................................................................................................................. 4
+PERGUNTAS E RESPOSTAS ................................................................................................................................... 5
+   1.      GERAL ............................................................................................................................................................... 5
+        1.1.      Provimento de internet é prestação de serviço de comunicação? Incide ISS ou ICMS? ............... 5
+        1.2.      Como declarar serviço de comunicação dentro do SIMPLES NACIONAL? .................................... 5
+        1.3. Qual o procedimento para estorno de débitos de ICMS nas prestações de serviços de
+        comunicação? ....................................................................................................................................................... 5
+        1.4.      Em quais hipóteses pode ocorrer o estorno de débitos do imposto? ................................................ 6
+        1.5.      Quais séries e subséries devem ser utilizadas na prestação de serviços de comunicação? ........ 6
+        1.6. Como proceder em relação à numeração da nota fiscal na situação de parcelamento: Fatura no
+        valor de R$ 1.000,00 (dezembro) parcelado em 2 vezes com datas de vencimento para janeiro e
+        fevereiro. Se a numeração da nota fiscal é pela data de vencimento, neste caso teremos 2
+        numerações diferentes de notas fiscais? .......................................................................................................... 6
+        1.7.      Como declarar os acréscimos e outras despesas acessórias? ......................................................... 6
+        1.8. Como faço para consultar a autenticidade das notas fiscais eletrônicas (modelo 21 ou 22)
+        emitidas por prestador de serviços de comunicação ou telecomunicação?................................................. 7
+        1.9. Qual o prazo para pagamento do ICMS nas prestações de serviços de comunicação por
+        empresas de telecomunicação? ......................................................................................................................... 7
+        1.10.   Como proceder caso os valores das faturas comerciais emitidas não superem os respectivos
+        documentos fiscais emitidos ou os documentos fiscais emitidos correspondam exatamente aos valores
+        das recargas realizadas?..................................................................................................................................... 7
+   2.      CONVÊNIOS ICMS 115/03 E 201/17 ............................................................................................................ 7
+        2.1.      O que é o Convênio ICMS 115/03?........................................................................................................ 7
+        2.2. O que é o Convênio ICMS 201/17? Minha empresa já entrega os arquivos de 2ª via de nota
+        fiscal do Convênio ICMS 115/03, ainda assim preciso entregar? Preciso entregar caso o valor da Nota
+        fiscal emitida seja igual ao valor da fatura cobrada de meu cliente? ............................................................ 8
+        2.3.      Quem está obrigado ao Convênio 115/03? ........................................................................................... 9
+        2.4. É necessário formalizar perante a SEFAZ-RS a opção de emissão de nota fiscal de
+        comunicação eletrônica (Convênio ICMS 115/03)? ......................................................................................... 9
+        2.5. Qual o procedimento para emissão de notas fiscais eletrônicas de prestação de serviço de
+        comunicação e telecomunicação através do Convênio ICMS 115/03? ...................................................... 10
+        2.6.      Qual o prazo de entrega dos arquivos do Convênio ICMS 115/03?................................................ 10
+        2.7.      Como entregar/transmitir os arquivos do Convênio ICMS 115/03? ................................................. 11
+        2.8. Quais os procedimentos para que uma prestadora de serviços de comunicação ou
+        telecomunicação possa emitir notas fiscais de serviço eletrônicas, modelo 21/22? ................................. 11
+        2.9. Qual o procedimento para emissão de nota fiscal de comunicação para um cliente do exterior,
+        sem inscrição no CNPJ, visto que para a validação do arquivo da NFs da TED, não é possível validar
+        sem ter CNPJ? .................................................................................................................................................... 11
+
+                                          Divisão de Fiscalização | Seção de Coordenação dos GES
+                                                   Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                                          CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                                                                                                2
+     2.10.    Qual o procedimento para emissão de nota fiscal de comunicação para um cliente não
+     obrigado à inscrição no CNPJ ou CPF, visto que a numeração é necessária para a validação do
+     arquivo da NFs da TED? ................................................................................................................................... 12
+     2.11.    Quais programas são utilizados para validar e enviar a segunda via das notas fiscais
+     eletrônicas para a SEFAZ-RS?......................................................................................................................... 12
+     2.12.    Quais seriam os procedimentos para cancelamento e substituição de documentos fiscais
+     eletrônicos (modelo 21 ou 22) já escriturados no livro de saída? ................................................................ 12
+     2.13.    Quais seriam os procedimentos para a criação de arquivos para substituição ou retificação de
+     arquivos já escriturados no livro de saída? ..................................................................................................... 13
+     2.14.         Cálculo do Hash Code: Como monto estes códigos de autenticação MD5? ............................. 13
+     2.15.    Estou com erro no momento de validar meu arquivo do Convênio ICMS 115/03. Como
+     resolver? .............................................................................................................................................................. 14
+     2.16.  O que devo fazer em casos de arquivos rejeitados, referentes às transmissões de arquivos
+     do Convênio ICMS 115/03? .............................................................................................................................. 14
+     2.17.    Como devo proceder para alterar/substituir arquivos do Convênio ICMS 115/03 já
+     transmitidos? ....................................................................................................................................................... 14
+     2.18.     Onde localizo o arquivo de atualização do Aplicativo Gera Mídia para entregar o arquivo das
+     notas fiscais modelo 21 e 22? .......................................................................................................................... 15
+     2.19.         Quais são as penalidades pela não apresentação dos arquivos do Convênio ICMS 115/03? 15
+     2.20.         Como consultar se houve entrega dos arquivos do Convênio ICMS 115/03? ........................... 15
+     2.21.   Como deve ser feita a entrega dos arquivos auxiliares nos termos do Convênio ICMS
+     201/17? 15
+     2.22.         Como os arquivos auxiliares do Convênio ICMS 201/17 devem ser identificados? .................. 15
+     2.23.         Como declarar serviço de comunicação dentro do SIMPLES NACIONAL?............................... 16
+     2.24.   Quais são as penalidades pela não apresentação dos arquivos auxiliares do Convênio ICMS
+     201/17? 16
+3.      IMPRESSÃO CONJUNTA ............................................................................................................................. 16
+     3.1. Como proceder para solicitação de adoção da sistemática de Impressão Conjunta de
+     Documentos Fiscais? ......................................................................................................................................... 16
+     3.2. O Pedido de Impressão Conjunta deve ser assinado digitalmente pelas duas empresas. Como
+     incluir múltiplas assinaturas no mesmo documento? .................................................................................... 16
+
+
+
+
+                                       Divisão de Fiscalização | Seção de Coordenação dos GES
+                                                 Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                                        CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                                                                                              3
+                                         INTRODUÇÃO
+     Com o objetivo de esclarecer aos contribuintes eventuais dúvidas e visando facilitar o correto
+cumprimento da legislação tributária, a Receita Estadual do RS, por meio dos Grupos
+Especializados Setoriais (GES), consolidou as principais perguntas e respostas aplicáveis aos
+respectivos setores de atuação. Dessa forma, procura-se prestar um serviço de informação ao
+contribuinte, de modo que este possa consultar o documento quando haja dúvidas acerca da
+tributação referente à atividade específica.
+     O escopo apresentado nesse documento não exaure todo o conjunto normativo referente à
+jurisdição da Secretaria da Fazenda do Rio Grande do Sul. Para acessar o inteiro teor da legislação,
+acesse o Portal de Legislação e Jurisprudência no site da Receita Estadual.
+     Este documento não se reveste de caráter de Consulta Formal, conforme Lei Estadual
+nº 6.537/73, título II, capítulo IV, seção I. As informações aqui dispostas devem ser
+confirmadas na legislação correspondente antes de sua aplicação.
+     Dúvidas específicas podem ser encaminhadas ao Plantão Fiscal Virtual , em Fale Conosco no
+Portal de Serviços da Receita Estadual.
+     Em caso de necessidade de formulação de Consulta Formal, acesse o protocolo eletrônico no
+portal da Receita Estadual.
+
+
+
+
+                       Divisão de Fiscalização | Seção de Coordenação dos GES
+                            Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                   CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                  4
+                               PERGUNTAS E RESPOSTAS
+1. GERAL
+1.1. Provimento de internet é prestação de serviço de comunicação? Incide ISS ou ICMS?
+
+R.: Se o contribuinte presta serviço de conexão de internet, ela presta serviço de comunicação, que está no
+âmbito do ICMS, e não do ISS:
+
+Lei Complementar nº 87/96 - Lei Kandir:
+“Art. 2° O imposto incide sobre: (ICMS)
+III - prestações onerosas de serviços de comunicação, por qualquer meio, inclusive a geração, a emissão, a
+recepção, a transmissão, a retransmissão, a repetição e a ampliação de comunicação de qualquer natureza;”
+
+Decreto nº 37.699/97 - RICMS:
+"Art. 3° - O imposto incide, também, sobre:
+II - as prestações onerosas de serviços de comunicação, por qualquer meio, inclusive a geração, a emissão,
+a recepção, a transmissão, a retransmissão, a repetição e a ampliação de comunicação de qualquer
+natureza;".
+
+1.2. Como declarar serviço de comunicação dentro do SIMPLES NACIONAL?
+
+R.: Para empresas do Simples Nacional, é necessário selecionar a atividade de serviços de comunicação
+na aba “Atividades Econômicas com Receita no Período de Apuração”, no programa PGDAS, selecionando
+“Comunicação sem substituição tributária de ICMS (o substituto tributário deve utilizar essa opção)”. A
+empresa deve realizar a apuração mensal informando o valor total do serviço prestado ao consumidor.
+
+1.3. Qual o procedimento para estorno de débitos de ICMS nas prestações de serviços de
+comunicação?
+
+As hipóteses de estorno de debito do imposto estão previstas no item 3.3, Seção 3.0, Capítulo XXI, Título I
+da IN 45/98.
+
+Caso a nota fiscal não seja cancelada e ocorra ressarcimento ao cliente mediante dedução dos valores
+indevidamente pagos, nas notas fiscais subsequentes, o contribuinte efetuará a recuperação do imposto
+diretamente e exclusivamente no documento fiscal em que ocorrer o ressarcimento ao cliente.
+
+Nos demais casos, deverá apresentar o arquivo eletrônico previsto no subitem 3.3.2, Seção 3.0, Capítulo
+XXI, Título I da IN 45/98 e protocolar pedido de autorização para recuperação do imposto contendo, no
+mínimo, as seguintes informações:
+1 - identificação do contribuinte requerente;
+2 - identificação do responsável pelas informações;
+3 - recibo de entrega do arquivo eletrônico previsto no subitem 3.3.2, referente ao ICMS a recuperar.
+
+Em substituição ao procedimento de estorno de débito a empresa pode usufruir do crédito presumido, desde
+que celebre Termo de Acordo prévio com o Estado do Rio Grande do Sul conforme previsto no Decreto nº
+37.699/97 (RICMS), Livro I, art. 32, inciso CXXXVI.
+
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                               Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                      CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                         5
+1.4. Em quais hipóteses pode ocorrer o estorno de débitos do imposto?
+
+R.: Conforme disposto no subitem 3.3.1, Seção 3.0, Capítulo XXI, Título I da IN 45/98, poderão ocorrer
+estornos de débito do imposto nas seguintes hipóteses:
+
+a)   erro de medição;
+b)   erro de faturamento;
+c)   erro de tarifação de serviço;
+d)   erro de emissão de documento fiscal;
+e)   formalização de discordância do tomador do serviço relativamente a cobrança ou a valores;
+f)   cobrança em duplicidade.
+
+Os motivos dos estornos de débito estão sujeitos à comprovação ao Fisco mediante apresentação de
+documentos, papeis e registros eletrônicos que deverão ser guardados pelo prazo previsto na legislação
+tributária estadual.
+
+
+1.5. Quais séries e subséries devem ser utilizadas na prestação de serviços de
+comunicação?
+
+R.: A empresa de telecomunicação deverá informar as séries e subséries dos documentos fiscais adotados
+para cada tipo de prestação de serviço, antes do início da utilização, da alteração, da inclusão ou da exclusão
+da série ou da subsérie adotada. A empresa deve enviar a 2ª via das notas fiscais para cada série emitida.
+
+A informação deverá ser remetida               ao    Grupo      Setorial   Comunicações   através   do   e-mail
+gscomunicações@sefaz.rs.gov.br.
+
+1.6. Como proceder em relação à numeração da nota fiscal na situação de parcelamento:
+Fatura no valor de R$ 1.000,00 (dezembro) parcelado em 2 vezes com datas de vencimento
+para janeiro e fevereiro. Se a numeração da nota fiscal é pela data de vencimento, neste caso
+teremos 2 numerações diferentes de notas fiscais?
+
+R.: Para resolver esta questão é necessário responder a seguinte pergunta: Qual a natureza do
+parcelamento?
+a) é financeiro, ou seja, a operadora concedeu um parcelamento da fatura. Neste caso deve se emitir uma
+única nota fiscal, devendo o ICMS ser apurado com base na data de vencimento mais próxima.
+b) não é financeiro, existe um contrato de fornecimento fixo com faturamento por períodos de 15 dias, sendo
+emitido uma única fatura mensal por comodidade, quando deveriam ser emitidas faturas quinzenais. Neste
+caso, deve-se emitir 2 notas fiscais, uma para cada período de faturamento, com numeração distinta. Vale
+lembrar que esta numeração pode até ser de períodos de apuração do ICMS distintos, caso o mês de
+vencimento das contas seja diferente.
+Resumindo, a apuração do ICMS devido não pode ser postergado, quando o parcelamento decorre de uma
+liberalidade da concessionária, como no caso das contas que não alcançam um valor mínimo e são cobradas
+em meses posteriores.
+
+1.7. Como declarar os acréscimos e outras despesas acessórias?
+
+
+
+                          Divisão de Fiscalização | Seção de Coordenação dos GES
+                                Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                       CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                             6
+R.: Os acréscimos e outras despesas acessórias devem ser lançados individualmente como itens distintos
+do documento fiscal, com descrição clara de sua natureza, inclusive com menção a que item o acréscimo
+ou despesa se refere, quando for o caso.
+
+1.8. Como faço para consultar a autenticidade das notas fiscais eletrônicas (modelo 21 ou
+22) emitidas por prestador de serviços de comunicação ou telecomunicação?
+
+R.: Ao contrário da NF-e modelo 55, as notas fiscais de prestação de serviço de comunicação não possuem
+consulta da Chave de Codificação Digital on-line. Por este motivo, caso o tomador do serviço deseje
+consultar a autenticidade do documento fiscal recebido, deve enviar uma solicitação via protocolo eletrônico
+conforme     instuções     do     link:  https://atendimento.receita.rs.gov.br/st-regimes-especiais-consulta-
+autenticidade-de-nota-fiscal-eletronica-de-comunicacao-modelo-21-e-22.
+
+As notas fiscais eletrônicas de comunicação ou telecomunicação (modelo 21 ou 22) emitida nos moldes do
+Convênio ICMS 115/03 são armazenadas em arquivo magnético pelo prestador do serviço e encaminhadas
+periodicamente, até o último dia útil do mês subsequente, à Receita Estadual. De posse desse arquivo é
+possível comparar com a cópia apresentada pelo tomador do serviço e autenticar o documento.
+
+1.9. Qual o prazo para pagamento do ICMS nas prestações de serviços de comunicação por
+empresas de telecomunicação?
+
+R.: Conforme Apêndice III, Item IX (PRAZOS DE PAGAMENTO DO ICMS, REFERIDOS NO LIVRO I, ART.
+43) do Decreto nº 37.699/97:
+
+"Até o dia 10 do mês da quantificação dos serviços, 50% do valor do imposto devido; Até o dia 27 do mês
+da quantificação dos serviços, o restante do valor do imposto devido;
+
+NOTA 01 - Por opção do contribuinte, os valores a serem pagos nas datas previstas neste item poderão ser
+calculados sobre o valor do imposto devido no mês anterior, desde que o valor equivalente à
+complementação do montante do imposto devido seja pago até o dia 10 do mês subseqüente."
+
+1.10.   Como proceder caso os valores das faturas comerciais emitidas não superem os
+respectivos documentos fiscais emitidos ou os documentos fiscais emitidos correspondam
+exatamente aos valores das recargas realizadas?
+
+R.: É necessário apresentar Formulário específico via Protocolo Eletrônico declarando que os valores das
+faturas comerciais emitidas não superam os respectivos documentos fiscais emitidos ou os documentos
+fiscais emitidos correspondem exatamente aos valores das recargas realizadas.
+Os      procedimentos     e    maiores      informações   podem     ser     obtidas   através do     link:
+https://atendimento.receita.rs.gov.br/st-nf-e-de-comunicacao-arquivo-auxiliar-convenio-201-17
+
+
+2. CONVÊNIOS ICMS 115/03 E 201/17
+2.1. O que é o Convênio ICMS 115/03?
+
+
+
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                               Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                      CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                           7
+R.: O Convênio ICMS 115/03 é o dispositivo legal, em âmbito nacional, que dispõe sobre a uniformização e
+disciplina a emissão, escrituração, manutenção e prestação das informações dos documentos fiscais
+emitidos em via única por sistema eletrônico de processamento de dados para contribuintes prestadores de
+serviços de comunicação e fornecedores de energia elétrica.
+
+Qual é a legislação?
+As disposições estão contidas no art. 189-A do Livro II do RICMS, aprovado pelo Decreto nº 37.699/97,
+combinado com o disposto no Capítulo XXXIV do Título I da IN 45/1998.
+
+Quem está obrigado?
+Todos os contribuintes que emitirem Nota Fiscal/Conta de Energia Elétrica (modelo 06), Nota Fiscal de
+Serviço de Comunicação (modelo 21), Nota Fiscal de Serviço de Telecomunicação (modelo 22) ou qualquer
+outro documento fiscal relativo à prestação de serviço de comunicação ou ao fornecimento de energia
+elétrica por sistema eletrônico de processamento de dados, em via única, desde que formalizem a opção
+através de requerimento endereçado aos grupos setoriais, conforme disposto no item 1.4 do Capítulo XXXIV
+da IN 45/98.
+
+Qual o prazo de entrega?
+Os arquivos, mantidos em meio óptico nos termos da Seção 3.0 do Capítulo XXXIV da IN 45/98, serão
+gerados com a mesma periodicidade de apuração do ICMS do contribuinte, devendo conter a totalidade dos
+documentos fiscais do período de apuração e entregues mensalmente, até o último dia do mês subsequente
+ao período de apuração, ou, no prazo de 5 (cinco) dias contado do recebimento de notificação específica
+para entrega dos arquivos.
+
+Como entregar?
+Os arquivos do Convênio ICMS 115/03 serão transmitidos mensalmente, exclusivamente por meio da
+Internet, através do sistema de Transmissão Eletrônica de Documentos (TED), disponível no "site" da
+Secretaria da Fazenda do RS.
+https://receita.fazenda.rs.gov.br/lista/3439/ted-(transmissao-eletronica-de-documentos)-
+
+Qual a penalidade pela não apresentação dos arquivos?
+O contribuinte habilitado torna-se obrigado à entrega mensal das informações, até o último dia do mês
+subsequente, sob pena de autuação por descumprimento de obrigação acessória prevista na Lei Estadual
+nº 6.537/73, Art. 11, IV, “e”.
+
+
+2.2. O que é o Convênio ICMS 201/17? Minha empresa já entrega os arquivos de 2ª via de
+nota fiscal do Convênio ICMS 115/03, ainda assim preciso entregar? Preciso entregar caso o
+valor da Nota fiscal emitida seja igual ao valor da fatura cobrada de meu cliente?
+
+R.: O Convênio ICMS 201/2017 solicita informações complementares ao Convênio 115/03. De acordo com
+a cláusula primeira do arquivo, são documentos de controle auxiliar que deverão seguir o layout definido no
+anexo único.
+     Para as empresas que prestam serviços de comunicação em geral, o arquivo é obrigatório quando a
+fatura de serviço de comunicação ou telecomunicação tenha valor maior do que os documentos fiscais
+emitidos.
+     Quando a empresa cobra na fatura comercial de seu cliente o mesmo valor que consta em sua Nota
+Fiscal de Comunicação – modelo 21 ou 22 –, a empresa estará dispensada de enviar os arquivos do
+Convênio 201/17, devendo emitir uma declaração formal de que os valores são idênticos.
+
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                              Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                     CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                         8
+      Os arquivos devem ser entregues de acordo com o layout definido no Anexo Único do Convênio ICMS
+201/17.
+      A entrega dos documentos deverá ser realizada trimestralmente, até o último dia do mês subsequente
+ao último mês do trimestre (conforme IN DRP 045/98, Título I, Capítulo XXXIV, Item 5.3 – b), podendo ser
+feita,    atualmente,    através     de     protocolo   eletrônico   conforme     Carta    de   Serviços:
+https://atendimento.receita.rs.gov.br/st-nf-e-de-comunicacao-arquivo-auxiliar-convenio-201-17.
+
+Dispositivos legais:
+IN DRP 045/98, Título I, Capítulo XXXIV, Item 5.0:
+"5.0 - ARQUIVOS ELETRÔNICOS DE CONTROLE AUXILIAR
+5.1 - As empresas prestadoras de serviços de comunicação que emitirem seus documentos fiscais nos
+termos do Convênio ICMS 115/03, ficam obrigadas a gerar, mensalmente, arquivos eletrônicos de controle
+auxiliar, observado o procedimento para a geração e entrega definido no anexo único do Convênio ICMS
+201/17 e o disposto nesta Seção."
+Convênio ICMS 201/17
+“Cláusula primeira Os contribuintes prestadores de serviços de comunicação que emitem seus documentos
+fiscais nos termos do Convênio ICMS 115/03, de 12 de dezembro de 2003, ficam obrigados a gerar arquivos
+eletrônicos de controle auxiliar, conforme leiaute definido no anexo único deste convênio.
+§ 1º São arquivos eletrônicos de controle auxiliar:
+I - Arquivo de Carregamento de Créditos em Terminais Telefônicos Pré-pagos, contendo informações obtidas
+diretamente da plataforma de controle de créditos, devendo espelhar os valores totais das recargas
+realizadas;
+II - Arquivo de Fatura de Serviços de Comunicação e de Telecomunicações, contendo informações relativas
+às faturas comerciais cujos valores superem os respectivos documentos fiscais emitidos.”
+Endereço para consulta do Convênio 201/17 e seu anexo:
+https://www.confaz.fazenda.gov.br/legislacao/convenios/2017/CV201_17
+
+2.3. Quem está obrigado ao Convênio 115/03?
+
+R.: Todos os contribuintes que emitirem Nota Fiscal/Conta de Energia Elétrica (modelo 06), Nota Fiscal de
+Serviço de Comunicação (modelo 21), Nota Fiscal de Serviço de Telecomunicação (modelo 22) ou qualquer
+outro documento fiscal relativo à prestação de serviço de comunicação ou ao fornecimento de energia
+elétrica por sistema eletrônico de processamento de dados, em via única, desde que formalizem a opção
+através de requerimento endereçado aos grupos setoriais, conforme disposto no item 1.4, do Capítulo
+XXXIV, do Título I, da IN 45/98.
+
+2.4. É necessário formalizar perante a SEFAZ-RS a opção de emissão de nota fiscal de
+comunicação eletrônica (Convênio ICMS 115/03)?
+
+R.: A empresa que desejar utilizar a nota fiscal de comunicação eletrônica deve formalizar sua opção,
+conforme consta na IN DRP nº 045/98, Título I, Capítulo XXXIV, item 1.4; ficando dispensados de apresentar
+a formalização aqueles que em 1º de maio de 2011 já emitirem documentos fiscais conforme disposto na
+referida legislação.
+
+"1.4 - Os contribuintes que optarem pela emissão dos documentos fiscais conforme disposto neste Capítulo
+deverão apresentar formalização da opção:
+
+
+
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                              Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                     CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                        9
+a) ao Grupo Setorial Comunicações da Agência Administração Setorial da Delegacia Especializada da
+Receita Estadual - GS Comunicações - Rua Siqueira Campos, 1184, 10º andar, Porto Alegre, RS - CEP
+90010-001, quanto aos documentos fiscais relativos à prestação de serviço de comunicação;
+1.4.1 - Ficam dispensados de apresentar a formalização da opção referida no item 1.4 os contribuintes que
+em 1º de maio de 2011 já emitirem documentos fiscais conforme disposto neste Capítulo.
+1.4.2 - Na hipótese de desistência da opção prevista no item 1.4, o contribuinte deverá apresentar
+formalização dessa desistência dirigida ao Grupo Setorial correspondente, conforme previsto nas alíneas "a"
+e "b" do item 1.4.
+1.4.3 - Na hipótese de opção pela emissão em via única da Nota Fiscal de Serviço de Comunicação, modelo
+21, e da Nota Fiscal de Serviço de Telecomunicação, modelo 22, em conformidade com este Capítulo, o
+contribuinte fica obrigado à emissão desses documentos exclusivamente nessa modalidade, os quais
+deverão abranger todas as suas prestações de serviço."
+
+A formalização pode ser feita, atualmente, através de protocolo eletrônico conforme Carta de Serviços:
+https://atendimento.receita.rs.gov.br/st-regimes-especiais-emissao-em-via-unica-para-comunicacoes-e-
+energia-eletrica-convenio-icms-115-03.
+
+2.5. Qual o procedimento para emissão de notas fiscais eletrônicas de prestação de serviço
+de comunicação e telecomunicação através do Convênio ICMS 115/03?
+
+R.: A empresa deve adquirir/desenvolver software para emissão das notas fiscais compatível com o
+Convênio ICMS 115/2003. Após a emissão regular das notas, ao final de cada período de apuração, a
+empresa deve enviar a 2ª via das notas emitidas para a SEFAZ/RS, conforme disposto no item 3.2 do
+Capítulo XXXIV, Título I da IN 45/98:
+"3.2 - Apresentação do arquivo
+3.2.1 - A entrega dos arquivos mantidos em meio óptico nos termos desta Seção será realizada
+mensalmente, até o último dia do mês subsequente ao período de apuração
+3.2.1.1 - A entrega dos arquivos será efetuada exclusivamente por meio da Internet, utilizando o sistema
+Transmissão Eletrônica de Documentos (TED)
+3.2.1.2 - O contribuinte deverá conservar os arquivos originais, que poderão ser novamente exigidos durante
+o prazo previsto na legislação tributária."
+
+Para o envio da segunda via das notas fiscais, a empresa deve fazer o download dos programas Validador
+e GeraMídiaTED, disponíveis em https://portal.fazenda.sp.gov.br/servicos/nf-comunicacao-energia/.
+São lançadas novas versões no início de cada ano, utilizar sempre a última versão disponível.
+
+São gerados 4 (quatro) arquivos (MESTRE, ITEM, DESTINATÁRIO e CONTROLE). Após a geração dos
+arquivos, os mesmos devem ser enviados mensalmente via TED, disponível em
+http://receita.fazenda.rs.gov.br/lista/3439/ted-(transmissao-eletronica-de-documentos)- .
+
+2.6. Qual o prazo de entrega dos arquivos do Convênio ICMS 115/03?
+
+R.: Os arquivos, mantidos em meio óptico nos termos da Seção 3.0, do Capítulo XXXIV, do Título I, da IN 45/98, serão
+gerados com a mesma periodicidade de apuração do ICMS do contribuinte, devendo conter a totalidade dos
+documentos fiscais do período de apuração e entregues mensalmente, até o último dia do mês subsequente ao
+período de apuração, ou, no prazo de 5 (cinco) dias contado do recebimento de notificação específica para entrega
+dos arquivos.
+
+
+
+                           Divisão de Fiscalização | Seção de Coordenação dos GES
+                                 Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                        CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                                  10
+2.7. Como entregar/transmitir os arquivos do Convênio ICMS 115/03?
+
+R.: Os arquivos do Convênio ICMS 115/03 serão transmitidos mensalmente, via INTERNET, através do
+sistema de Transmissão Eletrônica de Documentos (TED), disponível no "site" da Secretaria da Fazenda do
+RS.
+https://receita.fazenda.rs.gov.br/lista/3439/ted-(transmissao-eletronica-de-documentos)-.
+
+2.8. Quais os procedimentos para que uma prestadora de serviços de comunicação ou
+telecomunicação possa emitir notas fiscais de serviço eletrônicas, modelo 21/22?
+
+R.: Para a emissão eletrônica de notas fiscais de Serviços de Comunicação modelo 21 e 22 em via única, a
+empresa deve formalizar a opção utilizando o protocolo eletrônico, conforme instruções contidas no link:
+https://atendimento.receita.rs.gov.br/st-regimes-especiais-emissao-em-via-unica-para-comunicacoes-e-
+energia-eletrica-convenio-icms-115-03.
+
+A empresa deve adquirir/desenvolver software para emissão das notas fiscais compatível com o Convênio
+ICMS 115/03.
+
+O contribuinte habilitado torna-se obrigado à emissão desses documentos exclusivamente nessa
+modalidade, os quais deverão abranger todas as suas prestações de serviços, e à entrega mensal das
+informações, até o último dia do mês subsequente, sob pena de autuação por descumprimento de obrigação
+acessória prevista na Lei Estadual nº 6.537/73, Art. 11, IV, “e”.
+
+Capítulo XXXIV, Título I da IN 45/98:
+"1.4 - Os contribuintes que optarem pela emissão dos documentos fiscais conforme disposto neste Capítulo
+deverão apresentar formalização da opção:
+(...)
+1.4.3 - Na hipótese de opção pela emissão em via única da Nota Fiscal de Serviço de Comunicação, modelo
+21, e da Nota Fiscal de Serviço de Telecomunicação, modelo 22, em conformidade com este Capítulo, o
+contribuinte fica obrigado à emissão desses documentos exclusivamente nessa modalidade, os quais
+deverão abranger todas as suas prestações de serviço.
+(...)
+3.2.1 - A entrega dos arquivos mantidos em meio óptico nos termos desta Seção será realizada
+mensalmente, até o último dia do mês subsequente ao período de apuração
+3.2.1.1 - A entrega dos arquivos será efetuada exclusivamente por meio da Internet, utilizando o sistema
+Transmissão Eletrônica de Documentos (TED)”
+
+2.9. Qual o procedimento para emissão de nota fiscal de comunicação para um cliente do
+exterior, sem inscrição no CNPJ, visto que para a validação do arquivo da NFs da TED, não
+é possível validar sem ter CNPJ?
+
+R.: Segundo o Convênio ICMS 115/03, os campos do CNPJ devem ser preenchidos com 0 (zero) e o campo
+relativo a UF deve ser preenchido como EX.
+
+Referência: https://www.confaz.fazenda.gov.br/legislacao/convenios/2003/CV115_03-1.pdf.
+Anexo Único:
+“5.2. Observações
+
+
+                        Divisão de Fiscalização | Seção de Coordenação dos GES
+                              Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                     CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                     11
+5.2.1. Informações referentes aos dados cadastrais do consumidor da energia elétrica ou tomador dos
+serviços de comunicação/telecomunicação
+5.2.1.1. Campo 01 - Informar o CNPJ ou CPF. Em se tratando de pessoa não obrigada à inscrição no CNPJ
+ou CPF, preencher o campo com zeros;
+5.2.1.2. Campo 02 - Informar a Inscrição Estadual. Em se tratando de pessoa não obrigada à inscrição
+estadual, preencher o campo com a expressão “ISENTO”;
+5.2.1.3. Campo 03 - Informar a razão social, denominação ou nome;
+5.2.1.4. Campo 04 - Informar a sigla da UF da localização do consumidor da energia elétrica ou tomador dos
+serviços de comunicação/telecomunicação. Em se tratando de operações com exterior, preencher o campo
+com a expressão “EX”;
+
+2.10.   Qual o procedimento para emissão de nota fiscal de comunicação para um cliente
+não obrigado à inscrição no CNPJ ou CPF, visto que a numeração é necessária para a
+validação do arquivo da NFs da TED?
+
+R.: Segundo o Convênio ICMS 115/03, os campos do CNPJ ou CPF devem ser preenchidos com 0 (zero).
+
+Referência: https://www.confaz.fazenda.gov.br/legislacao/convenios/2003/CV115_03-1.pdf.
+Anexo Único:
+“5.2. Observações
+5.2.1. Informações referentes aos dados cadastrais do consumidor da energia elétrica ou tomador dos
+serviços de comunicação/telecomunicação
+5.2.1.1. Campo 01 - Informar o CNPJ ou CPF. Em se tratando de pessoa não obrigada à inscrição no CNPJ
+ou CPF, preencher o campo com zeros;
+5.2.1.2. Campo 02 - Informar a Inscrição Estadual. Em se tratando de pessoa não obrigada à inscrição
+estadual, preencher o campo com a expressão “ISENTO”;
+5.2.1.3. Campo 03 - Informar a razão social, denominação ou nome;
+5.2.1.4. Campo 04 - Informar a sigla da UF da localização do consumidor da energia elétrica ou tomador dos
+serviços de comunicação/telecomunicação. Em se tratando de operações com exterior, preencher o campo
+com a expressão “EX”;
+
+2.11.   Quais programas são utilizados para validar e enviar a segunda via das notas fiscais
+eletrônicas para a SEFAZ-RS?
+
+R.: Para o envio da segunda via das notas fiscais, a empresa deve fazer o download dos programas
+Validador e GeraMídiaTED, nas últimas versões disponibilizadas no sítio da SEFAZ-SP, em
+https://portal.fazenda.sp.gov.br/servicos/nf-comunicacao-energia/.
+A cada início de ano a versão dos programas é atualazada, sendo necessário fazer o download da nova
+versão do Validador e do GeraMídiaTED.
+
+São gerados 4 (quatro) arquivos (MESTRE, ITEM, DESTINATÁRIO e CONTROLE). Após a geração dos
+arquivos, os mesmos devem ser enviados mensalmente via                             TED, disponível em
+http://receita.fazenda.rs.gov.br/lista/3439/ted-(transmissao-eletronica-de-documentos)-.
+
+2.12.    Quais seriam os procedimentos para cancelamento e substituição de documentos
+fiscais eletrônicos (modelo 21 ou 22) já escriturados no livro de saída?
+
+
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                              Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                     CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                       12
+R.: No âmbito do Convênio 115/03, não é possível cancelar nota fiscal de serviço de comunicação fora
+período de competência, ou depois de escriturado. Somente é permitido o cancelamento antes da
+escrituração do documento fiscal. Deste modo, orienta-se:
+
+Caso se perceba que há documento a ser cancelado antes da escrituração, cancele o documento e emita
+novo documento fiscal para sanar a irregularidade.
+
+Caso o documento fiscal já tenha sido escriturado, não há a possibilidade de cancelamento. O débito,
+portanto, é devido e somente poderá ser restituído/compensado mediante procedimento específico previsto
+na legislação, a saber: utilização de crédito presumido, caso a empresa tenha realizado essa opção mediante
+homologação de prévio acordo com a SEFAZ/RS, ou estorno de débitos conforme procedimento específico.
+Tal procedimento está disposto no item 3.3, Capítulo XXI da IN 45/98.
+
+
+2.13.    Quais seriam os procedimentos para a criação de arquivos para substituição ou
+retificação de arquivos já escriturados no livro de saída?
+
+R.: Podem ser gerados arquivos de substituição de informações, desde que observados os seguintes
+passos:
+1 – geração de novos arquivos;
+2 – refazimento da escrita;
+3 – conservação dos documentos substitutos e substituídos;
+4 – lavratura de termo substanciado no RUDFTO.
+
+Disposição legal sobre o assunto:
+Convênio ICMS 115/03:
+"Cláusula sétima A criação de arquivos para substituição ou retificação de qualquer arquivo óptico já
+escriturado no Livro Registro de Saídas obedecerá aos procedimentos descritos neste convênio, devendo
+ser registrada no Livro Registro de Utilização de Documentos Fiscais e Termos de Ocorrências, modelo 6,
+mediante lavratura de termo circunstanciado contendo as seguintes informações:
+I - a data de ocorrência da substituição ou retificação;
+II - os motivos da substituição ou retificação do arquivo óptico;
+III - o nome do arquivo substituto e a sua chave de codificação digital vinculada;
+IV - o nome do arquivo substituído e a sua chave de codificação digital vinculada.
+Parágrafo único Os arquivos substituídos deverão ser conservados pelo prazo previsto na legislação da
+unidade federada a que estiver vinculado."
+ANEXO ÚNICO
+4.5.1. Os arquivos serão identificados no formato:
+UU CCCCCCCCCCCCCC                 MM        SSS AA MM             Snn     T . VVV
+UF           CNPJ             Modelo Série Ano Mês Status Tipo Volume
+4.5.2.1.7. Status (Snn) - indica se o arquivo é normal (N) ou substituto (S). Em caso de arquivo substituto,
+deverá ser indicado o número sequencial com dois dígitos (“nn”) do arquivo substituto, iniciando em “01”.
+Caso se trate de arquivo normal, preencher com “01”;
+
+2.14.    Cálculo do Hash Code: Como monto estes códigos de autenticação MD5?
+
+R.: O algoritmo MD5 é de domínio público e pode ser obtido no site: http://www.faqs.org/rfcs/rfc1321.html.
+A implementação da rotina em dll pode ser obtida em: https://userpages.umbc.edu/~hamilton/shnfaq.html.
+
+
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                               Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                      CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                         13
+2.15.   Estou com erro no momento de validar meu arquivo do Convênio ICMS 115/03. Como
+resolver?
+
+R.: Solicita-se a consulta no sítio da SEFAZ-SP, que disponibilizou uma tabela de erros do Validador.
+Disponível em: https://portal.fazenda.sp.gov.br/servicos/nf-comunicacao-energia/.
+
+2.16.  O que devo fazer em casos de arquivos rejeitados, referentes às transmissões de
+arquivos do Convênio ICMS 115/03?
+
+R.: Em caso de rejeição na transmissão de arquivos do Convênio ICMS 115/03 deve se observado se os
+arquivos estão identificados corretamente: se a competência informada está correta e se o status do arquivo
+está especificado corretamente, N (normal) ou S (substituto).
+
+ANEXO ÚNICO DO CONVÊNIO ICMS 115/03
+"4.5.2.1.5. Ano (AA) - ano do período de apuração dos documentos fiscais;
+4.5.2.1.6. Mês (MM) - mês do período de apuração dos documentos fiscais;
+4.5.2.1.7. Status (Snn) - indica se o arquivo é normal (N) ou substituto (S). Em caso de arquivo substituto,
+deverá ser indicado o número sequencial com dois dígitos (“nn”) do arquivo substituto, iniciando em “01”.
+Caso se trate de arquivo normal, preencher com “01”;".
+
+2.17.   Como devo proceder para alterar/substituir arquivos do Convênio ICMS 115/03 já
+transmitidos?
+
+R.: Deve ser realizada nova transmissão com a devida identificação de que se trata de arquivo Substituto
+(S).
+
+Para a geração de novos arquivos de substituição de informações já escrituradas, devem ser observados os
+seguintes passos:
+1 – geração de novos arquivos;
+2 – refazimento da escrita;
+3 – conservação dos documentos substitutos e substituídos;
+4 – lavratura de termo substanciado no RUDFTO.
+
+Disposição legal sobre o assunto:
+Convênio ICMS 115/03:
+"Cláusula sétima A criação de arquivos para substituição ou retificação de qualquer arquivo óptico já
+escriturado no Livro Registro de Saídas obedecerá aos procedimentos descritos neste convênio, devendo
+ser registrada no Livro Registro de Utilização de Documentos Fiscais e Termos de Ocorrências, modelo 6,
+mediante lavratura de termo circunstanciado contendo as seguintes informações:
+I - a data de ocorrência da substituição ou retificação;
+II - os motivos da substituição ou retificação do arquivo óptico;
+III - o nome do arquivo substituto e a sua chave de codificação digital vinculada;
+IV - o nome do arquivo substituído e a sua chave de codificação digital vinculada.
+Parágrafo único Os arquivos substituídos deverão ser conservados pelo prazo previsto na legislação da
+unidade federada a que estiver vinculado."
+ANEXO ÚNICO
+4.5.1. Os arquivos serão identificados no formato:
+UU CCCCCCCCCCCCCC                 MM        SSS AA MM             Snn     T . VVV
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                               Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                      CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                         14
+UF          CNPJ              Modelo Série Ano Mês Status Tipo Volume
+4.5.2.1.7. Status (Snn) - indica se o arquivo é normal (N) ou substituto (S). Em caso de arquivo substituto,
+deverá ser indicado o número sequencial com dois dígitos (“nn”) do arquivo substituto, iniciando em “01”.
+Caso se trate de arquivo normal, preencher com “01”.
+
+2.18.   Onde localizo o arquivo de atualização do Aplicativo Gera Mídia para entregar o
+arquivo das notas fiscais modelo 21 e 22?
+
+R.:     O      download     dos     aplicativos  pode     ser    feitos           no   site   da   SEFAZ-SP:
+https://portal.fazenda.sp.gov.br/servicos/nf-comunicacao-energia/.
+
+As versões são atualizadas no início de cada ano, necessitando de novo download e instalação.
+
+Setores de Comunicações e Energia Elétrica:
+a) Convênio ICMS 115/2003 - Instalador do Programa Validador - Versão X.XX
+b) Portaria CAT 79/2003 - Instalador do Programa GeraMidiaTED - Versão X.XX
+c) Convênio ICMS 115/2003 - Instalador do Programa Consulta eNotaFiscal - Versão X.XX
+d) Convênio ICMS 52/2005 e 53/2005 - Programa Extrator - Versão X.XX
+
+
+2.19.   Quais são as penalidades pela não apresentação dos arquivos do Convênio ICMS
+115/03?
+
+R.: O contribuinte habilitado torna-se obrigado à entrega mensal das informações, até o último dia do mês
+subsequente, sob pena de autuação por descumprimento de obrigação acessória prevista na Lei Estadual
+nº 6.537/73, Art. 11, IV, “e”.
+
+2.20.    Como consultar se houve entrega dos arquivos do Convênio ICMS 115/03?
+
+R.: A consulta pode ser realizada através do portal E-CAC, opção Convênio ICMS nº 115/03, consultar
+arquivos.
+
+
+2.21.   Como deve ser feita a entrega dos arquivos auxiliares nos termos do Convênio ICMS
+201/17?
+
+R.: O arquivo do Convênio 201/17 e os demais documentos devem ser encaminhados através de Protocolo
+Eletrônico do e-CAC, em “Meus serviços” / “Novo Protocolo – Setor de Comunicações” / "Arquivo Auxiliar
+Convênio 201/17”.
+
+Maiores informações podem ser obtidas através do link: https://atendimento.receita.rs.gov.br/st-nf-e-de-
+comunicacao-arquivo-auxiliar-convenio-201-17.
+
+
+2.22.    Como os arquivos auxiliares do Convênio ICMS 201/17 devem ser identificados?
+
+R.: Os arquivos auxiliares devem ser preenchidos conforme orientações dos itens 3.2 e 4.2 do anexo único
+do Convênio 201/17 (https://www.confaz.fazenda.gov.br/legislacao/convenios/2017/CV201_17).
+
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                               Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                      CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                          15
+A entrega pode ser feita, atualmente, através de protocolo eletrônico conforme Carta de Serviços:
+https://atendimento.receita.rs.gov.br/st-nf-e-de-comunicacao-arquivo-auxiliar-convenio-201-17.
+
+
+2.23.    Como declarar serviço de comunicação dentro do SIMPLES NACIONAL?
+
+R.: Para empresas do Simples Nacional, é necessário selecionar a atividade de serviços de comunicação
+na aba “Atividades Econômicas com Receita no Período de Apuração”, no programa PGDAS, selecionando
+“Comunicação sem substituição tributária de ICMS (o substituto tributário deve utilizar essa opção)”. A
+empresa deve realizar a apuração mensal informando o valor total do serviço prestado ao consumidor.
+
+
+2.24. Quais são as penalidades pela não apresentação dos arquivos auxiliares do
+Convênio ICMS 201/17?
+
+R.: O contribuinte habilitado torna-se obrigado à entrega trimestral das informações, até o último dia do mês
+subsequente ao último mês do trimestre, sob pena de autuação por descumprimento de obrigação acessória
+prevista na Lei Estadual nº 6.537/73, Art. 11, IV, “e”.
+
+
+3. IMPRESSÃO CONJUNTA
+
+3.1. Como proceder para solicitação de adoção da sistemática de Impressão Conjunta de
+Documentos Fiscais?
+
+R.: As empresas deverão requerer, conjunta e previamente, informando as séries e subséries adotadas,
+devendo estar serem distintas.
+
+Maiores informações podem ser obtidas através do link: https://atendimento.receita.rs.gov.br/st-regimes-
+especiais-impressao-conjunta-de-docs-fiscais-para-telecomunicacoes-ato-cotepe-09-2010.
+
+3.2. O Pedido de Impressão Conjunta deve ser assinado digitalmente pelas duas empresas.
+Como incluir múltiplas assinaturas no mesmo documento?
+
+R.: Quando for necessário mais de uma assinatura em um mesmo documento, as assinaturas devem ser
+realizadas no Portal da AC-RS (https://www.ac.rs.gov.br/apl/gdp/default.htm).
+
+O     passo         a     passo     com      orientações     pode    ser          obtido   através   do   link:
+https://atendimento.receita.rs.gov.br/assinatura-digital-passo-a-passo.
+
+
+
+
+                         Divisão de Fiscalização | Seção de Coordenação dos GES
+                               Av. Mauá, 1155 - Sala 109A - Centro - Porto Alegre/RS
+                                      CEP 90030-080 | Fone: (51) 3214-5530
+                                                                                                            16
+

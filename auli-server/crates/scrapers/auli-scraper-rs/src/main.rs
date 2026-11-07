@@ -85,8 +85,18 @@ fn run_faqs(use_cache: bool) -> errors::Result<()> {
         data_dir: DATA_DIR.to_string(),
         cache_dir: format!("{}/cache/faqs", DATA_DIR),
         use_cache,
-        // D-RSFAQ-7: o item "NFCom" dos menus de Documentos Fiscais redireciona para o PDF de perguntas do GES
-        // Comunicações. O "Manual para Declaração de ITCD" também é PDF, mas é manual: fica fora.
-        pdfs: vec!["https://atendimento.receita.rs.gov.br/faq-nfcom".to_string()],
+        // D-RSFAQ-7: os itens de menu que redirecionam para um PDF de perguntas. Ficam fora o "Manual para Declaração
+        // de ITCD" (manual, decisão do mantenedor), o `/nfcom-faq` (o mesmo PDF do `/faq-nfcom`, no menu GES
+        // Comunicações) e as orientações de transporte internacional (não são perguntas).
+        pdfs: [
+            "faq-nfcom",                       // NFCom (GES Comunicações, 11/2025)
+            "faq-ges-bebidas",                 // GES Bebidas (07/2026)
+            "duvidas-gerais-ges-com",          // GES Comunicações (07/2022)
+            "convenio-icms-201-17",            // Convênio ICMS 201/17 (2023)
+            "programas-de-autorregularizacao", // Autorregularização (09/2022)
+        ]
+        .iter()
+        .map(|p| format!("https://atendimento.receita.rs.gov.br/{p}"))
+        .collect(),
     })
 }

@@ -218,6 +218,6 @@ Verificação, com o cache da rodada de 06/11 (a mesma entrada, então toda dife
 A mesma rodada mostrou duas páginas que **nunca entraram no acervo** (não estão na árvore de agosto nem na de
 06/11, e o índice também não as lista): `/faq-nfcom` e `/manual-para-declaracao-de-itcd-faq` — o ureq recusa o
 corpo ("stream did not contain valid UTF-8"), provavelmente outra codificação. Fica registrado na pendência §20.
-Em 07/11 o motivo apareceu: não é codificação, os dois redirecionam para um PDF. O da NFCom entra (D-RSFAQ-7, 25
-perguntas); o manual do ITCD, não ([REGISTRO-scrapers.md#rs-faqs](REGISTRO-scrapers.md#rs-faqs), armadilha 6).
+Em 07/11 o motivo apareceu: não é codificação, os dois redirecionam para um PDF — e são sete os itens assim. Os cinco
+PDFs de perguntas entram (D-RSFAQ-7, 173 perguntas, a NFCom entre eles); o manual do ITCD, não ([REGISTRO-scrapers.md#rs-faqs](REGISTRO-scrapers.md#rs-faqs), armadilha 6).
 
