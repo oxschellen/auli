@@ -17,7 +17,7 @@
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-use fastembed::{Bgem3Embedding, Bgem3InitOptions, Bgem3Model};
+use fastembed::{AutoDevicePolicy, Bgem3Embedding, Bgem3InitOptions, Bgem3Model};
 
 use crate::error::{Error, Result};
 
@@ -51,12 +51,19 @@ pub struct Embedder {
 impl Embedder {
     /// Build once at startup. Blocking and slow: loads (and on first run downloads from Hugging
     /// Face into `cache_dir`) the BGE-M3 INT8 ONNX model.
+    ///
+    /// **Sempre na CPU (`AutoDevicePolicy::PreferCPU`) — contrato de reprodutibilidade.** Sem a política, o
+    /// ONNX Runtime escolhe o dispositivo sozinho (`MaxEfficiency`: prefere NPU e, no macOS, registra sempre o
+    /// CoreML), e o mesmo texto sairia com outro vetor numa máquina com outro hardware. Documentos e pergunta têm
+    /// de sair do mesmo cálculo — a mesma razão do `batch_size = 1` e do lockfile único. Rodar em GPU/NPU é uma
+    /// mudança de propósito, e exige revetorizar o acervo inteiro.
     pub fn new(cache_dir: PathBuf, threads: usize) -> Result<Self> {
         let opts = Bgem3InitOptions::new(Bgem3Model::BGEM3Q)
             .with_max_length(EMBED_MAX_TOKENS) // o teto do modelo — ver a const
             .with_intra_threads(threads)
-            .with_cache_dir(cache_dir);
-        let model = Bgem3Embedding::try_new(opts)?; // anyhow::Error -> crate::Error via #[from]
+            .with_cache_dir(cache_dir)
+            .with_auto_device(AutoDevicePolicy::PreferCPU);
+        let model = Bgem3Embedding::try_new(opts)?; // fastembed::Error -> crate::Error via #[from]
         Ok(Self {
             inner: Mutex::new(model),
         })
