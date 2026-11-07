@@ -18,7 +18,9 @@ só `servicos`** (194 e 28 — [REGISTRO-scrapers.md#ro](REGISTRO-scrapers.md#ro
 > (8 pastas sem nenhum artigo, como o resto da taxonomia de temas criada em 03/2026). A FAQ real está nas **8 páginas de
 > Documentos Eletrônicos** (NF-e, NFC-e, EFD, MDF-e, CT-e, DeSTDA, NFF, BP-e), cada uma com uma seção "Perguntas
 > Frequentes": **99 perguntas**, a pergunta em negrito como na PB/PA — segmentação do `kit::linhas`, com dois reparos
-> (links para o ambiente de homologação e o texto-modelo "Título da sanfona" do Elementor). **2 GETs.**
+> (links para o ambiente de homologação e o texto-modelo "Título da sanfona" do Elementor). **2 GETs.** E há um PDF, "Perguntas
+> Frequentes EFD ICMS IPI" (nov/2021, **35 perguntas**), que o repositório de documentos do portal entrega a um GET anônimo
+> (§3.1, D-SYDFAQ-8).
 >
 > Recomendação: RO = as 213 (193 + 20, D-SYDFAQ-1 B); PI = as 99 (D-SYDFAQ-2 A); o parser de seções do CE vai para o
 > kit, com o RO como 2º consumidor (D-SYDFAQ-6).
@@ -43,7 +45,7 @@ hosts aceitam o AuliBot (o scraper de serviços do PI ainda usa UA de navegador 
 | PI tema "Informações sobre a legislação tributária \| Perguntas Frequentes" (`69b9aa26…`) e suas 7 subpastas (ICMS, Agenda tributária, Regime Especial…) | **vazias** | nenhum filho (nem inativo) e nenhum artigo ligado (`linkedParents`, consulta `nested`) |
 | PI pastas "Dúvidas gerais" (Nota Piauiense) e "Dúvidas gerais de IPVA" | **vazias** | idem |
 | PI taxonomia "Temas e categorias - Portal Institucional" (`69653110…`) | 14 temas, 75 subtemas, **0 artigos** | só "API Legislação" e "LGPD → Atendimento ao Titular" recebem artigos ligados |
-| PI notícia "Sefaz publica documento de perguntas frequentes sobre EFD ICMS IPI" | aponta para um **PDF** (`documentoseletronicos/arquivos/Perguntas_Frequentes_EFD_ICMS_IPI_-_Versão_1.0.pdf`) — fora, como na frota | e para `documentoseletronicos/portal/efd/documentos.php`, que redireciona para a pasta "Documentos Eletrônicos" da SPA |
+| PI notícia "Sefaz publica documento de perguntas frequentes sobre EFD ICMS IPI" | aponta para um **PDF** num endereço antigo (`documentoseletronicos/arquivos/…`), que hoje redireciona para a SPA; o arquivo mudou para o repositório de documentos (§3.1) | e para `documentoseletronicos/portal/efd/documentos.php`, que redireciona para a pasta "Documentos Eletrônicos" da SPA |
 | **PI pasta "Conteúdos - Institucional → Documentos Eletrônicos"** (`69d6979d…`) | **8 páginas com FAQ** | §3 |
 | PI "Carta de Serviços" | sem FAQ | as seções com "?" são do modelo da ficha (O que é?, Como solicitar?, Onde solicitar?, Quem pode solicitar? — 20 de cada) |
 | Headless | não | — |
@@ -104,6 +106,25 @@ class="conteudo-html">`. A última seção é "Perguntas Frequentes <documento>"
 
 Coleta: o HTML inicial (token) + **um `_search`** dos artigos ligados à pasta (`nested` em `linkedParents`, 2,6 MB).
 
+### 3.1 O PDF "Perguntas Frequentes EFD ICMS IPI"
+
+A página da EFD leva a "Legislação e Documentos EFD" (`/documentos?folderId=69d900af…`), uma pasta do repositório de
+documentos do portal com 5 subpastas: 1 e 2. Regras de pós-validação (EFD e OIE), 3. Guia Prático da EFD (7 versões), **4.
+Perguntas Frequentes** (1 arquivo) e 5. Esclarecimentos técnicos (2 arquivos: saldo credor, pendência de integridade). Só a
+4 é FAQ; as outras são manuais e regras.
+
+| O quê | Evidência |
+|---|---|
+| Listagem | o componente `portal-lib-folder-browser` chama `obterPastaComItens` da classe `68e40169df43e345a988b6dd`. **GET anônimo**: `…/govPiPortalInstitucional/_classId/68e40169df43e345a988b6dd/obterPastaComItens?_body={"folderIdentifier":"legislacao-e-documentos-efd-4-perguntas-frequentes"}` → `items[]` com `title`, `fileName`, `fileUrl`, `lastUpdateDate`. As classes de arquivo do Sydle (`000…0e`/`0f`) dão 403 ao anônimo; este método não |
+| Arquivo | "Perguntas Frequentes EFD ICMS IPI – Versão 1.0.pdf", 425.638 B, `https://portal.sefaz.pi.gov.br/api/1/main/_ecm/_defaultFile/www/zu5a3chxym/` (GET anônimo, `application/pdf`). No portal, "Atualizado em 03/11/2026" é a data da carga; o PDF é de **22/11/2021** (Word, 21 páginas) |
+| Texto | camada de texto completa; nenhuma figura além da capa e do logo de cada página. `pdftotext -layout` (poppler) separa bem: o parágrafo começa recuado e a continuação vem na margem; o marcador "▪" fica na linha do item; o rodapé ("Secretaria da Fazenda do Estado do Piauí" + nº da página, 20×) ocupa uma linha |
+| Estrutura | sumário com 6 capítulos (Cadastro, Registros EFD, Multas, Regras de pós-validação, EPE e Portal EFD, Outros) e **35 perguntas** numeradas (1.1 … 6.2), com página; um subgrupo sem pergunta ("1.5 Certificado Digital"). No corpo, o mesmo número abre a pergunta — em 3 delas (1.5.2, 2.7, 4.9) separado por espaço não separável (U+00A0) |
+| Atualidade | a 2.11 cita o "Decreto 13.500/2008, art. 565-A" e a 6.2 o "artigo 89 do RICMS" — o RICMS do PI hoje é o Decreto 21.866/2023. Dois links apontam para o portal antigo (`documentoseletronicos/…`, que redireciona) |
+
+Seria o **primeiro PDF nas FAQs da frota** (o `faq.pdf` do SE, os PDFs de IPVA/ITCD do RN e o PDF federal da EFD no CE
+ficaram fora) e a primeira dependência do poppler: o scraper chamaria o `pdftotext` como processo, como GO e DF chamam o
+`curl`; os testes usam o texto extraído como fixture e não precisam dele.
+
 ## 4. Modelagem proposta
 
 | `FaqRaw` | RO | PI |
@@ -131,7 +152,7 @@ uma das pastas de FAQ vazias (§1) passou a ter artigo — é a hora de rever o 
   Recomendo **B**: as 20 são FAQ de verdade (as perguntas básicas da ST estão lá), e o custo é uma regra de poucas
   linhas. **A** é a alternativa mais simples.
 - **D-SYDFAQ-2 — Escopo do PI.** **A — as 8 páginas, 99 perguntas** (recomendada); **B — sem a DeSTDA, 89**; **C — não
-  coletar.** A página da DeSTDA não fala em dispensa, ao contrário do caso da PB. O PDF da FAQ da EFD fica fora.
+  coletar.** A página da DeSTDA não fala em dispensa, ao contrário do caso da PB. O PDF da FAQ da EFD é a D-SYDFAQ-8.
 - **D-SYDFAQ-3 — Cópias (RO).** O par idêntico (pergunta e resposta, sem contar espaços) fica uma vez, na ficha de menor
   `_id` (D-CEFAQ-5). A mesma pergunta com outra resposta fica em cada ficha.
 - **D-SYDFAQ-4 — Link e trilha** como na §4: no RO, a ficha com a âncora da seção; no PI, a página.
@@ -144,6 +165,18 @@ uma das pastas de FAQ vazias (§1) passou a ter artigo — é a hora de rever o 
   COMPARTILHADO continua pendente).
 - **D-SYDFAQ-7 — Transporte.** UA AuliBot (`crate::UA`) nos dois; 1 s entre os GETs; `ureq`/rustls (cadeias completas);
   sempre à rede, cache só com `--usecache`. 2 GETs por estado.
+- **D-SYDFAQ-8 — O PDF da FAQ da EFD (PI).**
+  - **A — incluir: +35, o PI vai a 134.** O arquivo é achado pela pasta (`obterPastaComItens`), não por endereço fixo:
+    exatamente um PDF na pasta 4, ou erro (a SEFAZ costuma deixar as versões antigas ao lado, como no Guia Prático — uma
+    versão nova pede revisão). Texto pelo `pdftotext -layout`; pergunta = o número do sumário até o "?"; o subgrupo sem
+    "?" vai para a trilha; o rodapé sai; as linhas do parágrafo se juntam. Guarda: as perguntas do corpo são as 35 do
+    sumário. Trilha "Perguntas Frequentes EFD ICMS IPI – Versão 1.0 (nov/2021) | Capítulo", com a data à vista, como o
+    "(até 2022)" das FAQs do GO; link = o PDF com `#page=<página do sumário>`. 2 GETs a mais.
+  - **B — deixar fora**, pela regra da frota para PDF.
+
+  Recomendo **A**: é a FAQ que a SEFAZ publica hoje para a EFD, as 35 têm texto inteiro, e o arquivo é achado sem
+  endereço fixo. O custo é a 1ª dependência de PDF na frota e duas respostas que citam o RICMS antigo — a data na trilha
+  avisa o leitor.
 
 ## 6. Reprodução
 
@@ -156,4 +189,7 @@ curl -sS -A "$UA" -H "Authorization: $TOK" "https://sydleone.sefin.ro.gov.br/api
 # PI: token + as 8 páginas de Documentos Eletrônicos
 TOK=$(curl -sS -A "$UA" https://portal.sefaz.pi.gov.br/ | grep -o '"Authorization":"Bearer [^"]*' | cut -d'"' -f4)
 curl -sS -A "$UA" -H "Authorization: $TOK" "https://portal.sefaz.pi.gov.br/api/1/govPiPortalInstitucional/_classId/5cd32901df14eb3d461160f0/_search?_body=$(q '{"query":{"bool":{"must":[{"term":{"active":true}},{"nested":{"path":"linkedParents","query":{"term":{"linkedParents.parent._id":"69d6979dc41c7a09017fa749"}}}}]}},"size":20}')" -o pi.json
+# PI: a pasta "4. Perguntas Frequentes" do repositório de documentos → o PDF
+curl -sS -A "$UA" -H "Authorization: $TOK" "https://portal.sefaz.pi.gov.br/api/1/govPiPortalInstitucional/_classId/68e40169df43e345a988b6dd/obterPastaComItens?_body=$(q '{"folderIdentifier":"legislacao-e-documentos-efd-4-perguntas-frequentes"}')"
+curl -sS -A "$UA" -o faq-efd.pdf https://portal.sefaz.pi.gov.br/api/1/main/_ecm/_defaultFile/www/zu5a3chxym/ && pdftotext -layout faq-efd.pdf -
 ```
