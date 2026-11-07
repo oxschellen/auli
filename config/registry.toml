@@ -163,7 +163,7 @@ name = "SEFAZ-PI"
 uf = "PI"
 state = "Piauí"
 prompt = "prompts/pi.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "am"
@@ -195,7 +195,7 @@ name = "SEFIN-RO"
 uf = "RO"
 state = "Rondônia"
 prompt = "prompts/ro.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "to"

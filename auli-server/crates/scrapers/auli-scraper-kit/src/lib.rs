@@ -10,6 +10,7 @@
 //! - [`faqtree`]: a árvore `<id>-faqs-tree.json` que a aba de FAQs do frontend lê.
 //! - [`html`]: o HTML das respostas de FAQ em texto ([`html::html_para_texto`]), uma regra só para a frota.
 //! - [`linhas`]: FAQ em linhas — a pergunta é a linha toda em negrito terminada em "?" (os Joomla da PB e do PA).
+//! - [`sydle`]: as seções (`section-wrapper`) dos artigos do Sydle ONE (as FAQs do CE e do RO).
 //!
 //! A **fronteira** (tipos, versão, caminho e I/O do snapshot — incluindo o shape per-público
 //! `ServicoPerPublico`) mora no `auli-contract` (D-C1): produtor e consumidor usam as mesmas
@@ -22,6 +23,7 @@ pub mod faqtree;
 pub mod html;
 pub mod http;
 pub mod linhas;
+pub mod sydle;
 
 mod agent;
 mod aggregate;

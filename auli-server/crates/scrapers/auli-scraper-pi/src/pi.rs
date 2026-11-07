@@ -27,11 +27,11 @@ use auli_scraper_kit::clean;
 use auli_scraper_kit::http::GetOpts;
 use serde::Deserialize;
 
-const BASE: &str = "https://portal.sefaz.pi.gov.br";
+pub(crate) const BASE: &str = "https://portal.sefaz.pi.gov.br";
 /// Shell público de onde extraímos o Bearer anônimo (efêmero).
 const SHELL_URL: &str = "https://portal.sefaz.pi.gov.br/";
 /// Endpoint do `_search` (GET) sobre a classe de conteúdo. O corpo ES vai em `?_body=`.
-const SEARCH_URL: &str = "https://portal.sefaz.pi.gov.br/api/1/govPiPortalInstitucional/_classId/5cd32901df14eb3d461160f0/_search";
+pub(crate) const SEARCH_URL: &str = "https://portal.sefaz.pi.gov.br/api/1/govPiPortalInstitucional/_classId/5cd32901df14eb3d461160f0/_search";
 /// `_id` do catálogo cidadão "Carta de Serviços" (o `parent._id` dos serviços). Os demais catálogos
 /// do portal (Notícias, Legislações, Tesouro, Serviços de Pessoal…) NÃO entram — não são a carta.
 const CATALOGO_ID: &str = "69381ceceecdd6684a84c49c";
@@ -140,7 +140,7 @@ pub fn scrape(
 }
 
 /// Extrai o Bearer token anônimo do shell público (`"Authorization":"Bearer …"`). Efêmero.
-fn fetch_token(agent: &ureq::Agent) -> Result<String> {
+pub(crate) fn fetch_token(agent: &ureq::Agent) -> Result<String> {
     println!("Fetching token (shell): {}", SHELL_URL);
     let shell = auli_scraper_kit::http::get_string(
         agent,
@@ -192,7 +192,7 @@ fn search_url() -> String {
 
 /// Percent-encode para valor de query string: preserva os "unreserved" do RFC 3986 e escapa o resto
 /// (inclusive `{ } [ ] " : ,` do JSON). Sem crate — evita a dependência (padrão do fleet).
-fn pct_encode(s: &str) -> String {
+pub(crate) fn pct_encode(s: &str) -> String {
     let mut out = String::with_capacity(s.len() * 3);
     for &b in s.as_bytes() {
         if b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.' | b'~') {

@@ -50,6 +50,8 @@
 - [PB FAQs — páginas de informação do portal institucional (www.sefaz.pb.gov.br/info/…)](#pb-faqs)
 - [PA FAQs — perguntas e respostas do site antigo da SEFA (antigo.sefa.pa.gov.br)](#pa-faqs)
 - [PA serviços — o catálogo `pis` do WordPress do site novo (site-sefa-wordpress.sefa.pa.gov.br)](#pa-servicos-pis)
+- [RO FAQs — as seções-pergunta das fichas da Agência Virtual (agenciavirtual.sefin.ro.gov.br)](#ro-faqs)
+- [PI FAQs — as páginas de Documentos Eletrônicos e o PDF da FAQ da EFD (portal.sefaz.pi.gov.br)](#pi-faqs)
 
 ---
 
@@ -2915,4 +2917,90 @@ por uma letra. Os 3 serviços que o `pis` não tem ("Dispensa de pagamento IPVA"
   `coletado_em`) e só é gravado depois das guardas.
 - `ureq`/rustls com o UA AuliBot (`crate::UA`), 1,1 s entre os GETs, 6 GETs por rodada.
 - Atualização: `scripts/tools/atualizar-servicos.sh pa`.
+
+---
+
+<a id="ro-faqs"></a>
+
+# RO FAQs — as seções-pergunta das fichas da Agência Virtual (agenciavirtual.sefin.ro.gov.br)
+
+**Discovery e implantação:** 07/11/2026, num estudo conjunto com o PI (os dois são Sydle ONE conecta-360). Estudo,
+medições e decisões D-SYDFAQ-1..8: [`docs/ESTUDO-RO-PI-Faqs.md`](ESTUDO-RO-PI-Faqs.md). Coleção `faqs` do
+`auli-scraper-ro` (`auli-scraper-ro faqs`, ou `all`). **211 perguntas de 46 fichas** na rodada de 07/11.
+
+## Fonte
+
+O RO não tem página de FAQ: a rota `/perguntas-frequentes/` é a casca da SPA, o índice A-Z (`faq.sefin.ro.gov.br`) é uma
+lista de links e o `www.sefin.ro.gov.br` não tem FAQ. As perguntas estão nas fichas de serviço: depois das 6 seções do
+modelo (O que é?, Legislação, Etapas e prazos, Onde e como solicitar, Documentação, Taxa), 57 fichas trazem seções cujo
+título é uma pergunta, no mesmo molde das FAQs do CE (`section-wrapper`, `#section-<slug>`). Um `_search` (GET, o token
+anônimo do HTML inicial) traz os 224 artigos inteiros e os catálogos. 2 GETs.
+
+## As armadilhas
+
+1. **A pergunta é uma seção da ficha**: título terminado em "?", fora o "O que é?" da ficha. O parser de seções é o do
+   CE, que foi para o kit (`kit::sydle`, D-SYDFAQ-6).
+2. **Duas seções agrupam perguntas** ("DFe-Download – Perguntas e respostas", 10 em `<h3>` — `kit::linhas`; "Perguntas
+   e Respostas" da Substituição Tributária, 10 com os rótulos "Pergunta:"/"Resposta:" — regra própria). As "Perguntas e
+   Respostas" da Ouvidoria não têm pergunta.
+3. **Fichas irmãs repetem perguntas**: 21 cópias saem (espaços não contam), ficando na ficha de menor `_id`. A mesma
+   pergunta com outra resposta ("Quando o benefício pode ser utilizado?": 2 anos no taxista, 4 na PcD) fica nas duas.
+4. **O `_search` tem 21 MB** (as imagens dos artigos vêm em base64): o `ureq` para em 10 MB, e o `GetOpts` do kit ganhou
+   o `limite_bytes`.
+5. **Um artigo em HTML tem blocos sem título** (a UPF): só os artigos em MARKDOWN são lidos, como no CE.
+6. O link usa o catálogo do artigo (`catalogo-servicos+…`, `catalogo-conteudos+…`), lido no mesmo `_search`.
+
+## Guardas e transporte
+
+- `Err` antes de gravar: o `_search` trouxe menos do que achou (ou bateu no teto de 500); o molde das seções mudou;
+  pergunta ou rótulo sem resposta; ficha fora de um catálogo conhecido; par (url, pergunta) repetido; menos de 180.
+- **Sempre à rede**; o cache em `data/ro/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a byte e
+  o snapshot a menos do `coletado_em`.
+- UA AuliBot (`ro::USER_AGENT`), 1 s entre os GETs, `ureq`/rustls.
+- Atualização: `scripts/tools/update-ro-faqs.sh`.
+
+---
+
+<a id="pi-faqs"></a>
+
+# PI FAQs — as páginas de Documentos Eletrônicos e o PDF da FAQ da EFD (portal.sefaz.pi.gov.br)
+
+**Discovery e implantação:** 07/11/2026, no estudo conjunto com o RO ([`docs/ESTUDO-RO-PI-Faqs.md`](ESTUDO-RO-PI-Faqs.md),
+D-SYDFAQ-1..8). Coleção `faqs` do `auli-scraper-pi` (`auli-scraper-pi faqs`, ou `all`). **134 perguntas** na rodada de
+07/11: 99 de 8 páginas e 35 do PDF.
+
+## Fonte
+
+A árvore de temas "Informações sobre a legislação tributária | Perguntas Frequentes" do portal (Sydle ONE) existe, mas
+está vazia, como toda a taxonomia "Temas e categorias" criada em 03/2026. A FAQ está na seção "Perguntas Frequentes" das
+**8 páginas de Documentos Eletrônicos** (NF-e, NFC-e, EFD, MDF-e, CT-e, DeSTDA, NFF, BP-e — os artigos ligados à pasta
+`69d6979d…`; `linkedParents` é `nested`) e no **PDF "Perguntas Frequentes EFD ICMS IPI"** (versão 1.0, nov/2021) da pasta
+"Legislação e Documentos EFD → 4. Perguntas Frequentes" do repositório de documentos, que o método `obterPastaComItens`
+lista a um GET anônimo (o endereço antigo do PDF redireciona para a SPA). 5 GETs.
+
+## As armadilhas
+
+1. **A pergunta é a linha em negrito terminada em "?"** (`kit::linhas`). No CT-e ela é um link para o `portal-h` (o
+   ambiente de homologação), sem negrito; na DeSTDA, um `<h4>` do Elementor com o mesmo link. O link vira destaque.
+2. **O texto-modelo "Título da sanfona" do Elementor** sobrou em duas perguntas ("Título da sanfoO que é a inutilização
+   de número do CT-e?na", "A declaração pode ser retificada?Título da sanfona") e sai.
+3. **O PDF é o 1º da frota.** O texto sai do `pdftotext -layout` (poppler, como processo); o cache guarda o texto, e o
+   `--usecache` não precisa do poppler. O parágrafo começa recuado e continua na margem; o rodapé de cada página sai.
+4. **O sumário do PDF tem pontilhado de um ponto só** em três entradas ("fazer? . 5", "(bloco H)?.. 7"): sem tratá-lo,
+   uma entrada engole a seguinte. A guarda é a numeração contínua do sumário.
+5. **Três perguntas começam no topo da página** (1.5.2, 2.7, 4.9) — logo depois do `\f`; o link leva `#page=N`.
+6. **O PDF é de 2021**: duas respostas citam o RICMS antigo (Decreto 13.500/2008); a trilha leva a data da capa
+   ("Perguntas Frequentes EFD ICMS IPI – Versão 1.0 (Novembro de 2021) | Capítulo").
+
+## Guardas e transporte
+
+- `Err` antes de gravar: o `_search` trouxe menos do que achou; página sem a seção "Perguntas Frequentes" (ou com
+  duas), sem pergunta, ou pergunta sem resposta; resto do editor no texto; a pasta com outro número de PDFs que um
+  (versão nova: rever o escopo); capa sem data; sumário que pula um número; entrada do sumário fora do corpo; par (url,
+  pergunta) repetido; menos de 90 nas páginas ou 30 no PDF. **Aviso**: artigo nas 10 pastas de FAQ hoje vazias.
+- **Sempre à rede**; o cache em `data/pi/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a byte e
+  o snapshot a menos do `coletado_em`.
+- UA AuliBot (`crate::UA`; os serviços do PI seguem com o UA de navegador, pendência §11 — o AuliBot passa no portal),
+  1 s entre os GETs, `ureq`/rustls.
+- Atualização: `scripts/tools/update-pi-faqs.sh` (confere o `pdftotext` antes).
 

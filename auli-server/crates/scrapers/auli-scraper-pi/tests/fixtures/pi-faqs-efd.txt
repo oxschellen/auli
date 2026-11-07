@@ -1,0 +1,735 @@
+Perguntas Frequentes
+    EFD ICMS IPI
+
+
+
+
+        Versão 1.0
+     Novembro de 2021
+Sumário
+1      CADASTRO............................................................................................................................. 4
+    1.1   A minha Inscrição Estadual foi suspensa, suspensa de ofício, cancelada ou baixada.
+    Como devo proceder para enviar a EFD ICMS IPI? .................................................................. 4
+    1.2       O MEI está obrigado a enviar a EFD? ........................................................................... 5
+    1.3       Qual Perfil de EFD deve ser entregue por contribuintes do SIMPLES Nacional? ....... 5
+    1.4    Alterei a forma de recolhimento de SIMPLES para correntista, ou de correntista
+    para SIMPLES, mas ainda não foi alterado o perfil de enquadramento, o que devo fazer? . 5
+    1.5       Certificado Digital ......................................................................................................... 5
+       1.5.1         Meu certificado digital expirou, conseguirei enviar a EFD? ................................ 5
+       1.5.2         Quem pode assinar a EFD ICMS IPI? .................................................................... 6
+       1.5.3    Quais são os passos que o contribuinte deve seguir para o Cadastramento de
+       Procuração Eletrônica? ......................................................................................................... 6
+       1.5.4    Estou credenciado na Receita Federal e não consigo transmitir a EFD, pois é
+       apresentada a mensagem “Contribuinte não localizado (CNPJ/CPF + IE)”. O que fazer? . 7
+2      REGISTROS EFD ..................................................................................................................... 7
+    2.1       O contribuinte do Simples Nacional deve registrar na EFD o Inventário (bloco H)?.. 7
+    2.2       Como o contribuinte deve declarar a CVI na EFD? ...................................................... 8
+    2.3       Como o contribuinte deve declarar a CVI na OIE EFD ICMS IPI? ................................. 9
+    2.4       Existe na EFD campo para demonstrar que o ICMS já foi recolhido? ....................... 10
+    2.5       Como realizar o registro dos itens no Inventário na EFD (H010)? ............................ 10
+    2.6       Como declaro o documento fiscal de energia elétrica? ............................................ 10
+    2.7       Por que não estou conseguindo registrar NFC-e no livro de entrada? ..................... 11
+    2.8       O Registro D695 deve ser preenchido por empresas do SIMPLES nacional? ........... 11
+    2.9  Não encontrei o campo 15, DEB_ESP, do registro E110 ao consultar o PVA e que
+    também é mencionado no Guia Prático Estadual. Onde posso encontrá-lo?...................... 11
+    2.10      Como e quando devo declarar documento fiscal extemporâneo? ........................... 12
+    2.11      Como declaro o Demonstrativo de Informações Anuais?......................................... 13
+3      MULTAS ............................................................................................................................... 14
+    3.1    Estou com dúvida quanto a multas por infringir obrigações acessórias, onde
+    consulto a infração e a penalidade? ...................................................................................... 14
+    3.2       Qual a multa por atraso na entrega da EFD ICMS IPI? .............................................. 14
+4      REGRAS DE PÓS-VALIDAÇÃO .............................................................................................. 14
+    4.1   Estou com dúvidas em relação as regras de pós-validação e processamento da EFD,
+    como consultá-las? ................................................................................................................. 14
+
+
+Secretaria da Fazenda do Estado do Piauí                                                                                                 2
+    4.2  Descumpri regras de pós-validação de malha fiscal. Onde posso consultar os
+    documentos fiscais que constam em malha? ........................................................................ 14
+    4.3    Enviei uma EFD que não foi processada, como posso solicitar o reprocessamento
+    (exceção de EFD não processada)? ........................................................................................ 15
+    4.4    Por que a EFD que enviei não foi processada com base na regra 1.1.01 - O
+    contribuinte se encontra com a situação cadastral baixada, cancelada ou suspensa perante
+    a SEFAZ PI? .............................................................................................................................. 15
+    4.5    Por que a EFD que enviei foi processada com alerta de violação da regra 3.2.04 - O
+    resultado da apuração do contribuinte optante pelo Simples Nacional deve ser zero? ..... 16
+    4.6    Por que recebi um alerta sobre a regra 3.2.01 ou 3.2.02 - O valor do "Saldo credor
+    do período anterior" (campo 10 do E110) desta declaração deve ser igual ao valor do
+    "Saldo credor a transportar para o período seguinte” (campo 14 do E110) da EFD
+    imediatamente anterior? ....................................................................................................... 17
+    4.7    Sou contribuinte do Simples Nacional e recebi um alerta sobre descumprimento da
+    regra 3.2.01 ou 3.2.02. O que devo fazer para não descumprir as regras? .......................... 17
+    4.8    Por que a EFD que enviei foi processada com alerta de violação da regra 3.2.04 -
+    Empresa com Regime Especial vencido ou cancelado entregou a declaração como se ainda
+    detivesse o regime? ................................................................................................................ 18
+    4.9     Por que a EFD que enviei foi processada com alerta de violação da regra 3.3.03 - O
+    registro G110 - Ativo Permanente – CIAP deve ser informado quando for utilizado o ajuste
+    PI020005 (Crédito de bens do ativo imobilizado) no registro E111? .................................... 19
+5      EXTRATO DE PROCESSAMENTO ESTADUAL (EPE) E O PORTAL EFD .................................. 19
+    5.1        Onde posso consultar o EPE? ..................................................................................... 19
+    5.2        Enviei a EFD, mas não recebi o EPE, o que aconteceu? ............................................. 19
+    5.3        Estou com problemas ao fazer consultas no Portal EFD. Como devo proceder? ..... 19
+6      OUTROS ASSUNTOS ............................................................................................................ 20
+    6.1        Onde devo emitir o Documento de Arrecadação (DAR)? ......................................... 20
+    6.2  Possuía saldo credor e alterei a forma de recolhimento de correntista para SIMPLES
+    NACIONAL, como devo declarar?........................................................................................... 20
+
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                                                                  3
+1 CADASTRO
+  1.1 A minha Inscrição Estadual foi suspensa, suspensa de ofício, cancelada ou baixada.
+      Como devo proceder para enviar a EFD ICMS IPI?
+       O contribuinte suspenso, suspenso de ofício, cancelado ou baixado não deve enviar a
+EFD ICMS IPI.
+       Quando o contribuinte tem sua inscrição cadastral na SEFAZ-PI desativada, seja por ter
+sido suspensa, suspensa de ofício, cancelada, baixada ou por ter evoluído para “em processo de
+baixa”, automaticamente é descredenciado para o envio da EFD na data em que ocorreu a
+desativação.
+       Nos casos em que é possível a reativação, que são os casos de suspensão, suspensão de
+ofício, cancelada e processo de baixa, o contribuinte será automaticamente recredenciado para
+envio da EFD quando fizer a reativação cadastral.
+       Se o motivo da suspensão for omissão de declaração, o contribuinte deve enviar a EFD
+com a data final igual a data em que foi descredenciado e recolher as multas.
+       Caso o motivo da suspensão seja excesso de compras do MEI, para reativar o
+contribuinte deve fazer o desenquadramento do MEI via portal do empreendedor; com o
+número do processo no Piauí Digital de reenquadramento, solicitar o cálculo do excesso de
+transação, abrindo um chamado no Fale com a Sefaz, pelo email centralfcs@sefaz.pi.gov.br (o
+sistema retornará com um número de protocolo para acompanhamento); realizar o
+recolhimento espontâneo do excesso de transação calculado ou, no caso de lavratura de auto
+de infração, realizar o recolhimento do crédito tributário lançado no auto de infração ou, ainda
+mesmo, se parcelado, realizar o recolhimento da primeira parcela; realizar o recolhimento da
+taxa de reativação, no valor de 30 UFR-PI.
+       Se a razão for não localização ou simulação de operações e prestações, para reativar o
+contribuinte deve entrar com processo de reativação em uma das agências de atendimento.
+       Nos casos de inscrição cancelada e em processo de baixa, para reativar, a empresa deve
+entrar com processo de reativação em uma das agências de atendimento.
+       Devem acompanhar o processo de reativação a Ficha Cadastral em 01 (uma) via assinada
+pelo requerente com Declaração de Habilitação do Contador – DHP; Instrumento de outorga de
+poderes (Procuração), quando for o caso, acompanhado de fotocópias da Carteira de Identidade
+e do CPF do responsável que subscreveu o formulário de pedido de inscrição; Outros
+documentos que comprovem alterações ocorridas que resultem em atualização cadastral; Cópia
+do pagamento integral (DAR WEB) das multas da DIEF/EFD ou, caso tenha sido objeto de
+
+Secretaria da Fazenda do Estado do Piauí                                                   4
+Parcelamento, anexar a cópia do pagamento da primeira (1ª) parcela, nos casos de empresa
+cancelada por falta de entrega das DIEFs/EFDs por 06 meses consecutivos; Cópia do
+comprovante do pagamento de taxa de prestação de serviços públicos (30 UFR/PI).
+
+
+  1.2 O MEI está obrigado a enviar a EFD?
+        O Microempreendedor Individual - MEI - optante pelo Sistema de Recolhimento em
+Valores Fixos Mensais dos Tributos abrangidos pelo Simples Nacional - SIMEI - não está obrigado
+ao envio da EFD, conforme dispõe o inciso I, § 6° do art. 561.
+
+
+  1.3 Qual Perfil de EFD deve ser entregue por contribuintes do SIMPLES Nacional?
+        Os contribuintes que possuem regime de apuração do Simples Nacional e que se
+encontrem nos critérios de obrigatoriedade deverão enviar a EFD com o Perfil C, à exceção dos
+contribuintes optantes pelo SIMEI, que são dispensados do envio da EFD.
+        Caso o contribuinte do SN já tenha enviado a EFD referente a janeiro de 2021 no perfil
+B, não precisará enviar nova EFD no perfil C. No entanto, caso envie EFD retificadora referente
+a este período, deverá enviar no perfil C.
+
+
+  1.4 Alterei a forma de recolhimento de SIMPLES para correntista, ou de correntista para
+      SIMPLES, mas ainda não foi alterado o perfil de enquadramento, o que devo fazer?
+        Para os contribuintes que tiveram alteração no regime de recolhimento de Simples
+Nacional para Correntista e que ainda não tiveram o perfil de enquadramento alterado pela
+SEFAZ, deverão enviar a EFD com o perfil que está credenciado atualmente. Após o
+processamento da alteração no Cadastro da SEFAZ, deverão fazer a retificação enviando a EFD
+com o Perfil A.
+        Para os contribuintes que tiveram alteração no regime de recolhimento de Correntista
+para Simples Nacional e ainda não tiveram alterados o perfil pela SEFAZ, deverão enviar a EFD
+com o perfil de enquadramento que está credenciado atualmente, sem a necessidade de
+retificação posterior.
+
+
+  1.5 Certificado Digital
+        1.5.1 Meu certificado digital expirou, conseguirei enviar a EFD?
+        O certificado precisa estar dentro da validade, caso contrário o PVA não autoriza a
+assinatura e a posterior transmissão do arquivo.
+
+Secretaria da Fazenda do Estado do Piauí                                                   5
+        1.5.2 Quem pode assinar a EFD ICMS IPI?
+        Poderão assinar a EFD-ICMS/IPI, com certificados digitais do tipo A1 ou A3:
+        1. e-PJ ou e-CNPJ que contenha a mesma base do CNPJ (8 primeiros caracteres) do
+estabelecimento;
+        2. e-PF ou e-CPF do produtor rural ou do representante legal da empresa no cadastro
+CNPJ;
+        3. no caso de sucessão, a EFD-ICMS/IPI pode ser assinada com certificado digital da
+sucessora se o CNPJ da sucedida estiver extinto no cadastro CNPJ da RFB por um dos seguintes
+eventos: incorporação, fusão ou cisão total e se a EFDI CMS/IPI se referir a período de apuração
+anterior ao da data da sucessão.
+        4. a pessoa jurídica ou a pessoa física com procuração eletrônica cadastrada no site da
+RFB, por estabelecimento.
+        5. Inventariante com procuração eletrônica cadastrada no site da RFB.
+
+
+        1.5.3 Quais são os passos que o contribuinte deve seguir para o Cadastramento de
+              Procuração Eletrônica?
+        O Cadastramento de Procuração Eletrônica deverá seguir os seguintes passos:
+1.      No site da RFB, http://receita.economia.gov.br/, clicar em “Serviços”, selecionar:
+ Procuração e-CAC Eletrônica –
+2.      Cadastrar/Consultar/Cancelar > Atendimento e-CAC certificado digital. Ou acessar
+ diretamente: https://cav.receita.fazenda.gov.br/autenticacao/Login .
+3.      Login com certificado digital de pessoa jurídica ou pessoa física (produtor rural),
+ selecionar “Procuração eletrônica”:
+        a) Selecionar “Cadastrar Procuração” ou outra opção, se for o caso;
+        b) Selecionar “Solicitação de procuração para a Receita Federal do Brasil”;
+        c) Preencher os dados do formulário apresentado e selecionar a opção “Assinatura da
+Escrituração Fiscal Digital EFD-ICMS/IPI”, constante do quadro “Destinados tanto a Pessoa Física
+quanto a Pessoa Jurídica”.
+        d) Para finalizar, clicar em “Cadastrar procuração”.
+Obs.: No caso de estabelecer Procuração Eletrônica em nome de filial para terceiros:
+        a) https://cav.receita.fazenda.gov.br/scripts/CAV/login/login.asp
+        b) Login com certificado digital de pessoa jurídica;
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                   6
+        c) Na opção “Alterar perfil de acesso”, selecionar “CNPJ matriz atuando como CNPJ filial”
+e alterar;
+        d) Preencher os dados do formulário apresentado e selecionar a opção “Assinatura da
+Escrituração Fiscal Digital (EFD-ICMS/IPI) do Sistema Público de Escrituração Digital”, constante
+do quadro “Destinados tanto a Pessoa Física quanto a Pessoa Jurídica”.
+        e) Para finalizar, clicar em “Cadastrar procuração” ou “Limpar” ou “Voltar”.
+
+
+        1.5.4 Estou credenciado na Receita Federal e não consigo transmitir a EFD, pois é
+              apresentada a mensagem “Contribuinte não localizado (CNPJ/CPF + IE)”. O que
+              fazer?
+        O contribuinte que está credenciado na Receita Federal e não consegue transmitir a
+declaração, deverá verificar se está tentando fazer a transmissão de uma declaração de um
+período em que é obrigado e verificar se a declaração enviada está com perfil de
+enquadramento correto.
+        O contribuinte deve se certificar que está fazendo a transmissão de uma declaração de
+um período em que está obrigado, verificando se o campo 04 (DT_INI) do registro 0000 da EFD
+possui uma data maior ou igual à data de início do credenciamento e se o campo 05 (DT_FIN)
+do registro 000 da EFD possui uma data menor ou igual à data fim (no caso de período ainda em
+aberto, deve informar o último dia do período de referência). Além disso, deve verificar se o
+perfil informado no campo 14 (IND_PERFIL) do registro 0000 é igual ao perfil que está
+credenciado naquele período.
+        Por exemplo, o contribuinte com data de início de credenciamento 14/11/2020, com o
+perfil A, ao transmitir a EFD de 11/2020, deve informar no campo DT_INI a data 14/11/2020
+(que é a data início de credenciamento que consta na base da RFB) e no campo DT_FIM a data
+30/11/2020 (último dia do período), bem como deve informar no campo IND_PERFIL o perfil A,
+caso contrário receberá a mensagem de erro.
+
+
+2 REGISTROS EFD
+  2.1 O contribuinte do Simples Nacional deve registrar na EFD o Inventário (bloco H)?
+        O bloco H da EFD, como diz respeito às informações da empresa do ano anterior, não
+será exigido na EFD de fevereiro de 2021 para as empresas do SIMPLES, pois não eram obrigadas
+à EFD antes de 2021. Portanto, o contribuinte segue obrigado a apresentar o Livro Registro de
+Inventário para a SEFAZ PI no ano de 2021 referente às informações de 2020.
+
+Secretaria da Fazenda do Estado do Piauí                                                    7
+         Especificamente para o mês de fevereiro de 2021, em função da validação do PVA
+obrigar o contribuinte a informar o bloco H com dados, consequentemente também deverá
+informar o registro H005. Ou seja, os contribuintes que não estão obrigados a informar o
+inventário, deverão informar com os dados zerados.
+         Então deve ser feito da seguinte forma no registro H005: no campo 03, valor total do
+estoque, informar zero e no campo 04, motivo do inventário, selecionar a opção 05, por
+determinação do fisco, ambos do registro H005.
+         O saldo do estoque de mercadorias relativo ao exercício de 2020 deve ser informado
+pelos optantes do Simples Nacional na EFD de junho de 2021, utilizando também o registro E115
+e os códigos disponíveis na tabela 5.2.
+         A partir do ano 2022, os contribuintes optantes pelo Simples Nacional devem informar
+o bloco H, referente ao Livro Registro de Inventário, na EFD do mês de referência de fevereiro
+de cada ano. Dessa forma, em fevereiro de 2022, deverão informar o inventário do exercício de
+2021 e não precisarão informar o saldo do estoque de mercadorias no registro E115 da EFD de
+junho de 2022.
+
+
+    2.2 Como o contribuinte deve declarar a CVI na EFD?
+         O contribuinte deve ficar atento ao tipo de serviço que está identificado na Cobrança
+por Verificação de Irregularidade (CVI). A partir do tipo de serviço, o contribuinte realiza o
+lançamento na EFD da cobrança:
+▪        Se a CVI se refere a Antecipação Parcial e o contribuinte é do Simples Nacional, deverá
+utilizar o ajuste “PI050037 - Antecipação Parcial recolhida por Empresa do Simples Nacional” no
+registro E111, seguindo as demais orientações contidas no Guia Prático Estadual para informar
+os registros E110 e E116.
+▪        Se a CVI se refere a Antecipação Parcial e o contribuinte é do Regime Normal de
+apuração, deverá utilizar o ajuste “PI020004 – Crédito de Antecipação Parcial” e o ajuste
+“PI050006 - Débito Especial de Antecipação Parcial” no registro E111, seguindo as demais
+orientações contidas no Guia Prático Estadual para informar os registros E110 e E116.
+▪        Se a CVI se refere a Antecipação Total (AT sem encerramento de fase), que é descrito
+com o tipo de serviço “Irregularidades”, e o contribuinte é do Regime Normal de apuração,
+deverá declarar um ajuste para se aproveitar do crédito “PI020034" e outro "PI050007" para
+constituir o pagamento, ambos no registro E111, seguindo as demais orientações contidas no
+Guia Prático Estadual para informar os registros E110 e E116.
+
+Secretaria da Fazenda do Estado do Piauí                                                   8
+▪        Se a CVI se refere a Substituição das Entradas (Antecipação Total com encerramento de
+fase), e o contribuinte é optante pelo Simples Nacional ou Regime Normal de apuração, deverá
+utilizar o ajuste ““PI150006 - Débito Especial – Substituição das entradas – Entradas
+Interestaduais” no registro E220, seguindo as demais orientações contidas no Guia Prático
+Estadual para informar os registros E210 e E250.
+▪        Se a CVI se refere a Diferencial de alíquota e as mercadorias são para uso e consumo,
+sendo o contribuinte optante pelo Simples Nacional ou Regime Normal de apuração, deverá
+utilizar o ajuste PI050004 - Débito Especial de Diferencial de Alíquota – Uso ou Consumo no
+registro E111, seguindo as demais orientações contidas no Guia Prático Estadual para informar
+os registros E110 e E116.
+▪        Se a CVI se refere a Diferencial de alíquota e as mercadorias são para o imobilizado,
+sendo o contribuinte do Regime Normal de apuração, deverá utilizar o ajuste "PI050003 - Débito
+especial de diferencial de alíquota – imobilizado" no registro E111, seguindo as demais
+orientações contidas no Guia Prático Estadual para informar os registros E110 e E116.
+
+
+    2.3 Como o contribuinte deve declarar a CVI na OIE EFD ICMS IPI?
+         Se a cobrança constante na CVI se refere ao ICMS ST e ao FECOP ST e o contribuinte é
+inscrito como substituto tributário no Piauí, deverá fazer os seguintes lançamentos na OIE EFD
+ICMS IPI:
+         O contribuinte deverá lançar o valor correspondente aos Pagamentos Antecipados
+ICMS ST utilizando o ajuste “PI140006 – Pagamentos Antecipados ST” no registro E220 e lançar
+a dedução como somatório de todas as deduções no campo 12 (VL_DEDUÇÕES_ST) do registro
+E210. Além disso, deverá utilizar o ajuste “PI150008 – Débito Especial - Pagamentos Antecipados
+ST” no registro E220 e lançar como débito especial, como parte do somatório de todos os
+débitos especiais no campo 15 (DEB_ESP_ST) do registro E210.
+         O contribuinte deverá lançar o valor correspondente aos Pagamentos Antecipados
+FECOP ICMS ST, utilizando o ajuste “PI140007 – Pagamentos Antecipados FECOP ICMS ST” no
+registro E220 e lançar a dedução como somatório de todas as deduções no campo 12
+(VL_DEDUÇÕES_ST) do registro E210. Além disso, deverá utilizar o ajuste “PI150012 – Débito
+Especial - Pagamentos Antecipados FECOP ICMS ST” no registro E220 e lançar como débito
+especial, como parte do somatório de todos os débitos especiais no campo 15 (DEB_ESP_ST) do
+registro E210.
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                  9
+        Os valores recolhidos a título de Pagamento Antecipado ST e FECOP ST devem ser
+identificados em um único registro E250, somando-se os valores resultantes dos
+ajustes PI150008 e PI150012 do registro E220. O código de receita da obrigação a ser informado
+é o 113008.
+        Obs.: Caso não exista FECOP ST na operação, o contribuinte deverá lançar apenas os
+registros referentes ao Pagamento Antecipado ST.
+
+
+  2.4 Existe na EFD campo para demonstrar que o ICMS já foi recolhido?
+        Não. Na EFD não existem campos que identificam se o ICMS já foi recolhido ou não,
+como havia na DIEF. Na EFD existem registros nos quais o contribuinte escritura as informações
+das OBRIGAÇÕES DO ICMS RECOLHIDO OU A RECOLHER, que são os registros E116, E250 e E316.
+No entanto, não há campo para informar se recolhimento já foi feito ou não. Portanto, se o
+contribuinte recolheu determinado valor do ICMS antes da data do vencimento da obrigação,
+deverá preencher os dados do DAR nestes registros, podendo informá-los separadamente um a
+um, ou juntamente com o valor faltante das rubricas de mesmo tipo, colocando como data de
+vencimento aquela estipulada para o vencimento da obrigação faltante.
+
+
+  2.5 Como realizar o registro dos itens no Inventário na EFD (H010)?
+        Os itens devem estar cadastrados previamente no registro 0200. A Validação do campo
+2, código do item, do registro H010 é a seguinte: o valor informado no campo deve existir no
+campo COD_ITEM do registro 0200.
+        Para mais informações, ler a orientação disponível para o REGISTRO 0200: TABELA DE
+IDENTIFICAÇÃO DO ITEM (PRODUTO E SERVIÇOS), do Guia Prático Nacional e REGISTRO H010:
+INVENTÁRIO, disponível no seguinte link: http://sped.rfb.gov.br/pasta/show/1573.
+
+
+  2.6 Como declaro o documento fiscal de energia elétrica?
+        O contribuinte que não tem direito ao crédito de ICMS constante no documento fiscal
+de energia deve zerar o ICMS ao registrar o documento fiscal. Deverá registrá-lo no registro C500
+com o campo 20, valor do ICMS acumulado, preenchido com o valor zero.
+        Ressaltando que os contribuintes que têm direito ao crédito de energia elétrica na
+proporção das saídas para o exterior devem consultar o Guia Prático Estadual do Piauí sobre a
+forma de escrituração deste crédito.
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                    10
+  2.7 Por que não estou conseguindo registrar NFC-e no livro de entrada?
+        De acordo com o Guia Prático do SPED Fiscal (GUIA PRÁTICO EFD ICMS IPI, exceção 09
+do registro C100), a NFC-e não deverá ser escriturada no Livro Fiscal de Entrada. Sendo assim,
+as operações de entrada continuam sendo realizadas com a NF-e, devendo ser emitida uma NF-
+e (modelo 55) referenciando a NFC-e, com CFOP 5929. Assim dispõe o artigo 3º-A da portaria
+GSF Nº 606 /2015:
+                         Art. 3º-A. Fica autorizada a emissão de Nota Fiscal Eletrônica - NF-e, modelo 55,
+                         englobando as saídas acobertadas por Nota Fiscal de Consumidor Eletrônica - NFC-e,
+                         modelo 65, destinadas a estabelecimento contribuinte ou não do ICMS.
+
+        A portaria poderá ser consultada na seção de legislação do site da SEFAZ PI:
+        https://webas.sefaz.pi.gov.br/legislacao/asset/4a5fadd2-f065-4ea8-952d-
+0d3444dcc6b6/PORT+GSF+606_2015?view=publicationpage1
+
+
+  2.8 O Registro D695 deve ser preenchido por empresas do SIMPLES nacional?
+        O registro D695 não deve ser informado para o perfil C. Sendo assim, para que o PVA
+valide a EFD, o contribuinte deverá excluir o registro da escrituração.
+        Caso    as    Empresas      de    Comunicação        e    Telecomunicação         desejem     enviar
+espontaneamente o registro D695, deverão abrir um chamado no Fale com a SEFAZ solicitando
+a alteração do perfil.
+        Ressaltando que as empresas obrigadas ao convênio ICMS 115/2003 se encontram
+obrigadas à entrega dos arquivos previstos no convênio quando solicitados.
+        Empresas não obrigadas aos arquivos previstos no convênio ICMS 115/03 devem
+informar os registros D500 e D590.
+        A partir da página 296 do Guia Nacional (versão 3.0.7) o contribuinte pode verificar os
+registros que são obrigatórios para o perfil C:
+        http://sped.rfb.gov.br/estatico/55/9CCACF05685E011D7100D6CF1AD79EFD60EDF0/G
+uia%20Pr%c3%a1tico%20EFD%20-%20Vers%c3%a3o%203.0.7.pdf
+
+
+  2.9 Não encontrei o campo 15, DEB_ESP, do registro E110 ao consultar o PVA e que também
+      é mencionado no Guia Prático Estadual. Onde posso encontrá-lo?
+        O campo 15, DEB_ESP, do registro E110, é o campo “Valores recolhidos ou a recolher,
+extra-apuração”. A numeração dos campos segue o padrão do Guia Prático Nacional, conforme
+disponível     no    seguinte    link,   na    parte    downloads,       manuais      e   guias     práticos:
+
+
+Secretaria da Fazenda do Estado do Piauí                                                                11
+http://sped.rfb.gov.br/arquivo/show/5603. O campo 1, REG, do registro E110, inicia-se com o
+nome do registro. E o último campo 15, DEB_ESP, termina com o Valores recolhidos ou a
+recolher, extra-apuração.
+
+
+  2.10 Como e quando devo declarar documento fiscal extemporâneo?
+        O documento fiscal de entrada de mercadorias ou aquisição de serviços é considerado
+escriturado extemporaneamente quando o documento de entrada de mercadorias ou aquisição
+de serviços for escriturado fora do período de apuração em que deveria ter sido registrado. Os
+documentos de entrada devem ser registrados na data da efetiva entrada do estabelecimento.
+Quando registrados em períodos posteriores à data da efetiva entrada, serão considerados
+como extemporâneos.
+        A escrituração de um documento fiscal de saída de mercadorias ou prestação de serviços
+é considerado como escriturado extemporaneamente quando o documento fiscal de
+mercadorias ou prestação de serviços for escriturado fora do período de apuração em que
+deveria ter sido registrado.
+        A legislação do ICMS do Piauí define que para documentos fiscais de saída o imposto
+deve ser apropriado com base na data de emissão dos documentos fiscais. Com isso, o
+contribuinte deve proceder da seguinte forma: todos os documentos de saídas com código de
+situação de documento igual a “00” (documento regular) devem ser lançados no período de
+apuração informado no registro 0000, considerando a data de emissão do documento, e, se a
+data de saída for maior que a data final do período de apuração, este campo não pode ser
+preenchido.
+        Caso o contribuinte tente escriturar extemporaneamente documento fiscal na EFD em
+período com a data igual à data de emissão do documento de saída ou igual à data de entrada
+no estabelecimento, o PVA acusará erro, pois não é permitido escriturar documento com o
+código de situação de extemporâneo igual ao período de referência da declaração.
+        Exemplo 1 - Documento Fiscal de Saída: na situação em que uma empresa emite NFe
+no dia 05/07/2021, e a data de saída da mercadoria também é no dia 05/07/2021. E o
+documento fiscal não é escriturado na EFD original do mês 07/2021.
+        O contribuinte pode retificar a EFD de 07/2021 e incluir essa NFe com o código de
+situação 00, documento regular.
+        Essa nota pode ainda ser registrada no período 08/2021, para tanto o contribuinte
+deverá escriturar extemporaneamente esse documento emitido em julho de 2021 na EFD do
+
+Secretaria da Fazenda do Estado do Piauí                                                  12
+período 08/2021. Para escriturar extemporaneamente o documento fiscal no período 08/2021,
+a data de emissão e a data de saída do estabelecimento devem permanecer as originais, dia
+05/07/2021, e o código de situação a ser informado deve ser o 01, escrituração extemporânea
+de documento regular.
+          Exemplo 2 - Documento Fiscal de Entrada: na situação em que uma empresa realiza
+uma compra de mercadoria. A NFe é emitida no dia 05/07/2021, e a data de entrada da
+mercadoria é no dia 11/08/2021. Via de regra a nota de entrada deve ser escriturada no mês de
+entrada da mercadoria no estabelecimento, ou seja, no período 08/2021, com o código de
+situação 00, escrituração de documento regular.
+          Caso o contribuinte não escriture a nota tempestivamente no período 08/2021, deverá
+escriturá-la extemporaneamente no período 09/2021 ou seguintes, e as datas de emissão e
+datas de entrada no estabelecimento permanecem as originais, ou seja, para data de emissão
+05/07/2021, data de entrada 11/08/2021. Além disso, código de situação será o 01, escrituração
+extemporânea de documento regular.
+          O contribuinte deve consultar o Guia Prático Estadual para mais informações sobre o
+registro extemporâneo. Além disso, o contribuinte poderá consultar a ficha da malha por meio
+do acesso restrito do e-ageat, módulo Siat Web. A respectiva ficha da malha de não registro está
+disponível na opção "Visualizar Regra da Malha" (representada por um símbolo "i"), onde
+também podem ser encontradas orientações sobre o registro extemporâneo de documento
+fiscal.
+
+
+  2.11 Como declaro o Demonstrativo de Informações Anuais?
+          De acordo com o Decreto 13.500/2008, art. 565-A, os contribuintes obrigados a entrega
+da EFD ICMS IPI devem informar na EFD referente ao mês de junho de cada ano, o registro das
+despesas operacionais e disponibilidades financeiras relativas ao exercício anterior, utilizando o
+registro E115 e os códigos disponíveis na tabela 5.2.
+          Todos os códigos utilizados no registo E115 para o Demonstrativo de Informações
+Anuais       são      retirados     da     tabela       5.2,    disponível      no      endereço
+http://www.sped.fazenda.gov.br/spedtabelas/AppConsulta/publico/aspx/ConsultaTabelasExte
+rnas.aspx?CodSistema=SpedFiscal
+          O saldo do estoque de mercadorias relativo ao exercício de 2020 deve ser informado
+pelos optantes do Simples Nacional na EFD de junho de 2021, utilizando também o registro E115
+e os códigos disponíveis na tabela 5.2.
+
+Secretaria da Fazenda do Estado do Piauí                                                     13
+        A partir do ano 2022, os contribuintes optantes pelo Simples Nacional devem informar
+o bloco H, referente ao Livro Registro de Inventário, na EFD do mês de referência de fevereiro
+de cada ano. Dessa forma, em fevereiro de 2022, deverão informar o inventário do exercício de
+2021 e não precisarão informar o saldo do estoque de mercadorias no registro E115 da EFD de
+junho de 2022.
+
+
+3 MULTAS
+  3.1 Estou com dúvida quanto a multas por infringir obrigações acessórias, onde consulto a
+      infração e a penalidade?
+        As multas relativas às obrigações acessórias podem ser consultadas na lei 4.257/89,
+Título IV, das infrações e penalidades, Capítulo II, das penalidades, seção III, das multas relativas
+às obrigações acessórias.
+
+
+  3.2 Qual a multa por atraso na entrega da EFD ICMS IPI?
+        A multa por omissão da EFD, em função do não envio ou atraso na entrega da declaração
+é de 10 (dez) UFR-PI aos contribuintes que, em até 30 (trinta) dias, contados do término do prazo
+regulamentar, deixarem de entregar ou entregarem, espontaneamente ou em ação fiscal e de
+50 UFR-PI para os que deixarem de entregar em prazo superior a 30 (trinta) dias, conforme
+dispõe o artigo 79, inciso I, b e inciso II, c, respectivamente.
+
+
+4 REGRAS DE PÓS-VALIDAÇÃO
+  4.1 Estou com dúvidas em relação as regras de pós-validação e processamento da EFD,
+      como consultá-las?
+        As regras de pós-validação da Escrituração Fiscal Digital podem ser consultadas na seção
+de Declarações e Documentos Eletrônicos do Site da SEFAZ PI:
+        https://portal.sefaz.pi.gov.br/documentoseletronicos/portal/efd/documentos.php
+
+
+  4.2 Descumpri regras de pós-validação de malha fiscal. Onde posso consultar os
+      documentos fiscais que constam em malha?
+        As consultas às notas fiscais que geraram inconsistências do tipo malha fiscal devem ser
+realizadas no SIAT WEB. Caso sejam referentes ao período corrente, estará disponível somente
+no dia seguinte à data limite para entrega da declaração. Caso sejam referentes a períodos
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                        14
+anteriores, a atualização da malha estará disponível somente no dia seguinte ao processamento
+da declaração enviada (retificadora ou original).
+
+
+  4.3 Enviei uma EFD que não foi processada, como posso solicitar o reprocessamento
+      (exceção de EFD não processada)?
+        O contribuinte de forma excepcional e justificada, demonstrando que a declaração está
+adequada, poderá solicitar a exceção de EFD não processada, para que a EFD seja reprocessada
+e considerada válida, após análise pela autoridade fiscal.
+        A solicitação de contribuinte que não está em auditoria preventiva deverá ser feita por
+processo administrativo SEI, em agência de atendimento e meios que estas disponibilizem. O
+contribuinte deve incluir no processo, além da justificativa e documentos comprobatórios, o
+comprovante de recolhimento da taxa de serviço – outras hipóteses.
+        O contribuinte acompanhado em auditoria preventiva pode entrar em contato com o
+auditor responsável, apresentando as justificativas e documentos comprobatórios para exceção
+de EFD não processada.
+        Os processos relacionados ao pedido de exceção deverão ser protocolados
+presencialmente em uma agência de atendimento. No caso de OIE EFD ICMS IPI não processada,
+os contribuintes de outras Unidades da Federação poderão encaminhar o pedido por meio do
+e-mail: ageat.interestadual@sefaz.pi.gov.br.
+
+
+  4.4 Por que a EFD que enviei não foi processada com base na regra 1.1.01 - O contribuinte
+      se encontra com a situação cadastral baixada, cancelada ou suspensa perante a SEFAZ
+      PI?
+        O contribuinte suspenso, suspenso de ofício, cancelado ou baixado não deve enviar a
+EFD ICMS IPI. Quando o contribuinte tem sua inscrição cadastral na SEFAZ-PI desativada, seja
+por ter sido suspensa, suspensa de ofício, cancelada, baixada ou por ter evoluído para “em
+processo de baixa”, automaticamente é descredenciado para o envio da EFD na data em que
+ocorreu a desativação.
+        Nos casos em que é possível a reativação, que são os casos de suspensão, suspensão de
+ofício, cancelada e processo de baixa, o contribuinte será automaticamente recredenciado para
+envio da EFD quando fizer a reativação cadastral.
+        Em alguns casos a obrigação no cadastro estadual é desativada, mas a obrigação na
+Receita Federal permanece por não ter sido desativada juntamente com a obrigação estadual.
+
+Secretaria da Fazenda do Estado do Piauí                                                  15
+Sendo assim, o contribuinte consegue enviar a EFD para a Receita Federal, que envia a
+declaração para a SEFAZ PI. Esta declaração não é processada perante a SEFAZ PI, em função de
+descumprir a regra 1.1.01. O contribuinte deve abrir um chamado no Fale com a SEFAZ
+solicitando o encerramento da obrigação na Receita Federal.
+        Mais detalhes sobre como solucionar, consultar no item deste documento “Tive minha
+Inscrição Estadual suspensa, suspensa de ofício, cancelada ou baixada, como devo proceder para
+enviar a EFD ICMS IPI”.
+
+
+4.5 Por que a EFD que enviei foi processada com alerta de violação da regra 3.2.04 - O
+    resultado da apuração do contribuinte optante pelo Simples Nacional deve ser zero?
+        Os contribuintes do Simples Nacional em sua escrituração devem se atentar ao
+resultado de sua apuração que deve estar zerado. Ou seja, o campo ICMS a recolher e o campo
+saldo credor a transportar devem estar zerados.
+        Para isso, o contribuinte deverá zerar a base de cálculo do ICMS e zerar o valor do
+imposto ao declarar os documentos fiscais de entrada e saída nos registros de documentos
+fiscais da EFD. Sendo assim, o campo 02, valor total dos débitos por "Saídas e prestações com
+débito do imposto" e o campo 06, Valor total dos créditos por "Entradas e aquisições com
+crédito do imposto" do registro E110 serão também informados com o valor zero, resultando
+em valor zero para os campos 13, valor total de ICMS a recolher e 14, valor total de "Saldo credor
+a transportar para o período seguinte”, não ocorrendo a violação à regra 3.2.04.
+        Caso o contribuinte informe a base de cálculo do ICMS e valor do imposto ao registrar
+os documentos fiscais, deverá na apuração, registro E110, realizar os seguintes ajustes:
+        a) O campo 05, valor total dos ajustes de estornos de créditos, deverá ser preenchido
+com o valor exato do total dos créditos por entradas que opcionalmente tenham sido declarados
+no campo 06, valor total dos créditos, de forma que resulte em anulação dos valores.
+        b) O campo 09, valor total de ajustes de estornos de débitos, deverá ser preenchido
+somente na existência de algum valor no campo 02, valor total dos débitos, de forma que
+também resulte em anulação dos valores.
+        No registro E111, ajuste/benefício/incentivo, preencher utilizando os seguintes códigos
+de ajustes constantes na tabela 5.1.1:
+        a) PI010013 – Estorno de créditos para apuração do ICMS Simples Nacional, informando
+o valor constante no campo 05 do registro E110;
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                     16
+        b) PI030005 – Estorno de débitos para apuração do ICMS Simples Nacional, informando
+o valor constante no campo 09 do registro E110.
+        Ao proceder com esses ajustes, resultará em valor zero para os campos 13, valor total
+de ICMS a recolher e campo 14, valor total de "Saldo credor a transportar para o período
+seguinte” do registro E110, não ocorrendo a violação à regra 3.2.04.
+
+
+  4.6 Por que recebi um alerta sobre a regra 3.2.01 ou 3.2.02 - O valor do "Saldo credor do
+      período anterior" (campo 10 do E110) desta declaração deve ser igual ao valor do "Saldo
+      credor a transportar para o período seguinte” (campo 14 do E110) da EFD
+      imediatamente anterior?
+        O contribuinte ao receber alerta da regra 3.2.01 ou 3.2.02, deve analisar se o valor do
+“saldo credor do período anterior” da declaração está diferente do valor do "Saldo credor a
+transportar para o período seguinte” da EFD imediatamente anterior. Os valores destes dois
+campos devem ser iguais.
+        Caso tenha descumprido a regra 3.2.01, significa que informou o valor do "Saldo credor
+do período anterior" (campo 10 do E110) da declaração maior que o valor do "Saldo credor a
+transportar para o período seguinte” (campo 14 do E110) da EFD imediatamente anterior.
+        Caso tenha descumprido a regra 3.2.02, significa que informou o valor do "Saldo credor
+do período anterior" (campo 10 do E110) da declaração menor que o valor do "Saldo credor a
+transportar para o período seguinte” (campo 14 do E110) da EFD imediatamente anterior.
+        Nas duas hipóteses, o contribuinte deve enviar uma EFD retificadora, igualando os
+valores do "Saldo credor do período anterior" (campo 10 do E110) da declaração e o valor do
+"Saldo credor a transportar para o período seguinte” (campo 14 do E110) da EFD imediatamente
+anterior.
+
+
+  4.7 Sou contribuinte do Simples Nacional e recebi um alerta sobre descumprimento da
+      regra 3.2.01 ou 3.2.02. O que devo fazer para não descumprir as regras?
+        Os contribuintes do Simples Nacional em sua escrituração devem se atentar ao
+resultado de sua apuração que deve estar zerado. Ou seja, o campo ICMS a recolher e o campo
+saldo credor a transportar devem estar zerados.
+        O contribuinte ao não zerar o campo “saldo credor a transportar” da EFD anterior e
+informar valor divergente na EFD imediatamente posterior no campo “saldo credor do período
+anterior”, causará a divergência e o descumprimento da regra.
+
+Secretaria da Fazenda do Estado do Piauí                                                   17
+        Exemplo: No período 02/2021, determinada empresa do Simples Nacional teve R$10,00
+de crédito decorrente das entradas, pois não zerou o ICMS quando escriturou os documentos
+fiscais de entrada. Também não lançou o ajuste PI010013 no registro E111, estorno de créditos
+para apuração do ICMS Simples Nacional, informando o valor de R$10,00. Consequentemente
+teve R$10,00 de saldo credor a transportar para o período seguinte.
+        No período 03/2021, informou no campo saldo credor do período anterior o valor zero.
+Ou seja, o Saldo credor do período anterior" da declaração foi menor que o valor do "Saldo
+credor a transportar para o período seguinte” da EFD imediatamente anterior, ocorrendo o
+descumprimento da regra 3.2.02.
+        No entanto, o contribuinte sendo do Simples Nacional, não deve ter saldo credor a
+transportar. Portanto, o correto a se fazer no período 02/2021 é zerar os valores de ICMS
+diretamente nos documentos fiscais ou fazer um ajuste PI010013 no registro E111, estorno de
+créditos para apuração do ICMS Simples Nacional no valor de R$10,00, para que o valor do
+crédito pelas entradas não seja levado para apuração. Com isso, o resultado de sua apuração
+será zero, não havendo saldo credor a transportar para o período seguinte, ficando igual ao valor
+zero do Saldo credor do período anterior da EFD do período 03/2021.
+        Para mais informações acesse o Guia Estadual no item referente à escrituração da EFD
+pelos contribuintes optantes pelo Simples Nacional:
+        https://portal.sefaz.pi.gov.br/documentoseletronicos/portal/efd/documentos.php
+
+
+  4.8 Por que a EFD que enviei foi processada com alerta de violação da regra 3.2.04 - Empresa
+      com Regime Especial vencido ou cancelado entregou a declaração como se ainda
+      detivesse o regime?
+        Isto pode ocorrer quando o contribuinte não está com o benefício fiscal cadastrado no
+sistema da SEFAZ e utilizou o ajuste correspondente ao benefício em sua apuração, com isso,
+violou a regra. Caso a empresa detenha efetivamente regime especial, deve entrar em contato
+com a UNATRI para que o cadastro seja corrigido.
+        Outra hipótese ocorre quando o contribuinte não possui nenhum tipo de benefício fiscal
+e utiliza ajuste específico do regime. Sendo assim, também violará a regra, devendo retificar a
+sua declaração utilizando o ajuste correto correspondente ao seu regime de apuração.
+
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                    18
+4.9 Por que a EFD que enviei foi processada com alerta de violação da regra 3.3.03 - O registro
+    G110 - Ativo Permanente – CIAP deve ser informado quando for utilizado o ajuste
+    PI020005 (Crédito de bens do ativo imobilizado) no registro E111?
+       A violação da regra 3.3.03 ocorre quando o contribuinte utiliza o ajuste PI020005
+(Crédito de bens do ativo imobilizado) no registro E111 e não declara o registro G110 – CIAP.
+Outra hipótese de violação ocorre quando o contribuinte declara no ajuste PI020005 do registro
+E111 um valor diferente do valor a ser apropriado informado no registro G110.
+       O contribuinte deve se atentar que o valor preenchido no campo 04, valor do ajuste da
+apuração, referente ao ajuste PI020005, no registro E111, deve ser igual à soma dos campos 09,
+valor de ICMS a ser apropriado na apuração do ICMS e campo 10, valor de outros créditos a ser
+apropriado na Apuração do ICMS, ambos do registro G110.
+
+
+5 EXTRATO DE PROCESSAMENTO ESTADUAL (EPE) E O PORTAL EFD
+  5.1 Onde posso consultar o EPE?
+       O contribuinte pode consultar o EPE no Domicílio Tributário Eletrônico, acesso pela e-
+ageat. Além disso, também poderá consultá-lo por meio do Portal EFD. Além disso, no portal
+poderá consultar omissões de arquivos, consultar/exportar arquivos. O acesso deve ser feito
+pela e-ageat ou pelo Controle de Acesso Unificado (CAU), por meio do certificado digital da
+Empresa ou do contador pelo seguinte link: https://app.sefaz.pi.gov.br/efd-node-web/.
+
+
+  5.2 Enviei a EFD, mas não recebi o EPE, o que aconteceu?
+       Após a transmissão do arquivo da EFD, este é enviado para a Receita Federal, que em
+seguida envia para a SEFAZ PI, que processa o arquivo e ao final envia o EPE para o DTe do
+contribuinte. Existe um tempo até que o EPE chegue ao DTe e este pode variar a depender do
+dia que o contribuinte transmite a EFD.
+       Caso o contribuinte ainda não consiga visualizar o EPE no DTe, deve abrir um chamado
+no Fale com a SEFAZ, informando os dados da empresa e um print da caixa de entrada marcando
+a opção mostrar todas as mensagens.
+
+
+  5.3 Estou com problemas ao fazer consultas no Portal EFD. Como devo proceder?
+       Caso as consultas efetuadas pelo contribuinte no Portal EFD não retornem nenhum tipo
+de informação, o contribuinte deverá limpar o histórico do navegador e o cache. Outra opção é
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                  19
+acessar através de uma janela anônima (ctrl + shitf + N). Caso ainda assim não consiga acessar,
+deverá abrir um chamado no Fale com a SEFAZ relatando o erro.
+
+
+6 OUTROS ASSUNTOS
+  6.1 Onde devo emitir o Documento de Arrecadação (DAR)?
+        A emissão do DAR pode ser feita pelo DAR Web pelo seguinte link:
+https://webas.sefaz.pi.gov.br/darweb/
+        O contribuinte também conta com a possibilidade de aguardar o envio da declaração
+bem como o processamento dessa EFD pela SEFAZ com a geração do respectivo EPE (Extrato de
+Processamento Estadual enviado via DTE) e da conta corrente para então emitir os DARs pela
+funcionalidade Visão Integral do SIAT WEB (acesso pelo e-AGEAT). Contudo, mesmo com essa
+funcionalidade, o contribuinte deve estar atento tanto aos valores quanto a todas as rubricas
+que devem ser pagas para o período e conferir se os DAR correspondem ao que foi lançado,
+antes de efetuar o recolhimento. Eventuais erros na escrituração podem gerar erros na
+formação da conta corrente e consequentemente no DAR.
+
+
+  6.2 Possuía saldo credor e alterei a forma de recolhimento de correntista para SIMPLES
+      NACIONAL, como devo declarar?
+        O contribuinte enquadrado no Regime Normal que optar pelo regime do Simples
+Nacional deverá estornar o crédito eventualmente existente em sua escrita fiscal, uma vez que
+está impedido de aproveitar crédito de ICMS, conforme estabelece o artigo 23 da Lei
+Complementar 123/2006:
+                       Art. 23. As microempresas e as empresas de pequeno porte optantes pelo Simples
+                       Nacional não farão jus à apropriação nem transferirão créditos relativos a impostos ou
+                       contribuições abrangidos pelo Simples Nacional.
+
+        Na situação em que o contribuinte no mês de referência de dezembro 2020 pertencer
+ao Regime Normal e em janeiro de 2021 optar pelo Simples Nacional, e tendo saldo credor a
+transferir em dezembro, não poderá se creditar do saldo credor apurado no mês de janeiro de
+2021, pois na migração do Regime Normal para o regime do Simples Nacional em 2021 deve
+estornar o crédito existente em sua escrita fiscal.
+        Conforme dispõe o artigo 89 do RICMS, quando da opção, na hipótese de existência de
+saldo credor do ICMS na escrita fiscal de estabelecimento vinculado ao regime normal de
+
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                                20
+apuração do imposto, deverá ser efetuado seu estorno na Ficha “Apuração do Imposto”, no
+Campo “Débito do Imposto”, Linha “Estorno de Créditos” da DIEF.
+       Na EFD ICMS IPI o contribuinte também deverá fazer o estorno do crédito, zerando a
+apuração do mês em que apurava como Regime Normal para que não transfira ICMS para
+período em que apurará como Simples Nacional.
+       Para o mês em que era do Regime Normal, deverá utilizar um estorno de crédito com o
+valor do saldo credor resultante de sua apuração. O contribuinte deverá utilizar o ajuste
+PI010015, estorno de crédito na hipótese de existência de saldo credor na alteração de regime
+Normal para Simples Nacional.
+       Sendo assim, o contribuinte do Simples Nacional não poderá se aproveitar de saldo
+credor do período anterior, devendo informar o campo 10 (Valor total de "Saldo credor do
+período anterior") do registro E110 com o valor zero.
+
+
+
+
+Secretaria da Fazenda do Estado do Piauí                                                 21
+
