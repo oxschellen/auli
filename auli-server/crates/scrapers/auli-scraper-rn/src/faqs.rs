@@ -467,7 +467,7 @@ mod tests {
         assert_eq!(a.children.len(), 1);
         let n = &a.children[0];
         assert_eq!(
-            (n.title.as_str(), n.url.as_str(), n.page_type.clone()),
+            (n.title.as_str(), n.url.as_str(), n.page_type),
             ("Nota Potiguar", LINK, PageType::Faq)
         );
         assert_eq!(n.faq_items.len(), 23);
