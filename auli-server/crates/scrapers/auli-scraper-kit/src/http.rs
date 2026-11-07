@@ -22,6 +22,9 @@ pub struct GetOpts<'a> {
     pub attempts: u32,
     /// Atraso inicial do backoff (dobra a cada tentativa falha).
     pub base_delay: Duration,
+    /// Teto do corpo da resposta do GET, em bytes. `None` = o do `ureq` (10 MB). As FAQs do RO trazem 21 MB num GET
+    /// (os artigos com imagens em base64).
+    pub limite_bytes: Option<u64>,
 }
 
 impl Default for GetOpts<'_> {
@@ -32,6 +35,7 @@ impl Default for GetOpts<'_> {
             headers: &[],
             attempts: 3,
             base_delay: Duration::from_millis(800),
+            limite_bytes: None,
         }
     }
 }
@@ -50,7 +54,10 @@ pub fn get_string(agent: &ureq::Agent, url: &str, opts: &GetOpts) -> Result<Stri
             req = req.header(*k, *v);
         }
         match req.call() {
-            Ok(mut resp) => match resp.body_mut().read_to_string() {
+            Ok(mut resp) => match match opts.limite_bytes {
+                Some(n) => resp.body_mut().with_config().limit(n).read_to_string(),
+                None => resp.body_mut().read_to_string(),
+            } {
                 Ok(s) if !s.trim().is_empty() => return Ok(s),
                 Ok(_) => last = anyhow!("resposta vazia"),
                 Err(e) => last = anyhow!(e.to_string()),

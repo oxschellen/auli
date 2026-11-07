@@ -15,3 +15,7 @@ ureq = { version = "3", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 anyhow = "1"
+# As FAQs (`faqs.rs`): as perguntas dentro de uma seção pelo `kit::linhas` (o fragmento pelo `scraper`) e os
+# rótulos "Pergunta:"/"Resposta:".
+regex = "1"
+scraper = "0.27.0"

@@ -21,6 +21,7 @@ use auli_contract::FaqRaw;
 use auli_scraper_kit::clean;
 use auli_scraper_kit::faqtree::{FaqItem, FaqNode, PageType};
 use auli_scraper_kit::http::GetOpts;
+use auli_scraper_kit::sydle;
 
 use crate::ce;
 
@@ -50,8 +51,6 @@ const MIN_PERGUNTAS: usize = 2400;
 /// Artigos de FAQ sem nenhuma seção (lista de bancos, link para o gov.br, "-"): 3 em 03/11/2026. Acima disto, o
 /// template mudou (D-CEFAQ-6).
 const MAX_SEM_SECOES: usize = 10;
-
-const BLOCO: &str = "<div class=\"section-wrapper\">";
 
 /// Lê a listagem do `conteudo-geral` e cada artigo de FAQ e grava a árvore do frontend (`<id>-faqs-tree.json`) e o
 /// snapshot. As guardas rodam antes de qualquer gravação: rodada que falha deixa os arquivos anteriores intactos.
@@ -247,90 +246,41 @@ struct Pergunta {
     url: String,
 }
 
-static SLUG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"id="section-([^"]*)""#).unwrap());
-static H2_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?s)<h2\b[^>]*>(.*?)</h2>").unwrap());
-static MD_H2_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?m)^##[ \t]+(.+?)[ \t]*$").unwrap());
-
 /// As perguntas de um artigo, ou `None` quando ele não tem seções (`contentFormat` HTML, ou nenhum bloco):
-/// o artigo fica fora, com log (D-CEFAQ-6).
+/// o artigo fica fora, com log (D-CEFAQ-6). As seções vêm do kit (`kit::sydle`, D-SYDFAQ-6).
 fn secoes(a: &Artigo) -> Result<Option<Vec<Pergunta>>> {
     let md = a.markdown.as_deref().unwrap_or("");
-    // O que vem antes do 1º bloco é o `<style>` e o botão "Expandir todas".
-    let blocos: Vec<&str> = md.split(BLOCO).skip(1).collect();
-    if a.formato.as_deref() != Some("MARKDOWN") || blocos.is_empty() {
+    if a.formato.as_deref() != Some("MARKDOWN") || !md.contains(sydle::BLOCO) {
         return Ok(None);
-    }
-    let ancoras = md.matches("id=\"section-").count();
-    if ancoras != blocos.len() {
-        bail!(
-            "{ancoras} âncora(s) id=\"section-\" para {} bloco(s) — o template mudou?",
-            blocos.len()
-        );
     }
     let url_artigo = url_artigo(&a.identifier, &a.id);
     let mut slugs = HashSet::new();
-    let mut out = Vec::with_capacity(blocos.len());
-    for bloco in blocos {
-        let (slug, pergunta, resposta) = secao(bloco)?;
+    let mut out = Vec::new();
+    for s in sydle::secoes(md, ce::BASE)? {
+        if s.titulo.is_empty() {
+            bail!("a seção {} tem a pergunta vazia", s.slug);
+        }
+        if s.texto.is_empty() {
+            bail!("a pergunta {:?} não tem resposta", s.titulo);
+        }
         // O portal repete o slug quando duas perguntas só diferem em pontuação (uma em 03/11/2026, `ICMS/IPI` e
         // `ICMS|IPI`, com respostas diferentes): as duas entram. A colisão de verdade é a do `.md`.
-        if !slugs.insert(slug.clone()) {
-            eprintln!("⚠️  CE FAQs: a âncora #section-{slug} se repete em {url_artigo}");
+        if !slugs.insert(s.slug.clone()) {
+            eprintln!(
+                "⚠️  CE FAQs: a âncora #section-{} se repete em {url_artigo}",
+                s.slug
+            );
         }
         out.push(Pergunta {
             id: a.id.clone(),
-            url: format!("{url_artigo}#section-{slug}"),
-            pergunta,
-            resposta,
+            url: format!("{url_artigo}#section-{}", s.slug),
+            pergunta: s.titulo,
+            resposta: s.texto,
             artigo: clean(&a.name),
             url_artigo: url_artigo.clone(),
         });
     }
     Ok(Some(out))
-}
-
-/// `(slug, pergunta, resposta)` de um bloco. A pergunta mora no cabeçalho, antes do `<sy-collapse>`: em `<h2>`
-/// (template de 2026) ou na linha `## ` (2024, markdown).
-fn secao(bloco: &str) -> Result<(String, String, String)> {
-    let slug = SLUG_RE
-        .captures(bloco)
-        .map(|c| c[1].to_string())
-        .ok_or_else(|| anyhow!("bloco sem id=\"section-…\""))?;
-    let gatilho = format!("trigger-by=\"#section-{slug}\"");
-    let i = bloco
-        .find(&gatilho)
-        .ok_or_else(|| anyhow!("a seção {slug} não tem o <sy-collapse> dela"))?;
-    let inicio_linha = bloco[..i].rfind('\n').map_or(0, |j| j + 1);
-    if !bloco[inicio_linha..i].contains("<sy-collapse") {
-        bail!("o gatilho da seção {slug} não está numa tag <sy-collapse>");
-    }
-    let cabecalho = &bloco[..inicio_linha];
-    let (pergunta, markdown) = match H2_RE.captures(cabecalho) {
-        Some(c) => (c[1].to_string(), false),
-        None => (
-            MD_H2_RE
-                .captures(cabecalho)
-                .map(|c| c[1].to_string())
-                .ok_or_else(|| anyhow!("a seção {slug} não tem pergunta (nem <h2> nem ##)"))?,
-            true,
-        ),
-    };
-    // A tag de abertura termina no fim da linha, não no primeiro `>`: a do template de 2024 traz
-    // `ref="(r) => handleState(r)"`, um `>` dentro do atributo.
-    let corpo = bloco[i..]
-        .split_once('\n')
-        .map(|(_, resto)| resto)
-        .ok_or_else(|| anyhow!("a seção {slug} acaba na tag <sy-collapse>"))?;
-    let pergunta = clean(&html_para_texto(&pergunta, false).replace('\n', " "));
-    let resposta = html_para_texto(corpo, markdown);
-    if pergunta.is_empty() {
-        bail!("a seção {slug} tem a pergunta vazia");
-    }
-    if resposta.is_empty() {
-        bail!("a pergunta {pergunta:?} não tem resposta");
-    }
-    Ok((slug, pergunta, resposta))
 }
 
 /// O artigo no portal: `…/<identifier>+<_id>`, como o `link` dos serviços; sem `identifier`, a forma curta.
@@ -426,21 +376,10 @@ fn montar_arvore(perguntas: &[Pergunta]) -> FaqNode {
     }
 }
 
-/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): no modo `markdown` (o
-/// `contentMarkdown` do Sydle) a quebra do fonte é quebra.
-fn html_para_texto(s: &str, markdown: bool) -> String {
-    auli_scraper_kit::html::html_para_texto(
-        s,
-        auli_scraper_kit::html::Opcoes {
-            base: Some(ce::BASE),
-            quebras_do_fonte: markdown,
-        },
-    )
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use auli_scraper_kit::sydle::BLOCO;
 
     // Da coleta de 03/11/2026 (pacotes do estudo), só com os campos que o scraper lê. Artigos: CTe (template de
     // 2024, 46 seções, a tag `<sy-collapse>` com `>` no atributo), Diferimento (template de 2026, 17 seções, com
@@ -650,18 +589,6 @@ mod tests {
         assert!(parse_artigo(CTE, ID_CTE).is_ok());
         assert!(parse_artigo(CTE, ID_DIFERIMENTO).is_err());
         assert!(parse_artigo("<html>", ID_CTE).is_err());
-    }
-
-    #[test]
-    fn links_e_listas_viram_texto() {
-        let html = r#"<p>Veja <a href="https://x.ce.gov.br/a">o manual</a> e <a href="https://y">https://y</a>.</p><ul><li>um</li><li>dois &amp; tr&ecirc;s</li></ul><a href="javascript:void(0)">nada</a>"#;
-        assert_eq!(
-            html_para_texto(html, false),
-            "Veja o manual \"https://x.ce.gov.br/a\" e \"https://y\".\num\ndois & três\nnada"
-        );
-        // No HTML a quebra do fonte é espaço; no markdown, quebra.
-        assert_eq!(html_para_texto("a\nb", false), "a b");
-        assert_eq!(html_para_texto("a\n- b", true), "a\n- b");
     }
 
     #[test]

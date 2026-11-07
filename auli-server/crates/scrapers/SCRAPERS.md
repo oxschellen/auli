@@ -36,12 +36,13 @@ Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/
 
 | Item | O que faz | Quem NÃO usa (exceção documentada) |
 |---|---|---|
-| `kit::http::get_string(agent, url, &GetOpts)` | GET com retry 3× + backoff ×2; `GetOpts { log_prefix, accept, headers, attempts, base_delay }` | ba (charset latin1), mg (headers+`Value`), rs-faqs (infra própria) |
+| `kit::http::get_string(agent, url, &GetOpts)` | GET com retry 3× + backoff ×2; `GetOpts { log_prefix, accept, headers, attempts, base_delay, limite_bytes }` (`limite_bytes`: o teto do corpo, quando os 10 MB do `ureq` não bastam — as FAQs do RO trazem 21 MB) | ba (charset latin1), mg (headers+`Value`), rs-faqs (infra própria) |
 | `kit::http::post_json(agent, url, headers, body, &GetOpts)` | POST JSON com retry (ce/mt) | — |
 | `kit::clean(s)` | zero-width + nbsp + squeeze | — |
 | `kit::clean_decoded(s)` / `kit::decode_entities(s)` | decode de entidades HTML + squeeze (pr/ba) — **sem** strip de zero-width | — |
 | `kit::html::html_para_texto(s, Opcoes { base, quebras_do_fonte })` | HTML das respostas de FAQ → texto: bloco vira linha, link vira `texto "url"` (uma vez só quando o texto é a URL), tag HTML sai, `<` que é texto fica, entidades decodificadas uma vez (D-KITHTML-1..8, `docs/ESTUDO-kit-html-para-texto.md`). `kit::html::endereco(href, base)` decide se um `href` vale ir para o texto | pe e rn (percorrem o DOM); o `tarf.rs` do rs (outro contrato) |
 | `kit::linhas::{linhas, segmentar}` (+ `sem_cloak`, `sem_prefixo_r`, `numeracao_irregular`) | FAQ em linhas para os portais em que a pergunta é um trecho em negrito no meio do texto: pergunta = linha toda em destaque terminada em "?" (só as numeradas quando a maioria é numerada; a linha em negrito que continua a numeração também; numa seção sem negrito, as numeradas); grupos "… - PERGUNTAS FREQUENTES"; e-mail protegido do Joomla → o texto visível (D-PBFAQ-2, D-PAFAQ-2, -3) | pb e pa (os dois Joomla) |
+| `kit::sydle::secoes(md, base)` | as seções (`<div class="section-wrapper">`, `#section-<slug>`) de um artigo do Sydle ONE, nos moldes de 2024 (`## `, markdown) e 2026 (`<h2>`, HTML): slug, título e corpo em texto (e o corpo cru); erro quando o molde muda (D-SYDFAQ-6, `docs/ESTUDO-RO-PI-Faqs.md`) | ce e ro (FAQs) |
 | `kit::cache::read_or_bail(dir, url, use_cache)` | cache-read + miss-vira-erro do `--usecache` | ce (terminador de paginação), rs-faqs (mensagem própria) |
 | `kit::USER_AGENT` | UA de navegador (Firefox/124 Linux) — a exceção da frota, só com motivo (D-FROTA-UA) | — (os 3 antigos Chrome eram cópia acidental; recoleta ao vivo confirmou ≡) |
 | `ScraperInfo::new(nome, versao)` (contrato) | substitui o `fn scraper_info()` boilerplate | — |
@@ -397,6 +398,15 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   login. Público único "Serviços", classe "Geral". Identidade = `_id`; link = `…/<friendlyUrl>`
   (rota SPA `/:pathWithId`; sem `friendlyUrl` → `…/<_id>`). Órgão "SEFAZ-PI".
 - 29 serviços (Carta de Serviços). 10 testes. `ServicoRaw` direto.
+- **FAQs** (`auli-scraper-pi faqs`, `faqs.rs`, D-SYDFAQ-2, -5, -8): a árvore de temas "Perguntas Frequentes" do portal
+  está vazia; a FAQ é a seção "Perguntas Frequentes" das **8 páginas de Documentos Eletrônicos** (os artigos ligados à
+  pasta `69d6979d…` — `linkedParents` é `nested`) e o **PDF "Perguntas Frequentes EFD ICMS IPI"** do repositório de
+  documentos. Páginas: pergunta = linha em negrito terminada em "?" (`kit::linhas`), depois de dois reparos — o link
+  para o `portal-h` (homologação) vira destaque e o texto-modelo "Título da sanfona" do Elementor sai. PDF: a pasta
+  "4. Perguntas Frequentes" pelo `obterPastaComItens` (GET anônimo; exatamente um PDF), o texto pelo `pdftotext
+  -layout` (poppler, como processo; o cache guarda o texto), as perguntas pelo sumário (numeração contínua; cada
+  entrada no corpo), trilha "… Versão 1.0 (Novembro de 2021) | Capítulo", link = o PDF com `#page=N`. Aviso quando as
+  pastas de FAQ vazias ganham artigo. AuliBot (`crate::UA`). 5 GETs. 134 perguntas (99 + 35, 07/11/2026), 19 testes. `docs/REGISTRO-scrapers.md#pi-faqs`.
 
 ### am — SEFAZ-AM (Amazonas)
 
@@ -487,6 +497,12 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
 - UA institucional **AuliBot** (D-PA-ROBOTS preventivo). Há `contentHtml` inline p/ uma v2 rica (como o AM).
 - 194 serviços, 1 público. 8 testes. `ServicoRaw` direto. **RO + PI = mesma geração Sydle → oportunidade
   de scraper parametrizável** (não o CE); ver D-XX em `docs/auli_pendencias.md` §16.
+- **FAQs** (`auli-scraper-ro faqs`, `faqs.rs`, D-SYDFAQ-1, -3, -4): não há página de FAQ — são as **seções-pergunta
+  das fichas** (título terminado em "?", fora as 6 seções do modelo da ficha), no molde das FAQs do CE (`kit::sydle`),
+  e as perguntas de dentro das seções "… Perguntas e respostas" (rótulos "Pergunta:"/"Resposta:" ou `kit::linhas`).
+  Um `_search` traz os artigos inteiros e os catálogos (21 MB: `limite_bytes`); link = `…/<catálogo>+<identifier>+
+  <_id>#section-<slug>`; cópias entre fichas irmãs ficam na de menor `_id`. AuliBot. 2 GETs. 211 perguntas de 46 fichas
+  (07/11/2026), 14 testes. `docs/REGISTRO-scrapers.md#ro-faqs`.
 
 ### to — SEFAZ-TO (Tocantins)
 

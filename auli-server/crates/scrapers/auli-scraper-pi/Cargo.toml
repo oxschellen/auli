@@ -15,3 +15,7 @@ ureq = { version = "3", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 anyhow = "1"
+# As FAQs (`faqs.rs`): a seção "Perguntas Frequentes" das páginas pelo `scraper` + `kit::linhas`, os reparos e o
+# texto do PDF (o `pdftotext -layout`, do poppler, como processo) por regex.
+regex = "1"
+scraper = "0.27.0"

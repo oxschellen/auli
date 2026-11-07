@@ -1,7 +1,7 @@
 # ESTUDO-RO-PI-Faqs — FAQs da SEFIN-RO e da SEFAZ-PI (coleção `faqs` das entidades `ro` e `pi`)
 
-**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~50 GETs). · **Estado:** proposta, aguardando
-decisão (§5). · **Por que juntos:** os dois portais são Sydle ONE da geração conecta-360 (D-XX-SYDLE-COMPARTILHADO):
+**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~50 GETs). · **Estado:** decidido (07/11: as
+recomendações da §5 — D-SYDFAQ-1 B, -2 A, -8 A, as demais como propostas) e implementado (§7). · **Por que juntos:** os dois portais são Sydle ONE da geração conecta-360 (D-XX-SYDLE-COMPARTILHADO):
 token anônimo no HTML inicial, `GET …/_classId/5cd32901df14eb3d461160f0/_search?_body=<ES>`. **Hoje a `ro` e a `pi` têm
 só `servicos`** (194 e 28 — [REGISTRO-scrapers.md#ro](REGISTRO-scrapers.md#ro), [#pi](REGISTRO-scrapers.md#pi)).
 
@@ -193,3 +193,35 @@ curl -sS -A "$UA" -H "Authorization: $TOK" "https://portal.sefaz.pi.gov.br/api/1
 curl -sS -A "$UA" -H "Authorization: $TOK" "https://portal.sefaz.pi.gov.br/api/1/govPiPortalInstitucional/_classId/68e40169df43e345a988b6dd/obterPastaComItens?_body=$(q '{"folderIdentifier":"legislacao-e-documentos-efd-4-perguntas-frequentes"}')"
 curl -sS -A "$UA" -o faq-efd.pdf https://portal.sefaz.pi.gov.br/api/1/main/_ecm/_defaultFile/www/zu5a3chxym/ && pdftotext -layout faq-efd.pdf -
 ```
+
+## 7. Implementação (07/11/2026)
+
+`auli-scraper-ro faqs` e `auli-scraper-pi faqs`; `scripts/tools/update-{ro,pi}-faqs.sh`. O que mudou em relação ao
+estudo:
+
+| | estudo | implementação |
+|---|---|---|
+| RO | 213 (193 + 20) | **211 de 46 fichas** (191 + 20): as cópias são comparadas sem contar espaços e quebras (D-SYDFAQ-3, como o CE), e "O acesso ao E-PAT pode ser feito por procuração?" tem 2 versões, não 4 — saem 21 cópias, não 19. As 11 fichas que só tinham cópias somem da árvore |
+| RO, transporte | 1 `_search` de 20,9 MB | o `ureq` para em 10 MB por padrão: o `GetOpts` do kit ganhou o `limite_bytes` (64 MB nas FAQs do RO). O mesmo `_search` traz os 5 catálogos, de onde sai o prefixo do link (`catalogo-servicos`/`catalogo-conteudos`) |
+| RO, artigos | MARKDOWN com seções | igual, e o filtro importa: a "Unidade Padrão Fiscal - UPF" é HTML com blocos sem título, que o parser estrito recusaria |
+| PI, páginas | 99 | 99 |
+| PI, PDF | 35 | 35. O sumário tem pontilhado de um ponto em três entradas (1.4, 1.5.4, 2.1) — a 1ª versão do parser leu 32 sem erro, e por isso entrou a guarda da numeração contínua do sumário. A guarda "perguntas do corpo = do sumário" saiu: por construção, as duas contas nunca diferem |
+| PI, vigia | aviso nas pastas de FAQ vazias | um `_search` de contagem (size 0) nas 10 pastas (o tema, os 7 subtemas e as 2 "Dúvidas gerais"); 0 em 07/11 (a mesma consulta na pasta de Documentos Eletrônicos dá 8) |
+
+**Kit.** `kit::sydle::secoes` é o `secao()` das FAQs do CE, que passa a chamá-lo: a árvore e o snapshot do CE saíram
+idênticos (2.706 perguntas, `--usecache` antes e depois). O `Secao` traz também o corpo cru, para as perguntas de dentro
+de uma seção (RO).
+
+**Resultado da rodada de 07/11.** RO: 211 perguntas, 46 fichas (resposta de 30 a 3.490 caracteres, mediana 316), 210
+links em `catalogo-servicos` e 1 em `catalogo-conteudos`. PI: 134 — NFC-e 23, NF-e 20, EFD 11, MDF-e 10, CT-e 10, DeSTDA 10,
+NFF 8, BP-e 7 e o PDF 35 (6 capítulos). Nenhuma tag, entidade, rodapé, "sanfona" ou `portal-h` no texto. `--usecache`
+reproduz a árvore byte a byte e o snapshot a menos do `coletado_em`, nos dois. Smoke (`/v1/retrieve`, faqs): 7 de 8
+perguntas com o alvo em 1º; na 8ª ("download de XML bloqueado"), as duas primeiras são perguntas vizinhas da mesma seção.
+
+**Testes.** `kit::sydle` 6; RO 14 (sobre 13 documentos reais do `_search`: 2 catálogos, 11 artigos); PI 19 (sobre 4 das 8
+páginas, a listagem da pasta e o texto do PDF, mais um PDF sintético mínimo). Mutação: 16 no RO, 23 no PI (cada regra e
+cada guarda), 6 no `kit::sydle` — todas pegas.
+
+**Aparte.** O AuliBot passa no PI (as sondagens e as FAQs usam ele); os serviços do PI seguem com o UA de navegador até
+uma recoleta verificada (pendência §11).
+

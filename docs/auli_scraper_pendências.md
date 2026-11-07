@@ -283,6 +283,10 @@ de coleta ([auli_pendencias.md](auli_pendencias.md) §44), BA e CE já não têm
 navegador. Passam a candidatos ao AuliBot, com o mesmo critério das linhas "legado": recoleta sem cache e diff
 limpo contra o backup. Não foi feito.
 
+**07/11/2026 — o PI aceita o AuliBot.** As sondagens do estudo das FAQs do RO/PI e a coleta das FAQs do PI usam o
+AuliBot no `portal.sefaz.pi.gov.br` (o HTML inicial, o `_search` e o repositório de documentos), sem bloqueio. Os
+serviços do PI seguem com o UA de navegador: a troca continua pedindo a recoleta sem cache com diff limpo.
+
 ## 12. Serviços sem atualização desde julho (✅ feita — 2026-11-03)
 
 Data da última coleta no snapshot de serviços (`coleta.coletado_em`):

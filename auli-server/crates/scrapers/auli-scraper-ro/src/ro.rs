@@ -27,7 +27,7 @@ use auli_scraper_kit::http::GetOpts;
 use serde::Deserialize;
 
 /// UA institucional do projeto (mitigação D-PA-ROBOTS): nunca UA de browser falso.
-const USER_AGENT: &str =
+pub(crate) const USER_AGENT: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 
 /// Base do link cidadão (página do serviço na Agência Virtual, gramática Sydle `{slug}+{id}`).
@@ -35,7 +35,7 @@ const LINK_BASE: &str = "https://agenciavirtual.sefin.ro.gov.br/catalogo-servico
 /// Shell público de onde extraímos o Bearer anônimo (efêmero).
 const SHELL_URL: &str = "https://agenciavirtual.sefin.ro.gov.br/";
 /// Endpoint do `_search` (GET) sobre a classe de conteúdo (API em `sydleone.…`, app `servicedesk-embedded`).
-const SEARCH_URL: &str = "https://sydleone.sefin.ro.gov.br/api/1/servicedesk-embedded/_classId/5cd32901df14eb3d461160f0/_search";
+pub(crate) const SEARCH_URL: &str = "https://sydleone.sefin.ro.gov.br/api/1/servicedesk-embedded/_classId/5cd32901df14eb3d461160f0/_search";
 /// `_id` do catálogo "Serviços" (o `parent._id` dos serviços). "Temas"/"Conteúdos" NÃO entram.
 const CATALOGO_ID: &str = "662c1875ee982159b7b199c9";
 /// `size` do `_search`: teto de itens numa GET (headroom sobre os ~194 atuais). Se o catálogo crescer
@@ -139,7 +139,7 @@ pub fn scrape(
 }
 
 /// Extrai o Bearer token anônimo do shell público (`"Authorization":"Bearer …"`). Efêmero.
-fn fetch_token(agent: &ureq::Agent) -> Result<String> {
+pub(crate) fn fetch_token(agent: &ureq::Agent) -> Result<String> {
     println!("Fetching token (shell): {}", SHELL_URL);
     let shell = auli_scraper_kit::http::get_string(
         agent,
@@ -189,7 +189,7 @@ fn search_url() -> String {
 }
 
 /// Percent-encode para valor de query string (preserva "unreserved", escapa o resto). Sem crate.
-fn pct_encode(s: &str) -> String {
+pub(crate) fn pct_encode(s: &str) -> String {
     let mut out = String::with_capacity(s.len() * 3);
     for &b in s.as_bytes() {
         if b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.' | b'~') {

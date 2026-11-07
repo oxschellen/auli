@@ -1,9 +1,12 @@
 // auli-scraper-ro — scraper da SEFIN-RO (serviços, "Agência Virtual" — SPA Sydle ONE conecta-360).
 // Sem headless, sem HTML: a fonte é a API JSON `_search` (GET) sobre o catálogo "Serviços".
 //
+// As FAQs são as seções-pergunta das mesmas fichas, pelo mesmo `_search` — `faqs.rs`.
+//
 // Conhece UMA entidade ("ro"); não lê o registry. Grava o snapshot de serviços (v3); a derivação
 // dos artefatos é o `auli-collections ro`.
 
+mod faqs;
 mod ro;
 
 /// A entidade que este scraper conhece (um crate binário por entidade).
@@ -11,7 +14,7 @@ pub const ENTITY: &str = "ro";
 const DATA_DIR: &str = "../data/ro/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-ro [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-ro [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -27,8 +30,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
         }
     }
 
