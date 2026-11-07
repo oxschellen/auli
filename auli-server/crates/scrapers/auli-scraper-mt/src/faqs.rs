@@ -1,14 +1,22 @@
-// SEFAZ-MT FAQs — a FAQ do programa Nota MT (`www.sefaz.mt.gov.br/notamt/duvida`), aplicação Angular
-// sobre uma API REST pública, à parte do X-Via dos serviços (`mt.rs`). Estudo, medições e decisões:
-// docs/ESTUDO-MT-Faqs.md (D-MTFAQ-*).
+// SEFAZ-MT FAQs — três fontes, cada uma um ramo da árvore. Estudo, medições e decisões: docs/ESTUDO-MT-Faqs.md
+// (D-MTFAQ-*).
 //
-// Uma chamada só: `GET /notamt/api/duvidas` (sem sessão) devolve todas as perguntas, com a resposta
-// inteira, o grupo ("3 - PRÊMIOS E ENTIDADES"), a ordem dentro do grupo e o status. A aplicação agrupa e
-// mostra num acordeão; não tem rota nem âncora por pergunta.
+// - **Nota MT** (`www.sefaz.mt.gov.br/notamt/duvida`, aplicação Angular): uma chamada, `GET /notamt/api/duvidas` (sem
+//   sessão), devolve todas as perguntas, com a resposta inteira, o grupo ("3 - PRÊMIOS E ENTIDADES"), a ordem dentro
+//   do grupo e o status. A aplicação agrupa e mostra num acordeão; não tem rota nem âncora por pergunta.
+// - **Site da SEFAZ** (`www5`, Liferay): as páginas "Perguntas frequentes" das áreas de serviço — `site.rs`
+//   (D-MTFAQ-10, -11, -13).
+// - **Portal MT** (`portal.mt.gov.br`, X-Via): as perguntas da SEFAZ na FAQ do portal do Estado — `portal.rs`
+//   (D-MTFAQ-10, -12).
 
-use std::collections::{BTreeMap, BTreeSet};
+mod portal;
+mod site;
+
+use std::cell::RefCell;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::path::Path;
-use std::time::Duration;
+use std::thread::sleep;
+use std::time::{Duration, Instant};
 
 use anyhow::{Context, Result, anyhow, bail};
 use serde::Deserialize;
@@ -24,27 +32,60 @@ const FAQ: &str = "https://www.sefaz.mt.gov.br/notamt/duvida";
 /// O programa abre a trilha de cada pergunta: "PROGRAMA" ou "CADASTRO" sozinhos não dizem de quê.
 const PROGRAMA: &str = "Nota MT";
 
-/// A identidade das FAQs da frota (D-MTFAQ-9); o host não tem `robots.txt` alcançável (D-MTFAQ-3).
+/// A identidade das FAQs da frota (D-MTFAQ-9).
 const UA: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
+/// O `Crawl-delay` que o `www5` declara no `robots.txt`, honrado (D-MTFAQ-13). Nos outros hosts, 1 s.
+const CORTESIA_WWW5: Duration = Duration::from_secs(30);
+const CORTESIA: Duration = Duration::from_secs(1);
+const WWW5: &str = "www5.sefaz.mt.gov.br";
 
 /// Coleta as FAQs e grava a árvore do frontend (`<id>-faqs-tree.json`) e o snapshot. As guardas
 /// (D-MTFAQ-4) rodam antes de qualquer gravação: rodada que falha deixa os arquivos anteriores intactos.
 pub fn run(data_dir: &str, use_cache: bool) -> Result<()> {
-    let duvidas: Vec<Duvida> = serde_json::from_str(&buscar(data_dir, use_cache)?)
+    let rede = Rede {
+        data_dir,
+        use_cache,
+        agente: auli_scraper_kit::build_agent(UA, Some(Duration::from_secs(60))),
+        ultima: RefCell::new(HashMap::new()),
+    };
+    let duvidas: Vec<Duvida> = serde_json::from_str(&rede.get(API, "application/json")?)
         .context("resposta da API fora do formato [{id, descDuvida, descResposta, …}]")?;
-    let grupos = agrupar(duvidas)?;
-    for g in &grupos {
-        println!("MT FAQs: {}: {} perguntas", g.nome, g.perguntas.len());
+    let fontes = [
+        Fonte {
+            titulo: PROGRAMA,
+            url: FAQ.to_string(),
+            grupos: agrupar(duvidas)?,
+        },
+        Fonte {
+            titulo: site::TITULO,
+            url: site::TODOS.to_string(),
+            grupos: site::coletar(&rede).context("MT FAQs: site da SEFAZ (www5)")?,
+        },
+        Fonte {
+            titulo: portal::TITULO,
+            url: portal::FAQ.to_string(),
+            grupos: portal::coletar(&rede).context("MT FAQs: Portal MT (X-Via)")?,
+        },
+    ];
+    for f in &fontes {
+        for g in &f.grupos {
+            println!(
+                "MT FAQs: {} | {}: {} perguntas",
+                f.titulo,
+                g.nome,
+                g.perguntas.len()
+            );
+        }
     }
-    let faqs = consolidar(&grupos)?;
+    let faqs = consolidar(&fontes)?;
 
     // Atômico pelo mesmo motivo das outras entidades: a árvore não tem outra fonte (o snapshot achatado
     // não a reconstrói) e é o único artefato de coleta que o frontend lê direto.
     let tree_path = format!("{data_dir}/{}-faqs-tree.json", crate::ENTITY);
     auli_contract::arquivo::escrever_atomico(
         Path::new(&tree_path),
-        &serde_json::to_string_pretty(&montar_arvore(&grupos))?,
+        &serde_json::to_string_pretty(&montar_arvore(&fontes))?,
     )?;
     println!("Wrote {tree_path} (árvore de FAQ p/ o frontend)");
 
@@ -58,25 +99,85 @@ pub fn run(data_dir: &str, use_cache: bool) -> Result<()> {
     Ok(())
 }
 
-/// A chamada à API (D-MTFAQ-5): rede sempre, gravando o cache; com `--usecache`, só o cache, e miss é
-/// erro.
-fn buscar(data_dir: &str, use_cache: bool) -> Result<String> {
-    if use_cache {
-        return auli_scraper_kit::cache::read(data_dir, "faqs", API)
-            .ok_or_else(|| anyhow!("cache miss para {API} (modo --usecache, sem rede)"));
+/// As chamadas de rede (D-MTFAQ-5): rede sempre, gravando o cache; com `--usecache`, só o cache, e miss é erro. Entre
+/// duas chamadas ao mesmo host, a cortesia dele: 30 s no `www5`, 1 s nos outros.
+struct Rede<'a> {
+    data_dir: &'a str,
+    use_cache: bool,
+    agente: ureq::Agent,
+    ultima: RefCell<HashMap<String, Instant>>,
+}
+
+impl Rede<'_> {
+    fn get(&self, url: &str, accept: &str) -> Result<String> {
+        self.chamar(url, url, || {
+            auli_scraper_kit::http::get_string(
+                &self.agente,
+                url,
+                &GetOpts {
+                    log_prefix: "MT FAQs",
+                    accept: Some(accept),
+                    ..Default::default()
+                },
+            )
+        })
     }
-    let agent = auli_scraper_kit::build_agent(UA, Some(Duration::from_secs(60)));
-    let resposta = auli_scraper_kit::http::get_string(
-        &agent,
-        API,
-        &GetOpts {
-            log_prefix: "MT FAQs",
-            accept: Some("application/json"),
-            ..Default::default()
-        },
-    )?;
-    auli_scraper_kit::cache::write(data_dir, "faqs", API, &resposta);
-    Ok(resposta)
+
+    /// POST de JSON; o cache é por URL e corpo.
+    fn post(&self, url: &str, corpo: &serde_json::Value, origin: &str) -> Result<String> {
+        self.chamar(url, &format!("{url} {corpo}"), || {
+            auli_scraper_kit::http::post_json(
+                &self.agente,
+                url,
+                &[("Origin", origin)],
+                corpo,
+                &GetOpts {
+                    log_prefix: "MT FAQs",
+                    accept: Some("application/json"),
+                    ..Default::default()
+                },
+            )
+        })
+    }
+
+    fn chamar(&self, url: &str, chave: &str, f: impl FnOnce() -> Result<String>) -> Result<String> {
+        if self.use_cache {
+            return auli_scraper_kit::cache::read(self.data_dir, "faqs", chave)
+                .ok_or_else(|| anyhow!("cache miss para {chave} (modo --usecache, sem rede)"));
+        }
+        let host = url.split('/').nth(2).unwrap_or_default().to_string();
+        let espera = if host == WWW5 {
+            CORTESIA_WWW5
+        } else {
+            CORTESIA
+        };
+        if let Some(antes) = self.ultima.borrow().get(&host) {
+            sleep(espera.saturating_sub(antes.elapsed()));
+        }
+        let corpo = f();
+        self.ultima.borrow_mut().insert(host, Instant::now());
+        let corpo = corpo?;
+        auli_scraper_kit::cache::write(self.data_dir, "faqs", chave, &corpo);
+        Ok(corpo)
+    }
+}
+
+/// Uma `Rede` só de cache (`--usecache`), num diretório temporário com as respostas dadas, `(chave, corpo)`: a chave é
+/// a URL do GET, ou `"<url> <corpo>"` no POST. O diretório tem o nome do teste e é refeito a cada execução.
+#[cfg(test)]
+fn rede_de_teste(nome: &str, respostas: &[(&str, &str)]) -> Rede<'static> {
+    let dir = std::env::temp_dir().join(format!("auli-mt-faqs-teste-{nome}"));
+    let _ = std::fs::remove_dir_all(&dir);
+    let dir: &'static str = Box::leak(dir.to_string_lossy().into_owned().into_boxed_str());
+    for (chave, corpo) in respostas {
+        auli_scraper_kit::cache::write(dir, "faqs", chave, corpo);
+    }
+    Rede {
+        data_dir: dir,
+        use_cache: true,
+        agente: auli_scraper_kit::build_agent(UA, None),
+        ultima: RefCell::new(HashMap::new()),
+    }
 }
 
 #[derive(Deserialize)]
@@ -99,11 +200,21 @@ struct Status {
 struct Pergunta {
     pergunta: String,
     resposta: String,
+    /// O link da própria pergunta (o Portal MT tem uma página por pergunta); sem ele, vale o do grupo.
+    url: Option<String>,
 }
 
 struct Grupo {
     nome: String,
+    url: String,
     perguntas: Vec<Pergunta>,
+}
+
+/// Um ramo da árvore: o programa Nota MT, o site da SEFAZ ou o Portal MT. O título abre a trilha das perguntas.
+struct Fonte {
+    titulo: &'static str,
+    url: String,
+    grupos: Vec<Grupo>,
 }
 
 /// As dúvidas ativas, por grupo na ordem do número do grupo e, dentro dele, na ordem do portal
@@ -135,11 +246,13 @@ fn agrupar(duvidas: Vec<Duvida>) -> Result<Vec<Grupo>> {
             duvidas.sort_by_key(|d| (d.numr_ordem_duvida.is_none(), d.numr_ordem_duvida, d.id));
             Grupo {
                 nome,
+                url: FAQ.to_string(),
                 perguntas: duvidas
                     .iter()
                     .map(|d| Pergunta {
                         pergunta: clean(&d.desc_duvida),
                         resposta: html_para_texto(&d.desc_resposta),
+                        url: None,
                     })
                     .collect(),
             }
@@ -157,30 +270,35 @@ fn numero_e_nome(grupo: &str) -> Result<(u32, String)> {
         .ok_or_else(|| anyhow!("grupo fora do formato \"N - NOME\": {grupo:?}"))
 }
 
-/// O acervo, com as guardas que olham todos os grupos (D-MTFAQ-4).
-fn consolidar(grupos: &[Grupo]) -> Result<Vec<FaqRaw>> {
-    let faqs: Vec<FaqRaw> = grupos
+/// O acervo, com as guardas que olham todas as fontes (D-MTFAQ-4).
+fn consolidar(fontes: &[Fonte]) -> Result<Vec<FaqRaw>> {
+    let faqs: Vec<FaqRaw> = fontes
         .iter()
-        .flat_map(|g| {
-            g.perguntas.iter().map(move |p| FaqRaw {
-                pergunta: p.pergunta.clone(),
-                resposta: p.resposta.clone(),
-                origin: trilha(g),
-                url: FAQ.to_string(),
+        .flat_map(|f| {
+            f.grupos.iter().flat_map(move |g| {
+                g.perguntas.iter().map(move |p| FaqRaw {
+                    pergunta: p.pergunta.clone(),
+                    resposta: p.resposta.clone(),
+                    origin: trilha(f, g),
+                    url: p.url.clone().unwrap_or_else(|| g.url.clone()),
+                })
             })
         })
         .collect();
-    // Sem pergunta não há o que coletar: é a API que mudou, não a FAQ que acabou.
+    // Sem pergunta não há o que coletar: é a fonte que mudou, não a FAQ que acabou.
     if faqs.is_empty() {
         bail!("nenhuma pergunta ativa na FAQ — a API mudou?");
     }
     if let Some(f) = faqs.iter().find(|f| f.pergunta.is_empty()) {
         bail!("pergunta sem texto em {}", f.origin);
     }
-    // O link é o mesmo para todas, então o nome do `.md` (pergunta + hash de link e pergunta) sai só da
-    // pergunta: repetida, um arquivo sobrescreveria o outro em silêncio.
+    // O nome do `.md` sai do link e da pergunta: repetidos, um arquivo sobrescreveria o outro em silêncio. No Nota MT
+    // o link é o mesmo para todas, então é a pergunta que não pode repetir.
     let mut vistas = BTreeSet::new();
-    if let Some(f) = faqs.iter().find(|f| !vistas.insert(f.pergunta.as_str())) {
+    if let Some(f) = faqs
+        .iter()
+        .find(|f| !vistas.insert((f.url.as_str(), f.pergunta.as_str())))
+    {
         bail!(
             "a pergunta {:?} aparece duas vezes (a 2ª em {}) — com o mesmo link, os .md teriam o mesmo nome",
             f.pergunta,
@@ -194,47 +312,54 @@ fn consolidar(grupos: &[Grupo]) -> Result<Vec<FaqRaw>> {
     println!(
         "MT FAQs: {} perguntas em {} grupos",
         faqs.len(),
-        grupos.len()
+        fontes.iter().map(|f| f.grupos.len()).sum::<usize>()
     );
     Ok(faqs)
 }
 
-fn trilha(g: &Grupo) -> String {
-    format!("{PROGRAMA} | {}", g.nome)
+fn trilha(f: &Fonte, g: &Grupo) -> String {
+    format!("{} | {}", f.titulo, g.nome)
 }
 
-/// A árvore da aba de FAQs: raiz → o programa → um `Faq` por grupo. A interface começa pelos filhos da
-/// raiz, e o nó do programa dá contexto aos grupos. Tudo aponta para a mesma página — a aplicação não tem
-/// rota por grupo nem por pergunta —, e os itens ficam sem `url` (a interface usa a do nó).
-fn montar_arvore(grupos: &[Grupo]) -> FaqNode {
-    let menu = |title: &str, children| FaqNode {
+/// A árvore da aba de FAQs: raiz → um `Menu` por fonte → um `Faq` por grupo. A interface começa pelos filhos da raiz,
+/// e o nó da fonte dá contexto aos grupos. O item leva o link próprio quando tem (o Portal MT); sem ele, a interface
+/// usa o do nó.
+fn montar_arvore(fontes: &[Fonte]) -> FaqNode {
+    let menu = |title: &str, url: &str, children| FaqNode {
         title: title.to_string(),
-        url: FAQ.to_string(),
+        url: url.to_string(),
         page_type: PageType::Menu,
         origin: String::new(),
         children,
         faq_items: Vec::new(),
     };
-    let grupos = grupos
+    let ramos = fontes
         .iter()
-        .map(|g| FaqNode {
-            title: g.nome.clone(),
-            url: FAQ.to_string(),
-            page_type: PageType::Faq,
-            origin: trilha(g),
-            children: Vec::new(),
-            faq_items: g
-                .perguntas
+        .map(|f| {
+            let grupos = f
+                .grupos
                 .iter()
-                .map(|p| FaqItem {
-                    pergunta: p.pergunta.clone(),
-                    resposta: p.resposta.clone(),
-                    url: None,
+                .map(|g| FaqNode {
+                    title: g.nome.clone(),
+                    url: g.url.clone(),
+                    page_type: PageType::Faq,
+                    origin: trilha(f, g),
+                    children: Vec::new(),
+                    faq_items: g
+                        .perguntas
+                        .iter()
+                        .map(|p| FaqItem {
+                            pergunta: p.pergunta.clone(),
+                            resposta: p.resposta.clone(),
+                            url: p.url.clone(),
+                        })
+                        .collect(),
                 })
-                .collect(),
+                .collect();
+            menu(f.titulo, &f.url, grupos)
         })
         .collect();
-    menu("Perguntas frequentes", vec![menu(PROGRAMA, grupos)])
+    menu("Perguntas frequentes", FAQ, ramos)
 }
 
 /// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): a quebra do fonte é estrutura nas
@@ -268,6 +393,15 @@ mod tests {
             Ok(_) => panic!("esperava Err"),
             Err(e) => format!("{e:#}"),
         }
+    }
+
+    /// O Nota MT como a única fonte.
+    fn nota(grupos: Vec<Grupo>) -> [Fonte; 1] {
+        [Fonte {
+            titulo: PROGRAMA,
+            url: FAQ.to_string(),
+            grupos,
+        }]
     }
 
     fn resposta(id: u64) -> String {
@@ -398,7 +532,7 @@ mod tests {
 
     #[test]
     fn todas_com_o_mesmo_link_e_a_trilha_do_programa() {
-        let faqs = consolidar(&agrupar(duvidas()).unwrap()).unwrap();
+        let faqs = consolidar(&nota(agrupar(duvidas()).unwrap())).unwrap();
         assert_eq!(faqs.len(), 7);
         assert!(faqs.iter().all(|f| f.url == FAQ));
         assert_eq!(faqs[0].origin, "Nota MT | PROGRAMA");
@@ -410,7 +544,7 @@ mod tests {
         let mut ds = duvidas();
         ds.iter_mut().find(|d| d.id == 136).unwrap().desc_duvida =
             " Quanto tempo tenho para receber meu prêmio? ".into();
-        let e = erro(consolidar(&agrupar(ds).unwrap()));
+        let e = erro(consolidar(&nota(agrupar(ds).unwrap())));
         assert!(
             e.contains("aparece duas vezes") && e.contains("Nota MT | PRÊMIOS E ENTIDADES"),
             "{e}"
@@ -419,7 +553,7 @@ mod tests {
 
     #[test]
     fn acervo_vazio_e_erro() {
-        let e = erro(consolidar(&agrupar(Vec::new()).unwrap()));
+        let e = erro(consolidar(&nota(agrupar(Vec::new()).unwrap())));
         assert!(e.contains("nenhuma pergunta"), "{e}");
     }
 
@@ -427,16 +561,112 @@ mod tests {
     fn pergunta_sem_texto_e_erro() {
         let mut ds = duvidas();
         ds.iter_mut().find(|d| d.id == 540).unwrap().desc_duvida = "  ".into();
-        let e = erro(consolidar(&agrupar(ds).unwrap()));
+        let e = erro(consolidar(&nota(agrupar(ds).unwrap())));
         assert!(
             e.contains("pergunta sem texto em Nota MT | DESCONTO IPVA"),
             "{e}"
         );
     }
 
+    /// As três fontes: o Nota MT da fixture; um grupo do site, cujas perguntas levam o link da página; e um do Portal
+    /// MT, com a página própria da pergunta — que repete o texto de uma do Nota MT, mas em outro link.
+    fn tres_fontes() -> [Fonte; 3] {
+        let grupo = |nome: &str, url: String, pergunta: &str, propria: Option<String>| Grupo {
+            nome: nome.to_string(),
+            url,
+            perguntas: vec![Pergunta {
+                pergunta: pergunta.to_string(),
+                resposta: "R.".to_string(),
+                url: propria,
+            }],
+        };
+        [
+            nota(agrupar(duvidas()).unwrap())
+                .into_iter()
+                .next()
+                .unwrap(),
+            Fonte {
+                titulo: site::TITULO,
+                url: site::TODOS.to_string(),
+                grupos: vec![grupo(
+                    "Documentos Fiscais",
+                    format!("{}?c=1&e=2", site::TODOS),
+                    "O que é a NFA-e?",
+                    None,
+                )],
+            },
+            Fonte {
+                titulo: portal::TITULO,
+                url: portal::FAQ.to_string(),
+                grupos: vec![grupo(
+                    "Institucional",
+                    portal::FAQ.to_string(),
+                    "Como receber o prêmio?",
+                    Some(format!("{}/abc", portal::FAQ)),
+                )],
+            },
+        ]
+    }
+
+    #[test]
+    fn consolidar_junta_as_tres_fontes_com_a_trilha_e_o_link_de_cada_uma() {
+        let faqs = consolidar(&tres_fontes()).unwrap();
+        assert_eq!(faqs.len(), 9);
+        let fim: Vec<(&str, &str)> = faqs[7..]
+            .iter()
+            .map(|f| (f.origin.as_str(), f.url.as_str()))
+            .collect();
+        assert_eq!(
+            fim,
+            [
+                (
+                    "SEFAZ-MT | Documentos Fiscais",
+                    "https://www5.sefaz.mt.gov.br/servicos?c=1&e=2"
+                ),
+                (
+                    "Portal MT | Institucional",
+                    "https://portal.mt.gov.br/perguntas-frequentes/abc"
+                ),
+            ]
+        );
+    }
+
+    #[test]
+    fn arvore_tem_um_ramo_por_fonte() {
+        let raiz = montar_arvore(&tres_fontes());
+        let ramos: Vec<(&str, &str, PageType)> = raiz
+            .children
+            .iter()
+            .map(|r| (r.title.as_str(), r.url.as_str(), r.page_type))
+            .collect();
+        assert_eq!(
+            ramos,
+            [
+                ("Nota MT", FAQ, PageType::Menu),
+                ("SEFAZ-MT", site::TODOS, PageType::Menu),
+                ("Portal MT", portal::FAQ, PageType::Menu),
+            ]
+        );
+        let site = &raiz.children[1].children[0];
+        assert_eq!(
+            (site.url.as_str(), site.origin.as_str()),
+            (
+                "https://www5.sefaz.mt.gov.br/servicos?c=1&e=2",
+                "SEFAZ-MT | Documentos Fiscais"
+            )
+        );
+        assert_eq!(site.faq_items[0].url, None);
+        let portal = &raiz.children[2].children[0];
+        assert_eq!(portal.page_type, PageType::Faq);
+        assert_eq!(
+            portal.faq_items[0].url.as_deref(),
+            Some("https://portal.mt.gov.br/perguntas-frequentes/abc")
+        );
+    }
+
     #[test]
     fn arvore_tem_programa_grupos_e_perguntas() {
-        let raiz = montar_arvore(&agrupar(duvidas()).unwrap());
+        let raiz = montar_arvore(&nota(agrupar(duvidas()).unwrap()));
         assert_eq!((raiz.page_type, raiz.children.len()), (PageType::Menu, 1));
         let programa = &raiz.children[0];
         assert_eq!(

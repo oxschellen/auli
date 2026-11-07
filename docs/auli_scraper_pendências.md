@@ -7,7 +7,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 
 | # | Entidade | Pendência | Estado |
 |---|---|---|---|
-| 1 | MT | FAQs fase 2 — PDFs e hub do site institucional (`www5`) | robots decidido (D-FROTA-ROBOTS, 07/11); falta a sondagem da §5.2 do estudo e a decisão sobre PDF |
+| 1 | MT | FAQs fase 2 — PDFs e hub do site institucional (`www5`) | ✅ feita (07/11): D-MTFAQ-10 = A — as páginas de perguntas das áreas do `www5` (48) + o Portal MT (11); o MT vai de 135 a 194 |
 | 2 | MT | Outras bases de conhecimento não sondadas (`conecta`, CITSmart) | nenhuma sondagem feita |
 | 3 | GO | Biblioteca **Pareceres** (1.266 documentos) como coleção `pareceres` | estudo próprio — são arquivos |
 | 4 | RJ | FAQs | em espera — proteção anti-robô; a D-RJ-WAF cobre só o catálogo |
@@ -49,10 +49,13 @@ A fase 1 (Nota MT, 135 perguntas, PR #185) está no ar. A fase 2 é o site insti
 **07/11/2026 — sondada** ([ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §9): o hub manda para um Portal do Conhecimento que
 foi refeito sem as perguntas (404), e os PDFs são de 2017 e órfãos. O que há de atual: 3 páginas "Perguntas
 frequentes" de áreas de serviço do `www5` (Contencioso 21, DIMP 11, NFA-e 15) e a FAQ do portal X-Via
-(`POST /v1/faq`, 11 da SEFAZ). **Próximo passo:** decidir a D-MTFAQ-10..14 (recomendada A: as 47 do `www5` + as 11
-do X-Via = 58).
+(`POST /v1/faq`, 11 da SEFAZ).
 
-Referência: [ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §2b, §3 (D-MTFAQ-3), §5.2 e §9.
+**07/11/2026 — implementada** ([ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §10): D-MTFAQ-10 = A. As áreas de serviço do
+`www5` dão 48 perguntas (a NFA-e tem 16, não as 15 da sondagem) e o Portal MT 11: o MT vai de 135 a **194**. Os
+PDFs de 2017 ficam fora; entram se a SEFAZ voltar a linká-los.
+
+Referência: [ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §2b, §3 (D-MTFAQ-3), §5.2, §9 e §10.
 
 ## 2. MT — bases de conhecimento não sondadas
 

@@ -2,7 +2,8 @@
 // React). Sem headless, sem HTML server-rendered, sem token: a fonte é a API pública
 // `POST /v1/search/department` (anônima), filtrada pelo órgão SEFAZ.
 //
-// As FAQs vêm de outro host, a FAQ do programa Nota MT (API JSON) — `faqs.rs`.
+// As FAQs vêm de três fontes: a FAQ do programa Nota MT (API JSON), as páginas de perguntas das áreas de serviço do
+// site da SEFAZ (www5) e a FAQ do Portal MT (X-Via) — `faqs.rs`.
 //
 // Conhece UMA entidade ("mt"); não lê o registry. Grava os snapshots de serviços (v3) e de FAQs; a
 // derivação dos artefatos é o `auli-collections mt`.
