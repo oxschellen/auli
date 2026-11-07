@@ -1,0 +1,233 @@
+                                              Estado do Rio Grande do Sul
+                                              Secretaria da Fazenda
+                                              Receita Estadual
+
+
+                                GES COMUNICAÇÕES
+
+
+Perguntas e Respostas sobre a Nota Fiscal Fatura de Serviços de Comunicação
+Eletrônica (NFCom, Modelo 62)
+
+
+Seção 1: Conceito, Obrigatoriedade e Natureza do Documento
+
+   1. O que é a NFCom, quais documentos ela substitui e qual o prazo de obrigatoriedade?
+
+       A NFCom é a Nota Fiscal Fatura de Serviços de Comunicação Eletrônica, modelo 62. Ela
+       unifica a nota fiscal e o boleto/fatura em um documento único e digital. A NFCom
+       substitui as notas fiscais modelo 21 (serviços de comunicação), modelo 22 (serviços de
+       telecomunicação) e o arquivo auxiliar do Convênio 201/17. O prazo oficial para a
+       obrigatoriedade da NFCom no ambiente de produção é 1º de novembro de 2025.
+
+   2. Preciso de autorização para emitir a NFCom?
+
+       O contribuinte que necessite emitir a NFCom no RS precisa estar previamente autorizado
+       pela SEFAZ. A Receita Estadual já realizou o cadastramento de ofício dos contribuintes
+       do setor. A verificação sobre autorização para emissão de documentos fiscais pode ser
+       feita no Cadastro Centralizado de Contribuinte (CCC), por meio da IE ou CNPJ. Os
+       documentos fiscais autorizados constarão na coluna “DFe Habilitados”, conforme
+       exemplo a seguir:
+
+
+
+
+       O acesso ao CCC pode             ser   realizado   no    seguinte   link:   https://dfe-
+       portal.svrs.rs.gov.br/Nfe/Ccc
+
+       Caso o contribuinte não esteja habilitado e necessite autorização, pode encaminhar
+       solicitação ao GES Comunicações via e-mail: gscomunicacoes@sefaz.rs.gov.br
+
+   3. O layout da NFCom é padronizado por estado ou é nacional?
+
+       O layout será nacional, seguindo estritamente as definições apresentadas no Manual de
+       Orientação do Contribuinte (MOC), com atualizações pelas Notas Técnicas. Esses
+       documentos        estão   disponíveis    no    Portal    da     NFCom:     https://dfe-
+       portal.svrs.rs.gov.br/Nfcom
+
+   4. A NFCom tem versão em papel?
+
+       Não. A NFCom existe apenas em formato eletrônico, com validade jurídica garantida por
+       assinatura digital e autorização da SEFAZ. O DANFE-COM é a representação gráfica que
+                                              Estado do Rio Grande do Sul
+                                              Secretaria da Fazenda
+                                              Receita Estadual
+
+
+       pode ser impressa ou disponibilizada eletronicamente, por meio do qual será possível o
+       pagamento dos serviços.
+
+   5. Como a NFCom garante segurança?
+
+       Através da assinatura digital e da autorização em tempo real pela SEFAZ, o que impede
+       fraudes e divergências. A comunicação com a SEFAZ para emissão da nota é online, e
+       cada nota é previamente autorizada e validada.
+
+   6. Qual a regra para numeração e série da NFCom?
+
+       A numeração da NFCom é sequencial e crescente de 1 a 999.999.999, por
+       estabelecimento e por série, devendo ser reiniciada ao atingir esse limite. A numeração
+       não começa do número 1 a cada mês.
+
+   7. Existe algum sistema homologado para emissão da NFCom?
+
+       Não haverá homologação de software no RS. Os contribuintes deverão buscar no
+       mercado sistemas aptos a atender aos critérios estabelecidos no MOC. O
+       credenciamento é dado ao CNPJ da empresa de telecomunicações, e não ao software.
+       Entretanto, algumas Unidades da Federação poderão exigir o credenciamento prévio do
+       desenvolvedor do sistema.
+
+
+
+Seção 2: Faturamento, Cobrança e Tipos de Serviço
+
+   7. O valor total da NFCom pode ser diferente do valor do boleto/fatura?
+
+       Não. A NFCom, por ser também fatura de cobrança, contém os dados do boleto.
+       Portanto, o valor do boleto deve ser exatamente igual ao valor da nota.
+
+   8. Quais cobranças devem constar na NFCom?
+
+       Todas as cobranças a um usuário de serviços de telecomunicações devem estar na
+       NFCom. Isso inclui serviços de locação de equipamento, acesso a aplicativos,
+       plataformas de streaming, vendas de equipamentos, entre outros.
+
+   9. Como tratar Serviços de Valor Adicionado (SVA) e outros serviços não sujeitos ao
+      ICMS?
+
+       Eles devem ser listados como itens referenciais ou financeiros, sem destaque de ICMS,
+       apenas para compor o valor total da cobrança. Sua tributação (ISSQN, PIS, COFINS)
+       permanece nos documentos fiscais próprios (NFS-e ou NF-e).
+
+   10. É necessário destacar o CFOP e o CST para os itens que não são de comunicação?
+
+       Não. Se um item tem o indicador indSemCST (indicando que não há situação tributária
+       para o ICMS), ele não vai ter CFOP e não vai ter alíquota. Se o item tiver CST informado
+       (tributado), o CFOP é obrigatório.
+                                             Estado do Rio Grande do Sul
+                                             Secretaria da Fazenda
+                                             Receita Estadual
+
+
+   11. O que é Cofaturamento (Co-billing) e qual a diferença para Cobrança de Terceiros?
+
+       Cofaturamento ou co-billing (tpFat=2) é o mesmo que faturamento conjunto e se aplica
+       somente a operadoras de telecomunicações. É o modelo onde uma operadora local
+       cobra serviços de telecomunicações de outra operadora parceira. Nesse modelo, a
+       operadora que irá realizar a cobrança utilizará o cClass 1300101 para o item da outra
+       operadora parceira. Em até 20 dias, a parceira emite uma NFCom do Tipo 2 sem fatura,
+       para fins de recolhimento do imposto que lhe é devido, referenciando a NFCom anterior.
+
+       Cobrança de Terceiros se refere a serviços prestados por terceiros e que não são de
+       telecomunicação (como seguros ou bibliotecas digitais). Deve ser informada na NFCom
+       com o código cClass do grupo 110.
+
+   12. Como as empresas do Simples Nacional informam o ICMS na NFCom?
+
+       As empresas do Simples Nacional devem utilizar o grupo ICMSSN, informando o CST =
+       90 e o indicador indSN = 1.
+
+
+
+Seção 3: Tipos de Faturamento e Fluxo de Emissão
+
+   13. Quando a NFCom deve ser emitida?
+
+       A NFCom deve ser emitida na competência da prestação do serviço. O valor pago
+       antecipadamente (pagamento anual) é apropriado contabilmente como adiantamento
+       e a nota é emitida respeitando a competência.
+
+   14. Quais modalidades de faturamento a NFCom permite?
+
+       A NFCom permite as modalidades Normal, Centralizado, Conjunto/Co-faturamento. O
+       Faturamento Centralizado (Tipo 1) ocorre quando a matriz centraliza a cobrança de suas
+       filiais.
+
+   15. Como processar o pagamento com Pix automático, débito em conta e cartão de
+       crédito?
+
+       O layout da NFCom possui campos para informar Pix e Débito em Conta. Entretanto,
+       não há campo para cartão de crédito, mas esse tipo de pagamento deve ser informado
+       no quadro de uso do prestador. O código de barras pode aparecer com zeros se a fatura
+       já foi quitada por automação. O modo de quitação deve ser informado no quadro de uso
+       do prestador no DANFE-COM.
+
+   16. Como fazer para emitir a NFCom aliado ao modelo de cobrança por carnês?
+
+       A NFCom deve ser emitida mensalmente para todos os clientes, mesmo com carnê. As
+       notas mensais devem espelhar essa cobrança, mantendo o mesmo código de barras do
+       carnê.
+
+   17. É possível emitir a fatura mas não emitir a NFCom?
+                                               Estado do Rio Grande do Sul
+                                               Secretaria da Fazenda
+                                               Receita Estadual
+
+
+        Não. A NFCom e o boleto/fatura são um documento único e indissociável. As únicas
+        dispensas de ter a fatura na NFCom são para serviços pré-pagos, cofaturamento,
+        faturamento centralizado, NFcom de ajuste e com tag de indicador de cessão de meios
+        de rede. Nesses casos, o grupo gFat não será preenchido.
+
+
+
+Seção 4: Correções e Substituição
+
+    18. Quando usar substituição de NFCom?
+
+        A NFCom de Substituição (Finalidade 3) é utilizada para corrigir documentos fiscais
+        anteriores em casos de erros, conforme Inc. II, Cláusula Décima Sétima do Ajuste SINIEF
+        07/22.
+
+    19. Quais validações a NFCom de Substituição precisa passar?
+
+        O grupo de informações da substituição (gSub) deve ser informado. A nota substituída
+        (referenciada pela chave de acesso) não pode estar cancelada e não pode ter sido
+        substituída anteriormente. O CNPJ do emitente da NFCom substituta deve ser igual ao
+        da substituída (exceto em casos de fusão, incorporação, etc.).
+
+    20. Como tratar descontos (ex: bom pagador) que ocorrem após a emissão da NFCom?
+
+        A NFCom permite descontos diretamente no item (vDesc) ou como um item de
+        desconto. Embora a NFCom de substituição possa ser usada, é aconselhável conceder o
+        desconto na nota fiscal do mês seguinte, pois a substituição mensal duplicaria a emissão
+        de notas.
+
+
+
+Seção 5: Escrituração Fiscal Digital (EFD-ICMS/IPI)
+
+    21. Onde a NFCom é escriturada na EFD-ICMS/IPI?
+
+        A NFCom (Código 62) é escriturada no Bloco D da EFD-ICMS/IPI. As notas
+        individualizadas são lançadas no Registro D700, e o Registro D730 é o analítico. A
+        escrituração consolidada da NFCom (Finalidade Normal) é feita no Registro D750. No
+        Rio Grande do Sul, notas normais de saída devem ser escrituradas de forma consolidada
+        a partir 1º de novembro de 2025.
+
+    22. Quais NFComs devem ser escrituradas individualmente (D700) e quais podem ser
+        consolidadas (D750)?
+
+        O Registro D750 é usado para a escrituração consolidada da NFCom de saída com a
+        finalidade Normal (finNFCom=0). As notas de substituição (finNFCom=3), notas de
+        ajuste (finNFCom=4) e notas de entrada não devem ser consolidadas e devem ser
+        escrituradas individualmente no Registro D700.
+
+    23. É obrigatório escriturar uma NFCom que contém apenas itens financeiros (sem ICMS)?
+                                        Estado do Rio Grande do Sul
+                                        Secretaria da Fazenda
+                                        Receita Estadual
+
+
+   Não. Uma NFCom que contenha apenas itens sem a indicação de Código de Situação
+   Tributária (CST) não deve ser escriturada.
+
+24. Como a NFCom de Substituição é registrada na escrituração?
+
+   Deve ser registrada individualmente no Registro D700, informando a Finalidade
+   (FIN_DOCe) como 3. O campo COD_MOD_DOC_REF (código do modelo do documento
+   fiscal referenciado) deve ser informado, e a chave do documento substituído
+   (CHV_DOCe_REF) é obrigatória se o documento for eletrônico (modelo 62). Se a
+   substituição gerar ajuste na apuração (estorno de débito/crédito), a chave da NFCom
+   deverá ser identificada no Registro E113.
+

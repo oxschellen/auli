@@ -1795,6 +1795,15 @@ vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 me
    `/1-2-declaracao-de-conteudo-eletronica-dc-e` e `/faq-dc-e`…), e a caminhada visita as duas: em 06/11/2026, 107 dos
    1.990 itens eram cópias. O `panel-N` é global, então o snapshot fica com a primeira ocorrência de cada painel na
    ordem da caminhada (D-RSFAQ-4); a árvore da aba de FAQs segue com as duas páginas, como o portal.
+6. **Itens de menu que são PDF** (D-RSFAQ-7, 07/11/2026). Sete itens redirecionam (303) para um PDF em
+   `/upload/arquivos/…`, e o ureq recusava o corpo ("stream did not contain valid UTF-8"): nunca entraram no acervo.
+   Entra só o `/faq-nfcom` (as "Perguntas e Respostas sobre a NFCom" do GES Comunicações, 04/11/2025, 25 perguntas em 5
+   seções), pela lista `FaqSource::pdfs`: texto pelo `kit::pdf`, uma seção por nó, trilha = breadcrumb do menu-pai |
+   item | seção, link `/faq-nfcom#page=N` (o item redireciona para o PDF vigente). A Seção 2 recomeça no 7 (aviso). Os
+   outros seis ficam fora e o log diz "é um PDF, não uma página": o "Manual para Declaração de ITCD" (manual, decisão
+   do mantenedor), o `/nfcom-faq` (o mesmo PDF da NFCom, no menu GES Comunicações), as orientações de transporte
+   internacional, e os PDFs de perguntas de Comunicações (07/2022), Bebidas (07/2026), Convênio ICMS 201/17 e
+   Autorregularização (09/2022), não avaliados.
 
 ## Guardas e transporte
 
@@ -1803,12 +1812,14 @@ vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 me
   — o AJAX da raiz leva a árvore toda, e aí quem para é a guarda de zero FAQs.
 - Cache-first sempre (`data/rs/raw/cache/faqs/`, página e `_body` por URL); `--usecache` = miss vira erro.
   Trocar a raiz cria um arquivo de cache novo para ela; o das filhas continua válido.
-- `retry` 3× com backoff; AJAX por `curl`, páginas por ureq; UA de navegador nos dois.
+- `retry` 3× com backoff; AJAX por `curl`, páginas por ureq; UA de navegador nos dois. O PDF da NFCom vai por ureq
+  com o AuliBot, e o cache guarda o texto extraído (`<url>_pdf.txt`).
 - Saída: `data/rs/raw/rs-faqs-tree.json` (a árvore que a aba de FAQs consome — único artefato sem outra
   fonte) e `data/rs/rs-faqs-snapshot.json`, nessa ordem e atômicos. Cada pergunta com o próprio link,
   `<página>#panel-N` — o hash que o portal usa para abrir o painel (`expandirAccordionPorHash`) e o que o botão
   "Copiar link" copia (D-RSFAQ-5); o snapshot sem as cópias de painel (armadilha 5).
-- Atualização: `scripts/tools/update-rs-faqs.sh` (apaga o cache antes; guarda de encolhimento).
+- Atualização: `scripts/tools/update-rs-faqs.sh` (apaga o cache antes; guarda de encolhimento; confere o poppler,
+  que o PDF da NFCom exige).
 
 ---
 

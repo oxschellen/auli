@@ -16,9 +16,12 @@
 //   - Each question has its own link, `<page>#panel-N` (the portal opens the panel from the hash); the
 //     same panel can sit on two URLs (alias pages), and the snapshot keeps it once. Decisions D-RSFAQ-3..5
 //     in docs/ESTUDO-RS-Faqs-Indice.md.
+//   - A menu item can redirect to a PDF. The ones listed in `FaqSource::pdfs` are FAQs and are read as text
+//     (`pdf.rs`, D-RSFAQ-7); any other PDF is an error on that item, as before.
 
 mod fetch;
 mod html;
+mod pdf;
 
 pub use auli_scraper_kit::faqtree::{FaqItem, FaqNode, PageType};
 
@@ -46,6 +49,8 @@ pub struct FaqSource {
     pub cache_dir: String,
     /// Offline mode: read only cached pages, never fetch (a cache miss becomes an error).
     pub use_cache: bool,
+    /// Menu items (absolute URLs) that redirect to a FAQ published as PDF (D-RSFAQ-7): read through `pdf.rs`.
+    pub pdfs: Vec<String>,
 }
 
 /// A child link discovered on a menu page.
@@ -107,7 +112,8 @@ pub fn run(source: &FaqSource) -> Result<()> {
 ///
 /// D-RSFAQ-4: o portal publica alguns painéis em duas URLs (página-alias — `/integracao` e
 /// `/notaintegrada` são o mesmo conteúdo), e a caminhada colhe as duas. O snapshot fica com uma
-/// ocorrência por painel (`panel-N`), a primeira na ordem da caminhada. A árvore da aba de FAQs não muda:
+/// ocorrência por painel (`panel-N`), a primeira na ordem da caminhada. Só o `#panel-N` conta: o
+/// `#page=N` das perguntas de PDF (D-RSFAQ-7) se repete de propósito. A árvore da aba de FAQs não muda:
 /// mostra as duas páginas, como o portal.
 pub fn flatten_faqs_raw(root: &FaqNode) -> Vec<auli_contract::FaqRaw> {
     let mut out = Vec::new();
@@ -126,6 +132,7 @@ fn collect_faqs_raw(
     if node.page_type == PageType::Faq {
         for item in &node.faq_items {
             if let Some((_, painel)) = item.url.as_deref().and_then(|u| u.rsplit_once('#'))
+                && painel.starts_with("panel-")
                 && !paineis.insert(painel.to_string())
             {
                 continue;
@@ -212,13 +219,21 @@ fn walk(
             node.faq_items = extract_faq_items(url, &body_html);
         }
         PageType::Menu => {
+            let trilha = html::extract_breadcrumbs(&page_html);
             for item in extract_menu_items(&source.base_url, &body_html) {
                 if item.url.is_empty() || visited.contains(&item.url) {
                     continue;
                 }
                 visited.insert(item.url.clone());
                 println!("  {}", item.url);
-                match walk(agent, source, &item.url, &item.title, visited) {
+                let filho = if source.pdfs.contains(&item.url) {
+                    let cache = cache_dir.join(format!("{}_pdf.txt", url_to_filename(&item.url)));
+                    fetch::get_pdf_text(&item.url, &cache, source.use_cache)
+                        .and_then(|texto| no_do_pdf(&item, &trilha, &texto))
+                } else {
+                    walk(agent, source, &item.url, &item.title, visited)
+                };
+                match filho {
                     Ok(child) => node.children.push(child),
                     Err(e) => eprintln!("Error walking {}: {}", item.url, e),
                 }
@@ -228,6 +243,46 @@ fn walk(
     }
 
     Ok(node)
+}
+
+/// The node of a FAQ published as PDF (D-RSFAQ-7): a menu with one FAQ node per section. The trail is the parent menu's
+/// breadcrumb plus the item and the section — the same shape as the HTML pages' breadcrumb —, and each question links
+/// to the menu item (it redirects to the current PDF) with `#page=N`.
+fn no_do_pdf(item: &MenuItem, trilha: &str, texto: &str) -> Result<FaqNode> {
+    let secoes = pdf::secoes(texto)?;
+    let total: usize = secoes.iter().map(|s| s.perguntas.len()).sum();
+    println!(
+        "  PDF {}: {} perguntas em {} seções",
+        item.url,
+        total,
+        secoes.len()
+    );
+    Ok(FaqNode {
+        title: item.title.clone(),
+        url: item.url.clone(),
+        page_type: PageType::Menu,
+        origin: String::new(),
+        children: secoes
+            .into_iter()
+            .map(|s| FaqNode {
+                origin: format!("{trilha} | {} | {}", item.title, s.titulo),
+                title: s.titulo,
+                url: item.url.clone(),
+                page_type: PageType::Faq,
+                children: Vec::new(),
+                faq_items: s
+                    .perguntas
+                    .into_iter()
+                    .map(|p| FaqItem {
+                        pergunta: p.pergunta,
+                        resposta: p.resposta,
+                        url: Some(format!("{}#page={}", item.url, p.pagina)),
+                    })
+                    .collect(),
+            })
+            .collect(),
+        faq_items: Vec::new(),
+    })
 }
 
 /// Reads `data-matriz-source-uri` and classifies the page by its template id.
@@ -400,6 +455,7 @@ mod tests {
             data_dir: data_dir.to_str().unwrap().into(),
             cache_dir: cache_dir.to_str().unwrap().into(),
             use_cache: true,
+            pdfs: Vec::new(),
         });
 
         let snapshot_depois = std::fs::read_to_string(&snapshot).unwrap();
@@ -481,6 +537,115 @@ mod tests {
         );
         assert_eq!(raw[2].origin, "Inicial | B");
         assert_eq!(contar_itens(&root), 4, "a árvore guarda as duas cópias");
+    }
+
+    #[test]
+    fn flatten_guarda_as_perguntas_de_pdf_na_mesma_pagina() {
+        // O `#page=N` (D-RSFAQ-7) não é painel: duas perguntas na mesma página são duas FAQs.
+        let mut secao = faq_leaf("https://x/faq-nfcom", "Inicial | NFCom | Seção 1", &[]);
+        secao.faq_items = vec![
+            com_url("1. P?", "https://x/faq-nfcom#page=1"),
+            com_url("2. Q?", "https://x/faq-nfcom#page=1"),
+        ];
+        let raw = flatten_faqs_raw(&menu("root", vec![secao]));
+        assert_eq!(raw.len(), 2);
+    }
+
+    #[test]
+    fn no_do_pdf_trilha_secoes_e_link_por_pagina() {
+        let item = MenuItem {
+            title: "NFCom - Nota Fiscal Fatura de Serviços de Comunicação Eletrônica".into(),
+            url: "https://atendimento.receita.rs.gov.br/faq-nfcom".into(),
+        };
+        let trilha =
+            "Inicial | 1. ICMS (Pessoa Jurídica e Produtor) | Documentos Fiscais / Nota Fiscal";
+        let texto = include_str!("../../tests/fixtures/rs-faqs-nfcom.txt");
+        let no = no_do_pdf(&item, trilha, texto).unwrap();
+        assert_eq!(no.page_type, PageType::Menu);
+        assert_eq!(no.url, item.url);
+        assert!(no.faq_items.is_empty());
+        assert_eq!(no.children.len(), 5);
+        let s4 = &no.children[3];
+        assert_eq!(s4.page_type, PageType::Faq);
+        assert_eq!(s4.title, "Seção 4: Correções e Substituição");
+        assert_eq!(
+            s4.origin,
+            "Inicial | 1. ICMS (Pessoa Jurídica e Produtor) | Documentos Fiscais / Nota Fiscal | \
+             NFCom - Nota Fiscal Fatura de Serviços de Comunicação Eletrônica | Seção 4: Correções e Substituição"
+        );
+        assert_eq!(
+            s4.faq_items[0].url.as_deref(),
+            Some("https://atendimento.receita.rs.gov.br/faq-nfcom#page=4")
+        );
+        let raw = flatten_faqs_raw(&menu("root", vec![no]));
+        assert_eq!(raw.len(), 25);
+        assert!(raw.iter().all(|f| f.url.contains("#page=")));
+    }
+
+    #[test]
+    fn a_caminhada_le_o_item_listado_como_pdf_com_a_trilha_do_menu() {
+        let tmp = std::env::temp_dir().join(format!("auli-rs-faqs-pdf-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&tmp);
+        let cache_dir = tmp.join("cache");
+        std::fs::create_dir_all(&cache_dir).unwrap();
+        let root_url = "https://exemplo.test/faq-documentos-fiscais";
+        let pdf_url = "https://exemplo.test/faq-nfcom";
+        let arquivo =
+            |url: &str, sufixo: &str| cache_dir.join(format!("{}{sufixo}", url_to_filename(url)));
+        std::fs::write(
+            arquivo(root_url, ".html"),
+            r#"<ol class="breadcrumb"><li><a href="/">Inicial</a></li><li>Documentos Fiscais</li></ol>
+               <div data-matriz-source-uri="/_service/x?templatename=pagina.listapagina.categoriafaq"></div>"#,
+        )
+        .unwrap();
+        // O manual também está no menu, mas fora da lista (e sem cache: no `--usecache`, é erro e fica fora).
+        std::fs::write(
+            arquivo(root_url, "_body.html"),
+            r#"<div class="panel panel-default"><div class="panel-heading"><a href="/faq-nfcom"><h4 class="panel-title">NFCom</h4></a></div></div>
+               <div class="panel panel-default"><div class="panel-heading"><a href="/manual"><h4 class="panel-title">Manual</h4></a></div></div>"#,
+        )
+        .unwrap();
+        std::fs::write(
+            arquivo(pdf_url, "_pdf.txt"),
+            "Seção 1: Conceito\n1. O que é?\n   É a nota.\n",
+        )
+        .unwrap();
+
+        let arvore = scrape(&FaqSource {
+            id: "rs".into(),
+            base_url: "https://exemplo.test".into(),
+            root_url: root_url.into(),
+            root_title: "Raiz".into(),
+            data_dir: tmp.join("raw").to_str().unwrap().into(),
+            cache_dir: cache_dir.to_str().unwrap().into(),
+            use_cache: true,
+            pdfs: vec![pdf_url.into()],
+        });
+        let _ = std::fs::remove_dir_all(&tmp);
+        let arvore = arvore.unwrap();
+        assert_eq!(arvore.children.len(), 1);
+        let nfcom = &arvore.children[0];
+        assert_eq!(
+            (nfcom.title.as_str(), nfcom.url.as_str()),
+            ("NFCom", pdf_url)
+        );
+        assert_eq!(
+            nfcom.children[0].origin,
+            "Inicial | Documentos Fiscais | NFCom | Seção 1: Conceito"
+        );
+        assert_eq!(
+            nfcom.children[0].faq_items[0].url.as_deref(),
+            Some("https://exemplo.test/faq-nfcom#page=1")
+        );
+    }
+
+    #[test]
+    fn no_do_pdf_com_molde_mudado_e_erro() {
+        let item = MenuItem {
+            title: "NFCom".into(),
+            url: "https://x/faq-nfcom".into(),
+        };
+        assert!(no_do_pdf(&item, "Inicial", "texto qualquer").is_err());
     }
 
     #[test]
