@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE, no CE e no RN, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE, no CE, no RN e no ES, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -455,6 +455,14 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   ganha 2º caso.
 - 45 serviços, 60 ocorrências, 2 públicos (Cidadão 43 / Empresa 17). 8 testes. `ServicoRaw` direto.
   Detalhes de descoberta em `docs/REGISTRO-scrapers.md#es`.
+- **FAQs** (`auli-scraper-es faqs`, `faqs.rs`): outro portal, o **Receita Orienta** (`s1-internet.sefaz.es.gov.br`,
+  ASP.NET, HTML servido pronto). A navegação é a fonte: a barra de menu da categoria ICMS (a semente) lista as 6
+  categorias → cada categoria lista os assuntos → cada assunto é uma página com o acordeão inteiro (`heading{ID}_faq`
+  direto no assunto; `heading{SID}_sa` → `heading{ID}_saf` no subassunto; resposta no `.card-body.user-content`,
+  anexo no `.card-footer`). A busca `BuscaV2` fica fora: devolve também o que o portal despublicou. Resposta pelo
+  `html_para_texto` do DF; trilha `Categoria | Assunto [| Subassunto]` (a categoria some quando tem um assunto só, de
+  mesmo nome); link = página + `#heading{ID}_…`. `ureq`/rustls, UA AuliBot, 52 GETs com 1 s. 1.003 perguntas
+  (07/11/2026), 20 testes. `docs/REGISTRO-scrapers.md#es-faqs`.
 
 ### ro — SEFIN-RO (Rondônia)
 

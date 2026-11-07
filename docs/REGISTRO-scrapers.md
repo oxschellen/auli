@@ -46,6 +46,7 @@
 - [PE FAQs — Perguntas e Respostas do IPVA e do ITCMD (www.sefaz.pe.gov.br/Servicos/…/Perguntas-e-Respostas.aspx)](#pe-faqs)
 - [CE FAQs — Perguntas e respostas do Portal de Serviços da SEFAZ-CE (portalservicos.sefaz.ce.gov.br)](#ce-faqs)
 - [RN FAQs — FAQ do programa Nota Potiguar (np.sefaz.rn.gov.br/portal)](#rn-faqs)
+- [ES FAQs — portal Receita Orienta (s1-internet.sefaz.es.gov.br/ReceitaOrienta)](#es-faqs)
 
 ---
 
@@ -2711,3 +2712,57 @@ O HTML das telas vem escrito no próprio bundle — `js/templates.js` (~1 MB, no
   `data/rn/rn-faqs-snapshot.json` (um `FaqRaw` por pergunta, trilha "Nota Potiguar"), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-rn-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
 
+
+---
+
+<a id="es-faqs"></a>
+
+# ES FAQs — portal Receita Orienta (s1-internet.sefaz.es.gov.br/ReceitaOrienta)
+
+**Discovery e implantação:** 07/11/2026. Estudo, medições e decisões D-ESFAQ-1..8:
+[`docs/ESTUDO-ES-Faqs.md`](ESTUDO-ES-Faqs.md). Coleção `faqs` do `auli-scraper-es` (`auli-scraper-es faqs`, ou `all` =
+serviços + FAQs). **1.003 perguntas** na rodada de 07/11 (ICMS 874, Nota Premiada Capixaba 42, IPVA 35, ITCMD 32,
+Reforma Tributária 18, Agendar Atendimento 2), de 46 assuntos em 6 categorias.
+
+## Fonte
+
+O Receita Orienta é um portal à parte (ASP.NET/IIS), não o `portal.es.gov.br` dos serviços; o site institucional
+(`sefaz.es.gov.br`) só aponta para ele ("Perguntas Frequentes" → `s1-internet…/faleconosco` → `/ReceitaOrienta`).
+Sem `robots.txt` (404). HTML servido pronto, sem token nem JavaScript para o conteúdo. A navegação é a fonte
+(D-ESFAQ-1): a barra de menu de qualquer página de categoria lista as 6 categorias; a semente é a categoria ICMS
+(`/categoria/61`, D-ESFAQ-7), porque a home tem 17,8 MB de imagens em base64. Cada categoria lista os assuntos
+(`href=Assunto/{id}/{Categoria}/{catId}`, relativo); cada assunto é uma página com o acordeão inteiro. 52 GETs
+(6 categorias + 46 assuntos, ~3,7 MB) com 1 s entre eles.
+
+## As armadilhas
+
+1. **A busca não é fonte.** A `BuscaV2` devolve um JSON embutido (`var modelo = {…}`) com 1.176 perguntas — 173 a mais
+   que a navegação: 155 de 12 assuntos despublicados (a página do assunto responde "Erro: Você não deveria estar
+   aqui.") e 18 de 4 subassuntos que o portal não exibe; e traz o `nomeLogin` de quem cadastrou. Não é usada.
+2. **Três tipos de cabeçalho no acordeão.** `heading{ID}_faq` = pergunta direto no assunto; `heading{SID}_sa` =
+   subassunto; `heading{ID}_saf` = pergunta do subassunto, dentro do `collapse{SID}_sa`. O subassunto da pergunta sai
+   do ancestral `collapse{SID}_sa`, não da ordem do documento.
+3. **Títulos repetidos na mesma página**, em subassuntos diferentes (10 hoje: "a) Quem pode requerer a isenção?" em
+   PcD e em taxistas). O link leva a âncora da pergunta (`#heading{ID}_…`), e o nome do `.md` sai de link + pergunta:
+   não colidem.
+4. **O anexo fica fora do corpo**, num `.card-footer` com `href='/ReceitaOrienta/Categoria/DownloadAnexo/{id}'`
+   (relativo, aspas simples): vira a linha final `Anexo: <url absoluta>` da resposta. 31 anexos (`.doc`/PDF), não
+   baixados. Uma resposta depende dele ("Em anexo está o laudo para preenchimento").
+5. **O nome da categoria no menu** traz o separador `<p> |</p>` dentro do link: o nome é só o texto direto do `<a>`.
+6. **A categoria colapsa** na trilha e na árvore quando tem um assunto só, de mesmo nome (IPVA, ITCMD, Nota Premiada
+   Capixaba, Reforma Tributária, Agendar Atendimento — D-ESFAQ-3).
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: o GET que falhe; menu sem categoria; categoria sem assunto; página
+  "Você não deveria estar aqui"; página sem `#accordion` ou sem pergunta; cabeçalho sem título; pergunta de
+  subassunto fora de um `collapse…_sa` ou num subassunto sem cabeçalho; pergunta sem `collapse` ou sem
+  `.user-content`; resposta vazia; subassunto sem pergunta; id de pergunta repetido; menos de 900 perguntas (piso).
+- **Sempre à rede**; o cache em `data/es/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- `ureq`/rustls (TLS 1.2, GCM, cadeia completa com o Sectigo OV R36) com o UA AuliBot (`crate::UA`, D-ESFAQ-8).
+- Resposta pelo `html_para_texto` na variante do DF (link → `texto "url"`, bloco e `<hr>` → linha, entidades no
+  fim); "Atualizado em" fica (645 respostas).
+- Saída: `data/es/raw/es-faqs-tree.json` (raiz → categoria → assunto → subassunto; item com o link da pergunta) e
+  `data/es/es-faqs-snapshot.json` (um `FaqRaw` por pergunta), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-es-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
