@@ -8,17 +8,15 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
-use std::sync::LazyLock;
 use std::time::Duration;
 
 use anyhow::{Context, Result, anyhow, bail};
-use regex::Regex;
 use serde::Deserialize;
 
 use auli_contract::FaqRaw;
+use auli_scraper_kit::clean;
 use auli_scraper_kit::faqtree::{FaqItem, FaqNode, PageType};
 use auli_scraper_kit::http::GetOpts;
-use auli_scraper_kit::{clean, decode_entities};
 
 const API: &str = "https://www.sefaz.mt.gov.br/notamt/api/duvidas";
 /// A página das dúvidas: o link de toda pergunta e de todo nó da árvore.
@@ -239,34 +237,16 @@ fn montar_arvore(grupos: &[Grupo]) -> FaqNode {
     menu("Perguntas frequentes", vec![menu(PROGRAMA, grupos)])
 }
 
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?i)</?(?:br|div|li|ol|p|ul)\b[^>]*>").unwrap());
-static TAG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<[^>]*>").unwrap());
-
-/// HTML → texto, na convenção da frota: `<a href="url">texto</a>` vira `texto "url"`, tag de bloco vira
-/// quebra de linha, as outras tags saem, linhas vazias saem. O HTML das respostas é simples — `<br>`,
-/// listas, `<b>`, dois links — e às vezes malformado (`</li>•item</li></br>`), o que a troca por regex
-/// tolera.
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): a quebra do fonte é estrutura nas
+/// respostas do Nota MT.
 fn html_para_texto(s: &str) -> String {
-    let com_links = LINK_RE.replace_all(s, |c: &regex::Captures| {
-        let texto = clean(&TAG_RE.replace_all(&c[2], ""));
-        let href = c[1].trim();
-        if texto.is_empty() {
-            format!("\"{href}\"")
-        } else {
-            format!("{texto} \"{href}\"")
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    decode_entities(&TAG_RE.replace_all(&com_quebras, ""))
-        .lines()
-        .map(clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(FAQ),
+            quebras_do_fonte: true,
+        },
+    )
 }
 
 #[cfg(test)]

@@ -10,12 +10,10 @@
 
 use std::collections::BTreeSet;
 use std::path::Path;
-use std::sync::LazyLock;
 use std::thread::sleep;
 use std::time::Duration;
 
 use anyhow::{Context, Result, anyhow, bail};
-use regex::Regex;
 use scraper::Html;
 use serde::Deserialize;
 use serde::de::DeserializeOwned;
@@ -338,38 +336,16 @@ fn montar_arvore(assuntos: &[AssuntoFaq]) -> FaqNode {
     }
 }
 
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)</?(?:br|div|h[1-6]|hr|li|ol|p|table|tbody|thead|tr|ul)\b[^>]*>").unwrap()
-});
-static CELULA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</?t[dh]\b[^>]*>").unwrap());
-
-/// HTML → texto, na convenção da frota: `<a href="url">texto</a>` vira `texto "url"`, tag de bloco vira
-/// quebra de linha, célula vira espaço, linhas vazias saem. O resto — tirar as tags e decodificar as
-/// entidades — fica com o parser HTML (`scraper`): o editor da FAQ usa entidades nomeadas que o kit não
-/// conhece (`&ndash;`, `&ordm;`, `&ldquo;`, `&sect;`…).
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): a quebra do fonte é estrutura nas
+/// respostas do Fale Conosco.
 fn html_para_texto(s: &str) -> String {
-    let com_links = LINK_RE.replace_all(s, |c: &regex::Captures| {
-        let href = uma_linha(c[1].trim());
-        let texto = uma_linha(&c[2]);
-        if href.is_empty() || href.starts_with('#') || href.starts_with("javascript:") {
-            texto
-        } else if texto.is_empty() {
-            format!("\"{href}\"")
-        } else {
-            format!("{texto} \"{href}\"")
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    let com_celulas = CELULA_RE.replace_all(&com_quebras, " ");
-    texto_do_html(&com_celulas)
-        .lines()
-        .map(clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(FAQ),
+            quebras_do_fonte: true,
+        },
+    )
 }
 
 /// Um trecho curto (pergunta, texto de link) numa linha só, sem tag.

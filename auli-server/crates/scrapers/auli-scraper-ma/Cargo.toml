@@ -17,5 +17,3 @@ serde_json = "1.0"
 anyhow = "1"
 # scraper (html5ever) para transformar a `descricao` do conteúdo (HTML) em texto.
 scraper = "0.27.0"
-# As FAQs (`faqs.rs`) vêm da API JSON da página "Perguntas Frequentes"; o regex converte o HTML das respostas.
-regex = "1"

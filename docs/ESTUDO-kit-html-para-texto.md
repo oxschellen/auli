@@ -1,7 +1,7 @@
 # ESTUDO-kit-html-para-texto — um conversor HTML → texto único para as FAQs da frota
 
 **Data:** 2026-11-07 (inventário do código e experimento local com os caches; nenhuma requisição de rede). ·
-**Estado:** proposta, aguardando decisão (§7). · **Escopo:** a função `html_para_texto` dos scrapers de FAQ.
+**Estado:** **implementado (07/11/2026)** — D-KITHTML-1..8 aprovadas pelo mantenedor (§10). · **Escopo:** a função `html_para_texto` dos scrapers de FAQ.
 Substitui a nota "Candidata nova (02/11/2026)" do [auli_scraper_pendências.md](auli_scraper_pendências.md) §10,
 que contava cinco cópias.
 
@@ -199,3 +199,27 @@ mkdir -p $X/srv   # os binários rodam daqui: ../data/<id>/raw = a cópia
 (cd $X/srv && $X/target/debug/auli-scraper-sp --usecache faqs)   # grava em $X/data/sp/
 # compare $X/data/<id>/<id>-faqs-snapshot.json com data/<id>/<id>-faqs-snapshot.json, sem o coletado_em
 ```
+
+## 10. Implementação (07/11/2026)
+
+D-KITHTML-1..8 como propostas. `auli-scraper-kit/src/html.rs` traz `html_para_texto(s, Opcoes { base,
+quebras_do_fonte })` e `endereco(href, base)`, com as regras da §6 sem mudança. Cada um dos 12 crates troca a sua
+versão por um invólucro de uma linha com as opções da tabela da §6, que mantém a assinatura de antes; as chamadas e os
+testes dos crates não mudam. O anexo do ES passa a usar o `endereco` do kit.
+
+- **Código:** +125 −626 linhas nos 12 crates e no kit, mais o `html.rs` novo (345 linhas, das quais 205 de testes). Saíram as 12 funções e os regexes e
+  auxiliares que só elas usavam (`OCULTO_RE`, `LINK_RE`, `BLOCO_RE`…, `endereco`, `decodificar`, `absoluta`), a
+  lista fechada de tags do PR (a regra dela foi para o kit, D-KITHTML-5) e cinco dependências que ficaram sem uso
+  (`scraper` no AM e no CE; `regex` no MA, MS e MT). O kit ganhou `regex` e `scraper`.
+- **Testes:** 15 no kit, um por regra, com os casos reais do experimento. Quinze mutações, uma por regra: todas
+  derrubam o teste delas. Quatro testes não pegavam a mutação na primeira versão e foram reforçados: a quebra dentro
+  de tag de bloco (`<p<br>style=` é o que vaza; com `<span>` a tag se recompõe), o `href` com o `:` codificado e o
+  texto sem, o `<center>` no meio do texto corrido e o `<o:p>`. Nos crates, um teste mudou de expectativa: o do
+  caminho de menu do PR, que fixava a URL repetida (D-KITHTML-2). No total, 336 testes passam.
+- **Equivalência:** os binários do branch, no laboratório da §2, produzem os mesmos 12 snapshots e as mesmas 12
+  árvores da candidata da rodada 5, byte a byte. O diff contra a base é a tabela da §4.
+- **Regeração local:** os 8 snapshots que mudam (SP, GO, CE, MA, MS, PR, SC, MG) foram refeitos com `--usecache` sobre
+  os caches de produção, e saíram iguais aos do laboratório. Depois vieram `auli-collections` e `build-packs.sh <id>
+  faqs`. Foram calculados 388 vetores, não 395: no MS, 7 das 144 respostas mudam depois dos 6.000 caracteres da
+  chave, que é o teto do vetor (o `build-packs` avisa "20 de 1200 keys no teto"), e reaproveitam o vetor. Os 21.259
+  artefatos de serviços e pareceres dessas entidades saíram com o mesmo md5.

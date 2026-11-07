@@ -12,13 +12,12 @@ use std::path::Path;
 use std::sync::LazyLock;
 
 use anyhow::{Context, Result, anyhow, bail};
-use regex::Regex;
 use serde::Deserialize;
 
 use auli_contract::FaqRaw;
+use auli_scraper_kit::clean;
 use auli_scraper_kit::faqtree::{FaqItem, FaqNode, PageType};
 use auli_scraper_kit::http::GetOpts;
-use auli_scraper_kit::{clean, decode_entities};
 
 use crate::ma::{API_BASE, FRONT_BASE};
 
@@ -358,34 +357,15 @@ fn montar_arvore(raizes: &[Raiz]) -> FaqNode {
     )
 }
 
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?i)</?(?:br|div|li|ol|p|ul)\b[^>]*>").unwrap());
-static TAG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<[^>]*>").unwrap());
-
-/// HTML → texto, na convenção da frota: `<a href="url">texto</a>` vira `texto "url"`, tag de bloco vira quebra
-/// de linha, as outras tags saem, entidades decodificadas, linhas vazias saem (o editor do portal deixa muito
-/// `<p><br></p>`). Também sai o `U+FEFF` que 6 respostas trazem colado ao texto — o `clean` não o remove.
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): host do portal SGC.
 fn html_para_texto(s: &str) -> String {
-    let com_links = LINK_RE.replace_all(s, |c: &regex::Captures| {
-        let texto = clean(&TAG_RE.replace_all(&c[2], ""));
-        let href = c[1].trim();
-        if texto.is_empty() {
-            format!("\"{href}\"")
-        } else {
-            format!("{texto} \"{href}\"")
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    decode_entities(&TAG_RE.replace_all(&com_quebras, ""))
-        .replace('\u{feff}', "")
-        .lines()
-        .map(clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(FAQ.as_str()),
+            quebras_do_fonte: false,
+        },
+    )
 }
 
 #[cfg(test)]

@@ -14,12 +14,10 @@
 
 use std::collections::BTreeSet;
 use std::path::Path;
-use std::sync::LazyLock;
 use std::thread::sleep;
 use std::time::Duration;
 
 use anyhow::{Result, anyhow, bail};
-use regex::Regex;
 use serde::Deserialize;
 use ureq::Agent;
 
@@ -28,7 +26,7 @@ use auli_scraper_kit::clean;
 use auli_scraper_kit::faqtree::{FaqItem, FaqNode, PageType};
 use auli_scraper_kit::http::GetOpts;
 
-use crate::pareceres::{COURTESY, UA, decode_html};
+use crate::pareceres::{COURTESY, UA};
 use crate::scrape::{Facet, Resp};
 
 const BASE: &str = "https://portal.fazenda.sp.gov.br";
@@ -290,69 +288,16 @@ fn consolidar(subsites: &[Subsite]) -> Result<Vec<FaqRaw>> {
     Ok(faqs)
 }
 
-static OCULTO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?is)<style\b.*?</style>|<script\b.*?</script>|<svg\b.*?</svg>|<!--.*?-->")
-        .unwrap()
-});
-static ESPACO_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\s+").unwrap());
-static IMG_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r#"(?is)<img\b[^>]*?\ssrc\s*=\s*["']([^"']*)["'][^>]*>"#).unwrap());
-static LINK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?is)<a\b[^>]*?\shref\s*=\s*["']([^"']*)["'][^>]*>(.*?)</a>"#).unwrap()
-});
-static BLOCO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)</?(?:p|div|br|hr|li|ul|ol|tr|table|tbody|thead|h[1-6]|blockquote)\b[^>]*>")
-        .unwrap()
-});
-static CELULA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(?i)</?t[dh]\b[^>]*>").unwrap());
-static TAG_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<[^>]+>").unwrap());
-
-/// HTML do editor SharePoint → texto, na convenção do SC e do PR: `<a href="url">texto</a>` vira
-/// `texto "url"`, `<img src>` vira `"url"`, tag de bloco vira quebra de linha. Diferenças medidas nas
-/// 2.665 respostas de 01/11/2026:
-///   - o editor escapa o `<` do texto (`&lt;escrituras&gt;`), então TODA tag sai — e as entidades só são
-///     decodificadas depois, para o `&lt;` não virar tag;
-///   - o HTML traz quebras de linha cruas, que no navegador são espaço: o espaço é colapsado antes de
-///     os blocos virarem linha, senão a frase se parte no meio;
-///   - `<style>`, `<script>`, `<svg>` e comentários saem com o conteúdo;
-///   - `href` e `src` vêm com entidades (`https&#58;//`) e às vezes relativos (`/servicos/…`);
-///   - célula de tabela vira espaço e linha de tabela vira linha: "CST_ICMS 53". Não `|`: as respostas
-///     citam registros SPED (`|C197|SP90090278|…`).
+/// HTML → texto pelo conversor da frota (`auli_scraper_kit::html`, D-KITHTML-1): links da raiz do portal com o host
+/// do `BASE`.
 fn html_para_texto(s: &str) -> String {
-    let visivel = OCULTO_RE.replace_all(s, "");
-    let corrido = ESPACO_RE.replace_all(&visivel, " ");
-    let com_imagens = IMG_RE.replace_all(&corrido, |c: &regex::Captures| {
-        format!("\"{}\"", absoluta(&decode_html(c[1].trim())))
-    });
-    let com_links = LINK_RE.replace_all(&com_imagens, |c: &regex::Captures| {
-        let href = decode_html(c[1].trim());
-        let texto = clean(&decode_html(&TAG_RE.replace_all(&c[2], "")));
-        if href.is_empty() || href.starts_with('#') || href.starts_with("javascript:") {
-            texto
-        } else if texto.is_empty() {
-            format!("\"{}\"", absoluta(&href))
-        } else {
-            format!("{texto} \"{}\"", absoluta(&href))
-        }
-    });
-    let com_quebras = BLOCO_RE.replace_all(&com_links, "\n");
-    let com_celulas = CELULA_RE.replace_all(&com_quebras, " ");
-    let sem_tags = TAG_RE.replace_all(&com_celulas, "");
-    decode_html(&sem_tags)
-        .lines()
-        .map(clean)
-        .filter(|l| !l.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n")
-}
-
-/// `/servicos/…` → `https://portal.fazenda.sp.gov.br/servicos/…`; o resto como veio.
-fn absoluta(url: &str) -> String {
-    if url.starts_with('/') {
-        format!("{BASE}{url}")
-    } else {
-        url.to_string()
-    }
+    auli_scraper_kit::html::html_para_texto(
+        s,
+        auli_scraper_kit::html::Opcoes {
+            base: Some(BASE),
+            quebras_do_fonte: false,
+        },
+    )
 }
 
 /// A página de FAQs do subsite, onde o portal abre a lista daquele Home.
