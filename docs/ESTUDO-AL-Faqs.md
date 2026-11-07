@@ -55,7 +55,7 @@ acessível.
 
 ## 3. Decisões propostas (do mantenedor)
 
-- **D-ALFAQ-1 — Adiar.** Nenhuma coleção `faqs` para a `al` enquanto o site institucional estiver em manutenção: sem
+- **D-ALFAQ-1 — Adiar** (✅ decidida pelo mantenedor em 06/11/2026; pendências §21). Nenhuma coleção `faqs` para a `al` enquanto o site institucional estiver em manutenção: sem
   TAREFA, sem código, sem cache.
 - **D-ALFAQ-2 — Sem Wayback como fonte.** As respostas do Auli citam o link oficial, que precisa abrir; uma FAQ
   reconstruída do arquivo apontaria para rotas K2 que o site novo provavelmente não terá, com conteúdo de antes da

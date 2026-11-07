@@ -27,6 +27,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 18 | CE | Os 332 conteúdos do `conteudo-geral` que não são FAQ (Parecer CECON, Comunicados COTRI, Notas Explicativas…) | candidatos a coleção própria (D-CEFAQ-7) |
 | 19 | CE | FAQ nova fora da convenção de nome (aviso do D-CEFAQ-2) | medir: `getItem` dos 332 |
 | 20 | RS | FAQs: o índice novo `/perguntas-frequentes` como guarda e plano B (D-RSFAQ-2, -6); duas páginas que nunca entraram | D-RSFAQ-3..5 feitas (06/11); guarda e plano B em aberto |
+| 21 | AL | FAQs: não existe FAQ pública da SEFAZ-AL — o site institucional está em manutenção (D-ALFAQ-1..5) | ✅ decidida: adiar (06/11); retomar quando o título da raiz deixar de ser "Site em manutenção" |
 
 ---
 
@@ -467,3 +468,38 @@ agosto): o ureq recusa o corpo ("stream did not contain valid UTF-8"), e o índi
 codificação (e se são FAQ) antes de decidir.
 
 **Próximo passo.** Decidir a D-RSFAQ-2 (guarda pelo índice); a D-RSFAQ-6 só se o `-antigo` sair do ar.
+
+## 21. AL — FAQs adiadas: o site da SEFAZ-AL está em manutenção (D-ALFAQ-1..5)
+
+_Aberta e decidida em 06/11/2026. Estudo: [ESTUDO-AL-Faqs.md](ESTUDO-AL-Faqs.md)._
+
+**Conclusão: não há FAQ pública da SEFAZ-AL para coletar hoje.**
+
+- A FAQ morava no site institucional (`www.sefaz.al.gov.br/perguntas-frequentes`, Joomla/K2), que está em manutenção
+  sem data. O host devolve **a mesma página para qualquer caminho** — `/`, `/perguntas-frequentes`, `/robots.txt`,
+  `/sitemap.xml`, um caminho inventado: HTTP 200, 46.523 bytes, md5 `dd07faf6…`, título "SEFAZ-AL | Site em
+  manutenção", "Notícias e conteúdos voltam em breve". Nenhum host de site novo (`novo.`, `portal.`, `www2.`…) existe.
+- Fora dele não há FAQ: o Portal do Contribuinte (38 rotas no bundle, nenhuma de FAQ), o ITCD, o IPVA on-line, a Nota
+  Fiscal Cidadã (só um redirecionamento — diferente da Nota MT), o `gcs2` (só legislação: `CAT001` e `CAT017`) e a
+  API do Portal Alagoas Digital (26 campos por serviço, nenhum de pergunta).
+- O canal de dúvidas é a **Nise**, assistente de WhatsApp `(82) 3216-9999`, sem base de conhecimento pública.
+- A última captura da FAQ no Wayback é de 18/07/2025; o arquivo não é fonte (o link oficial precisa abrir) e o
+  conteúdo da captura não foi lido. A expectativa para quando voltar é modesta (dezenas a poucas centenas de
+  perguntas), mas é hipótese.
+
+**Decisão do mantenedor (06/11/2026): adiar** (D-ALFAQ-1) — sem TAREFA, sem código, sem cache. As outras propostas do
+estudo seguem como estão: sem Wayback como fonte (D-ALFAQ-2), sonda manual (D-ALFAQ-4), cartilhas em PDF fora
+(D-ALFAQ-5).
+
+**Gatilho de retomada (D-ALFAQ-3):** o título da raiz deixar de ser "SEFAZ-AL | Site em manutenção" — o status já é
+200 e não vai mudar; o título vai. 1 GET:
+
+```bash
+curl -sS -A 'AuliBot/0.1 (+https://github.com/oxschellen/auli)' https://www.sefaz.al.gov.br/ | grep -o '<title>[^<]*'
+```
+
+**Próximo passo.** Nenhum até o gatilho. Quando disparar: salvar o HTML, sondar `/perguntas-frequentes` e
+`/robots.txt` e reabrir o estudo pelo checklist do §4.
+
+**À parte:** o `gcs2.sefaz.al.gov.br` é o gestor de legislação da SEFAZ-AL — ponto de partida se a `al` um dia ganhar
+uma coleção `legislacao` (estudo §6).
