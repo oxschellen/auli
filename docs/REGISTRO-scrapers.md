@@ -48,6 +48,7 @@
 - [RN FAQs — FAQ do programa Nota Potiguar (np.sefaz.rn.gov.br/portal)](#rn-faqs)
 - [ES FAQs — portal Receita Orienta (s1-internet.sefaz.es.gov.br/ReceitaOrienta)](#es-faqs)
 - [PB FAQs — páginas de informação do portal institucional (www.sefaz.pb.gov.br/info/…)](#pb-faqs)
+- [PA FAQs — perguntas e respostas do site antigo da SEFA (antigo.sefa.pa.gov.br)](#pa-faqs)
 
 ---
 
@@ -971,6 +972,11 @@ a `classe` do paradigital não discrimina (todos iguais). Profundidade: **100%**
 etapas + requisitos + contatos.
 
 ## Fase 4 — Manual de Atendimento (Joomla) — **EXTINTO**
+
+> **Correção (07/11/2026, D-PAFAQ-6):** o Joomla não foi extinto, mudou de host — vive em `antigo.sefa.pa.gov.br`,
+> e o menu "Orientações" do site novo aponta para ele. Esta fase testou só o `www`. As FAQs do PA vêm de lá
+> ([#pa-faqs](#pa-faqs)). O catálogo de serviços do site novo é o tipo `pis` do WordPress (154 páginas, abertas
+> anônimas) — pendência §22 do `auli_scraper_pendências.md`.
 
 `www.sefa.pa.gov.br` **não é mais Joomla**: foi reconstruído como **SPA Angular** (`main.*.js`,
 `data-critters-container`, Cloudflare Turnstile). As URLs antigas do Manual
@@ -2818,3 +2824,51 @@ plugin Tabs da Regular Labs (`.tab-pane` com `.nn_tabs-title`), todas no HTML. 9
   `FaqRaw` por pergunta; trilha `Página | Aba` no Cadastro e na Cobrança, `Página [| Grupo]` nas outras; link com
   `#<id da aba>` quando a FAQ está numa aba), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-pb-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+- **07/11/2026 — a segmentação foi para o kit** (`kit::linhas`, D-PAFAQ-3), com a regra da continuação da numeração:
+  a linha em negrito que continua a sequência abre pergunta mesmo sem "?". Recuperou a 3 de Combustíveis da ST ("3 -
+  Considerando uma operação de Venda de Etanol Hidratado…", que estava na resposta da 2): **201 perguntas**.
+
+---
+
+<a id="pa-faqs"></a>
+
+# PA FAQs — perguntas e respostas do site antigo da SEFA (antigo.sefa.pa.gov.br)
+
+**Discovery e implantação:** 07/11/2026. Estudo, medições e decisões D-PAFAQ-1..6:
+[`docs/ESTUDO-PA-Faqs.md`](ESTUDO-PA-Faqs.md). Coleção `faqs` do `auli-scraper-pa` (`auli-scraper-pa faqs`, ou `all` =
+serviços + FAQs). **154 perguntas** na rodada de 07/11, de 11 páginas.
+
+## Fonte
+
+O site novo (`www.sefa.pa.gov.br`, Angular + WordPress headless) não tem FAQ; o menu "Orientações" dele aponta para o
+site antigo, que continua no ar em `antigo.sefa.pa.gov.br` (Joomla). Lá, o "Perguntas e Respostas" do Manual de
+Atendimento é um índice de 30 links (13 PDFs, 4 de outros órgãos, 5 sem link, 1 subsite fora do ar, 7 artigos); a busca
+do Joomla acha mais páginas. Lista curada de 11 (D-PAFAQ-1, opção A), pelo link do título de cada artigo (o
+canônico). `robots.txt` padrão Joomla com `/arquivos/` e `/legislacao/` fechados; as páginas usadas estão abertas.
+TLS 1.3, cadeia completa. 11 GETs (~1 MB) com 1 s.
+
+## As armadilhas
+
+1. **A pergunta é um trecho em negrito no meio do texto**, como na PB: segmentação do kit (`kit::linhas`).
+2. **Três páginas não usam negrito** (PIX, Imunidades e Isenções, Parcelamento "1.1 -"): numa seção sem nenhuma pergunta
+   em negrito, valem as linhas numeradas que terminam em "?".
+3. **Pergunta em negrito que não termina em "?"** ("8. A CONSULTA … PODE SER FEITA … DE DUAS FORMAS DISTINTAS." na
+   Denegação; "2- Qualquer valor deve ser retificado? Mesmo que a diferença seja de centavos." no Cruzamento EFD x NF-e):
+   numa seção numerada, a linha em negrito que continua a sequência abre pergunta.
+4. **A Alíquota Modal 19% existe em dois artigos idênticos** (20715 e 20716); fica o 20716, o do índice — que o índice
+   linka por uma URL de edição (`/orientacoes?layout=edit&id=20716`).
+5. **Respostas longas e listas que a página corta:** a 25 da DIEF 2016 é a tabela de mensagens de validação (33.522
+   caracteres; só os primeiros 6.000 entram no vetor); a 3 da Alíquota termina em ":" sem a lista — é da página.
+
+## Guardas e transporte
+
+- `Err` antes de gravar qualquer arquivo: o GET que falhe; página sem o artigo (`div.w3-card-12.internas`); página sem
+  pergunta; pergunta sem resposta; par (link, pergunta) repetido; e-mail protegido que sobrou no texto; menos de 135
+  perguntas (piso). Aviso: numeração que pula ou repete (o Parcelamento numera "1.1, 1.2…").
+- **Sempre à rede**; o cache em `data/pa/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a
+  byte e o snapshot a menos do `coletado_em`.
+- `ureq`/rustls com o UA AuliBot (`crate::UA`, D-PAFAQ-5). Resposta pelo conversor do kit, sem o prefixo "R –".
+- Saída: `data/pa/raw/pa-faqs-tree.json` (raiz = o índice → um nó por página) e `data/pa/pa-faqs-snapshot.json` (um
+  `FaqRaw` por pergunta; trilha = a página; link = a página), nessa ordem e atômicos.
+- Atualização: `scripts/tools/update-pa-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+

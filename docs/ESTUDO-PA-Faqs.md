@@ -1,7 +1,7 @@
 # ESTUDO-PA-Faqs — Perguntas e respostas da SEFA-PA (coleção `faqs` da entidade `pa`)
 
-**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~50 GETs). · **Estado:** proposta v1, aguardando
-decisão (§5). · **Órgão:** Secretaria de Estado da Fazenda do Pará (SEFA-PA). · **Hoje a `pa` tem só `servicos`**
+**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~50 GETs). · **Estado:** **v1 implementada (07/11/2026) — 11 páginas, 154 perguntas** (§8); D-PAFAQ-1 decidida na opção A,
+D-PAFAQ-2..6 como propostas. · **Órgão:** Secretaria de Estado da Fazenda do Pará (SEFA-PA). · **Hoje a `pa` tem só `servicos`**
 (paradigital/Prodepa, 34 serviços — [REGISTRO-scrapers.md#pa](REGISTRO-scrapers.md#pa)).
 
 > **TL;DR — a FAQ do PA está no site antigo, espalhada em 11 páginas, e é na maior parte de 2014–2018.**
@@ -107,7 +107,7 @@ seção tem pergunta em negrito, então o complemento não muda nada lá — a i
     2023–2025; é a mais provável de estar desatualizada, mas não há norma que a dê por extinta.
   - **D — não coletar o PA agora** e esperar o site novo ganhar FAQ.
 
-  Recomendo **A**, pelo mesmo critério da PB; **C** é a alternativa se a dúvida sobre a DIEF pesar mais.
+  ✅ **Decidida em 07/11/2026: opção A** (as 11 páginas).
 - **D-PAFAQ-2 — Segmentação = a da PB + o complemento** das numeradas sem negrito (§3).
 - **D-PAFAQ-3 — A segmentação vai para o kit.** Com o PA, o percurso em linhas e o `segmentar` da PB ganham o 2º
   consumidor; em vez de copiar ~250 linhas, extrair para `auli_scraper_kit` (como o conversor, D-KITHTML). Prova: a PB
@@ -140,3 +140,27 @@ grep -o '<p>[0-9]* resultados' busca.html                                       
 curl -sS -I -A "$UA" "https://site-sefa-wordpress.sefa.pa.gov.br/wp-json/wp/v2/pis?per_page=1" | grep -i x-wp-total   # 154
 curl -sS -A "$UA" -o /dev/null https://app.sefa.pa.gov.br/cadin/faq               # Empty reply from server
 ```
+
+## 8. Implementação (07/11/2026)
+
+`auli-scraper-pa/src/faqs.rs` (`auli-scraper-pa faqs` ou `all`), D-PAFAQ-1 na opção A e D-PAFAQ-2..6 como propostas.
+
+- **A segmentação foi para o kit** (`auli_scraper_kit::linhas`, D-PAFAQ-3): o percurso em linhas, o `segmentar`, a troca
+  do e-mail protegido do Joomla, o prefixo "R" e o aviso de numeração saíram do `faqs.rs` da PB, que passou a chamá-los.
+  Com o código movido e o complemento das numeradas sem negrito, a PB saiu byte a byte igual pelo `--usecache`.
+- **Uma regra a mais, que a coleta mostrou:** duas perguntas em negrito não terminam em "?" — a 8 da Denegação ("… DE DUAS
+  FORMAS DISTINTAS.") e a 2 do Cruzamento EFD x NF-e ("…? Mesmo que a diferença seja de centavos.") — e ficavam dentro da
+  resposta anterior. Numa seção numerada, a linha em negrito que continua a sequência (a anterior + 1) abre pergunta.
+  Com ela o PA passa de 152 para **154**, e a **PB ganha 1**: a 3 de Combustíveis da Substituição Tributária ("3 -
+  Considerando uma operação de Venda de Etanol Hidratado…"), que estava grudada na resposta da 2 — a única mudança na PB
+  (201 perguntas; 2 vetores recalculados).
+
+Números da rodada à rede (11 GETs): 154 perguntas — SINTEGRA 31, DIEF 2016 30, Parcelamento 29, Manifestação do
+Destinatário 20, Denegação 9, Cruzamento 8, Alíquota 19% 6, Imunidades 6, EFD Estadual 6, Selo Fiscal 5, PIX 4. Respostas:
+0 vazias, nenhuma tag, entidade ou e-mail protegido no texto (o `<NÚMERO DE SÉRIE>` de uma mensagem do ECF é texto e
+fica), nenhum prefixo "R"; mín. 31 caracteres, mediana 358, máx. 33.522 (a tabela de validações da DIEF). `--usecache`:
+árvore idêntica byte a byte, snapshot idêntico a menos do `coletado_em`. 154 `.md` e 154 vetores; os 40 artefatos de
+serviços do PA e os 106 da PB saíram com o mesmo md5. Smoke `/v1/retrieve`: o alvo em 1º nas 5 perguntas do PA e na da
+pergunta recuperada da PB. Testes: 9 no PA, 12 no `kit::linhas`; as regras novas (complemento, continuação) e as
+movidas foram desligadas uma a uma, e cada uma derrubou um teste.
+

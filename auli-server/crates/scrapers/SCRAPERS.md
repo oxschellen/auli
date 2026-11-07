@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE, no CE, no RN, no ES e na PB, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE, no CE, no RN, no ES, na PB e no PA, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -41,6 +41,7 @@ Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/
 | `kit::clean(s)` | zero-width + nbsp + squeeze | — |
 | `kit::clean_decoded(s)` / `kit::decode_entities(s)` | decode de entidades HTML + squeeze (pr/ba) — **sem** strip de zero-width | — |
 | `kit::html::html_para_texto(s, Opcoes { base, quebras_do_fonte })` | HTML das respostas de FAQ → texto: bloco vira linha, link vira `texto "url"` (uma vez só quando o texto é a URL), tag HTML sai, `<` que é texto fica, entidades decodificadas uma vez (D-KITHTML-1..8, `docs/ESTUDO-kit-html-para-texto.md`). `kit::html::endereco(href, base)` decide se um `href` vale ir para o texto | pe e rn (percorrem o DOM); o `tarf.rs` do rs (outro contrato) |
+| `kit::linhas::{linhas, segmentar}` (+ `sem_cloak`, `sem_prefixo_r`, `numeracao_irregular`) | FAQ em linhas para os portais em que a pergunta é um trecho em negrito no meio do texto: pergunta = linha toda em destaque terminada em "?" (só as numeradas quando a maioria é numerada; a linha em negrito que continua a numeração também; numa seção sem negrito, as numeradas); grupos "… - PERGUNTAS FREQUENTES"; e-mail protegido do Joomla → o texto visível (D-PBFAQ-2, D-PAFAQ-2, -3) | pb e pa (os dois Joomla) |
 | `kit::cache::read_or_bail(dir, url, use_cache)` | cache-read + miss-vira-erro do `--usecache` | ce (terminador de paginação), rs-faqs (mensagem própria) |
 | `kit::USER_AGENT` | UA de navegador (Firefox/124 Linux) — a exceção da frota, só com motivo (D-FROTA-UA) | — (os 3 antigos Chrome eram cópia acidental; recoleta ao vivo confirmou ≡) |
 | `ScraperInfo::new(nome, versao)` (contrato) | substitui o `fn scraper_info()` boilerplate | — |
@@ -439,6 +440,11 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   `portal-digital.sefa.pa.gov.br` estava fora do ar (522) e o Joomla foi extinto — ver `docs/REGISTRO-scrapers.md#pa`.
 - 34 serviços, 54 ocorrências, 3 públicos (Cidadão 21 / Empresa 30 / Estado 3). 8 testes. `ServicoRaw` direto.
   O paradigital cobre **63 órgãos** com o mesmo contrato → oportunidade de scraper genérico (D-PA-ACERVO).
+- **FAQs** (`auli-scraper-pa faqs`, `faqs.rs`): do **site antigo** da SEFA (`antigo.sefa.pa.gov.br`, Joomla, para onde o
+  menu "Orientações" do site novo aponta) — o Joomla não foi extinto, mudou de host. Lista curada de 11 páginas de
+  perguntas e respostas (o índice do Manual de Atendimento é uma lista de links, a maioria PDF); corpo em
+  `div.w3-card-12.internas`, segmentação do kit (`kit::linhas`), resposta pelo conversor do kit; trilha = a página.
+  11 GETs. 154 perguntas (07/11/2026), 9 testes. `docs/REGISTRO-scrapers.md#pa-faqs`.
 
 ### es — SEFAZ-ES (Espírito Santo)
 
@@ -631,8 +637,9 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   páginas de informação (Cadastro em 10 abas, SPED, Substituição Tributária, MDF-e, NFA-e, Simples, GIM, AIDF,
   Cobrança Automática). Cada uma marca a pergunta de um jeito; a seção vira linhas (bloco e `<br>` quebram) e pergunta
   é a linha toda em negrito que termina em "?", só as numeradas quando a maioria é numerada. E-mail protegido do
-  Joomla → o texto visível; tabela de anexos fora; prefixo "R –" fora; grupos da ST na trilha. Resposta pelo
-  conversor do kit. 9 GETs. 200 perguntas (07/11/2026), 21 testes. `docs/REGISTRO-scrapers.md#pb-faqs`.
+  Joomla → o texto visível; tabela de anexos fora; prefixo "R –" fora; grupos da ST na trilha. Segmentação e
+  resposta pelo kit (`kit::linhas`, `kit::html`; desde 07/11, 201 perguntas — a regra da continuação da numeração
+  recuperou a 3 de Combustíveis). 9 GETs. 200 perguntas (07/11/2026), 21 testes. `docs/REGISTRO-scrapers.md#pb-faqs`.
 
 ---
 
