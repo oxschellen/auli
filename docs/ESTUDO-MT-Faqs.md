@@ -1,8 +1,8 @@
 # ESTUDO-MT-Faqs — Perguntas Frequentes da SEFAZ-MT (coleção `faqs` da entidade `mt`)
 
 **Data:** 2026-11-02 (descoberta) · revisado em 2026-11-02 após sondagem (§5.1). · **Estado:** **v1 implementada
-— FAQ do Nota MT, API JSON anônima, 135 perguntas** (§2, §8). Os PDFs "FAQ <tema>" do site institucional ficam
-para a fase 2 e dependem da D-MTFAQ-3 (robots), que o mantenedor deixou para depois. · **Órgão:** Secretaria de Estado de Fazenda de Mato Grosso
+— FAQ do Nota MT, API JSON anônima, 135 perguntas** (§2, §8). **Fase 2 sondada em 07/11/2026 (§9): proposta,
+aguardando decisão** — a hipótese da §2b (os PDFs "FAQ <tema>") não se confirmou como fonte principal. · **Órgão:** Secretaria de Estado de Fazenda de Mato Grosso
 (SEFAZ-MT). · **Hoje a `mt` tem só `servicos`** (X-Via, 27 itens, descrição rica; recoletado sem cache em 02/11).
 
 > **TL;DR — duas fontes de FAQ de verdade, de formas opostas.**
@@ -211,3 +211,85 @@ Registro em [`REGISTRO-scrapers.md#mt-faqs`](REGISTRO-scrapers.md#mt-faqs).
   frente). Mutação: sem a ordenação, com "sem ordem" primeiro, sem as guardas de pergunta e de `id` repetidos, com
   as inativas dentro, sem a quebra de linha dos blocos, sem o link, sem o `clean` da pergunta e sem o programa na
   trilha — cada uma derruba um teste.
+
+## 9. Fase 2 — sondagem de 07/11/2026
+
+Feita deste ambiente depois da D-FROTA-ROBOTS, com o UA AuliBot e **30 s entre as requisições** ao `www5` e ao
+Portal do Conhecimento (o `Crawl-delay` que os dois declaram, como a D-MTFAQ-3 propunha). ~80 GETs ao todo.
+
+> **TL;DR — as FAQs atuais do MT estão em HTML e numa API, não nos PDFs.**
+>
+> O hub `/-/perguntas-frequentes-1` não lista mais PDF nenhum: diz que as perguntas "estão disponíveis no Portal do
+> Conhecimento" e linka `portaldoconhecimento.mt.gov.br/perguntas-frequentes7`, que dá **404** — o portal foi refeito
+> (o sitemap declara 10 páginas: calculadoras, modelos, nenhuma de perguntas). Os PDFs "FAQ Cadastro" e "FAQ ITCD"
+> ainda baixam, mas são de **28/09/2017** e nada os linka. O que há de atual:
+>
+> 1. **Três páginas "Perguntas frequentes" de áreas de serviço do `www5`**, em HTML: Contencioso Administrativo
+>    Tributário (**21**), Declarações Fiscais — DIMP (**11**) e Documentos Fiscais — NFA-e (**15**): **47**.
+> 2. **A FAQ do portal estadual X-Via** (`portal.mt.gov.br/perguntas-frequentes`), por API JSON aberta: `POST /v1/faq`
+>    com o id da SEFAZ devolve **11** perguntas, todas alteradas em fev–mar/2026.
+
+### 9.1 O que foi avaliado
+
+| Fonte | Veredito | Evidência |
+|---|---|---|
+| `www5` — hub `/-/perguntas-frequentes-1` | **sem conteúdo**: aponta para o Portal do Conhecimento | o texto do web content; o link é `…/perguntas-frequentes7` |
+| `portaldoconhecimento.mt.gov.br` (Liferay; robots `Disallow: /`, `Crawl-delay: 30`) | **sem FAQ**: `/perguntas-frequentes7`, `/mapa-do-site` e `/sobre-o-itcd` dão 404; o sitemap (32 sub-sitemaps) declara 10 páginas, nenhuma de perguntas | os 32 sub-sitemaps, lidos um a um |
+| `www5` — listagem da pasta (JSON WS e `headless-delivery`) | **403** nas duas | a enumeração não pode ser pela pasta (D-MTFAQ-2) |
+| `www5` — as 24 áreas de "Todos os Serviços" (`/servicos`) | **5 têm o item "Perguntas frequentes"** no menu: Contencioso, Declarações Fiscais e Documentos Fiscais com perguntas; Autorregularização vazia; ITCD → o hub (sem conteúdo) | as 24 páginas de área |
+| **`www5` — Contencioso** (`/-/22563369-perguntas-frequentes`) | **fonte**: 21 perguntas, `<p><strong>N. …?</strong></p>` + `<p><strong>Resposta:</strong> …</p>` | atual (Plenária Virtual, DT-E, e-Process) |
+| **`www5` — Declarações Fiscais** (`/servicos?c=75259024&e=75467035&s=75468011`) | **fonte**: 11 perguntas sobre a DIMP, `<strong>N. …?</strong><br>` + resposta no mesmo `<p>` | cita o Ato COTEPE/ICMS 38/2024 |
+| **`www5` — Documentos Fiscais** (`/servicos?c=16773297&e=74923471&s=74924121`) | **fonte**: 15 perguntas sobre a NFA-e, `<ol start="N"><li><strong>…?</strong></li></ol>` + `<p>` | — |
+| `www5` — PDF "FAQ Cadastro" (`documents/6071037/8241275/FAQ+Cadastro/…`) | **antigo**: 28/09/2017, 22 perguntas em 2 seções em caixa alta (14 + 8, a numeração recomeça), Portaria 005/2014 | baixa (200), mas nenhuma página o linka |
+| `www5` — PDF "FAQ ITCD" (`…/FAQ+ITCD/0538c698-…`) | **antigo**: 28/09/2017, 14 perguntas, tabelas de faixas de alíquota | idem |
+| `www5` — "Perguntas e respostas CIB" | **fora**: CIB é a Comissão Intergestores Bipartite, da assistência social (SETAS/MT) — não o "Cadastro Imobiliário" que a §1 supôs | índice de busca |
+| **X-Via** `portal.mt.gov.br` (robots libera tudo) | **fonte**: `POST /v1/faq {"uo": [<id da SEFAZ>]}` → 11 perguntas (pergunta, resposta em HTML, `dataDaUltimaAlteracao`, categoria, serviço, status); página por pergunta, `/perguntas-frequentes/<id>`; o id vem de `GET /v1/department/secretaria-de-estado-de-fazenda` | o bundle `main.*.js` (`/v1/faq`, `/v1/faq/{id}`); a lista sem filtro tem 295 perguntas de 13 órgãos, nenhuma outra tributária |
+
+As 11 do X-Via: 5 de "Finanças e Tributação" (contribuinte do ICMS, domicílio tributário, transferência e situação
+da inscrição estadual, inscrição de produtor menor de idade — a primeira cita a Portaria 059/2025, que torna o PDF
+de Cadastro de 2017 duvidoso), 5 de "Comunicação e Transparência" (orçamento, receita e despesa públicas, audiência e
+consulta pública) e 1 institucional ("O que é Servidor Fazendário?").
+
+### 9.2 Modelagem proposta
+
+| `FaqRaw` | `www5` (HTML) | X-Via (JSON) |
+|---|---|---|
+| `pergunta` | a linha em negrito terminada em "?" (`kit::linhas`) | `pergunta` |
+| `resposta` | até a próxima pergunta, sem o "Resposta:" (`kit::html`) | `resposta` (HTML → `kit::html`) |
+| `origin` | `"SEFAZ-MT | <área> | Perguntas frequentes"` | `"Portal MT | <categoria>"` (+ o serviço, quando há) |
+| `url` | a página da área (sem âncora) | `https://portal.mt.gov.br/perguntas-frequentes/<id>` |
+
+Árvore: o Nota MT segue como está; entram os nós "Site da SEFAZ" (uma página por área) e "Portal MT". Guardas: cada
+página listada com pelo menos uma pergunta; pergunta sem resposta, `(url, pergunta)` repetido, X-Via com `status`
+diferente de "Ativo" ou `uo` de outro órgão → `Err`; item "Perguntas frequentes" novo numa área, ou que sumiu → aviso.
+
+### 9.3 Decisões propostas
+
+- **D-MTFAQ-10 — Escopo da fase 2.**
+  - **A — as 3 páginas do `www5` e as 11 do X-Via: 58** (o MT vai de 135 a 193). Tudo atual e linkado pelos sites.
+  - **B — A + os 2 PDFs de 2017: 94.** Os PDFs estão órfãos (nenhuma página os linka) e o de Cadastro cita normas
+    que a FAQ do X-Via já dá por substituídas; exigiriam ainda uma regra nova no leitor de PDF (seção em caixa alta
+    que recomeça a numeração).
+  - **C — só o X-Via: 11.**
+
+  Recomendo **A**: é o que a SEFAZ-MT publica hoje, nas duas formas mais limpas que a frota já lê (`kit::linhas`, API
+  JSON). Os PDFs ficam registrados; entram se a SEFAZ voltar a linká-los.
+- **D-MTFAQ-11 — Enumeração do `www5`:** pela página "Todos os Serviços" → as áreas → o item "Perguntas frequentes" de
+  cada uma, nunca por lista no código (D-MTFAQ-2). Custo: ~30 GETs a 30 s, ~15 min por rodada. Área vazia
+  (Autorregularização) ou que leva ao hub (ITCD) → aviso, não erro.
+- **D-MTFAQ-12 — X-Via:** o id da SEFAZ derivado do `GET /v1/department/<slug>` (não fixo no código, como o órgão do
+  AL); 1 s entre as chamadas (o robots libera tudo).
+- **D-MTFAQ-13 — Cortesia no `www5`:** honrar o `Crawl-delay: 30` (a proposta da D-MTFAQ-3, aplicada na sondagem).
+- **D-MTFAQ-14 — Trilha:** `SEFAZ-MT | <área> | Perguntas frequentes` e `Portal MT | <categoria>`; o Nota MT não
+  muda.
+
+### 9.4 Reprodução
+
+```sh
+UA='AuliBot/0.1 (+https://github.com/oxschellen/auli)'; W=https://www5.sefaz.mt.gov.br
+curl -s -A "$UA" "$W/servicos" | grep -o 'href="/servicos?c=[^"]*"[^>]*>[^<]*'          # as 24 áreas
+curl -s -A "$UA" "$W/-/22563369-perguntas-frequentes" | grep -c 'Resposta:'             # 21 (30 s entre GETs)
+ID=$(curl -s -A "$UA" https://portal.mt.gov.br/v1/department/secretaria-de-estado-de-fazenda | jq -r .id)
+curl -s -A "$UA" -H 'Content-Type: application/json' -X POST https://portal.mt.gov.br/v1/faq \
+  -d "{\"uo\":[\"$ID\"]}" | jq 'length'                                                   # 11
+```

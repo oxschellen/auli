@@ -46,10 +46,13 @@ A fase 1 (Nota MT, 135 perguntas, PR #185) está no ar. A fase 2 é o site insti
 ([auli_pendencias.md](auli_pendencias.md) §44): o robots não barra a coleta. A proposta do estudo de honrar o
 `Crawl-delay: 30` (D-MTFAQ-3) segue como proposta para a fase 2.
 
-**Próximo passo.** Rodar a sondagem da §5.2 do estudo na máquina do mantenedor e avaliar os PDFs (PDF ficou
-fora em todas as outras entidades até aqui).
+**07/11/2026 — sondada** ([ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §9): o hub manda para um Portal do Conhecimento que
+foi refeito sem as perguntas (404), e os PDFs são de 2017 e órfãos. O que há de atual: 3 páginas "Perguntas
+frequentes" de áreas de serviço do `www5` (Contencioso 21, DIMP 11, NFA-e 15) e a FAQ do portal X-Via
+(`POST /v1/faq`, 11 da SEFAZ). **Próximo passo:** decidir a D-MTFAQ-10..14 (recomendada A: as 47 do `www5` + as 11
+do X-Via = 58).
 
-Referência: [ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §2b, §3 (D-MTFAQ-3) e §5.2.
+Referência: [ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §2b, §3 (D-MTFAQ-3), §5.2 e §9.
 
 ## 2. MT — bases de conhecimento não sondadas
 
