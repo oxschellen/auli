@@ -28,7 +28,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 19 | CE | FAQ nova fora da convenção de nome (aviso do D-CEFAQ-2) | medir: `getItem` dos 332 |
 | 20 | RS | FAQs: o índice novo `/perguntas-frequentes` como guarda e plano B (D-RSFAQ-2, -6); duas páginas que nunca entraram | D-RSFAQ-3..5 feitas (06/11); guarda e plano B em aberto |
 | 21 | AL | FAQs: não existe FAQ pública da SEFAZ-AL — o site institucional está em manutenção (D-ALFAQ-1..5) | ✅ decidida: adiar (06/11); retomar quando o título da raiz deixar de ser "Site em manutenção" |
-| 22 | PA | Serviços: o catálogo `pis` do WordPress do site novo tem 154 páginas de serviço; o acervo usa 34 do paradigital (D-PAFAQ-6) | estudo próprio |
+| 22 | PA | Serviços: o catálogo `pis` do WordPress do site novo tem 154 páginas de serviço; o acervo usa 34 do paradigital (D-PAFAQ-6) | estudado (07/11); aguardando D-PASERV-1 |
 
 ---
 
@@ -529,4 +529,8 @@ páginas de serviço** (`X-WP-Total`), cada uma com blocos ACF ("Como solicitar 
 
 **Próximo passo.** Estudo próprio: comparar os dois catálogos (sobreposição, campos, atualização) antes de decidir se
 o `pis` substitui, complementa ou fica de fora.
+
+**07/11/2026 — estudado:** [ESTUDO-PA-Servicos-pis.md](ESTUDO-PA-Servicos-pis.md). 137 serviços e 17 páginas-índice; sem as
+12 cópias (um post por tema), 125 serviços distintos, que cobrem 31 dos 34 do paradigital. O `pis` não tem público-alvo.
+Propostas D-PASERV-1..4 (recomendada: o `pis` mais os 3 só do paradigital, 128, público único), aguardando decisão.
 
