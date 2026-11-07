@@ -17,7 +17,9 @@
 //! threshold* do SharePoint; então paginamos por `$orderby=Id` + `$skiptoken` (via `odata.nextLink`),
 //! que é seguro, e filtramos as RCs no cliente. ~136 páginas de 200 → poucos minutos.
 //!
-//! ESCOPO: RCs de 2012+ (início do acervo do portal). `Ementa` = assunto (vetorizado); corpo =
+//! ESCOPO: RCs de **2020+** (decisão do mantenedor, 07/11/2026). O portal tem desde 2012; as 8.505 de 2012–2019
+//! saíram do acervo (`auli remover`) e os `.md` delas, com os resumos, estão arquivados em
+//! `data/sp/arquivo/sp-pareceres-2012-2019.tar.gz`. `Ementa` = assunto (vetorizado); corpo =
 //! `PublishingPageContent` (armazenado com todos os detalhes). Grava só o intermediário
 //! `../data/sp/ref/sp-pareceres-temp.txt` (numero/assunto/corpo/link, **sem `resumo`**). Não toca
 //! contrato/snapshot/collections.
@@ -49,8 +51,9 @@ pub(crate) const UA: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 pub(crate) const COURTESY: Duration = Duration::from_millis(1000);
 const PAGE_SIZE: usize = 200;
-const MIN_YEAR: i32 = 2012;
-const MIN_PARECERES: usize = 10000; // guarda contra coleta truncada (esperado ~15–20 k)
+const MIN_YEAR: i32 = 2020;
+/// Guarda contra coleta truncada: 7.100 RCs de 2020+ em 11/2026, ~1.100 novas por ano.
+const MIN_PARECERES: usize = 5000;
 
 static RE_RC: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"^RC(\d+)_(\d{4})\.aspx$").expect("regex RC inválida"));
