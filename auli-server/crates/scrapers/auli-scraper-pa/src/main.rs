@@ -3,15 +3,21 @@
 //
 // Conhece UMA entidade ("pa"); não lê o registry. Grava o snapshot de serviços (v3); a derivação
 // dos artefatos é o `auli-collections pa`.
+//
+// As FAQs vêm do site antigo da SEFA (`antigo.sefa.pa.gov.br`, Joomla) — `faqs.rs`.
 
+mod faqs;
 mod pa;
 
 /// A entidade que este scraper conhece (um crate binário por entidade).
 pub const ENTITY: &str = "pa";
 const DATA_DIR: &str = "../data/pa/raw";
+/// A identidade da frota (D-FROTA-UA) nas FAQs — D-PAFAQ-5. Os serviços declaram a mesma em `pa.rs`.
+pub(crate) const UA: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-pa [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-pa [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -27,8 +33,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
         }
     }
 

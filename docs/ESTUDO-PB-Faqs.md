@@ -195,3 +195,8 @@ do `coletado_em`. 200 `.md` com nomes únicos e 200 vetores; os 106 artefatos de
 `/v1/retrieve` (5 perguntas parafraseadas): o alvo em 1º em 4; na da EFD ("quais empresas são obrigadas a enviar…")
 em 5º, atrás de vizinhas da mesma página. Testes: 21 novos sobre as páginas reais e acordeões mínimos; 15 mutações,
 uma por regra, todas pegas.
+
+**07/11/2026 — no PR das FAQs do PA:** a segmentação foi para o kit (`kit::linhas`) e ganhou a regra da continuação da
+numeração (a linha em negrito que continua a sequência abre pergunta mesmo sem "?"). Na PB ela recuperou a 3 de
+Combustíveis da Substituição Tributária, que estava na resposta da 2: **201 perguntas** ([ESTUDO-PA-Faqs.md](ESTUDO-PA-Faqs.md) §8).
+

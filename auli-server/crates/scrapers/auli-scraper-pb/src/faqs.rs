@@ -7,15 +7,13 @@
 // segmenta as nove (D-PBFAQ-2): a seção vira linhas (bloco e `<br>` quebram), e pergunta é a linha toda em destaque que
 // termina em "?" — só as numeradas, quando a maioria é numerada.
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 use std::path::Path;
 use std::sync::LazyLock;
 use std::thread::sleep;
 use std::time::Duration;
 
 use anyhow::{Context, Result, anyhow, bail};
-use regex::Regex;
-use scraper::node::Node;
 use scraper::{ElementRef, Html, Selector};
 use ureq::Agent;
 
@@ -24,6 +22,9 @@ use auli_scraper_kit::clean;
 use auli_scraper_kit::faqtree::{FaqItem, FaqNode, PageType};
 use auli_scraper_kit::html::{Opcoes, html_para_texto};
 use auli_scraper_kit::http::GetOpts;
+use auli_scraper_kit::linhas::{
+    Bruta, CLOAK_TEXTO, linhas, numeracao_irregular, segmentar, sem_cloak, sem_prefixo_r,
+};
 
 const HOST: &str = "https://www.sefaz.pb.gov.br";
 
@@ -176,27 +177,6 @@ static CORPO: LazyLock<Selector> =
 static ABA: LazyLock<Selector> = LazyLock::new(|| Selector::parse(".tab-pane").unwrap());
 static TITULO_ABA: LazyLock<Selector> =
     LazyLock::new(|| Selector::parse(".nn_tabs-title").unwrap());
-/// O e-mail protegido do Joomla: o texto "Este endereço de email está sendo protegido de spambots…" e o script que
-/// monta o endereço.
-static CLOAK_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r#"(?s)<span id="cloak([0-9a-f]+)">[^<]*</span>\s*<script[^>]*>(.*?)</script>"#)
-        .unwrap()
-});
-static PARTE_JS_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"'([^']*)'").unwrap());
-/// O que sobra no texto quando o plugin muda e a troca acima não acontece.
-const CLOAK_TEXTO: &str = "protegido de spambots";
-/// Numeração da pergunta: "1.", "1 -", "1 –", "1)", "P1.", "11.a-".
-static NUM_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?i)^P?(\d+)(?:\.[a-z0-9]+)?\s*(?:[.\-–)]|\s[-–])\s*").unwrap());
-/// Título de subgrupo ("COMÉRCIO EXTERIOR - PERGUNTAS FREQUENTES").
-static GRUPO_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?i)PERGUNTAS\s+(?:FREQUENTES|E\s+RESPOSTAS)").unwrap());
-static SUFIXO_GRUPO_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)\s*[-–]\s*PERGUNTAS\s+(?:FREQUENTES|E\s+RESPOSTAS)\s*$").unwrap()
-});
-/// O "R –", "R." ou "R:" que abre a resposta (D-PBFAQ-6). "R$" não casa.
-static PREFIXO_R_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^R\s*[-–.:]\s*").unwrap());
-static LETRA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"[^\W\d_]").unwrap());
 
 /// A página → as perguntas, na ordem da página.
 fn extrair(html: &str, f: &Fonte, url: &str) -> Result<Pagina> {
@@ -249,12 +229,10 @@ fn extrair(html: &str, f: &Fonte, url: &str) -> Result<Pagina> {
         } else {
             None
         };
-        let brutas = segmentar(&linhas(s.el))?;
+        let brutas = segmentar(&linhas(s.el));
         avisar_numeracao(f.nome, s.titulo.as_deref(), &brutas);
         for b in brutas {
-            let resposta = PREFIXO_R_RE
-                .replace(&html_para_texto(&b.resposta_html, opcoes()), "")
-                .into_owned();
+            let resposta = sem_prefixo_r(&html_para_texto(&b.resposta_html, opcoes()));
             if resposta.is_empty() {
                 bail!("a pergunta {:?} ficou sem resposta", b.titulo);
             }
@@ -290,182 +268,6 @@ fn opcoes() -> Opcoes<'static> {
     }
 }
 
-/// Troca cada e-mail protegido pelo texto que o navegador mostra (D-PBFAQ-6): o `addy_text…` do script, cujos pedaços
-/// vêm entre aspas, com entidades e às vezes com um `<span>` de cor. O texto visível vale mais que o `mailto`: num deles
-/// o `mailto` do portal tem erro de digitação e o texto está certo. Sem `addy_text`, o trecho fica, e a guarda pega.
-fn sem_cloak(html: &str) -> String {
-    CLOAK_RE
-        .replace_all(html, |c: &regex::Captures| {
-            let Ok(re) = Regex::new(&format!(
-                r"var addy_text{}\s*=((?:\s*\+?\s*'[^']*')+)",
-                &c[1]
-            )) else {
-                return c[0].to_string();
-            };
-            match re.captures(&c[2]) {
-                Some(t) => {
-                    let junto: String = PARTE_JS_RE
-                        .captures_iter(&t[1])
-                        .map(|p| p[1].to_string())
-                        .collect();
-                    let visivel: String =
-                        Html::parse_fragment(&junto).root_element().text().collect();
-                    escapar(clean(&visivel).as_str())
-                }
-                None => c[0].to_string(),
-            }
-        })
-        .into_owned()
-}
-
-/// Uma linha da seção: o texto puro (para achar a pergunta), o HTML mínimo (para o conversor) e se todo o texto com
-/// letras está em destaque.
-#[derive(Debug, Default)]
-struct Linha {
-    texto: String,
-    html: String,
-    negrito: bool,
-}
-
-#[derive(Default)]
-struct Escritor {
-    linhas: Vec<Linha>,
-    texto: String,
-    html: String,
-    tem_texto_fora: bool,
-    /// Um `<a>` aberto na linha atual. A quebra o fecha: o portal deixa `<a href="mailto:…">` aberto até o endereço da
-    /// linha seguinte, e o conversor colaria as duas linhas no texto do link ("…gov.brAv. Presidente…").
-    link_aberto: bool,
-}
-
-impl Escritor {
-    fn quebra(&mut self) {
-        if self.link_aberto {
-            self.html.push_str("</a>");
-            self.link_aberto = false;
-        }
-        let texto = clean(&self.texto);
-        if !texto.is_empty() || !self.html.trim().is_empty() {
-            self.linhas.push(Linha {
-                negrito: !texto.is_empty() && !self.tem_texto_fora,
-                texto,
-                html: std::mem::take(&mut self.html),
-            });
-        }
-        self.texto.clear();
-        self.html.clear();
-        self.tem_texto_fora = false;
-    }
-}
-
-fn linhas(el: ElementRef) -> Vec<Linha> {
-    let mut e = Escritor::default();
-    andar(el, false, &mut e);
-    e.quebra();
-    e.linhas
-}
-
-fn eh_negrito(el: ElementRef) -> bool {
-    matches!(
-        el.value().name(),
-        "strong" | "b" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
-    )
-}
-
-/// HTML → linhas. Bloco e `<br>` quebram a linha; a tabela entra inteira numa linha sua (o conversor a lê); a lista
-/// de anexos do `com_attachments` não entra. No HTML da linha só ficam o texto (reescapado: o parser já decodificou),
-/// os links e as imagens — o conversor do kit faz o resto.
-fn andar(el: ElementRef, negrito: bool, e: &mut Escritor) {
-    for filho in el.children() {
-        match filho.value() {
-            Node::Text(t) => {
-                e.texto.push_str(t);
-                e.html.push_str(&escapar(t));
-                // Trecho sem letra fora do negrito (o "1" de "13" que o editor deixou de fora, o "“" depois do "?") não
-                // desfaz o destaque da linha.
-                if !negrito && LETRA_RE.is_match(t) {
-                    e.tem_texto_fora = true;
-                }
-            }
-            Node::Element(_) => {
-                let Some(f) = ElementRef::wrap(filho) else {
-                    continue;
-                };
-                let v = f.value();
-                if v.classes().any(|c| c.starts_with("attachments")) {
-                    continue;
-                }
-                match v.name() {
-                    "script" | "style" => {}
-                    "br" => e.quebra(),
-                    "table" => {
-                        e.quebra();
-                        e.html.push_str(&f.html());
-                        e.quebra();
-                    }
-                    "img" => {
-                        if let Some(src) = v.attr("src") {
-                            e.html
-                                .push_str(&format!("<img src=\"{}\">", escapar_atributo(src)));
-                        }
-                    }
-                    "a" => {
-                        if let Some(href) = v.attr("href") {
-                            e.html
-                                .push_str(&format!("<a href=\"{}\">", escapar_atributo(href)));
-                            e.link_aberto = true;
-                        }
-                        andar(f, negrito, e);
-                        if e.link_aberto {
-                            e.html.push_str("</a>");
-                            e.link_aberto = false;
-                        }
-                    }
-                    nome => {
-                        let bloco = matches!(
-                            nome,
-                            "p" | "div"
-                                | "li"
-                                | "ul"
-                                | "ol"
-                                | "dt"
-                                | "dd"
-                                | "dl"
-                                | "blockquote"
-                                | "hr"
-                                | "center"
-                                | "h1"
-                                | "h2"
-                                | "h3"
-                                | "h4"
-                                | "h5"
-                                | "h6"
-                        );
-                        if bloco {
-                            e.quebra();
-                        }
-                        andar(f, negrito || eh_negrito(f), e);
-                        if bloco {
-                            e.quebra();
-                        }
-                    }
-                }
-            }
-            _ => {}
-        }
-    }
-}
-
-fn escapar(s: &str) -> String {
-    s.replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;")
-}
-
-fn escapar_atributo(s: &str) -> String {
-    escapar(s).replace('"', "&quot;")
-}
-
 /// O id da aba no fragmento da URL: o que não é ASCII seguro vai em `%XX` (`não-habilitado` → `n%C3%A3o-habilitado`).
 fn pct(s: &str) -> String {
     s.bytes()
@@ -479,97 +281,18 @@ fn pct(s: &str) -> String {
         .collect()
 }
 
-#[derive(Debug)]
-struct Bruta {
-    titulo: String,
-    resposta_html: String,
-    grupo: String,
-}
-
-/// Sem aspas e espaços do fim: a DeSTDA fechava uma pergunta com `?" “`.
-fn sem_fecho(s: &str) -> &str {
-    s.trim_end_matches(|c: char| c.is_whitespace() || matches!(c, '"' | '“' | '”' | '\''))
-}
-
-/// As linhas → perguntas (D-PBFAQ-2, -3). Pergunta = linha em destaque que termina em "?"; quando a maioria é
-/// numerada, só as numeradas (no Cadastro, "Sim. Mas o que fazer?" é subtítulo de resposta). Grupo = linha em destaque
-/// sem "?" com "PERGUNTAS FREQUENTES"/"PERGUNTAS E RESPOSTAS", depois da 1ª pergunta. Resposta = as linhas até a próxima
-/// pergunta ou grupo; o que vem antes da 1ª pergunta (título da aba, introdução, índice) sai.
-fn segmentar(linhas: &[Linha]) -> Result<Vec<Bruta>> {
-    let mut perguntas: Vec<usize> = linhas
-        .iter()
-        .enumerate()
-        .filter(|(_, l)| l.negrito && sem_fecho(&l.texto).ends_with('?'))
-        .map(|(i, _)| i)
-        .collect();
-    let numeradas = perguntas
-        .iter()
-        .filter(|&&i| NUM_RE.is_match(&linhas[i].texto))
-        .count();
-    if !perguntas.is_empty() && numeradas * 2 >= perguntas.len() {
-        perguntas.retain(|&i| NUM_RE.is_match(&linhas[i].texto));
-    }
-    let Some(&primeira) = perguntas.first() else {
-        return Ok(Vec::new());
-    };
-    let grupos: HashSet<usize> = linhas
-        .iter()
-        .enumerate()
-        .filter(|&(i, l)| {
-            i > primeira
-                && l.negrito
-                && GRUPO_RE.is_match(&l.texto)
-                && !sem_fecho(&l.texto).ends_with('?')
-        })
-        .map(|(i, _)| i)
-        .collect();
-    let mut marcos: Vec<usize> = perguntas
-        .iter()
-        .copied()
-        .chain(grupos.iter().copied())
-        .collect();
-    marcos.sort_unstable();
-    let mut out = Vec::new();
-    let mut grupo = String::new();
-    for (k, &i) in marcos.iter().enumerate() {
-        let fim = marcos.get(k + 1).copied().unwrap_or(linhas.len());
-        if grupos.contains(&i) {
-            grupo = SUFIXO_GRUPO_RE.replace(&linhas[i].texto, "").into_owned();
-            continue;
-        }
-        out.push(Bruta {
-            titulo: linhas[i].texto.clone(),
-            resposta_html: linhas[i + 1..fim]
-                .iter()
-                .map(|l| l.html.as_str())
-                .collect::<Vec<_>>()
-                .join("<br>"),
-            grupo: grupo.clone(),
-        });
-    }
-    Ok(out)
-}
-
 /// Numeração que pula ou repete só avisa (D-PBFAQ-7): a MDF-e não tem a 6, e isso é da página.
 fn avisar_numeracao(pagina: &str, aba: Option<&str>, brutas: &[Bruta]) {
-    let mut por_grupo: BTreeMap<&str, Vec<u32>> = BTreeMap::new();
-    for b in brutas {
-        if let Some(n) = NUM_RE.captures(&b.titulo).and_then(|c| c[1].parse().ok()) {
-            por_grupo.entry(b.grupo.as_str()).or_default().push(n);
-        }
-    }
-    for (grupo, nums) in por_grupo {
-        if nums.iter().copied().ne(1..=nums.len() as u32) {
-            println!(
-                "PB FAQs: aviso — {pagina}{}{}: numeração {nums:?}",
-                aba.map(|a| format!(" | {a}")).unwrap_or_default(),
-                if grupo.is_empty() {
-                    String::new()
-                } else {
-                    format!(" | {grupo}")
-                }
-            );
-        }
+    for (grupo, nums) in numeracao_irregular(brutas) {
+        println!(
+            "PB FAQs: aviso — {pagina}{}{}: numeração {nums:?}",
+            aba.map(|a| format!(" | {a}")).unwrap_or_default(),
+            if grupo.is_empty() {
+                String::new()
+            } else {
+                format!(" | {grupo}")
+            }
+        );
     }
 }
 
@@ -807,7 +530,7 @@ mod tests {
     #[test]
     fn st_le_so_a_aba_de_faq_e_os_grupos() {
         let p = pagina(ST, "Substituição Tributária");
-        assert_eq!(p.perguntas.len(), 30);
+        assert_eq!(p.perguntas.len(), 31);
         let mut grupos: Vec<(&str, usize)> = Vec::new();
         for q in &p.perguntas {
             match grupos.last_mut() {
@@ -821,12 +544,24 @@ mod tests {
                 ("", 16),
                 ("COMÉRCIO EXTERIOR", 9),
                 ("DIFAL NÃO CONTRIBUINTE – ICMS – EC 87/15", 3),
-                ("COMBUSTÍVEIS", 2)
+                ("COMBUSTÍVEIS", 3)
             ]
         );
         // O título do grupo não fica no fim da resposta anterior.
         assert!(!p.perguntas[15].resposta.contains("PERGUNTAS FREQUENTES"));
         assert!(p.perguntas.iter().all(|q| q.assunto.is_none()));
+        // A 3 de Combustíveis não termina em "?" (é um cenário com as perguntas A, B, C): entra pela continuação da
+        // numeração (D-PAFAQ-2), e não fica mais na resposta da 2.
+        let q3 = &p.perguntas[30];
+        assert!(
+            q3.titulo
+                .starts_with("3 - Considerando uma operação de Venda de Etanol Hidratado")
+        );
+        assert!(
+            !p.perguntas[29]
+                .resposta
+                .contains("Considerando uma operação de Venda de Etanol")
+        );
     }
 
     #[test]
@@ -860,7 +595,7 @@ mod tests {
         assert!(
             p.perguntas
                 .iter()
-                .all(|q| !PREFIXO_R_RE.is_match(&q.resposta))
+                .all(|q| sem_prefixo_r(&q.resposta) == q.resposta)
         );
     }
 
@@ -952,14 +687,14 @@ mod tests {
     #[test]
     fn trilha_com_a_aba_assunto_ou_o_grupo() {
         let faqs = consolidar(&paginas()).unwrap();
-        assert_eq!(faqs.len(), 64 + 30 + 16);
+        assert_eq!(faqs.len(), 64 + 31 + 16);
         assert_eq!(faqs[0].origin, "Cadastro de Contribuintes | FAC");
         assert_eq!(faqs[64].origin, "Substituição Tributária");
         assert_eq!(
             faqs[80].origin,
             "Substituição Tributária | COMÉRCIO EXTERIOR"
         );
-        assert_eq!(faqs[94].origin, "NFA-e");
+        assert_eq!(faqs[95].origin, "NFA-e");
     }
 
     #[test]

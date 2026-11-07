@@ -28,6 +28,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 19 | CE | FAQ nova fora da convenção de nome (aviso do D-CEFAQ-2) | medir: `getItem` dos 332 |
 | 20 | RS | FAQs: o índice novo `/perguntas-frequentes` como guarda e plano B (D-RSFAQ-2, -6); duas páginas que nunca entraram | D-RSFAQ-3..5 feitas (06/11); guarda e plano B em aberto |
 | 21 | AL | FAQs: não existe FAQ pública da SEFAZ-AL — o site institucional está em manutenção (D-ALFAQ-1..5) | ✅ decidida: adiar (06/11); retomar quando o título da raiz deixar de ser "Site em manutenção" |
+| 22 | PA | Serviços: o catálogo `pis` do WordPress do site novo tem 154 páginas de serviço; o acervo usa 34 do paradigital (D-PAFAQ-6) | estudo próprio |
 
 ---
 
@@ -516,3 +517,16 @@ curl -sS -A 'AuliBot/0.1 (+https://github.com/oxschellen/auli)' https://www.sefa
 
 **À parte:** o `gcs2.sefaz.al.gov.br` é o gestor de legislação da SEFAZ-AL — ponto de partida se a `al` um dia ganhar
 uma coleção `legislacao` (estudo §6).
+
+## 22. PA — o catálogo de serviços do site novo (D-PAFAQ-6)
+
+_Aberta em 07/11/2026, no estudo das FAQs do PA ([ESTUDO-PA-Faqs.md](ESTUDO-PA-Faqs.md) §1)._
+
+O WordPress headless do site novo da SEFA (`site-sefa-wordpress.sefa.pa.gov.br/wp-json/wp/v2`) tem o tipo `pis`: **154
+páginas de serviço** (`X-WP-Total`), cada uma com blocos ACF ("Como solicitar este serviço", "Documentos necessários",
+"Manual/Tutorial", "Base legal do serviço") e às vezes um `service_link`. O acervo usa hoje os **34** serviços do órgão
+48 no paradigital (Prodepa). `/pis` e `/pis-categories` abrem anônimos; `/search` e `/types` dão 401.
+
+**Próximo passo.** Estudo próprio: comparar os dois catálogos (sobreposição, campos, atualização) antes de decidir se
+o `pis` substitui, complementa ou fica de fora.
+

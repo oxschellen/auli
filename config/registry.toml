@@ -179,7 +179,7 @@ name = "SEFA-PA"
 uf = "PA"
 state = "Pará"
 prompt = "prompts/pa.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "es"

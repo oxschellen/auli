@@ -489,6 +489,7 @@ dependencies = [
  "anyhow",
  "auli-contract",
  "auli-scraper-kit",
+ "scraper",
  "serde",
  "serde_json",
  "ureq",
