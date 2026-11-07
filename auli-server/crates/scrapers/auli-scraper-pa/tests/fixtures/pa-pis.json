@@ -1,0 +1,659 @@
+{
+ "body": [
+  {
+   "id": 11082,
+   "modified": "2026-08-20T20:15:14",
+   "title": {
+    "rendered": "AINF - Auto de Infração"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    787,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 10516,
+   "modified": "2026-07-14T20:38:56",
+   "title": {
+    "rendered": "Renúncia Fiscal"
+   },
+   "content": {
+    "rendered": "\n<p>Renúncia fiscal ou gasto tributário são desonerações concedidas a determinado segmento econômico ou parcela de contribuinte que, visando à satisfação do interesse público, afasta a norma geral tributária aplicada e reduz o valor de tributo a ser recolhido pelo beneficiário.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    59
+   ],
+   "acf": {
+    "service_link": "/multiple-contents/beneficios-fiscais",
+    "titulo1": "Sistema Tributário de Referência",
+    "descricao1": "O cálculo da renúncia fiscal requer conhecer o sistema tributário padrão de cada Imposto de competência do Estado, a fim de ser possível calcular o montante que seria recolhido aos cofres públicos, caso não adotada a desoneração fiscal.",
+    "titulo2": "Benefícios Fiscais Dispostos na Legislação do Estado do Pará",
+    "descricao2": "Os incentivos no ICMS, IPVA e ITCD são concedidos em caráter geral ou individualmente. No caso do ICMS, os benefícios estão dispostos nos Anexos I, II, III e IV do Decreto n.º 4.676, de 18 de junho de 2001 - Regulamento do ICMS do Estado do Pará.\r\n\r\nOs benefícios do IPVA e do ITCD estão previstos em sua lei instituidora, Lei n.º 6.017, de 30 de dezembro de 1996 e Lei n.º 5.529, de 5 de janeiro de 1989, respectivamente.\r\n\r\nNos anexos é possível visualizar de forma condensada o tipo de benefício fiscal concedido, o segmento, produto ou pessoa beneficiada, a formas de concessão, forma de requerimento, meio de publicação e sua vigência.\r\n<ul>\r\n \t<li>Benefícios Fiscais no ICMS:\r\n<ul>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/Quadro-da-Legislacao.-Anexo-I-do-RICMS.-22.01.24.xlsx\">Quadro da Legislação. Anexo I do RICMS. 22.01.24</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/Quadro-da-Legislacao.-Anexo-II-do-RICMS.-22.01.24.xlsx\">Quadro da Legislação. Anexo II do RICMS. 22.01.24</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/Quadro-da-Legislacao.-Anexo-III-do-RICMS.-22.01.24.xlsx\">Quadro da Legislação. Anexo III do RICMS. 22.01.24</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/Quadro-da-Legislacao.-Anexo-IV-do-RICMS.-22.01.24.xlsx\">Quadro da Legislação. Anexo IV do RICMS. 22.01.24</a></li>\r\n</ul>\r\n</li>\r\n \t<li>Benefícios Fiscais no IPVA:\r\n<ul>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/Quadro-da-Legislacao.-IPVA.-22.01.24.xlsx\">Quadro da Legislação. IPVA. 22.01.24</a></li>\r\n</ul>\r\n</li>\r\n \t<li>Benefícios Fiscais no ITCD:\r\n<ul>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/Quadro-da-Legislacao.-ITCD.-22.01.24.xlsx\">Quadro da Legislação. ITCD. 22.01.24</a></li>\r\n</ul>\r\n</li>\r\n \t<li>Benefícios Fiscais Fora do Regulamento do ICMS:\r\n<ul>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/Quadro-da-Legislacao.-Legislacao-Esparsa-do-ICMS.-30.11.23.xlsx\">Quadro da Legislação. Legislação Esparsa do ICMS. 30.11.23</a></li>\r\n</ul>\r\n</li>\r\n</ul>\r\n&nbsp;",
+    "titulo3": "Metodologias de Cálculo ",
+    "descricao3": "A SEFA adota método denominado Initial revenue loss (gain) ou perda inicial que verifica o valor de perda da receita tributária em função da concessão de benefícios fiscais. Vale dizer, calcula-se o valor que seria devido com a regra-tributária básica do imposto, alíquota e base de cálculo padrão, e subtrai-se do valor encontrado com a alíquota ou base de cálculo inferior.",
+    "titulo4": "Benefícios Convalidados e Remitidos",
+    "descricao4": "Seguindo todas as recomendações estabelecidas pela Lei Complementar n.º 160, de 7 de agosto de 2017 e pelo Convênio ICMS nº 190/17, o Estado do Pará remitiu e reinstituiu benefícios fiscais concedidos sem observância das formalidades elencadas na alínea “g” do inciso XII do § 2o do art. 155 da Constituição Federal.",
+    "titulo5": "Renúncia na Lei de Responsabilidade Fiscal ",
+    "descricao5": "<span class=\"TextRun SCXW107248636 BCX0\" lang=\"PT-BR\"><span class=\"NormalTextRun SCXW107248636 BCX0\">A Lei de Responsabilidade Fiscal estabelece </span><span class=\"NormalTextRun SCXW107248636 BCX0\">como requisito essencial da responsabilidade na ges</span><span class=\"NormalTextRun SCXW107248636 BCX0\">tão fiscal,</span><span class=\"NormalTextRun SCXW107248636 BCX0\"> que o Estado seja capaz de estimar </span><span class=\"NormalTextRun SCXW107248636 BCX0\">sua receita e, com vistas </span><span class=\"NormalTextRun SCXW107248636 BCX0\">a não comprometer as metas de resultado </span><span class=\"NormalTextRun SCXW107248636 BCX0\">fiscal previamente estabelecidas</span><span class=\"NormalTextRun SCXW107248636 BCX0\">, a</span><span class=\"NormalTextRun SCXW107248636 BCX0\"> necessidade de</span> <span class=\"NormalTextRun SCXW107248636 BCX0\">considerar</span><span class=\"NormalTextRun SCXW107248636 BCX0\"> o impacto da renúncia fiscal</span><span class=\"NormalTextRun SCXW107248636 BCX0\"> no </span><span class=\"NormalTextRun SCXW107248636 BCX0\">orçamentário financeiro</span><span class=\"NormalTextRun SCXW107248636 BCX0\">. </span><span class=\"NormalTextRun SCXW107248636 BCX0\"> </span></span>",
+    "titulo6": "Estimativa de Renúncias Fiscais ",
+    "descricao6": "As estimativas de renúncia fiscais do Estado do Pará estão previstas na Lei de Diretrizes Orçamentárias.\r\n<ul>\r\n \t<li aria-setsize=\"-1\">LDO 2023\r\n<ul>\r\n \t<li aria-setsize=\"-1\"><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/LDO-2023.pdf\">LDO 2023</a></li>\r\n \t<li aria-setsize=\"-1\"><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/2023-LDO-2023_MEMORIA-DE-CALCULO-DA-RENUNCIA-DE-RECEITA.pdf\">2023 - LDO 2023_MEMÓRIA DE CÁLCULO DA RENÚNCIA DE RECEITA</a></li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<ul>\r\n \t<li aria-setsize=\"-1\">LDO 2024\r\n<ul>\r\n \t<li aria-setsize=\"-1\"><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/2024/01/LDO-2024.pdf\">LDO 2024</a></li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<ul>\r\n \t<li>LDO 2025\r\n<ul>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/renuncia-fiscal/2025/Quadro_Renuncia_Fiscal-LDO_2025.pdf\">LDO 2025</a></li>\r\n</ul>\r\n</li>\r\n</ul>",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 9011,
+   "modified": "2026-03-13T13:15:03",
+   "title": {
+    "rendered": "Vista de Processo"
+   },
+   "content": {
+    "rendered": "\n<p>É utilizado para que cidadãos, contribuintes ou seus representantes legais possam consultar processos administrativos fiscais em andamento ou já concluídos.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    692
+   ],
+   "acf": {
+    "service_link": "",
+    "titulo1": "Como solicitar o serviço",
+    "descricao1": "O pedido deverá ser feito através do formulário padrão e formalizado na Unidade onde encontrar-se o processo.\r\nNo caso de VISTAS/FOTOS não há cobrança da taxa.",
+    "titulo2": "Documentos necessários",
+    "descricao2": "<ol>\r\n \t<li> Requerimento;</li>\r\n \t<li> Procuração e/ou substabelecimento (com assinatura reconhecida em cartório);</li>\r\n \t<li> Contrato social, última alteração ou ata do estatuto social e termo de posse ou kit Prefeito;</li>\r\n \t<li> Documento de identificação do procurador e/ou substabelecido.</li>\r\n</ol>",
+    "titulo3": "Manual",
+    "descricao3": "Não há",
+    "titulo4": "Base Legal do serviço",
+    "descricao4": "<ul>\r\n \t<li>DECRETO Nº 1.359, de 31 de agosto de 2015;</li>\r\n \t<li>Os incisos X e XXXIII do art. 5º e no inciso II do § 3º do art. 37 da Constituição Federal;</li>\r\n \t<li>O inciso II do art. 29 e no § 5º do art. 286 da Constituição do Estado do Pará;</li>\r\n \t<li>Lei n° 12.527, de 18 de novembro de 2011.</li>\r\n</ul>",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 9006,
+   "modified": "2026-03-13T17:55:27",
+   "title": {
+    "rendered": "Solicitação"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    65,
+    692
+   ],
+   "acf": []
+  },
+  {
+   "id": 8880,
+   "modified": "2026-02-23T12:19:09",
+   "title": {
+    "rendered": "Novo Manter Usuário"
+   },
+   "content": {
+    "rendered": "\n<p>Este serviço é exclusivo para o servidor da SEFA com perfil de Atendente, Auditor ou Fiscal. É um serviço de gestão do acesso ao Portal de Serviço da SEFA. Permite a ativação de login de acesso ao portal, alteração de dados do Contribuinte e alteração de senha.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/pservicos/admin/usuario",
+    "titulo1": "Como solicitar o serviço ",
+    "descricao1": "O servidor deverá estar logado na área restrita do portal de serviços, na Macro área PORTAL.",
+    "titulo2": "Documentos necessários ",
+    "descricao2": "Não há.",
+    "titulo3": "Manual ",
+    "descricao3": "Não há.",
+    "titulo4": "Base Legal ",
+    "descricao4": "Portaria 414/2017",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 8616,
+   "modified": "2026-06-27T05:55:17",
+   "title": {
+    "rendered": "DIEF - Comércio Exterior"
+   },
+   "content": {
+    "rendered": "\n<p>Neste serviço, você poderá apresentar a declaração eletrônica, DIEF - Comercio Exterior, por ocasião da realização das operações de importação de mercadorias ou bens provenientes do exterior por contribuinte deste Estado.</p>\n\n\n\n<p>Quem deve declarar:</p>\n\n\n\n<ul class=\"wp-block-list\">\n<li>A pessoa natural ou jurídica que, mesmo sem habitualidade, realize a importação de mercadoria ou bem proveniente do exterior, qualquer que seja a sua finalidade;</li>\n\n\n\n<li>O despachante aduaneiro com registro no órgão competente ou quaisquer outras entidades ou pessoas, que representem o contribuinte importador.</li>\n</ul>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    679
+   ],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/pservicos/autenticacao?servico=https://app.sefa.pa.gov.br/dief-comercio-exterior/index.html",
+    "titulo1": "Como solicitar o serviço",
+    "descricao1": "<p data-renderer-start-pos=\"1260\">A apresentação da DIEF - Comércio Exterior deverá ser entregue:</p>\r\n\r\n<ul>\r\n \t<li data-renderer-start-pos=\"1325\">Por evento, por meio eletrônico e antes do desembaraço aduaneiro, conforme as operações de importação, inclusive as beneficiadas com isenção, diferimento, suspensão, tratamento tributário especial ou qualquer outra circunstância de não incidência do – <span class=\"acronym-highlight\">ICMS</span>;</li>\r\n \t<li data-renderer-start-pos=\"1325\">Até o 10º (décimo) dia subsequente à entrada no estabelecimento ou no domicílio do contribuinte importador, nas operações de importação de mercadorias ou bens provenientes do exterior  realizadas por contribuinte localizado neste Estado e com desembaraço aduaneiro em outra unidade da federação.</li>\r\n</ul>\r\n<p data-renderer-start-pos=\"1885\">Apresentação do documento: O contribuinte importador ou seu representante legal.</p>",
+    "titulo2": "Documentos necessários",
+    "descricao2": "<ul>\r\n \t<li>Requerimento em 2 (duas vias) especificando o motivo do uso, alteração ou cessação de uso; identificação e endereço do contribuinte importador; identificação e endereço do despachante aduaneiro ou qualquer outro representante legal do contribuinte importador, quando for o caso; data, identificação e assinatura do representante legal.</li>\r\n \t<li>Ficha de Inscrição Cadastral do contribuinte importador, quando for pessoa inscrita no Cadastro de Contribuintes do ICMS;</li>\r\n \t<li>Cadastro Nacional de Pessoa Jurídica - <span class=\"acronym-highlight\">CNPJ</span> do Ministério da Fazenda, quando for pessoa não inscrita no Cadastro de Contribuintes do ICMS;</li>\r\n \t<li>Carteira de Identidade e Cadastro de Pessoa Física - <span class=\"acronym-highlight\">CPF</span> do Ministério da Fazenda ou, se for o caso, passaporte, quando se tratar de pessoa natural;</li>\r\n \t<li>Carteira de Identidade e CPF do representante legal do contribuinte importador, com comprovação da capacidade de representação por instrumento público ou particular, este último  com registro em cartório e, ainda, documento de registro no órgão competente, se for despachante aduaneiro.</li>\r\n</ul>",
+    "titulo3": "Manual",
+    "descricao3": "<a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais/comercio-exterior/3_manual_dief.pdf\">Manual do Usuário</a>",
+    "titulo4": "Base Legal do serviço",
+    "descricao4": "Instrução Normativa 0005/2013.",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 8609,
+   "modified": "2026-06-27T05:54:25",
+   "title": {
+    "rendered": "Comércio Exterior"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    679,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 8293,
+   "modified": "2026-06-27T05:38:39",
+   "title": {
+    "rendered": "Comunicação Oficial"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    673,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 8283,
+   "modified": "2025-12-16T15:07:52",
+   "title": {
+    "rendered": "Declarações"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    670,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 8266,
+   "modified": "2025-12-12T20:10:05",
+   "title": {
+    "rendered": "Consulta Pública Divida Ativa"
+   },
+   "content": {
+    "rendered": "\n<p>O Consulta Dívida Ativa é um serviço de acesso livre, onde é possível saber se você ou sua empresa possuem pendências financeiras com o Estado que foram formalmente inscritas para cobrança. Através deste serviço é possível obter o nome do cartório que realizou o protesto, se o título estiver protestado, a placa do veículo a que se refere a dívida (quando for o caso), número da CDA e valor atualizado.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    62
+   ],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/consulta-publica-cda/bem-vindo",
+    "titulo1": "Como solicitar o serviço",
+    "descricao1": "A solicitação é feita na área pública do Portal de Serviços da SEFA, na opção “Consulta Dívida Ativa”.",
+    "titulo2": "Manual/Tutorial",
+    "descricao2": "Não há.",
+    "titulo3": "Documentos necessários",
+    "descricao3": "Não há.",
+    "titulo4": "Base Legal",
+    "descricao4": "Não se aplica.",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 8265,
+   "modified": "2025-12-12T20:08:14",
+   "title": {
+    "rendered": "Consulta Pública Divida Ativa"
+   },
+   "content": {
+    "rendered": "\n<p>O Consulta Dívida Ativa é um serviço de acesso livre, onde é possível saber se você ou sua empresa possuem pendências financeiras com o Estado que foram formalmente inscritas para cobrança. Através deste serviço é possível obter o nome do cartório que realizou o protesto, se o título estiver protestado, a placa do veículo a que se refere a dívida (quando for o caso), número da CDA e valor atualizado.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/consulta-publica-cda/bem-vindo",
+    "titulo1": "Como solicitar o serviço",
+    "descricao1": "A solicitação é feita na área pública do Portal de Serviços da SEFA, na opção “Consulta Dívida Ativa”.",
+    "titulo2": "Manual/Tutorial",
+    "descricao2": "Não há.",
+    "titulo3": "Documentos necessários",
+    "descricao3": "Não há.",
+    "titulo4": "Base Legal",
+    "descricao4": "Não se aplica.",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 1089,
+   "modified": "2024-05-10T13:45:52",
+   "title": {
+    "rendered": "Contribuinte Cadastro"
+   },
+   "content": {
+    "rendered": "\n<p>Possibilita que os contribuintes e a sociedade em geral realizem a consulta de débitos inscritos em Dívida Ativa através do Portal de Serviços da Secretaria de Estado da Fazenda do Pará.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/cadin/cadastrado",
+    "titulo1": "CADIN",
+    "descricao1": "Instituído pela Lei 12.799/2088 e regulamentado pelo Decreto 53.455/2008, o Cadastro Informativo de Créditos não Quitados de Órgãos e Entidades Estaduais - Cadin Estadual registra o nome das pessoas Físicas e jurídicas que posuem pendências com os órgãos e entidades da Administração Pública Direta e Indireta.",
+    "titulo2": "Impacto",
+    "descricao2": "O impacto dessas restrições pode ser significativo para as pessoas físicas e jurídicas listadas no CADIN Estadual, pois elas ficam impossibilitadas de realizar negócios ou transações financeiras com o governo estadual do Pará. Por outro lado, o registro no CADIN Estadual não impede que a autoridade competente firme contratos com empresas que exerçam atividades de monopólio ou sob regime de concessão, desde que os serviços sejam considerados imprescindíveis para o Estado e justificados no processo administrativo.",
+    "titulo3": "Base Legal",
+    "descricao3": "O CADIN foi instituído pela Lei 12.799/2088 e regulamentado pelo Decreto 53.455/2008.",
+    "titulo4": "",
+    "descricao4": "",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 1087,
+   "modified": "2026-06-27T04:40:03",
+   "title": {
+    "rendered": "CADIN"
+   },
+   "content": {
+    "rendered": "\n<p>Instituído pela Lei 8.873/2019 e regulamentado pelo Decreto nº 2.623/2022, o Cadastro Informativo dos Créditos não Quitados de Órgãos e Entidades da Administração Pública Estadual (CADIN-PA) visa fornecer informações relativas às pendências de pessoas físicas e jurídicas perante os diversos órgãos e entidades da Administração Pública Estadual Direta e Indireta.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    69,
+    61
+   ],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/cadin/bem-vindo",
+    "titulo1": "O que é CADIN?",
+    "descricao1": "Cadastro único que visa fornecer informações relativas às pendências de pessoas físicas e jurídicas perante os diversos órgãos e entidades da Administração Pública Estadual Direta e Indireta, conforme Lei instituidora nº 8.873/2019.",
+    "titulo2": "Objetivos",
+    "descricao2": "Permitir à Administração Estadual o cumprimento das determinações constitucionais e legais, que vedam a contratação, pelo Poder Público, de pessoa física ou jurídica em débito com o Estado, impedindo, também, o recebimento de benefícios ou incentivos fiscais, creditícios, administrativos ou de qualquer natureza.",
+    "titulo3": "FAQ",
+    "descricao3": "<a href=\"https://app.sefa.pa.gov.br/cadin/faq\">FAQ</a>",
+    "titulo4": "Legislaçao",
+    "descricao4": "<div class=\"ql-block\" data-block-id=\"block-34f5b43b-8949-441a-bdb6-e351bf53dc76\"><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/cadastro_contribuinte/lp2019_08873\">Lei nº 8.873/2019 instituidora do CADIN/PA</a></div>\r\n<div data-block-id=\"block-34f5b43b-8949-441a-bdb6-e351bf53dc76\"></div>\r\n<div class=\"ql-block\" data-block-id=\"block-099c0eca-d726-4b8d-bb86-6778caf7a1e3\"><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/cadastro_contribuinte/in2023_00018.pdf\">IN SEFA nº 18/2023 que implementa o CADIN/PA</a></div>\r\n<div class=\"ql-block\" data-block-id=\"block-ed406e03-680b-4a5b-8698-18f3ace5583b\"></div>",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 912,
+   "modified": "2026-07-03T17:51:17",
+   "title": {
+    "rendered": "Isenção de IPVA - Pessoa com Deficiência"
+   },
+   "content": {
+    "rendered": "\n<p>É a concessão de isenção do IPVA dos veículos de propriedade, ou cuja posse detenha em decorrência de contrato mercantil - \"leasing\", da Pessoa com deficiência física, visual, mental severa ou profunda, Síndrome de Down ou autista.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    57
+   ],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/beneficio-fiscal/menu/showMenuForm",
+    "titulo1": "Como solicitar esse serviço",
+    "descricao1": "Na área restrita do Portal de Serviços da SEFA, na opção <strong>Solicitação Imunidade ou Isenção. </strong>Acesso com usuário e senha cadastrados ou através de Certificado Digital.",
+    "titulo2": "Documentos necessários",
+    "descricao2": "<!-- wp:list -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul><!-- wp:list-item -->\r\n \t<li>Carteira Nacional de Habilitação do requerente ou do condutor autorizado, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Decisão judicial ou documento que determine a tutela ou curatela, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Declaração de Serviço Médico Privado integrante do Sistema Único de Saúde, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Laudo médico de avaliação;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Laudo Pericial expedido pelo Centro de Perícias Científicas “Renato Chaves”, ou por entidade de inspeção credenciada pelo DETRAN/PA, referente às adaptações feitas no veículo, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Nota Fiscal de aquisição do veículo, em nome do requerente, em que conste os itens de série do modelo especificados no laudo de perícia médica ou Declaração da concessionária descrevendo os itens de série do veículo, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Notas Fiscais de aquisição e de instalação do acessório, quando for o caso.</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item -->\r\n\r\nOs documentos deverão ser encaminhados em forma digital, no formato PDF.\r\n\r\nConcluída a análise, será disponibilizado no Portal de Serviços o parecer e a portaria de concessão de isenção. E, após a SEFA confirmar a publicação da portaria no Diário Oficial do Estado, o débito será baixado automaticamente, quando o interessado poderá emitir o DAE de licenciamento.\r\n<ul>\r\n \t<li><a style=\"font-family: var(--list--font-family); background-color: var(--global--color-background); font-size: var(--global--font-size-base);\" href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/DECLARACAO_CONCESSIONARIA_IPVA.pdf\">Modelo de Declaração da concessionária</a></li>\r\n \t<li><a style=\"font-family: var(--list--font-family); font-size: var(--global--font-size-base); background-color: var(--global--color-background);\" href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/4_anexoIV_CONVENIO_ICMS_38_12.pdf\">Modelo do Laudo de avaliação autismo</a></li>\r\n \t<li><a style=\"font-family: var(--list--font-family); font-size: var(--global--font-size-base); background-color: var(--global--color-background);\" href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/3-6-LAUDO-DEFICINCIA-FSICA-E-VISUAL.pdf\">Modelo Laudo Pericial Deficiência Física e/ou Visual</a></li>\r\n \t<li><a style=\"font-family: var(--list--font-family); font-size: var(--global--font-size-base); background-color: var(--global--color-background);\" href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/3_anexoIII_CONVENIO_ICMS_38_12.pdf\">Modelo de Laudo de avaliação deficiência mental</a></li>\r\n</ul>\r\n&nbsp;\r\n\r\n<!-- /wp:list -->\r\n\r\n<!-- /wp:list -->",
+    "titulo3": "Manual/Tutorial",
+    "descricao3": "<!-- wp:list -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li><a style=\"font-family: var(--list--font-family); background-color: var(--global--color-background); font-size: var(--global--font-size-base);\" href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/Tutorial_Pessoas_Com_Deficiencia_ou_Autismo_1.0---IPVA.pdf\">Tutorial para solicitar isenção</a></li>\r\n \t<li><a style=\"font-family: var(--list--font-family); font-size: var(--global--font-size-base); background-color: var(--global--color-background);\" href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/Tutorial_Pessoas_Com_Deficiencia_ou_Autismo_1.0----IPVA-1-26.pdf\">Tutorial IPVA - Pessoa com deficiência ou autismo</a></li>\r\n \t<li><a style=\"font-family: var(--list--font-family); font-size: var(--global--font-size-base); background-color: var(--global--color-background);\" href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/Tutorial_Pessoas_Com_Deficiencia_ou_Autismo_1.0---IPVA-acomp-e-canc.pdf\">Tutorial para acompanhar e cancelar pedido de isenção</a></li>\r\n</ul>\r\n</li>\r\n</ul>\r\n&nbsp;\r\n\r\n<!-- /wp:list -->",
+    "titulo4": "Base legal do serviço",
+    "descricao4": "<ul>\r\n \t<li>Lei n. 6017, de 30 de dezembro de 1996;</li>\r\n \t<li>Decreto n. 2703, de 27 de dezembro de 2006 - Regulamento do IPVA;</li>\r\n \t<li>Instrução Normativa n. 04, de 25 de março de 2015;</li>\r\n \t<li>Instrução Normativa n. 08, de 12 de julho de 2013.</li>\r\n \t<li><span class=\"ui-provider bio bip biq bir bis bit biu biv biw bix biy biz bja bjb bjc bjd bje bjf bjg bjh bji bjj bjk bjl bjm bjn bjo bjp bjq bjr bjs bjt bju bjv bjw\" dir=\"ltr\">Instrução Normativa N. 004, de 16 de janeiro de 2024.</span></li>\r\n</ul>",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 886,
+   "modified": "2026-06-27T17:08:35",
+   "title": {
+    "rendered": "DIEF Comércio Exterior"
+   },
+   "content": {
+    "rendered": "\n<p>É a apresentação de Declaração eletrônica, DIEF - Comercio Exterior, por ocasião da realização das operações de importação de mercadorias ou bens provenientes do exterior por contribuinte deste Estado, conforme estabelece a Instrução normativa 020/2005.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    58
+   ],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/pservicos/autenticacao?servico=https://app.sefa.pa.gov.br:443/dief-comercio-exterior/index.html",
+    "titulo1": "Como solicitar este serviço",
+    "descricao1": "Na área restrita do Portal de Serviços da SEFA, na opção <a href=\"https://app.sefa.pa.gov.br/pservicos/autenticacao?servico=https://app.sefa.pa.gov.br:443/dief-comercio-exterior/index.html\">DIEF Comercio Exterior</a>. Acesso com usuário e senha cadastrados ou através de Certificado Digital. A apresentação da DIEF - Comércio Exterior deverá observar o disposto na <a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/in2013_00005.pdf\">Instrução normativa 005/2013</a>.",
+    "titulo2": "Documentos Necessários",
+    "descricao2": "<!-- wp:list -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul><!-- wp:list-item -->\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/requerimento_dief.pdf\">Requerimento</a> em 2 (duas vias) especificando o motivo do pedido (uso, alteração ou cessação de uso); identificação e endereço do contribuinte importador; identificação e endereço do despachante aduaneiro ou qualquer outro representante legal do contribuinte importador, quando for o caso; data, identificação e assinatura do representante legal.</li>\r\n \t<li>Ficha de Inscrição Cadastral do contribuinte importador, quando for pessoa inscrita no Cadastro de Contribuintes do ICMS;</li>\r\n \t<li>Cadastro Nacional de Pessoa Jurídica - CNPJ do Ministério da Fazenda, quando for pessoa não inscrita no Cadastro de Contribuintes do ICMS;</li>\r\n \t<li>Carteira de Identidade e Cadastro de Pessoa Física - CPF do Ministério da Fazenda ou, se for o caso, passaporte, quando se tratar de pessoa natural;</li>\r\n \t<li>Carteira de Identidade e CPF do representante legal do contribuinte importador, com comprovação da capacidade de representação por instrumento público ou particular, este último com registro em cartório e, ainda, documento de registro no órgão competente, se for despachante aduaneiro;</li>\r\n \t<li><a style=\"font-family: var(--list--font-family); background-color: var(--global--color-background); font-size: var(--global--font-size-base);\" href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/modelo_GLME.pdf\">Modelo da Guia para Liberação de Mercadoria Estrangeira sem Comprovação do Recolhimento do ICMS – GLME.</a></li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item -->\r\n\r\n<!-- /wp:list -->",
+    "titulo3": "Manual/Tutorial",
+    "descricao3": "<a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/3_manual_dief.pdf\">Manual DIEF Comércio Exterior</a>",
+    "titulo4": "Base legal do serviço",
+    "descricao4": "Instrução Normativa 0005/2013.",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 871,
+   "modified": "2026-06-27T04:20:19",
+   "title": {
+    "rendered": "Consulta Protocolo"
+   },
+   "content": {
+    "rendered": "\n<p>É a consulta do andamento do pedido protocolado na SEFA/PA. Esta consulta se dá através de CPF, CNPJ, Inscrição Estadual ou o número do pedido.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    62
+   ],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/consulta-protocolo/",
+    "titulo1": "Como solicitar este serviço",
+    "descricao1": "Na área pública do Portal de Serviços da SEFA, na opção <a href=\"https://app.sefa.pa.gov.br/consulta-protocolo/\">Consulta Protocolo.</a>",
+    "titulo2": "Documentos Necessários",
+    "descricao2": "Não há.",
+    "titulo3": "Manual/Tutorial",
+    "descricao3": "Não há",
+    "titulo4": "Base legal do serviço",
+    "descricao4": "Não se aplica.",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 892,
+   "modified": "2026-08-12T15:45:03",
+   "title": {
+    "rendered": "Isenção de IPVA - Pessoa com Deficiência"
+   },
+   "content": {
+    "rendered": "\n<p>É a concessão de isenção do IPVA dos veículos de propriedade, ou cuja posse detenha em decorrência de contrato mercantil - \"leasing\", da Pessoa com deficiência física, visual, mental severa ou profunda, Síndrome de Down ou autista.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    59
+   ],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/beneficio-fiscal/menu/showMenuForm",
+    "titulo1": "Como solicitar esse serviço",
+    "descricao1": "Na área restrita do Portal de Serviços da SEFA, na opção <strong>Solicitação Imunidade ou Isenção. </strong>Acesso com usuário e senha cadastrados ou através de Certificado Digital.",
+    "titulo2": "Documentos necessários",
+    "descricao2": "<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Carteira Nacional de Habilitação do requerente ou do condutor autorizado, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Decisão judicial ou documento que determine a tutela ou curatela, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Declaração de Serviço Médico Privado integrante do Sistema Único de Saúde, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Laudo médico de avaliação;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Laudo Pericial expedido pelo Centro de Perícias Científicas “Renato Chaves”, ou por entidade de inspeção credenciada pelo DETRAN/PA, referente às adaptações feitas no veículo, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li style=\"list-style-type: none;\">\r\n<ul>\r\n \t<li>Nota Fiscal de aquisição do veículo, em nome do requerente, em que conste os itens de série do modelo especificados no laudo de perícia médica ou Declaração da concessionária descrevendo os itens de série do veículo, quando for o caso;</li>\r\n</ul>\r\n</li>\r\n</ul>\r\n<!-- /wp:list-item --> <!-- wp:list-item -->\r\n<ul>\r\n \t<li>Notas Fiscais de aquisição e de instalação do acessório, quando for o caso.</li>\r\n</ul>\r\nOs documentos deverão ser encaminhados em forma digital, no formato PDF.\r\n\r\nConcluída a análise, será disponibilizado no Portal de Serviços o parecer e a portaria de concessão de isenção. E, após a SEFA confirmar a publicação da portaria no Diário Oficial do Estado, o débito será baixado automaticamente, quando o interessado poderá emitir o DAE de licenciamento.\r\n<ul>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/DECLARACAO_CONCESSIONARIA_IPVA.pdf\">Modelo de Declaração da concessionária</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/4_anexoIV_CONVENIO_ICMS_38_12.pdf\">Modelo do Laudo de avaliação autismo</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/3-6-LAUDO-DEFICINCIA-FSICA-E-VISUAL.pdf\">Modelo Laudo Pericial Deficiência Física e/ou Visual</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/3_anexoIII_CONVENIO_ICMS_38_12.pdf\">Modelo de Laudo de avaliação deficiência mental</a></li>\r\n</ul>",
+    "titulo3": "Manual/Tutorial",
+    "descricao3": "<ul>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/Tutorial_Pessoas_Com_Deficiencia_ou_Autismo_1.0---IPVA.pdf\">Tutorial para solicitar isenção</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/Tutorial_Pessoas_Com_Deficiencia_ou_Autismo_1.0----IPVA-1-26.pdf\">Tutorial IPVA - Pessoa com deficiência ou autismo</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/Tutorial_Pessoas_Com_Deficiencia_ou_Autismo_1.0---IPVA-acomp-e-canc.pdf\">Tutorial para acompanhar e cancelar pedido de isenção</a></li>\r\n \t<li><a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/manuais_tutorias/beneficio_fiscal/TUTORIAL_CONSULTA_PORTARIA_IMUNIDADES_ISENCOES.pdf\">Tutorial para consultar Portaria de isenção/imunidade</a></li>\r\n</ul>",
+    "titulo4": "Base legal do serviço",
+    "descricao4": "<ul>\r\n \t<li>Lei n. 6017, de 30 de dezembro de 1996;</li>\r\n \t<li>Decreto n. 2703, de 27 de dezembro de 2006 - Regulamento do IPVA;</li>\r\n \t<li>Instrução Normativa n. 04, de 25 de março de 2015;</li>\r\n \t<li>Instrução Normativa n. 08, de 12 de julho de 2013.</li>\r\n \t<li><span class=\"ui-provider bio bip biq bir bis bit biu biv biw bix biy biz bja bjb bjc bjd bje bjf bjg bjh bji bjj bjk bjl bjm bjn bjo bjp bjq bjr bjs bjt bju bjv bjw\" dir=\"ltr\">Instrução Normativa N. 004, de 16 de janeiro de 2024.</span></li>\r\n</ul>",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  },
+  {
+   "id": 856,
+   "modified": "2024-01-22T12:25:18",
+   "title": {
+    "rendered": "Cadastro de Contribuintes"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    64,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 8250,
+   "modified": "2025-12-12T19:36:26",
+   "title": {
+    "rendered": "Consulta"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    62,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 854,
+   "modified": "2024-01-22T12:22:20",
+   "title": {
+    "rendered": "Débitos e Parcelamentos"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    61,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 853,
+   "modified": "2024-01-22T12:21:02",
+   "title": {
+    "rendered": "Documentos Fiscais"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    60,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 852,
+   "modified": "2024-01-22T18:04:10",
+   "title": {
+    "rendered": "ICMS"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    65,
+    58
+   ],
+   "acf": []
+  },
+  {
+   "id": 850,
+   "modified": "2026-07-02T13:31:45",
+   "title": {
+    "rendered": "IPVA"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    65,
+    57
+   ],
+   "acf": []
+  },
+  {
+   "id": 849,
+   "modified": "2026-08-13T12:57:53",
+   "title": {
+    "rendered": "ITCD"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    65,
+    56
+   ],
+   "acf": []
+  },
+  {
+   "id": 848,
+   "modified": "2024-01-22T12:19:33",
+   "title": {
+    "rendered": "Portal de Serviços"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    65,
+    55
+   ],
+   "acf": []
+  },
+  {
+   "id": 847,
+   "modified": "2024-01-22T19:55:17",
+   "title": {
+    "rendered": "Trânsito de Mercadorias"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    65,
+    54
+   ],
+   "acf": []
+  },
+  {
+   "id": 8300,
+   "modified": "2026-08-07T18:50:30",
+   "title": {
+    "rendered": "Benefício Imunidades e isenções"
+   },
+   "content": {
+    "rendered": ""
+   },
+   "pis-categories": [
+    59,
+    65
+   ],
+   "acf": []
+  },
+  {
+   "id": 840,
+   "modified": "2026-06-27T05:27:15",
+   "title": {
+    "rendered": "ALMA web"
+   },
+   "content": {
+    "rendered": "\n<p>Neste serviço o interessado poderá emitir o DAE referente ao Termo de Apreensão da Mercadoria e, após o pagamento, emitir a Autorização de Liberação de Mercadoria Apreendida.</p>\n",
+    "protected": false
+   },
+   "pis-categories": [
+    65,
+    54
+   ],
+   "acf": {
+    "service_link": "https://app.sefa.pa.gov.br/pservicos/autenticacao?servico=https%3A//app.sefa.pa.gov.br%3A443/alma-web/index.jsp",
+    "titulo1": "Como solicitar este serviço",
+    "descricao1": "Na área restrita do Portal de Serviços da SEFA, na opção <a href=\"https://app.sefa.pa.gov.br/pservicos/autenticacao?servico=https%3A//app.sefa.pa.gov.br%3A443/alma-web/index.jsp\">ALMA web.</a> Acesso com usuário e senha cadastrados ou através de Certificado Digital.\r\n\r\nEste serviço pode ser realizado pelo Fiel depositário, Quadro societário, ou terceiros que tiverem procuração eletrônica lhe concedendo o respectivo acesso. Todo o interessado no serviço ALMA web deverá ter aderido ao DEC – Domicilio Eletrônico do Contribuinte.",
+    "titulo2": "Documentos Necessários",
+    "descricao2": "Não há.",
+    "titulo3": "Manual/Tutorial",
+    "descricao3": "<a href=\"https://site-sefa-wordpress.sefa.pa.gov.br/wp-content/uploads/servicos/cadastro_contribuinte/4_manual_alma_web.pdf\">Manual ALMA web</a>\r\n\r\n&nbsp;",
+    "titulo4": "Base legal do serviço",
+    "descricao4": "Não se aplica.",
+    "titulo5": "",
+    "descricao5": "",
+    "titulo6": "",
+    "descricao6": "",
+    "titulo7": "",
+    "descricao7": "",
+    "titulo8": "",
+    "descricao8": ""
+   }
+  }
+ ],
+ "status": 200,
+ "headers": {
+  "X-WP-Total": 28,
+  "X-WP-TotalPages": 1
+ }
+}

@@ -99,7 +99,7 @@ compartilham a URL de login), RJ (identidade `(link, titulo)`), CE (identidade `
 | **go** | SEFAZ-GO / Goiás (Secr. Economia) | Portal Expresso (SPA); API WSO2 `servicosOrgaos/20`, token client_credentials anônimo | JSON | 1 | 103 | rica (inline) | direto | 8 | **curl (WAF JA3)** |
 | **pi** | SEFAZ-PI / Piauí | SPA Sydle ONE; API JSON `_search` (**GET**), catálogo "Carta de Serviços", Bearer anônimo do shell | JSON | 1 | 29 | curta | direto | 10 | rustls |
 | **am** | SEFAZ-AM / Amazonas | Next.js **App Router**; flight **RSC** (header `RSC: 1`), árvore `items`; público via 3 rotas de perfil | JSON (RSC) | 3 | 278 | curta (resumo) | direto | 9 | rustls |
-| **pa** | SEFA-PA / Pará | Catálogo estadual "paradigital" (API Prodepa/Spring); `GET /orgao/48` + `GET /servico/{id}`, anônimo | JSON | 3 | 34 | **rica** (etapas+requisitos) | direto | 8 | rustls |
+| **pa** | SEFA-PA / Pará | WordPress do site novo, tipo `pis` (WP REST, `_envelope`) + 3 serviços do paradigital (API Prodepa, `GET /servico/{id}`), anônimo | JSON | 1 | 130 | **rica** (blocos ACF) | direto | 17 | rustls |
 | **es** | SEFAZ-ES / Espírito Santo | portal.es.gov.br (X-Via, molde MT); `POST /v1/search` por `departmentSlug`, anônimo | JSON | 2 | 45 | **rica** (`serviceLetterContent` HTML) | direto | 8 | rustls |
 | **ro** | SEFIN-RO / Rondônia | Agência Virtual (Sydle ONE conecta-360, molde PI); `GET _search`, catálogo "Serviços", Bearer anônimo | JSON | 1 | 194 | curta | direto | 8 | rustls |
 | **to** | SEFAZ-TO / Tocantins | Carta de Serviços (ASP.NET/IIS, HTML); `listar_servico.aspx?cod_empresa=37` + detalhe por span `lbl*` | HTML | 4 | 45 | **rica** (Carta) | direto | 8 | rustls |
@@ -426,19 +426,21 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
 
 ### pa — SEFA-PA (Pará)
 
-- **Catálogo estadual "paradigital"** (SPA Quasar/Vue), API **Prodepa/Spring** em
-  `para-digital.sistemas.pa.gov.br/para-digital-service/portal` — tudo **GET anônimo, sem login**.
-  Multi-tenant **por órgão**: a SEFA é o **órgão 48**. `GET /orgao/48` → `[{id, nome}]` (listagem magra,
-  sem descrição) → obriga o detalhe. `GET /servico/{id}` → payload rico: `finalidade`, `etapaServicos[]`
-  (passo a passo), `requisitoServicos[]`, `contatos[]`, `tema` (classe), flags `cidadao/empresa/estado`
-  (público), `linkAcesso`. Descrição do snapshot = finalidade + "Como proceder" + "Requisitos" + "Acesso".
-- **Público via flags** (sobrepostos → 3 públicos Cidadão/Empresa/Estado; `ocorrencias` = público × classe).
-  `classe` = `tema.descricao` (SEFA: tema único "Tributos e empresas"). Identidade = `id`; `link` = a
-  página do serviço no paradigital (`…/servico/{id}`). Órgão "SEFA-PA".
-- **Primeira entidade com UA institucional `AuliBot`** (não o UA Firefox do kit) + **rate-limit ≥1s**
-  entre GETs — mitigações da decisão de desconsiderar robots (D-PA-ROBOTS). O portal candidato
-  `portal-digital.sefa.pa.gov.br` estava fora do ar (522) e o Joomla foi extinto — ver `docs/REGISTRO-scrapers.md#pa`.
-- 34 serviços, 54 ocorrências, 3 públicos (Cidadão 21 / Empresa 30 / Estado 3). 8 testes. `ServicoRaw` direto.
+- **Catálogo `pis` do WordPress do site novo** (`pis.rs`, D-PASERV-1 = C): `GET /wp-json/wp/v2/pis?per_page=100&page=N`
+  e `/pis-categories`, anônimos, com `_envelope` (os cabeçalhos no corpo: a guarda do `X-WP-Total` vale com o cache).
+  154 páginas: saem as **15 páginas-índice** que o próprio site lista no bundle (`INDICES`), e as **cópias** (um post por
+  tema) viram um serviço — o texto da alterada por último, os temas de todas; chave = título só com letras e números.
+  `descricao` = `content` + cada bloco ACF com texto ("Título:" + texto) + "Acessar o serviço: `service_link`", pelo
+  `kit::html` com a base `https://www.sefa.pa.gov.br`; a quebra do fonte só conta no campo sem tag de bloco. `classe` =
+  cada tema (sem "Home"; sem tema → "Geral"); `link` = `…/internal/services/<id em letras>` (`a`=0…`j`=9).
+- **Os 3 que só o paradigital tem** (`pa.rs`, `SO_PARADIGITAL`): `GET /servico/{1034,1115,1116}` da API Prodepa
+  (`para-digital.sistemas.pa.gov.br/para-digital-service/portal`); descrição = finalidade + "Como proceder" +
+  "Requisitos" + "Acesso", link = `…/servico/{id}` do paradigital, classe IPVA. Se aparecerem no `pis`, fica o do `pis`.
+- **Público único "Serviços"** (D-PASERV-2, slug `servicos-gerais`): o `pis` não diz para quem é o serviço. Órgão "SEFA-PA".
+- UA AuliBot (`crate::UA`) + **≥1s** entre GETs (D-PA-ROBOTS, D-PASERV-4); sempre à rede, cache só com `--usecache`,
+  gravado depois das guardas. 6 GETs. Guardas: `X-WP-Total`, página-índice ausente, tema desconhecido, descrição
+  vazia, piso de 110.
+- 130 serviços, 141 ocorrências (07/11/2026). 17 testes. `ServicoRaw` direto. `docs/REGISTRO-scrapers.md#pa-servicos-pis`.
   O paradigital cobre **63 órgãos** com o mesmo contrato → oportunidade de scraper genérico (D-PA-ACERVO).
 - **FAQs** (`auli-scraper-pa faqs`, `faqs.rs`): do **site antigo** da SEFA (`antigo.sefa.pa.gov.br`, Joomla, para onde o
   menu "Orientações" do site novo aponta) — o Joomla não foi extinto, mudou de host. Lista curada de 11 páginas de

@@ -1,0 +1,85 @@
+{
+ "body": [
+  {
+   "id": 787,
+   "name": "AINF - Auto de Infração"
+  },
+  {
+   "id": 59,
+   "name": "Benefício Imunidades e Isenções"
+  },
+  {
+   "id": 64,
+   "name": "Cadastro de Contribuintes"
+  },
+  {
+   "id": 69,
+   "name": "CADIN"
+  },
+  {
+   "id": 679,
+   "name": "Comércio Exterior"
+  },
+  {
+   "id": 673,
+   "name": "Comunicação Oficial"
+  },
+  {
+   "id": 62,
+   "name": "Consulta Protocolo"
+  },
+  {
+   "id": 61,
+   "name": "Débitos e Parcelamentos"
+  },
+  {
+   "id": 672,
+   "name": "DEC"
+  },
+  {
+   "id": 670,
+   "name": "Declarações"
+  },
+  {
+   "id": 60,
+   "name": "Documentos Fiscais"
+  },
+  {
+   "id": 65,
+   "name": "Home"
+  },
+  {
+   "id": 58,
+   "name": "ICMS"
+  },
+  {
+   "id": 57,
+   "name": "IPVA"
+  },
+  {
+   "id": 56,
+   "name": "ITCD"
+  },
+  {
+   "id": 55,
+   "name": "Portal de Serviços"
+  },
+  {
+   "id": 708,
+   "name": "Renúncia Fiscal"
+  },
+  {
+   "id": 692,
+   "name": "Solicitação"
+  },
+  {
+   "id": 54,
+   "name": "Trânsito de Mercadorias"
+  }
+ ],
+ "status": 200,
+ "headers": {
+  "X-WP-Total": 19,
+  "X-WP-TotalPages": 1
+ }
+}

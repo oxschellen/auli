@@ -1,5 +1,5 @@
-// auli-scraper-pa — scraper da SEFA-PA (serviços, catálogo estadual "paradigital" — API Prodepa).
-// Sem headless, sem login: listagem por órgão + detalhe rico, tudo JSON anônimo.
+// auli-scraper-pa — scraper da SEFA-PA. Serviços: o catálogo `pis` do site novo (WordPress REST, `pis.rs`) e os 3
+// que só o catálogo estadual "paradigital" tem (API Prodepa, `pa.rs`). Sem headless, sem login: JSON anônimo.
 //
 // Conhece UMA entidade ("pa"); não lê o registry. Grava o snapshot de serviços (v3); a derivação
 // dos artefatos é o `auli-collections pa`.
@@ -8,11 +8,12 @@
 
 mod faqs;
 mod pa;
+mod pis;
 
 /// A entidade que este scraper conhece (um crate binário por entidade).
 pub const ENTITY: &str = "pa";
 const DATA_DIR: &str = "../data/pa/raw";
-/// A identidade da frota (D-FROTA-UA) nas FAQs — D-PAFAQ-5. Os serviços declaram a mesma em `pa.rs`.
+/// A identidade da frota (D-FROTA-UA): FAQs (D-PAFAQ-5) e serviços (D-PASERV-4).
 pub(crate) const UA: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 

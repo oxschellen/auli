@@ -49,6 +49,7 @@
 - [ES FAQs — portal Receita Orienta (s1-internet.sefaz.es.gov.br/ReceitaOrienta)](#es-faqs)
 - [PB FAQs — páginas de informação do portal institucional (www.sefaz.pb.gov.br/info/…)](#pb-faqs)
 - [PA FAQs — perguntas e respostas do site antigo da SEFA (antigo.sefa.pa.gov.br)](#pa-faqs)
+- [PA serviços — o catálogo `pis` do WordPress do site novo (site-sefa-wordpress.sefa.pa.gov.br)](#pa-servicos-pis)
 
 ---
 
@@ -898,6 +899,10 @@ Secretaria de Estado da Fazenda do Pará (SEFA-PA).
 > 522) e o **Joomla foi extinto** (o site SEFA virou SPA Angular + WordPress fechado). Nenhum conteúdo
 > de carta de serviços exige login — só a *execução* (link para o `pservicos`).
 
+> **Fonte trocada (07/11/2026, D-PASERV-1 = C):** os serviços do PA vêm do catálogo `pis` do WordPress do site novo
+> (154 páginas, 127 serviços distintos) mais os 3 que só o paradigital tem — 130, num público único. Este relatório fica
+> como o registro da escolha de julho. Ver [#pa-servicos-pis](#pa-servicos-pis).
+
 ---
 
 ## Fase 0 — robots.txt (documental, NÃO usado como gate)
@@ -976,7 +981,7 @@ etapas + requisitos + contatos.
 > **Correção (07/11/2026, D-PAFAQ-6):** o Joomla não foi extinto, mudou de host — vive em `antigo.sefa.pa.gov.br`,
 > e o menu "Orientações" do site novo aponta para ele. Esta fase testou só o `www`. As FAQs do PA vêm de lá
 > ([#pa-faqs](#pa-faqs)). O catálogo de serviços do site novo é o tipo `pis` do WordPress (154 páginas, abertas
-> anônimas) — pendência §22 do `auli_scraper_pendências.md`.
+> anônimas), que virou a fonte dos serviços ([#pa-servicos-pis](#pa-servicos-pis)).
 
 `www.sefa.pa.gov.br` **não é mais Joomla**: foi reconstruído como **SPA Angular** (`main.*.js`,
 `data-critters-container`, Cloudflare Turnstile). As URLs antigas do Manual
@@ -2871,4 +2876,43 @@ TLS 1.3, cadeia completa. 11 GETs (~1 MB) com 1 s.
 - Saída: `data/pa/raw/pa-faqs-tree.json` (raiz = o índice → um nó por página) e `data/pa/pa-faqs-snapshot.json` (um
   `FaqRaw` por pergunta; trilha = a página; link = a página), nessa ordem e atômicos.
 - Atualização: `scripts/tools/update-pa-faqs.sh` (apaga o cache antes; guarda de encolhimento contra o `.anterior`).
+
+---
+
+<a id="pa-servicos-pis"></a>
+
+# PA serviços — o catálogo `pis` do WordPress do site novo (site-sefa-wordpress.sefa.pa.gov.br)
+
+**Discovery e implantação:** 07/11/2026. Estudo, medições e decisões D-PASERV-1..4:
+[`docs/ESTUDO-PA-Servicos-pis.md`](ESTUDO-PA-Servicos-pis.md). Coleção `servicos` do `auli-scraper-pa`. **130 serviços**
+na rodada de 07/11: 127 do `pis` e 3 do paradigital. Substitui os 34 do paradigital ([#pa](#pa)).
+
+## Fonte
+
+O site novo (`www.sefa.pa.gov.br`, Angular) lê o tipo `pis` do WordPress headless: `GET /wp-json/wp/v2/pis` (anônimo,
+154 páginas em 2 de 100) e `/pis-categories` (19 temas). Cada página tem `content`, até 8 blocos ACF
+(`tituloN`/`descricaoN`) e o `service_link`; o link público é `/internal/services/<id>`, com cada dígito do id trocado
+por uma letra. Os 3 serviços que o `pis` não tem ("Dispensa de pagamento IPVA", "Pedido de Ressarcimento do IPVA",
+"Registro de veículo novo") vêm do paradigital (`GET /servico/{1034,1115,1116}`), com o conteúdo e o link de lá.
+
+## As armadilhas
+
+1. **15 páginas são índice de tema**, não serviço: o site as lista no bundle, e o scraper copia a lista. "CADIN" e
+   "Consulta Protocolo" têm nome de tema mas são serviços.
+2. **12 serviços estão publicados duas vezes**, um post por tema, às vezes com textos que divergem: viram um serviço,
+   com o texto do post alterado por último e os temas dos dois. A chave é o título só com letras e números.
+3. **"Home" não é tema** (é o destaque da página inicial); serviço sem tema vai para "Geral".
+4. **Os blocos ACF vêm em HTML formatado ou em texto puro**: a quebra do fonte só conta no campo sem tag de bloco.
+5. **Sem público-alvo**: público único "Serviços" (slug `servicos-gerais`); as abas Cidadão/Empresa/Estado do paradigital
+   saíram.
+
+## Guardas e transporte
+
+- `Err` antes de gravar: os temas ou a soma das páginas diferentes do `X-WP-Total` (lido do corpo, com `_envelope`);
+  página-índice da lista ausente do catálogo; tema fora de `pis-categories`; descrição vazia; menos de 110 serviços do
+  `pis`.
+- **Sempre à rede**; o cache em `data/pa/raw/cache/servicos/` só é lido com `--usecache` (reproduz o snapshot a menos do
+  `coletado_em`) e só é gravado depois das guardas.
+- `ureq`/rustls com o UA AuliBot (`crate::UA`), 1,1 s entre os GETs, 6 GETs por rodada.
+- Atualização: `scripts/tools/atualizar-servicos.sh pa`.
 

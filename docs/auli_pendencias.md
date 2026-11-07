@@ -282,6 +282,10 @@ o candidato `portal-digital` estava fora do ar (522) e o Joomla foi extinto.
 - **⏳ D-PA-ACERVO e D-PA-PORTALDIGITAL (abertas):** movidas para
   [auli_scraper_pendências.md](auli_scraper_pendências.md) §8 e §6.
 
+> **07/11/2026 — fonte trocada (D-PASERV-1 = C):** os serviços vêm do catálogo `pis` do WordPress do site novo, mais os 3
+> que só o paradigital tem — 130, público único "Serviços". [auli_scraper_pendências.md](auli_scraper_pendências.md) §22,
+> [REGISTRO-scrapers.md#pa-servicos-pis](REGISTRO-scrapers.md#pa-servicos-pis).
+
 ## 15. Entidade `es` (SEFAZ-ES) integrada — ✅ **resolvida (16ª entidade)**
 
 Fonte = `portal.es.gov.br` (SPA React sobre **X-Via**, MESMO stack do MT). O `conectacidadao`/
