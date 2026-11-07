@@ -245,11 +245,12 @@ fn walk(
     Ok(node)
 }
 
-/// The node of a FAQ published as PDF (D-RSFAQ-7): a menu with one FAQ node per section. The trail is the parent menu's
+/// The node of a FAQ published as PDF (D-RSFAQ-7): a menu with one FAQ node per section (or chapter), or the FAQ node
+/// itself when the PDF has neither. The trail is the parent menu's
 /// breadcrumb plus the item and the section — the same shape as the HTML pages' breadcrumb —, and each question links
 /// to the menu item (it redirects to the current PDF) with `#page=N`.
 fn no_do_pdf(item: &MenuItem, trilha: &str, texto: &str) -> Result<FaqNode> {
-    let secoes = pdf::secoes(texto)?;
+    let mut secoes = pdf::secoes(texto)?;
     let total: usize = secoes.iter().map(|s| s.perguntas.len()).sum();
     println!(
         "  PDF {}: {} perguntas em {} seções",
@@ -257,6 +258,29 @@ fn no_do_pdf(item: &MenuItem, trilha: &str, texto: &str) -> Result<FaqNode> {
         total,
         secoes.len()
     );
+    let origem = format!("{trilha} | {}", item.title);
+    let itens = |perguntas: Vec<pdf::Pergunta>| -> Vec<FaqItem> {
+        perguntas
+            .into_iter()
+            .map(|p| FaqItem {
+                pergunta: p.pergunta,
+                resposta: p.resposta,
+                url: Some(format!("{}#page={}", item.url, p.pagina)),
+            })
+            .collect()
+    };
+    // Sem seção nem capítulo (Convênio 201/17, Autorregularização): o próprio item é a página de FAQ.
+    if secoes.len() == 1 && secoes[0].titulo.is_empty() {
+        let s = secoes.remove(0);
+        return Ok(FaqNode {
+            title: item.title.clone(),
+            url: item.url.clone(),
+            page_type: PageType::Faq,
+            origin: origem,
+            children: Vec::new(),
+            faq_items: itens(s.perguntas),
+        });
+    }
     Ok(FaqNode {
         title: item.title.clone(),
         url: item.url.clone(),
@@ -265,20 +289,12 @@ fn no_do_pdf(item: &MenuItem, trilha: &str, texto: &str) -> Result<FaqNode> {
         children: secoes
             .into_iter()
             .map(|s| FaqNode {
-                origin: format!("{trilha} | {} | {}", item.title, s.titulo),
+                origin: format!("{origem} | {}", s.titulo),
                 title: s.titulo,
                 url: item.url.clone(),
                 page_type: PageType::Faq,
                 children: Vec::new(),
-                faq_items: s
-                    .perguntas
-                    .into_iter()
-                    .map(|p| FaqItem {
-                        pergunta: p.pergunta,
-                        resposta: p.resposta,
-                        url: Some(format!("{}#page={}", item.url, p.pagina)),
-                    })
-                    .collect(),
+                faq_items: itens(s.perguntas),
             })
             .collect(),
         faq_items: Vec::new(),
@@ -636,6 +652,32 @@ mod tests {
         assert_eq!(
             nfcom.children[0].faq_items[0].url.as_deref(),
             Some("https://exemplo.test/faq-nfcom#page=1")
+        );
+    }
+
+    #[test]
+    fn no_do_pdf_sem_secao_e_a_propria_pagina_de_faq() {
+        let item = MenuItem {
+            title: "Programas de Autorregularização".into(),
+            url: "https://atendimento.receita.rs.gov.br/programas-de-autorregularizacao".into(),
+        };
+        let texto = include_str!("../../tests/fixtures/rs-faqs-autorregularizacao.txt");
+        let no = no_do_pdf(
+            &item,
+            "Inicial | 1. ICMS (Pessoa Jurídica e Produtor) | Autorregularização",
+            texto,
+        )
+        .unwrap();
+        assert_eq!(no.page_type, PageType::Faq);
+        assert!(no.children.is_empty());
+        assert_eq!(no.faq_items.len(), 16);
+        assert_eq!(
+            no.origin,
+            "Inicial | 1. ICMS (Pessoa Jurídica e Produtor) | Autorregularização | Programas de Autorregularização"
+        );
+        assert_eq!(
+            no.faq_items[0].url.as_deref(),
+            Some("https://atendimento.receita.rs.gov.br/programas-de-autorregularizacao#page=3")
         );
     }
 

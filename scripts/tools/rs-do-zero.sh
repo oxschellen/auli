@@ -13,7 +13,7 @@ set -euo pipefail
 # apagados), e uma edição no arquivo durante a rodada não desalinha mais a leitura — o bash volta
 # ao disco por posição em bytes, e já viu tudo o que precisava ver.
 main() {
-  # As FAQs leem um PDF (o da NFCom, D-RSFAQ-7) pelo poppler; sem ele a subárvore cairia em silêncio na etapa 4, com os
+  # As FAQs leem os PDFs de perguntas (D-RSFAQ-7) pelo poppler; sem ele a subárvore cairia em silêncio na etapa 4, com os
   # caches já apagados. Confere antes de apagar qualquer coisa.
   command -v pdftotext > /dev/null && command -v pdfinfo > /dev/null \
     || { echo "❌ falta o pdftotext/pdfinfo (poppler-utils): sudo apt install poppler-utils"; exit 1; }

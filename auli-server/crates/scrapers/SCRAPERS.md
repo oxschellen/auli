@@ -170,8 +170,10 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   preservada pelo portal; desde nov/2026 `/perguntas-frequentes` é um índice novo com as perguntas inline —
   estudado como guarda e plano B, `docs/ESTUDO-RS-Faqs-Indice.md`). Link por pergunta (`<página>#panel-N`), uma
   ocorrência por painel no snapshot (o portal tem páginas-alias) e resposta sem o texto dos botões de UI
-  (D-RSFAQ-3..5). O item "NFCom" redireciona para um PDF de perguntas: entra pela lista `FaqSource::pdfs` (`faqs/pdf.rs`,
-  `kit::pdf`, uma seção por nó, link `/faq-nfcom#page=N`; D-RSFAQ-7); os outros seis itens-PDF ficam fora.
+  (D-RSFAQ-3..5). Cinco itens de menu redirecionam para PDFs de perguntas (NFCom, GES Bebidas, GES Comunicações,
+  Convênio 201/17, Autorregularização — 173): entram pela lista `FaqSource::pdfs`, lidos por um leitor só
+  (`faqs/pdf.rs`, `kit::pdf`: cabeçalho/rodapé repetidos e sumário fora, a numeração do corpo manda, link
+  `<item>#page=N`; D-RSFAQ-7); o manual do ITCD e outros dois itens-PDF ficam fora.
 - **Pareceres** (Consultas Formais Respondidas): Portal de Legislação (`legislacao.sefaz.rs.gov.br`,
   ASP.NET WebForms/IIS, windows-1252) via **curl subprocess** (ureq recebe resposta degradada; cookie
   de sessão obrigatório, senão o servidor pendura). O filtro "Consultas Formais Respondidas" é **estado

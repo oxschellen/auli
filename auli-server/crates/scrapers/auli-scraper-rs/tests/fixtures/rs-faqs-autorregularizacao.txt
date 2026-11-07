@@ -1,0 +1,208 @@
+   PERGUNTAS E RESPOSTAS
+   PROGRAMAS DE
+AUTORREGULARIZAÇÃO
+
+
+
+
+        Atualizado em 29/09/2022
+Sumário
+PERGUNTAS E RESPOSTAS ..................................................................................................................................... 3
+   1.     O que são Programas de Autorregularização? .............................................................................................. 3
+   2.     Qual a base legal para os Programas de Autorregularização? ................................................................... 3
+   3.     Como solicitar esclarecimento ou encaminhar justificativa? ........................................................................ 3
+   4.     No âmbito do Programa de Autorregularização, há possibilidade de parcelamento do valor devido? . 3
+   5. Existe diferença de valor entre a regularização através da Denúncia Espontânea ou pelo pagamento
+   da Guia de Arrecadação? .......................................................................................................................................... 3
+   6.     Como realizar a Denúncia Espontânea? ........................................................................................................ 4
+   7.     Há incidência de multa e juros no pagamento realizado no Programa de Autorregularização? ........... 4
+   8.     Como faço para realizar o pagamento? .......................................................................................................... 4
+   9. Para regularização através do pagamento do ICMS devido, é necessária a emissão de uma Guia de
+   Arrecadação para cada período de apuração?...................................................................................................... 5
+   10.   É possível a utilização de saldo credor para compensação com os débitos identificados no
+   Programa de Autorregularização? ........................................................................................................................... 5
+   11.       Há possibilidade de prorrogação do prazo para regularização? ............................................................. 5
+   12.       Há necessidade de retificação de EFD e GIA após o pagamento? ....................................................... 5
+   13.       O que acontece se eu não me regularizar com o Programa? ................................................................. 6
+   14.   Existe desconto ao realizar o pagamento à vista das Guias de Arrecadação relativas ao Programa
+   de Autorregularização? .............................................................................................................................................. 6
+   15.   Existe atendimento presencial ou telefônico para retirada de dúvidas relativas ao Programa de
+   Autorregularização? ................................................................................................................................................... 6
+   16.       Qual o setor responsável pelos Programas de Autorregularização na Receita Estadual? ................ 6
+
+
+
+
+                                                              Receita Estadual – SEFAZ/RS
+                                                        Av. Mauá, 1155 – Centro – Porto Alegre/RS
+                                                                    CEP 90030-080
+                                                                                                                                                                          2
+                               PERGUNTAS E RESPOSTAS
+
+1. O que são Programas de Autorregularização?
+R: Trata-se de procedimento preventivo que se destina a identificar divergências ou inconsistências
+provenientes de malhas e monitoramentos, que acarretaram pagamento a menor de imposto. O Programa
+de Autorregularização oferece ao contribuinte a possibilidade de sanar espontaneamente o descumprimento
+de obrigação tributária, evitando assim uma sanção mais onerosa administrativa e penal. Todas as
+informações pertinentes ao Programa são encaminhadas no documento “INSTRUÇÕES PARA
+AUTORREGULARIZAÇÃO”, enviados ao contribuinte via Caixa Postal Eletrônica no e-CAC.
+O Programa é uma Ação de Regularização, não configurando início de procedimento fiscal.
+
+2. Qual a base legal para os Programas de Autorregularização?
+R: A base legal para a Autorregularização é o art. 16, §§ 3º, 4º e 5º, da Lei Estadual 6.537/73, combinado
+com IN DRP 45/98 , Título IV, Capítulo IV, Seção 9, item 9.2, “b” e 9.5.
+
+3. Como solicitar esclarecimento ou encaminhar justificativa?
+R: Caso o contribuinte necessite atendimento, poderá solicitar esclarecimento ou enviar justificativa,
+acessando a opção “Solicitar/ Acompanhar Atendimento” na aba “Autorregularizações” constante da Caixa
+Postal Eletrônica no e-CAC, dentro do período indicado pelo Programa. Poderá também ser enviado arquivo
+de cálculo com justificativa que será analisada posteriormente.
+
+4. No âmbito do Programa de Autorregularização, há possibilidade de parcelamento
+   do valor devido?
+R: A única possibilidade de parcelamento do valor devido referenciado no Programa de Autorregularização
+é através da apresentação de Denúncia Espontânea pelo contribuinte, até o prazo final indicado no
+programa, de forma a constituir o crédito tributário mediante Auto de Lançamento. Após o contribuinte tomar
+ciência deste Auto de Lançamento no seu Domicílio Tributário Eletrônico (DTE), torna-se possível efetuar o
+pedido de parcelamento. As orientações sobre como o estabelecimento deve apresentar a Denúncia
+Espontânea constam no documento de “INSTRUÇÕES PARA AUTORREGULARIZAÇÃO”. Outras
+orientações gerais sobre a Denúncia Espontânea e condições de parcelamentos, podem ser observadas
+nos links a seguir:
+Denúncia Espontânea de Infração pelo Contribuinte - CLIQUE AQUI
+Condições de Parcelamento - CLIQUE AQUI
+
+5. Existe diferença de valor entre a regularização através da Denúncia Espontânea
+   ou pelo pagamento da Guia de Arrecadação?
+R: Diferenças da regularização através da apresentação da Denúncia Espontânea ou através do
+pagamento das Guias de Arrecadação:
+
+   1) No primeiro caso, Denúncia Espontânea, onde posteriormente poderá solicitar o parcelamento,
+      ocorre a incidência de juros e multa moratória.
+
+
+                                       Receita Estadual – SEFAZ/RS
+                                   Av. Mauá, 1155 – Centro – Porto Alegre/RS
+                                               CEP 90030-080
+                                                                                                             3
+   2) Já na segunda situação, caso a regularização ocorra através da emissão e pagamento das Guias de
+      Arrecadação (Código 1500, somente no caso de programa de autoregularização) para cada
+      período de competência, não haverá a incidência de multa moratória (conforme Decreto Nº
+      56.216, de 30 de novembro de 2021), incidindo desta forma apenas os juros de mora (art.69 da Lei
+      6.537/73).
+
+
+6. Como realizar a Denúncia Espontânea?
+R: Caso opte por regularizar os valores devidos por meio de Denúncia Espontânea para lançamento do
+imposto devido e abertura de possibilidade de parcelamento, deverá proceder a abertura de protocolo
+eletrônico específico para esse fim, no Portal e-CAC, em “Meus serviços” / “Protocolo Eletrônico - Novo
+Protocolo Eletrônico” / “Apresentação de Denúncia Espontânea de Infração”, que será analisado pela
+Fiscalização e, sendo aceita a denúncia, haverá um lançamento tributário com multa de 40%, conforme Lei
+Estadual nº 6.537/73, art. 8º, II, “b”, combinado com art. 9ª, I. Segue link com orientações sobre apresentação
+de Denúncia Espontânea:
+Denúncia Espontânea de Infração pelo Contribuinte - CLIQUE AQUI
+
+7. Há incidência de multa e juros no pagamento realizado no Programa de
+   Autorregularização?
+
+R: Para o pagamento realizado por GA (Guia de Arrecadação) gerada diretamente no âmbito do Programa
+de Autorregularização há incidência apenas de juros de mora (art.69 da Lei 6.537/73). Nesta hipótese, não
+haverá incidência das multas definidas no art. 9º da Lei 6.537/73, nem de multa moratória prevista no Decreto
+nº 56.216/21.
+
+
+8. Como faço para realizar o pagamento?
+R: O contribuinte, para efetuar o pagamento, deve acessar sua Caixa Postal Eletrônica, no Portal de Serviços
+da Receita Estadual (e-CAC), por meio do site http://www.sefaz.rs.gov.br/Receita/portaleCAC.aspx, e clicar
+na aba “Autorregularizações” do painel do contribuinte, conforme tela ilustrada a seguir:
+
+
+
+
+                                        Receita Estadual – SEFAZ/RS
+                                    Av. Mauá, 1155 – Centro – Porto Alegre/RS
+                                                CEP 90030-080
+                                                                                                             4
+Para emitir a Guia de Arrecadação (GA), acessar diretamente a aba Autorregularização, no e-CAC, clicar na
+opção “Realizar Pagamento”, onde deverá ser informado, para cada referência, o valor do imposto devido.
+O sistema emitirá a guia com código de arrecadação 1500 e vencimento no último dia útil do mês da emissão.
+Nos casos de pagamento de tributo em atraso, a GA será gerada considerando juros de mora (art. 69 da Lei
+6.537/73).
+
+Nos casos de Substituição Tributária Interestadual, o contribuinte de outra unidade da federação, não inscrito
+como substituto tributário no RS, deve realizar recolhimentos individuais para cada documento fiscal, por
+meio de GNRE (que pode ser gerada no endereço www.gnre.pe.gov.br/gnre/index.html), indicando no
+campo "Receita", o código 100099 (ICMS Subst. Tributária por operação), no campo "Documento de Origem:
+Nota Fiscal", o número do referido documento fiscal, e no campo "Unidade Favorecida", o Estado do Rio
+Grande do Sul (RS). Alertamos que, nos casos previstos no Art. 13-A da Lei 8.820/89, deve haver o
+recolhimento adicional do ICMS Fundo de Combate à Pobreza AMPARA-RS (Lei 14.742/2015), no código
+10012-9.
+
+9. Para regularização através do pagamento do ICMS devido, é necessária a
+   emissão de uma Guia de Arrecadação para cada período de apuração?
+R: Sim, se faz necessária a emissão de uma Guia de Arrecadação para cada período. A regularização deve
+ser realizada através do pagamento das respectivas Guias de Arrecadação, relativas a cada competência
+devida. O próprio sistema calculará os juros de mora (art. 69 da Lei 6.537/73) devidos em cada período, no
+momento da emissão da guia de arrecadação. O código de arrecadação utilizado é o 1500.
+
+10. É possível a utilização de saldo credor para compensação com os débitos
+   identificados no Programa de Autorregularização?
+R: Não é possível utilizar diretamente saldo credor para se regularizar no âmbito do Programa de
+Autorregularização. Para quitar o valor devido, devem ser emitidas as Guias de Arrecadação, informando o
+mês de referência, o que possibilitará o cálculo automático de juros de mora (art. 69 da Lei 6.537/73) relativos
+a cada competência devida. As instruções de emissão da GA estão no arquivo “Instruções para
+Autorregularização”. O código de arrecadação utilizado é o 1500.
+
+11. Há possibilidade de prorrogação do prazo para regularização?
+R: O prazo é o informado no documento “INSTRUÇÕES PARA AUTORREGULARIZAÇÃO”, não havendo
+possibilidade de prorrogação. Isso se dá em respeito à isonomia relativa a todas as empresas que se
+encontram em idêntica situação. Caso a empresa não se regularize dentro do prazo, será incluída em ação
+fiscal. A regularização pode ser feita através do pagamento das guias disponibilizadas no site ou da
+apresentação de Denúncia Espontânea através da abertura de Protocolo Eletrônico específico e
+preenchimento e assinatura do formulário.
+
+12. Há necessidade de retificação de EFD e GIA após o pagamento?
+R: Após o recolhimento do imposto devido frente ao Programa de Autorregularização, não é necessária
+nenhuma ação complementar por parte do contribuinte visando retificação de EFD e/ou GIA, a menos que
+esteja explicitamente citado no referido programa.
+
+
+
+
+                                         Receita Estadual – SEFAZ/RS
+                                     Av. Mauá, 1155 – Centro – Porto Alegre/RS
+                                                 CEP 90030-080
+                                                                                                              5
+13. O que acontece se eu não me regularizar com o Programa?
+R: A não adesão por parte do contribuinte ao Programa de Autorregularização, no prazo definido nas
+instruções, com o pagamento da GIA, apresentação de Denúncia Espontânea ou envio de justificativa
+considerada válida, ensejará início de ação fiscal. A autuação terá por base os valores de ICMS a serem
+pagos, bem como os valores de juros, multa de mora e multa por infração, conforme art. 9º da Lei 6.537/73.
+
+14. Existe desconto ao realizar o pagamento à vista das Guias de Arrecadação
+   relativas ao Programa de Autorregularização?
+R: Se o pagamento for realizado através das guias de arrecadação, o estabelecimento não receberá multa
+punitiva. Apenas haverá a incidência de juros. O programa de Autorregularização já possibilita que a
+regularização seja feita com um ônus menor do que o gerado após o início da ação fiscal, no que se refere
+à multa. Desta forma, não há incidência de descontos.
+
+15. Existe atendimento presencial ou telefônico para retirada de dúvidas relativas ao
+   Programa de Autorregularização?
+R: No momento, os canais de atendimento para esclarecimentos de dúvidas relativas aos programas de
+autorregularização são através de e-mail informado no documento “INSTRUÇÕES PARA
+AUTORREGULARIZAÇÃO” ou através do portal e-CAC.
+
+16. Qual o setor responsável pelos Programas de Autorregularização na Receita
+   Estadual?
+R: Os Comunicados de Programas de Autorregularização são emitidos pelos seguintes setores: CSC ATR-
+Central de Serviços Compartilhados Autorregularização, GES - Grupos Especializados Setoriais, Delegacia
+do ITCD e Posto Fiscal Virtual. Verifique na “INSTRUÇÃO PARA AUTORREGULARIZAÇÃO” o setor
+responsável indicado e o respectivo e-mail para atendimento.
+
+
+
+
+                                       Receita Estadual – SEFAZ/RS
+                                   Av. Mauá, 1155 – Centro – Porto Alegre/RS
+                                               CEP 90030-080
+                                                                                                        6
+

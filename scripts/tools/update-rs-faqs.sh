@@ -27,7 +27,7 @@ for arg in "$@"; do
   esac
 done
 
-# O item "NFCom" é um PDF de perguntas (D-RSFAQ-7), lido pelo poppler: sem ele, a subárvore cai em silêncio (é erro de
+# Cinco itens de menu são PDFs de perguntas (D-RSFAQ-7), lidos pelo poppler: sem ele, essas subárvores caem em silêncio (é erro de
 # item, não de coleta). Confere antes de apagar o cache.
 command -v pdftotext > /dev/null && command -v pdfinfo > /dev/null \
   || { echo "❌ falta o pdftotext/pdfinfo (poppler-utils): sudo apt install poppler-utils"; exit 1; }
