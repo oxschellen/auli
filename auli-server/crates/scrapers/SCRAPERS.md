@@ -43,7 +43,7 @@ Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/
 | `kit::html::html_para_texto(s, Opcoes { base, quebras_do_fonte })` | HTML das respostas de FAQ → texto: bloco vira linha, link vira `texto "url"` (uma vez só quando o texto é a URL), tag HTML sai, `<` que é texto fica, entidades decodificadas uma vez (D-KITHTML-1..8, `docs/ESTUDO-kit-html-para-texto.md`). `kit::html::endereco(href, base)` decide se um `href` vale ir para o texto | pe e rn (percorrem o DOM); o `tarf.rs` do rs (outro contrato) |
 | `kit::linhas::{linhas, segmentar}` (+ `sem_cloak`, `sem_prefixo_r`, `numeracao_irregular`) | FAQ em linhas para os portais em que a pergunta é um trecho em negrito no meio do texto: pergunta = linha toda em destaque terminada em "?" (só as numeradas quando a maioria é numerada; a linha em negrito que continua a numeração também, se tem letra — o "10." sozinho é item da resposta —, e a marcada com o número sem separador, "49 Deve…?", se continua a numeração; a nota entre parênteses depois do "?" não conta; numa seção sem negrito, as numeradas); grupos "… - PERGUNTAS FREQUENTES"; e-mail protegido do Joomla → o texto visível (D-PBFAQ-2, D-PAFAQ-2, -3) | pb e pa (os dois Joomla) |
 | `kit::sydle::secoes(md, base)` | as seções (`<div class="section-wrapper">`, `#section-<slug>`) de um artigo do Sydle ONE, nos moldes de 2024 (`## `, markdown) e 2026 (`<h2>`, HTML): slug, título e corpo em texto (e o corpo cru); erro quando o molde muda (D-SYDFAQ-6, `docs/ESTUDO-RO-PI-Faqs.md`) | ce e ro (FAQs) |
-| `kit::pdf::{extrair, mes_ano}` | o texto (`pdftotext -layout`) e o `(ano, mês)` da criação (`pdfinfo -isodates`) de um PDF, pelo poppler como processo; erro se o corpo não é PDF ou falta o poppler-utils (os testes usam o texto extraído como fixture) | pi e ba (FAQs) |
+| `kit::pdf::{extrair, mes_ano}` | o texto (`pdftotext -layout`) e o `(ano, mês)` da criação (`pdfinfo -isodates`) de um PDF, pelo poppler como processo; erro se o corpo não é PDF ou falta o poppler-utils (os testes usam o texto extraído como fixture) | pi, ba e rs (FAQs) |
 | `kit::cache::read_or_bail(dir, url, use_cache)` | cache-read + miss-vira-erro do `--usecache` | ce (terminador de paginação), rs-faqs (mensagem própria) |
 | `kit::USER_AGENT` | UA de navegador (Firefox/124 Linux) — a exceção da frota, só com motivo (D-FROTA-UA) | — (os 3 antigos Chrome eram cópia acidental; recoleta ao vivo confirmou ≡) |
 | `ScraperInfo::new(nome, versao)` (contrato) | substitui o `fn scraper_info()` boilerplate | — |
@@ -170,7 +170,8 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   preservada pelo portal; desde nov/2026 `/perguntas-frequentes` é um índice novo com as perguntas inline —
   estudado como guarda e plano B, `docs/ESTUDO-RS-Faqs-Indice.md`). Link por pergunta (`<página>#panel-N`), uma
   ocorrência por painel no snapshot (o portal tem páginas-alias) e resposta sem o texto dos botões de UI
-  (D-RSFAQ-3..5).
+  (D-RSFAQ-3..5). O item "NFCom" redireciona para um PDF de perguntas: entra pela lista `FaqSource::pdfs` (`faqs/pdf.rs`,
+  `kit::pdf`, uma seção por nó, link `/faq-nfcom#page=N`; D-RSFAQ-7); os outros seis itens-PDF ficam fora.
 - **Pareceres** (Consultas Formais Respondidas): Portal de Legislação (`legislacao.sefaz.rs.gov.br`,
   ASP.NET WebForms/IIS, windows-1252) via **curl subprocess** (ureq recebe resposta degradada; cookie
   de sessão obrigatório, senão o servidor pendura). O filtro "Consultas Formais Respondidas" é **estado

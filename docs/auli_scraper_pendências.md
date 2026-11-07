@@ -482,8 +482,14 @@ IBS, que o índice não lista. A trilha sai dele igual ao breadcrumb em 94% das 
 §11](ESTUDO-RS-Faqs-Indice.md).
 
 **Achado da mesma rodada:** `/faq-nfcom` e `/manual-para-declaracao-de-itcd-faq` nunca entraram no acervo (nem em
-agosto): o ureq recusa o corpo ("stream did not contain valid UTF-8"), e o índice também não as lista. Sondar a
-codificação (e se são FAQ) antes de decidir.
+agosto): o ureq recusa o corpo ("stream did not contain valid UTF-8"), e o índice também não as lista.
+**07/11/2026 — D-RSFAQ-7:** não é codificação — os dois redirecionam (303) para um PDF, e são sete os itens de menu
+assim. Entra só o PDF da NFCom (25 perguntas, `FaqSource::pdfs`); o manual do ITCD fica fora (decisão do mantenedor).
+Ficam por avaliar quatro PDFs de perguntas: Comunicações (`/duvidas-gerais-ges-com`, 07/2022), Bebidas
+(`/faq-ges-bebidas`, 07/2026), Convênio ICMS 201/17 (`/convenio-icms-201-17`) e Autorregularização
+(`/programas-de-autorregularizacao`, 09/2022) — cada um com o molde do próprio Word. O `/nfcom-faq` é o mesmo PDF da
+NFCom, e as orientações de transporte internacional não são perguntas. [REGISTRO-scrapers.md
+#rs-faqs](REGISTRO-scrapers.md#rs-faqs), armadilha 6.
 
 **Próximo passo.** Decidir a D-RSFAQ-2 (guarda pelo índice); a D-RSFAQ-6 só se o `-antigo` sair do ar.
 

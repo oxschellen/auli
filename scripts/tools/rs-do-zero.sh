@@ -13,6 +13,11 @@ set -euo pipefail
 # apagados), e uma edição no arquivo durante a rodada não desalinha mais a leitura — o bash volta
 # ao disco por posição em bytes, e já viu tudo o que precisava ver.
 main() {
+  # As FAQs leem um PDF (o da NFCom, D-RSFAQ-7) pelo poppler; sem ele a subárvore cairia em silêncio na etapa 4, com os
+  # caches já apagados. Confere antes de apagar qualquer coisa.
+  command -v pdftotext > /dev/null && command -v pdfinfo > /dev/null \
+    || { echo "❌ falta o pdftotext/pdfinfo (poppler-utils): sudo apt install poppler-utils"; exit 1; }
+
   # Apaga os caches das duas coleções, o que é o que "do zero" significa aqui: o scraper é cache-first
   # sempre, e a flag --usecache só decide o que fazer no miss — nunca ignora um arquivo que exista.
   echo "Etapa 1/13 — 🗑️  apagando os caches de serviços e faqs"

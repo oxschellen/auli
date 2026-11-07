@@ -27,6 +27,11 @@ for arg in "$@"; do
   esac
 done
 
+# O item "NFCom" é um PDF de perguntas (D-RSFAQ-7), lido pelo poppler: sem ele, a subárvore cai em silêncio (é erro de
+# item, não de coleta). Confere antes de apagar o cache.
+command -v pdftotext > /dev/null && command -v pdfinfo > /dev/null \
+  || { echo "❌ falta o pdftotext/pdfinfo (poppler-utils): sudo apt install poppler-utils"; exit 1; }
+
 # Cópia do snapshot e da árvore ANTES da coleta: o scraper sobrescreve os dois, e `data/` está fora
 # do git — sem a cópia, a queda que o guard do passo 3 pega já não teria volta. Ela só some quando o
 # guard passa; enquanto existir, é o último estado bom. Por isso uma rodada que falhou NÃO a recopia:

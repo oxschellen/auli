@@ -22,6 +22,11 @@ const ACCEPT_LANGUAGE: &str = "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7";
 // `$.getJSON` — daí o AJAX ir por `get_via_curl` e as páginas seguirem no ureq.
 const ACCEPT_JSON: &str = "application/json, text/javascript, */*; q=0.01";
 
+/// D-FROTA-UA: o PDF das FAQs (D-RSFAQ-7) é busca nova e vai com o AuliBot, que o portal aceita (curl, 07/11/2026). As
+/// páginas seguem no UA de navegador por legado.
+const UA_PDF: &str =
+    "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
+
 /// Number of attempts for a network operation before giving up.
 const MAX_ATTEMPTS: u32 = 3;
 /// Initial backoff between attempts (doubles each retry).
@@ -75,14 +80,20 @@ pub fn get_web_page_html(
         return Err(cache_miss(url, cache_path));
     }
 
-    let raw = retry(url, || {
+    let corpo = retry(url, || {
         let mut resp = agent
             .get(url)
             .header("Accept", ACCEPT)
             .header("Accept-Language", ACCEPT_LANGUAGE)
             .call()?;
-        Ok(resp.body_mut().read_to_string()?)
+        Ok(resp.body_mut().read_to_vec()?)
     })?;
+    // Um item do menu pode redirecionar para um PDF (o "Manual para Declaração de ITCD"). Fora de `FaqSource::pdfs`,
+    // é erro com o nome certo — não "stream did not contain valid UTF-8" —, e fora do `retry`: repetir não muda nada.
+    if corpo.starts_with(b"%PDF") {
+        return Err(format!("{url} é um PDF, não uma página (fora de FaqSource::pdfs)").into());
+    }
+    let raw = String::from_utf8(corpo).map_err(|e| format!("{url}: corpo fora de UTF-8 ({e})"))?;
     // Vem com 200, então o `retry` não a vê; gravada, a próxima rodada a leria do cache como página.
     if crate::f5::bloqueio_f5(&raw) {
         return Err(format!("{}: o F5 devolveu desafio/bloqueio no lugar da página", url).into());
@@ -140,6 +151,28 @@ pub fn get_web_page_ajax_body_html(
     Ok(body_html)
 }
 
+/// Fetches (or reads from cache) the text of a FAQ published as PDF (D-RSFAQ-7), via `kit::pdf` (`pdftotext -layout`).
+/// The cache keeps the extracted text, so a cached run needs no poppler.
+pub fn get_pdf_text(url: &str, cache_path: &Path, use_cache: bool) -> Result<String> {
+    if cache_path.exists() {
+        return Ok(fs::read_to_string(cache_path)?);
+    }
+    if use_cache {
+        return Err(cache_miss(url, cache_path));
+    }
+
+    let agent = auli_scraper_kit::build_agent(UA_PDF, None);
+    let corpo = retry(url, || {
+        Ok(agent.get(url).call()?.body_mut().read_to_vec()?)
+    })?;
+    // O F5 devolve HTML com 200: o kit recusa o que não começa por "%PDF", e nada vai para o cache.
+    let texto = auli_scraper_kit::pdf::extrair(&corpo)
+        .map_err(|e| format!("{url}: {e:#}"))?
+        .texto;
+    save(cache_path, &texto)?;
+    Ok(texto)
+}
+
 /// Error returned in `--usecache` mode when a page has no cache file to read.
 fn cache_miss(url: &str, cache_path: &Path) -> crate::errors::Error {
     format!(
@@ -172,6 +205,28 @@ mod tests {
         let _ = std::fs::remove_dir_all(&dir);
         assert!(r.is_err(), "a página do F5 tem de ser erro, não conteúdo");
         assert_eq!(n, 0, "a página do F5 não pode entrar no cache");
+    }
+
+    #[test]
+    fn pagina_que_e_pdf_e_erro_com_o_nome_certo_e_fora_do_cache() {
+        let dir = dir_vazio("faq-html-pdf");
+        let url = format!("{}/manual", servidor_local("%PDF-1.7\n%fake"));
+        let r = get_web_page_html(&build_agent(), &url, &dir.join("pagina.html"), false);
+        let n = arquivos(&dir);
+        let _ = std::fs::remove_dir_all(&dir);
+        assert!(r.is_err_and(|e| e.to_string().contains("é um PDF")));
+        assert_eq!(n, 0);
+    }
+
+    #[test]
+    fn pdf_que_vem_como_desafio_do_f5_e_erro_e_fora_do_cache() {
+        let dir = dir_vazio("faq-pdf-f5");
+        let url = format!("{}/faq-nfcom", servidor_local(DESAFIO));
+        let r = get_pdf_text(&url, &dir.join("faq-nfcom_pdf.txt"), false);
+        let n = arquivos(&dir);
+        let _ = std::fs::remove_dir_all(&dir);
+        assert!(r.is_err_and(|e| e.to_string().contains("não é um PDF")));
+        assert_eq!(n, 0);
     }
 
     #[test]

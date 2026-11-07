@@ -237,8 +237,8 @@ The SC, PR, SP, MG, MS, MT, GO, DF, AM, MA, PE, CE, RN, ES, PB, PA, RO, PI, AC a
 `--usecache` (`scripts/tools/update-sc-faqs.sh`, `update-pr-faqs.sh`, `update-sp-faqs.sh`, `update-mg-faqs.sh`,
 `update-ms-faqs.sh`, `update-mt-faqs.sh`, `update-go-faqs.sh`, `update-df-faqs.sh`, `update-am-faqs.sh`,
 `update-ma-faqs.sh`, `update-pe-faqs.sh`, `update-ce-faqs.sh`, `update-rn-faqs.sh`, `update-es-faqs.sh`, `update-pb-faqs.sh`, `update-pa-faqs.sh`,
-`update-ro-faqs.sh`, `update-pi-faqs.sh`, `update-ac-faqs.sh`, `update-ba-faqs.sh`; the PI and BA ones also need `pdftotext`, from
-poppler-utils).
+`update-ro-faqs.sh`, `update-pi-faqs.sh`, `update-ac-faqs.sh`, `update-ba-faqs.sh`; the PI and BA ones — and
+`update-rs-faqs.sh` — also need `pdftotext`, from poppler-utils).
 
 ```bash
 cd auli-server
