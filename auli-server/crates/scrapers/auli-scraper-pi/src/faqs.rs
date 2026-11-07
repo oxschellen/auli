@@ -9,7 +9,6 @@
 
 use std::collections::HashSet;
 use std::path::Path;
-use std::process::Command;
 use std::sync::LazyLock;
 use std::thread::sleep;
 use std::time::Duration;
@@ -237,33 +236,10 @@ impl Rede<'_> {
             .limit(LIMITE_PDF)
             .read_to_vec()
             .with_context(|| format!("corpo de {url}"))?;
-        if !pdf.starts_with(b"%PDF") {
-            bail!("{url} não devolveu um PDF");
-        }
-        let texto = pdftotext(&pdf)?;
+        let texto = auli_scraper_kit::pdf::extrair(&pdf)?.texto;
         auli_scraper_kit::cache::write(self.data_dir, "faqs", &chave, &texto);
         Ok(texto)
     }
-}
-
-/// `pdftotext -layout` (poppler) sobre o PDF, num arquivo temporário.
-fn pdftotext(pdf: &[u8]) -> Result<String> {
-    let caminho = std::env::temp_dir().join(format!("auli-pi-faq-{}.pdf", std::process::id()));
-    std::fs::write(&caminho, pdf).with_context(|| format!("gravar {}", caminho.display()))?;
-    let saida = Command::new("pdftotext")
-        .args(["-layout", "-enc", "UTF-8"])
-        .arg(&caminho)
-        .arg("-")
-        .output();
-    let _ = std::fs::remove_file(&caminho);
-    let saida = saida.context("pdftotext não rodou — instale o poppler-utils")?;
-    if !saida.status.success() {
-        bail!(
-            "pdftotext falhou: {}",
-            String::from_utf8_lossy(&saida.stderr).trim()
-        );
-    }
-    String::from_utf8(saida.stdout).context("pdftotext devolveu texto fora de UTF-8")
 }
 
 /// O `_search` dos artigos ativos ligados à pasta "Documentos Eletrônicos" (`linkedParents` é `nested`).

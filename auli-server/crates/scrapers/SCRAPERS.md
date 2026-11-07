@@ -41,8 +41,9 @@ Extraído das cópias por-entidade (as ~500 linhas duplicadas de fetch/UA/clean/
 | `kit::clean(s)` | zero-width + nbsp + squeeze | — |
 | `kit::clean_decoded(s)` / `kit::decode_entities(s)` | decode de entidades HTML + squeeze (pr/ba) — **sem** strip de zero-width | — |
 | `kit::html::html_para_texto(s, Opcoes { base, quebras_do_fonte })` | HTML das respostas de FAQ → texto: bloco vira linha, link vira `texto "url"` (uma vez só quando o texto é a URL), tag HTML sai, `<` que é texto fica, entidades decodificadas uma vez (D-KITHTML-1..8, `docs/ESTUDO-kit-html-para-texto.md`). `kit::html::endereco(href, base)` decide se um `href` vale ir para o texto | pe e rn (percorrem o DOM); o `tarf.rs` do rs (outro contrato) |
-| `kit::linhas::{linhas, segmentar}` (+ `sem_cloak`, `sem_prefixo_r`, `numeracao_irregular`) | FAQ em linhas para os portais em que a pergunta é um trecho em negrito no meio do texto: pergunta = linha toda em destaque terminada em "?" (só as numeradas quando a maioria é numerada; a linha em negrito que continua a numeração também; numa seção sem negrito, as numeradas); grupos "… - PERGUNTAS FREQUENTES"; e-mail protegido do Joomla → o texto visível (D-PBFAQ-2, D-PAFAQ-2, -3) | pb e pa (os dois Joomla) |
+| `kit::linhas::{linhas, segmentar}` (+ `sem_cloak`, `sem_prefixo_r`, `numeracao_irregular`) | FAQ em linhas para os portais em que a pergunta é um trecho em negrito no meio do texto: pergunta = linha toda em destaque terminada em "?" (só as numeradas quando a maioria é numerada; a linha em negrito que continua a numeração também, se tem letra — o "10." sozinho é item da resposta —, e a marcada com o número sem separador, "49 Deve…?", se continua a numeração; a nota entre parênteses depois do "?" não conta; numa seção sem negrito, as numeradas); grupos "… - PERGUNTAS FREQUENTES"; e-mail protegido do Joomla → o texto visível (D-PBFAQ-2, D-PAFAQ-2, -3) | pb e pa (os dois Joomla) |
 | `kit::sydle::secoes(md, base)` | as seções (`<div class="section-wrapper">`, `#section-<slug>`) de um artigo do Sydle ONE, nos moldes de 2024 (`## `, markdown) e 2026 (`<h2>`, HTML): slug, título e corpo em texto (e o corpo cru); erro quando o molde muda (D-SYDFAQ-6, `docs/ESTUDO-RO-PI-Faqs.md`) | ce e ro (FAQs) |
+| `kit::pdf::{extrair, mes_ano}` | o texto (`pdftotext -layout`) e o `(ano, mês)` da criação (`pdfinfo -isodates`) de um PDF, pelo poppler como processo; erro se o corpo não é PDF ou falta o poppler-utils (os testes usam o texto extraído como fixture) | pi e ba (FAQs) |
 | `kit::cache::read_or_bail(dir, url, use_cache)` | cache-read + miss-vira-erro do `--usecache` | ce (terminador de paginação), rs-faqs (mensagem própria) |
 | `kit::USER_AGENT` | UA de navegador (Firefox/124 Linux) — a exceção da frota, só com motivo (D-FROTA-UA) | — (os 3 antigos Chrome eram cópia acidental; recoleta ao vivo confirmou ≡) |
 | `ScraperInfo::new(nome, versao)` (contrato) | substitui o `fn scraper_info()` boilerplate | — |
@@ -268,6 +269,18 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
 - **D-BA1..4:** público do `panel-title` da ficha (fallback slugificado); classe do `<small>`;
   ficha que falha degrada (Cidadãos/Geral/vazio) sem derrubar a coleta; guarda de charset (UTF-8 →
   latin-1). 1 público (Cidadãos — o portal não tem split), descrições ricas (~1649). 5 testes.
+- **FAQs** (`auli-scraper-ba faqs`, `faqs.rs`, D-BAFAQ-1 A): o "Perguntas e Respostas" do **Plantão Fiscal**, que segue no
+  portal antigo (`portal.sefaz.ba.gov.br/default/perguntas_respostas/`, linkado pelas páginas de ICMS, IPVA, ITD e Taxas
+  do site novo) — os menus Inspetoria, Legislação e Contencioso por uma lista curada (`PLANTAO`; fora as Finanças
+  Públicas, a TEF vazia, o Simples Nacional 404 e a NFC-e 1.1 superada; opção nova no `menu.htm` é aviso) — e três do
+  site novo (`www.sefaz.ba.gov.br`, WordPress): o Balcão Virtual (acordeão por aba, âncora pelo `aria-controls`), o
+  Cadastro Sincronizado (`kit::linhas`) e o PDF da taxa de incêndio. Páginas do portal (windows-1252): as tabelas de
+  layout viram blocos, o negrito por classe CSS e o do número sozinho viram negrito da pergunta, e o `kit::linhas`
+  segmenta; a NF-e por seção expansível; no SINTEGRA, os subtítulos "Registro Tipo NN – …" viram grupo. PDFs (`kit::pdf`):
+  a pergunta é a linha (recuo até 3) com o número seguinte (salto de 1 é aviso; "13.780/12" não é a 13), romano em caixa
+  alta seguido da pergunta esperada abre seção, o mês da criação vai na trilha ("Alíquota (abr/2020)", D-BAFAQ-2) e o
+  link leva `#page=N`; nas páginas, o mês do `Last-Modified` só quando posterior à migração de 08/2023 (o ITD). Transporte: `native-tls` no portal (o dos serviços), o R36 como âncora no `www` (o do AC);
+  AuliBot (`crate::UA`); 37 GETs. 830 perguntas (07/11/2026), 22 testes. `docs/REGISTRO-scrapers.md#ba-faqs`.
 
 ### rj — SEFAZ-RJ (Rio de Janeiro)
 
@@ -403,8 +416,8 @@ não têm mais motivo para o UA de navegador: são candidatos ao AuliBot, com re
   pasta `69d6979d…` — `linkedParents` é `nested`) e o **PDF "Perguntas Frequentes EFD ICMS IPI"** do repositório de
   documentos. Páginas: pergunta = linha em negrito terminada em "?" (`kit::linhas`), depois de dois reparos — o link
   para o `portal-h` (homologação) vira destaque e o texto-modelo "Título da sanfona" do Elementor sai. PDF: a pasta
-  "4. Perguntas Frequentes" pelo `obterPastaComItens` (GET anônimo; exatamente um PDF), o texto pelo `pdftotext
-  -layout` (poppler, como processo; o cache guarda o texto), as perguntas pelo sumário (numeração contínua; cada
+  "4. Perguntas Frequentes" pelo `obterPastaComItens` (GET anônimo; exatamente um PDF), o texto pelo `kit::pdf`
+  (`pdftotext -layout`, poppler como processo; o cache guarda o texto), as perguntas pelo sumário (numeração contínua; cada
   entrada no corpo), trilha "… Versão 1.0 (Novembro de 2021) | Capítulo", link = o PDF com `#page=N`. Aviso quando as
   pastas de FAQ vazias ganham artigo. AuliBot (`crate::UA`). 5 GETs. 134 perguntas (99 + 35, 07/11/2026), 19 testes. `docs/REGISTRO-scrapers.md#pi-faqs`.
 

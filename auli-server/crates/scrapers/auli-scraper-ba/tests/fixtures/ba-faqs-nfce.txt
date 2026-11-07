@@ -1,0 +1,517 @@
+       NFC-e
+NOTA FISCAL DE VENDA A
+CONSUMIDOR ELETRÔNICA
+
+
+  Perguntas e Respostas
+         Versão 1.6
+         Atualizado
+         23/05/2019
+
+
+
+                          1
+I - INFORMAÇÕES INICIAIS
+
+
+1. O que é a Nota Fiscal de Consumidor Eletrônica - NFC-e?
+
+A Nota Fiscal de Consumidor Eletrônica – NFC-e – é um documento de
+existência apenas digital, emitido e armazenado eletronicamente, com o intuito
+de documentar as operações comerciais de venda presencial ou venda para
+entrega em domicílio a consumidor final (pessoa física ou jurídica) em operação
+interna e sem geração de crédito de ICMS ao adquirente.
+
+2. Quais os tipos de documentos fiscais em papel que a NFC-e substitui?
+
+Nota Fiscal de Venda a consumidor, modelo 2
+Cupom Fiscal emitido por ECF.
+
+
+3. Quais são as vantagens da NFC-e?
+
+       Dispensa de homologação pelo Fisco do programa emissor;
+       Não há necessidade de autorização prévia do equipamento a ser
+        utilizado;
+       Uso de Impressora comum, térmica, jato de tinta ou a laser;
+       Simplificação de obrigações acessórias (dispensa de impressão de
+        Redução Z e Leitura X, Lacres na impressora, etc.);
+       Dispensa da figura do interventor técnico;
+       Uso de papel não certificado, com menor requisito de tempo de guarda;
+       Transmissão em tempo real ou on-line da NFC-e;
+       Possibilidade de redução significativa dos gastos com papel;
+       Possibilidade de uso de novas tecnologias;
+       Flexibilidade de expansão de Pontos de vendas (Caixas);
+
+4. Em quais tipos de operações a NFC-e pode ser utilizada?
+
+Somente nas operações internas de venda presencial ou venda para entrega em
+domicílio a consumidor final. Para as demais operações, o contribuinte deverá
+utilizar a nota fiscal eletrônica modelo 55 (NF-e).
+
+5. A NFC-e pode ser usada para venda com entrega em domicílio?
+
+Sim, apenas para operações dentro do Estado. Nestas hipóteses será exigida
+na NFC-e a identificação do consumidor e do endereço de entrega.
+
+
+
+                                                                                2
+6 O contribuinte pode emitir somente NF-e em todas as suas operações?
+Sim, ao invés de emitir NFC-e, o contribuinte pode optar por emitir somente NF-
+e. Neste caso o contribuinte não deve ter ECF ativo.
+
+ 7. Qual é o modelo de documento fiscal da NFC-e?
+
+ A NFC-e é identificada pelo modelo 65.
+
+ 8. Já existe legislação em vigor para regulamentar a NFC-e?
+
+ Sim. A NFC-e foi instituída pelo Ajuste SINIEF nº 19/16.
+ No Estado da Bahia, a NFC-e está regulamentada no RICMS, Decreto
+ 13.780/12, nos artigos 107-A a 107-I
+
+
+
+II) REQUISITOS
+
+ 9. Quais são os requisitos necessários para a emissão da NFC-e?
+     Possuir certificado digital no padrão ICP-Brasil, contendo o CNPJ da
+       empresa;
+       Desenvolver ou adquirir um software emissor de NFC-e;
+       Possuir impressora comum, térmica, jato de tinta ou a laser;
+       Possuir acesso à Internet para obtenção da autorização da NFC-e;
+     Obter orientações para configuração do programa emissor e gerar o
+    CSC - Código de Segurança do Consumidor, acessando na Internet o
+    endereço www.sefaz.ba.gov.br e escolhendo as opções Nota Fiscal de
+    Consumidor eletrônica > Como se tornar emissor de NFC-e ;
+
+ 10. A SEFAZ disponibilizou emissor gratuito de NFC-e?
+
+ Não. O Fisco tem prestado orientações técnicas a entidades que demonstraram
+ o interesse em desenvolver uma solução gratuita, sob exclusiva
+ responsabilidade do próprio desenvolvedor.
+
+ 11. Posso utilizar o emissor gratuito da NF-e para emitir NFC-e?
+
+ Não. Considerando as peculiaridades do varejo, o emissor gratuito da NF-e não
+ está preparado para emitir a NFC-e.
+
+ 12. Tenho que ter certificado digital para emitir a NFC-e?
+
+ Sim. Por ser um documento com valor legal, a emissão de NFC-e exige a
+
+                                                                                  3
+ segurança proporcionada pelo certificado digital.
+
+ 13. Quais certificados digitais poderão ser utilizados?
+
+ Os certificados devem ser emitidos por uma autoridade certificadora, seguindo
+ o padrão ICP-Brasil, podendo ser dos seguintes tipos:_
+
+       A1 - é gerado e armazenado em seu computador pessoal, dispensando
+        o uso de cartões inteligentes ou tokens;
+       A3 - é emitido em uma mídia criptográfica: HSM, cartão inteligente ou
+        token, proporcionando maior mobilidade e segurança.
+
+ O tipo de certificado digital a ser escolhido depende do sistema/aplicação onde
+ o mesmo será utilizado. Informe-se com o responsável pelo seu equipamento
+ ou consulte a devida documentação para verificar se há alguma restrição para
+ uso do tipo A1 ou A3.
+
+ 14. Posso utilizar o mesmo certificado digital da NF-e?
+
+ Sim. O mesmo certificado digital pode também ser utilizado por todos os
+ estabelecimentos do contribuinte.
+
+
+
+III) ADESÃO
+
+ 15. Quais os procedimentos junto a SEFAZ para aderir à NFC-e?
+
+Para emissão de NFC-e, o contribuinte deverá acessar o sítio da SEFAZ na
+Internet em www.sefaz.ba.gov.br e escolher as seguintes opções:
+Inspetoria Eletrônica > Nota Fiscal > Nota fiscal do consumidor eletrônica >
+EMPRESÁRIO - Como se tornar emissor de NFC-e. Deverá então baixar a
+instrução para configuração do seu programa emissor e gerar o CSC - Código
+de Segurança do Contribuinte. Este código é único para a empresa (CNPJ
+básico), devendo ser gerado um para uso no ambiente de homologação e outro
+para uso em produção (para este ambiente podem ser gerados até dois
+códigos).
+
+Obs.: o acesso para obtenção do CSC deverá ser efetuado com o mesmo login
+e senha do contribuinte, utilizado para acesso restrito de funcionalidades
+disponibilizadas na Internet.
+
+
+ 16. Quando a minha empresa será obrigada à emissão de NFC-e?
+
+A partir de janeiro de 2019, todos os contribuintes já estão obrigados a emitir
+NFC-e, exceto os inscritos como MEI (Micro Empresário Individual).
+
+
+                                                                                  4
+17. Quais as situações em que não se aplica a obrigação de emissão de
+NFC-e?
+O art. 107-B do RICMS, Decreto nº 13.780/12 estipula:
+
+
+“§ 6º A obrigatoriedade de emissão de NFC-e não se aplica:
+ I – nas operações promovidas por concessionárias de serviço público,
+relacionadas com o fornecimento de água, energia elétrica e gás canalizado;
+II – nas prestações de serviços de comunicação;
+III - nas prestações de serviços de transporte de carga, valores e de
+passageiros;
+ IV – nas operações realizadas por contribuintes que optem por emitir NF-e em
+todas as operações
+V – nas operações realizadas por instituições de assistência social ou de
+educação de que trata o inciso XI do art. 265 deste Regulamento;
+VI – aos contribuintes inscritos no cadastro de contribuintes do ICMS como Micro
+Empreendedor Individual –MEI”.
+
+
+18. O que muda para o meu cliente se minha empresa passar a utilizar
+NFC-e em suas operações?
+
+O consumidor poderá optar por receber através de mensagem eletrônica o
+código de acesso para consulta da NFC-e, dispensando a impressão do
+DANFE NFC-e. Caso deseje receber o documento impresso poderá escolher
+por recebê-lo na forma completa ou na forma simplificada, sem a discriminação
+dos produtos adquiridos.
+
+Outra mudança é a facilidade de consultar no site da SEFAZ a validade,
+existência e autorização de uso da NFC-e referente à sua compra. A consulta
+poderá ser feita na Internet, similar ao que existe para a NF-e, utilizando a
+chave de acesso, ou pela leitura do QR-Code impresso no DANFE NFC-e
+(Documento Auxiliar da Nota Fiscal Eletrônica) por intermédio de um smartphone
+ou tablet.
+
+19. O acesso ao ambiente de teste e de produção está disponível para as
+empresas desenvolvedoras de software?
+
+Atualmente o acesso a esses ambientes da NFC-e da SEFAZ está disponível
+somente para os desenvolvedores inscritos no cadastro de contribuintes do
+ICMS.
+
+
+
+
+                                                                                5
+IV) DOCUMENTO AUXILIAR DA NFC-E (DANFE_NFC-E)
+
+20. O que é e para o que serve o DANFE_NFC-e?
+
+O DANFE NFC-e é uma representação simplificada da NFC-e. Tem as
+seguintes funções básicas:
+
+       Conter a chave de acesso da NFC-e para que se consulte a regularidade
+        da mesma;
+       Conter o código de barras bidimensional da NFC-e (QR-Code) para que
+        se consulte a regularidade da mesma, a partir de um smartphone ou
+        tablet;
+       Para o caso da entrega em domicílio, o DANFE NFC-e acompanhará a
+        mercadoria em trânsito, fornecendo outras informações básicas sobre a
+        venda (emitente, destinatário, valores, endereço de entrega, etc.).
+       O DANFE NFC-e deverá ser impresso conforme as especificações
+        técnicas definidas em manual próprio, disponível no Portal Nacional da
+        NF-e: www.nfe.fazenda.gov.br.
+
+
+21. O que é QR-Code?
+
+O QR-Code é um código de barras bidimensional, que foi criado em 1994 pela
+empresa japonesa Denso-Wave, que significa “código de resposta rápida” devido
+à capacidade de ser interpretado rapidamente.
+
+22. Qual a finalidade do QR-Code impresso no DANFE NFC-e?
+
+Tem a finalidade de facilitar a consulta dos dados do documento fiscal eletrônico
+pelos consumidores, mediante leitura com o uso de aplicativo leitor instalado em
+smartphones ou tablets. Atualmente existem no mercado inúmeros aplicativos
+gratuitos para smartphones que possibilitam a leitura de QR-Code.
+
+23. Em que momento o DANFE_NFC-e deve ser impresso?
+
+O DANFE NFC-e deve ser impresso pelo emitente da NFC-e no momento da
+venda presencial, quando solicitado pelo consumidor, em substituição ou em
+complemento ao envio de mensagem eletrônica contendo o código de acesso
+para consulta ou ao envio do arquivo XML da nota. Nas vendas para entrega
+em domicílio ou quando emitida a NFC-e em contingência, a impressão do
+DANFE NFC-e, na forma completa é obrigatória.
+
+24. Há obrigatoriedade da guarda do DANFE NFC-e pelo emitente e pelo
+consumidor (destinatário)?
+
+Não existe obrigatoriedade da guarda do DANFE NFC-e. O documento fiscal
+relativo à operação é o arquivo digital da NFC-e. Por se tratar de um documento
+fiscal digital, a NFC-e deve ser armazenada eletronicamente pelo período de
+5 (cinco) anos, conforme determinado pela legislação tributária.
+
+                                                                                6
+25. Em qual tipo de papel posso imprimir o DANFE NFC-e?
+
+Em qualquer tipo de papel, desde que garanta a legibilidade das informações
+impressas, especialmente do QR-Code, por, no mínimo, seis meses.
+Na impressão do DANFE NFC-e, deverá ser utilizado papel com largura mínima
+de 56 mm e margens laterais com, no mínimo, 0,2 mm.
+Não existe qualquer restrição para que se imprima o DANFE NFC-e em outros
+tamanhos de papel como, por exemplo, o A4.
+
+26. Posso utilizar qualquer tipo de impressora?
+
+Não. Para impressão do DANFE, o contribuinte deverá utilizar impressoras não
+fiscais, com impressão térmica, jato de tinta ou a laser, que permitam a
+legibilidade do QR Code.
+
+
+27. O que é o Código de Segurança do Contribuinte - CSC?
+O CSC é um código de segurança alfanumérico, de conhecimento exclusivo do
+contribuinte e da SEFAZ, usado para garantir a autoria e a autenticidade do
+DANFE NFC-e.
+
+ATENÇÃO: O CSC é requisito de validade do DANFE NFC-e, portanto deve ser
+cadastrado no programa emissor do contribuinte antes da primeira nota fiscal
+emitida.
+
+28. Qual o procedimento para solicitar o Código de Segurança do
+Contribuinte - CSC?
+
+O contribuinte deverá obter Instrução para configuração do seu programa emissor
+e o CSC - Código de Segurança do Contribuinte na página da Internet
+www.sefaz.ba.gov.br, acessando Inspetoria Eletrônica > Nota Fiscal > Nota fiscal
+do consumidor eletrônica > EMPRESÁRIO - Como se tornar emissor de NFC-e.
+Obs.: o acesso para obtenção do CSC deverá ser efetuado com o mesmo login e
+senha do contribuinte, utilizado para acesso restrito de funcionalidades
+disponibilizadas na Internet. Este código é único para a empresa (CNPJ básico),
+devendo ser gerado um para uso no ambiente de homologação e outro para uso
+em produção (para este ambiente podem ser gerados até dois códigos).
+
+
+V) EMISSÃO EM CONTINGÊNCIA
+
+29. Como posso emitir uma NFC-e em contingência?
+
+Em caso de problemas técnicos ou operacionais, o contribuinte poderá utilizar
+a contingência offline que consiste na emissão da NFC-e, sem a prévia
+autorização do Fisco, devendo, nesse caso, ser transmitida à SEFAZ,
+imediatamente depois de superado os problemas técnicos ou em um prazo de
+até o 1º (primeiro) dia útil subsequente contado a partir de sua emissão.
+
+                                                                               7
+A decisão da emissão da NFC-e em contingência é exclusiva do contribuinte e
+não depende de autorização do Fisco.
+
+30. Se faltar luz no meu estabelecimento, como posso emitir a NFC-e?
+
+A SEFAZ recomenda a utilização de fontes de alimentação ininterruptas do tipo
+nobreak. Além disso, o contribuinte poderá utilizar equipamentos com bateria
+interna, como, por exemplo, laptop, tablet ou smartphone.
+
+
+
+VI) DETALHES OPERACIONAIS
+
+31. Em que condições posso cancelar uma NFC-e?
+
+Somente poderá ser cancelada a NFC-e previamente autorizada.
+ O contribuinte emitente poderá solicitar o cancelamento da NFC-e, mediante
+ Registro do Evento de Cancelamento de NFC-e, nas hipóteses indicadas a seguir
+ e desde que não tenha ocorrido circulação da mercadoria com a NFC-e a ser
+ cancelada:
+
+ I - em até 30 (trinta) minutos da concessão da Autorização de Uso da NFC-e
+ emitida com incorreção;
+
+ II - em um prazo de até 168 (cento e sessenta e oito) horas, para a NFC-e cuja
+ autorização, devido a problemas técnicos de comunicação, só tenha sido obtida
+ após ter sido emitida, para conclusão da operação de venda, outra NFC-e emitida
+ em contingência. Para a realização deste cancelamento deve ser informada a
+ Chave de Acesso da NFC-e emitida em contingência, que a substituiu.
+
+Vencido o prazo para cancelamento da NFC-e, o RICMS permite a
+regularização do estoque com o procedimento previsto nos parágrafos do Art.
+92:
+       § 1º Após o prazo máximo referido no caput e desde que não tenha
+       ocorrido a circulação da mercadoria, fica admitida a emissão de Nota
+       Fiscal de entrada ou saída para regularização do quantitativo da
+       mercadoria em estoque, com destaque do imposto, se for o caso, desde
+       que emitida no prazo de sessenta dias da emissão da nota fiscal
+       incorreta.
+       § 2º A NF-e referida no § 1º deve conter, no campo “Chave de acesso da
+       NF-e referenciada”, a chave de acesso da NF-e que foi cancelada por
+       incorreção, bem como o motivo da incorreção no campo “Informações
+       complementares”.
+
+
+32. Como devo proceder para cancelar uma NFC-e?
+
+O pedido de cancelamento de uma NFC-e deverá ser feito por meio do
+webservice de eventos (utilizar o código do evento adequado, conforme o tipo
+
+                                                                               8
+de cancelamento), devendo ser autorizado pela SEFAZ.
+
+O layout do arquivo de solicitação de cancelamento de NFC-e poderá ser
+consultado no Manual de Orientação do Contribuinte (MOC), disponível no Portal
+Nacional da NF-e (www.nfe.fazenda.gov.br).
+
+33. Posso utilizar a carta de correção eletrônica (CC-e) para NFC-e?
+Não. A carta de correção eletrônica não é utilizada na NFC-e
+
+34. Preciso autorizar minhas impressoras ou software na SEFAZ para
+emitir a NFC-e?
+
+Não é necessário autorizar qualquer equipamento ou software na SEFAZ para
+emitir a NFC-e.
+
+35. A NFC-e pode ser emitida por meio de smartphone ou tablets?
+
+Sim. O contribuinte pode utilizar plataformas móveis para emissão de NFC-e.
+
+36. Posso utilizar meu equipamento de ECF para impressão do DANFE-
+NFC-e?
+
+Verifique a viabilidade técnica de uso do ECF para impressão do DANFE-NFC-
+e com o fabricante do seu equipamento.
+
+37. Se já utilizo a NF-e, poderei utilizar a mesma numeração para NFC-e?
+
+A numeração utilizada pela NFC-e será distinta da numeração utilizada pela
+NF-e, por se tratar de um novo modelo de documento fiscal eletrônico (modelo
+65).
+
+A numeração da NFC-e, definida pelo contribuinte, deverá ser seqüencial de 1 a
+999.999.999, por estabelecimento e por série, devendo ser reiniciada quando
+atingido este limite.
+
+O contribuinte poderá adotar séries distintas para a emissão da NFC-e que serão
+designadas por algarismos arábicos, em ordem crescente, podendo ser utilizado
+o algarismo zero apenas no caso de utilização de série única.
+
+38. Como devo preencher as informações dos tributos incidentes sobre
+toda a cadeia, em atendimento a Lei Federal nº 12.741/2012 (lei da
+transparência)?
+
+Apenas é exigido pela Lei Federal nº 12.741/2012 a informação, no documento
+fiscal, de um campo, em reais, com o valor total de tributos incidentes na venda
+ao consumidor e considerando toda a cadeia de tributação anterior.
+
+Na divisão V do DANFE NFC-e (vide documento técnico de especificação do
+
+                                                                               9
+DANFE NFCe e QR Code) poderá ser impresso o texto “Informação dos Tributos
+Totais Incidentes (Lei Federal 12.741/2012)”, seguido do valor em reais do
+total dos tributos da operação/prestação contemplando toda a cadeia de
+fornecimento;
+
+Importante ressaltar que para que seja impressa esta informação no DANFE
+NFC-e a mesma deverá constar no campo próprio do arquivo eletrônico da NFC-
+e (Campo vTotTrib).
+
+
+Fica facultado ao contribuinte emissor de NFC-e, que assim desejar, imprimir
+no Detalhe da Venda o valor total de carga tributária por item de mercadoria.
+
+
+
+39. Como devo preencher a minha Escrituração Fiscal Digital (EFD)?
+
+       Utilizar o código “65” na escrituração da NFC-e, para identificar o
+        modelo.
+       Cada NFC-e emitida deverá ser escriturada pelo preenchimento,
+        exclusivamente, dos respectivos registros C100 e C190;
+       É vedado o preenchimento do campo 04 do registro C100 (código do
+        participante), ainda que a NFC-e contenha a identificação do
+        consumidor;
+       O campo do registro C100 relativo à indicação do tipo de operação
+        (campo 02) deverá estar preenchido com conteúdo “1”, que indica
+        documento fiscal de saída;
+       O campo 17 do registro C100 relativo à indicação do tipo do frete deverá
+        estar preenchido com conteúdo “9”, que indica documento fiscal sem
+        cobrança de frete.
+       Deverão ser escrituradas no Livro Registro de Saídas ou constar da
+        EFD, conforme o caso, sem valores monetários e de acordo com a
+        legislação pertinente, as informações relativas:
+        - aos números de NFC-e que tiverem sido inutilizados;
+        - aos números de NFC-e utilizados em arquivos digitais que tiveram a
+        Autorização de Uso de NFC-e denegada;
+        - às NFC-e emitidas e posteriormente canceladas.
+
+
+
+
+VII) INFORMAÇÕES TÉCNICAS
+
+
+
+40. Quais são os documentos técnicos necessários para desenvolver um
+sistema emissor de NFC-e?
+
+Toda a documentação técnica do Projeto da Nota Fiscal de Consumidor
+
+                                                                               10
+Eletrônica - NFC-e está disponível no Portal Nacional da NF-e
+(www.nfe.fazenda.gov.br):
+
+
+ 41. Quais são os webservices da NFC-e?
+
+ Os webservices a serem configurados no programa emissor de NFC-e podem
+ ser obtidos em www.sefaz.ba.gov.br > Nota Fiscal de Consumidor eletrônica >
+ Como se tornar emissor de NFC-e > Baixar instrução para configuração do
+ programa emissor.
+
+
+42. Como posso obter suporte junto à SEFAZ sobre a NFC-e?
+
+Por meio da Central de Atendimento, tel 0800-0710071 ou através do correio
+eletrônico faleconosco@sefaz.ba.gov.br.
+
+Problemas técnicos identificados na obtenção da autorização de uso da NFC-e
+devem ser relatados para o e-mail suportenfe@sefaz.ba.gov.br.
+
+
+
+
+VIII) OBRIGAÇÕES ACESSÓRIAS
+
+
+
+
+43. Contribuinte que está obrigado a transmitir o arquivo Sintegra deve
+informar neste arquivo as NFC-e emitidas?
+
+
+A partir de 2019 não é mais obrigatório a apresentação de arquivo Sintegra
+exigido pelo Convênio ICMS 57/95
+
+ 44. Contribuinte que passar a emitir NFC-e também está obrigado ao TEF?
+
+
+Contribuinte que emitir NFC-e não está obrigado a utilizar TEF, ou seja, a
+integrar o programa emissor com o sistema de autorização de pagamento por
+cartão de crédito ou débito. Se já for usuário de TEF é recomendável que
+continue a utilizar, pelos benefícios trazidos nos controles das vendas
+efetuadas.
+Nas emissões de NFC-e em que o pagamento seja efetuado por cartão de
+crédito ou débito, será obrigatório informar se a transação foi efetuada com
+POS ou com TEF; utilizando-se esta última opção, será obrigatório a
+informação do CNPJ da Credenciadora e o código da autorização.
+
+
+
+
+                                                                               11
+45. Há exigências específicas para venda de combustível em postos de
+abastecimento?
+
+Os postos revendedores de combustível estão obrigados a informar na NFC-e
+os dados de identificação do tanque, da bomba, do bico abastecedor e dos
+valores dos encerrantes inicial e final.
+
+
+
+
+                                                                        12
+
