@@ -1,7 +1,7 @@
 # ESTUDO-PA-Servicos-pis — o catálogo de serviços do site novo da SEFA-PA (coleção `servicos` da entidade `pa`)
 
-**Data:** 2026-11-07 (sondagem direta, UA AuliBot, 3 GETs de dados + o bundle do site novo). · **Estado:** proposta,
-aguardando decisão (§4). · **Origem:** pendência §22 do [auli_scraper_pendências.md](auli_scraper_pendências.md),
+**Data:** 2026-11-07 (sondagem direta, UA AuliBot, 3 GETs de dados + o bundle do site novo). · **Estado:** decidido
+(07/11: D-PASERV-1 = C, D-PASERV-2..4 como propostas) e implementado (§6). · **Origem:** pendência §22 do [auli_scraper_pendências.md](auli_scraper_pendências.md),
 aberta no [ESTUDO-PA-Faqs.md](ESTUDO-PA-Faqs.md) §1. · **Hoje a `pa` coleta 34 serviços do paradigital** (Prodepa,
 órgão 48 — [REGISTRO-scrapers.md#pa](REGISTRO-scrapers.md#pa)).
 
@@ -17,6 +17,11 @@ aberta no [ESTUDO-PA-Faqs.md](ESTUDO-PA-Faqs.md) §1. · **Hoje a `pa` coleta 34
 > das flags do paradigital. Com o `pis`, a classificação é só por tema (ICMS, IPVA, ITCD, Documentos Fiscais…).
 >
 > Recomendação: **o `pis` como fonte, com os 3 serviços que só o paradigital tem, num público único** (opção C, 128).
+
+> **Correção (07/11/2026, na implementação — §6):** as páginas-índice são **15**, não 17. A regra "título = nome de uma
+> das categorias do post" errava em três: "CADIN" e "Consulta Protocolo" são serviços (o site os abre como serviço, e eles
+> têm o link do app e os 4 blocos), e "Consulta" é índice (o tema dela é "Consulta Protocolo"). O site lista as 15 no
+> próprio bundle. Ficam **139 serviços, 127 distintos**, e a opção C dá **130**.
 
 ---
 
@@ -65,7 +70,7 @@ Ressarcimento do IPVA" e "Registro de veículo novo".
 
 ## 4. Decisões propostas (D-PASERV-*)
 
-- **D-PASERV-1 — Fonte.** As opções:
+- **D-PASERV-1 — Fonte.** **Decidida (07/11): C.** As opções:
   - **A — trocar pelo `pis`: 125 serviços.** Mais simples (3 GETs, o paradigital sai), mais rico e mais atual. Perde as
     3 abas de público e os 3 serviços que só o paradigital tem.
   - **B — trocar pelo `pis`, tentando manter o público:** o público do paradigital nos 31 que casam e "Serviços" nos
@@ -90,3 +95,41 @@ curl -sS -A "$UA" "$W/pis?per_page=100&page=1" -o pis1.json; curl -sS -A "$UA" "
 curl -sS -A "$UA" "$W/pis-categories?per_page=100" -o cats.json                       # 19 categorias
 jq '[.[] | {id, t: .title.rendered, c: ."pis-categories"}] | length' pis1.json pis2.json
 ```
+
+## 6. Implementação (07/11/2026)
+
+`auli-scraper-pa servicos`: o `pis.rs` lê o `pis`, e o `pa.rs` junta os 3 do paradigital. O que mudou em relação à
+§3:
+
+| | estudo | implementação |
+|---|---|---|
+| Páginas-índice | 17, pela regra do título = tema | **15**, a lista do próprio site: o `main.js` tem os títulos que abrem como página de tema (`Cadastro de Contribuintes`, `Consulta`, `Débitos e Parcelamentos`… `AINF - Auto de Infração`), e o `pis.rs` copia a lista (`INDICES`). "CADIN" e "Consulta Protocolo" voltam a ser serviços |
+| Serviços | 137 → 125 distintos | **139 → 127 distintos**; + 3 do paradigital = **130** |
+| Cópias | 6 idênticas, 6 que divergem | 3 idênticas e 9 que divergem, comparando `content` e ACF ao pé da letra. O tratamento é o mesmo (o texto da alterada por último, os temas das duas); a chave é o título só com letras e números ("DIEF - Comércio Exterior" = "DIEF Comércio Exterior") |
+| `X-WP-Total` | do cabeçalho | do corpo: os GETs levam `_envelope`, que põe os cabeçalhos no JSON — a guarda vale também com `--usecache` |
+| Os 3 do paradigital | — | `GET /servico/{1034,1115,1116}`, com a descrição montada como antes (finalidade + etapas + requisitos + acesso), o link do paradigital e a classe **IPVA** (os três são de IPVA). Se um deles aparecer no `pis` com o mesmo título, fica o do `pis` |
+
+**Descrição.** `content`, cada bloco com texto ("Título:" e o texto; sem os dois-pontos quando o título já termina em
+"?", ":", "." ou "!") e "Acessar o serviço: `service_link`" (o caminho da raiz ganha `https://www.sefa.pa.gov.br`).
+Tudo pelo `kit::html`, com a base do site. Os blocos ACF vêm de dois jeitos: HTML formatado (a quebra do fonte cai no
+meio da frase) ou texto puro (a quebra separa linhas): a quebra do fonte só conta no campo sem tag de bloco. Os 8
+blocos são lidos; o `quantidade` não, porque duas páginas têm o 5º bloco ("Base Legal") preenchido com `quantidade` 4.
+
+**Guardas** (erro antes de gravar): os temas e a soma das páginas iguais ao `X-WP-Total`; uma página-índice da lista que
+sumiu do catálogo; tema fora de `pis-categories`; descrição vazia; menos de 110 serviços do `pis`.
+
+**Transporte** (D-PASERV-4): `crate::UA`, 1,1 s entre os GETs, `ureq`/rustls, 6 GETs por rodada. Sempre à rede; o
+cache em `data/pa/raw/cache/servicos/` só é lido com `--usecache`, e só é gravado depois das guardas. O `--usecache`
+reproduz o snapshot a menos do `coletado_em`.
+
+**Resultado da rodada de 07/11.** 130 serviços, 141 ocorrências, uma aba ("Serviços", slug `servicos-gerais` — o
+`servicos` colidiria com o `pa-servicos.json` agregado). Classes: Documentos Fiscais 17, IPVA 15, Débitos e
+Parcelamentos 14, Cadastro de Contribuintes 13, Benefício Imunidades e Isenções 12, Consulta Protocolo 11, ICMS 10, ITCD
+10, Trânsito de Mercadorias 9, Geral 6, Portal de Serviços 5, Comércio Exterior 4, Comunicação Oficial 4, Solicitação 3,
+Declarações 3, CADIN 3, AINF 2. Descrição de 171 a 14.698 caracteres (mediana 1.010); só a de "Cadastrar declaração
+ITCD - Causa Mortis" passa dos 6.000 que entram no vetor. Os `pa-cidadao/empresa/estado.json` antigos saíram de
+`data/pa/raw/` (o `process` não apaga aba que deixou de existir).
+
+**Testes.** 13 no `pis.rs`, sobre 28 páginas reais (as 15 páginas-índice só com id, título e temas, e 13 serviços
+escolhidos pelas regras), e 4 no `pa.rs`. 22 mutações (cada regra e cada guarda desligada), todas pegas.
+

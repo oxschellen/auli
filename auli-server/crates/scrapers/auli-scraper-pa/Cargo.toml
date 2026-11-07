@@ -3,10 +3,10 @@ name = "auli-scraper-pa"
 version = "0.1.0"
 edition = "2024"
 
-# Scraper da SEFA-PA (serviços, catálogo estadual "paradigital" — API Prodepa/Spring). SEM headless,
-# SEM login: a listagem por órgão (`GET /orgao/48`) + o detalhe rico (`GET /servico/{id}`) são JSON
-# anônimo. UA institucional AuliBot + rate-limit ≥1s (mitigações D-PA-ROBOTS). Depende de auli-contract
-# + o kit — nunca de fastembed/ort. Decisões em docs/descobertas.md#pa.
+# Scraper da SEFA-PA. Serviços: o catálogo `pis` do WordPress do site novo (`/wp-json/wp/v2/pis`) e os 3 que só o
+# catálogo estadual "paradigital" tem (`GET /servico/{id}`, API Prodepa) — docs/ESTUDO-PA-Servicos-pis.md. SEM
+# headless, SEM login: JSON anônimo. UA institucional AuliBot + rate-limit ≥1s (mitigações D-PA-ROBOTS). Depende de
+# auli-contract + o kit — nunca de fastembed/ort.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }
@@ -16,3 +16,5 @@ serde_json = "1.0"
 anyhow = "1"
 # As FAQs (`faqs.rs`, site antigo da SEFA, Joomla): o artigo pelo seletor e as linhas pelo `kit::linhas`.
 scraper = "0.27.0"
+# O `pis.rs`: o campo ACF com tag de bloco é HTML (a quebra do fonte é só formatação).
+regex = "1"

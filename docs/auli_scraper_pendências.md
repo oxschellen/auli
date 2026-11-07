@@ -28,7 +28,7 @@ ponteiro no lugar de cada uma, para as citações do código continuarem válida
 | 19 | CE | FAQ nova fora da convenção de nome (aviso do D-CEFAQ-2) | medir: `getItem` dos 332 |
 | 20 | RS | FAQs: o índice novo `/perguntas-frequentes` como guarda e plano B (D-RSFAQ-2, -6); duas páginas que nunca entraram | D-RSFAQ-3..5 feitas (06/11); guarda e plano B em aberto |
 | 21 | AL | FAQs: não existe FAQ pública da SEFAZ-AL — o site institucional está em manutenção (D-ALFAQ-1..5) | ✅ decidida: adiar (06/11); retomar quando o título da raiz deixar de ser "Site em manutenção" |
-| 22 | PA | Serviços: o catálogo `pis` do WordPress do site novo tem 154 páginas de serviço; o acervo usa 34 do paradigital (D-PAFAQ-6) | estudado (07/11); aguardando D-PASERV-1 |
+| 22 | PA | Serviços: o catálogo `pis` do WordPress do site novo tem 154 páginas de serviço; o acervo usa 34 do paradigital (D-PAFAQ-6) | ✅ feita (07/11): D-PASERV-1 = C — o `pis` + os 3 só do paradigital, 130, público único |
 
 ---
 
@@ -518,7 +518,7 @@ curl -sS -A 'AuliBot/0.1 (+https://github.com/oxschellen/auli)' https://www.sefa
 **À parte:** o `gcs2.sefaz.al.gov.br` é o gestor de legislação da SEFAZ-AL — ponto de partida se a `al` um dia ganhar
 uma coleção `legislacao` (estudo §6).
 
-## 22. PA — o catálogo de serviços do site novo (D-PAFAQ-6)
+## 22. PA — o catálogo de serviços do site novo (D-PAFAQ-6) (✅ feita — 2026-11-07)
 
 _Aberta em 07/11/2026, no estudo das FAQs do PA ([ESTUDO-PA-Faqs.md](ESTUDO-PA-Faqs.md) §1)._
 
@@ -533,4 +533,9 @@ o `pis` substitui, complementa ou fica de fora.
 **07/11/2026 — estudado:** [ESTUDO-PA-Servicos-pis.md](ESTUDO-PA-Servicos-pis.md). 137 serviços e 17 páginas-índice; sem as
 12 cópias (um post por tema), 125 serviços distintos, que cobrem 31 dos 34 do paradigital. O `pis` não tem público-alvo.
 Propostas D-PASERV-1..4 (recomendada: o `pis` mais os 3 só do paradigital, 128, público único), aguardando decisão.
+
+**07/11/2026 — feita:** D-PASERV-1 = C, D-PASERV-2..4 como propostas. O `auli-scraper-pa servicos` lê o `pis` (3
+GETs) e os 3 do paradigital (3 GETs): **130 serviços**, público único "Serviços", classe = tema. As páginas-índice são as
+15 que o site lista no bundle, não as 17 do estudo ("CADIN" e "Consulta Protocolo" são serviços; "Consulta" é índice):
+127 do `pis` + 3. [ESTUDO-PA-Servicos-pis.md](ESTUDO-PA-Servicos-pis.md) §6.
 
