@@ -1,7 +1,7 @@
 # ESTUDO-AC-Faqs — FAQs da SEFAZ-AC (coleção `faqs` da entidade `ac`)
 
-**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~40 GETs). · **Estado:** proposta, aguardando
-decisão (§4). · **Órgão:** Secretaria de Estado da Fazenda do Acre (SEFAZ-AC). · **Hoje a `ac` tem só `servicos`**
+**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~40 GETs). · **Estado:** decidido (07/11: D-ACFAQ-1
+A) e implementado (§5). · **Órgão:** Secretaria de Estado da Fazenda do Acre (SEFAZ-AC). · **Hoje a `ac` tem só `servicos`**
 (Carta de Serviços do WordPress, 19 fichas — [REGISTRO-scrapers.md#ac](REGISTRO-scrapers.md#ac)).
 
 > **TL;DR — a SEFAZ-AC não tem FAQ própria; a única é a de uma ficha de serviço que já está no acervo.**
@@ -65,3 +65,22 @@ erro. A introdução (antes da 1ª pergunta) fica de fora — ela já está no s
   Recomendo **A**: o custo de código é pequeno (o molde PB/PA, 1 GET), e a aba de FAQs passa a existir para o AC. **B** é a escolha se o acervo não deve ter o mesmo texto em duas coleções.
 - **D-ACFAQ-2 — Transporte.** UA AuliBot; o R36 como âncora rustls (o mesmo do `ac.rs`); sempre à rede, cache só com
   `--usecache`.
+
+## 5. Implementação (07/11/2026)
+
+`auli-scraper-ac faqs`; `scripts/tools/update-ac-faqs.sh`. A modelagem é a da §3, com dois ajustes:
+
+- **Só a aba "PERGUNTAS FREQUENTES"** é lida (`.elementor-toggle-item` com esse título; exatamente uma). Hoje ela é a
+  última das 4 abas do post, mas segmentar o post inteiro faria a última resposta depender da ordem das abas.
+- **Uma pergunta vinha partida** por `<br>` entre dois negritos ("Obtive a autorização para compra do veículo com
+  isenção mas não</strong><br /><strong>utilizei, posso solicitar novamente?"): a 1ª versão gravou a pergunta só com a
+  2ª metade e a 1ª foi para a resposta anterior. Os negritos separados só por um `<br>` passam a ser um antes da
+  segmentação (1 caso no post), sem mexer no `kit::linhas` (PB e PA ficam como estão).
+
+**Resultado da rodada de 07/11.** 17 perguntas, nenhuma tag nem entidade no texto. `--usecache` reproduz a árvore byte a
+byte e o snapshot a menos do `coletado_em`. Smoke (`/v1/retrieve`, faqs): o alvo em 1º nas 4 perguntas, entre elas a que
+vinha partida.
+
+**Testes.** 7, sobre o post real (sem o `<head>`, scripts e estilos) e acordeões sintéticos; 7 mutações (cada regra e cada
+guarda), todas pegas.
+

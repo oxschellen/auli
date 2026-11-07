@@ -28,7 +28,7 @@ use ureq::tls::{Certificate, RootCerts, TlsConfig};
 const USER_AGENT: &str =
     "AuliBot/0.1 (+https://github.com/oxschellen/auli; carlos.schellenberger@gmail.com)";
 
-const BASE: &str = "https://sefaz.ac.gov.br/2021";
+pub(crate) const BASE: &str = "https://sefaz.ac.gov.br/2021";
 const CARTA_URL: &str = "https://sefaz.ac.gov.br/2021/?page_id=6732";
 
 /// Público único (não há eixo de audiência).
@@ -147,7 +147,7 @@ pub fn scrape(
 
 /// Agent `ureq` com o intermediário Sectigo R36 embutido como trust anchor (rustls). Resolve a cadeia
 /// quebrada do servidor sem desabilitar a verificação.
-fn build_agent() -> Agent {
+pub(crate) fn build_agent() -> Agent {
     let cert = Certificate::from_pem(SECTIGO_R36_PEM.as_bytes()).expect("R36 PEM válido");
     let roots = RootCerts::new_with_certs(&[cert]);
     Agent::config_builder()

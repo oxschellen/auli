@@ -52,6 +52,7 @@
 - [PA serviços — o catálogo `pis` do WordPress do site novo (site-sefa-wordpress.sefa.pa.gov.br)](#pa-servicos-pis)
 - [RO FAQs — as seções-pergunta das fichas da Agência Virtual (agenciavirtual.sefin.ro.gov.br)](#ro-faqs)
 - [PI FAQs — as páginas de Documentos Eletrônicos e o PDF da FAQ da EFD (portal.sefaz.pi.gov.br)](#pi-faqs)
+- [AC FAQs — a aba de perguntas do post "Isenção de ICMS para PCD" (sefaz.ac.gov.br)](#ac-faqs)
 
 ---
 
@@ -3003,4 +3004,39 @@ lista a um GET anônimo (o endereço antigo do PDF redireciona para a SPA). 5 GE
 - UA AuliBot (`crate::UA`; os serviços do PI seguem com o UA de navegador, pendência §11 — o AuliBot passa no portal),
   1 s entre os GETs, `ureq`/rustls.
 - Atualização: `scripts/tools/update-pi-faqs.sh` (confere o `pdftotext` antes).
+
+---
+
+<a id="ac-faqs"></a>
+
+# AC FAQs — a aba de perguntas do post "Isenção de ICMS para PCD" (sefaz.ac.gov.br)
+
+**Discovery e implantação:** 07/11/2026. Estudo e decisões D-ACFAQ-1..2: [`docs/ESTUDO-AC-Faqs.md`](ESTUDO-AC-Faqs.md).
+Coleção `faqs` do `auli-scraper-ac` (`auli-scraper-ac faqs`, ou `all`). **17 perguntas** na rodada de 07/11.
+
+## Fonte
+
+A SEFAZ-AC não tem FAQ própria: no WordPress do site (busca da API e as 30 páginas) e nos sistemas que a home linka
+(Nota Premiada Acreana — Angular + Strapi, 10 telas —, DEC, sefazonline, autorregularização, SINF, Escola Fazendária),
+nenhuma página de perguntas. A única são as 17 da aba "PERGUNTAS FREQUENTES" do post 9727, "Isenção de ICMS para PCD",
+que também é uma ficha da Carta de Serviços: o texto está no acervo de serviços inteiro, e aqui cada pergunta vira um
+documento (D-ACFAQ-1, opção A). 1 GET.
+
+## As armadilhas
+
+1. **O post é um acordeão do Elementor** (4 abas; a de perguntas é a última): só a aba "PERGUNTAS FREQUENTES" é lida —
+   segmentado inteiro, a última resposta levaria as abas seguintes.
+2. **Uma pergunta vem partida por `<br>` entre dois negritos** ("…mas não</strong><br /><strong>utilizei, posso
+   solicitar novamente?"): os dois negritos viram um antes da segmentação, sem mexer no `kit::linhas`.
+3. **TLS**: o leaf é do Sectigo R36 e o servidor não manda o intermediário certo — o mesmo agente dos serviços, com o R36
+   como âncora.
+
+## Guardas e transporte
+
+- `Err` antes de gravar: nenhuma ou mais de uma aba de perguntas; aba sem pergunta; pergunta sem resposta; pergunta
+  repetida; menos de 15.
+- **Sempre à rede**; o cache em `data/ac/raw/cache/faqs/` só é lido com `--usecache`, que reproduz a árvore byte a byte e
+  o snapshot a menos do `coletado_em`.
+- UA AuliBot (o do `ac.rs`), `ureq`/rustls com o R36.
+- Atualização: `scripts/tools/update-ac-faqs.sh`.
 

@@ -1,17 +1,20 @@
 // auli-scraper-ac — scraper da SEFAZ-AC (serviços, sefaz.ac.gov.br — WordPress + Elementor).
 // Sem headless: a Carta de Serviços lista posts de serviço; cada post traz a descrição rica.
 //
+// As FAQs são a aba "PERGUNTAS FREQUENTES" de um desses posts (Isenção de ICMS para PCD) — `faqs.rs`.
+//
 // Conhece UMA entidade ("ac"); não lê o registry. Grava o snapshot de serviços (v3); a derivação
 // dos artefatos é o `auli-collections ac`.
 
 mod ac;
+mod faqs;
 
 /// A entidade que este scraper conhece (um crate binário por entidade).
 pub const ENTITY: &str = "ac";
 const DATA_DIR: &str = "../data/ac/raw";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CLI: auli-scraper-ac [--usecache] servicos   (omitido -> servicos)
+    // CLI: auli-scraper-ac [--usecache] servicos|faqs|all   (omitido -> servicos)
     let raw: Vec<String> = std::env::args().skip(1).collect();
     let use_cache = raw.iter().any(|a| a == "--usecache");
     let cmd = raw
@@ -27,8 +30,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match cmd {
         "servicos" => run_servicos(use_cache)?,
+        "faqs" => faqs::run(DATA_DIR, use_cache)?,
+        "all" => {
+            run_servicos(use_cache)?;
+            faqs::run(DATA_DIR, use_cache)?;
+        }
         other => {
-            return Err(format!("coleção desconhecida: '{}'. Use: servicos", other).into());
+            return Err(format!(
+                "coleção desconhecida: '{}'. Use: servicos | faqs | all",
+                other
+            )
+            .into());
         }
     }
 
