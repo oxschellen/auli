@@ -187,7 +187,7 @@ name = "SEFAZ-ES"
 uf = "ES"
 state = "Espírito Santo"
 prompt = "prompts/es.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "ro"

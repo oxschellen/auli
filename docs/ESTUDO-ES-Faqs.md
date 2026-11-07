@@ -1,7 +1,7 @@
 # ESTUDO-ES-Faqs — Receita Orienta da SEFAZ-ES (coleção `faqs` da entidade `es`)
 
-**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~60 GETs). · **Estado:** **proposta v1 — as
-1.003 perguntas da navegação do portal Receita Orienta** (§3), aguardando decisão. · **Órgão:** Secretaria de Estado
+**Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~60 GETs). · **Estado:** **v1 implementada (07/11/2026) — as
+1.003 perguntas da navegação do portal Receita Orienta** (§3, §8); D-ESFAQ-1..8 aprovadas pelo mantenedor. · **Órgão:** Secretaria de Estado
 da Fazenda do Espírito Santo (SEFAZ-ES). · **Hoje a `es` tem só `servicos`** (X-Via, 45 itens —
 [REGISTRO-scrapers.md#es](REGISTRO-scrapers.md#es)).
 
@@ -63,7 +63,7 @@ do Receita Orienta às vezes linkam a Carta de Serviços, mas não estão no ace
 - As respostas são HTML simples: `<div>`/`<p>`, `<br>`, `<hr>` como separador (616), `<b>`, `<a>` (291). Não há tabela,
   imagem, lista nem iframe. "Atualizado em dd/mm/aaaa" aparece em 645 respostas; em 536 é a última linha.
 - **Anexos** ficam fora do corpo, num `.card-footer` com `<a href='/ReceitaOrienta/Categoria/DownloadAnexo/{id}'>`
-  (aspas simples, caminho relativo): **15**, em 10 assuntos. Uma resposta depende dele ("Em anexo está o laudo para
+  (aspas simples, caminho relativo): **31**, em 15 assuntos. Uma resposta depende dele ("Em anexo está o laudo para
   preenchimento").
 
 **Números (07/11/2026):**
@@ -95,7 +95,7 @@ serviços).
 |---|---|
 | `pergunta` | o `.pPergunta` do cabeçalho, como na página — com o número de ordem (D-ESFAQ-5) |
 | `resposta` | o `.card-body.user-content` em texto (D-ESFAQ-6); com anexo, uma linha final `Anexo: <url absoluta>` |
-| `origin` | `Categoria \| Assunto` ou `Categoria \| Assunto \| Subassunto`, com a categoria omitida quando tem o mesmo nome do assunto (D-ESFAQ-3) |
+| `origin` | `Categoria \| Assunto` ou `Categoria \| Assunto \| Subassunto`, com a categoria omitida quando tem um assunto só, de mesmo nome (D-ESFAQ-3) |
 | `url` | a URL da página do assunto, como a categoria a escreve, + `#heading{ID}_faq` ou `#heading{ID}_saf` (D-ESFAQ-4) |
 
 Ex.: `ICMS | AC- Aviso de Cobrança | 1- Aviso de Cobrança "ICMS declarado e não recolhido"` · `IPVA | 05. Da isenção
@@ -132,8 +132,8 @@ cabeçalho sem `collapse` correspondente ou sem `.user-content`; resposta vazia;
   navegando, e cada página traz a estrutura inteira.
 - **D-ESFAQ-2 — Escopo = o que a navegação mostra: 1.003 perguntas.** Assuntos despublicados e subassuntos ocultos
   ficam fora.
-- **D-ESFAQ-3 — Trilha** `Categoria | Assunto [| Subassunto]`, omitindo a categoria quando o nome dela é o do assunto
-  (IPVA, ITCMD, Nota Premiada Capixaba, Reforma Tributária, Agendar Atendimento). O subassunto é o que desambigua os
+- **D-ESFAQ-3 — Trilha** `Categoria | Assunto [| Subassunto]`, omitindo a categoria quando ela tem um assunto só, de
+  mesmo nome (IPVA, ITCMD, Nota Premiada Capixaba, Reforma Tributária, Agendar Atendimento). O subassunto é o que desambigua os
   títulos repetidos e situa os cabeçalhos sem "?".
 - **D-ESFAQ-4 — Link** = página do assunto + `#heading{ID}_{faq|saf}`. A âncora vai no cabeçalho, que está visível; o
   `collapse` está fechado e o navegador não rola até ele (precedente: `#collapse<id>` do DF).
@@ -173,3 +173,26 @@ curl -sS -A "$UA" -o cad.html "$H/categoria/Assunto/101/ICMS/61"                
 grep -oE 'id=heading[0-9]+_(faq|sa|saf)\b' cad.html | sed 's/.*_//' | sort | uniq -c  # 11 sa, 37 saf
 curl -sS -A "$UA" "$H/categoria/Assunto/921/ICMS/61" | grep -o 'deveria estar aqui'    # assunto despublicado
 ```
+
+## 8. Implementação (07/11/2026)
+
+`auli-scraper-es/src/faqs.rs` (`auli-scraper-es faqs` ou `all`), D-ESFAQ-1..8 como propostas, com um ajuste: a
+categoria colapsa só quando tem **um assunto só**, de mesmo nome. Uma categoria de vários assuntos em que um deles se
+chame como ela mantém a categoria na trilha. Hoje as duas regras dão o mesmo resultado.
+
+- **Rodada à rede:** 52 GETs, **1.003 perguntas** em 46 assuntos de 6 categorias, os mesmos números da §2. Respostas:
+  0 vazias, nenhuma tag, entidade ou caractere invisível; mín. 4 caracteres, mediana 501, máx. 4.895; 31 linhas
+  `Anexo:`; "Atualizado em" (ou "atualizado/Atualizada em") em 645. Trilhas: 607 de três níveis, 335 de dois, 61 de
+  um (categoria que colapsa, pergunta direto no assunto); 675 perguntas têm subassunto. 1.003 links distintos.
+- **`--usecache`:** árvore idêntica byte a byte, snapshot idêntico a menos do `coletado_em`.
+- **Derivação:** 1.003 `.md` com nomes únicos; os 51 artefatos de serviços refeitos pelo `auli-collections es` saíram
+  com o mesmo md5; 1.003 vetores (`build-packs.sh es faqs`).
+- **Smoke `/v1/retrieve`** (servidor local temporário, 5 perguntas parafraseadas): o alvo em 1º em 3 (taxa para
+  impugnar auto de infração; laudo de isenção para síndrome de Down; rateio da Nota Premiada para as entidades, cujo
+  título é só "Como funciona ?" — achada pela trilha). Nas outras 2 o alvo ficou em 2º e 4º, atrás de perguntas
+  vizinhas do mesmo assunto ("O que é a NFC-e?" antes de "Qual é o modelo… da NFC-e?"; "Qual a serventia…" antes de
+  "O que é Cooperação Fiscal?").
+- **Testes:** 20 sobre páginas reais (as categorias ICMS e IPVA; os assuntos Cooperação Fiscal, AC- Aviso de Cobrança e
+  Isenção - aquisição de veículo novo; a página despublicada do CT-e) e acordeões mínimos para as guardas. Dez regras
+  desligadas uma a uma (colapso, anexo, despublicado, subassunto vazio, separador do menu, id repetido, âncora,
+  resposta vazia, `<hr>`, pergunta fora de subassunto): cada uma fez falhar o teste dela.
