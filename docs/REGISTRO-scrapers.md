@@ -1706,6 +1706,13 @@ que ficou decidido:
 
 ## Estado
 
+**07/11/2026 — só de 2020 em diante (D-TARF-9, decisão do mantenedor): 4.712 acórdãos.** Os 17.802 de 2005–2019
+saíram do acervo sem nova coleta: os `.md` foram arquivados em `data/rs/arquivo/rs-tarf-2005-2019.tar.gz` (conferido
+com `tar d`), o `build-packs.sh rs tarf` reaproveitou os 4.712 vetores e o `auli remover` tirou os órfãos do pack
+(327 → 69 MB). O `tarf.rs` descarta da listagem o que tem ano anterior a 2020 no número, antes de decidir quem é
+inédito — sem isso a rodada seguinte buscaria de novo os 17.802 corpos. Número sem ano reconhecível fica ("Acórdão
+00121" e "Acórdão 36721", pela leitura mais provável 001/21 e 367/21). O histórico abaixo é anterior ao corte.
+
 **Acervo completo, atualizado em 18/10/2026: 22.514 acórdãos na árvore.** A pausa em 3.800 ficou para
 trás; desde então a coleta é incremental — `auli-scraper-rs tarf` refaz a listagem inteira (46 GETs)
 e só busca o corpo do que ainda não tem `.md`, e o `build-packs.sh rs` vetoriza só o novo. A rodada de

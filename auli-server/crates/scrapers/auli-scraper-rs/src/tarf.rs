@@ -60,6 +60,12 @@
 //!
 //! O que sobra sem ementa é da fonte, não do parser: 19 acórdãos que o tribunal publicou sem
 //! ementa e 10 que o portal declara `ACÓRDÃO INEXISTENTE`. Lista em `docs/lista-tarf-sem-ementa.md`.
+//!
+//! ESCOPO (D-TARF-9, decisão do mantenedor, 07/11/2026): só os acórdãos de **2020 em diante**, pelo
+//! ano do número ("ACÓRDÃO 409/26"). O grupo do portal vai de 2005; os 17.802 de 2005–2019 saíram
+//! do acervo (`auli remover`) e os `.md` deles estão arquivados em
+//! `data/rs/arquivo/rs-tarf-2005-2019.tar.gz`. Número sem ano reconhecível fica: "Acórdão 00121" e
+//! "Acórdão 36721" são, pela leitura mais provável, 001/21 e 367/21.
 
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
@@ -81,6 +87,10 @@ const API_BASE: &str = "https://tarf.sefaz.rs.gov.br/api";
 const DEEP_LINK_BASE: &str = "https://tarf.sefaz.rs.gov.br/documento/";
 /// Único grupo no escopo: "ACÓRDÃOS A PARTIR DE 2005" (D-TARF-2).
 const GRUPO_ACORDAOS: &str = "14543";
+/// Desde quando o acervo guarda acórdãos (D-TARF-9).
+const ANO_MINIMO: u32 = 2020;
+/// O ano no fim do número: "409/26", "071-24", "037A/08".
+static RE_ANO: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"[/-]\s*(\d{2,4})\b").unwrap());
 /// Árvore de documentos (G5): um `.md` por acórdão inédito.
 const DOCS_DIR: &str = "../data/rs/docs/tarf";
 /// Namespace de cache da frota: `<CACHE_BASE>/cache/<CACHE_KIND>`, irmão de `cache/pareceres`.
@@ -146,6 +156,18 @@ struct Dispositivo {
     texto: String,
 }
 
+/// O ano do número do acórdão ("ACÓRDÃO 409/26" → 2026). Os dois dígitos são de 2000 em diante: o grupo
+/// começa em 2005. Sem ano reconhecível, `None` — e o acórdão fica (D-TARF-9).
+fn ano(numero: &str) -> Option<u32> {
+    let a: u32 = RE_ANO.captures(numero)?[1].parse().ok()?;
+    Some(if a < 100 { 2000 + a } else { a })
+}
+
+/// De 2020 em diante, ou sem ano reconhecível (D-TARF-9).
+fn no_escopo(numero: &str) -> bool {
+    ano(numero).is_none_or(|a| a >= ANO_MINIMO)
+}
+
 // ---------------------------------------------------------------------------
 // Coleta
 // ---------------------------------------------------------------------------
@@ -155,6 +177,18 @@ pub fn run(use_cache: bool) -> Result<()> {
 
     // 1) Listagem inteira (barata: 46 GETs) — é re-percorrida a cada rodada, sempre.
     let itens = listar(&agent, use_cache)?;
+
+    // 1b) Só de 2020 em diante (D-TARF-9): sem isto, o "existe ⇒ pula" do passo 3 buscaria de novo, como
+    //     inéditos, os corpos dos acórdãos que saíram do acervo.
+    let na_listagem = itens.len();
+    let itens: Vec<Item> = itens
+        .into_iter()
+        .filter(|i| no_escopo(&i.numero()))
+        .collect();
+    println!(
+        "🗓️  {} acórdão(s) anteriores a {ANO_MINIMO} fora do acervo (D-TARF-9).",
+        na_listagem - itens.len()
+    );
 
     // 2) Um `.md` por slug: revisões do mesmo acórdão não podem disputar o arquivo (D-TARF-3).
     let (itens, descartados) = dedup_por_slug(itens);
@@ -856,6 +890,19 @@ fn normalizar_linhas(s: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn ano_do_numero_e_o_corte_de_2020() {
+        assert_eq!(ano("ACÓRDÃO 409/26"), Some(2026));
+        assert_eq!(ano("ACÓRDÃO 071-24"), Some(2024));
+        assert_eq!(ano("ACÓRDÃO Nº 037A/08"), Some(2008));
+        assert_eq!(ano("ACÓRDÃO 085/20 fisico"), Some(2020));
+        assert_eq!(ano("ACÓRDÃO 1389/2012"), Some(2012));
+        // Sem ano reconhecível: fica no acervo (a leitura mais provável é 001/21).
+        assert_eq!(ano("Acórdão 00121"), None);
+        assert!(no_escopo("ACÓRDÃO 001/20") && no_escopo("Acórdão 36721"));
+        assert!(!no_escopo("ACÓRDÃO 1389/12") && !no_escopo("ACÓRDÃO 475/19"));
+    }
 
     /// 510/24 — layout moderno, aparado depois do início do RELATÓRIO.
     const MODERNO: &str = include_str!("../tests/fixtures/tarf-510-24.html");
