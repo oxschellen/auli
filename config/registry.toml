@@ -243,7 +243,7 @@ name = "SEFAZ-RN"
 uf = "RN"
 state = "Rio Grande do Norte"
 prompt = "prompts/rn.txt"
-collections = ["servicos"]
+collections = ["servicos", "faqs"]
 
 [[entities]]
 id = "pb"

@@ -1,7 +1,7 @@
 # Scrapers por entidade (`auli-scraper-<id>`)
 
 Referência das 9 implementações de scraper da frota Auli. Cada crate é um **binário por
-entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE e no CE, FAQs) de uma SEFAZ estadual
+entidade** que raspa o catálogo de serviços (e, no RS, na SC, no PR e em SP, também FAQs e pareceres; em MG, no MS, no MT, no GO, no DF, no AM, no MA, em PE, no CE e no RN, FAQs) de uma SEFAZ estadual
 e grava um **snapshot v3** que o `auli-collections` deriva em artefatos e o `auli update` vetoriza.
 
 Fonte da verdade das entidades: [`config/registry.toml`](../../../config/registry.toml). Este doc
@@ -588,6 +588,11 @@ robots dele libera `*` (D-PE4), e as duas coleções de PE passaram ao AuliBot.
 - `titulo`/`Matéria`/categoria vêm com entidades HTML → `html_to_text` (html5ever). `link` = `acf.link`
   (absolutizado se relativo; permalink do card quando `acf.link=false`); identidade = o link; público
   único "Serviços"; classe = categoria WP (`Finanças e Impostos` em 12/15). UA institucional AuliBot.
+- **FAQs** (`auli-scraper-rn faqs`, `faqs.rs`): não vêm do site da SEFAZ (sem FAQ tributária no WordPress), e sim do
+  **Nota Potiguar** — a tela "FAQ" do portal AngularJS (`np.sefaz.rn.gov.br/portal`), cujo HTML está escrito no
+  `js/templates.js` (`$templateCache.put`, literais de string JS lidos um a um). 1 GET; `<h3>` = pergunta, o que
+  vem até o próximo = resposta; link da tela (`#/o-aplicativo/faq`), trilha "Nota Potiguar"; a outra tela de FAQ
+  (`#/comunicacao/faq`) só confere. 23 perguntas (06/11/2026), 11 testes. `docs/REGISTRO-scrapers.md#rn-faqs`.
 - 15 serviços, 4 classes. 4 testes. `ServicoRaw` direto. Descoberta em `docs/REGISTRO-scrapers.md#rn`.
 
 ---
