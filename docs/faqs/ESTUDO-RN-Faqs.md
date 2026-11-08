@@ -4,7 +4,7 @@
 `postagem` do WordPress e fechou a descoberta (§7). · **Estado:** **v1 implementada (06/11/2026) — a FAQ do programa
 Nota Potiguar, 23 perguntas** (§3, §9). · **Órgão:** Secretaria de Estado da Fazenda do Rio
 Grande do Norte (SEFAZ-RN; host `sefaz.rn.gov.br`). · **Hoje a `rn` tem só `servicos`** (15 cards do CPT `servicos`
-pela WP REST — [REGISTRO-scrapers.md#rn](REGISTRO-scrapers.md#rn)).
+pela WP REST — [REGISTRO-scrapers.md#rn](../REGISTRO-scrapers.md#rn)).
 
 > **TL;DR — a FAQ tributária do RN não está no site da SEFAZ; está no Nota Potiguar.**
 >

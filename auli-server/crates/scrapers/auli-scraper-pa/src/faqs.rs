@@ -1,5 +1,5 @@
 // SEFA-PA FAQs — as páginas de perguntas e respostas do site antigo da SEFA (`antigo.sefa.pa.gov.br`, Joomla), para
-// onde o menu "Orientações" do site novo aponta. Estudo, medições e decisões: docs/ESTUDO-PA-Faqs.md (D-PAFAQ-*).
+// onde o menu "Orientações" do site novo aponta. Estudo, medições e decisões: docs/faqs/ESTUDO-PA-Faqs.md (D-PAFAQ-*).
 //
 // Não há FAQ central (o índice "Perguntas e Respostas" do Manual de Atendimento é uma lista de links, a maioria PDF):
 // uma lista curada de 11 páginas (D-PAFAQ-1, opção A). A pergunta é um trecho em negrito no meio do texto, como na

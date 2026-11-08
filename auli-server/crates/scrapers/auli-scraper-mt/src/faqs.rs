@@ -1,4 +1,4 @@
-// SEFAZ-MT FAQs — três fontes, cada uma um ramo da árvore. Estudo, medições e decisões: docs/ESTUDO-MT-Faqs.md
+// SEFAZ-MT FAQs — três fontes, cada uma um ramo da árvore. Estudo, medições e decisões: docs/faqs/ESTUDO-MT-Faqs.md
 // (D-MTFAQ-*).
 //
 // - **Nota MT** (`www.sefaz.mt.gov.br/notamt/duvida`, aplicação Angular): uma chamada, `GET /notamt/api/duvidas` (sem

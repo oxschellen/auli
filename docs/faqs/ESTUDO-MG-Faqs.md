@@ -289,8 +289,8 @@ itens de um `Menu` depois dos filhos, então a III.1 aparece no fim da III. Seç
 ## 11. Fase 2 — fonte A, a base do CSM (02/11/2026)
 
 O mantenedor ratificou a D-MGFAQ-8 e decidiu coletar apesar do robots
-([auli_pendencias.md](auli_pendencias.md) §42). Código em
-[`csm.rs`](../auli-server/crates/scrapers/auli-scraper-mg/src/csm.rs); o `faqs.rs` só junta a base ao acervo e à
+([auli_pendencias.md](../auli_pendencias.md) §42). Código em
+[`csm.rs`](../../auli-server/crates/scrapers/auli-scraper-mg/src/csm.rs); o `faqs.rs` só junta a base ao acervo e à
 árvore, depois dos módulos do SPED.
 
 ### 11.1 Correções do §3 e do §6

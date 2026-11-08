@@ -1786,7 +1786,7 @@ vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 me
    páginas-filhas não mudaram de URL; a raiz do scraper passou a apontar para lá (06/11/2026). O 1º nível da
    árvore é o que o `body` do `id=108` lista (17 nós em 01/11), não a barra "Seções" das páginas de categoria.
    "-antigo" é nome de página em despedida: se sumir, a mesma guarda avisa. O índice novo foi estudado em
-   [`ESTUDO-RS-Faqs-Indice.md`](ESTUDO-RS-Faqs-Indice.md) (06/11/2026): o `panel-N` dele é o mesmo do AJAX, todo
+   [`ESTUDO-RS-Faqs-Indice.md`](faqs/ESTUDO-RS-Faqs-Indice.md) (06/11/2026): o `panel-N` dele é o mesmo do AJAX, todo
    painel dele está na coleta com o mesmo texto, a trilha sai igual em 94% das páginas, e a diferença 1.990 →
    1.854 são 107 cópias da caminhada (o mesmo painel em duas URLs) e as 29 do Piloto RTC – IBS, que ele não lista.
    Ele é gerado, não ao vivo; fica como guarda e plano B (D-RSFAQ-1..6, pendências §20).
@@ -1841,7 +1841,7 @@ vem do breadcrumb da página-folha. Na coleta de 01/11/2026 eram 330 nós (60 me
 # SC FAQs — Perguntas Frequentes da SEF-SC (www.sef.sc.gov.br/perguntas)
 
 **Discovery e implantação:** 31/10 a 01/11/2026. Estudo completo, com as medições
-e as decisões D-SCFAQ-1..8: [`docs/ESTUDO-SC-Faqs.md`](ESTUDO-SC-Faqs.md). Coleção `faqs` do
+e as decisões D-SCFAQ-1..8: [`docs/faqs/ESTUDO-SC-Faqs.md`](faqs/ESTUDO-SC-Faqs.md). Coleção `faqs` do
 `auli-scraper-sc` (`auli-scraper-sc faqs`, ou `all` = serviços + FAQs). **1.306 perguntas** na rodada de
 01/11.
 
@@ -1926,7 +1926,7 @@ profundidade contra ciclo.
 # PR FAQs — Perguntas Frequentes do SAC da SEFA-PR (atendimento.fazenda.pr.gov.br/sacsefa)
 
 **Discovery e implantação:** 01/11/2026. Estudo completo, com as medições e as decisões D-PRFAQ-1..9:
-[`docs/ESTUDO-PR-Faqs.md`](ESTUDO-PR-Faqs.md). Coleção `faqs` do `auli-scraper-pr` (`auli-scraper-pr faqs`,
+[`docs/faqs/ESTUDO-PR-Faqs.md`](faqs/ESTUDO-PR-Faqs.md). Coleção `faqs` do `auli-scraper-pr` (`auli-scraper-pr faqs`,
 ou `all` = serviços + FAQs). **1.321 perguntas** em 48 referentes e 274 assuntos na rodada de 01/11.
 
 ## Fonte
@@ -1997,7 +1997,7 @@ server-side, sem API, sem sessão para as páginas, sem `robots.txt` (404).
 # SP FAQs — Perguntas Frequentes da SEFAZ-SP (listas SharePoint por subsite)
 
 **Discovery e implantação:** 01/11/2026. Estudo, medições e decisões D-SPFAQ-1..9:
-[`docs/ESTUDO-SP-Faqs.md`](ESTUDO-SP-Faqs.md). Coleção `faqs` do `auli-scraper-sp` (`auli-scraper-sp faqs`, ou
+[`docs/faqs/ESTUDO-SP-Faqs.md`](faqs/ESTUDO-SP-Faqs.md). Coleção `faqs` do `auli-scraper-sp` (`auli-scraper-sp faqs`, ou
 `all` = serviços + FAQs). **2.665 perguntas** em 64 subsites com conteúdo na rodada de 01/11.
 
 ## Fonte
@@ -2062,7 +2062,7 @@ portal; quem abre a pergunta desses dois cai no erro do SharePoint. O `sefaziden
 # MG FAQs — Perguntas Frequentes do Portal SPED MG e da Base de Conhecimento do CSM
 
 **Discovery e implantação:** SPED em 01/11/2026, CSM em 02/11/2026. Estudo, medições e decisões
-D-MGFAQ-1..15: [`docs/ESTUDO-MG-Faqs.md`](ESTUDO-MG-Faqs.md) (§10 = o SPED, §11 = o CSM). Coleção `faqs` do
+D-MGFAQ-1..15: [`docs/faqs/ESTUDO-MG-Faqs.md`](faqs/ESTUDO-MG-Faqs.md) (§10 = o SPED, §11 = o CSM). Coleção `faqs` do
 `auli-scraper-mg` (`auli-scraper-mg faqs`, ou `all` = serviços + FAQs). **310 perguntas** na rodada de 02/11:
 SPED 149 (NF-e 87, NFC-e 62) e CSM 161 (rejeições de DF-e 61, Sintegra - PED 100).
 
@@ -2161,7 +2161,7 @@ As armadilhas do CSM, na mesma numeração:
 # MS FAQs — Perguntas Frequentes da FAQ do Fale Conosco MS (www.faleconosco.ms.gov.br/faq)
 
 **Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-MSFAQ-1..12:
-[`docs/ESTUDO-MS-Faqs.md`](ESTUDO-MS-Faqs.md) (§8 = a sondagem da API e a implementação). Coleção `faqs` do
+[`docs/faqs/ESTUDO-MS-Faqs.md`](faqs/ESTUDO-MS-Faqs.md) (§8 = a sondagem da API e a implementação). Coleção `faqs` do
 `auli-scraper-ms` (`auli-scraper-ms faqs`, ou `all` = serviços + FAQs). **1.200 perguntas** em 71 assuntos e 384
 subtemas na rodada de 02/11.
 
@@ -2212,7 +2212,7 @@ a FAQ do Fale Conosco, uma aplicação AngularJS 1.2 sobre uma API REST pública
 # MT FAQs — Nota MT, site da SEFAZ (www5) e Portal MT
 
 **Discovery e implantação:** 02/11/2026 (Nota MT) e 07/11/2026 (fase 2: site da SEFAZ e Portal MT). Estudo,
-medições e decisões D-MTFAQ-1..14: [`docs/ESTUDO-MT-Faqs.md`](ESTUDO-MT-Faqs.md) (§8 e §10). Coleção `faqs` do
+medições e decisões D-MTFAQ-1..14: [`docs/faqs/ESTUDO-MT-Faqs.md`](faqs/ESTUDO-MT-Faqs.md) (§8 e §10). Coleção `faqs` do
 `auli-scraper-mt` (`auli-scraper-mt faqs`, ou `all` = serviços + FAQs). **194 perguntas** em 15 grupos de três
 fontes na rodada de 07/11: Nota MT 135, site da SEFAZ 48, Portal MT 11.
 
@@ -2283,7 +2283,7 @@ categoria, o tipo e o status; cada pergunta tem a página própria, `/perguntas-
 # GO FAQs — Perguntas Frequentes do site Orientação Tributária (orientacaotributaria.sefaz.go.gov.br)
 
 **Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-GOFAQ-1..10:
-[`docs/ESTUDO-GO-Faqs.md`](ESTUDO-GO-Faqs.md). Coleção `faqs` do `auli-scraper-go` (`auli-scraper-go faqs`, ou
+[`docs/faqs/ESTUDO-GO-Faqs.md`](faqs/ESTUDO-GO-Faqs.md). Coleção `faqs` do `auli-scraper-go` (`auli-scraper-go faqs`, ou
 `all` = serviços + FAQs). **1.298 perguntas** em 115 termos de categoria (44 temas) na rodada de 02/11.
 
 ## Fonte
@@ -2337,7 +2337,7 @@ biblioteca `Pareceres` (1.266 documentos) — fora desta coleção.
 # DF FAQs — Perguntas e Respostas do Portal da Receita e Perguntas Frequentes do ISS/NFS-e
 
 **Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-DFFAQ-1..10:
-[`docs/ESTUDO-DF-Faqs.md`](ESTUDO-DF-Faqs.md). Coleção `faqs` do `auli-scraper-df` (`auli-scraper-df faqs`, ou
+[`docs/faqs/ESTUDO-DF-Faqs.md`](faqs/ESTUDO-DF-Faqs.md). Coleção `faqs` do `auli-scraper-df` (`auli-scraper-df faqs`, ou
 `all` = serviços + FAQs). **993 perguntas** na rodada de 02/11: 900 da Receita (22 temas, 81 tipos de atendimento) e
 93 do ISS/NFS-e (6 seções).
 
@@ -2397,7 +2397,7 @@ biblioteca `Pareceres` (1.266 documentos) — fora desta coleção.
 # AM FAQs — Perguntas Frequentes das páginas do Portfólio de Serviços (www.sefaz.am.gov.br)
 
 **Discovery e implantação:** 02/11/2026. Estudo, medições e decisões D-AMFAQ-1..10:
-[`docs/ESTUDO-AM-Faqs.md`](ESTUDO-AM-Faqs.md). Coleção `faqs` do `auli-scraper-am` (`auli-scraper-am faqs`, ou
+[`docs/faqs/ESTUDO-AM-Faqs.md`](faqs/ESTUDO-AM-Faqs.md). Coleção `faqs` do `auli-scraper-am` (`auli-scraper-am faqs`, ou
 `all` = serviços + FAQs). **176 perguntas** na rodada de 02/11, de 47 das 306 páginas da árvore (285 lidas, 109 cópias
 entre páginas irmãs).
 
@@ -2455,7 +2455,7 @@ entre páginas irmãs).
 # MA FAQs — Perguntas Frequentes do Portal SGC (portal-sgc.sefaz.ma.gov.br/portal/perguntas-frequentes)
 
 **Discovery e implantação:** 06/11/2026. Estudo, medições e decisões D-MAFAQ-1..4:
-[`docs/ESTUDO-MA-Faqs.md`](ESTUDO-MA-Faqs.md). Coleção `faqs` do `auli-scraper-ma` (`auli-scraper-ma faqs`, ou
+[`docs/faqs/ESTUDO-MA-Faqs.md`](faqs/ESTUDO-MA-Faqs.md). Coleção `faqs` do `auli-scraper-ma` (`auli-scraper-ma faqs`, ou
 `all` = serviços + FAQs). **336 perguntas** em 20 raízes e 55 subcategorias na rodada de 06/11.
 
 ## Fonte
@@ -2511,7 +2511,7 @@ categoriaPai}`). Nenhum host da SEFAZ-MA tem `robots.txt` (404).
 # PE FAQs — Perguntas e Respostas do IPVA e do ITCMD (www.sefaz.pe.gov.br/Servicos/…/Perguntas-e-Respostas.aspx)
 
 **Discovery e implantação:** 06/11/2026. Estudo, medições e decisões D-PEFAQ-1..6:
-[`docs/ESTUDO-PE-Faqs.md`](ESTUDO-PE-Faqs.md). Coleção `faqs` do `auli-scraper-pe` (`auli-scraper-pe faqs`, ou
+[`docs/faqs/ESTUDO-PE-Faqs.md`](faqs/ESTUDO-PE-Faqs.md). Coleção `faqs` do `auli-scraper-pe` (`auli-scraper-pe faqs`, ou
 `all` = serviços + FAQs). **59 perguntas** (IPVA 40, ITCMD 19) na rodada de 06/11.
 
 ## Fonte
@@ -2562,7 +2562,7 @@ use=reference`; ~35 robôs nomeados com `Disallow: /`, não o AuliBot.
 # CE FAQs — Perguntas e respostas do Portal de Serviços da SEFAZ-CE (portalservicos.sefaz.ce.gov.br)
 
 **Discovery e implantação:** 03/11/2026. Estudo, medições e decisões D-CEFAQ-1..10:
-[`docs/ESTUDO-CE-Faqs.md`](ESTUDO-CE-Faqs.md). Coleção `faqs` do `auli-scraper-ce` (`auli-scraper-ce faqs`, ou `all` =
+[`docs/faqs/ESTUDO-CE-Faqs.md`](faqs/ESTUDO-CE-Faqs.md). Coleção `faqs` do `auli-scraper-ce` (`auli-scraper-ce faqs`, ou `all` =
 serviços + FAQs). **2.706 perguntas** na rodada de 03/11, de 93 dos 96 artigos de FAQ (3.179 lidas, 473 cópias).
 
 ## Fonte
@@ -2739,7 +2739,7 @@ Perguntas = as que ficam no acervo depois das cópias.
 # RN FAQs — FAQ do programa Nota Potiguar (np.sefaz.rn.gov.br/portal)
 
 **Discovery e implantação:** 06/11/2026. Estudo, medições e decisões D-RNFAQ-1..7:
-[`docs/ESTUDO-RN-Faqs.md`](ESTUDO-RN-Faqs.md). Coleção `faqs` do `auli-scraper-rn` (`auli-scraper-rn faqs`, ou `all`
+[`docs/faqs/ESTUDO-RN-Faqs.md`](faqs/ESTUDO-RN-Faqs.md). Coleção `faqs` do `auli-scraper-rn` (`auli-scraper-rn faqs`, ou `all`
 = serviços + FAQs). **23 perguntas** na rodada de 06/11.
 
 ## Fonte
@@ -2785,7 +2785,7 @@ O HTML das telas vem escrito no próprio bundle — `js/templates.js` (~1 MB, no
 # ES FAQs — portal Receita Orienta (s1-internet.sefaz.es.gov.br/ReceitaOrienta)
 
 **Discovery e implantação:** 07/11/2026. Estudo, medições e decisões D-ESFAQ-1..8:
-[`docs/ESTUDO-ES-Faqs.md`](ESTUDO-ES-Faqs.md). Coleção `faqs` do `auli-scraper-es` (`auli-scraper-es faqs`, ou `all` =
+[`docs/faqs/ESTUDO-ES-Faqs.md`](faqs/ESTUDO-ES-Faqs.md). Coleção `faqs` do `auli-scraper-es` (`auli-scraper-es faqs`, ou `all` =
 serviços + FAQs). **1.003 perguntas** na rodada de 07/11 (ICMS 874, Nota Premiada Capixaba 42, IPVA 35, ITCMD 32,
 Reforma Tributária 18, Agendar Atendimento 2), de 46 assuntos em 6 categorias.
 
@@ -2839,7 +2839,7 @@ Sem `robots.txt` (404). HTML servido pronto, sem token nem JavaScript para o con
 # PB FAQs — páginas de informação do portal institucional (www.sefaz.pb.gov.br/info/…)
 
 **Discovery e implantação:** 07/11/2026. Estudo, medições e decisões D-PBFAQ-1..8:
-[`docs/ESTUDO-PB-Faqs.md`](ESTUDO-PB-Faqs.md). Coleção `faqs` do `auli-scraper-pb` (`auli-scraper-pb faqs`, ou `all` =
+[`docs/faqs/ESTUDO-PB-Faqs.md`](faqs/ESTUDO-PB-Faqs.md). Coleção `faqs` do `auli-scraper-pb` (`auli-scraper-pb faqs`, ou `all` =
 serviços + FAQs). **200 perguntas** na rodada de 07/11, de 9 páginas.
 
 ## Fonte
@@ -2893,7 +2893,7 @@ plugin Tabs da Regular Labs (`.tab-pane` com `.nn_tabs-title`), todas no HTML. 9
 # PA FAQs — perguntas e respostas do site antigo da SEFA (antigo.sefa.pa.gov.br)
 
 **Discovery e implantação:** 07/11/2026. Estudo, medições e decisões D-PAFAQ-1..6:
-[`docs/ESTUDO-PA-Faqs.md`](ESTUDO-PA-Faqs.md). Coleção `faqs` do `auli-scraper-pa` (`auli-scraper-pa faqs`, ou `all` =
+[`docs/faqs/ESTUDO-PA-Faqs.md`](faqs/ESTUDO-PA-Faqs.md). Coleção `faqs` do `auli-scraper-pa` (`auli-scraper-pa faqs`, ou `all` =
 serviços + FAQs). **154 perguntas** na rodada de 07/11, de 11 páginas.
 
 ## Fonte
@@ -2976,7 +2976,7 @@ por uma letra. Os 3 serviços que o `pis` não tem ("Dispensa de pagamento IPVA"
 # RO FAQs — as seções-pergunta das fichas da Agência Virtual (agenciavirtual.sefin.ro.gov.br)
 
 **Discovery e implantação:** 07/11/2026, num estudo conjunto com o PI (os dois são Sydle ONE conecta-360). Estudo,
-medições e decisões D-SYDFAQ-1..8: [`docs/ESTUDO-RO-PI-Faqs.md`](ESTUDO-RO-PI-Faqs.md). Coleção `faqs` do
+medições e decisões D-SYDFAQ-1..8: [`docs/faqs/ESTUDO-RO-PI-Faqs.md`](faqs/ESTUDO-RO-PI-Faqs.md). Coleção `faqs` do
 `auli-scraper-ro` (`auli-scraper-ro faqs`, ou `all`). **211 perguntas de 46 fichas** na rodada de 07/11.
 
 ## Fonte
@@ -3016,7 +3016,7 @@ anônimo do HTML inicial) traz os 224 artigos inteiros e os catálogos. 2 GETs.
 
 # PI FAQs — as páginas de Documentos Eletrônicos e o PDF da FAQ da EFD (portal.sefaz.pi.gov.br)
 
-**Discovery e implantação:** 07/11/2026, no estudo conjunto com o RO ([`docs/ESTUDO-RO-PI-Faqs.md`](ESTUDO-RO-PI-Faqs.md),
+**Discovery e implantação:** 07/11/2026, no estudo conjunto com o RO ([`docs/faqs/ESTUDO-RO-PI-Faqs.md`](faqs/ESTUDO-RO-PI-Faqs.md),
 D-SYDFAQ-1..8). Coleção `faqs` do `auli-scraper-pi` (`auli-scraper-pi faqs`, ou `all`). **134 perguntas** na rodada de
 07/11: 99 de 8 páginas e 35 do PDF.
 
@@ -3061,7 +3061,7 @@ lista a um GET anônimo (o endereço antigo do PDF redireciona para a SPA). 5 GE
 
 # AC FAQs — a aba de perguntas do post "Isenção de ICMS para PCD" (sefaz.ac.gov.br)
 
-**Discovery e implantação:** 07/11/2026. Estudo e decisões D-ACFAQ-1..2: [`docs/ESTUDO-AC-Faqs.md`](ESTUDO-AC-Faqs.md).
+**Discovery e implantação:** 07/11/2026. Estudo e decisões D-ACFAQ-1..2: [`docs/faqs/ESTUDO-AC-Faqs.md`](faqs/ESTUDO-AC-Faqs.md).
 Coleção `faqs` do `auli-scraper-ac` (`auli-scraper-ac faqs`, ou `all`). **17 perguntas** na rodada de 07/11.
 
 ## Fonte
@@ -3096,7 +3096,7 @@ documento (D-ACFAQ-1, opção A). 1 GET.
 
 # BA FAQs — o "Perguntas e Respostas" do Plantão Fiscal (portal.sefaz.ba.gov.br) e três páginas do site novo
 
-**Discovery e implantação:** 07/11/2026. Estudo e decisões D-BAFAQ-1..5: [`docs/ESTUDO-BA-Faqs.md`](ESTUDO-BA-Faqs.md).
+**Discovery e implantação:** 07/11/2026. Estudo e decisões D-BAFAQ-1..5: [`docs/faqs/ESTUDO-BA-Faqs.md`](faqs/ESTUDO-BA-Faqs.md).
 Coleção `faqs` do `auli-scraper-ba` (`auli-scraper-ba faqs`, ou `all`). **830 perguntas** na rodada de 07/11.
 
 ## Fonte

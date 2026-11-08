@@ -1,5 +1,5 @@
 // As perguntas da SEFAZ na FAQ do portal do Estado (`portal.mt.gov.br/perguntas-frequentes`, X-Via) — D-MTFAQ-10 e
-// -12 (docs/ESTUDO-MT-Faqs.md §9). Duas chamadas, sem sessão: o órgão (`GET /v1/department/<slug>`, de onde vem o id —
+// -12 (docs/faqs/ESTUDO-MT-Faqs.md §9). Duas chamadas, sem sessão: o órgão (`GET /v1/department/<slug>`, de onde vem o id —
 // não fixo no código) e as perguntas dele (`POST /v1/faq {"uo": [<id>]}`), cada uma com a página própria
 // (`/perguntas-frequentes/<id>`), a resposta em HTML, a categoria e o status.
 

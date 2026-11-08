@@ -3,9 +3,9 @@
 **Data:** 2026-11-06 (1 GET do índice com o UA AuliBot, comparado com a coleta de 06/11 pela raiz `-antigo`). ·
 **Estado:** **D-RSFAQ-3..5 implementadas em 06/11/2026** (§11: botões fora das respostas, uma ocorrência por
 painel, link por pergunta); D-RSFAQ-2 (guarda) e D-RSFAQ-6 (plano B) em aberto. A coleta segue pela caminhada da
-raiz `/perguntas-frequentes-antigo` (#201). · **Origem:** [TAREFA-RS-FAQS-RAIZ.md](TAREFA-RS-FAQS-RAIZ.md) §1 e
-[REGISTRO-scrapers.md#rs-faqs](REGISTRO-scrapers.md#rs-faqs), armadilha 2 ("candidato a fonte futura… estudo à
-parte"). · **Pendência:** [auli_scraper_pendências.md](auli_scraper_pendências.md) §20.
+raiz `/perguntas-frequentes-antigo` (#201). · **Origem:** [TAREFA-RS-FAQS-RAIZ.md](../TAREFA-RS-FAQS-RAIZ.md) §1 e
+[REGISTRO-scrapers.md#rs-faqs](../REGISTRO-scrapers.md#rs-faqs), armadilha 2 ("candidato a fonte futura… estudo à
+parte"). · **Pendência:** [auli_scraper_pendências.md](../auli_scraper_pendências.md) §20.
 
 > **TL;DR — o índice é uma fonte boa e completa para o que mostra, mas não mostra tudo e não é ao vivo.**
 >
@@ -219,5 +219,5 @@ A mesma rodada mostrou duas páginas que **nunca entraram no acervo** (não est�
 06/11, e o índice também não as lista): `/faq-nfcom` e `/manual-para-declaracao-de-itcd-faq` — o ureq recusa o
 corpo ("stream did not contain valid UTF-8"), provavelmente outra codificação. Fica registrado na pendência §20.
 Em 07/11 o motivo apareceu: não é codificação, os dois redirecionam para um PDF — e são sete os itens assim. Os cinco
-PDFs de perguntas entram (D-RSFAQ-7, 173 perguntas, a NFCom entre eles); o manual do ITCD, não ([REGISTRO-scrapers.md#rs-faqs](REGISTRO-scrapers.md#rs-faqs), armadilha 6).
+PDFs de perguntas entram (D-RSFAQ-7, 173 perguntas, a NFCom entre eles); o manual do ITCD, não ([REGISTRO-scrapers.md#rs-faqs](../REGISTRO-scrapers.md#rs-faqs), armadilha 6).
 

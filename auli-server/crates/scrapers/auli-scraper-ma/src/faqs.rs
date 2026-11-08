@@ -1,5 +1,5 @@
 // SEFAZ-MA FAQs — a página "Perguntas Frequentes" do Portal SGC (`/portal/perguntas-frequentes`), o mesmo SPA
-// Angular sobre a API Spring dos serviços (`ma.rs`). Estudo, medições e decisões: docs/ESTUDO-MA-Faqs.md
+// Angular sobre a API Spring dos serviços (`ma.rs`). Estudo, medições e decisões: docs/faqs/ESTUDO-MA-Faqs.md
 // (D-MAFAQ-*).
 //
 // Uma chamada só, com o token anônimo do portal: `GET /sgc/api/faq/perguntas/faq?publicado=true` devolve todas

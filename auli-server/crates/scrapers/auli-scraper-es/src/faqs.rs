@@ -1,5 +1,5 @@
 // SEFAZ-ES FAQs — o portal Receita Orienta (`s1-internet.sefaz.es.gov.br/ReceitaOrienta`), ASP.NET com o HTML
-// servido pronto. Estudo, medições e decisões: docs/ESTUDO-ES-Faqs.md (D-ESFAQ-*).
+// servido pronto. Estudo, medições e decisões: docs/faqs/ESTUDO-ES-Faqs.md (D-ESFAQ-*).
 //
 // A fonte é a navegação (D-ESFAQ-1, -2). A barra de menu de uma página de categoria lista as categorias, cada
 // categoria lista os seus assuntos, e cada assunto é UMA página com o acordeão inteiro. A pergunta fica direto no

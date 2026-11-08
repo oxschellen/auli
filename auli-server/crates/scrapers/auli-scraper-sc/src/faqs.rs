@@ -1,5 +1,5 @@
 // SEF-SC FAQs — "Perguntas frequentes" (a Base de Conhecimento da CAF), servidas pelo mesmo portal
-// Next.js do `sc.rs`. Estudo, medições e decisões: docs/ESTUDO-SC-Faqs.md (D-SCFAQ-*).
+// Next.js do `sc.rs`. Estudo, medições e decisões: docs/faqs/ESTUDO-SC-Faqs.md (D-SCFAQ-*).
 //
 // A fonte é `/_next/data/<buildId>/perguntas/buscar.json?assunto=<raiz>`, uma chamada por raiz da
 // árvore de assuntos (`perguntas.json` → `assuntosBusca`). Três propriedades da fonte moldam o código:

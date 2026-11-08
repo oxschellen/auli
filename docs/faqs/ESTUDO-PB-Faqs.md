@@ -3,7 +3,7 @@
 **Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~30 GETs). · **Estado:** **v1 implementada (07/11/2026) — 9 páginas, 200 perguntas** (§8); D-PBFAQ-1 decidida na opção C
 (sem a DeSTDA), D-PBFAQ-2..8 como propostas. · **Órgão:** Secretaria de Estado da Fazenda da Paraíba (SEFAZ-PB; o portal se chama "SER/PB"). ·
 **Hoje a `pb` tem só `servicos`** (Carta de Serviços em `cartaservico.sefaz.pb.gov.br`, 101 fichas —
-[REGISTRO-scrapers.md#pb](REGISTRO-scrapers.md#pb)).
+[REGISTRO-scrapers.md#pb](../REGISTRO-scrapers.md#pb)).
 
 > **TL;DR — a FAQ da PB está espalhada em 10 páginas do Joomla, cada uma marcando a pergunta de um jeito.**
 >

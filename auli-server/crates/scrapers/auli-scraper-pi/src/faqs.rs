@@ -1,6 +1,6 @@
 // SEFAZ-PI FAQs — a seção "Perguntas Frequentes" das 8 páginas de Documentos Eletrônicos do portal (Sydle ONE) e o PDF
 // "Perguntas Frequentes EFD ICMS IPI" do repositório de documentos. A árvore de temas "Perguntas Frequentes" do portal
-// está vazia. Estudo, medições e decisões: docs/ESTUDO-RO-PI-Faqs.md (D-SYDFAQ-*).
+// está vazia. Estudo, medições e decisões: docs/faqs/ESTUDO-RO-PI-Faqs.md (D-SYDFAQ-*).
 //
 // Páginas: um `_search` (os artigos ligados à pasta "Documentos Eletrônicos"); a pergunta é a linha em negrito
 // terminada em "?", pelo `kit::linhas`, depois de dois reparos (D-SYDFAQ-5). PDF: o método `obterPastaComItens` lista a
@@ -286,7 +286,7 @@ fn aviso_pastas(json: &str) -> Result<Option<String>> {
     Ok((b.hits.total > 0).then(|| {
         format!(
             "⚠️  PI FAQs: {} artigo(s) nas pastas de FAQ do portal, vazias em 07/11/2026 — reveja o escopo \
-             (docs/ESTUDO-RO-PI-Faqs.md §1)",
+             (docs/faqs/ESTUDO-RO-PI-Faqs.md §1)",
             b.hits.total
         )
     }))

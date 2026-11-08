@@ -1,5 +1,5 @@
 // SEFAZ-PE FAQs — as páginas "Perguntas e Respostas" do IPVA e do ITCMD, páginas de publicação do mesmo
-// SharePoint 2013 dos serviços (`scrape.rs`). Estudo, medições e decisões: docs/ESTUDO-PE-Faqs.md (D-PEFAQ-*).
+// SharePoint 2013 dos serviços (`scrape.rs`). Estudo, medições e decisões: docs/faqs/ESTUDO-PE-Faqs.md (D-PEFAQ-*).
 //
 // Sem API (a `_api` e o `listdata.svc` dão 403): uma lista curada de duas páginas, HTML server-side. O corpo de
 // cada uma é um único campo rico (`div[id$="_RichHtmlField"]`), em que as perguntas são parágrafos numerados

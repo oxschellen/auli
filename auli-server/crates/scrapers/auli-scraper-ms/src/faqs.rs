@@ -1,6 +1,6 @@
 // SEFAZ-MS FAQs — a FAQ da Fale Conosco MS (`www.faleconosco.ms.gov.br/faq`), aplicação AngularJS sobre
 // uma API REST pública, à parte do site WordPress dos serviços (`ms.rs`). Estudo, medições e decisões:
-// docs/ESTUDO-MS-Faqs.md (D-MSFAQ-*).
+// docs/faqs/ESTUDO-MS-Faqs.md (D-MSFAQ-*).
 //
 // A API (POST `recursos/faq/<ação>`, corpo `[{key, value}]`, sem sessão) tem os três níveis da navegação:
 // assuntos (`listassunto`, com a contagem `qtdeFaq` do próprio portal) → subtemas

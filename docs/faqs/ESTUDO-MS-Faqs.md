@@ -114,7 +114,7 @@ pergunta vazia, zero total) → F2 transporte (JSF → ids; 1 GET por assunto; c
 ## 8. Sondagem, decisões e implementação (02/11/2026)
 
 A §5 rodou daqui: o Fale Conosco não barra o AuliBot e não tem `robots.txt` (404); o `robots.txt` da SEFAZ-MS
-só fecha o `/wp-admin/`. Código em [`faqs.rs`](../auli-server/crates/scrapers/auli-scraper-ms/src/faqs.rs).
+só fecha o `/wp-admin/`. Código em [`faqs.rs`](../../auli-server/crates/scrapers/auli-scraper-ms/src/faqs.rs).
 
 ### 8.1 O que a API mostrou
 

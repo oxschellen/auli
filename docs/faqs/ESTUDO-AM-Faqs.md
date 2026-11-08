@@ -113,7 +113,7 @@ Cadastro 6; ITCMD 5; Isenções de ICMS e Regimes Especiais 4; Fiscalização 1;
   `"Dúvidas frequentes — <nome>"` (o único texto que não é da fonte; hoje 1 página, a 302).
 - **D-AMFAQ-5** — Cópia exata entre páginas fica na de menor `id`. Alternativa (manter as cópias) descartada: 5 cópias do
   Refis no vetor degradam o retrieve sem ganho.
-- **D-AMFAQ-6** — GCC e NFC-e fora: o GCC vira **pendência** ([auli_scraper_pendências.md](auli_scraper_pendências.md)
+- **D-AMFAQ-6** — GCC e NFC-e fora: o GCC vira **pendência** ([auli_scraper_pendências.md](../auli_scraper_pendências.md)
   §16: sondar o XHR do Struts2); a NFC-e não (PDF de 2017, técnico).
 - **D-AMFAQ-7** — `AuliBot` (o portal aceita), 1 s de cortesia (o padrão das FAQs da frota), rede sempre, cache lido
   só com `--usecache`.

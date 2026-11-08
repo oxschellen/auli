@@ -1,7 +1,7 @@
 // SEFAZ-BA FAQs — o "Perguntas e Respostas" do Plantão Fiscal, que continua no portal antigo
 // (`portal.sefaz.ba.gov.br/default/perguntas_respostas/`, linkado pelas páginas de ICMS, IPVA, ITD e Taxas do site novo), e
 // três páginas de perguntas do site novo (`www.sefaz.ba.gov.br`, WordPress). Estudo, medições e decisões:
-// docs/ESTUDO-BA-Faqs.md (D-BAFAQ-*).
+// docs/faqs/ESTUDO-BA-Faqs.md (D-BAFAQ-*).
 //
 // Plantão Fiscal (D-BAFAQ-1 A): os menus Inspetoria, Legislação e Contencioso, por uma lista curada (Finanças Públicas,
 // a TEF vazia, o Simples Nacional fora do ar e a NFC-e 1.1 superada ficam fora). As páginas HTML (windows-1252) são

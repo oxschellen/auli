@@ -46,16 +46,16 @@ A fase 1 (Nota MT, 135 perguntas, PR #185) está no ar. A fase 2 é o site insti
 ([auli_pendencias.md](auli_pendencias.md) §44): o robots não barra a coleta. A proposta do estudo de honrar o
 `Crawl-delay: 30` (D-MTFAQ-3) segue como proposta para a fase 2.
 
-**07/11/2026 — sondada** ([ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §9): o hub manda para um Portal do Conhecimento que
+**07/11/2026 — sondada** ([ESTUDO-MT-Faqs.md](faqs/ESTUDO-MT-Faqs.md) §9): o hub manda para um Portal do Conhecimento que
 foi refeito sem as perguntas (404), e os PDFs são de 2017 e órfãos. O que há de atual: 3 páginas "Perguntas
 frequentes" de áreas de serviço do `www5` (Contencioso 21, DIMP 11, NFA-e 15) e a FAQ do portal X-Via
 (`POST /v1/faq`, 11 da SEFAZ).
 
-**07/11/2026 — implementada** ([ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §10): D-MTFAQ-10 = A. As áreas de serviço do
+**07/11/2026 — implementada** ([ESTUDO-MT-Faqs.md](faqs/ESTUDO-MT-Faqs.md) §10): D-MTFAQ-10 = A. As áreas de serviço do
 `www5` dão 48 perguntas (a NFA-e tem 16, não as 15 da sondagem) e o Portal MT 11: o MT vai de 135 a **194**. Os
 PDFs de 2017 ficam fora; entram se a SEFAZ voltar a linká-los.
 
-Referência: [ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §2b, §3 (D-MTFAQ-3), §5.2, §9 e §10.
+Referência: [ESTUDO-MT-Faqs.md](faqs/ESTUDO-MT-Faqs.md) §2b, §3 (D-MTFAQ-3), §5.2, §9 e §10.
 
 ## 2. MT — bases de conhecimento não sondadas
 
@@ -66,7 +66,7 @@ Referência: [ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §2b, §3 (D-MTFAQ-3), §5.2
 
 **Próximo passo.** Ler o `robots.txt` do `sac` e sondar se há listagem anônima, antes de qualquer estudo.
 
-Referência: [ESTUDO-MT-Faqs.md](ESTUDO-MT-Faqs.md) §1 e §4.
+Referência: [ESTUDO-MT-Faqs.md](faqs/ESTUDO-MT-Faqs.md) §1 e §4.
 
 ## 3. GO — biblioteca Pareceres (D-GOFAQ-7)
 
@@ -76,7 +76,7 @@ O mesmo SharePoint das FAQs do GO (`orientacaotributaria.sefaz.go.gov.br`, `_api
 **Próximo passo.** Estudo próprio: formatos dos arquivos, extração de texto, metadados disponíveis na `_api`
 (número, data, assunto) e se o conteúdo também para em 2022, como as FAQs.
 
-Referência: [ESTUDO-GO-Faqs.md](ESTUDO-GO-Faqs.md), D-GOFAQ-7.
+Referência: [ESTUDO-GO-Faqs.md](faqs/ESTUDO-GO-Faqs.md), D-GOFAQ-7.
 
 ## 4. RJ: o portal da SEFAZ-RJ barra coleta automatizada — serviços de volta pela D-RJ-WAF, FAQs em espera (aberta — 2026-11-02)
 
@@ -168,7 +168,7 @@ navegador (a descoberta provou zero-XHR: todo o conteúdo é server-rendered no 
 
 **Custo/risco:** **~278 GETs** (um por serviço, cacheáveis; cortesia entre eles) — mais pesado que
 qualquer scraper atual. **(02/11/2026)** As FAQs do AM já leem esses detalhes (`auli-scraper-am/src/faqs.rs`,
-[ESTUDO-AM-Faqs.md](ESTUDO-AM-Faqs.md)): o portão `visibleSections`, o valor único de um campo do
+[ESTUDO-AM-Faqs.md](faqs/ESTUDO-AM-Faqs.md)): o portão `visibleSections`, o valor único de um campo do
 `serviceDetails` (`valor_unico`) e a referência `$x` → bloco de texto, lida em bytes de linha em linha
 (`bloco_de_texto`). A v2 reusa os três e o cache de detalhes de `data/am/raw/cache/faqs/` — rodando junto com as
 FAQs, não custa rede. A árvore tem hoje 243 serviços com detalhe (eram 239). Os **39 serviços link-only** (externo/submenu) NÃO têm página de detalhe → sem
@@ -368,7 +368,7 @@ do `raw/` são posicionais, o `atualizar-servicos.sh` acusa "raw/ mudou" mesmo s
 _Era a §41 do [auli_pendencias.md](auli_pendencias.md)._
 
 Registro em [REGISTRO-scrapers.md#sp-faqs](REGISTRO-scrapers.md#sp-faqs); estudo em
-[ESTUDO-SP-Faqs.md](ESTUDO-SP-Faqs.md) §9. Nenhum dos dois justifica PR sozinho.
+[ESTUDO-SP-Faqs.md](faqs/ESTUDO-SP-Faqs.md) §9. Nenhum dos dois justifica PR sozinho.
 
 1. **Lista ausente derruba a rodada inteira.** O `buscar_todas` do
    [`faqs.rs`](auli-server/crates/scrapers/auli-scraper-sp/src/faqs.rs) propaga qualquer falha de chamada,
@@ -412,7 +412,7 @@ depois de uma interrupção? Se for raro, a dívida pode ficar registrada e não
 
 ## 16. AM — Perguntas e Respostas do GCC (D-AMFAQ-6)
 
-_Aberta em 02/11/2026, no estudo das FAQs do AM ([ESTUDO-AM-Faqs.md](ESTUDO-AM-Faqs.md))._
+_Aberta em 02/11/2026, no estudo das FAQs do AM ([ESTUDO-AM-Faqs.md](faqs/ESTUDO-AM-Faqs.md))._
 
 `sistemas.sefaz.am.gov.br/gcc/menucontribuinte/publico/perguntasRespostas.action` responde 200 (12.830 B), mas é
 só a casca Struts2-jQuery (`jQuery.struts2_jquery…`, 1 link, texto vazio): o conteúdo chega por JS. As FAQs do AM
@@ -437,7 +437,7 @@ Outro serviço sem rota continua pulado, com aviso. Com ele, 283 serviços.
 
 ## 18. CE — o resto do catálogo `conteudo-geral` (D-CEFAQ-7)
 
-_Aberta em 03/11/2026, na implantação das FAQs do CE ([ESTUDO-CE-Faqs.md](ESTUDO-CE-Faqs.md))._
+_Aberta em 03/11/2026, na implantação das FAQs do CE ([ESTUDO-CE-Faqs.md](faqs/ESTUDO-CE-Faqs.md))._
 
 As FAQs leem 96 dos 428 conteúdos do `conteudo-geral`. Os outros 332, pela mesma API (`getChildren` + `getItem`), são
 na maioria textos interpretativos: **78 "Parecer CECON"** (e mais alguns "Parecer nº …"), 71 Comunicados COTRI, 38
@@ -451,7 +451,7 @@ separar o que é parecer do que é comunicado.
 
 ## 19. CE — FAQ nova fora da convenção de nome (D-CEFAQ-2)
 
-_Aberta em 03/11/2026, na implantação das FAQs do CE ([ESTUDO-CE-Faqs.md](ESTUDO-CE-Faqs.md))._
+_Aberta em 03/11/2026, na implantação das FAQs do CE ([ESTUDO-CE-Faqs.md](faqs/ESTUDO-CE-Faqs.md))._
 
 A seleção dos artigos de FAQ é pelo nome (`d[úu]vidas|pergunta|faq`), o critério editorial da SEFAZ-CE. O estudo
 previa avisar quando um conteúdo de nome fora do padrão tivesse ≥ 3 blocos `section-wrapper` — sinal de FAQ nova fora
@@ -463,7 +463,7 @@ algum tiver, decidir entre ampliar o filtro de nome e ler todos a cada rodada.
 
 ## 20. RS — o índice novo das FAQs e três defeitos da coleta atual (D-RSFAQ-1..6)
 
-_Aberta em 06/11/2026, depois da troca de raiz do #201. Estudo: [ESTUDO-RS-Faqs-Indice.md](ESTUDO-RS-Faqs-Indice.md)._
+_Aberta em 06/11/2026, depois da troca de raiz do #201. Estudo: [ESTUDO-RS-Faqs-Indice.md](faqs/ESTUDO-RS-Faqs-Indice.md)._
 
 O `/perguntas-frequentes` novo é uma página só (5 MB, 1 GET, passa com o AuliBot) com 1.854 perguntas canônicas de
 233 páginas, com o mesmo `panel-N` do AJAX de cada página. Todo painel dele está na coleta pela raiz `-antigo`, com o
@@ -485,7 +485,7 @@ IBS, que o índice não lista. A trilha sai dele igual ao breadcrumb em 94% das 
 
 **06/11/2026 — D-RSFAQ-3..5 feitas** (botões fora das respostas, uma ocorrência por painel, link por pergunta):
 1.990 → 1.883 FAQs, respostas iguais às antigas menos o texto dos botões — [ESTUDO-RS-Faqs-Indice.md
-§11](ESTUDO-RS-Faqs-Indice.md).
+§11](faqs/ESTUDO-RS-Faqs-Indice.md).
 
 **Achado da mesma rodada:** `/faq-nfcom` e `/manual-para-declaracao-de-itcd-faq` nunca entraram no acervo (nem em
 agosto): o ureq recusa o corpo ("stream did not contain valid UTF-8"), e o índice também não as lista.
@@ -501,7 +501,7 @@ não são perguntas: ficam fora. [REGISTRO-scrapers.md
 
 ## 21. AL — FAQs adiadas: o site da SEFAZ-AL está em manutenção (D-ALFAQ-1..5)
 
-_Aberta e decidida em 06/11/2026. Estudo: [ESTUDO-AL-Faqs.md](ESTUDO-AL-Faqs.md)._
+_Aberta e decidida em 06/11/2026. Estudo: [ESTUDO-AL-Faqs.md](faqs/ESTUDO-AL-Faqs.md)._
 
 **Conclusão: não há FAQ pública da SEFAZ-AL para coletar hoje.**
 
@@ -536,7 +536,7 @@ uma coleção `legislacao` (estudo §6).
 
 ## 22. PA — o catálogo de serviços do site novo (D-PAFAQ-6) (✅ feita — 2026-11-07)
 
-_Aberta em 07/11/2026, no estudo das FAQs do PA ([ESTUDO-PA-Faqs.md](ESTUDO-PA-Faqs.md) §1)._
+_Aberta em 07/11/2026, no estudo das FAQs do PA ([ESTUDO-PA-Faqs.md](faqs/ESTUDO-PA-Faqs.md) §1)._
 
 O WordPress headless do site novo da SEFA (`site-sefa-wordpress.sefa.pa.gov.br/wp-json/wp/v2`) tem o tipo `pis`: **154
 páginas de serviço** (`X-WP-Total`), cada uma com blocos ACF ("Como solicitar este serviço", "Documentos necessários",

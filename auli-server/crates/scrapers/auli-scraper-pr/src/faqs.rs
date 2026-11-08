@@ -1,6 +1,6 @@
 // SEFA-PR FAQs — as "Perguntas Frequentes" do Portal de Atendimento do SAC
 // (`atendimento.fazenda.pr.gov.br/sacsefa/portal`), aplicação PHP à parte do portal Drupal do
-// `scrape.rs`. Estudo, medições e decisões: docs/ESTUDO-PR-Faqs.md (D-PRFAQ-*).
+// `scrape.rs`. Estudo, medições e decisões: docs/faqs/ESTUDO-PR-Faqs.md (D-PRFAQ-*).
 //
 // A fonte é HTML server-side: o `index` lista os referentes (temas) e cada `assuntosReferente/<id>`
 // traz o referente inteiro — cards de assunto com os painéis de pergunta e a resposta íntegra. Três

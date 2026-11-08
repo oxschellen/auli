@@ -4,7 +4,7 @@
 hosts de Alagoas e leu o site pelo buscador (§7). · **Estado:** **BLOQUEADO — não existe FAQ pública da SEFAZ-AL
 hoje.** O site institucional, onde ela morava, está em manutenção sem data; nenhum outro host a tem. Nada a
 implementar. · **Órgão:** Secretaria de Estado da Fazenda de Alagoas (SEFAZ-AL). · **Hoje a `al` tem só `servicos`**
-(Portal Alagoas Digital, API REST `/api/v1`, 60 serviços — [REGISTRO-scrapers.md#al](REGISTRO-scrapers.md#al)).
+(Portal Alagoas Digital, API REST `/api/v1`, 60 serviços — [REGISTRO-scrapers.md#al](../REGISTRO-scrapers.md#al)).
 
 > **TL;DR — não há o que raspar; o gatilho de retomada é o título da página.**
 >

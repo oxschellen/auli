@@ -9,7 +9,7 @@ edition = "2024"
 # rica inline, categoria (classe) e `targets` (públicos), então NÃO há chamada de detalhe. Depende
 # de auli-contract + o kit — nunca de fastembed/ort. Decisões D-MT1..5 em docs/auli_pendencias.md / PR.
 # As FAQs (`faqs.rs`) vêm de três fontes: a API JSON da FAQ do Nota MT, as páginas de perguntas das áreas de serviço
-# do site da SEFAZ (www5) e a FAQ do Portal MT (X-Via) — docs/ESTUDO-MT-Faqs.md.
+# do site da SEFAZ (www5) e a FAQ do Portal MT (X-Via) — docs/faqs/ESTUDO-MT-Faqs.md.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

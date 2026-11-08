@@ -1,5 +1,5 @@
 // SEFAZ-DF FAQs — duas fontes oficiais, ambas HTML servido pelo órgão, sem navegador. Estudo, medições e
-// decisões: docs/ESTUDO-DF-Faqs.md (D-DFFAQ-*).
+// decisões: docs/faqs/ESTUDO-DF-Faqs.md (D-DFFAQ-*).
 //
 // (A) Receita — as "Perguntas e Respostas - FAQ" do Portal da Receita (`aplicacoes/perguntasfrequentes/`,
 //     ColdFusion, o mesmo host da Carta de Serviços). A página é uma casca com os temas; as perguntas de um tema

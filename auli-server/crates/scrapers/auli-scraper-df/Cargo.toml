@@ -9,7 +9,7 @@ edition = "2024"
 # `servico.cfm` traz a descrição rica num accordion (`div.panel-body`). Público = codTipoPessoa
 # (Cidadão/Empresa). Gotcha WAF (JA3): o host reseta o ureq mas responde ao curl → coleta via
 # `kit::http::get_via_curl` (requer curl no PATH), como o GO. Decisões em docs/descobertas.md#df.
-# As FAQs (`faqs.rs`, docs/ESTUDO-DF-Faqs.md): Receita pelo mesmo curl (GET + POST de formulário), ISS pelo ureq.
+# As FAQs (`faqs.rs`, docs/faqs/ESTUDO-DF-Faqs.md): Receita pelo mesmo curl (GET + POST de formulário), ISS pelo ureq.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

@@ -2,7 +2,7 @@
 //! `<div class="section-wrapper">`, um por seção, cada um com o título no cabeçalho (`<div class="heading"
 //! id="section-<slug>">`) e o corpo num `<sy-collapse … trigger-by="#section-<slug>">`. Dois moldes: o de 2026 (título em
 //! `<h2>`, corpo em HTML com entidades) e o de 2024 (título numa linha `## `, corpo em markdown, onde a quebra de linha
-//! separa os itens das listas). Estudos: `docs/ESTUDO-CE-Faqs.md` e `docs/ESTUDO-RO-PI-Faqs.md` (D-SYDFAQ-6).
+//! separa os itens das listas). Estudos: `docs/faqs/ESTUDO-CE-Faqs.md` e `docs/faqs/ESTUDO-RO-PI-Faqs.md` (D-SYDFAQ-6).
 
 use std::sync::LazyLock;
 

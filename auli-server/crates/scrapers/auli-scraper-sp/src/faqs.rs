@@ -1,5 +1,5 @@
 // SEFAZ-SP FAQs — as "Perguntas Frequentes" do portal, uma lista SharePoint por subsite de serviço,
-// lidas pela mesma `_api` anônima do `scrape.rs`. Estudo, medições e decisões: docs/ESTUDO-SP-Faqs.md
+// lidas pela mesma `_api` anônima do `scrape.rs`. Estudo, medições e decisões: docs/faqs/ESTUDO-SP-Faqs.md
 // (D-SPFAQ-*).
 //
 // A página central `/Paginas/perguntas-frequentes.aspx` é um plugin JS: lista os subsites pela `Homes 360`

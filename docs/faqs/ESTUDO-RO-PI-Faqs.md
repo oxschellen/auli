@@ -3,7 +3,7 @@
 **Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~50 GETs). · **Estado:** decidido (07/11: as
 recomendações da §5 — D-SYDFAQ-1 B, -2 A, -8 A, as demais como propostas) e implementado (§7). · **Por que juntos:** os dois portais são Sydle ONE da geração conecta-360 (D-XX-SYDLE-COMPARTILHADO):
 token anônimo no HTML inicial, `GET …/_classId/5cd32901df14eb3d461160f0/_search?_body=<ES>`. **Hoje a `ro` e a `pi` têm
-só `servicos`** (194 e 28 — [REGISTRO-scrapers.md#ro](REGISTRO-scrapers.md#ro), [#pi](REGISTRO-scrapers.md#pi)).
+só `servicos`** (194 e 28 — [REGISTRO-scrapers.md#ro](../REGISTRO-scrapers.md#ro), [#pi](../REGISTRO-scrapers.md#pi)).
 
 > **TL;DR — a FAQ dos dois está dentro de páginas que o acervo já conhece, cada uma num formato.**
 >

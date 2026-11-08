@@ -15,7 +15,7 @@
 //   - We recurse through menus, collecting FAQ question/answer pairs at the leaves.
 //   - Each question has its own link, `<page>#panel-N` (the portal opens the panel from the hash); the
 //     same panel can sit on two URLs (alias pages), and the snapshot keeps it once. Decisions D-RSFAQ-3..5
-//     in docs/ESTUDO-RS-Faqs-Indice.md.
+//     in docs/faqs/ESTUDO-RS-Faqs-Indice.md.
 //   - A menu item can redirect to a PDF. The ones listed in `FaqSource::pdfs` are FAQs and are read as text
 //     (`pdf.rs`, D-RSFAQ-7); any other PDF is an error on that item, as before.
 

@@ -2,7 +2,7 @@
 
 **Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~40 GETs). · **Estado:** decidido (07/11: D-ACFAQ-1
 A) e implementado (§5). · **Órgão:** Secretaria de Estado da Fazenda do Acre (SEFAZ-AC). · **Hoje a `ac` tem só `servicos`**
-(Carta de Serviços do WordPress, 19 fichas — [REGISTRO-scrapers.md#ac](REGISTRO-scrapers.md#ac)).
+(Carta de Serviços do WordPress, 19 fichas — [REGISTRO-scrapers.md#ac](../REGISTRO-scrapers.md#ac)).
 
 > **TL;DR — a SEFAZ-AC não tem FAQ própria; a única é a de uma ficha de serviço que já está no acervo.**
 >

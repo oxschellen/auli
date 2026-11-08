@@ -1613,7 +1613,7 @@ não tinha registro de robots.
 
 **Decisão do mantenedor (02/11/2026): desconsiderar**, no padrão da D-PA-ROBOTS (conteúdo público, LAI,
 baixo volume), cobrindo os serviços e a fase 2 das FAQs do MG — a base "SRE - Dúvidas Frequentes" do
-CSM, 81 artigos ([ESTUDO-MG-Faqs.md](ESTUDO-MG-Faqs.md) §3; ratifica a D-MGFAQ-8). Diferente dos
+CSM, 81 artigos ([ESTUDO-MG-Faqs.md](faqs/ESTUDO-MG-Faqs.md) §3; ratifica a D-MGFAQ-8). Diferente dos
 pareceres do RS, que também estão sob `Disallow: /`: lá a coleta se apoia na autorização da própria
 SEFAZ-RS; aqui não há autorização da SEF-MG.
 
@@ -1633,7 +1633,7 @@ inclui a "SRE - Serviços públicos" (`bccaaf011bbec61029f686afe54bcbfc`), que �
 no acervo.
 
 **Aplicada (02/11/2026)** no [`csm.rs`](auli-server/crates/scrapers/auli-scraper-mg/src/csm.rs): a lista trouxe
-81 de 81 (`meta.count`), 62 artigos baixados (as 19 orientações da DOLT/SUTRI ficam fora), 161 perguntas. Medições e decisões em [ESTUDO-MG-Faqs.md](ESTUDO-MG-Faqs.md) §11.
+81 de 81 (`meta.count`), 62 artigos baixados (as 19 orientações da DOLT/SUTRI ficam fora), 161 perguntas. Medições e decisões em [ESTUDO-MG-Faqs.md](faqs/ESTUDO-MG-Faqs.md) §11.
 
 ---
 

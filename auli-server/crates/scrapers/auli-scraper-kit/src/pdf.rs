@@ -1,6 +1,6 @@
 //! O texto de um PDF pelo poppler, como processo: `pdftotext -layout` (o parágrafo começa recuado, o rodapé fica numa
 //! linha, as páginas separadas por `\f`) e a data de criação pelo `pdfinfo -isodates`. As FAQs do PI e da BA
-//! (`docs/ESTUDO-RO-PI-Faqs.md` §3.1, `docs/ESTUDO-BA-Faqs.md`). Quem coleta precisa do poppler-utils; os testes usam o
+//! (`docs/faqs/ESTUDO-RO-PI-Faqs.md` §3.1, `docs/faqs/ESTUDO-BA-Faqs.md`). Quem coleta precisa do poppler-utils; os testes usam o
 //! texto extraído como fixture.
 
 use std::path::Path;

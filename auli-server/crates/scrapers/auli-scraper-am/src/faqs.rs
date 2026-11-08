@@ -1,6 +1,6 @@
 // SEFAZ-AM FAQs — as "Perguntas Frequentes" que o Portfólio de Serviços publica dentro do detalhe de cada
 // serviço: uma seção do `serviceDetails` no mesmo flight RSC (`RSC: 1`) que os serviços já leem. Sem navegador.
-// Estudo, medições e decisões: docs/ESTUDO-AM-Faqs.md (D-AMFAQ-*).
+// Estudo, medições e decisões: docs/faqs/ESTUDO-AM-Faqs.md (D-AMFAQ-*).
 //
 // O escopo é o do `servicos`: a árvore `items` do portfólio — os serviços e as categorias que têm página de
 // detalhe. O flight da listagem traz também os links do Portal do Servidor Fazendário (o RH dos servidores da

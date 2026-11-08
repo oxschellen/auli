@@ -1,6 +1,6 @@
 // SEFAZ-AC FAQs — a aba "PERGUNTAS FREQUENTES" do post "Isenção de ICMS para PCD" (`?p=9727`), a única FAQ da SEFAZ-AC.
 // O post também é uma ficha da Carta de Serviços: o texto está no acervo de serviços, e aqui cada pergunta vira um
-// documento. Estudo, medições e decisões: docs/ESTUDO-AC-Faqs.md (D-ACFAQ-*).
+// documento. Estudo, medições e decisões: docs/faqs/ESTUDO-AC-Faqs.md (D-ACFAQ-*).
 //
 // O post é um acordeão do Elementor (`.elementor-toggle-item`); a pergunta é a linha em negrito terminada em "?", pelo
 // `kit::linhas` (o molde da PB e da PA). Só a aba de perguntas é lida: segmentado inteiro, o post daria à última resposta

@@ -1,6 +1,6 @@
 // SEF-MG FAQs, 2ª fonte — a base "SRE - Dúvidas Frequentes" da Base de Conhecimento do CSM
 // (`atendimento2.fazenda.mg.gov.br/csm`, o mesmo ServiceNow dos serviços do `mg.rs`). Estudo, medições e
-// decisões: docs/ESTUDO-MG-Faqs.md §11 (D-MGFAQ-13 a 15).
+// decisões: docs/faqs/ESTUDO-MG-Faqs.md §11 (D-MGFAQ-13 a 15).
 //
 // ⚠️ ROBOTS/ACESSO: o host declara `robots.txt: Disallow: /`. A coleta desta base pública é decisão do
 // mantenedor (02/11/2026, docs/auli_pendencias.md §42) — não há autorização da SEF-MG. Mitigações:

@@ -67,7 +67,7 @@ Cada item: `{id, descDuvida, descResposta, descGrupoDuvida, statusDuvida, numrOr
 6 - EMPRESAS 13 · 7 - MENOR PREÇO 17 · 8 - DOE SUA NOTA 15 · 9 - DESCONTO IPVA 24.
 
 **Identidade.** O nome do `.md` é `slug(pergunta)` + hash8 de `url + "\n" + pergunta`
-([`nome_faq_de`](../auli-server/crates/auli-contract/src/mddoc.rs)). Como a `url` é a mesma para as 135, **a pergunta
+([`nome_faq_de`](../../auli-server/crates/auli-contract/src/mddoc.rs)). Como a `url` é a mesma para as 135, **a pergunta
 é a identidade**: duas perguntas iguais gerariam o mesmo arquivo e uma sobrescreveria a outra em silêncio (aconteceu
 no MS — 2 casos, resolvidos com `?idFaq=`; aqui o SPA não respeita parâmetro). Guarda `Err` em pergunta repetida.
 
@@ -100,7 +100,7 @@ baixa (`Err`); zero no total (`Err`); PDF sem nenhuma linha `1.` (`Err` "layout 
 `(url, pergunta)` repetido (`Err`).
 
 **Transporte:** não há chamada de PDF no kit. O precedente é local ao scraper de pareceres do PR
-([`pareceres.rs`](../auli-server/crates/scrapers/auli-scraper-pr/src/pareceres.rs): download por `curl`,
+([`pareceres.rs`](../../auli-server/crates/scrapers/auli-scraper-pr/src/pareceres.rs): download por `curl`,
 `pdftotext -layout -enc UTF-8 <pdf> -` como subprocesso). O MT seria o 2º uso: copiar as ~15 linhas; promover ao kit
 só no 3º.
 
@@ -199,7 +199,7 @@ esquerda; casos `Err`: `id` repetido, pergunta repetida, `statusDuvida` inválid
 
 `auli-scraper-mt` ganhou `faqs.rs` e os subcomandos `faqs` e `all`; a `mt` ganhou a coleção `faqs` no registry;
 `scripts/tools/update-mt-faqs.sh` (irmão do do MS: apaga o cache, guarda de encolhimento contra o `.anterior`).
-Registro em [`REGISTRO-scrapers.md#mt-faqs`](REGISTRO-scrapers.md#mt-faqs).
+Registro em [`REGISTRO-scrapers.md#mt-faqs`](../REGISTRO-scrapers.md#mt-faqs).
 
 - **Rodada de 02/11:** 1 GET (200, 76 KB) → 135 perguntas, 9 grupos, 0 inativas, 0 repetidas, 0 respostas vazias;
   nenhuma tag nem entidade no texto. `--usecache`: árvore idêntica byte a byte, snapshot idêntico a menos do
@@ -299,7 +299,7 @@ curl -s -A "$UA" -H 'Content-Type: application/json' -X POST https://portal.mt.g
 ## 10. Fase 2 — implementação (07/11/2026)
 
 **Decidido pelo usuário em 07/11: D-MTFAQ-10 = A**; D-MTFAQ-11 a -14 como propostas, com os desvios abaixo.
-Registro em [`REGISTRO-scrapers.md#mt-faqs`](REGISTRO-scrapers.md#mt-faqs).
+Registro em [`REGISTRO-scrapers.md#mt-faqs`](../REGISTRO-scrapers.md#mt-faqs).
 
 O `faqs.rs` passa a ter três fontes, cada uma um ramo da árvore (raiz → `Menu` por fonte → `Faq` por grupo): o Nota
 MT, sem mudança; o site da SEFAZ (`faqs/site.rs`); e o Portal MT (`faqs/portal.rs`). As chamadas passam todas pela

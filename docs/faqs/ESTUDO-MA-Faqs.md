@@ -48,7 +48,7 @@ RFC 9309 §2.3.1.3: 4xx ⇒ sem restrição. Nada a decidir.
 
 **TLS.** `portal-sgc` e `portal` **passaram a mandar a cadeia inteira** (folha → GlobalSign GCC R3 DV TLS CA 2020 →
 raiz R3; `openssl s_client` verifica ok) — o gotcha da D-MA-TLS sumiu ali, e o intermediário embutido no
-[`ma.rs`](../auli-server/crates/scrapers/auli-scraper-ma/src/ma.rs) continua valendo como âncora (mesmo emissor;
+[`ma.rs`](../../auli-server/crates/scrapers/auli-scraper-ma/src/ma.rs) continua valendo como âncora (mesmo emissor;
 vence em 18/03/2029) caso o servidor regrida. `sistemas1` e `www` **ainda mandam só a folha** (curl exit 60; com
 `-s`, falha calado e a saída sai vazia) — sondar esses hosts exige `--cacert` com aquele PEM.
 
@@ -99,7 +99,7 @@ seus 17 itens dizem `publicado=true` no próprio item e só saem pelo filtro. `p
 visível. ⇒ **sempre mandar `publicado=true`**, exatamente como a página, e não filtrar por flag nenhum do nosso lado.
 
 **Identidade.** O nome do `.md` sai de `url + "\n" + pergunta`
-([`nome_faq_de`](../auli-server/crates/auli-contract/src/mddoc.rs)); com a `url` única, **a pergunta é a
+([`nome_faq_de`](../../auli-server/crates/auli-contract/src/mddoc.rs)); com a `url` única, **a pergunta é a
 identidade** e as duas "Sobre a seção" colidiriam — uma sobrescreveria a outra em silêncio. Ver D-MAFAQ-2.
 
 **Ordem determinística:** raízes pela `ordem` da própria categoria (sem ordem vai para o fim; nome desempata);

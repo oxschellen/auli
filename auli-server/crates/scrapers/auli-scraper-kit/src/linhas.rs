@@ -1,7 +1,7 @@
 //! FAQ em linhas: para os portais em que a pergunta é só um trecho em negrito no meio do texto, sem estrutura própria
 //! (o Joomla da PB e o do PA). A seção vira linhas — tag de bloco e `<br>` quebram — e pergunta é a linha cujo texto
-//! com letras está todo em destaque e termina em "?". Estudos: `docs/ESTUDO-PB-Faqs.md` §3 e
-//! `docs/ESTUDO-PA-Faqs.md` §3 (D-PBFAQ-2, D-PAFAQ-2, -3).
+//! com letras está todo em destaque e termina em "?". Estudos: `docs/faqs/ESTUDO-PB-Faqs.md` §3 e
+//! `docs/faqs/ESTUDO-PA-Faqs.md` §3 (D-PBFAQ-2, D-PAFAQ-2, -3).
 //!
 //! - [`linhas`]: o elemento da seção → as linhas, cada uma com o texto puro, um HTML mínimo (texto, links, imagens e as
 //!   tabelas inteiras, que o [`crate::html`] converte) e se está toda em destaque;

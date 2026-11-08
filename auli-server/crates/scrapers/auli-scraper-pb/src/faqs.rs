@@ -1,5 +1,5 @@
 // SEFAZ-PB FAQs — as páginas de informação do portal institucional (`www.sefaz.pb.gov.br`, Joomla) que trazem
-// perguntas e respostas. Estudo, medições e decisões: docs/ESTUDO-PB-Faqs.md (D-PBFAQ-*).
+// perguntas e respostas. Estudo, medições e decisões: docs/faqs/ESTUDO-PB-Faqs.md (D-PBFAQ-*).
 //
 // Não há FAQ central: uma lista curada de 9 páginas (D-PBFAQ-1), cada uma com a FAQ na página inteira, numa aba
 // (`nn_tabs`) ou em todas as abas. Cada página marca a pergunta de um jeito (`<h4>`, `<strong>`, `<b>`, `<span>` em

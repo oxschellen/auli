@@ -1,6 +1,6 @@
 // SEF-MG FAQs — as "Perguntas Frequentes" do Portal SPED MG (`portalsped.fazenda.mg.gov.br/spedmg`),
 // OpenCms com HTML estático, à parte do CSM ServiceNow do `mg.rs`. Estudo, medições e decisões:
-// docs/ESTUDO-MG-Faqs.md (D-MGFAQ-*).
+// docs/faqs/ESTUDO-MG-Faqs.md (D-MGFAQ-*).
 //
 // Cada módulo do SPED (NF-e, NFC-e, CT-e…) tem um menu lateral; quando ele tem "Perguntas…", a página é
 // um índice — seções em romano, perguntas numeradas e sub-tópicos sem número — que linka cada pergunta

@@ -1,5 +1,5 @@
 // As "Perguntas frequentes" das áreas de serviço do site da SEFAZ (`www5.sefaz.mt.gov.br`, Liferay) — D-MTFAQ-10,
-// -11 e -13 (docs/ESTUDO-MT-Faqs.md §9).
+// -11 e -13 (docs/faqs/ESTUDO-MT-Faqs.md §9).
 //
 // A enumeração é a do próprio site, nunca uma lista no código: a página "Todos os Serviços" lista as áreas; o menu
 // de cada área (`div.mosaic-relateds-list`) tem, ou não, o item "Perguntas frequentes"; a página dele traz as

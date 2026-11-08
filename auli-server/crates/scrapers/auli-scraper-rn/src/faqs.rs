@@ -1,5 +1,5 @@
 // SEFAZ-RN FAQs — a FAQ do programa Nota Potiguar (`np.sefaz.rn.gov.br/portal`). Estudo, medições e decisões:
-// docs/ESTUDO-RN-Faqs.md (D-RNFAQ-*).
+// docs/faqs/ESTUDO-RN-Faqs.md (D-RNFAQ-*).
 //
 // O site da SEFAZ-RN (WordPress) não tem FAQ tributária; o Nota Potiguar, o programa de cidadania fiscal, tem duas
 // telas de FAQ num portal AngularJS. O HTML delas vem escrito no próprio bundle, nos templates do `$templateCache`

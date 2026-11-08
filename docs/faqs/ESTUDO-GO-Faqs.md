@@ -132,7 +132,7 @@ transporte (`_api` + `DispForm` por termo, cache, `write_faqs("go", …)` + árv
 
 `auli-scraper-go` ganhou `faqs.rs` e os subcomandos `faqs` e `all`; a `go` ganhou a coleção `faqs` no registry;
 `scripts/tools/update-go-faqs.sh` (irmão do do MT: apaga o cache, guarda de encolhimento contra o `.anterior`).
-Registro em [`REGISTRO-scrapers.md#go-faqs`](REGISTRO-scrapers.md#go-faqs).
+Registro em [`REGISTRO-scrapers.md#go-faqs`](../REGISTRO-scrapers.md#go-faqs).
 
 - **Rodada de 02/11:** 116 GETs (1 da lista + 115 formulários), todos 200 pelo `ureq`; 1.298 perguntas, 115
   termos, 3 itens com nome antigo do termo (aviso); nenhuma resposta vazia depois da conversão; nenhuma tag nem

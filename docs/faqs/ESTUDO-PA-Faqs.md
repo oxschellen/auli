@@ -2,7 +2,7 @@
 
 **Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~50 GETs). · **Estado:** **v1 implementada (07/11/2026) — 11 páginas, 154 perguntas** (§8); D-PAFAQ-1 decidida na opção A,
 D-PAFAQ-2..6 como propostas. · **Órgão:** Secretaria de Estado da Fazenda do Pará (SEFA-PA). · **Hoje a `pa` tem só `servicos`**
-(paradigital/Prodepa, 34 serviços — [REGISTRO-scrapers.md#pa](REGISTRO-scrapers.md#pa)).
+(paradigital/Prodepa, 34 serviços — [REGISTRO-scrapers.md#pa](../REGISTRO-scrapers.md#pa)).
 
 > **TL;DR — a FAQ do PA está no site antigo, espalhada em 11 páginas, e é na maior parte de 2014–2018.**
 >

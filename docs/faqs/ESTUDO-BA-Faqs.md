@@ -2,7 +2,7 @@
 
 **Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de ~1 s, ~120 GETs). · **Estado:** decidido (07/11:
 D-BAFAQ-1 A; 2–5 como propostas) e implementado (§7). · **Órgão:** Secretaria da Fazenda do Estado da Bahia (SEFAZ-BA). · **Hoje a `ba` tem só `servicos`**
-(Carta de Serviços do `portal.sefaz.ba.gov.br` — [REGISTRO-scrapers.md#ba](REGISTRO-scrapers.md#ba)). Destravada pela
+(Carta de Serviços do `portal.sefaz.ba.gov.br` — [REGISTRO-scrapers.md#ba](../REGISTRO-scrapers.md#ba)). Destravada pela
 D-FROTA-ROBOTS: o `portal` tem `robots.txt` com `Disallow: /`.
 
 > **TL;DR — a BA tem a maior FAQ que falta, mas quase toda antiga e em três formatos.**
@@ -117,7 +117,7 @@ curl -sS --cacert r36.pem -A "$UA" "https://www.sefaz.ba.gov.br/wp-json/wp/v2/pa
 ## 7. Implementação (07/11/2026)
 
 `auli-scraper-ba faqs`; `scripts/tools/update-ba-faqs.sh`; detalhes em
-[REGISTRO-scrapers.md#ba-faqs](REGISTRO-scrapers.md#ba-faqs). A modelagem é a da §4, com estes ajustes:
+[REGISTRO-scrapers.md#ba-faqs](../REGISTRO-scrapers.md#ba-faqs). A modelagem é a da §4, com estes ajustes:
 
 - **Data (D-BAFAQ-2).** PDFs: o mês da criação (`pdfinfo`), "Alíquota (abr/2020)" — a NFC-e fica "(mai/2019)", o mês da
   capa (23/05/2019), e não "(Versão 1.6, 23/05/2019)". Páginas HTML: o `Last-Modified`, só quando é posterior à

@@ -1,6 +1,6 @@
 // SEFAZ-GO FAQs — as "Perguntas Frequentes" do site Orientação Tributária da Economia-GO
 // (`orientacaotributaria.sefaz.go.gov.br`), um SharePoint instalado no órgão, à parte da API do Portal
-// Expresso dos serviços (`go.rs`). Estudo, medições e decisões: docs/ESTUDO-GO-Faqs.md (D-GOFAQ-*).
+// Expresso dos serviços (`go.rs`). Estudo, medições e decisões: docs/faqs/ESTUDO-GO-Faqs.md (D-GOFAQ-*).
 //
 // A lista "Perguntas Frequentes" sai inteira da REST `_api` anônima, num GET. A categoria de cada pergunta é
 // um termo de taxonomia, e a REST só dá o nome do termo — "Informações Gerais" nomeia uns 20 termos de temas

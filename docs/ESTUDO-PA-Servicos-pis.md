@@ -2,7 +2,7 @@
 
 **Data:** 2026-11-07 (sondagem direta, UA AuliBot, 3 GETs de dados + o bundle do site novo). · **Estado:** decidido
 (07/11: D-PASERV-1 = C, D-PASERV-2..4 como propostas) e implementado (§6). · **Origem:** pendência §22 do [auli_scraper_pendências.md](auli_scraper_pendências.md),
-aberta no [ESTUDO-PA-Faqs.md](ESTUDO-PA-Faqs.md) §1. · **Hoje a `pa` coleta 34 serviços do paradigital** (Prodepa,
+aberta no [ESTUDO-PA-Faqs.md](faqs/ESTUDO-PA-Faqs.md) §1. · **Hoje a `pa` coleta 34 serviços do paradigital** (Prodepa,
 órgão 48 — [REGISTRO-scrapers.md#pa](REGISTRO-scrapers.md#pa)).
 
 > **TL;DR — o site novo tem um catálogo próprio, 3,7× maior e vivo, mas sem público-alvo.**

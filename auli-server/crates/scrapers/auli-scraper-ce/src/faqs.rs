@@ -1,6 +1,6 @@
 // SEFAZ-CE FAQs — os artigos de perguntas e respostas ("Principais Dúvidas sobre …") do catálogo `conteudo-geral`
 // do Portal de Serviços (Sydle ONE), pela mesma API JSON dos serviços: `getChildren` lista o catálogo e `getItem`
-// traz o artigo. Sem navegador. Estudo, medições e decisões: docs/ESTUDO-CE-Faqs.md (D-CEFAQ-*).
+// traz o artigo. Sem navegador. Estudo, medições e decisões: docs/faqs/ESTUDO-CE-Faqs.md (D-CEFAQ-*).
 //
 // Cada artigo é um `contentMarkdown` com um bloco `<div class="section-wrapper">` por pergunta, em dois templates:
 // o de 2026 (pergunta em `<h2>`, resposta em HTML com entidades) e o de 2024 (pergunta numa linha `## `, resposta

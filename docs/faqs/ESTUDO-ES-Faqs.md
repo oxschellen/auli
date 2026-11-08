@@ -3,7 +3,7 @@
 **Data:** 2026-11-07 (sondagem direta, UA AuliBot, cortesia de 1 s, ~60 GETs). · **Estado:** **v1 implementada (07/11/2026) — as
 1.003 perguntas da navegação do portal Receita Orienta** (§3, §8); D-ESFAQ-1..8 aprovadas pelo mantenedor. · **Órgão:** Secretaria de Estado
 da Fazenda do Espírito Santo (SEFAZ-ES). · **Hoje a `es` tem só `servicos`** (X-Via, 45 itens —
-[REGISTRO-scrapers.md#es](REGISTRO-scrapers.md#es)).
+[REGISTRO-scrapers.md#es](../REGISTRO-scrapers.md#es)).
 
 > **TL;DR — a FAQ do ES é um portal próprio, o Receita Orienta, em HTML servido pronto.**
 >
@@ -143,7 +143,7 @@ cabeçalho sem `collapse` correspondente ou sem `.user-content`; resposta vazia;
   `http(s)`/`mailto`, sem repetir a URL quando ela é o próprio texto; bloco e `<hr>` → quebra de linha; entidades no
   fim). "Atualizado em" fica: é a única data visível da resposta. Anexo → linha final `Anexo: <url absoluta>`, sem
   baixar o arquivo. Seria a 7ª cópia do conversor (SP, GO, DF, AM, CE, MA); a extração para o kit segue como item
-  próprio ([auli_scraper_pendências.md](auli_scraper_pendências.md) §10), fora deste PR.
+  próprio ([auli_scraper_pendências.md](../auli_scraper_pendências.md) §10), fora deste PR.
 - **D-ESFAQ-7 — Semente = `categoria/61` (ICMS)**, não a home: a barra de menu de qualquer categoria lista as 6
   (82, 61, 81, 62, 83, 63, na ordem da home), e a home custa 17,8 MB. Se a 61 sumir, a coleta falha alto.
 - **D-ESFAQ-8 — Transporte:** UA AuliBot (D-FROTA-UA), 1 s entre os 52 GETs, sem paralelismo, `ureq`/rustls (cadeia

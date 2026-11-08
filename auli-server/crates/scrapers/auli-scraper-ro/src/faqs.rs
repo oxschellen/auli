@@ -1,6 +1,6 @@
 // SEFIN-RO FAQs — as perguntas das fichas da Agência Virtual (Sydle ONE conecta-360). Não há página de FAQ: depois das
 // 6 seções do modelo da ficha (O que é?, Legislação, Etapas e prazos…), muitas fichas trazem seções cujo título é uma
-// pergunta. Estudo, medições e decisões: docs/ESTUDO-RO-PI-Faqs.md (D-SYDFAQ-*).
+// pergunta. Estudo, medições e decisões: docs/faqs/ESTUDO-RO-PI-Faqs.md (D-SYDFAQ-*).
 //
 // Um `_search` traz os artigos inteiros (o `contentMarkdown`, no molde das FAQs do CE — `kit::sydle`) e os catálogos (o
 // identificador de cada um entra no link). Pergunta = seção cujo título termina em "?". As seções que agrupam perguntas

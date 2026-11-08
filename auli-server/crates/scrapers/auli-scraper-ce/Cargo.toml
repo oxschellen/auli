@@ -7,7 +7,7 @@ edition = "2024"
 # vem da API JSON `getChildren` (POST), catálogo `servico-geral`. Token Bearer anônimo é extraído
 # fresh do shell público a cada rodada (efêmero). Depende de auli-contract + o kit — nunca de
 # fastembed/ort. Decisões D-CE1..4 no plano-scraper-ce.md / PR. As FAQs (`faqs.rs`) são os artigos de perguntas e
-# respostas do catálogo `conteudo-geral`, pela mesma API (`getChildren` + `getItem`) — docs/ESTUDO-CE-Faqs.md.
+# respostas do catálogo `conteudo-geral`, pela mesma API (`getChildren` + `getItem`) — docs/faqs/ESTUDO-CE-Faqs.md.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
 auli-scraper-kit = { path = "../auli-scraper-kit" }

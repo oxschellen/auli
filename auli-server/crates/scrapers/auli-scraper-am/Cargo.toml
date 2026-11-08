@@ -8,7 +8,7 @@ edition = "2024"
 # /_next/data. Público (PF/PJ/Órgãos) sai das 3 rotas de perfil; classe = categoria da árvore.
 # Só os campos da listagem (resumo curto) — o conteúdo rico do detalhe fica de fora (decisão de
 # escopo). As FAQs (`faqs.rs`) são a seção "Perguntas Frequentes" do detalhe, no flight RSC dele
-# (docs/ESTUDO-AM-Faqs.md). Depende de auli-contract + o kit — nunca de fastembed/ort. Decisões em
+# (docs/faqs/ESTUDO-AM-Faqs.md). Depende de auli-contract + o kit — nunca de fastembed/ort. Decisões em
 # docs/descobertas.md#am.
 [dependencies]
 auli-contract = { path = "../../auli-contract" }
