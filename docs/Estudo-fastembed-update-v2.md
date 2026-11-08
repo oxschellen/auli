@@ -48,6 +48,20 @@ pooling).
 - Tempo estimado da revetorização completa (37.941 vetores, pela taxa do piloto): ~2 h 20 min.
 - O modelo INT8 (`models/models--gpahal--bge-m3-onnx-int8`, 560 MB) fica até o fim da janela de rollback.
 
+## Migração feita (07–08/11/2026)
+
+- As 27 entidades revetorizadas com `build-packs.sh` depois do merge do PR #219 (`90143ff`), em 2 h 35 min (das
+  21:29 de 07/11 às 00:05 de 08/11, horário de Brasília; o SP levou 55 min e o RS, 35 min).
+- Todas as coleções saíram com "Cache de vetores DESLIGADO" e "0 reaproveitados", sem erro. São 38.000 registros,
+  os mesmos de antes: `docs_hashes`, ids e ordem iguais; só os vetores mudaram (cosseno FP32 × INT8 com mediana
+  ~0,98 e mínimo 0,90, em FAQs e acórdãos longos).
+- Boot num servidor de laboratório: os 27 manifestos validados com `bge-m3-fp32`, os 38.000 registros carregados.
+- Busca: um registro sorteado por coleção, perguntado pelo título, voltou em 1º em 50 das 54 coleções (32–53 ms
+  por consulta). As 4 faltas são pareceres e TARF, cujo título é só o número; perguntados pela ementa, 14 de 15
+  voltaram em 1º e os 15 entre os cinco primeiros.
+- Rollback: reverter `90143ff` e mover cada `data/<id>/arquivo/packs-bge-m3-q-int8` de volta para `data/<id>/packs`
+  (508 MB nas 27).
+
 ## Decisão: revetorizar tudo, sem versionar o encoder
 
 - **A identidade do manifesto não muda.** `EMBED_MODEL_ID`, `EMBED_DIM`, `STRATEGY_VERSION` e `PACK_FORMAT` ficam como estão, e nenhum campo novo entra no manifesto. A troca do encoder se resolve revetorizando todas as 27 entidades, não carimbando versão.
