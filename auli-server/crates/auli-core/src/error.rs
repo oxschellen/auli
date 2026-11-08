@@ -11,7 +11,7 @@ pub enum Error {
     Custom(String),
 
     #[error(transparent)]
-    Anyhow(#[from] anyhow::Error),
+    Embed(#[from] fastembed::Error),
 
     #[error("Erro de I/O: {0}")]
     Io(#[from] std::io::Error),

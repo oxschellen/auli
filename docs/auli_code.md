@@ -247,8 +247,8 @@ pedido.
 
 Toda a parte de embeddings/busca vetorial é **in-process** (sem Ollama nem ChromaDB):
 
-- **Embedder** (`auli-core::embed`): `fastembed` com **BGE-M3 ONNX INT8** (`Bgem3Model::BGEM3Q`),
-  dimensão **1024** (`EMBED_DIM`), apenas a saída _dense_. O modelo fica atrás de um `Mutex` porque
+- **Embedder** (`auli-core::embed`): `fastembed` com **BGE-M3 ONNX FP32** (`EmbeddingModel::BGEM3`, `BAAI/bge-m3`;
+  INT8 até 11/2026), dimensão **1024** (`EMBED_DIM`), vetor _dense_ por pooling CLS, sempre na CPU (`PreferCPU`). O modelo fica atrás de um `Mutex` porque
   `embed` é `&mut self`; `max_length` é **8192**, o teto do próprio BGE-M3 (`EMBED_MAX_TOKENS`) — era
   512 até a TAREFA-FAQ-PR, e com 512 a resposta da FAQ era cortada em silêncio. `embed_dense` é
   **bloqueante/CPU-bound** — os chamadores usam `run_blocking`. Construído uma vez no startup (lento;

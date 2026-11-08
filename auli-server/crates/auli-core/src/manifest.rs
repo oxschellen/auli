@@ -18,7 +18,12 @@ use crate::error::{Error, Result};
 
 /// Model identifier baked into every manifest. Change this whenever the model or quantization
 /// changes (it implies a full re-ingest).
-pub const EMBED_MODEL_ID: &str = "bge-m3-q-int8";
+///
+/// `bge-m3-fp32` desde 07/11/2026: o BGE-M3 sem quantização (`BAAI/bge-m3`), no lugar do INT8
+/// (`bge-m3-q-int8`, `gpahal/bge-m3-onnx-int8`), cujos vetores mudavam com a versão do ONNX Runtime
+/// (`embed.rs` e `docs/Estudo-fastembed-update-v2.md` §Resultado). Pack carimbado `bge-m3-q-int8` é recusado
+/// no boot.
+pub const EMBED_MODEL_ID: &str = "bge-m3-fp32";
 
 /// Bumped whenever what gets embedded changes (the scraper's `text_to_embed` formula / the contract
 /// `stored_repr`). A pack built under an old strategy is incompatible with a server running a new one

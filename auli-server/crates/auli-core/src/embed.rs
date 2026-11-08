@@ -2,10 +2,16 @@
 //! `update` mode (documents) and the `server` mode (the user question). Same code, same model,
 //! same `max_length`, so the cosine space is shared by construction.
 //!
-//! The model is held behind a `Mutex` because `Bgem3Embedding::embed` takes `&mut self`. All
+//! The model is held behind a `Mutex` because `TextEmbedding::embed` takes `&mut self`. All
 //! methods are **blocking** and CPU-bound; async callers wrap each call in
-//! `tokio::task::spawn_blocking`. Phase 1 uses only the dense output, preserving the old
-//! `Vec<Vec<f32>>` contract.
+//! `tokio::task::spawn_blocking`. Only the dense vector is used (`Vec<Vec<f32>>`).
+//!
+//! **O modelo é o BGE-M3 em FP32** (`BAAI/bge-m3`, vetor denso por pooling CLS, normalizado), e não mais o
+//! INT8 (`gpahal/bge-m3-onnx-int8`) usado até 11/2026 — decisão de 07/11/2026,
+//! `docs/Estudo-fastembed-update-v2.md` §Resultado. O INT8 mudava de vetor com a versão do ONNX Runtime
+//! (cosseno ~0,986 entre o 1.24 e o 1.31 para o mesmo texto); o FP32 dá cosseno 1,0000000 entre os dois, e
+//! na busca é igual ou um pouco melhor (acerto em 1º de 91,2% contra 90,6% nas 2.056 perguntas das FAQs do
+//! RS). Custa ~2,3× o tempo de vetorização, ~+0,9 GB de memória e ~2,3 GB de modelo.
 //!
 //! Embedding strategy: we embed a *key* — não o documento inteiro —, mas a key deixou de ser
 //! sempre curta: desde a TAREFA-FAQ-PR a das FAQs carrega a RESPOSTA junto (assunto + `P:` + `R:`).
@@ -17,7 +23,7 @@
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-use fastembed::{Bgem3Embedding, Bgem3InitOptions, Bgem3Model};
+use fastembed::{AutoDevicePolicy, EmbeddingModel, TextEmbedding, TextInitOptions};
 
 use crate::error::{Error, Result};
 
@@ -35,9 +41,10 @@ pub const EMBED_MAX_TOKENS: usize = 8192;
 /// Quantos textos vão por chamada ao `fastembed` em [`Embedder::embed_dense`]. **Teto de memória,
 /// não de lote**: o `batch_size` do modelo continua 1, e fatiar não altera nenhum vetor.
 ///
-/// O que a fatia limita é o `colbert`/`sparse` que o fastembed acumula e nós descartamos — ~1,4 MB
-/// por documento no acervo do TARF. Com 256, o transitório fica em ~360 MB em vez dos ~31 GB de uma
-/// coleção inteira de uma vez.
+/// O que a fatia limita é a saída bruta que o fastembed guarda até o fim da chamada, antes do pooling: o
+/// `last_hidden_state`, 1024 floats **por token** de cada texto (no INT8 de antes, multi-vetor, era o
+/// `colbert`, da mesma escala — ~1,4 MB por documento no acervo do TARF, ~31 GB numa coleção inteira de uma
+/// vez). Com 256, o transitório fica na casa de centenas de MB.
 ///
 /// O valor não é crítico: qualquer coisa entre dezenas e alguns milhares troca memória por um número
 /// irrelevante de chamadas a mais. 256 dá folga confortável mesmo se um lote inteiro bater no teto de
@@ -45,18 +52,25 @@ pub const EMBED_MAX_TOKENS: usize = 8192;
 const FATIA: usize = 256;
 
 pub struct Embedder {
-    inner: Mutex<Bgem3Embedding>,
+    inner: Mutex<TextEmbedding>,
 }
 
 impl Embedder {
     /// Build once at startup. Blocking and slow: loads (and on first run downloads from Hugging
-    /// Face into `cache_dir`) the BGE-M3 INT8 ONNX model.
+    /// Face into `cache_dir`) the BGE-M3 FP32 ONNX model (~2,3 GB).
+    ///
+    /// **Sempre na CPU (`AutoDevicePolicy::PreferCPU`) — contrato de reprodutibilidade.** Sem a política, o
+    /// ONNX Runtime escolhe o dispositivo sozinho (`MaxEfficiency`: prefere NPU e, no macOS, registra sempre o
+    /// CoreML), e o mesmo texto sairia com outro vetor numa máquina com outro hardware. Documentos e pergunta têm
+    /// de sair do mesmo cálculo — a mesma razão do `batch_size = 1` e do lockfile único. Rodar em GPU/NPU é uma
+    /// mudança de propósito, e exige revetorizar o acervo inteiro.
     pub fn new(cache_dir: PathBuf, threads: usize) -> Result<Self> {
-        let opts = Bgem3InitOptions::new(Bgem3Model::BGEM3Q)
+        let opts = TextInitOptions::new(EmbeddingModel::BGEM3)
             .with_max_length(EMBED_MAX_TOKENS) // o teto do modelo — ver a const
             .with_intra_threads(threads)
-            .with_cache_dir(cache_dir);
-        let model = Bgem3Embedding::try_new(opts)?; // anyhow::Error -> crate::Error via #[from]
+            .with_cache_dir(cache_dir)
+            .with_auto_device(AutoDevicePolicy::PreferCPU);
+        let model = TextEmbedding::try_new(opts)?; // fastembed::Error -> crate::Error via #[from]
         Ok(Self {
             inner: Mutex::new(model),
         })
@@ -64,29 +78,28 @@ impl Embedder {
 
     /// Dense vectors for a batch of texts (Phase 1). Blocking — call via `spawn_blocking`.
     ///
-    /// **`batch_size = 1` é obrigatório, não uma escolha de performance.** Com o lote automático, o
-    /// fastembed faz padding ao maior texto do lote e o padding VAZA para o vetor agrupado: o mesmo
-    /// texto embedado em lotes diferentes sai com cosseno ~0,98 em vez de 1,00 (medido — ver
-    /// `testes_ordem`). Duas consequências graves:
+    /// **`batch_size = 1`.** No INT8 de antes ele era obrigatório: com o lote automático, o fastembed faz
+    /// padding ao maior texto do lote, e a quantização dinâmica deixava o padding VAZAR para o vetor — o mesmo
+    /// texto em lotes diferentes saía com cosseno ~0,98 em vez de 1,00 (medido — ver `testes_ordem`). No FP32 o
+    /// lote não muda o vetor (07/11/2026: 23 textos em lote = um por um, bit a bit), mas o `Some(1)` fica: é mais
+    /// rápido com textos de comprimento desigual (11 s contra 21 s nos mesmos 23) e mantém a garantia sem
+    /// depender do modelo. Sem ela, duas consequências graves:
     ///
     /// 1. O servidor embeda a **pergunta sozinha** e o `update` embeda os **documentos em lote** —
     ///    com padding dinâmico, query e documentos sairiam de regimes diferentes do mesmo modelo.
     /// 2. Acrescentar um documento mudaria o vetor dos outros, tornando o índice instável a cada
     ///    coleta incremental.
     ///
-    /// Com `Some(1)` cada texto é padded ao próprio tamanho: cosseno 1,000000 entre execuções, em
-    /// qualquer ordem ou composição. E sai **~2,9× mais rápido** na prática, porque o padding ao maior
-    /// do lote desperdiçava compute com textos de comprimento muito desigual.
+    /// Com `Some(1)` cada texto é padded ao próprio tamanho: o mesmo vetor entre execuções, em qualquer ordem
+    /// ou composição.
     ///
     /// **A entrada é fatiada em [`FATIA`] textos por chamada — por MEMÓRIA, não por velocidade.**
-    /// O BGE-M3 é multi-vetor: cada passada devolve `dense`, `sparse` **e** `colbert`, e o fastembed
-    /// acumula os três ao longo de toda a lista que recebe. Usamos só o `dense`, mas o descarte só
-    /// acontece no fim — então uma chamada com a coleção inteira constrói tudo antes de jogar fora.
-    ///
-    /// O `colbert` não é um vetor por documento: é **um vetor de 1024 floats por token**
-    /// (`[batch, seq_len-1, 1024]`). Medido no acervo do TARF — 22.476 acórdãos, ~337 tokens de média
-    /// — dá ~1,4 MB por documento e **~31 GB** no total, contra 0,09 GB do `dense`. É o que explicava
-    /// o pico de 42,5 GB de RSS do `auli update` (auli_pendencias.md §31.1).
+    /// O fastembed roda o modelo sobre toda a lista que recebe e só no fim faz o pooling: até lá, guarda a
+    /// saída bruta de cada texto — o `last_hidden_state`, **um vetor de 1024 floats por token**. Numa chamada
+    /// com a coleção inteira, é a coleção inteira em memória antes de virar um vetor por texto. No INT8 de
+    /// antes, o que se acumulava era o `colbert`, da mesma escala: medido no acervo do TARF — 22.476
+    /// acórdãos, ~337 tokens de média —, ~1,4 MB por documento e **~31 GB** no total, contra 0,09 GB do
+    /// `dense`. Era o que explicava o pico de 42,5 GB de RSS do `auli update` (auli_pendencias.md §31.1).
     ///
     /// Fatiar por fora é **numericamente inócuo**: o `batch_size = 1` interno já processa um texto
     /// por vez, então o tamanho da fatia não toca em nada que a doutrina acima protege. É o que o
@@ -98,9 +111,8 @@ impl Embedder {
             .map_err(|_| Error::from("embedder mutex poisoned"))?;
         let mut dense = Vec::with_capacity(texts.len());
         for fatia in texts.chunks(FATIA) {
-            // `out` morre no fim de cada volta, e com ele o `sparse` e o `colbert` da fatia.
-            let out = model.embed(fatia, Some(1))?;
-            dense.extend(out.dense);
+            // A saída bruta da fatia morre no fim de cada volta; só o vetor de cada texto fica.
+            dense.extend(model.embed(fatia, Some(1))?);
         }
         Ok(dense)
     }
@@ -157,8 +169,8 @@ mod testes_ordem {
 
     /// INVARIANTE do fatiamento: partir a entrada em pedaços não pode mudar NADA.
     ///
-    /// O `embed_dense` fatia em [`FATIA`] textos por chamada para não deixar o fastembed acumular o
-    /// `colbert` da coleção inteira (~31 GB no TARF). Isso é seguro porque o `batch_size = 1` interno
+    /// O `embed_dense` fatia em [`FATIA`] textos por chamada para não deixar o fastembed acumular a saída
+    /// bruta da coleção inteira (o `last_hidden_state`; no INT8 de antes, o `colbert`, ~31 GB no TARF). Isso é seguro porque o `batch_size = 1` interno
     /// já processa um texto por vez — mas "é seguro porque eu raciocinei" não é garantia, e esta é a
     /// função onde um engano custa re-vetorizar tudo. Aqui a igualdade é medida.
     ///
