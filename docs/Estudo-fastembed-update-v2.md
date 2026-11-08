@@ -3,6 +3,51 @@
 Documento de implementação para o Claude Code. Versão 2, revisada em 07/11/2026 — substitui o estudo anterior.
 Objetivo: atualizar a dependência `fastembed` no monorepo Auli mantendo Rust, BGE-M3 e o contrato do embedder (dense-only, packs reprodutíveis), e **revetorizar o acervo inteiro** com o encoder novo. Não há exigência de igualdade vetorial entre 5.17.2 e 7.6.1.
 
+## Resultado do piloto e decisão (07/11/2026) — vale sobre o plano abaixo onde ele diverge
+
+**O gate falhou, e a causa não é a esperada.** No piloto do RS, nenhum dos 3.538 vetores comparados ficou acima
+de 0,995: o mesmo texto (`key_hash` igual) saiu com cosseno ~0,986 (0,973–0,992) entre a 5.17.2 e a 7.6.1. O
+piloto parou e o RS voltou do backup. Isolado num experimento à parte (23 textos): os ids de token são idênticos
+nas duas versões, o `PreferCPU` não muda nada, a sessão é a mesma (`Level3`). Sobra o **ONNX Runtime 1.24.2 →
+1.31.0 no modelo INT8**: a quantização dinâmica muda de resultado com a versão. A premissa da seção seguinte ("só
+drift de ponto flutuante, ≥ 0,999") estava errada.
+
+**Medições** (as quatro coleções do RS sem o TARF, 3.538 documentos, num diretório de laboratório que reproduz a
+produção bit a bit; 292 perguntas reais do RS do log de consultas; 2.056 perguntas das FAQs do RS como consulta,
+acerto = a própria FAQ em 1º):
+
+| | INT8 5.17.2 | INT8 7.6.1 | FP32 7.6.1 (`BAAI/bge-m3`) |
+|---|---|---|---|
+| revetorizar os 3.538 | 5 min 38 s | — | 12 min 49 s (2,3×) |
+| pico de RSS do update | 2,9 GB | ~3,0 GB | 3,8 GB |
+| vetorizar uma pergunta (mediana) | 16 ms | — | 39 ms |
+| acerto em 1º / MRR@10 (FAQs do RS) | 90,6% / 0,9400 | 90,8% / 0,9408 | **91,2% / 0,9434** |
+| o mesmo texto no ONNX Runtime 1.24 × 1.31 | cosseno ~0,986 | | **cosseno 1,0000000** |
+| lote > 1 | vaza padding | | bit a bit igual ao um por um |
+
+As duas INT8 ficam à mesma distância do FP32 (cosseno ~0,975–0,98; o 1º resultado igual ao do FP32 em ~70% das
+perguntas): a 7.6.1 não piora a busca, só muda os números.
+
+**Decisão do usuário (07/11): o encoder passa a ser o BGE-M3 FP32** (`EmbeddingModel::BGEM3` do `TextEmbedding`;
+vetor denso por pooling CLS, normalizado), **e o `EMBED_MODEL_ID` passa de `bge-m3-q-int8` a `bge-m3-fp32`**. É troca
+de modelo, e o id existe para isso: o boot recusa pack do modelo antigo, e o cache de vetores do update se desliga
+sozinho. O `Some(1)` e o `FATIA` ficam (no FP32 o `FATIA` limita o `last_hidden_state` que o fastembed guarda até o
+pooling).
+
+**O que muda no procedimento abaixo:**
+
+- O gate de 0,995 contra o pack antigo não se aplica: FP32 e INT8 diferem por construção (cosseno ~0,98). A
+  validação foi o piloto acima; na migração, cada entidade tem de sair com o log "Cache de vetores DESLIGADO" e
+  "0 reaproveitados" em todas as coleções.
+- Não é preciso tirar o manifesto para desligar o cache (o id novo já desliga), mas o backup continua: mover
+  `data/<id>/packs` para `data/<id>/arquivo/packs-bge-m3-q-int8` antes do `build-packs.sh <id>`.
+- **O boot passa a ser tudo-ou-nada:** da hora do merge até a 27ª entidade, o servidor não pode ser reiniciado (o
+  binário novo recusa as que faltam; o antigo, as já feitas). A mistura de modelos, por isso, não acontece.
+- A checagem final é o próprio boot: as 27 com `embed_model_id = bge-m3-fp32`, num servidor de laboratório antes
+  do restart.
+- Tempo estimado da revetorização completa (37.941 vetores, pela taxa do piloto): ~2 h 20 min.
+- O modelo INT8 (`models/models--gpahal--bge-m3-onnx-int8`, 560 MB) fica até o fim da janela de rollback.
+
 ## Decisão: revetorizar tudo, sem versionar o encoder
 
 - **A identidade do manifesto não muda.** `EMBED_MODEL_ID`, `EMBED_DIM`, `STRATEGY_VERSION` e `PACK_FORMAT` ficam como estão, e nenhum campo novo entra no manifesto. A troca do encoder se resolve revetorizando todas as 27 entidades, não carimbando versão.
