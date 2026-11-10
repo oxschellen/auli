@@ -43,7 +43,8 @@ import { About } from "../about/About";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { hasCollection } from "../../shared/entities";
 import type { Collection } from "../../shared/entities";
-import { SIDEBAR_WIDTH } from "../../shared/layout";
+import { SIDEBAR_RAIL_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH } from "../../shared/layout";
+import { Tooltip } from "../chat/ui/tooltip";
 
 /** Grupo de navegação. `null` = topo (sem título). */
 type Grupo = null | "acervo" | "tributum" | "integracoes";
@@ -154,6 +155,7 @@ const NavItem = ({
   onSelect,
   onKeyDown,
   tabRef,
+  recolhida,
 }: {
   item: MenuItem;
   idPrefix: Lista;
@@ -161,47 +163,60 @@ const NavItem = ({
   onSelect: () => void;
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
   tabRef: (el: HTMLButtonElement | null) => void;
+  recolhida: boolean;
 }) => (
-  <chakra.button
-    ref={tabRef}
-    type="button"
-    role="tab"
-    id={`${idPrefix}-${item.id}`}
-    aria-selected={isActive}
-    aria-controls={`tabpanel-${item.id}`}
-    // `aria-disabled`, não `disabled`: o segundo tira o botão da árvore de acessibilidade e o
-    // leitor de tela nem anuncia que a seção existe — que é o que queremos comunicar.
-    aria-disabled={item.disabled || undefined}
-    // Roving tabindex: só a ativa está na ordem de Tab; as demais via setas.
-    tabIndex={isActive ? 0 : -1}
-    onClick={item.disabled ? undefined : onSelect}
-    onKeyDown={onKeyDown}
-    display="flex"
-    alignItems="center"
-    gap="10px"
-    w="100%"
-    px="12px"
-    // 6px dá 34px de item (era 8px → 38px): 10% mais baixo, para a lista caber melhor na altura
-    // de um notebook.
-    py="6px"
-    borderRadius="8px"
-    cursor={item.disabled ? "not-allowed" : "pointer"}
-    fontSize="0.9rem"
-    fontFamily="body"
-    fontWeight={isActive ? "600" : "500"}
-    textAlign="left"
-    // Ativa: fundo azul (`bg.navActive`) e texto em `accent.strong`, sem barra lateral. O
-    // `bg.subtle` de antes era quase da cor do `bg.app` da sidebar e o destaque sumia no claro.
-    color={item.disabled ? "fg.disabled" : isActive ? "accent.strong" : "fg.muted"}
-    bg={isActive ? "bg.navActive" : "transparent"}
-    _hover={item.disabled || isActive ? undefined : { bg: "bg.subtle", color: "fg" }}
-    transition="color 0.15s ease, background 0.15s ease"
-  >
-    <item.Icone size="17px" aria-hidden="true" />
-    <Box as="span" flex="1" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-      {item.label}
-    </Box>
-  </chakra.button>
+  // Recolhida, o rótulo sai da vista mas não do leitor de tela (`srOnly`: é ele que nomeia a aba
+  // e, por ela, o painel) e passa a aparecer como dica ao lado do ícone.
+  <Tooltip content={item.label} disabled={!recolhida} positioning={{ placement: "right" }}>
+    <chakra.button
+      ref={tabRef}
+      type="button"
+      role="tab"
+      id={`${idPrefix}-${item.id}`}
+      aria-selected={isActive}
+      aria-controls={`tabpanel-${item.id}`}
+      // `aria-disabled`, não `disabled`: o segundo tira o botão da árvore de acessibilidade e o
+      // leitor de tela nem anuncia que a seção existe — que é o que queremos comunicar.
+      aria-disabled={item.disabled || undefined}
+      // Roving tabindex: só a ativa está na ordem de Tab; as demais via setas.
+      tabIndex={isActive ? 0 : -1}
+      onClick={item.disabled ? undefined : onSelect}
+      onKeyDown={onKeyDown}
+      display="flex"
+      alignItems="center"
+      justifyContent={recolhida ? "center" : undefined}
+      gap="10px"
+      w="100%"
+      px={recolhida ? 0 : "12px"}
+      // 6px dá 34px de item (era 8px → 38px): 10% mais baixo, para a lista caber melhor na altura
+      // de um notebook.
+      py="6px"
+      borderRadius="8px"
+      cursor={item.disabled ? "not-allowed" : "pointer"}
+      fontSize="0.9rem"
+      fontFamily="body"
+      fontWeight={isActive ? "600" : "500"}
+      textAlign="left"
+      // Ativa: fundo azul (`bg.navActive`) e texto em `accent.strong`, sem barra lateral. O
+      // `bg.subtle` de antes era quase da cor do `bg.app` da sidebar e o destaque sumia no claro.
+      color={item.disabled ? "fg.disabled" : isActive ? "accent.strong" : "fg.muted"}
+      bg={isActive ? "bg.navActive" : "transparent"}
+      _hover={item.disabled || isActive ? undefined : { bg: "bg.subtle", color: "fg" }}
+      transition="color 0.15s ease, background 0.15s ease"
+    >
+      <item.Icone size="17px" aria-hidden="true" />
+      <Box
+        as="span"
+        flex="1"
+        overflow="hidden"
+        textOverflow="ellipsis"
+        whiteSpace="nowrap"
+        srOnly={recolhida || undefined}
+      >
+        {item.label}
+      </Box>
+    </chakra.button>
+  </Tooltip>
 );
 
 /**
@@ -221,6 +236,7 @@ const NavList = ({
   onSelect,
   onKeyDown,
   tabRefs,
+  recolhida = false,
 }: {
   menuItems: MenuItem[];
   selectedId: string;
@@ -228,6 +244,8 @@ const NavList = ({
   onSelect: (id: string) => void;
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
   tabRefs: TabRefs;
+  /** Faixa de ícones (só a sidebar; o drawer é sempre a lista cheia). */
+  recolhida?: boolean;
 }) => (
   <Flex
     direction="column"
@@ -242,20 +260,24 @@ const NavList = ({
       // o agrupamento visual mete um div e um parágrafo no meio. Marcá-los como presentacionais
       // devolve os botões à posse do tablist sem perder o texto do título, que segue exposto.
       <Box key={g.id ?? "topo"} role="none">
-        {g.titulo && (
-          <Text
-            role="none"
-            fontSize="0.68rem"
-            color="fg.muted"
-            letterSpacing="0.06em"
-            textTransform="uppercase"
-            px="12px"
-            mt="14px"
-            mb="4px"
-          >
-            {g.titulo}
-          </Text>
-        )}
+        {g.titulo &&
+          (recolhida ? (
+            // Na faixa de ícones o título não cabe; vira um traço, senão os grupos se fundem.
+            <Box role="none" h="1px" bg="border" mx="12px" my="10px" />
+          ) : (
+            <Text
+              role="none"
+              fontSize="0.68rem"
+              color="fg.muted"
+              letterSpacing="0.06em"
+              textTransform="uppercase"
+              px="12px"
+              mt="14px"
+              mb="4px"
+            >
+              {g.titulo}
+            </Text>
+          ))}
         {menuItems
           .filter((t) => t.grupo === g.id)
           .map((item) => (
@@ -267,6 +289,7 @@ const NavList = ({
               onSelect={() => onSelect(item.id)}
               onKeyDown={onKeyDown}
               tabRef={(el) => (tabRefs.current[item.id] = el)}
+              recolhida={recolhida}
             />
           ))}
       </Box>
@@ -274,8 +297,11 @@ const NavList = ({
   </Flex>
 );
 
-export const Home = () => {
+/** `sidebarAberta` vem do botão ao lado do logo (ou do Ctrl+B); `false` recolhe a sidebar numa
+ *  faixa de ícones. Só vale a partir de `md`. */
+export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
   const entity = useSelectedEntity();
+  const largura = sidebarAberta ? SIDEBAR_WIDTH : SIDEBAR_RAIL_WIDTH;
   // Todas as seções continuam VISÍVEIS — a que a entidade não tem fica inerte, não desaparece:
   // some com a seção e o usuário não sabe que ela existe; apagada, ele vê que existe e não vale
   // aqui. 23 das 27 entidades declaram só `servicos`, então isso desativa 4 das 7 na maioria.
@@ -347,14 +373,20 @@ export const Home = () => {
   const ativa = menuItems.find((t) => t.id === selectedId);
 
   return (
-    <Flex h="100%" minH={0} bg="bg.canvas">
+    <Flex
+      h="100%"
+      minH={0}
+      bg="bg.canvas"
+      css={{ [SIDEBAR_VAR]: largura }}
+    >
       {/* Sidebar (>= md). Scroll próprio se a janela for baixa; o conteúdo mantém o seu — ela não
           é ancestral do chat, então o "único container de scroll" do App.tsx segue valendo. */}
       <Box
+        id="sidebar-secoes"
         hideBelow="md"
         // Compartilhada com a barra de composição do chat, que é `fixed` e precisa saber onde a
-        // sidebar termina para não invadi-la. Ver `shared/layout.ts`.
-        w={SIDEBAR_WIDTH}
+        // sidebar termina para não invadi-la — pela variável acima. Ver `shared/layout.ts`.
+        w={largura}
         flexShrink={0}
         {...PISTA_DE_ROLAGEM}
         borderRight="1px solid var(--chakra-colors-border)"
@@ -368,6 +400,7 @@ export const Home = () => {
           onSelect={selectTab}
           onKeyDown={onTabKeyDown("tab")}
           tabRefs={tabRefs}
+          recolhida={!sidebarAberta}
         />
       </Box>
 
