@@ -37,7 +37,7 @@ export function tiposDisponiveis(entity: Entity): QuestionType[] {
   });
 }
 
-function isQuestionType(value: string | null): value is QuestionType {
+export function isQuestionType(value: string | null): value is QuestionType {
   return value === "1" || value === "2" || value === "3" || value === "4";
 }
 

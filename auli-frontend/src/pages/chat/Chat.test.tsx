@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, expect, it, vi } from "vitest";
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { renderWithProvider } from "../../test/render";
 import { EntityProvider } from "../../shared/EntityContext";
 import { getEntity } from "../../shared/entities";
@@ -146,7 +146,113 @@ describe("a conversa começa vazia", () => {
     const pergunta = "Qual o prazo para pagar o ICMS da empresa?";
     fireEvent.change(screen.getByLabelText("Sua pergunta"), { target: { value: pergunta } });
     fireEvent.click(screen.getByLabelText("Enviar pesquisa"));
-    expect(await screen.findByText(pergunta)).toBeInTheDocument();
+    // A pergunta aparece no balão e, com o painel "Minhas perguntas", também na lista dele.
+    const ocorrencias = await screen.findAllByText(pergunta);
+    expect(ocorrencias.filter((el) => !el.closest("aside"))).toHaveLength(1);
     expect(screen.queryByText("Olá! Como posso ajudar?")).toBeNull();
+  });
+});
+
+/**
+ * "Minhas perguntas" (D-HIST-*). Em jsdom o `hideBelow`/`hideFrom` não recorta nada, então o painel
+ * fixo e os dois botões renderizam juntos — o que se confere aqui é o comportamento, não o modo.
+ */
+describe("minhas perguntas", () => {
+  const CHAVE = "auli.historico.rs";
+  const pergunta = "Qual o prazo para pagar o ICMS da empresa?";
+  const enviar = (texto: string) => {
+    fireEvent.change(screen.getByLabelText("Sua pergunta"), { target: { value: texto } });
+    fireEvent.click(screen.getByLabelText("Enviar pesquisa"));
+  };
+  const painel = () => within(screen.getByRole("complementary", { name: "Minhas perguntas" }));
+
+  beforeEach(() => {
+    localStorage.removeItem(CHAVE);
+    localStorage.removeItem("auli.historicoPainel");
+    localStorage.setItem("auli.questionType", "1");
+  });
+
+  it("a pergunta enviada entra no painel e fica gravada no navegador, por entidade", async () => {
+    montar();
+    enviar(pergunta);
+    expect(await painel().findByText(pergunta)).toBeInTheDocument();
+    const gravado = JSON.parse(localStorage.getItem(CHAVE)!);
+    expect(gravado.itens).toHaveLength(1);
+    expect(gravado.itens[0]).toMatchObject({ pergunta, tipo: "1", favorita: false });
+  });
+
+  it("clicar numa pergunta do painel a devolve à caixa, sem enviar", () => {
+    localStorage.setItem(
+      CHAVE,
+      JSON.stringify({ v: 1, itens: [{ id: "a", pergunta, tipo: "1", em: 1, favorita: false }] }),
+    );
+    montar();
+    fireEvent.click(painel().getByText(pergunta));
+    expect(screen.getByLabelText("Sua pergunta")).toHaveValue(pergunta);
+    // Não enviou: a conversa segue vazia, com a apresentação do tipo.
+    expect(screen.getByRole("heading", { name: "Como posso ajudar?" })).toBeInTheDocument();
+  });
+
+  it("devolve a pergunta com o tipo de consulta em que ela foi feita", () => {
+    localStorage.setItem(
+      CHAVE,
+      JSON.stringify({ v: 1, itens: [{ id: "a", pergunta, tipo: "2", em: 1, favorita: false }] }),
+    );
+    montar();
+    expect(screen.getByRole("button", { name: /^Tipo de consulta: Serviços \+ FAQs/ })).toBeInTheDocument();
+    fireEvent.click(painel().getByText(pergunta));
+    expect(screen.getByRole("button", { name: /^Tipo de consulta: Pareceres/ })).toBeInTheDocument();
+  });
+
+  it("a estrela move a pergunta para Favoritas e a marca fica gravada", () => {
+    localStorage.setItem(
+      CHAVE,
+      JSON.stringify({ v: 1, itens: [{ id: "a", pergunta, tipo: "1", em: 1, favorita: false }] }),
+    );
+    montar();
+    expect(painel().queryByRole("region", { name: "Favoritas" })).toBeNull();
+    fireEvent.click(painel().getByRole("button", { name: "Marcar como favorita" }));
+    expect(painel().getByRole("region", { name: "Favoritas" })).toHaveTextContent(pergunta);
+    expect(JSON.parse(localStorage.getItem(CHAVE)!).itens[0].favorita).toBe(true);
+  });
+
+  it("limpar recentes preserva as favoritas, e remover tira uma pergunta só", () => {
+    localStorage.setItem(
+      CHAVE,
+      JSON.stringify({
+        v: 1,
+        itens: [
+          { id: "a", pergunta, tipo: "1", em: 2, favorita: false },
+          { id: "b", pergunta: "Como emitir a certidão de situação fiscal?", tipo: "1", em: 1, favorita: true },
+        ],
+      }),
+    );
+    montar();
+    fireEvent.click(painel().getByRole("button", { name: "Limpar recentes" }));
+    expect(painel().queryByText(pergunta)).toBeNull();
+    expect(painel().getByText("Como emitir a certidão de situação fiscal?")).toBeInTheDocument();
+    fireEvent.click(painel().getByRole("button", { name: "Remover esta pergunta" }));
+    expect(painel().getByText(/As perguntas que você enviar aparecem aqui/)).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem(CHAVE)!).itens).toEqual([]);
+  });
+
+  it("fechar o painel fica salvo, e o botão o traz de volta", () => {
+    montar();
+    fireEvent.click(painel().getByRole("button", { name: "Fechar minhas perguntas" }));
+    expect(screen.queryByRole("complementary", { name: "Minhas perguntas" })).toBeNull();
+    expect(localStorage.getItem("auli.historicoPainel")).toBe("recolhido");
+    fireEvent.click(screen.getByRole("button", { name: "Mostrar minhas perguntas" }));
+    expect(screen.getByRole("complementary", { name: "Minhas perguntas" })).toBeInTheDocument();
+  });
+
+  it("o drawer abre pelo botão, e Esc o fecha devolvendo o foco", () => {
+    localStorage.setItem("auli.historicoPainel", "recolhido");
+    montar();
+    const botao = screen.getByRole("button", { name: "Abrir minhas perguntas" });
+    fireEvent.click(botao);
+    expect(screen.getByRole("complementary", { name: "Minhas perguntas" })).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("complementary", { name: "Minhas perguntas" })).toBeNull();
+    expect(document.activeElement).toBe(botao);
   });
 });

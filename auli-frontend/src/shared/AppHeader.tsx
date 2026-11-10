@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { LuPanelLeft } from "react-icons/lu";
 import { ColorModeButton } from "../pages/chat/ui/color-mode.jsx";
 import { Tooltip } from "../pages/chat/ui/tooltip";
-import { SIDEBAR_WIDTH } from "./layout";
+import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "./layout";
 
 interface AppHeaderProps {
   /** A versão do app. Saiu da vista (D-UI-4): vira a dica do logo — era informação de quem
@@ -45,7 +45,7 @@ export const AppHeader = ({
     <Box
       as="header"
       w="100%"
-      h="52px"
+      h={HEADER_HEIGHT}
       flex="none"
       px={{ base: 2, md: 4 }}
       bg="bg.canvas"
