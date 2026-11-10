@@ -4,7 +4,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithProvider } from "../../test/render";
 import { EntityProvider } from "../../shared/EntityContext";
 import { Chat } from "./Chat";
-import { SIDEBAR_WIDTH } from "../../shared/layout";
+import { SIDEBAR_VAR, SIDEBAR_WIDTH } from "../../shared/layout";
 
 // A consulta nunca responde: os testes daqui olham o que acontece no ENVIO, não na chegada.
 vi.mock("axios", () => ({
@@ -94,7 +94,8 @@ describe("barra de composição não invade a sidebar", () => {
     montar();
     const media = regrasDaBarra().find((r) => r.startsWith("@media"));
     expect(media).toBeDefined();
-    expect(media).toContain(`left:${SIDEBAR_WIDTH}`);
+    // Pela variável que o `Home` zera com a sidebar oculta; a largura cheia é o reserva.
+    expect(media).toContain(`left:var(${SIDEBAR_VAR}, ${SIDEBAR_WIDTH})`);
   });
 });
 

@@ -13,7 +13,7 @@ import { SelectQuestionType } from "./SelectQuestionType";
 import { EstadoInicial } from "./EstadoInicial";
 import { TIPOS } from "./utils/tipos";
 import { useSelectedEntity } from "../../shared/EntityContext";
-import { SIDEBAR_WIDTH } from "../../shared/layout";
+import { SIDEBAR_VAR, SIDEBAR_WIDTH } from "../../shared/layout";
 // O `API_URL` saiu daqui para `utils/api.ts` quando o modal do log passou a precisar da MESMA
 // base — ver `logUrl`, que é derivada dele justamente para não divergir.
 import { API_URL } from "./utils/api";
@@ -109,7 +109,9 @@ export const Chat = () => {
 
           `right={0}` em vez de `width="100%"`: com o recuo à esquerda, 100% transbordaria à
           direita exatamente a largura da sidebar. Abaixo de `md` a sidebar vira drawer e não
-          ocupa espaço, daí o `base: 0`. */}
+          ocupa espaço, daí o `base: 0`. O recuo vem da variável que o `Home` define (a faixa de
+          ícones com a sidebar recolhida); `SIDEBAR_WIDTH` é o reserva para o Chat montado fora
+          dele. */}
       <Box
         ref={composerRef}
         position="fixed"
@@ -117,7 +119,7 @@ export const Chat = () => {
         // keyboard height is measured from visualViewport, so this needs no
         // device/UA check — desktops simply report 0.
         bottom={isKeyboardOpen ? `${keyboardHeight}px` : 0}
-        left={{ base: 0, md: SIDEBAR_WIDTH }}
+        left={{ base: 0, md: `var(${SIDEBAR_VAR}, ${SIDEBAR_WIDTH})` }}
         right={0}
         zIndex={20}
         // Mesma cor do fundo: a caixa é que se destaca (borda e sombra), não uma faixa branca de

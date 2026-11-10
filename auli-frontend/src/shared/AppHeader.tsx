@@ -1,6 +1,8 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, chakra } from "@chakra-ui/react";
 import { MdExpandMore } from "react-icons/md";
+import { LuPanelLeft } from "react-icons/lu";
 import { ColorModeButton } from "../pages/chat/ui/color-mode.jsx";
+import { Tooltip } from "../pages/chat/ui/tooltip";
 import type { Entity } from "./entities";
 
 interface AppHeaderProps {
@@ -11,6 +13,11 @@ interface AppHeaderProps {
   entity?: Entity | null;
   /** Return to the state-selection page. When omitted, no switcher is shown. */
   onChangeEntity?: () => void;
+  /** Se a sidebar de seções está expandida; `false` = recolhida em faixa de ícones (só conta
+   *  com `onToggleSidebar`). */
+  sidebarAberta?: boolean;
+  /** Expande/recolhe a sidebar. Sem ele (seleção de estado, que não tem sidebar), sem botão. */
+  onToggleSidebar?: () => void;
 }
 
 /**
@@ -18,7 +25,14 @@ interface AppHeaderProps {
  * com o logo centralizado e a versão embaixo. A marca e o estado vão para a esquerda, onde a
  * leitura começa; o estado vira um seletor que diz o que é ("SEFAZ-RS ▾"), não "RS trocar".
  */
-export const AppHeader = ({ subtitle, entity, onChangeEntity }: AppHeaderProps) => {
+export const AppHeader = ({
+  subtitle,
+  entity,
+  onChangeEntity,
+  sidebarAberta,
+  onToggleSidebar,
+}: AppHeaderProps) => {
+  const rotuloSidebar = sidebarAberta ? "Recolher a barra lateral" : "Expandir a barra lateral";
   return (
     <Box
       as="header"
@@ -35,6 +49,29 @@ export const AppHeader = ({ subtitle, entity, onChangeEntity }: AppHeaderProps) 
     >
       <Flex h="100%" alignItems="center" justifyContent="space-between" gap={3}>
         <Flex alignItems="center" gap={3} minW={0}>
+          {/* Só a partir de md: abaixo dele a sidebar já é o drawer, com o seu botão de menu. O
+              atalho (Ctrl+B) é ouvido no AppShell; aqui só é anunciado. */}
+          {onToggleSidebar && (
+            <Tooltip content={`${rotuloSidebar} (Ctrl+B)`}>
+              <chakra.button
+                type="button"
+                hideBelow="md"
+                aria-label={rotuloSidebar}
+                aria-expanded={sidebarAberta}
+                aria-controls="sidebar-secoes"
+                aria-keyshortcuts="Control+B"
+                onClick={onToggleSidebar}
+                display="flex"
+                alignItems="center"
+                p="6px"
+                borderRadius="8px"
+                color="fg.muted"
+                _hover={{ bg: "bg.overlay", color: "fg" }}
+              >
+                <LuPanelLeft size={20} aria-hidden="true" />
+              </chakra.button>
+            </Tooltip>
+          )}
           <Text
             as="span"
             fontSize="20px"
