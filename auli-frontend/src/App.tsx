@@ -10,6 +10,7 @@ import { StateSelection } from "./pages/stateselection/StateSelection";
 import { EntityProvider } from "./shared/EntityContext";
 import { AbasDeEstado } from "./shared/AbasDeEstado";
 import { idDaAba, idDoPainel, useAbas } from "./shared/abas";
+import { RespostaDaAbaProvider, useAbasRespondendo } from "./shared/RespostaDaAba";
 import { getEntity } from "./shared/entities";
 import { idDaSidebar } from "./shared/layout";
 
@@ -37,6 +38,7 @@ function lerSidebarAberta(): boolean {
  */
 const AppShell = () => {
   const { abas, abrirNova, ativar, fechar, escolher } = useAbas();
+  const { respondendo, marcarRespondendo } = useAbasRespondendo();
   const entity = getEntity(abas.lista.find((a) => a.chave === abas.ativa)?.entityId) ?? null;
   // Aqui e não no Home: o botão mora no cabeçalho, ao lado do logo, e a sidebar no Home. Uma
   // escolha só para todas as abas.
@@ -73,7 +75,13 @@ const AppShell = () => {
         onToggleSidebar={entity ? () => setSidebarAberta((v) => !v) : undefined}
         sidebarId={entity ? idDaSidebar(entity.id) : undefined}
       >
-        <AbasDeEstado abas={abas} onAtivar={ativar} onFechar={fechar} onNova={abrirNova} />
+        <AbasDeEstado
+          abas={abas}
+          respondendo={respondendo}
+          onAtivar={ativar}
+          onFechar={fechar}
+          onNova={abrirNova}
+        />
       </AppHeader>
       {/* Clip here; Home owns the single scroll container so the chat's
           scroll-to-bottom has exactly one scrollable ancestor. */}
@@ -91,7 +99,9 @@ const AppShell = () => {
             >
               {daAba ? (
                 <EntityProvider entity={daAba}>
-                  <Home sidebarAberta={sidebarAberta} />
+                  <RespostaDaAbaProvider chave={aba.chave} marcar={marcarRespondendo}>
+                    <Home sidebarAberta={sidebarAberta} />
+                  </RespostaDaAbaProvider>
                 </EntityProvider>
               ) : (
                 <StateSelection onSelect={(id) => escolher(aba.chave, id)} />

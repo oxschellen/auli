@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { KeyboardEvent } from "react";
-import { Box, Flex, chakra } from "@chakra-ui/react";
+import { Box, Flex, Spinner, chakra } from "@chakra-ui/react";
 import { MdAdd, MdClose } from "react-icons/md";
 import { Tooltip } from "../pages/chat/ui/tooltip";
 import { getEntity } from "./entities";
@@ -9,6 +9,9 @@ import type { Abas } from "./abas";
 
 interface AbasDeEstadoProps {
   abas: Abas;
+  /** As chaves das abas cuja conversa espera resposta: ganham um spinner, e "respondendo" no
+   *  nome acessível. */
+  respondendo: ReadonlySet<string>;
   onAtivar: (chave: string) => void;
   onFechar: (chave: string) => void;
   onNova: () => void;
@@ -26,7 +29,13 @@ interface AbasDeEstadoProps {
  * Abaixo de `sm` a aba mostra só a sigla: o nome não cabe ao lado do logo. Com muitas abas, a faixa
  * rola na horizontal e a ativa é trazida para a vista.
  */
-export const AbasDeEstado = ({ abas, onAtivar, onFechar, onNova }: AbasDeEstadoProps) => {
+export const AbasDeEstado = ({
+  abas,
+  respondendo,
+  onAtivar,
+  onFechar,
+  onNova,
+}: AbasDeEstadoProps) => {
   const refs = useRef<Record<string, HTMLButtonElement | null>>({});
   // Fechar pelo teclado tira de cena a aba que tinha o foco, e a nova ativa só existe depois do
   // render: o foco vai para ela no efeito.
@@ -75,6 +84,8 @@ export const AbasDeEstado = ({ abas, onAtivar, onFechar, onNova }: AbasDeEstadoP
         {abas.lista.map((aba) => {
           const entity = getEntity(aba.entityId);
           const ativa = aba.chave === abas.ativa;
+          const ocupada = respondendo.has(aba.chave);
+          const nome = entity?.name ?? "Novo estado";
           return (
             <chakra.button
               key={aba.chave}
@@ -85,7 +96,7 @@ export const AbasDeEstado = ({ abas, onAtivar, onFechar, onNova }: AbasDeEstadoP
               role="tab"
               // Rótulo explícito: o do conteúdo juntaria a sigla ao nome ("RSSEFAZ-RS") e, abaixo
               // de `sm`, com o nome escondido, seria só a sigla.
-              aria-label={entity?.name ?? "Novo estado"}
+              aria-label={ocupada ? `${nome}, respondendo` : nome}
               id={idDaAba(aba.chave)}
               aria-selected={ativa}
               aria-controls={idDoPainel(aba.chave)}
@@ -129,8 +140,9 @@ export const AbasDeEstado = ({ abas, onAtivar, onFechar, onNova }: AbasDeEstadoP
                 whiteSpace="nowrap"
                 display={{ base: entity ? "none" : "inline", sm: "inline" }}
               >
-                {entity?.name ?? "Novo estado"}
+                {nome}
               </Box>
+              {ocupada && <Spinner size="xs" color="fg.muted" aria-hidden="true" />}
               {!soOMapa && (
                 <chakra.span
                   aria-hidden="true"
