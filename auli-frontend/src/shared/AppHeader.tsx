@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { LuPanelLeft } from "react-icons/lu";
 import { ColorModeButton } from "../pages/chat/ui/color-mode.jsx";
 import { Tooltip } from "../pages/chat/ui/tooltip";
+import { SIDEBAR_WIDTH } from "./layout";
 
 interface AppHeaderProps {
   /** A versão do app. Saiu da vista (D-UI-4): vira a dica do logo — era informação de quem
@@ -33,6 +34,13 @@ export const AppHeader = ({
   children,
 }: AppHeaderProps) => {
   const rotuloSidebar = sidebarAberta ? "Recolher a barra lateral" : "Expandir a barra lateral";
+  // Com a sidebar aberta, as abas começam na linha dela: a marca ocupa a largura da sidebar menos
+  // o padding do cabeçalho e o gap até as abas. Recolhida (64px), a faixa é mais estreita que
+  // botão + logo, e as abas seguem o logo; sem sidebar (aba no mapa, ou abaixo de md), idem.
+  const inicioDasAbas =
+    onToggleSidebar && sidebarAberta
+      ? `calc(${SIDEBAR_WIDTH} - var(--chakra-spacing-4) - var(--chakra-spacing-3))`
+      : undefined;
   return (
     <Box
       as="header"
@@ -49,42 +57,44 @@ export const AppHeader = ({
     >
       <Flex h="100%" alignItems="center" justifyContent="space-between" gap={3}>
         <Flex alignItems="center" gap={3} flex="1" minW={0}>
-          {/* Só a partir de md: abaixo dele a sidebar já é o drawer, com o seu botão de menu. O
-              atalho (Ctrl+B) é ouvido no AppShell; aqui só é anunciado. */}
-          {onToggleSidebar && (
-            <Tooltip content={`${rotuloSidebar} (Ctrl+B)`}>
-              <chakra.button
-                type="button"
-                hideBelow="md"
-                aria-label={rotuloSidebar}
-                aria-expanded={sidebarAberta}
-                aria-controls={sidebarId}
-                aria-keyshortcuts="Control+B"
-                onClick={onToggleSidebar}
-                display="flex"
-                alignItems="center"
-                p="6px"
-                borderRadius="8px"
-                color="fg.muted"
-                _hover={{ bg: "bg.overlay", color: "fg" }}
-              >
-                <LuPanelLeft size={20} aria-hidden="true" />
-              </chakra.button>
-            </Tooltip>
-          )}
-          <Text
-            as="span"
-            fontSize="20px"
-            fontWeight="700"
-            letterSpacing="-0.02em"
-            color="fg"
-            pl={{ base: 1, md: 0 }}
-            flexShrink={0}
-            title={subtitle}
-            fontFamily='"SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
-          >
-            Auli
-          </Text>
+          <Flex alignItems="center" gap={3} flexShrink={0} minW={{ md: inicioDasAbas }}>
+            {/* Só a partir de md: abaixo dele a sidebar já é o drawer, com o seu botão de menu.
+                O atalho (Ctrl+B) é ouvido no AppShell; aqui só é anunciado. */}
+            {onToggleSidebar && (
+              <Tooltip content={`${rotuloSidebar} (Ctrl+B)`}>
+                <chakra.button
+                  type="button"
+                  hideBelow="md"
+                  aria-label={rotuloSidebar}
+                  aria-expanded={sidebarAberta}
+                  aria-controls={sidebarId}
+                  aria-keyshortcuts="Control+B"
+                  onClick={onToggleSidebar}
+                  display="flex"
+                  alignItems="center"
+                  p="6px"
+                  borderRadius="8px"
+                  color="fg.muted"
+                  _hover={{ bg: "bg.overlay", color: "fg" }}
+                >
+                  <LuPanelLeft size={20} aria-hidden="true" />
+                </chakra.button>
+              </Tooltip>
+            )}
+            <Text
+              as="span"
+              fontSize="20px"
+              fontWeight="700"
+              letterSpacing="-0.02em"
+              color="fg"
+              pl={{ base: 1, md: 0 }}
+              flexShrink={0}
+              title={subtitle}
+              fontFamily='"SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
+            >
+              Auli
+            </Text>
+          </Flex>
           {children}
         </Flex>
         <ColorModeButton color="fg" _hover={{ bg: "bg.overlay" }} borderRadius="8px" />
