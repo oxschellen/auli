@@ -111,7 +111,9 @@ another state, the user opens another tab; a state opens in one tab only.
 - [src/shared/AbasDeEstado.tsx](src/shared/AbasDeEstado.tsx) — the tab strip next
   to the logo, `[RS SEFAZ-RS ×] [SP SEFAZ-SP ×] [+]`: WAI-ARIA tabs (arrow keys,
   Delete closes), "+" opens a tab on the map. A tab whose chat is waiting for an
-  answer shows a spinner, reported through
+  answer shows a spinner, and one whose answer arrived while it was hidden shows a
+  dot until it is opened — both in the ×'s spot, so the tab keeps its width; with
+  a mouse, hovering brings the × back. Reported through
   [RespostaDaAba.tsx](src/shared/RespostaDaAba.tsx).
 - [src/shared/EntityContext.tsx](src/shared/EntityContext.tsx) — `EntityProvider`,
   one per tab, with that tab's entity; `useSelectedEntity()` reads it.
@@ -444,7 +446,7 @@ auli-frontend/
    │  ├─ entities.ts           # entity registry (states + their collections)
    │  ├─ abas.ts               # state tabs: open/close/pick, persisted (auli.abas)
    │  ├─ AbasDeEstado.tsx      # the state-tab strip in the header
-   │  ├─ RespostaDaAba.tsx     # a tab's chat reports when it waits (tab spinner)
+   │  ├─ RespostaDaAba.tsx     # a tab's chat reports when it waits (spinner, then dot)
    │  ├─ EntityContext.tsx     # per-tab state context
    │  ├─ CollectionEmpty.tsx   # "coming soon for this state" placeholder
    │  ├─ AsyncContent.tsx

@@ -7,11 +7,21 @@ import { getEntity } from "./entities";
 import { idDaAba, idDoPainel } from "./abas";
 import type { Abas } from "./abas";
 
+/** Estilo da aba com o mouse sobre ela — só onde há mouse. O `_groupHover` do Chakra não tem o
+ *  `@media (hover: hover)` que o `_hover` tem, e no celular o toque liga o `:hover` antes de decidir
+ *  o alvo: o × apareceria sob o dedo e o toque no sinal fecharia a aba. */
+const comMouseNaAba = (estilo: Record<string, string>) => ({
+  "@media (hover: hover)": { ".group:hover &": estilo },
+});
+
 interface AbasDeEstadoProps {
   abas: Abas;
   /** As chaves das abas cuja conversa espera resposta: ganham um spinner, e "respondendo" no
    *  nome acessível. */
   respondendo: ReadonlySet<string>;
+  /** As chaves das abas que receberam resposta escondidas: ganham um ponto até serem abertas, e
+   *  "resposta nova" no nome acessível. */
+  novas: ReadonlySet<string>;
   onAtivar: (chave: string) => void;
   onFechar: (chave: string) => void;
   onNova: () => void;
@@ -28,10 +38,15 @@ interface AbasDeEstadoProps {
  *
  * Abaixo de `sm` a aba mostra só a sigla: o nome não cabe ao lado do logo. Com muitas abas, a faixa
  * rola na horizontal e a ativa é trazida para a vista.
+ *
+ * O spinner (esperando resposta) e o ponto (resposta nova) ocupam o lugar do ×, como o ponto do
+ * arquivo não salvo no VS Code: a aba não muda de largura, e as da direita não andam. Com o mouse
+ * sobre a aba, o × volta. Sem mouse (celular), o toque no sinal troca de aba em vez de fechá-la.
  */
 export const AbasDeEstado = ({
   abas,
   respondendo,
+  novas,
   onAtivar,
   onFechar,
   onNova,
@@ -84,7 +99,11 @@ export const AbasDeEstado = ({
         {abas.lista.map((aba) => {
           const entity = getEntity(aba.entityId);
           const ativa = aba.chave === abas.ativa;
-          const ocupada = respondendo.has(aba.chave);
+          const sinal = respondendo.has(aba.chave)
+            ? "respondendo"
+            : novas.has(aba.chave) && !ativa
+              ? "resposta nova"
+              : null;
           const nome = entity?.name ?? "Novo estado";
           return (
             <chakra.button
@@ -96,7 +115,7 @@ export const AbasDeEstado = ({
               role="tab"
               // Rótulo explícito: o do conteúdo juntaria a sigla ao nome ("RSSEFAZ-RS") e, abaixo
               // de `sm`, com o nome escondido, seria só a sigla.
-              aria-label={ocupada ? `${nome}, respondendo` : nome}
+              aria-label={sinal ? `${nome}, ${sinal}` : nome}
               id={idDaAba(aba.chave)}
               aria-selected={ativa}
               aria-controls={idDoPainel(aba.chave)}
@@ -105,6 +124,7 @@ export const AbasDeEstado = ({
               tabIndex={ativa ? 0 : -1}
               onClick={() => onAtivar(aba.chave)}
               onKeyDown={aoTeclar(aba.chave)}
+              className="group"
               display="flex"
               alignItems="center"
               gap={1.5}
@@ -142,7 +162,6 @@ export const AbasDeEstado = ({
               >
                 {nome}
               </Box>
-              {ocupada && <Spinner size="xs" color="fg.muted" aria-hidden="true" />}
               {!soOMapa && (
                 <chakra.span
                   aria-hidden="true"
@@ -152,12 +171,28 @@ export const AbasDeEstado = ({
                     onFechar(aba.chave);
                   }}
                   display="flex"
-                  p="2px"
+                  alignItems="center"
+                  justifyContent="center"
+                  boxSize="18px"
                   borderRadius="4px"
                   color="fg.muted"
                   _hover={{ bg: "bg.muted", color: "fg" }}
+                  // Com o sinal no lugar do ×, só fecha com o × à vista (mouse sobre a aba).
+                  pointerEvents={sinal ? "none" : undefined}
+                  css={sinal ? comMouseNaAba({ pointerEvents: "auto" }) : undefined}
                 >
-                  <MdClose size={14} />
+                  {sinal && (
+                    <Box display="flex" css={comMouseNaAba({ display: "none" })}>
+                      {sinal === "respondendo" ? (
+                        <Spinner size="xs" color="fg.muted" />
+                      ) : (
+                        <Box boxSize="8px" borderRadius="full" bg="accent" />
+                      )}
+                    </Box>
+                  )}
+                  <Box display={sinal ? "none" : "flex"} css={comMouseNaAba({ display: "flex" })}>
+                    <MdClose size={14} />
+                  </Box>
                 </chakra.span>
               )}
             </chakra.button>
