@@ -38,7 +38,7 @@ function lerSidebarAberta(): boolean {
  */
 const AppShell = () => {
   const { abas, abrirNova, ativar, fechar, escolher } = useAbas();
-  const { respondendo, marcarRespondendo } = useAbasRespondendo();
+  const { respondendo, novas, marcarRespondendo } = useAbasRespondendo(abas.ativa);
   const entity = getEntity(abas.lista.find((a) => a.chave === abas.ativa)?.entityId) ?? null;
   // Aqui e não no Home: o botão mora no cabeçalho, ao lado do logo, e a sidebar no Home. Uma
   // escolha só para todas as abas.
@@ -78,6 +78,7 @@ const AppShell = () => {
         <AbasDeEstado
           abas={abas}
           respondendo={respondendo}
+          novas={novas}
           onAtivar={ativar}
           onFechar={fechar}
           onNova={abrirNova}
@@ -99,7 +100,11 @@ const AppShell = () => {
             >
               {daAba ? (
                 <EntityProvider entity={daAba}>
-                  <RespostaDaAbaProvider chave={aba.chave} marcar={marcarRespondendo}>
+                  <RespostaDaAbaProvider
+                    chave={aba.chave}
+                    aVista={aba.chave === abas.ativa}
+                    marcar={marcarRespondendo}
+                  >
                     <Home sidebarAberta={sidebarAberta} />
                   </RespostaDaAbaProvider>
                 </EntityProvider>

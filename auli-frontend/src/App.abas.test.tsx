@@ -172,23 +172,48 @@ describe("abas de estado", () => {
   it("a aba que espera resposta tem spinner, escondida também; a resposta chega nela", async () => {
     let responder!: (r: unknown) => void;
     vi.mocked(axios.post).mockImplementationOnce(() => new Promise((r) => (responder = r)));
-    localStorage.setItem("auli.abas", JSON.stringify({ abas: ["rs", "sp"], ativa: "rs" }));
+    localStorage.setItem("auli.abas", JSON.stringify({ abas: ["rs", "sp", "mg"], ativa: "rs" }));
     render(<App />);
     const spinner = (nome: string) => aba(nome).querySelector(".chakra-spinner");
 
     fireEvent.change(caixa("SEFAZ-RS"), { target: { value: "Qual o prazo do ITCD?" } });
     fireEvent.click(within(painel("SEFAZ-RS")).getByRole("button", { name: "Enviar pesquisa" }));
-    expect(nomes()).toEqual(["SEFAZ-RS, respondendo", "SEFAZ-SP"]);
+    expect(nomes()).toEqual(["SEFAZ-RS, respondendo", "SEFAZ-SP", "SEF-MG"]);
     expect(spinner("SEFAZ-RS, respondendo")).not.toBeNull();
     expect(spinner("SEFAZ-SP")).toBeNull();
 
     fireEvent.click(aba("SEFAZ-SP"));
-    expect(nomes()).toEqual(["SEFAZ-RS, respondendo", "SEFAZ-SP"]); // escondida, segue esperando
+    expect(nomes()).toEqual(["SEFAZ-RS, respondendo", "SEFAZ-SP", "SEF-MG"]); // escondida, segue
 
+    // Chegou com o RS escondido: o spinner dá lugar ao ponto de resposta nova.
+    await act(async () => responder({ data: { answer: "Resposta do RS" } }));
+    expect(nomes()).toEqual(["SEFAZ-RS, resposta nova", "SEFAZ-SP", "SEF-MG"]);
+    expect(spinner("SEFAZ-RS, resposta nova")).toBeNull();
+
+    // Ir a outra aba não o tira; abrir o RS, sim.
+    fireEvent.click(aba("SEF-MG"));
+    expect(nomes()).toEqual(["SEFAZ-RS, resposta nova", "SEFAZ-SP", "SEF-MG"]);
+    fireEvent.click(aba("SEFAZ-RS, resposta nova"));
+    expect(nomes()).toEqual(["SEFAZ-RS", "SEFAZ-SP", "SEF-MG"]);
+    expect(within(painel("SEFAZ-RS")).getByText("Resposta do RS")).toBeInTheDocument();
+
+    // E sair dele de novo não o traz de volta.
+    fireEvent.click(aba("SEFAZ-SP"));
+    expect(nomes()).toEqual(["SEFAZ-RS", "SEFAZ-SP", "SEF-MG"]);
+  });
+
+  it("a resposta que chega com a aba à vista não ganha ponto", async () => {
+    let responder!: (r: unknown) => void;
+    vi.mocked(axios.post).mockImplementationOnce(() => new Promise((r) => (responder = r)));
+    localStorage.setItem("auli.abas", JSON.stringify({ abas: ["rs", "sp"], ativa: "rs" }));
+    render(<App />);
+
+    fireEvent.change(caixa("SEFAZ-RS"), { target: { value: "Qual o prazo do ITCD?" } });
+    fireEvent.click(within(painel("SEFAZ-RS")).getByRole("button", { name: "Enviar pesquisa" }));
     await act(async () => responder({ data: { answer: "Resposta do RS" } }));
     expect(nomes()).toEqual(["SEFAZ-RS", "SEFAZ-SP"]);
-    expect(spinner("SEFAZ-RS")).toBeNull();
-    fireEvent.click(aba("SEFAZ-RS"));
-    expect(within(painel("SEFAZ-RS")).getByText("Resposta do RS")).toBeInTheDocument();
+
+    fireEvent.click(aba("SEFAZ-SP"));
+    expect(nomes()).toEqual(["SEFAZ-RS", "SEFAZ-SP"]);
   });
 });
