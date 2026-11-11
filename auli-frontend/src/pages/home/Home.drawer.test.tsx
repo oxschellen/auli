@@ -1,18 +1,19 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { fireEvent, screen } from "@testing-library/react";
 import { renderWithProvider } from "../../test/render";
 import { EntityProvider } from "../../shared/EntityContext";
+import { getEntity } from "../../shared/entities";
 import { Home } from "./Home";
 
-/** O Home exige uma entidade escolhida; o provider a lê do localStorage no primeiro render. */
-beforeEach(() => localStorage.setItem("auli.entity", "rs"));
+/** O Home exige uma entidade: a da aba de estado em que ele estaria. */
+const RS = getEntity("rs")!;
 
 const abrirDrawer = () => fireEvent.click(screen.getByLabelText("Abrir menu de seções"));
 
 const montar = () =>
   renderWithProvider(
-    <EntityProvider>
+    <EntityProvider entity={RS}>
       <Home />
     </EntityProvider>,
   );

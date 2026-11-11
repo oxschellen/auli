@@ -1,5 +1,6 @@
 import { Flex, Textarea, IconButton, Box } from "@chakra-ui/react";
 import { MdArrowUpward } from "react-icons/md";
+import { useId } from "react";
 import type { ChangeEvent, ReactNode, RefObject } from "react";
 import { isPromptValid, charsRemaining } from "./utils/prompt";
 
@@ -46,6 +47,8 @@ export const Input = ({
   const valid = isPromptValid(prompt);
   const remaining = charsRemaining(prompt);
   const curto = prompt.trim().length > 0 && !valid;
+  // Era o fixo `prompt-id`; com uma caixa por aba de estado aberta, sairia repetido.
+  const id = useId();
   return (
     <Box
       role="group"
@@ -69,7 +72,7 @@ export const Input = ({
 
         <Textarea
           ref={textareaRef}
-          id="prompt-id"
+          id={id}
           name="prompt"
           aria-label="Sua pergunta"
           rows={1}

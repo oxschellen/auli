@@ -7,7 +7,11 @@ import { ErrorBoundary } from "./shared/ErrorBoundary";
 import { AppHeader } from "./shared/AppHeader";
 import { Home } from "./pages/home/Home";
 import { StateSelection } from "./pages/stateselection/StateSelection";
-import { EntityProvider, useEntity } from "./shared/EntityContext";
+import { EntityProvider } from "./shared/EntityContext";
+import { AbasDeEstado } from "./shared/AbasDeEstado";
+import { idDaAba, idDoPainel, useAbas } from "./shared/abas";
+import { getEntity } from "./shared/entities";
+import { idDaSidebar } from "./shared/layout";
 
 // Sourced from package.json at build time (see vite.config.js `define`).
 const APP_VERSION = __APP_VERSION__;
@@ -23,10 +27,19 @@ function lerSidebarAberta(): boolean {
   }
 }
 
-/** App shell: the state-selection landing page until an entity is chosen, then the tabbed app. */
+/**
+ * App shell: o cabeçalho com as abas de estado e, embaixo, um painel por aba — o mapa enquanto a
+ * aba não tem estado, depois o `Home` dele.
+ *
+ * As abas inativas ficam MONTADAS e escondidas (D-ABAS-5), como as seções dentro do `Home`: é o
+ * que deixa cada uma com a sua conversa, a sua seção, a sua rolagem e até uma pergunta em
+ * andamento. Cada aba tem o seu `EntityProvider`, então o que está dentro dela lê o estado dela.
+ */
 const AppShell = () => {
-  const { entity, clearEntity } = useEntity();
-  // Aqui e não no Home: o botão mora no cabeçalho, ao lado do logo, e a sidebar no Home.
+  const { abas, abrirNova, ativar, fechar, escolher } = useAbas();
+  const entity = getEntity(abas.lista.find((a) => a.chave === abas.ativa)?.entityId) ?? null;
+  // Aqui e não no Home: o botão mora no cabeçalho, ao lado do logo, e a sidebar no Home. Uma
+  // escolha só para todas as abas.
   const [sidebarAberta, setSidebarAberta] = useState(lerSidebarAberta);
 
   useEffect(() => {
@@ -37,11 +50,12 @@ const AppShell = () => {
     }
   }, [sidebarAberta]);
 
-  // Ctrl+B (⌘B no Mac), o atalho de sidebar dos editores. Só com estado escolhido: na seleção
-  // de estado não há sidebar, e o Ctrl+B fica com o navegador. Com Shift é outra coisa (o
+  // Ctrl+B (⌘B no Mac), o atalho de sidebar dos editores. Só com estado escolhido na aba ativa:
+  // no mapa não há sidebar, e o Ctrl+B fica com o navegador. Com Shift é outra coisa (o
   // Ctrl+Shift+B do Chrome mostra a barra de favoritos), então fica de fora.
+  const temSidebar = entity !== null;
   useEffect(() => {
-    if (!entity) return;
+    if (!temSidebar) return;
     const aoTeclar = (e: KeyboardEvent) => {
       if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== "b") return;
       e.preventDefault();
@@ -49,21 +63,42 @@ const AppShell = () => {
     };
     document.addEventListener("keydown", aoTeclar);
     return () => document.removeEventListener("keydown", aoTeclar);
-  }, [entity]);
+  }, [temSidebar]);
 
   return (
     <Flex direction="column" h="100dvh" w="100%">
       <AppHeader
         subtitle={APP_VERSION}
-        entity={entity}
-        onChangeEntity={entity ? clearEntity : undefined}
         sidebarAberta={sidebarAberta}
         onToggleSidebar={entity ? () => setSidebarAberta((v) => !v) : undefined}
-      />
+        sidebarId={entity ? idDaSidebar(entity.id) : undefined}
+      >
+        <AbasDeEstado abas={abas} onAtivar={ativar} onFechar={fechar} onNova={abrirNova} />
+      </AppHeader>
       {/* Clip here; Home owns the single scroll container so the chat's
           scroll-to-bottom has exactly one scrollable ancestor. */}
       <Box flex="1" minH={0} overflow="hidden">
-        {entity ? <Home sidebarAberta={sidebarAberta} /> : <StateSelection />}
+        {abas.lista.map((aba) => {
+          const daAba = getEntity(aba.entityId);
+          return (
+            <Box
+              key={aba.chave}
+              role="tabpanel"
+              id={idDoPainel(aba.chave)}
+              aria-labelledby={idDaAba(aba.chave)}
+              h="100%"
+              hidden={aba.chave !== abas.ativa}
+            >
+              {daAba ? (
+                <EntityProvider entity={daAba}>
+                  <Home sidebarAberta={sidebarAberta} />
+                </EntityProvider>
+              ) : (
+                <StateSelection onSelect={(id) => escolher(aba.chave, id)} />
+              )}
+            </Box>
+          );
+        })}
       </Box>
     </Flex>
   );
@@ -77,12 +112,10 @@ const App = () => {
       <Toaster />
       <ErrorBoundary>
         <LazyMotion features={domAnimation}>
-          {/* Single-page app: one shared header above the tabbed Home. Sections
-              are tabs (see Home), not routes, so there's no router. The active
-              entity (state) scopes all data + chat; chosen on the landing page. */}
-          <EntityProvider>
-            <AppShell />
-          </EntityProvider>
+          {/* Single-page app: one shared header above the state tabs, each with
+              its own Home. Sections are tabs inside Home, not routes, so there's
+              no router. Each tab's entity (state) scopes its data + chat. */}
+          <AppShell />
         </LazyMotion>
       </ErrorBoundary>
     </Provider>

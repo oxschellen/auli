@@ -20,3 +20,7 @@ export const SIDEBAR_RAIL_WIDTH = "64px";
  *  `SIDEBAR_RAIL_WIDTH` recolhida. O `Home` a define na sua raiz e a barra fixa do chat, que é
  *  descendente dela no DOM, a herda — `fixed` muda o bloco de contenção, não a herança. */
 export const SIDEBAR_VAR = "--auli-sidebar-w";
+
+/** Id da sidebar da aba de estado `entityId`: o `Home` o põe nela e o botão de recolher, no
+ *  cabeçalho, aponta para ele (`aria-controls`). Com o estado no id, duas abas não colidem. */
+export const idDaSidebar = (entityId: string) => `${entityId}-sidebar-secoes`;

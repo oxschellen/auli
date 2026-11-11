@@ -1,5 +1,4 @@
 import { Flex, Stack, Text } from "@chakra-ui/react";
-import { useEntity } from "../../shared/EntityContext";
 import { BrazilMap } from "./BrazilMap";
 
 /**
@@ -8,10 +7,11 @@ import { BrazilMap } from "./BrazilMap";
  * toggled mid-session.
  *
  * Selection is via the interactive Brazil map (available states in accent, others greyed).
+ *
+ * Mora dentro de uma aba de estado ainda sem estado (a aba nova, do "+"); `onSelect` dá o estado
+ * a ela.
  */
-export function StateSelection() {
-  const { selectEntity } = useEntity();
-
+export function StateSelection({ onSelect }: { onSelect: (entityId: string) => void }) {
   return (
     <Flex direction="column" h="100%" w="100%" bg="bg.canvas" overflowY="auto">
       <Flex direction="column" align="center" maxW="720px" mx="auto" w="100%" px={5} py={10} flex={1}>
@@ -27,7 +27,7 @@ export function StateSelection() {
 
         {/* Interactive Brazil map */}
         <Flex justify="center" w="100%" maxW="506px">
-          <BrazilMap onSelect={selectEntity} />
+          <BrazilMap onSelect={onSelect} />
         </Flex>
       </Flex>
     </Flex>

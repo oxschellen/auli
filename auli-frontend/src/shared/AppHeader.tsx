@@ -1,36 +1,36 @@
-import { Box, Button, Flex, Text, chakra } from "@chakra-ui/react";
-import { MdExpandMore } from "react-icons/md";
+import { Box, Flex, Text, chakra } from "@chakra-ui/react";
+import type { ReactNode } from "react";
 import { LuPanelLeft } from "react-icons/lu";
 import { ColorModeButton } from "../pages/chat/ui/color-mode.jsx";
 import { Tooltip } from "../pages/chat/ui/tooltip";
-import type { Entity } from "./entities";
 
 interface AppHeaderProps {
   /** A versão do app. Saiu da vista (D-UI-4): vira a dica do logo — era informação de quem
    *  desenvolve ocupando a área mais nobre da tela. */
   subtitle?: string;
-  /** The active entity (state), if one is selected. */
-  entity?: Entity | null;
-  /** Return to the state-selection page. When omitted, no switcher is shown. */
-  onChangeEntity?: () => void;
   /** Se a sidebar de seções está expandida; `false` = recolhida em faixa de ícones (só conta
    *  com `onToggleSidebar`). */
   sidebarAberta?: boolean;
-  /** Expande/recolhe a sidebar. Sem ele (seleção de estado, que não tem sidebar), sem botão. */
+  /** Expande/recolhe a sidebar. Sem ele (aba no mapa, que não tem sidebar), sem botão. */
   onToggleSidebar?: () => void;
+  /** Id da sidebar da aba ativa, para o `aria-controls` do botão. */
+  sidebarId?: string;
+  /** A faixa de abas de estado, logo depois do logo. */
+  children?: ReactNode;
 }
 
 /**
  * Cabeçalho compacto (D-UI-4): 52px na cor de superfície, com borda — era uma faixa preta de 77px
- * com o logo centralizado e a versão embaixo. A marca e o estado vão para a esquerda, onde a
- * leitura começa; o estado vira um seletor que diz o que é ("SEFAZ-RS ▾"), não "RS trocar".
+ * com o logo centralizado e a versão embaixo. A marca e os estados vão para a esquerda, onde a
+ * leitura começa. O seletor "SEFAZ-RS ▾" deu lugar às abas de estado (`children`), uma por estado
+ * aberto.
  */
 export const AppHeader = ({
   subtitle,
-  entity,
-  onChangeEntity,
   sidebarAberta,
   onToggleSidebar,
+  sidebarId,
+  children,
 }: AppHeaderProps) => {
   const rotuloSidebar = sidebarAberta ? "Recolher a barra lateral" : "Expandir a barra lateral";
   return (
@@ -48,7 +48,7 @@ export const AppHeader = ({
       zIndex={100}
     >
       <Flex h="100%" alignItems="center" justifyContent="space-between" gap={3}>
-        <Flex alignItems="center" gap={3} minW={0}>
+        <Flex alignItems="center" gap={3} flex="1" minW={0}>
           {/* Só a partir de md: abaixo dele a sidebar já é o drawer, com o seu botão de menu. O
               atalho (Ctrl+B) é ouvido no AppShell; aqui só é anunciado. */}
           {onToggleSidebar && (
@@ -58,7 +58,7 @@ export const AppHeader = ({
                 hideBelow="md"
                 aria-label={rotuloSidebar}
                 aria-expanded={sidebarAberta}
-                aria-controls="sidebar-secoes"
+                aria-controls={sidebarId}
                 aria-keyshortcuts="Control+B"
                 onClick={onToggleSidebar}
                 display="flex"
@@ -79,36 +79,13 @@ export const AppHeader = ({
             letterSpacing="-0.02em"
             color="fg"
             pl={{ base: 1, md: 0 }}
+            flexShrink={0}
             title={subtitle}
             fontFamily='"SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
           >
             Auli
           </Text>
-          {entity && onChangeEntity && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={onChangeEntity}
-              aria-label={`Estado atual: ${entity.name}. Trocar de estado.`}
-              title="Trocar de estado"
-              h="32px"
-              px={2}
-              gap={1.5}
-              borderRadius="8px"
-              borderColor="border"
-              color="fg"
-              fontWeight="500"
-              _hover={{ bg: "bg.overlay" }}
-            >
-              <Box as="span" fontWeight="700" fontSize="11px" bg="accent" color="accent.fg" borderRadius="5px" px={1.5} lineHeight="20px">
-                {entity.uf}
-              </Box>
-              <Text as="span" fontSize="14px" display={{ base: "none", sm: "inline" }}>
-                {entity.name}
-              </Text>
-              <MdExpandMore size={16} color="var(--chakra-colors-fg-muted)" />
-            </Button>
-          )}
+          {children}
         </Flex>
         <ColorModeButton color="fg" _hover={{ bg: "bg.overlay" }} borderRadius="8px" />
       </Flex>
