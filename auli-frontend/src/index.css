@@ -2,12 +2,9 @@
    Auli UI - Global Styles
    ======================================== */
 
-/* CSS Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* No CSS reset here: Chakra's preflight already does `* { margin: 0; padding: 0;
+   box-sizing: border-box }` in `@layer reset`. A copy outside any layer beat the
+   padding of every Chakra recipe (`@layer recipes`): tooltips, buttons, inputs. */
 
 /* Color, spacing, radius, and shadow now live in the Chakra token system
    (src/theme/system.js); components read var(--chakra-colors-*). The only
