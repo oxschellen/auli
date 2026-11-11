@@ -40,7 +40,7 @@ O conector expõe hoje o acervo de pareceres e respostas a consultas tributária
 
 ## Privacidade
 
-**A Auli não sabe quem você é.** Não há cadastro, login nem cookie de rastreamento, e o seu endereço IP não é gravado — nada liga uma consulta a uma pessoa, a um local ou a um histórico individual. O navegador guarda apenas a sua preferência de estado, que nunca é enviada ao servidor.
+**A Auli não sabe quem você é.** Não há cadastro, login nem cookie de rastreamento, e o seu endereço IP não é gravado — nada liga uma consulta a uma pessoa, a um local ou a um histórico individual. O navegador guarda as suas preferências (os estados abertos, o tipo de consulta e a posição dos painéis) e a lista **Minhas perguntas** do chat: as perguntas que você enviou e as que marcou como favoritas. Essa lista fica só neste navegador — o servidor recebe cada pergunta para respondê-la, como sempre, mas não recebe a lista nem sabe de quem ela é. Você pode apagar cada pergunta, ou todas as recentes, no próprio painel. Em computador compartilhado, quem usar o mesmo navegador verá essas perguntas.
 
 **O que fica registrado:** a pergunta, o horário e os documentos consultados. Serve para auditar a qualidade das respostas e o mascaramento automático descrito abaixo. Como a pergunta é guardada exatamente como você a escreveu, **dados pessoais que você mesmo digitar ficam gravados** — se incluir um CPF ou CNPJ, ele fica no registro. Evite informar dados que não sejam necessários à dúvida.
 

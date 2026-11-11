@@ -83,9 +83,11 @@ npm run test:watch# Vitest in watch mode
     landing page until an entity is chosen, then [`Home`](src/pages/home/Home.tsx).
 
 There is **no router** — the app is a single page. Sections are tabs inside
-`Home`, not routes, so all state lives in memory and the URL stays at `/`. The
-selected entity is the one piece of state that persists (to `localStorage`), so a
-reload returns straight to the chosen state's app.
+`Home`, not routes, so the URL stays at `/`. Conversations, searches and scroll
+live in memory only. What persists, in `localStorage` only: the open state tabs
+(`auli.abas`), the question type, whether the sidebar and the "Minhas perguntas"
+panel are open, and each state's "Minhas perguntas" list (`auli.historico.<id>`).
+A reload returns to the same tabs.
 
 ### Multi-tenant state selection
 

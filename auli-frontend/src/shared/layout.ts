@@ -24,3 +24,11 @@ export const SIDEBAR_VAR = "--auli-sidebar-w";
 /** Id da sidebar da aba de estado `entityId`: o `Home` o põe nela e o botão de recolher, no
  *  cabeçalho, aponta para ele (`aria-controls`). Com o estado no id, duas abas não colidem. */
 export const idDaSidebar = (entityId: string) => `${entityId}-sidebar-secoes`;
+
+/** Altura do cabeçalho. O painel "Minhas perguntas" gruda no topo da área que rola e precisa da
+ *  altura que sobra abaixo dele; o `AppHeader` lê daqui para os dois não divergirem. */
+export const HEADER_HEIGHT = "52px";
+
+/** Largura do painel "Minhas perguntas", à direita do chat (a partir do breakpoint `xl`; abaixo
+ *  dele vira drawer). A barra de composição, que é `fixed`, recua esta largura à direita. */
+export const HISTORICO_WIDTH = "288px";
