@@ -43,7 +43,7 @@ import { About } from "../about/About";
 import { useSelectedEntity } from "../../shared/EntityContext";
 import { hasCollection } from "../../shared/entities";
 import type { Collection } from "../../shared/entities";
-import { SIDEBAR_RAIL_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH } from "../../shared/layout";
+import { SIDEBAR_RAIL_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH, idDaSidebar } from "../../shared/layout";
 import { Tooltip } from "../chat/ui/tooltip";
 
 /** Grupo de navegação. `null` = topo (sem título). */
@@ -150,6 +150,7 @@ type Lista = "tab" | "tabm";
 /** Um item da sidebar/drawer. Botão largura total, ícone + rótulo, estados via cores do tema. */
 const NavItem = ({
   item,
+  escopo,
   idPrefix,
   isActive,
   onSelect,
@@ -158,6 +159,7 @@ const NavItem = ({
   recolhida,
 }: {
   item: MenuItem;
+  escopo: string;
   idPrefix: Lista;
   isActive: boolean;
   onSelect: () => void;
@@ -172,9 +174,9 @@ const NavItem = ({
       ref={tabRef}
       type="button"
       role="tab"
-      id={`${idPrefix}-${item.id}`}
+      id={`${escopo}-${idPrefix}-${item.id}`}
       aria-selected={isActive}
-      aria-controls={`tabpanel-${item.id}`}
+      aria-controls={`${escopo}-tabpanel-${item.id}`}
       // `aria-disabled`, não `disabled`: o segundo tira o botão da árvore de acessibilidade e o
       // leitor de tela nem anuncia que a seção existe — que é o que queremos comunicar.
       aria-disabled={item.disabled || undefined}
@@ -228,10 +230,15 @@ const NavItem = ({
  * (`tab-…`), que existe sempre — o accname lê elemento referenciado mesmo com `display:none`.
  * Pelo mesmo motivo cada lista tem seu próprio mapa de refs: um só faria o `.focus()` das setas
  * mirar a lista invisível, conforme a ordem em que os callbacks de ref rodam.
+ *
+ * `escopo` (o id da entidade) prefixa todos os ids pelo mesmo motivo, um nível acima: cada aba de
+ * estado tem o seu `Home` montado, e duas abas abertas teriam dois `tab-chat` (`rs-tab-chat` e
+ * `sp-tab-chat` não colidem — um estado só abre numa aba).
  */
 const NavList = ({
   menuItems,
   selectedId,
+  escopo,
   idPrefix,
   onSelect,
   onKeyDown,
@@ -240,6 +247,7 @@ const NavList = ({
 }: {
   menuItems: MenuItem[];
   selectedId: string;
+  escopo: string;
   idPrefix: Lista;
   onSelect: (id: string) => void;
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
@@ -284,6 +292,7 @@ const NavList = ({
             <NavItem
               key={item.id}
               item={item}
+              escopo={escopo}
               idPrefix={idPrefix}
               isActive={item.id === selectedId}
               onSelect={() => onSelect(item.id)}
@@ -382,7 +391,7 @@ export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
       {/* Sidebar (>= md). Scroll próprio se a janela for baixa; o conteúdo mantém o seu — ela não
           é ancestral do chat, então o "único container de scroll" do App.tsx segue valendo. */}
       <Box
-        id="sidebar-secoes"
+        id={idDaSidebar(entity.id)}
         hideBelow="md"
         // Compartilhada com a barra de composição do chat, que é `fixed` e precisa saber onde a
         // sidebar termina para não invadi-la — pela variável acima. Ver `shared/layout.ts`.
@@ -396,6 +405,7 @@ export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
         <NavList
           menuItems={menuItems}
           selectedId={selectedId}
+          escopo={entity.id}
           idPrefix="tab"
           onSelect={selectTab}
           onKeyDown={onTabKeyDown("tab")}
@@ -461,6 +471,7 @@ export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
               <NavList
                 menuItems={menuItems}
                 selectedId={selectedId}
+                escopo={entity.id}
                 idPrefix="tabm"
                 onSelect={selectTab}
                 onKeyDown={onTabKeyDown("tabm")}
@@ -479,8 +490,8 @@ export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
                 direction="column"
                 minH="100%"
                 role="tabpanel"
-                id={`tabpanel-${item.id}`}
-                aria-labelledby={`tab-${item.id}`}
+                id={`${entity.id}-tabpanel-${item.id}`}
+                aria-labelledby={`${entity.id}-tab-${item.id}`}
                 hidden={selectedId !== item.id}
                 display={selectedId === item.id ? "flex" : "none"}
               >

@@ -640,11 +640,16 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
 
 ### 4.2 Estrutura da aplicação
 
-- **Single-page sem roteador.** [App.tsx](auli-frontend/src/App.tsx) monta um `EntityProvider`
-  e mostra `StateSelection` até uma entidade ser escolhida; depois mostra `Home`. Não há
-  React Router; a navegação interna é por **abas**.
-- **Seleção de entidade.** [shared/EntityContext.tsx](auli-frontend/src/shared/EntityContext.tsx)
-  guarda a entidade selecionada, persistida em `localStorage` (chave `auli.entity`).
+- **Single-page sem roteador.** [App.tsx](auli-frontend/src/App.tsx) mostra uma **aba de
+  estado** por estado aberto (faixa no cabeçalho, `[RS SEFAZ-RS ×] [+]`): a aba mostra
+  `StateSelection` até ter um estado e depois o `Home` dele. As abas inativas ficam montadas e
+  escondidas, cada uma com a sua conversa, seção e rolagem. Não há React Router; a navegação
+  interna é por **abas** (as de estado e, dentro do `Home`, as de seção).
+- **Abas de estado.** [shared/abas.ts](auli-frontend/src/shared/abas.ts) abre, fecha e persiste as
+  abas em `localStorage` (chave `auli.abas`; migra o `auli.entity` de antes delas); um estado abre
+  numa aba só. [shared/EntityContext.tsx](auli-frontend/src/shared/EntityContext.tsx) dá a cada aba
+  a sua entidade (`useSelectedEntity`). Desenho e decisões em
+  [ESTUDO-abas-por-estado.md](ESTUDO-abas-por-estado.md).
 - **Registro de entidades (frontend).** [shared/entities.ts](auli-frontend/src/shared/entities.ts) é
   **gerado** de `config/registry.toml` por [scripts/tools/gen-frontend-entities.mjs](scripts/tools/gen-frontend-entities.mjs)
   (guardado por `scripts/tools/check-registry-sync.sh`), com **nove** entidades:
@@ -749,8 +754,8 @@ alimentam os packs, lidos de `data/<id>/raw/`).
 
 [pages/stateselection/StateSelection.tsx](auli-frontend/src/pages/stateselection/StateSelection.tsx)
 apresenta um mapa interativo do Brasil ([BrazilMap.tsx](auli-frontend/src/pages/stateselection/BrazilMap.tsx),
-[brazilPaths.ts](auli-frontend/src/pages/stateselection/brazilPaths.ts)) e cards das
-entidades; ambos chamam `selectEntity`.
+[brazilPaths.ts](auli-frontend/src/pages/stateselection/brazilPaths.ts)) dentro de uma aba de
+estado ainda sem estado; escolher chama o `onSelect` da aba.
 
 ### 4.6 Tema, erros e testes
 

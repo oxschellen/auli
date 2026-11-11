@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithProvider } from "../../test/render";
 import { EntityProvider } from "../../shared/EntityContext";
+import { getEntity } from "../../shared/entities";
 import { Chat } from "./Chat";
 import { SIDEBAR_VAR, SIDEBAR_WIDTH } from "../../shared/layout";
 
@@ -11,12 +12,12 @@ vi.mock("axios", () => ({
   default: { post: vi.fn(() => new Promise(() => {})), isCancel: vi.fn(() => false) },
 }));
 
-/** O Chat exige uma entidade escolhida; o provider a lê do localStorage no primeiro render. */
-beforeEach(() => localStorage.setItem("auli.entity", "rs"));
+/** O Chat exige uma entidade: a da aba de estado em que ele estaria. */
+const RS = getEntity("rs")!;
 
 const montar = () =>
   renderWithProvider(
-    <EntityProvider>
+    <EntityProvider entity={RS}>
       <Chat />
     </EntityProvider>,
   );

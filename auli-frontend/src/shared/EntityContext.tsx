@@ -1,71 +1,21 @@
-import { createContext, use, useCallback, useMemo, useState } from "react";
+import { createContext, use } from "react";
 import type { ReactNode } from "react";
-import { ENTITIES, getEntity, type Entity } from "./entities";
+import type { Entity } from "./entities";
 
-const STORAGE_KEY = "auli.entity";
+/**
+ * A entidade da aba de estado em que o componente está. Cada aba tem o seu provider (ver
+ * `App.tsx`), então duas abas abertas — RS e SP — leem cada uma a sua, ao mesmo tempo. Quem abre,
+ * fecha, escolhe e persiste as abas é o `useAbas` (`shared/abas.ts`).
+ */
+const EntityContext = createContext<Entity | null>(null);
 
-interface EntityContextValue {
-  /** The selected entity, or null when no state has been chosen yet (show the selector). */
-  entity: Entity | null;
-  /** Choose / switch the active entity (persisted to localStorage). */
-  selectEntity: (id: string) => void;
-  /** Clear the selection and return to the state-selection page. */
-  clearEntity: () => void;
+export function EntityProvider({ entity, children }: { entity: Entity; children: ReactNode }) {
+  return <EntityContext.Provider value={entity}>{children}</EntityContext.Provider>;
 }
 
-const EntityContext = createContext<EntityContextValue | undefined>(undefined);
-
-/** Reads the persisted entity id once at startup (ignored if it no longer maps to a known entity). */
-function readStoredEntity(): Entity | null {
-  try {
-    const id = localStorage.getItem(STORAGE_KEY);
-    return getEntity(id) ?? null;
-  } catch {
-    return null;
-  }
-}
-
-export function EntityProvider({ children }: { children: ReactNode }) {
-  const [entity, setEntity] = useState<Entity | null>(readStoredEntity);
-
-  const selectEntity = useCallback((id: string) => {
-    const next = ENTITIES.find((e) => e.id === id);
-    if (!next) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, next.id);
-    } catch {
-      // Non-fatal: selection still works for this session without persistence.
-    }
-    setEntity(next);
-  }, []);
-
-  const clearEntity = useCallback(() => {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // ignore
-    }
-    setEntity(null);
-  }, []);
-
-  const value = useMemo(
-    () => ({ entity, selectEntity, clearEntity }),
-    [entity, selectEntity, clearEntity],
-  );
-
-  return <EntityContext.Provider value={value}>{children}</EntityContext.Provider>;
-}
-
-/** Access the entity selection. Returns null `entity` until a state is chosen. */
-export function useEntity(): EntityContextValue {
-  const ctx = use(EntityContext);
-  if (!ctx) throw new Error("useEntity must be used within an EntityProvider");
-  return ctx;
-}
-
-/** Convenience: the chosen entity, asserting one is selected (use inside the app shell). */
+/** A entidade da aba (use dentro de uma aba com estado escolhido). */
 export function useSelectedEntity(): Entity {
-  const { entity } = useEntity();
-  if (!entity) throw new Error("useSelectedEntity called before an entity was selected");
+  const entity = use(EntityContext);
+  if (!entity) throw new Error("useSelectedEntity fora de uma aba de estado (EntityProvider)");
   return entity;
 }

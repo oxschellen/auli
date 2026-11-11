@@ -18,7 +18,7 @@ const declaracao = (el: Element, prop: string) => {
   return undefined;
 };
 
-const sidebar = () => document.getElementById("sidebar-secoes")!;
+const sidebar = () => document.getElementById("rs-sidebar-secoes")!;
 /** Largura da sidebar e a que a barra fixa do chat lê (definida na raiz do Home). */
 const larguras = () => [declaracao(sidebar(), "width"), declaracao(sidebar().parentElement!, SIDEBAR_VAR)];
 const botao = () => screen.getByRole("button", { name: /barra lateral/ });
@@ -27,6 +27,8 @@ const ctrlB = (extra: Partial<KeyboardEventInit> = {}) =>
 
 describe("sidebar recolhível (botão ao lado do logo)", () => {
   beforeEach(() => {
+    // A aba do RS vem da migração do `auli.entity` (sem `auli.abas` salvo).
+    localStorage.removeItem("auli.abas");
     localStorage.setItem("auli.entity", "rs");
     localStorage.removeItem("auli.sidebar");
   });
@@ -35,7 +37,7 @@ describe("sidebar recolhível (botão ao lado do logo)", () => {
     render(<App />);
     expect(botao()).toHaveAccessibleName("Recolher a barra lateral");
     expect(botao()).toHaveAttribute("aria-expanded", "true");
-    expect(botao()).toHaveAttribute("aria-controls", "sidebar-secoes");
+    expect(botao()).toHaveAttribute("aria-controls", "rs-sidebar-secoes");
     expect(larguras()).toEqual([SIDEBAR_WIDTH, SIDEBAR_WIDTH]);
 
     fireEvent.click(botao());
@@ -83,7 +85,10 @@ describe("sidebar recolhível (botão ao lado do logo)", () => {
 });
 
 describe("sem estado escolhido", () => {
-  beforeEach(() => localStorage.removeItem("auli.entity"));
+  beforeEach(() => {
+    localStorage.removeItem("auli.abas");
+    localStorage.removeItem("auli.entity");
+  });
 
   it("não há sidebar: nem botão, nem Ctrl+B", () => {
     render(<App />);
