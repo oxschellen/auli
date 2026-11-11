@@ -41,6 +41,8 @@ export const UserMessage = ({ messageText, setPrompt }: UserMessageProps) => {
               size="xs"
               minW="26px"
               h="26px"
+              // Um círculo de 26px: sem isso, o padding do tamanho `xs` o alarga numa pílula.
+              px={0}
               color="fg.muted"
               bg="transparent"
               _hover={{ bg: "bg.overlay" }}

@@ -20,10 +20,7 @@ export function Tooltip(props) {
       <ChakraTooltip.Trigger asChild>{children}</ChakraTooltip.Trigger>
       <Portal disabled={!portalled} container={portalRef}>
         <ChakraTooltip.Positioner>
-          {/* O padding da receita do Chakra vive em `@layer recipes` e perde para o `* { padding: 0 }`
-              SEM camada do index.css — a dica saía colada no texto. Repetido como style prop, que
-              o Chakra emite sem camada e ganha por especificidade. */}
-          <ChakraTooltip.Content ref={ref} px="2.5" py="1" {...contentProps}>
+          <ChakraTooltip.Content ref={ref} {...contentProps}>
             {showArrow && (
               <ChakraTooltip.Arrow>
                 <ChakraTooltip.ArrowTip />
