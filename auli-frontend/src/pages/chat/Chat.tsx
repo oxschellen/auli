@@ -14,6 +14,7 @@ import { SelectQuestionType } from "./SelectQuestionType";
 import { EstadoInicial } from "./EstadoInicial";
 import { Historico } from "./Historico";
 import { useHistorico } from "./utils/useHistorico";
+import { usePainelHistorico } from "./utils/usePainelHistorico";
 import type { ItemHistorico } from "./utils/historico";
 import { TIPOS } from "./utils/tipos";
 import { useSelectedEntity } from "../../shared/EntityContext";
@@ -22,18 +23,6 @@ import { HEADER_HEIGHT, HISTORICO_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH } from "../.
 // O `API_URL` saiu daqui para `utils/api.ts` quando o modal do log passou a precisar da MESMA
 // base — ver `logUrl`, que é derivada dele justamente para não divergir.
 import { API_URL } from "./utils/api";
-
-const PAINEL_KEY = "auli.historicoPainel";
-
-/** O painel começa como foi deixado; sem preferência salva (ou sem localStorage), aberto — a mesma
- *  regra da barra lateral esquerda (`App.tsx`). */
-function lerPainelAberto(): boolean {
-  try {
-    return localStorage.getItem(PAINEL_KEY) !== "recolhido";
-  } catch {
-    return true;
-  }
-}
 
 /** O botão de "Minhas perguntas", na linha acima da caixa de mensagem. São dois no DOM — um por
  *  modo, escolhidos por CSS (`hideBelow`/`hideFrom`), como os dois botões da barra lateral
@@ -64,18 +53,11 @@ export const Chat = () => {
 
   const historico = useHistorico(entity.id);
   // Dois estados, como na barra lateral esquerda: a partir de `xl` o painel é uma coluna e a
-  // escolha fica salva; abaixo dele é um drawer, que abre e fecha sem deixar rastro.
-  const [painelAberto, setPainelAberto] = useState(lerPainelAberto);
+  // escolha fica salva, e vale para todas as abas de estado; abaixo dele é um drawer, que abre e
+  // fecha sem deixar rastro.
+  const [painelAberto, setPainelAberto] = usePainelHistorico();
   const [drawerAberto, setDrawerAberto] = useState(false);
   const botaoDrawerRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(PAINEL_KEY, painelAberto ? "aberto" : "recolhido");
-    } catch {
-      // Sem persistência, o botão segue valendo nesta sessão.
-    }
-  }, [painelAberto]);
 
   // Esc fecha o drawer e devolve o foco ao botão que o abriu — o mesmo par do drawer de seções.
   useEffect(() => {
@@ -282,7 +264,7 @@ export const Chat = () => {
             hideBelow="xl"
             aria-label={painelAberto ? "Recolher minhas perguntas" : "Mostrar minhas perguntas"}
             aria-expanded={painelAberto}
-            onClick={() => setPainelAberto((v) => !v)}
+            onClick={() => setPainelAberto(!painelAberto)}
           >
             <LuPanelRight size={14} aria-hidden="true" />
             Minhas perguntas

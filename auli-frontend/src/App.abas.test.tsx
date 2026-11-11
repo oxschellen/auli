@@ -37,6 +37,7 @@ const abrir = (entityId: string) => {
 beforeEach(() => {
   localStorage.removeItem("auli.abas");
   localStorage.removeItem("auli.entity");
+  localStorage.removeItem("auli.historicoPainel");
 });
 
 describe("abas de estado", () => {
@@ -150,6 +151,22 @@ describe("abas de estado", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Abrir outro estado" }));
     expect(botao()).toBeNull();
+  });
+
+  it("fechar o painel Minhas perguntas numa aba fecha nas outras, e abrir também", () => {
+    localStorage.setItem("auli.abas", JSON.stringify({ abas: ["rs", "sp"], ativa: "rs" }));
+    render(<App />);
+    const doPainel = (nome: string) =>
+      within(painel(nome)).queryByRole("complementary", { name: "Minhas perguntas" });
+    expect(doPainel("SEFAZ-RS")).not.toBeNull();
+
+    fireEvent.click(within(painel("SEFAZ-RS")).getByRole("button", { name: "Fechar minhas perguntas" }));
+    fireEvent.click(aba("SEFAZ-SP"));
+    expect(doPainel("SEFAZ-SP")).toBeNull();
+
+    fireEvent.click(within(painel("SEFAZ-SP")).getByRole("button", { name: "Mostrar minhas perguntas" }));
+    fireEvent.click(aba("SEFAZ-RS"));
+    expect(doPainel("SEFAZ-RS")).not.toBeNull();
   });
 
   it("a aba que espera resposta tem spinner, escondida também; a resposta chega nela", async () => {

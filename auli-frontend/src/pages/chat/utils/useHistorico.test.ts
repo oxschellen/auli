@@ -43,6 +43,19 @@ describe("useHistorico", () => {
     ]);
   });
 
+  it("grava relendo o que está gravado, mesmo antes de o aviso da outra aba chegar", () => {
+    const { result } = renderHook(() => useHistorico("rs"));
+    act(() => result.current.registrar("Pergunta feita nesta aba", "1"));
+    // A outra aba gravou, e o `storage` ainda não chegou: a tela não a mostra.
+    const daOutra = JSON.parse(localStorage.getItem("auli.historico.rs")!);
+    daOutra.itens.unshift({ id: "x", pergunta: "Pergunta feita na outra aba", tipo: "2", em: 9, favorita: false });
+    localStorage.setItem("auli.historico.rs", JSON.stringify(daOutra));
+    const daqui = result.current.itens[0].id;
+    act(() => result.current.alternarFavorita(daqui));
+    const gravado = JSON.parse(localStorage.getItem("auli.historico.rs")!);
+    expect(gravado.itens.map((i: { id: string }) => i.id)).toEqual(["x", daqui]);
+  });
+
   it("sem localStorage, a lista vale nesta sessão", () => {
     vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
       throw new Error("bloqueado");

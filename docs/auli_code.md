@@ -679,6 +679,11 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
 - [pages/chat/utils/useMessages.ts](auli-frontend/src/pages/chat/utils/useMessages.ts):
   estado das mensagens, que começa **vazio** — antes da primeira pergunta o chat mostra o
   [EstadoInicial](auli-frontend/src/pages/chat/EstadoInicial.tsx) (D-UI-10), não uma saudação.
+- **Minhas perguntas** (§4.3.2): [pages/chat/Historico.tsx](auli-frontend/src/pages/chat/Historico.tsx)
+  desenha o painel; [utils/historico.ts](auli-frontend/src/pages/chat/utils/historico.ts) tem as
+  operações puras sobre a lista; [utils/useHistorico.ts](auli-frontend/src/pages/chat/utils/useHistorico.ts)
+  é a única porta para o armazenamento; [utils/usePainelHistorico.ts](auli-frontend/src/pages/chat/utils/usePainelHistorico.ts)
+  guarda se o painel está aberto, uma escolha só para todas as abas de estado.
 
 Há subpasta [pages/chat/ui/](auli-frontend/src/pages/chat/ui/) com 4 snippets utilitários do
 Chakra em `.jsx` (color-mode, provider, toaster, tooltip) — confirmando a observação do
@@ -716,6 +721,31 @@ começar vazia (teste no `Chat.test.tsx`).
 simulada, as telas no desktop e no celular (estado inicial, envio, Resumo, selos, fontes em três
 grupos, recolher no celular). **Não verificado:** com o LLM real em todos os tipos, em Safari/iOS e
 com leitor de tela.
+
+### 4.3.2 Minhas perguntas — as decisões (D-HIST-\*)
+
+As perguntas enviadas ficam guardadas no navegador, com favoritas, num painel à direita do chat.
+É a Etapa 1 do [Estudo-sidebar-direita.md](Estudo-sidebar-direita.md): sem login e sem servidor.
+**Escopo: só o frontend**, e a única prosa que muda é a frase de privacidade do Sobre.
+
+| | O quê | Por quê |
+| --- | --- | --- |
+| **D-HIST-1** | A lista mora no `localStorage`, uma chave por entidade: `auli.historico.<id>` | Sem login não há outro lugar. Por entidade porque a pergunta feita no RS não serve em SP |
+| **D-HIST-2** | Guarda a pergunta, o tipo de consulta, a data do último envio e a estrela. **Não** guarda a resposta nem o `log_id` | A resposta é derivada do acervo, que muda a cada coleta; reenviar a refaz |
+| **D-HIST-3** | Registra no **envio**, não na chegada | A pergunta que deu erro ou estourou o tempo é a que a pessoa vai querer reenviar |
+| **D-HIST-4** | Pergunta repetida no mesmo tipo não duplica: sobe ao topo com a data nova e mantém a estrela. A mesma frase em outro tipo é outra entrada | Caixa e espaços não fazem outra pergunta; outra coleção faz outra consulta |
+| **D-HIST-5** | Teto de 50 recentes. Favorita nunca é descartada sozinha. O teto só é aplicado ao registrar | 50 perguntas pesam poucas dezenas de kB. Tirar a estrela não pode fazer a pergunta sumir na hora |
+| **D-HIST-6** | Clicar numa pergunta a devolve à caixa **com o tipo em que foi feita**, sem enviar | Sem o tipo, a pergunta de Pareceres iria para Serviços + FAQs. Sem enviar pelo critério da D-UI-10 |
+| **D-HIST-7** | O painel existe só no Chat. A partir de `xl` (1280px) é uma coluna de 288px, aberta por padrão, com a escolha salva em `auli.historicoPainel` e **valendo para todas as abas de estado**. Abaixo disso é um drawer vindo da direita | A 1280px sobram 768px para a coluna de leitura de 760px. Uma escolha só, como a da barra lateral esquerda |
+| **D-HIST-8** | Um botão "Minhas perguntas" na linha acima da caixa de mensagem, em toda largura | O botão flutuante no canto cobria o balão da pergunta no celular |
+| **D-HIST-9** | Tudo dentro do `Chat`; o painel é `sticky` no container de scroll. `Home` e `App` não mudam | Sem canal novo entre `Home` e `Chat`. Em `fixed`, o painel cobriria a barra de rolagem do conteúdo |
+| **D-HIST-10** | `useHistorico` é a única porta para o armazenamento, e toda gravação relê a lista antes de alterá-la | Na Etapa 2 troca-se esse arquivo. Reler é o que impede duas abas do navegador de se apagarem |
+| **D-HIST-11** | A frase do Sobre é corrigida no mesmo patch; o painel diz "Guardadas só neste navegador" e oferece remover uma pergunta e limpar as recentes | A pergunta pode trazer dado de contribuinte, e em computador compartilhado outra pessoa a vê |
+
+**Ajuste às abas de estado (11/11/2026):** o patch do estudo foi escrito antes delas. Com um `Chat`
+por aba, um `useState` em cada um deixaria o painel fechado no RS e aberto no SP; a escolha passou
+a um valor só (`usePainelHistorico`, `useSyncExternalStore` sobre `auli.historicoPainel`), sem tocar
+no `App` nem no `Home`.
 
 ### 4.4 Páginas de referência (conteúdo estático por entidade)
 
