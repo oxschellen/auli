@@ -288,19 +288,16 @@ export function McpList() {
                 borderRadius="8px"
                 overflowX="auto"
               >
-                {/* `px`/`py` explícitos repõem o padding do `size="sm"`: o reset `* { padding: 0 }`
-                    do index.css, sem camada, vence o recipe do Chakra, que vive em `@layer`. Sem
-                    isso as colunas de texto corrido encostam uma na outra. */}
                 <Table.Root size="sm" aria-label="Ferramentas do servidor MCP">
                   <Table.Header>
                     <Table.Row bg="bg.subtle">
-                      <Table.ColumnHeader color="fg" fontWeight="700" px={2} py={2}>
+                      <Table.ColumnHeader color="fg" fontWeight="700">
                         Ferramenta
                       </Table.ColumnHeader>
-                      <Table.ColumnHeader color="fg" fontWeight="700" px={2} py={2} minW="16rem">
+                      <Table.ColumnHeader color="fg" fontWeight="700" minW="16rem">
                         O que faz
                       </Table.ColumnHeader>
-                      <Table.ColumnHeader color="fg" fontWeight="700" px={2} py={2} minW="16rem">
+                      <Table.ColumnHeader color="fg" fontWeight="700" minW="16rem">
                         Diga, por exemplo
                       </Table.ColumnHeader>
                     </Table.Row>
@@ -308,13 +305,13 @@ export function McpList() {
                   <Table.Body>
                     {FERRAMENTAS.map((f) => (
                       <Table.Row key={f.nome}>
-                        <Table.Cell color="fg" px={2} py={2} whiteSpace="nowrap" verticalAlign="top">
+                        <Table.Cell color="fg" whiteSpace="nowrap" verticalAlign="top">
                           <Text as="code">{f.nome}</Text>
                         </Table.Cell>
-                        <Table.Cell color="fg" px={2} py={2} verticalAlign="top">
+                        <Table.Cell color="fg" verticalAlign="top">
                           {f.oQueFaz}
                         </Table.Cell>
-                        <Table.Cell color="fg" px={2} py={2} verticalAlign="top">
+                        <Table.Cell color="fg" verticalAlign="top">
                           {f.exemplo}
                         </Table.Cell>
                       </Table.Row>
