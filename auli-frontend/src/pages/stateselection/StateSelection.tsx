@@ -2,9 +2,9 @@ import { Flex, Stack, Text } from "@chakra-ui/react";
 import { BrazilMap } from "./BrazilMap";
 
 /**
- * Landing page: pick the state (tax authority / entity) before entering the app. The whole session
- * is scoped to the chosen entity (data files + chat), so this is chosen once up front rather than
- * toggled mid-session.
+ * The map page: pick the state (tax authority / entity) of a state tab. Everything in the tab is
+ * scoped to the chosen entity (data files + chat), so it is chosen once per tab; another state
+ * means another tab.
  *
  * Selection is via the interactive Brazil map (available states in accent, others greyed).
  *

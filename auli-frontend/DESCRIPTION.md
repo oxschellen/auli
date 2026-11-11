@@ -11,17 +11,17 @@ asks questions in natural language and receives AI-generated answers, plus
 several browsable reference sections (Services, FAQs, Legal Opinions, and Tax
 Notes). The UI is in **Brazilian Portuguese** and is **mobile-first**.
 
-The app is **multi-tenant by state**: the user first picks a state tax authority
-(*entity*) on a landing page, and the whole session — every data file and the
-chat — is scoped to that entity. Two entities ship today: **RS** (SEFAZ-RS, full
-data) and **SC** (SEF-SC, Serviços only so far). See
+The app is **multi-tenant by state**: the user picks a state tax authority
+(*entity*) on a map, and everything picked under it — every data file and the
+chat — is scoped to that entity. Several states can be open at once, each in its
+own **state tab** in the header, like browser tabs. All 27 UFs have an entity
+today, each with the collections scraped for it so far. See
 [Multi-tenant state selection](#multi-tenant-state-selection).
 
 - **App name (package):** `auli-ui`
-- **UI version:** taken from `package.json` `version` (currently `0.1.43`) and
-  shown in the header as `v.0.1.43` — injected at build time via the
-  `__APP_VERSION__` define, so it can't drift from a hardcoded constant. When an
-  entity is selected the header subtitle becomes `v.0.1.43 · SEF-SC`.
+- **UI version:** taken from `package.json` `version` — injected at build time
+  via the `__APP_VERSION__` define, so it can't drift from a hardcoded constant —
+  and shown as the tooltip of the "Auli" logo.
 - **Backend API:** `https://api.auli.com.br/v1/question` (POST `{ question, entity? }`
   → `{ answer }`) — `entity` is the selected state id, so the backend can query
   the right tenant's collections (override the URL with `VITE_API_URL`).
@@ -76,11 +76,13 @@ npm run test:watch# Vitest in watch mode
   - a single global `Toaster`,
   - [`ErrorBoundary`](src/shared/ErrorBoundary.tsx),
   - `LazyMotion` (Framer Motion),
-  - [`EntityProvider`](src/shared/EntityContext.tsx) — the selected-state context,
   - then `AppShell`: a full-height `Flex` column with the shared
-    [`AppHeader`](src/shared/AppHeader.tsx) pinned above a single content region.
-    The region renders the [`StateSelection`](src/pages/stateselection/StateSelection.tsx)
-    landing page until an entity is chosen, then [`Home`](src/pages/home/Home.tsx).
+    [`AppHeader`](src/shared/AppHeader.tsx), which carries the state tabs, pinned
+    above one panel per tab. A tab shows the
+    [`StateSelection`](src/pages/stateselection/StateSelection.tsx) map until it
+    has a state, then that state's [`Home`](src/pages/home/Home.tsx) inside its
+    own [`EntityProvider`](src/shared/EntityContext.tsx). Inactive tabs stay
+    mounted and hidden, so each keeps its conversation, section and scroll.
 
 There is **no router** — the app is a single page. Sections are tabs inside
 `Home`, not routes, so the URL stays at `/`. Conversations, searches and scroll
@@ -91,39 +93,41 @@ A reload returns to the same tabs.
 
 ### Multi-tenant state selection
 
-The app is scoped to one **entity** (state tax authority) at a time, chosen up
-front rather than toggled mid-session (so chat history, search, and scroll state
-never need re-scoping).
+Each state tab is scoped to one **entity** (state tax authority), chosen once on
+its map, so chat history, search and scroll never need re-scoping. To look at
+another state, the user opens another tab; a state opens in one tab only.
 
 - [src/shared/entities.ts](src/shared/entities.ts) — the entity registry (a
   frontend mirror of the scraper's `domain::entities`). Each `Entity` has `id`
   (also the `public/<id>/` data folder and the backend tenant key), `name`
   (`SEFAZ-RS`), `uf` (`RS`), `state` (`Rio Grande do Sul`), and **`collections`**
   — the list of sections it actually has data for. `hasCollection(entity, kind)`
-  drives the per-tab empty state. Ships `rs` (all five collections) and `sc`
-  (`servicos` only).
-- [src/shared/EntityContext.tsx](src/shared/EntityContext.tsx) — `EntityProvider`
-  + `useEntity()` / `useSelectedEntity()`. Holds the chosen entity (or `null` when
-  none is picked yet), persisted to `localStorage` under `auli.entity`; a stored
-  id that no longer maps to a known entity is ignored. `selectEntity(id)` /
-  `clearEntity()` switch or reset the selection. `useSelectedEntity()` asserts one
-  is selected (used inside the app shell, below the landing-page gate).
+  drives the per-section empty state. Generated from `config/registry.toml` by
+  `scripts/tools/gen-frontend-entities.mjs` — do not hand-edit.
+- [src/shared/abas.ts](src/shared/abas.ts) — the state tabs: open, close, pick a
+  state, persisted to `localStorage` under `auli.abas` (the open states in order,
+  and the active one). The pre-tabs `auli.entity` key is migrated into the first
+  tab once. Ids the registry no longer knows, and repeats, are dropped.
+- [src/shared/AbasDeEstado.tsx](src/shared/AbasDeEstado.tsx) — the tab strip next
+  to the logo, `[RS SEFAZ-RS ×] [SP SEFAZ-SP ×] [+]`: WAI-ARIA tabs (arrow keys,
+  Delete closes), "+" opens a tab on the map. A tab whose chat is waiting for an
+  answer shows a spinner, reported through
+  [RespostaDaAba.tsx](src/shared/RespostaDaAba.tsx).
+- [src/shared/EntityContext.tsx](src/shared/EntityContext.tsx) — `EntityProvider`,
+  one per tab, with that tab's entity; `useSelectedEntity()` reads it.
 - [src/pages/stateselection/StateSelection.tsx](src/pages/stateselection/StateSelection.tsx)
-  — the landing page ("Escolha o estado"): an interactive **Brazil map** beside one
-  card per entity (UF badge, name, state, collection count). Both call `selectEntity`.
+  — the map page ("Escolha o estado") of a tab with no state yet: an interactive
+  **Brazil map**; picking a state calls the tab's `onSelect`.
 - [src/pages/stateselection/BrazilMap.tsx](src/pages/stateselection/BrazilMap.tsx) —
-  an outlined SVG map of all 27 states. States backed by an available entity (RS, SC)
-  are filled with the accent color and are clickable/keyboard-operable (`role=button`,
+  an outlined SVG map of all 27 states. States backed by an available entity (all
+  27 today) are filled with the accent color and are clickable/keyboard-operable (`role=button`,
   `<title>` tooltip); every other state is greyed (`bg.mapInactive`) and inert.
   Colors resolve via `useToken` and native `<svg>`/`<path>` elements are used (Chakra's
   `Box as="path"` drops the `d`/`viewBox` attributes). Geometry comes from
   [brazilPaths.ts](src/pages/stateselection/brazilPaths.ts) — auto-generated compact
   per-UF path strings (GeoJSON simplified via Douglas-Peucker, projected to a
-  1000×1000 viewBox; ~33 kB, do not hand-edit). A future map of more states only needs
-  more entities in the registry — the map lights up any UF that has one.
-- The active entity is surfaced in [`AppHeader`](src/shared/AppHeader.tsx) as a
-  left-slot **`UF` chip + "trocar"** button that calls `clearEntity()` to return
-  to the selector; the header subtitle gains `· <entity.name>`.
+  1000×1000 viewBox; ~33 kB, do not hand-edit). The map lights up any UF that has an
+  entity in the registry.
 
 ### Home tab shell
 
@@ -165,6 +169,11 @@ The conversational core.
   aligned, blue) with a copy-to-input button.
 - [SystemMessage.tsx](src/pages/chat/SystemMessage.tsx) — assistant's bubble,
   rendered via `react-markdown` (shared renderers), with a copy button.
+- [Historico.tsx](src/pages/chat/Historico.tsx) — the "Minhas perguntas" panel:
+  the questions sent in this state, starred ones on top, kept only in this
+  browser (`utils/historico.ts`, `utils/useHistorico.ts`; whether it is open,
+  shared by all tabs, in `utils/usePainelHistorico.ts`). A column from `xl`, a
+  drawer below.
 
 **Chat utilities (`src/pages/chat/utils/`):**
 
@@ -251,18 +260,19 @@ Loads `public/about.md` and renders it as markdown.
 
 ## Shared Modules (`src/shared/`)
 
-- [AppHeader.tsx](src/shared/AppHeader.tsx) — sticky header (black in **both**
-  color modes) with the "Auli" wordmark, an optional subtitle (the app version,
-  suffixed with the active entity name), the light/dark **color-mode toggle**
-  ([`ColorModeButton`](src/pages/chat/ui/color-mode.jsx)) in its right slot, and —
-  when an entity is selected — the **`UF` chip + "trocar"** state switcher in its
-  left slot.
+- [AppHeader.tsx](src/shared/AppHeader.tsx) — sticky 52px header: the sidebar
+  toggle (from `md`, also Ctrl+B), the "Auli" wordmark (the app version is its
+  tooltip), the state tabs, and the light/dark **color-mode toggle**
+  ([`ColorModeButton`](src/pages/chat/ui/color-mode.jsx)) on the right. With the
+  sidebar open, the tabs start on the sidebar's edge.
 - [entities.ts](src/shared/entities.ts) — the entity registry (`Entity`,
   `ENTITIES`, `getEntity`, `hasCollection`); see
   [Multi-tenant state selection](#multi-tenant-state-selection).
+- [abas.ts](src/shared/abas.ts), [AbasDeEstado.tsx](src/shared/AbasDeEstado.tsx),
+  [RespostaDaAba.tsx](src/shared/RespostaDaAba.tsx) — the state tabs; see
+  [Multi-tenant state selection](#multi-tenant-state-selection).
 - [EntityContext.tsx](src/shared/EntityContext.tsx) — `EntityProvider` +
-  `useEntity` / `useSelectedEntity`; the `localStorage`-persisted selected-state
-  context.
+  `useSelectedEntity`; one provider per state tab.
 - [CollectionEmpty.tsx](src/shared/CollectionEmpty.tsx) — the "coming soon for
   this state" placeholder shown by a section the selected entity has no data for.
 - [AsyncContent.tsx](src/shared/AsyncContent.tsx) — three-state gate
@@ -432,7 +442,10 @@ auli-frontend/
    ├─ shared/
    │  ├─ AppHeader.tsx
    │  ├─ entities.ts           # entity registry (states + their collections)
-   │  ├─ EntityContext.tsx     # selected-state context (localStorage)
+   │  ├─ abas.ts               # state tabs: open/close/pick, persisted (auli.abas)
+   │  ├─ AbasDeEstado.tsx      # the state-tab strip in the header
+   │  ├─ RespostaDaAba.tsx     # a tab's chat reports when it waits (tab spinner)
+   │  ├─ EntityContext.tsx     # per-tab state context
    │  ├─ CollectionEmpty.tsx   # "coming soon for this state" placeholder
    │  ├─ AsyncContent.tsx
    │  ├─ SearchInput.tsx
@@ -441,7 +454,7 @@ auli-frontend/
    │  ├─ fetchers.ts
    │  └─ linkify.tsx
    └─ pages/
-      ├─ stateselection/       # "Escolha o estado" landing page (+ BrazilMap, brazilPaths)
+      ├─ stateselection/       # "Escolha o estado" map of a new tab (+ BrazilMap, brazilPaths)
       ├─ home/                 # tabbed shell
       ├─ chat/                 # chat + ui/ + utils/
       ├─ servicoslist/
