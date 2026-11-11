@@ -648,8 +648,9 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
 - **Abas de estado.** [shared/abas.ts](auli-frontend/src/shared/abas.ts) abre, fecha e persiste as
   abas em `localStorage` (chave `auli.abas`; migra o `auli.entity` de antes delas); um estado abre
   numa aba só. [shared/EntityContext.tsx](auli-frontend/src/shared/EntityContext.tsx) dá a cada aba
-  a sua entidade (`useSelectedEntity`). Desenho e decisões em
-  [ESTUDO-abas-por-estado.md](ESTUDO-abas-por-estado.md).
+  a sua entidade (`useSelectedEntity`). [shared/RespostaDaAba.tsx](auli-frontend/src/shared/RespostaDaAba.tsx)
+  põe um spinner na aba enquanto a conversa dela espera resposta, escondida ou não. Desenho e
+  decisões em [ESTUDO-abas-por-estado.md](ESTUDO-abas-por-estado.md).
 - **Registro de entidades (frontend).** [shared/entities.ts](auli-frontend/src/shared/entities.ts) é
   **gerado** de `config/registry.toml` por [scripts/tools/gen-frontend-entities.mjs](scripts/tools/gen-frontend-entities.mjs)
   (guardado por `scripts/tools/check-registry-sync.sh`), com **nove** entidades:

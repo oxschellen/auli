@@ -13,6 +13,7 @@ import { SelectQuestionType } from "./SelectQuestionType";
 import { EstadoInicial } from "./EstadoInicial";
 import { TIPOS } from "./utils/tipos";
 import { useSelectedEntity } from "../../shared/EntityContext";
+import { useAvisarResposta } from "../../shared/RespostaDaAba";
 import { SIDEBAR_VAR, SIDEBAR_WIDTH } from "../../shared/layout";
 // O `API_URL` saiu daqui para `utils/api.ts` quando o modal do log passou a precisar da MESMA
 // base — ver `logUrl`, que é derivada dele justamente para não divergir.
@@ -30,6 +31,11 @@ export const Chat = () => {
 
   const { isKeyboardVisible: isKeyboardOpen, keyboardHeight } = useIsKeyboardVisible();
   const [loading, setLoading] = useState(false);
+  // O spinner na aba do estado: é com a aba escondida, a pergunta ainda rodando, que ele conta.
+  const avisarResposta = useAvisarResposta();
+  useEffect(() => {
+    avisarResposta(loading);
+  }, [avisarResposta, loading]);
   // Só no celular: a caixa de mensagem ocupa ~220px da tela, e recolhê-la libera a leitura da
   // resposta. Fica uma barrinha que a traz de volta já com o foco no campo.
   const [recolhido, setRecolhido] = useState(false);

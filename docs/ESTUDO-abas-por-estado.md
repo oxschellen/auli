@@ -164,7 +164,8 @@ A barra fixa do chat de uma aba escondida não aparece: um `fixed` dentro de um 
   abertas e "Abrir outro estado" (§9, item 5).
 - **Resposta em segundo plano:** uma pergunta feita no RS continua enquanto se olha o SP. Um
   indicador na aba (girando, depois um ponto) exige subir o `loading` do Chat até a aba — fica para
-  a fase 3.
+  a fase 3. *Feito em 11/11/2026, só o girando:* um spinner enquanto a conversa espera, e
+  "respondendo" no nome acessível da aba (`shared/RespostaDaAba.tsx`). O ponto depois, não.
 
 ### 5.5 Tamanho
 
