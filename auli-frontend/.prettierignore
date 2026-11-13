@@ -1,4 +1,4 @@
 # Gerados: o check-registry-sync.sh compara o entities.ts byte a byte com a saída do gerador, e o
 # brazilPaths.ts sai de script também. Formatá-los aqui só criaria diferença com a fonte.
-src/shared/entities.ts
-src/pages/stateselection/brazilPaths.ts
+src/contexto/entities.ts
+src/secoes/mapa/brazilPaths.ts

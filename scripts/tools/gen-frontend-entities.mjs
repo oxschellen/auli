@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// gen-frontend-entities.mjs — gera auli-frontend/src/shared/entities.ts a partir de config/registry.toml.
+// gen-frontend-entities.mjs — gera auli-frontend/src/contexto/entities.ts a partir de config/registry.toml.
 //
 // O frontend deixa de manter sua própria lista de entidades (4ª cópia da §6): a fonte da verdade é
 // config/registry.toml. Rode após editar o registry:
@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const REGISTRY = join(ROOT, "config", "registry.toml");
-const OUT = join(ROOT, "auli-frontend", "src", "shared", "entities.ts");
+const OUT = join(ROOT, "auli-frontend", "src", "contexto", "entities.ts");
 
 /** Minimal TOML parse for the registry's `[[entities]]` array-of-tables. */
 function parseEntities(text) {
@@ -67,7 +67,7 @@ const out = `/**
  *
  * Cada entidade é uma secretaria estadual da fazenda. Cada aba de estado do app é escopo de uma
  * entidade, escolhida no mapa de seleção; as abas abertas são persistidas por \`abas.ts\`. Os dados
- * são servidos por entidade de \`public/<id>/…\` (ver \`entityPath\` em fetchers).
+ * são servidos por entidade de \`public/<id>/…\` (ver \`entityPath\` em \`api/estaticos\`).
  */
 
 /** As abas de coleção que uma entidade pode ter. \`chat\` está sempre disponível. */

@@ -1,0 +1,230 @@
+/**
+ * GERADO de config/registry.toml por scripts/tools/gen-frontend-entities.mjs — NÃO EDITE À MÃO.
+ * Rode `node scripts/tools/gen-frontend-entities.mjs` após mudar o registry.
+ *
+ * Cada entidade é uma secretaria estadual da fazenda. Cada aba de estado do app é escopo de uma
+ * entidade, escolhida no mapa de seleção; as abas abertas são persistidas por `abas.ts`. Os dados
+ * são servidos por entidade de `public/<id>/…` (ver `entityPath` em `api/estaticos`).
+ */
+
+/** As abas de coleção que uma entidade pode ter. `chat` está sempre disponível. */
+export type Collection = "conteudos" | "faqs" | "legislacao" | "notas" | "pareceres" | "servicos" | "tarf";
+
+export interface Entity {
+  /** Id estável; também a pasta `public/<id>/` e a chave de tenant no backend. */
+  id: string;
+  /** Nome completo exibido no header / seletor (ex.: "SEFAZ-RS"). */
+  name: string;
+  /** Sigla curta para UI compacta (ex.: "RS"). */
+  uf: string;
+  /** Nome do estado por extenso (ex.: "Rio Grande do Sul"). */
+  state: string;
+  /** Quais coleções esta entidade tem dados hoje. */
+  collections: Collection[];
+}
+
+export const ENTITIES: Entity[] = [
+  {
+    id: "rs",
+    name: "SEFAZ-RS",
+    uf: "RS",
+    state: "Rio Grande do Sul",
+    collections: ["servicos", "faqs", "pareceres", "notas", "conteudos", "tarf", "legislacao"],
+  },
+  {
+    id: "sc",
+    name: "SEF-SC",
+    uf: "SC",
+    state: "Santa Catarina",
+    collections: ["servicos", "faqs", "pareceres"],
+  },
+  {
+    id: "pr",
+    name: "SEFA-PR",
+    uf: "PR",
+    state: "Paraná",
+    collections: ["servicos", "faqs", "pareceres"],
+  },
+  {
+    id: "sp",
+    name: "SEFAZ-SP",
+    uf: "SP",
+    state: "São Paulo",
+    collections: ["servicos", "faqs", "pareceres"],
+  },
+  {
+    id: "mg",
+    name: "SEF-MG",
+    uf: "MG",
+    state: "Minas Gerais",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "pe",
+    name: "SEFAZ-PE",
+    uf: "PE",
+    state: "Pernambuco",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "ba",
+    name: "SEFAZ-BA",
+    uf: "BA",
+    state: "Bahia",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "rj",
+    name: "SEFAZ-RJ",
+    uf: "RJ",
+    state: "Rio de Janeiro",
+    collections: ["servicos"],
+  },
+  {
+    id: "ce",
+    name: "SEFAZ-CE",
+    uf: "CE",
+    state: "Ceará",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "ms",
+    name: "SEFAZ-MS",
+    uf: "MS",
+    state: "Mato Grosso do Sul",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "mt",
+    name: "SEFAZ-MT",
+    uf: "MT",
+    state: "Mato Grosso",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "go",
+    name: "SEFAZ-GO",
+    uf: "GO",
+    state: "Goiás",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "pi",
+    name: "SEFAZ-PI",
+    uf: "PI",
+    state: "Piauí",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "am",
+    name: "SEFAZ-AM",
+    uf: "AM",
+    state: "Amazonas",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "pa",
+    name: "SEFA-PA",
+    uf: "PA",
+    state: "Pará",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "es",
+    name: "SEFAZ-ES",
+    uf: "ES",
+    state: "Espírito Santo",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "ro",
+    name: "SEFIN-RO",
+    uf: "RO",
+    state: "Rondônia",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "to",
+    name: "SEFAZ-TO",
+    uf: "TO",
+    state: "Tocantins",
+    collections: ["servicos"],
+  },
+  {
+    id: "ma",
+    name: "SEFAZ-MA",
+    uf: "MA",
+    state: "Maranhão",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "ap",
+    name: "SEFAZ-AP",
+    uf: "AP",
+    state: "Amapá",
+    collections: ["servicos"],
+  },
+  {
+    id: "ac",
+    name: "SEFAZ-AC",
+    uf: "AC",
+    state: "Acre",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "df",
+    name: "SEFAZ-DF",
+    uf: "DF",
+    state: "Distrito Federal",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "rn",
+    name: "SEFAZ-RN",
+    uf: "RN",
+    state: "Rio Grande do Norte",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "pb",
+    name: "SEFAZ-PB",
+    uf: "PB",
+    state: "Paraíba",
+    collections: ["servicos", "faqs"],
+  },
+  {
+    id: "al",
+    name: "SEFAZ-AL",
+    uf: "AL",
+    state: "Alagoas",
+    collections: ["servicos"],
+  },
+  {
+    id: "se",
+    name: "SEFAZ-SE",
+    uf: "SE",
+    state: "Sergipe",
+    collections: ["servicos"],
+  },
+  {
+    id: "rr",
+    name: "SEFAZ-RR",
+    uf: "RR",
+    state: "Roraima",
+    collections: ["servicos"],
+  },
+];
+
+export function getEntity(id: string | null | undefined): Entity | undefined {
+  return ENTITIES.find((e) => e.id === id);
+}
+
+/** Entidade cujo estado é a UF dada (ex.: "RS"), se houver. Usado pelo mapa do Brasil. */
+export function getEntityByUf(uf: string): Entity | undefined {
+  return ENTITIES.find((e) => e.uf === uf);
+}
+
+/** Se uma entidade tem dados para uma coleção (dirige o estado vazio das abas). */
+export function hasCollection(entity: Entity, collection: Collection): boolean {
+  return entity.collections.includes(collection);
+}
