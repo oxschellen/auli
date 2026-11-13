@@ -93,7 +93,9 @@ There is **no router** — the app is a single page. Sections are tabs inside
 live in memory only. What persists, in `localStorage` only: the open state tabs
 (`auli.abas`), the question type, whether the sidebar and the "Minhas perguntas"
 panel are open, and each state's "Minhas perguntas" list (`auli.historico.<id>`).
-A reload returns to the same tabs.
+A reload returns to the same tabs. All of it goes through
+[src/lib/storage.ts](src/lib/storage.ts), and other browser windows of the app
+follow along (the `storage` event).
 
 ### Multi-tenant state selection
 
@@ -310,6 +312,10 @@ and fails when a rule breaks.
 - [linkify.tsx](src/lib/linkify.tsx) — turns bare URLs in plain text into
   Chakra `Link`s, trimming trailing sentence punctuation (and preserving
   balanced-paren URLs).
+- [storage.ts](src/lib/storage.ts) — the only door to `localStorage`: every key
+  (`CHAVES`), `lerTexto`/`gravarTexto` with one `try/catch` (blocked storage
+  keeps the value in memory for the session), and `useTextoGravado`, which
+  re-renders on writes from this window and from others.
 - [textSearch.ts](src/lib/textSearch.ts), [highlight.tsx](src/lib/highlight.tsx),
   [rehypeHighlight.ts](src/lib/rehypeHighlight.ts) — the client-side search
   (accent- and case-insensitive) and the highlight of what it matched, in plain

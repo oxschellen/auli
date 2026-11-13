@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Collection, Entity } from "../../../contexto/entities";
 import { hasCollection } from "../../../contexto/entities";
+import { CHAVES, gravarTexto, lerTexto } from "../../../lib/storage";
 
 /**
  * O tipo de consulta enviado com a pergunta do chat: "1" = Serviços+FAQs (padrão), "2" = Pareceres,
@@ -11,7 +12,6 @@ import { hasCollection } from "../../../contexto/entities";
  */
 export type QuestionType = "1" | "2" | "3" | "4";
 
-const STORAGE_KEY = "auli.questionType";
 const DEFAULT_TYPE: QuestionType = "1";
 
 /**
@@ -43,12 +43,8 @@ export function isQuestionType(value: string | null): value is QuestionType {
 
 /** Lê o tipo persistido (cai no padrão se ausente/desconhecido). */
 function readStored(): QuestionType {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return isQuestionType(stored) ? stored : DEFAULT_TYPE;
-  } catch {
-    return DEFAULT_TYPE;
-  }
+  const stored = lerTexto(CHAVES.tipoDeConsulta);
+  return isQuestionType(stored) ? stored : DEFAULT_TYPE;
 }
 
 /**
@@ -74,11 +70,7 @@ export const useQuestionType = (entity: Entity) => {
   // RadioGroup devolve `string | null`; valida antes de persistir/aplicar.
   const updateQuestionType = (value: string | null) => {
     if (!isQuestionType(value) || !disponiveis.includes(value)) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, value);
-    } catch {
-      // Não fatal: a seleção vale nesta sessão, só não sobrevive ao reload.
-    }
+    gravarTexto(CHAVES.tipoDeConsulta, value);
     setQuestionType(value);
   };
 

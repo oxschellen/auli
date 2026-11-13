@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import { LazyMotion, domAnimation } from "framer-motion";
 import { Provider } from "../ui/provider";
@@ -12,21 +12,15 @@ import { AbasDeEstado } from "./AbasDeEstado";
 import { idDaAba, idDoPainel, useAbas } from "./abas";
 import { RespostaDaAbaProvider, useAbasRespondendo } from "../contexto/RespostaDaAba";
 import { getEntity } from "../contexto/entities";
+import { CHAVES, gravarTexto, lerTexto, useTextoGravado } from "../lib/storage";
 import { idDaSidebar } from "../ui/layout";
 
 // Sourced from package.json at build time (see vite.config.js `define`).
 const APP_VERSION = __APP_VERSION__;
 
-const SIDEBAR_KEY = "auli.sidebar";
-
-/** A sidebar começa como foi deixada; sem preferência salva (ou sem localStorage), aberta. */
-function lerSidebarAberta(): boolean {
-  try {
-    return localStorage.getItem(SIDEBAR_KEY) !== "recolhida";
-  } catch {
-    return true;
-  }
-}
+/** Recolhe ou expande a sidebar. Sem preferência salva (ou sem localStorage), ela está aberta. */
+const alternarSidebar = () =>
+  gravarTexto(CHAVES.sidebar, lerTexto(CHAVES.sidebar) === "recolhida" ? "aberta" : "recolhida");
 
 /**
  * App shell: o cabeçalho com as abas de estado e, embaixo, um painel por aba — o mapa enquanto a
@@ -41,16 +35,8 @@ const AppShell = () => {
   const { respondendo, novas, marcarRespondendo } = useAbasRespondendo(abas.ativa);
   const entity = getEntity(abas.lista.find((a) => a.chave === abas.ativa)?.entityId) ?? null;
   // Aqui e não no Home: o botão mora no cabeçalho, ao lado do logo, e a sidebar no Home. Uma
-  // escolha só para todas as abas.
-  const [sidebarAberta, setSidebarAberta] = useState(lerSidebarAberta);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(SIDEBAR_KEY, sidebarAberta ? "aberta" : "recolhida");
-    } catch {
-      // Sem persistência, o botão segue valendo nesta sessão.
-    }
-  }, [sidebarAberta]);
+  // escolha só para todas as abas (e, pelo `storage`, para as outras janelas do navegador).
+  const sidebarAberta = useTextoGravado(CHAVES.sidebar) !== "recolhida";
 
   // Ctrl+B (⌘B no Mac), o atalho de sidebar dos editores. Só com estado escolhido na aba ativa:
   // no mapa não há sidebar, e o Ctrl+B fica com o navegador. Com Shift é outra coisa (o
@@ -62,7 +48,7 @@ const AppShell = () => {
       if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== "b")
         return;
       e.preventDefault();
-      setSidebarAberta((v) => !v);
+      alternarSidebar();
     };
     document.addEventListener("keydown", aoTeclar);
     return () => document.removeEventListener("keydown", aoTeclar);
@@ -73,7 +59,7 @@ const AppShell = () => {
       <AppHeader
         subtitle={APP_VERSION}
         sidebarAberta={sidebarAberta}
-        onToggleSidebar={entity ? () => setSidebarAberta((v) => !v) : undefined}
+        onToggleSidebar={entity ? alternarSidebar : undefined}
         sidebarId={entity ? idDaSidebar(entity.id) : undefined}
       >
         <AbasDeEstado

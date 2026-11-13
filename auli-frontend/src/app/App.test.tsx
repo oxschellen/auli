@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it } from "vitest";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import App from "./App";
 import { SIDEBAR_RAIL_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH } from "../ui/layout";
 
@@ -68,6 +68,17 @@ describe("sidebar recolhível (botão ao lado do logo)", () => {
     unmount();
 
     render(<App />);
+    expect(botao()).toHaveAccessibleName("Expandir a barra lateral");
+    expect(larguras()).toEqual([SIDEBAR_RAIL_WIDTH, SIDEBAR_RAIL_WIDTH]);
+  });
+
+  it("acompanha a escolha feita em outra janela do navegador", () => {
+    render(<App />);
+    expect(botao()).toHaveAccessibleName("Recolher a barra lateral");
+    act(() => {
+      localStorage.setItem("auli.sidebar", "recolhida");
+      window.dispatchEvent(new StorageEvent("storage", { key: "auli.sidebar" }));
+    });
     expect(botao()).toHaveAccessibleName("Expandir a barra lateral");
     expect(larguras()).toEqual([SIDEBAR_RAIL_WIDTH, SIDEBAR_RAIL_WIDTH]);
   });
