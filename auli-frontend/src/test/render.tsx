@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
 import { render } from "@testing-library/react";
-import { Provider } from "../pages/chat/ui/provider";
+import { Provider } from "../ui/provider";
 
 /**
  * Render a component inside the app's Chakra + color-mode Provider, which the

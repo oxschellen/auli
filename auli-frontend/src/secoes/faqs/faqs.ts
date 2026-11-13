@@ -1,0 +1,146 @@
+import { parseQuery, buildHaystack, haystackMatches } from "../../lib/textSearch";
+
+/** A single Q&A pair as stored in faqs-tree.json. */
+interface RawFaqItem {
+  pergunta: string;
+  resposta: string;
+  /** Link da própria pergunta, quando a fonte tem um (SC). Sem ele, a folha usa o do nó (RS). */
+  url?: string | null;
+}
+
+/** Raw node shape as it appears in faqs-tree.json (and its recursive children). */
+export interface RawFaqNode {
+  title?: string;
+  url?: string | null;
+  page_type?: string;
+  children?: RawFaqNode[];
+  faq_items?: RawFaqItem[];
+}
+
+/** Normalized tree node consumed by the FAQ UI. */
+export interface FaqNode {
+  id: string;
+  text: string;
+  url: string | null;
+  children: FaqNode[];
+}
+
+/** A node plus the chain of ancestors that led to it (used by search results). */
+export interface FaqSearchHit {
+  node: FaqNode;
+  ancestors: FaqNode[];
+}
+
+/**
+ * Quantas PERGUNTAS a árvore tem — a unidade do acervo, e o que vira documento e vetor.
+ *
+ * Conta os `faq_items` da árvore crua em vez das folhas da árvore convertida, porque as duas
+ * respostas diferem: no RS há 25 páginas de menu sem filho nenhum, que são folhas mas não são
+ * perguntas (1.972 folhas para 1.947 perguntas). Somar `faq_items` não tem essa ambiguidade.
+ */
+export function contarPerguntas(json: RawFaqNode): number {
+  let total = json.faq_items?.length ?? 0;
+  for (const child of json.children || []) total += contarPerguntas(child);
+  return total;
+}
+
+let _id = 0;
+
+function makeId(): string {
+  return `node-${_id++}`;
+}
+
+export function buildNodesFromJson(json: RawFaqNode): FaqNode[] {
+  _id = 0;
+  return (json.children || []).map(convertJsonNode);
+}
+
+function convertJsonNode(jsonNode: RawFaqNode): FaqNode {
+  const children: FaqNode[] = [];
+
+  for (const child of jsonNode.children || []) {
+    children.push(convertJsonNode(child));
+  }
+
+  for (const item of jsonNode.faq_items || []) {
+    children.push({
+      id: makeId(),
+      text: item.pergunta,
+      url: item.url || jsonNode.url || null,
+      children: [],
+    });
+  }
+
+  return {
+    id: makeId(),
+    text: jsonNode.title ?? "",
+    url: jsonNode.url || null,
+    children,
+  };
+}
+
+export function searchNodes(
+  nodes: FaqNode[],
+  query: string,
+  ancestors: FaqNode[] = [],
+): FaqSearchHit[] {
+  // `parseQuery` uma vez no topo; a recursão carrega os termos já normalizados (não reparseia).
+  return collectMatches(nodes, parseQuery(query), ancestors);
+}
+
+function collectMatches(
+  nodes: FaqNode[],
+  terms: readonly string[],
+  ancestors: FaqNode[],
+): FaqSearchHit[] {
+  const results: FaqSearchHit[] = [];
+  for (const node of nodes) {
+    if (haystackMatches(buildHaystack([node.text]), terms)) {
+      results.push({ node, ancestors });
+    }
+    if (node.children.length > 0) {
+      results.push(...collectMatches(node.children, terms, [...ancestors, node]));
+    }
+  }
+  return results;
+}
+
+export function getEffectiveUrl(node: FaqNode, ancestors: FaqNode[]): string | null {
+  if (node.url) return node.url;
+  for (let i = ancestors.length - 1; i >= 0; i--) {
+    if (ancestors[i].url) return ancestors[i].url;
+  }
+  return null;
+}
+
+export function buildPageTypeMap(
+  jsonNode: RawFaqNode,
+  map: Map<string, string> = new Map(),
+): Map<string, string> {
+  if (jsonNode.url && jsonNode.page_type) {
+    map.set(jsonNode.url.replace(/\/$/, ""), jsonNode.page_type);
+  }
+  if (Array.isArray(jsonNode.children)) {
+    for (const child of jsonNode.children) {
+      buildPageTypeMap(child, map);
+    }
+  }
+  return map;
+}
+
+export function buildAnswerMap(
+  jsonNode: RawFaqNode,
+  map: Map<string, string> = new Map(),
+): Map<string, string> {
+  if (Array.isArray(jsonNode.faq_items)) {
+    for (const item of jsonNode.faq_items) {
+      map.set(item.pergunta.trim().toLowerCase(), item.resposta);
+    }
+  }
+  if (Array.isArray(jsonNode.children)) {
+    for (const child of jsonNode.children) {
+      buildAnswerMap(child, map);
+    }
+  }
+  return map;
+}

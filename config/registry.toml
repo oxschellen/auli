@@ -19,7 +19,7 @@
 # FONTE DA VERDADE compartilhada. É lida por:
 #   - auli-cli  (server): entidades carregadas + prompt por entidade
 #   - auli-collections (scraper): entidades válidas + diretório de saída
-#   - auli-frontend: gerado por scripts/tools/gen-frontend-entities.mjs -> src/shared/entities.ts
+#   - auli-frontend: gerado por scripts/tools/gen-frontend-entities.mjs -> src/contexto/entities.ts
 # Editar AQUI; nunca duplicar a lista de entidades em código.
 #
 # Campos por entidade:

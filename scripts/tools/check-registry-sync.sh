@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # check-registry-sync.sh — guard-rail: config/registry.toml é a FONTE ÚNICA de entidades.
 # Falha (exit 1) se:
-#   1) o frontend (src/shared/entities.ts) estiver fora de sincronia com o registry, ou
+#   1) o frontend (src/contexto/entities.ts) estiver fora de sincronia com o registry, ou
 #   2) reaparecer um diretório de definição de entidade fora do registry (a triplicação da §6).
 # Barato (node + git; não compila Rust). Bom para CI ou pre-commit.
 set -euo pipefail
@@ -11,8 +11,8 @@ fail=0
 
 # 1) entities.ts regenerado bate com o commitado?
 node "$ROOT/scripts/tools/gen-frontend-entities.mjs" >/dev/null
-if ! git -C "$ROOT" diff --quiet -- auli-frontend/src/shared/entities.ts; then
-  echo "❌ auli-frontend/src/shared/entities.ts fora de sincronia com config/registry.toml."
+if ! git -C "$ROOT" diff --quiet -- auli-frontend/src/contexto/entities.ts; then
+  echo "❌ auli-frontend/src/contexto/entities.ts fora de sincronia com config/registry.toml."
   echo "   Rode: node scripts/tools/gen-frontend-entities.mjs  (e faça commit)."
   fail=1
 fi

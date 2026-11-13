@@ -221,7 +221,7 @@ echo "✅ 3/8  CONCLUÍDO — zips prontos em public/downloads/"
 #
 # O furo que deixou Roraima quebrada em produção: o passo 2 faz `rm -rf` + `mkdir` por entidade, o
 # que cria o diretório mesmo sem fonte em `data/`, e o `(0 arquivos)` no log passa despercebido. A
-# entidade continua aparecendo no seletor de estados (src/shared/entities.ts, gerado do registry) e
+# entidade continua aparecendo no seletor de estados (src/contexto/entities.ts, gerado do registry) e
 # suas abas quebram para quem a escolher.
 #
 # Por isso a guarda compara as DUAS listas — o registry e o disco — e para o deploy na divergência.
@@ -244,7 +244,7 @@ if [ "${#vazias[@]}" -gt 0 ]; then
   done
   if [ "$ALLOW_VAZIAS" = 0 ]; then
     echo
-    echo "❌ deploy abortado. A entidade aparece no seletor de estados (src/shared/entities.ts) e"
+    echo "❌ deploy abortado. A entidade aparece no seletor de estados (src/contexto/entities.ts) e"
     echo "   suas abas falham em produção. Resolva de um dos dois jeitos:"
     echo "     • recupere/colete o data/<id>/ e rode de novo; ou"
     echo "     • tire a entidade de config/registry.toml e rode scripts/tools/gen-frontend-entities.mjs"
