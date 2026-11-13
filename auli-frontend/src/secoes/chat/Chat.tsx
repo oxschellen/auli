@@ -1,53 +1,34 @@
-import { Box, Flex, Text, chakra } from "@chakra-ui/react";
-import { MdEdit, MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import { LuPanelRight } from "react-icons/lu";
-import { useRef, useEffect, useState } from "react";
-import { useIsKeyboardVisible } from "./hooks/useIsKeyboardVisible";
+import { Flex } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 import { Messages } from "./Messages";
-import { Input } from "./Input";
-import { usePrompt } from "./hooks/usePrompt";
-import { useMessages } from "./hooks/useMessages";
-import { useQuestionType } from "./hooks/useQuestionType";
-import { callServerAPI } from "./hooks/callServerAPI";
-import { isPromptValid } from "./lib/prompt";
+import { Compositor } from "./Compositor";
+import { PainelHistorico } from "./PainelHistorico";
 import { SelectQuestionType } from "./SelectQuestionType";
 import { EstadoInicial } from "./EstadoInicial";
-import { Historico } from "./Historico";
+import { useConversa } from "./hooks/useConversa";
+import { useQuestionType } from "./hooks/useQuestionType";
 import { useHistorico } from "./hooks/useHistorico";
 import { usePainelHistorico } from "./hooks/usePainelHistorico";
+import { isPromptValid } from "./lib/prompt";
 import type { ItemHistorico } from "./lib/historico";
 import { TIPOS } from "./lib/textoDosTipos";
 import { useSelectedEntity } from "../../contexto/EntityContext";
 import { useAvisarResposta } from "../../contexto/RespostaDaAba";
-import { HEADER_HEIGHT, HISTORICO_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH, Z } from "../../ui/layout";
-import { Sobreposicao } from "../../ui/Sobreposicao";
 
-/** O botão de "Minhas perguntas", na linha acima da caixa de mensagem. São dois no DOM — um por
- *  modo, escolhidos por CSS (`hideBelow`/`hideFrom`), como os dois botões da barra lateral
- *  esquerda — com a mesma cara, que é a do "Recolher" vizinho. */
-const BOTAO_HISTORICO = {
-  type: "button",
-  display: "flex",
-  alignItems: "center",
-  gap: 1,
-  px: 2,
-  py: 1,
-  fontSize: "12px",
-  color: "fg.muted",
-  borderRadius: "full",
-  cursor: "pointer",
-  _hover: { bg: "bg.overlay" },
-} as const;
-
+/**
+ * O chat de uma aba de estado. Compõe as partes (I8 do docs/ESTUDO-frontend-organizacao.md) — a
+ * conversa (`useConversa`), a barra de composição (`Compositor`) e "Minhas perguntas"
+ * (`PainelHistorico`) — e cuida do que é dele: o envio, a rolagem até a resposta e o que volta do
+ * histórico para a caixa.
+ */
 export const Chat = () => {
   const entity = useSelectedEntity();
-  const { prompt, setPrompt, updatePrompt } = usePrompt();
-  const { messages, setMessages } = useMessages();
+  const conversa = useConversa(entity.id);
+  const [prompt, setPrompt] = useState("");
   // O seletor de fonte é dirigido pelo registry: a entidade decide quais tipos existem.
   const { questionType, updateQuestionType, disponiveis } = useQuestionType(entity);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const isSubmittingRef = useRef(false);
 
   const historico = useHistorico(entity.id);
   // Dois estados, como na barra lateral esquerda: a partir de `xl` o painel é uma coluna e a
@@ -57,13 +38,12 @@ export const Chat = () => {
   const [drawerAberto, setDrawerAberto] = useState(false);
   const botaoDrawerRef = useRef<HTMLButtonElement>(null);
 
-  const { isKeyboardVisible: isKeyboardOpen, keyboardHeight } = useIsKeyboardVisible();
-  const [loading, setLoading] = useState(false);
   // O spinner na aba do estado: é com a aba escondida, a pergunta ainda rodando, que ele conta.
   const avisarResposta = useAvisarResposta();
   useEffect(() => {
-    avisarResposta(loading);
-  }, [avisarResposta, loading]);
+    avisarResposta(conversa.esperando);
+  }, [avisarResposta, conversa.esperando]);
+
   // Só no celular: a caixa de mensagem ocupa ~220px da tela, e recolhê-la libera a leitura da
   // resposta. Fica uma barrinha que a traz de volta já com o foco no campo.
   const [recolhido, setRecolhido] = useState(false);
@@ -72,25 +52,16 @@ export const Chat = () => {
     requestAnimationFrame(() => textareaRef.current?.focus());
   };
 
-  // Altura MEDIDA da barra de composição, que é `fixed` e cobre o fim da lista. O recuo era fixo
-  // (185px) e no celular a barra passa disso — o seletor de tipo quebra em duas linhas —, então a
-  // última faixa de cada resposta (os botões do log e de cópia) ficava escondida atrás dela.
-  // O valor inicial reproduz os 185px de antes até a primeira medição.
-  const composerRef = useRef<HTMLDivElement>(null);
-  const [composerHeight, setComposerHeight] = useState(169);
-  useEffect(() => {
-    const el = composerRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => setComposerHeight(el.offsetHeight));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
+  // A altura da barra de composição, que é `fixed` e cobre o fim da lista: o `Compositor` a mede.
+  // O valor inicial reproduz os 185px de recuo de antes até a primeira medição.
+  const [alturaCompositor, setAlturaCompositor] = useState(169);
 
   // Resposta que chega rola até o COMEÇO dela, não até o fim (D-UI-2): a resposta longa terminava
   // com a tabela e as fontes na tela, e o Resumo — a parte mais lida — ficava acima, fora da vista
   // (no celular, sempre). A pergunta e a espera seguem rolando até o fim, como antes.
+  const { mensagens } = conversa;
   useEffect(() => {
-    const ultima = messages[messages.length - 1];
+    const ultima = mensagens[mensagens.length - 1];
     requestAnimationFrame(() => {
       if (ultima?.from === "server" && ultima.showButton && !ultima.pendente) {
         document
@@ -100,10 +71,10 @@ export const Chat = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       }
     });
-  }, [messages]);
+  }, [mensagens]);
 
   // Antes da primeira pergunta, a apresentação do tipo selecionado no lugar da saudação (D-UI-10).
-  const vazio = !messages.some((m) => m.from === "user");
+  const vazio = !mensagens.some((m) => m.from === "user");
   const usarExemplo = (pergunta: string) => {
     setPrompt(pergunta);
     requestAnimationFrame(() => textareaRef.current?.focus());
@@ -119,231 +90,66 @@ export const Chat = () => {
     usarExemplo(item.pergunta);
   };
 
-  const painel = (aoFechar: () => void) => (
-    <Historico
-      itens={historico.itens}
-      onUsar={usarDoHistorico}
-      onFavoritar={historico.alternarFavorita}
-      onRemover={historico.remover}
-      onLimparRecentes={historico.limparRecentes}
-      onFechar={aoFechar}
-    />
-  );
-
-  const handleCallServerAPI = async (prompt: string) => {
-    const trimmedPrompt = prompt.trim();
-    if (isSubmittingRef.current || loading || !isPromptValid(trimmedPrompt)) return;
-    isSubmittingRef.current = true;
+  const enviar = (texto: string) => {
+    const pergunta = texto.trim();
+    if (conversa.esperando || !isPromptValid(pergunta)) return;
+    if (!conversa.enviar(pergunta, questionType)) return;
     // No ENVIO, não na chegada (D-HIST-3): a pergunta que deu erro ou estourou o tempo é
     // justamente a que a pessoa vai querer reenviar.
-    historico.registrar(trimmedPrompt, questionType);
-    try {
-      await callServerAPI({
-        prompt: trimmedPrompt,
-        messages,
-        setMessages,
-        setPrompt,
-        setLoading,
-        entityId: entity.id,
-        questionType,
-      });
-    } finally {
-      isSubmittingRef.current = false;
-    }
+    historico.registrar(pergunta, questionType);
+    // A caixa esvazia no ENVIO, não na chegada (D-UI-2): a pergunta já está no balão do usuário,
+    // e deixá-la no campo com "Pronto para enviar" durante a espera convidava a reenviar. Quem
+    // quiser reaproveitá-la usa o botão do próprio balão.
+    setPrompt("");
   };
 
   return (
     <Flex w="100%" flex={1} bg="bg.app">
-      <Flex flexDirection="column" flex={1} minW={0} pb={`${composerHeight + 16}px`}>
+      <Flex flexDirection="column" flex={1} minW={0} pb={`${alturaCompositor + 16}px`}>
         {vazio ? (
           <EstadoInicial tipo={questionType} onExemplo={usarExemplo} />
         ) : (
-          <Messages messages={messages} setPrompt={setPrompt} />
+          <Messages messages={mensagens} setPrompt={setPrompt} />
         )}
         <div ref={messagesEndRef} />
       </Flex>
 
-      {/* Painel (>= xl): coluna à direita, DENTRO do fluxo — o chat encolhe em vez de ser coberto,
-          e a barra de rolagem da área de conteúdo segue à vista, à direita dele. `sticky` porque o
-          Chat mora dentro do único container de scroll (ver `Home`): sem isso o painel subiria
-          junto com as mensagens. A altura é a da área que rola, que nesta largura é a tela menos
-          o cabeçalho. O zIndex fica ACIMA da barra de composição (ver `Z`). */}
-      {painelAberto && (
-        <Box
-          as="aside"
-          aria-label="Minhas perguntas"
-          hideBelow="xl"
-          position="sticky"
-          top={0}
-          alignSelf="flex-start"
-          flexShrink={0}
-          w={HISTORICO_WIDTH}
-          h={`calc(100dvh - ${HEADER_HEIGHT})`}
-          overflowY="auto"
-          bg="bg.app"
-          borderLeft="1px solid var(--chakra-colors-border)"
-          zIndex={Z.painelHistorico}
-        >
-          {painel(() => setPainelAberto(false))}
-        </Box>
-      )}
+      <PainelHistorico
+        coluna={painelAberto}
+        drawer={drawerAberto}
+        onFecharColuna={() => setPainelAberto(false)}
+        onFecharDrawer={() => setDrawerAberto(false)}
+        devolverFocoA={botaoDrawerRef}
+        itens={historico.itens}
+        onUsar={usarDoHistorico}
+        onFavoritar={historico.alternarFavorita}
+        onRemover={historico.remover}
+        onLimparRecentes={historico.limparRecentes}
+      />
 
-      {/* Drawer (< xl): o véu + o MESMO painel, vindo da direita. Esc fecha e devolve o foco ao
-          botão que o abriu, como no drawer de seções do `Home`. */}
-      {drawerAberto && (
-        <Sobreposicao
-          hideFrom="xl"
-          onFechar={() => setDrawerAberto(false)}
-          devolverFocoA={botaoDrawerRef}
-        >
-          <Box
-            as="aside"
-            aria-label="Minhas perguntas"
-            position="absolute"
-            top={0}
-            bottom={0}
-            right={0}
-            w="min(320px, 88vw)"
-            overflowY="auto"
-            bg="bg.app"
-            borderLeft="1px solid var(--chakra-colors-border)"
-          >
-            {painel(() => setDrawerAberto(false))}
-          </Box>
-        </Sobreposicao>
-      )}
-
-      {/* Barra de composição. `fixed` é o que permite subi-la acima do teclado virtual — mas
-          `fixed` se ancora na VIEWPORT, não na área de conteúdo, então ela precisa recuar a
-          largura da sidebar. Sem isso invade o menu, que é o que acontecia desde que a navegação
-          virou sidebar (antes as abas eram uma faixa no topo e a barra cheia estava certa).
-
-          `right={0}` em vez de `width="100%"`: com o recuo à esquerda, 100% transbordaria à
-          direita exatamente a largura da sidebar. Abaixo de `md` a sidebar vira drawer e não
-          ocupa espaço, daí o `base: 0`. O recuo vem da variável que o `Home` define (a faixa de
-          ícones com a sidebar recolhida); `SIDEBAR_WIDTH` é o reserva para o Chat montado fora
-          dele. */}
-      <Box
-        ref={composerRef}
-        position="fixed"
-        // Lift the input above the on-screen keyboard when it's open. The
-        // keyboard height is measured from visualViewport, so this needs no
-        // device/UA check — desktops simply report 0.
-        bottom={isKeyboardOpen ? `${keyboardHeight}px` : 0}
-        left={{ base: 0, md: `var(${SIDEBAR_VAR}, ${SIDEBAR_WIDTH})` }}
-        // Com o painel "Minhas perguntas" aberto (>= xl), recua também à direita.
-        right={painelAberto ? { base: 0, xl: HISTORICO_WIDTH } : 0}
-        zIndex={Z.compositor}
-        // Mesma cor do fundo: a caixa é que se destaca (borda e sombra), não uma faixa branca de
-        // ponta a ponta (D-UI-4).
-        bg="bg.app"
+      <Compositor
+        textareaRef={textareaRef}
+        prompt={prompt}
+        onDigitar={(e) => setPrompt(e.target.value)}
+        esperando={conversa.esperando}
+        onEnviar={enviar}
+        placeholder={TIPOS[questionType].placeholder}
+        painelAberto={painelAberto}
+        onAlternarPainel={() => setPainelAberto(!painelAberto)}
+        drawerAberto={drawerAberto}
+        onAbrirDrawer={() => setDrawerAberto(true)}
+        botaoDrawerRef={botaoDrawerRef}
+        recolhido={recolhido}
+        onRecolher={() => setRecolhido(true)}
+        onExpandir={expandir}
+        onAltura={setAlturaCompositor}
       >
-        {/* A linha acima da caixa, alinhada com ela: à esquerda, "Minhas perguntas" (em toda
-            largura); à direita, só no celular, o "Recolher" — e, recolhida, a barrinha que a traz
-            de volta. A caixa segue filha DIRETA desta barra fixa (o teste da sidebar sobe por
-            `parentElement`), então quem a esconde é o próprio `Input`, pela prop `recolhido`. */}
-        <Flex
-          display={{ base: recolhido ? "none" : "flex", md: "flex" }}
-          justify="space-between"
-          maxW="760px"
-          mx={{ base: 3, md: "auto" }}
-        >
-          <chakra.button
-            {...BOTAO_HISTORICO}
-            hideBelow="xl"
-            aria-label={painelAberto ? "Recolher minhas perguntas" : "Mostrar minhas perguntas"}
-            aria-expanded={painelAberto}
-            onClick={() => setPainelAberto(!painelAberto)}
-          >
-            <LuPanelRight size={14} aria-hidden="true" />
-            Minhas perguntas
-          </chakra.button>
-          <chakra.button
-            {...BOTAO_HISTORICO}
-            ref={botaoDrawerRef}
-            hideFrom="xl"
-            aria-label="Abrir minhas perguntas"
-            aria-expanded={drawerAberto}
-            onClick={() => setDrawerAberto(true)}
-          >
-            <LuPanelRight size={14} aria-hidden="true" />
-            Minhas perguntas
-          </chakra.button>
-          <chakra.button
-            type="button"
-            aria-label="Recolher a caixa de mensagem"
-            aria-expanded={true}
-            onClick={() => setRecolhido(true)}
-            display={{ base: "flex", md: "none" }}
-            alignItems="center"
-            gap={1}
-            px={2}
-            py={1}
-            fontSize="11px"
-            color="fg.muted"
-            borderRadius="full"
-            _hover={{ bg: "bg.overlay" }}
-          >
-            Recolher
-            <MdKeyboardArrowDown size={16} />
-          </chakra.button>
-        </Flex>
-        <chakra.button
-          type="button"
-          aria-label="Mostrar a caixa de mensagem"
-          aria-expanded={false}
-          onClick={expandir}
-          display={{ base: recolhido ? "flex" : "none", md: "none" }}
-          alignItems="center"
-          justifyContent="space-between"
-          w="calc(100% - 24px)"
-          mx={3}
-          mb={2}
-          px={3}
-          py={2}
-          fontSize="0.9rem"
-          color="fg.muted"
-          bg="bg.canvas"
-          border="1px solid"
-          borderColor="border"
-          borderRadius="12px"
-        >
-          <Flex as="span" alignItems="center" gap={2}>
-            <MdEdit size={16} />
-            Escrever pergunta
-          </Flex>
-          <MdKeyboardArrowUp size={20} />
-        </chakra.button>
-
-        {/* O seletor mora DENTRO da caixa de mensagem: é filho do `Input`, não irmão. */}
-        <Input
-          textareaRef={textareaRef}
-          prompt={prompt}
-          updatePrompt={updatePrompt}
-          loading={loading}
-          callServerAPI={handleCallServerAPI}
-          recolhido={recolhido}
-          placeholder={TIPOS[questionType].placeholder}
-        >
-          <SelectQuestionType
-            questionType={questionType}
-            updateQuestionType={updateQuestionType}
-            disponiveis={disponiveis}
-          />
-        </Input>
-        {/* O aviso de protótipo saiu de cada resposta (eram 3 linhas repetidas) e mora aqui, uma vez
-            (D-UI-4). O texto completo, validado com quem atende, está no Sobre. */}
-        <Text
-          display={{ base: recolhido ? "none" : "block", md: "block" }}
-          textAlign="center"
-          fontSize="12px"
-          color="fg.muted"
-          px={3}
-          pb={2}
-        >
-          A Auli é experimental e pode errar — confira as fontes.
-        </Text>
-      </Box>
+        <SelectQuestionType
+          questionType={questionType}
+          updateQuestionType={updateQuestionType}
+          disponiveis={disponiveis}
+        />
+      </Compositor>
     </Flex>
   );
 };

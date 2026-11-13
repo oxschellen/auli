@@ -56,6 +56,6 @@ sobrescrita com a variável de ambiente `VITE_API_URL`).
 ## Testes
 
 Testes com **Vitest**: lógica pura (parsers, validação do prompt, `editLinks`,
-`callServerAPI`) no ambiente Node e testes de renderização de componentes
+o contrato do `api/chat`) no ambiente Node e testes de renderização de componentes
 (`SearchInput`, `AsyncContent`, `Input`, `Messages`) em **jsdom** via Testing
 Library. Veja [DESCRIPTION.md](DESCRIPTION.md) para detalhes da arquitetura.

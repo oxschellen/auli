@@ -1,4 +1,4 @@
-import type { QuestionType } from "../hooks/useQuestionType";
+import type { QuestionType } from "./tipoDeConsulta";
 
 /**
  * O texto de cada tipo de consulta, num lugar só (D-UI-9): rótulo do seletor, descrição do menu,

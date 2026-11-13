@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { CHAVES, gravarTexto, lerTexto, useTextoGravado } from "../../../lib/storage";
 import * as historico from "../lib/historico";
 import type { ItemHistorico } from "../lib/historico";
-import type { QuestionType } from "./useQuestionType";
+import type { QuestionType } from "../lib/tipoDeConsulta";
 
 /**
  * As perguntas enviadas nesta entidade, guardadas só neste navegador (Etapa 1: sem login e sem

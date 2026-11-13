@@ -665,21 +665,23 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
 
 ### 4.3 Chat (caminho ativo)
 
-- [secoes/chat/Chat.tsx](auli-frontend/src/secoes/chat/Chat.tsx): a URL da API é
-  `import.meta.env.VITE_API_URL ?? "https://api.auli.com.br/v1/question"`. Passa
-  `entityId: entity.id` ao backend.
-- [secoes/chat/hooks/callServerAPI.ts](auli-frontend/src/secoes/chat/hooks/callServerAPI.ts):
-  `POST` via axios do corpo `{ question, entity? }`, com **timeout de 70 s** via
-  `AbortController`; mensagens de erro/timeout em pt-BR. Lê `res.data.answer`, `log_id` e
-  `fontes` (D-SF-10).
+- [api/chat.ts](auli-frontend/src/api/chat.ts): a URL da API é
+  `import.meta.env.VITE_API_URL ?? "https://api.auli.com.br/v1/question"`; `perguntar` faz o
+  `POST` via axios do corpo `{ question, entity?, type }`, com **timeout de 70 s** via
+  `AbortController`, e devolve a resposta (`answer`, `log_id`, `fontes` — D-SF-10) ou qual foi a
+  falha (tempo, limite, indisponível).
+- [secoes/chat/hooks/useConversa.ts](auli-frontend/src/secoes/chat/hooks/useConversa.ts): as
+  mensagens, que começam **vazias** — antes da primeira pergunta o chat mostra o
+  [EstadoInicial](auli-frontend/src/secoes/chat/EstadoInicial.tsx) (D-UI-10), não uma saudação —,
+  a espera e o envio, com as mensagens de erro/timeout em pt-BR. O
+  [Chat.tsx](auli-frontend/src/secoes/chat/Chat.tsx) passa `entity.id` e compõe a conversa com a
+  barra de composição ([Compositor.tsx](auli-frontend/src/secoes/chat/Compositor.tsx)) e o painel
+  ([PainelHistorico.tsx](auli-frontend/src/secoes/chat/PainelHistorico.tsx)).
 - [secoes/chat/Fontes.tsx](auli-frontend/src/secoes/chat/Fontes.tsx): a lista fixa de fontes de
   Serviços + FAQs (§3.4.1, D-SF-10), abaixo da resposta, em três grupos — citadas à vista,
   também consideradas e descartadas recolhidas (§4.3.1, D-UI-8).
 - [secoes/chat/lib/prompt.ts](auli-frontend/src/secoes/chat/lib/prompt.ts): validação do
   prompt (mínimo de 10 caracteres) — fonte única usada pelo guard de envio, botão e contador.
-- [secoes/chat/hooks/useMessages.ts](auli-frontend/src/secoes/chat/hooks/useMessages.ts):
-  estado das mensagens, que começa **vazio** — antes da primeira pergunta o chat mostra o
-  [EstadoInicial](auli-frontend/src/secoes/chat/EstadoInicial.tsx) (D-UI-10), não uma saudação.
 - **Minhas perguntas** (§4.3.2): [secoes/chat/Historico.tsx](auli-frontend/src/secoes/chat/Historico.tsx)
   desenha o painel; [lib/historico.ts](auli-frontend/src/secoes/chat/lib/historico.ts) tem as
   operações puras sobre a lista; [hooks/useHistorico.ts](auli-frontend/src/secoes/chat/hooks/useHistorico.ts)
@@ -795,7 +797,7 @@ estado ainda sem estado; escolher chama o `onSelect` da aba.
   (claro/escuro); modo de cor via `next-themes`.
 - `ErrorBoundary` ([app/ErrorBoundary.tsx](auli-frontend/src/app/ErrorBoundary.tsx)).
 - Testes presentes: `SearchInput`, `AsyncContent`, `linkify`, `Input`, `Messages`,
-  `callServerAPI`, `prompt`, `faqs`, `conteudos`, `camadas` (arquivos `*.test.ts(x)`).
+  `api/chat`, `useConversa`, `prompt`, `faqs`, `conteudos`, `camadas` (arquivos `*.test.ts(x)`).
 
 ### 4.7 Distinção ativo vs modelado (frontend)
 

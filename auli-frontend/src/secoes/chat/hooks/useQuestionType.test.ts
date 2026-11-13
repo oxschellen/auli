@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useQuestionType, tiposDisponiveis } from "./useQuestionType";
+import { useQuestionType } from "./useQuestionType";
+import { tiposDisponiveis } from "../lib/tipoDeConsulta";
 import type { Entity } from "../../../contexto/entities";
 
 const STORAGE_KEY = "auli.questionType";

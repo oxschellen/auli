@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, Text, chakra } from "@chakra-ui/react";
 import { MdInfoOutline } from "react-icons/md";
-import type { QuestionType } from "./hooks/useQuestionType";
+import type { QuestionType } from "./lib/tipoDeConsulta";
 import { TIPOS } from "./lib/textoDosTipos";
 
 interface EstadoInicialProps {

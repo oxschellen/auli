@@ -9,7 +9,7 @@ interface InputProps {
   prompt: string;
   updatePrompt: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   loading: boolean;
-  callServerAPI: (prompt: string) => void;
+  onEnviar: (prompt: string) => void;
   /** Controles que moram DENTRO da caixa de mensagem, acima do campo — hoje o seletor de tipo de
    *  consulta. Slot em vez de import direto para o `Input` não depender do que é composto nele
    *  (e para os testes dele seguirem montando o campo sozinho). */
@@ -39,7 +39,7 @@ export const Input = ({
   prompt,
   updatePrompt,
   loading,
-  callServerAPI,
+  onEnviar,
   children,
   recolhido = false,
   placeholder = "Digite sua pergunta...",
@@ -102,7 +102,7 @@ export const Input = ({
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
               if (!loading && valid) {
-                callServerAPI(prompt);
+                onEnviar(prompt);
               }
             }
           }}
@@ -126,7 +126,7 @@ export const Input = ({
           _active={{ bg: "brand.700" }}
           transition="background 0.15s ease"
           disabled={loading || !valid}
-          onClick={() => callServerAPI(prompt)}
+          onClick={() => onEnviar(prompt)}
         >
           <MdArrowUpward size={20} />
         </IconButton>

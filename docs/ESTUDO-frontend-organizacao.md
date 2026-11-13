@@ -53,6 +53,7 @@ O relatório foi conferido contra a `main` em `a57bb86` antes da etapa 1. Os ach
 - Na I5: o `Marca` mora em `lib/highlight.tsx`, ao lado do `Highlight` que o usa, e o `lib/markdown.tsx` o importa para o `compactMarkdownComRealce`. O relatório diz que as classes `markdown-body` e `faq-answer` não são consultadas pelos testes, mas o `Messages.test` usava a `.markdown-body` como marcador de mensagem desenhada; o seletor ficou só `p`, que já cobria o caso. O "Abrir no portal" dos Pareceres ganhou o `aria-label` que o `LinkExterno` exige, igual ao da Legislação. Na aba Sobre, o carregando e o erro passam a aparecer dentro da coluna de leitura, como nos Critérios.
 - Na I6, o `TributumShell.test` disparava o Esc do leitor de PDF no `window`; com o ouvinte no `document`, passou a disparar no `document`, que é por onde uma tecla de verdade passa. O `zIndex={1}` do `SearchInput` fica fora da escala `Z`: é o empilhamento do ícone dentro do próprio campo, não uma camada do app.
 - Na I7, o registro manteve os nomes de campo de hoje (`label`, `Component`, `collection`) em vez dos do esboço (`rotulo`, `Componente`, `colecao`): seria renomear por renomear, o que o próprio estudo desaconselha, e o diff deixaria de ser só movimentação. Pelo mesmo motivo o `secoesDe` marca `disabled`, que é o que o `proximaHabilitada` lê. O `registro.test.ts` cobre o `secoesDe`, que antes era um `useMemo` sem teste dentro do `Home`.
+- Na I8, o `enviar` do `useConversa` responde NA HORA se aceitou a pergunta (`false` com outra a caminho), e a resposta chega depois: com a trava dentro do hook, é o que deixa o `Chat` registrar no histórico e esvaziar a caixa só quando a pergunta foi mesmo enviada. A espera é trocada pela resposta pelo `id`, não pelo `pop()` de uma cópia da lista. O `tipos.ts` (o `Message`) já existia desde a etapa 2, e a prop `callServerAPI` do `Input` virou `onEnviar`. O C4 (trocar `showButton` por `natureza`), opcional no estudo, ficou de fora.
 - E6: o `.cursor/` e o `.agents/` saíram (decisão do mantenedor em 13/11/2026). A skill do react-doctor segue na cópia local de `.claude/skills/`, que é a que o Claude Code lê.
 
 **A etapa 1 fez também, além do checklist:** `remark-gfm` e `swr` entraram no `vendor-utils` do `chunkMap` (E4), o que leva o pacote do app de 204 kB para 153 kB, sem mudar o total; a linha comentada do `vite.svg` saiu do `index.html`; as menções a `@emotion/styled`, ao `jsconfig.json` e ao alias saíram do `README.md`, do `DESCRIPTION.md` e do `docs/auli_code.md`. A `meta description` com o texto "Auli" ficou: trocá-la é decisão de produto, não de organização.
@@ -677,7 +678,7 @@ A ordem põe primeiro o que encosta em login e permissão, e depois o que só re
 ### Etapa 4: dividir os arquivos grandes
 
 - [x] I7, registro de seções e `Navegacao.tsx`.
-- [ ] I8, `useConversa`, `Compositor` e `PainelHistorico`, com a repartição do `callServerAPI.test.ts`.
+- [x] I8, `useConversa`, `Compositor` e `PainelHistorico`, com a repartição do `callServerAPI.test.ts`.
 
 ### Decisões que antecedem a etapa 2
 

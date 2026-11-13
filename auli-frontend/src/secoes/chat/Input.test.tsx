@@ -14,7 +14,7 @@ function setup(prompt: string, overrides: Partial<Parameters<typeof Input>[0]> =
     prompt,
     updatePrompt: vi.fn(),
     loading: false,
-    callServerAPI: vi.fn(),
+    onEnviar: vi.fn(),
     ...overrides,
   };
   renderWithProvider(<Input {...props} />);
@@ -43,25 +43,25 @@ describe("Input", () => {
   });
 
   it("submits on click with a valid prompt", () => {
-    const { callServerAPI } = setup(VALID);
+    const { onEnviar } = setup(VALID);
     fireEvent.click(screen.getByLabelText("Enviar pesquisa"));
-    expect(callServerAPI).toHaveBeenCalledWith(VALID);
+    expect(onEnviar).toHaveBeenCalledWith(VALID);
   });
 
   it("submits on Enter (without Shift) when valid", () => {
-    const { callServerAPI } = setup(VALID);
+    const { onEnviar } = setup(VALID);
     fireEvent.keyDown(screen.getByPlaceholderText("Digite sua pergunta..."), {
       key: "Enter",
     });
-    expect(callServerAPI).toHaveBeenCalledWith(VALID);
+    expect(onEnviar).toHaveBeenCalledWith(VALID);
   });
 
   it("does not submit on Enter when the prompt is too short", () => {
-    const { callServerAPI } = setup(SHORT);
+    const { onEnviar } = setup(SHORT);
     fireEvent.keyDown(screen.getByPlaceholderText("Digite sua pergunta..."), {
       key: "Enter",
     });
-    expect(callServerAPI).not.toHaveBeenCalled();
+    expect(onEnviar).not.toHaveBeenCalled();
   });
 
   it("põe os controles do slot DENTRO da mesma caixa do campo", () => {
@@ -79,11 +79,11 @@ describe("Input", () => {
   });
 
   it("does not submit on Shift+Enter (newline)", () => {
-    const { callServerAPI } = setup(VALID);
+    const { onEnviar } = setup(VALID);
     fireEvent.keyDown(screen.getByPlaceholderText("Digite sua pergunta..."), {
       key: "Enter",
       shiftKey: true,
     });
-    expect(callServerAPI).not.toHaveBeenCalled();
+    expect(onEnviar).not.toHaveBeenCalled();
   });
 });

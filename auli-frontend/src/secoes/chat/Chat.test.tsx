@@ -153,6 +153,15 @@ describe("a conversa começa vazia", () => {
     expect(ocorrencias.filter((el) => !el.closest("aside"))).toHaveLength(1);
     expect(screen.queryByText("Olá! Como posso ajudar?")).toBeNull();
   });
+
+  it("a caixa esvazia no envio, não na chegada (D-UI-2)", async () => {
+    montar();
+    const caixa = screen.getByLabelText("Sua pergunta");
+    fireEvent.change(caixa, { target: { value: "Qual o prazo para pagar o ICMS da empresa?" } });
+    fireEvent.click(screen.getByLabelText("Enviar pesquisa"));
+    // A consulta deste arquivo nunca responde: o que esvaziou a caixa foi o envio.
+    await waitFor(() => expect(caixa).toHaveValue(""));
+  });
 });
 
 /**

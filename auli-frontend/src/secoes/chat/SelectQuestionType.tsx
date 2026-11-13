@@ -1,7 +1,7 @@
 import { Box, Flex, RadioGroup, Text, chakra } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { MdExpandMore } from "react-icons/md";
-import type { QuestionType } from "./hooks/useQuestionType";
+import type { QuestionType } from "./lib/tipoDeConsulta";
 import { TIPOS } from "./lib/textoDosTipos";
 import { Z } from "../../ui/layout";
 
