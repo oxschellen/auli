@@ -29,7 +29,7 @@ describe("drawer de seções (mobile)", () => {
     abrirDrawer();
     expect(screen.getAllByRole("tablist")).toHaveLength(2);
 
-    // No documento, não no painel: ao abrir, o foco ainda está no botão, FORA do drawer.
+    // O Esc é ouvido no documento; o foco, que ao abrir foi para dentro do drawer, volta ao botão.
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.getAllByRole("tablist")).toHaveLength(1);
     expect(document.activeElement).toBe(botao);
