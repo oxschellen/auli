@@ -6,17 +6,30 @@ import { Messages } from "./Messages";
 import type { Message } from "./tipos";
 
 const messages: Message[] = [
-  { id: "1", from: "server", text: "Olá! Como posso ajudar?", showButton: false },
-  { id: "2", from: "user", text: "Qual a alíquota do ICMS?", showButton: true },
-  { id: "3", from: "server", text: "Depende do produto.", showButton: true },
+  { id: "1", natureza: "pergunta", text: "Qual a alíquota do ICMS?" },
+  { id: "2", natureza: "resposta", text: "Depende do produto." },
+  { id: "3", natureza: "erro", text: "Desculpe! A requisição excedeu o tempo limite." },
 ];
 
 describe("Messages", () => {
-  it("renders both user and server message text", () => {
+  it("renders the question, the answer and the error text", () => {
     renderWithProvider(<Messages messages={messages} setPrompt={vi.fn()} />);
-    expect(screen.getByText("Olá! Como posso ajudar?")).toBeInTheDocument();
     expect(screen.getByText("Qual a alíquota do ICMS?")).toBeInTheDocument();
     expect(screen.getByText("Depende do produto.")).toBeInTheDocument();
+    expect(screen.getByText("Desculpe! A requisição excedeu o tempo limite.")).toBeInTheDocument();
+  });
+
+  it("a resposta é o cartão com ações; o erro, um balão sem nenhuma (C4)", () => {
+    renderWithProvider(<Messages messages={messages} setPrompt={vi.fn()} />);
+    const resposta = screen.getByText("Depende do produto.").closest("article");
+    expect(resposta).not.toBeNull();
+    // Um "Copiar resposta" só: o da resposta. O erro não tem o que copiar.
+    expect(screen.getAllByLabelText("Copiar resposta para a área de transferência")).toHaveLength(
+      1,
+    );
+    expect(
+      screen.getByText("Desculpe! A requisição excedeu o tempo limite.").closest("article"),
+    ).toBeNull();
   });
 
   it("renders nothing for an empty transcript", () => {

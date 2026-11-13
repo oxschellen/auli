@@ -31,17 +31,15 @@ describe("Pensando", () => {
 });
 
 describe("Messages", () => {
-  it("desenha a mensagem pendente como a animação, não como texto", () => {
+  it("desenha a mensagem de espera como a animação, não como texto", () => {
     renderWithProvider(
       <Messages
         setPrompt={vi.fn()}
         messages={[
           {
             id: "1",
-            from: "server",
+            natureza: "espera",
             text: "Aguarde! Pensando...",
-            showButton: false,
-            pendente: true,
           },
         ]}
       />,

@@ -34,7 +34,7 @@ describe("useConversa", () => {
     expect(result.current.esperando).toBe(false);
   });
 
-  it("no envio, mostra a pergunta e a espera (pendente), e depois troca a espera pela resposta", async () => {
+  it("no envio, mostra a pergunta e a espera, e depois troca a espera pela resposta", async () => {
     let responder!: (v: unknown) => void;
     post.mockImplementation(() => new Promise((r) => (responder = r)));
     const { result } = renderHook(() => useConversa("rs"));
@@ -44,21 +44,19 @@ describe("useConversa", () => {
     });
     expect(result.current.esperando).toBe(true);
     const [usuario, espera] = result.current.mensagens;
-    expect(usuario).toMatchObject({ from: "user", text: PERGUNTA });
-    expect(espera).toMatchObject({ from: "server", pendente: true, showButton: false });
+    expect(usuario).toMatchObject({ natureza: "pergunta", text: PERGUNTA });
+    expect(espera).toMatchObject({ natureza: "espera" });
     expect(espera.text).toMatch(/pensando/i);
 
     await act(async () => responder({ data: { answer: "Resposta do servidor", log_id: "abc" } }));
     expect(result.current.esperando).toBe(false);
     expect(result.current.mensagens).toHaveLength(2);
     expect(result.current.mensagens[1]).toMatchObject({
-      from: "server",
+      natureza: "resposta",
       text: "Resposta do servidor",
-      showButton: true,
       logId: "abc",
       tipo: "1",
     });
-    expect(result.current.mensagens[1].pendente).toBeUndefined();
 
     // Com a resposta na tela, a trava se solta: a próxima pergunta é aceita.
     let aceita = false;
@@ -101,7 +99,9 @@ describe("useConversa", () => {
   it("tempo esgotado, servidor fora e limite: cada falha com a sua mensagem", async () => {
     post.mockRejectedValue(new Error("aborted"));
     isCancel.mockReturnValue(true);
-    expect((await enviarEEsperar()).result.current.mensagens.at(-1)?.text).toMatch(/tempo limite/i);
+    const tempo = (await enviarEEsperar()).result.current.mensagens.at(-1);
+    expect(tempo).toMatchObject({ natureza: "erro" });
+    expect(tempo?.text).toMatch(/tempo limite/i);
 
     isCancel.mockReturnValue(false);
     post.mockRejectedValue(new Error("network"));
