@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { MdExpandMore } from "react-icons/md";
 import type { QuestionType } from "./hooks/useQuestionType";
 import { TIPOS } from "./lib/textoDosTipos";
+import { Z } from "../../ui/layout";
 
 interface SelectQuestionTypeProps {
   questionType: QuestionType;
@@ -86,7 +87,7 @@ export const SelectQuestionType = ({
           borderColor="border"
           borderRadius="12px"
           boxShadow="popover"
-          zIndex={30}
+          zIndex={Z.menuSuspenso}
         >
           <RadioGroup.Root
             aria-label="Tipo de consulta"

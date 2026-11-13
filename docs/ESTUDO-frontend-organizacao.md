@@ -51,6 +51,7 @@ O relatório foi conferido contra a `main` em `a57bb86` antes da etapa 1. Os ach
 - A I3 saiu com duas diferenças em relação ao esboço. O `inputRef` e o foco ao limpar moram na `BarraDeBusca`, e não no `useBusca`: com o ref dentro do objeto, a regra `react-hooks/refs` trata toda leitura de `busca` no render como acesso a ref, e a barra é mesmo a dona do campo. E os acordeões seguem recebendo o texto da busca, não `termos`: o `FaqsAccordion` precisa do texto para a mensagem de vazio e para saber que há busca (uma letra isolada some dos termos), então seriam três props no lugar de uma para poupar um `parseQuery` já memoizado.
 - Na I4, o `comoBotao` cobriu também as linhas que abrem link (o resultado de busca das FAQs e o item dos Conteúdos) e o mapa do Brasil, todas com o mesmo `onKeyDown`. Uma mudança pequena de acessibilidade veio junto: o nó da árvore de FAQs sem ação (nem filhos, nem resposta, nem link) tinha `role="button"` sem foco; agora é só texto.
 - Na I5: o `Marca` mora em `lib/highlight.tsx`, ao lado do `Highlight` que o usa, e o `lib/markdown.tsx` o importa para o `compactMarkdownComRealce`. O relatório diz que as classes `markdown-body` e `faq-answer` não são consultadas pelos testes, mas o `Messages.test` usava a `.markdown-body` como marcador de mensagem desenhada; o seletor ficou só `p`, que já cobria o caso. O "Abrir no portal" dos Pareceres ganhou o `aria-label` que o `LinkExterno` exige, igual ao da Legislação. Na aba Sobre, o carregando e o erro passam a aparecer dentro da coluna de leitura, como nos Critérios.
+- Na I6, o `TributumShell.test` disparava o Esc do leitor de PDF no `window`; com o ouvinte no `document`, passou a disparar no `document`, que é por onde uma tecla de verdade passa. O `zIndex={1}` do `SearchInput` fica fora da escala `Z`: é o empilhamento do ícone dentro do próprio campo, não uma camada do app.
 - E6: o `.cursor/` e o `.agents/` saíram (decisão do mantenedor em 13/11/2026). A skill do react-doctor segue na cópia local de `.claude/skills/`, que é a que o Claude Code lê.
 
 **A etapa 1 fez também, além do checklist:** `remark-gfm` e `swr` entraram no `vendor-utils` do `chunkMap` (E4), o que leva o pacote do app de 204 kB para 153 kB, sem mudar o total; a linha comentada do `vite.svg` saiu do `index.html`; as menções a `@emotion/styled`, ao `jsconfig.json` e ao alias saíram do `README.md`, do `DESCRIPTION.md` e do `docs/auli_code.md`. A `meta description` com o texto "Auli" ficou: trocá-la é decisão de produto, não de organização.
@@ -670,7 +671,7 @@ A ordem põe primeiro o que encosta em login e permissão, e depois o que só re
 - [x] I3, busca compartilhada. Conferir à mão: buscar com acento e com duas palavras em cada lista.
 - [x] I4, acordeão compartilhado. Conferir à mão: abrir e fechar por clique, Enter e Espaço.
 - [x] I5, documento markdown, realce e link.
-- [ ] I6, sobreposição e escala de `zIndex`. Conferir à mão no celular: os dois drawers, o log e o PDF, com Esc e com clique no fundo.
+- [x] I6, sobreposição e escala de `zIndex`. Conferir à mão no celular: os dois drawers, o log e o PDF, com Esc e com clique no fundo.
 
 ### Etapa 4: dividir os arquivos grandes
 
