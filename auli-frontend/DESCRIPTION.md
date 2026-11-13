@@ -46,7 +46,9 @@ today, each with the collections scraped for it so far. See
 
 Linting via **ESLint 9** (flat config) with React, React Hooks, React Refresh,
 and `typescript-eslint` plugins. `react-hooks/exhaustive-deps` is enforced as an
-error.
+error. Formatting is **Prettier** ([.prettierrc.json](.prettierrc.json): defaults
+plus `printWidth: 100`), checked in CI; the generated `entities.ts` and
+`brazilPaths.ts` are in [.prettierignore](.prettierignore).
 
 ---
 
@@ -58,6 +60,8 @@ npm run dev       # start Vite dev server
 npm run build     # type-check (tsc --noEmit) then production build
 npm run preview   # preview the production build
 npm run lint      # ESLint over js/jsx/ts/tsx (fails on warnings)
+npm run format    # Prettier --write over src/ and the root *.js configs
+npm run format:check # what CI runs
 npm run typecheck # tsc --noEmit only
 npm test          # run the Vitest suite once
 npm run test:watch# Vitest in watch mode
@@ -419,6 +423,7 @@ auli-frontend/
 ├─ index.html
 ├─ vite.config.js
 ├─ eslint.config.js
+├─ .prettierrc.json, .prettierignore
 ├─ tsconfig.json
 ├─ package.json
 ├─ public/                     # static assets
