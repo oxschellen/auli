@@ -139,13 +139,24 @@ another state, the user opens another tab; a state opens in one tab only.
 
 ### Home tab shell
 
-[src/secoes/home/Home.tsx](src/secoes/home/Home.tsx) renders a top tab bar
-(Chat, Serviços, FAQs, Pareceres, Notas, Conteúdos, Sobre) implementing the
-WAI-ARIA tabs pattern (roving `tabIndex`, arrow-key navigation). A tab panel is
-**mounted on first activation and then kept mounted** (toggled with
-`display: none`) so each section preserves its state — scroll position, search
-query, chat history — across tab switches, and megabyte-sized section data is
-fetched only once the tab is first opened.
+Three files, by what changes them:
+
+- [src/secoes/registro.ts](src/secoes/registro.ts) — the sections as data: the
+  17 `SECOES` (id, label, icon, component, required collection, group), the four
+  `GRUPOS` (top, Acervo, Tributum, Integrações), and `secoesDe(entity)`, which
+  keeps every section visible and disables the ones whose collection the entity
+  lacks. A new section is an entry here.
+- [src/secoes/home/Navegacao.tsx](src/secoes/home/Navegacao.tsx) — the list by
+  groups (`NavList`), used by the sidebar and by the mobile drawer, following the
+  WAI-ARIA vertical tabs pattern (roving `tabIndex`; arrow keys move to the next
+  *enabled* section, wrapping around, via `proximaHabilitada`), and the scroll
+  cue of both containers.
+- [src/secoes/home/Home.tsx](src/secoes/home/Home.tsx) — the active section, the
+  sidebar (collapsible into an icon rail from `md`), the drawer below `md`, and
+  the panels. A panel is **mounted on first activation and then kept mounted**
+  (toggled with `display: none`) so each section preserves its state — scroll
+  position, search query, chat history — across switches, and megabyte-sized
+  section data is fetched only once the section is first opened.
 
 ### Scrolling
 
@@ -513,7 +524,8 @@ auli-frontend/
    │  └─ ErrorBoundary.tsx
    │
    ├─ secoes/                  # SECTIONS: import from the base, never from each other
-   │  ├─ home/                 # sidebar shell that composes the sections
+   │  ├─ registro.ts           # the 17 sections as data (used by home/)
+   │  ├─ home/                 # sidebar shell that composes the sections (+ Navegacao)
    │  ├─ mapa/                 # "Escolha o estado" map of a new tab (+ BrazilMap, brazilPaths)
    │  ├─ chat/                 # components · hooks/ · lib/ · tipos.ts
    │  ├─ servicos/  faqs/  jurisprudencia/  legislacao/  notas/  conteudos/
