@@ -2,7 +2,7 @@ import { Box, Flex, Heading, Text, chakra } from "@chakra-ui/react";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { MdChevronRight, MdExpandMore } from "react-icons/md";
-import type { Fonte } from "./tipos";
+import type { Fonte } from "../../api/chat";
 import { toAbsoluteHref } from "../../lib/markdown";
 import { agruparFontes } from "./lib/fontes";
 import { ancora } from "./lib/citacoes";

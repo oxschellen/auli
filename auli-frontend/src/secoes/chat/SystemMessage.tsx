@@ -14,7 +14,7 @@ import { dividirSecoes } from "./lib/secoes";
 import { ancora, marcarCitacoes, rotuloDoHref, rotulosCitados } from "./lib/citacoes";
 import { TIPOS } from "./lib/textoDosTipos";
 import type { QuestionType } from "./hooks/useQuestionType";
-import type { Fonte } from "./tipos";
+import type { Fonte } from "../../api/chat";
 
 interface SystemMessageProps {
   /** Id da mensagem: prefixa os ids das fontes (o mesmo rótulo existe em toda resposta) e é o

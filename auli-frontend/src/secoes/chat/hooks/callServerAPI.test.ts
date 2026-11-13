@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import axios from "axios";
 import { callServerAPI } from "./callServerAPI";
+import { API_URL } from "../../../api/chat";
 import type { Message } from "../tipos";
 
 vi.mock("axios", () => ({
@@ -28,7 +29,6 @@ function makeArgs() {
       setMessages,
       setPrompt,
       setLoading,
-      API_URL: "https://api.test/question",
       questionType: "1" as const,
     },
   };
@@ -102,7 +102,7 @@ describe("callServerAPI", () => {
     await callServerAPI({ ...args, entityId: "rs", questionType: "2" });
 
     expect(mockedPost).toHaveBeenCalledWith(
-      args.API_URL,
+      API_URL,
       { question: args.prompt, entity: "rs", type: 2 },
       expect.anything(),
     );

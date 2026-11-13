@@ -1,19 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
+import type { Fonte } from "../../api/chat";
 import type { QuestionType } from "./hooks/useQuestionType";
 
 /** Who authored a chat message. */
 type MessageSender = "user" | "server";
-
-/** Um documento recuperado para a resposta, como a lista de fontes o mostra (D-SF-10). O `rotulo`
- *  é o mesmo da citação no texto (`"Serviço 2"`, `"FAQ 4"`), para o analista bater um com o outro. */
-export interface Fonte {
-  rotulo: string;
-  titulo: string;
-  link: string;
-  /** Veredito da triagem (D-SF-9). Ausente = o documento foi à resposta sem veredito (sem triagem,
-   *  triagem que falhou, ou documento que o modelo omitiu). */
-  triagem?: "aplica" | "condicional" | "descarta";
-}
 
 /** A single message rendered in the chat transcript. */
 export interface Message {

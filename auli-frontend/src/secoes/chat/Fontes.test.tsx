@@ -4,7 +4,7 @@ import { fireEvent, screen } from "@testing-library/react";
 import { renderWithProvider } from "../../test/render";
 import { Fontes, resumoFontes } from "./Fontes";
 import { SystemMessage } from "./SystemMessage";
-import type { Fonte } from "./tipos";
+import type { Fonte } from "../../api/chat";
 
 const fontes: Fonte[] = [
   { rotulo: "Serviço 1", titulo: "Emitir guia", link: "https://s/1", triagem: "aplica" },
