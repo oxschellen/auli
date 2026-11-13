@@ -7,9 +7,11 @@ that helps Brazilian public servants answer citizens' questions about **state
 taxes** (impostos estaduais), with a focus on Rio Grande do Sul (RS).
 
 This repository is the **frontend** — a single-page React application. The user
-asks questions in natural language and receives AI-generated answers, plus
-several browsable reference sections (Services, FAQs, Legal Opinions, and Tax
-Notes). The UI is in **Brazilian Portuguese** and is **mobile-first**.
+asks questions in natural language and receives AI-generated answers, and can
+browse the state's collection (Services, FAQs, Legal Opinions, TARF rulings,
+Legislation, Notes, Contents), the curated **Tributum** shelf, and the
+integrations (connecting one's own AI assistant through MCP, and downloading each
+state's package). The UI is in **Brazilian Portuguese** and is **mobile-first**.
 
 The app is **multi-tenant by state**: the user picks a state tax authority
 (*entity*) on a map, and everything picked under it — every data file and the
@@ -22,9 +24,12 @@ today, each with the collections scraped for it so far. See
 - **UI version:** taken from `package.json` `version` — injected at build time
   via the `__APP_VERSION__` define, so it can't drift from a hardcoded constant —
   and shown as the tooltip of the "Auli" logo.
-- **Backend API:** `https://api.auli.com.br/v1/question` (POST `{ question, entity? }`
-  → `{ answer }`) — `entity` is the selected state id, so the backend can query
-  the right tenant's collections (override the URL with `VITE_API_URL`).
+- **Backend API:** `https://api.auli.com.br/v1/question` (POST
+  `{ question, entity?, type }` → `{ answer, log_id?, fontes? }`) — `entity` is
+  the state of the tab, so the backend queries the right tenant's collections,
+  and `type` is the question type (Serviços + FAQs, Pareceres, TARF, Legislação).
+  An answer's audit log is `GET /v1/log/{log_id}`. Override the URL with
+  `VITE_API_URL`; both calls live in [src/api/chat.ts](src/api/chat.ts).
 
 ---
 
@@ -36,7 +41,7 @@ today, each with the collections scraped for it so far. See
 | UI library | **React 19** |
 | Build tool / dev server | **Vite 8** (Rolldown-based) with `@vitejs/plugin-react` |
 | Component library | **Chakra UI v3** (+ `@emotion/react`) |
-| Navigation | **None** — single-page **tabbed** shell (no router) |
+| Navigation | **No router** — state tabs in the header and a sidebar of sections, all in memory; the URL stays at `/` |
 | Data fetching | **SWR** + **Axios** |
 | Animation | **Framer Motion** (`LazyMotion` / `domAnimation`) |
 | Icons | **react-icons** (Material Design set) |
@@ -108,7 +113,7 @@ another state, the user opens another tab; a state opens in one tab only.
   (also the `public/<id>/` data folder and the backend tenant key), `name`
   (`SEFAZ-RS`), `uf` (`RS`), `state` (`Rio Grande do Sul`), and **`collections`**
   — the list of sections it actually has data for. `hasCollection(entity, kind)`
-  drives the per-section empty state. Generated from `config/registry.toml` by
+  decides which sections are enabled (`secoesDe`, in `secoes/registro.ts`). Generated from `config/registry.toml` by
   `scripts/tools/gen-frontend-entities.mjs` — do not hand-edit.
 - [src/app/abas.ts](src/app/abas.ts) — the state tabs: open, close, pick a
   state, persisted to `localStorage` under `auli.abas` (the open states in order,
@@ -242,41 +247,122 @@ SC's `Cidadão / Empresa / Servidor Público / Estudante / Prefeitura`.
 
 ### 3. FAQs (`src/secoes/faqs/`)
 
-[FaqsList.tsx](src/secoes/faqs/FaqsList.tsx) loads `public/<entity>/faqs.json`
+[FaqsList.tsx](src/secoes/faqs/FaqsList.tsx) loads `<entity>-faqs-tree.json`
 and builds an in-memory tree with the parsers in
 [faqs.ts](src/secoes/faqs/faqs.ts) (`buildNodesFromJson`,
 `buildAnswerMap`, `buildPageTypeMap`, `searchNodes`, `getEffectiveUrl`),
 rendered as a searchable, keyboard-operable accordion
-([FaqsAccordion.tsx](src/secoes/faqs/FaqsAccordion.tsx)). Search is deferred
-with `useDeferredValue` since the dataset is large.
+([FaqsAccordion.tsx](src/secoes/faqs/FaqsAccordion.tsx)). The search runs in the
+list, not in the accordion, so the counter and the results share one pass over
+the tree; it is deferred with `useDeferredValue` since the dataset is large.
 
-### 4. Pareceres (`src/secoes/jurisprudencia/`)
+### 4. Pareceres and Acórdãos TARF (`src/secoes/jurisprudencia/`)
 
-[PareceresList.tsx](src/secoes/jurisprudencia/PareceresList.tsx) loads the plain
-text `public/<entity>/portal-pareceres.txt` and renders it with URLs turned into
-links via [linkify.tsx](src/lib/linkify.tsx).
+Two sections, one component:
+[JurisprudenciaList.tsx](src/secoes/jurisprudencia/JurisprudenciaList.tsx) takes
+the collection and its vocabulary ("parecer"/"pareceres", "acórdão"/"acórdãos"),
+and [PareceresList.tsx](src/secoes/jurisprudencia/PareceresList.tsx) and
+[TarfList.tsx](src/secoes/jurisprudencia/TarfList.tsx) only fill them in. Both
+load `<entity>-<collection>-index.json` (derived by
+`auli-collections <id> indice <collection>`): a flat list of `numero`, `assunto`,
+`resumo` (markdown) and `link`. For TARF, `numero` is the ruling, `assunto` its
+headnote and `resumo` the reasoning the ruling itself carries.
 
-### 5. Notas (`src/secoes/notas/`)
+- The search index ([pareceres.ts](src/secoes/jurisprudencia/pareceres.ts)) is
+  built on the **first** search and reused on the next keystrokes: browsing never
+  pays for it, and these collections run to thousands of documents.
+- [PareceresAccordion.tsx](src/secoes/jurisprudencia/PareceresAccordion.tsx)
+  renders **progressively**, 100 items at a time as the scroll nears the end
+  (`IntersectionObserver`; without it, everything renders — never truncated).
+  An item opens to its `resumo`, with the search terms highlighted, and to
+  "Abrir no portal".
 
-[NotasList.tsx](src/secoes/notas/NotasList.tsx) — same pattern as Pareceres,
-loading `public/<entity>/portal-notas.txt`.
+### 5. Legislação (`src/secoes/legislacao/`)
 
-### 6. Conteúdos (`src/secoes/conteudos/`)
+[LegislacaoList.tsx](src/secoes/legislacao/LegislacaoList.tsx) loads
+`<entity>-legislacao-index.json`: one entry per provision, with the question
+(`titulo`), the provision (`ementa`, e.g. "Art. 28"), the trail in the law
+(`trilha`, "Lei | Título | Capítulo"), the answer (`corpo`, markdown) and the
+official `link`. Entries are grouped by law (the first segment of the trail, see
+[legislacao.ts](src/secoes/legislacao/legislacao.ts)), in the order of the legal
+text; groups start closed and are forced open while searching. A row opens to
+the answer and "Abrir no portal".
+
+It is its own component, not `JurisprudenciaList` (D-LEG-13): there the list is
+flat and chronological and each item opens to a summary; here it is a hierarchy
+by law, and the two would share nothing but the search box.
+
+### 6. Notas (`src/secoes/notas/`)
+
+[NotasList.tsx](src/secoes/notas/NotasList.tsx) loads the plain text
+`<entity>-portal-notas.txt` and shows it as is, with URLs turned into links via
+[linkify.tsx](src/lib/linkify.tsx).
+
+### 7. Conteúdos (`src/secoes/conteudos/`)
 
 [ConteudosList.tsx](src/secoes/conteudos/ConteudosList.tsx) — "Central de
-Conteúdo", loads `public/<entity>/conteudo_site_tree.json` (a `categories` tree),
+Conteúdo", loads `<entity>-conteudo_site_tree.json` (a `categories` tree),
 rendered with [ConteudosAccordion.tsx](src/secoes/conteudos/ConteudosAccordion.tsx)
 and filtered by [conteudos.ts](src/secoes/conteudos/conteudos.ts).
 
-> **Empty state:** every section gates on `hasCollection(entity, kind)`. When the
-> selected state has no data for a section (e.g. SC has only Serviços), the tab
-> renders [`CollectionEmpty`](src/ui/CollectionEmpty.tsx) — a friendly
-> "*&lt;Section&gt; ainda não disponível para &lt;UF&gt;*" placeholder — and never
-> fires the fetch, so there is no 404. Tabs reappear as that state's data is scraped.
+> **Sections a state lacks:** a section whose collection the entity does not
+> declare is shown but **disabled** in the sidebar (`secoesDe`), so it cannot be
+> opened — it appears as that state's data is scraped. Each list still gates on
+> `hasCollection(entity, kind)` and renders
+> [`CollectionEmpty`](src/ui/CollectionEmpty.tsx) without firing the fetch, as a
+> defense.
 
-### 7. Sobre (`src/secoes/sobre/About.tsx`)
+### 8. Sobre (`src/secoes/sobre/About.tsx`)
 
-Loads `public/about.md` and renders it as markdown.
+The project's manifesto: `public/about.md`, shown as prose through
+[`DocumentoMarkdown`](src/ui/DocumentoMarkdown.tsx).
+
+### 9. Tributum (`src/secoes/tributum/`)
+
+An editorial shelf, not a collection (D-TRIB-*): nothing here enters the `.md`
+trees, the packs or the prompts, and **one catalog, `public/tributum.json`, is
+shared by every state** — so its six sections are always enabled.
+
+- **Critérios** ([CriteriosTributum.tsx](src/secoes/tributum/CriteriosTributum.tsx))
+  — what goes in, what does not and who curates: `public/tributum-criterios.md`,
+  through `DocumentoMarkdown`. It opens the group: the editorial rule comes before
+  the lists it governs.
+- **Artigos e estudos, Instituições, Dados, Análises, Livros** — five lists over
+  [TributumShell.tsx](src/secoes/tributum/TributumShell.tsx): the search bar with
+  its counter (over the fields each section declares searchable), the
+  loading/error gate, the cards (each section draws its own) and [RodapeCurador.tsx](src/secoes/tributum/RodapeCurador.tsx), which
+  names the shelf's curator — the curation is personal and named, not an
+  institutional endorsement. The catalog is fetched once
+  ([useTributum.ts](src/secoes/tributum/useTributum.ts)) and typed in
+  [types.ts](src/secoes/tributum/types.ts), whose test also checks the published
+  catalog against the schema.
+- Every item links out through `LinkExterno`. One not declared published wears
+  an "exemplo" badge ([PlaceholderBadge.tsx](src/secoes/tributum/PlaceholderBadge.tsx);
+  absent means placeholder, fail-safe). A PDF hosted with recorded authorization
+  opens in [PdfModal.tsx](src/secoes/tributum/PdfModal.tsx), a native `<iframe>`
+  with "Abrir em nova aba" always visible — Chrome on Android shows a blank frame
+  instead of the PDF. Books carry an access badge (open, commercial, library).
+
+### 10. Conectar sua IA (`src/secoes/mcp/`)
+
+[McpList.tsx](src/secoes/mcp/McpList.tsx) — how to query the Auli collection from
+inside one's own AI assistant, through the MCP connector: what can be asked (the
+five tools: `listar_entidades`, `buscar_pareceres`, `obter_parecer`,
+`consultar_servicos_faqs`, `buscar_legislacao`) and a table of the four
+installation manuals (ChatGPT, Claude, GitHub Copilot, Copilot Studio). A manual
+opens in an in-page reader (`DocumentoMarkdown` over `public/manuais/*.md`,
+copied from the repository's `manuais/` by `build-frontend-public.sh`). The list
+is hardcoded on purpose and mirrors `manuais/README.md`. Always enabled.
+
+### 11. Downloads (`src/secoes/downloads/`)
+
+[DownloadsList.tsx](src/secoes/downloads/DownloadsList.tsx) — the selected
+state's `.zip` package highlighted, and below it a table of every state, for
+whoever feeds their own RAG. It reads `public/downloads/downloads.json`, the
+**only global data file** of the frontend, generated by `auli bundle` from the
+same `.md` trees as the packs (state, file, size, sha256, last change, and file
+counts per type; see [downloads.ts](src/secoes/downloads/downloads.ts)). Always
+enabled: a state without a package shows an empty highlight, and the table stays.
 
 ---
 
@@ -403,8 +489,8 @@ Color is centralized in a single source of truth,
 `createSystem`/`defineConfig`. It defines a small set of **semantic tokens**
 (`bg.app`, `fg.muted`, `accent`, `border`, …), each carrying a light (`base`)
 and a `_dark` value, so color mode is a data change rather than per-component
-conditionals. Shadow tokens live here too (`focusRing`, and `cardHover` for the
-hoverable state-selection cards), keeping raw color values out of components. Components consume tokens only — never raw color literals — and a
+conditionals. Shadow tokens live here too (e.g. `focusRing`), keeping raw color values out of
+components. Components consume tokens only — never raw color literals — and a
 `no-restricted-syntax` lint rule in [eslint.config.js](eslint.config.js) fails
 the build on any hex/`rgb()`/`hsl()` literal in `src/**/*.{jsx,tsx}` (raw values
 are allowed only in `system.js` and `.css` files, the latter as
@@ -420,29 +506,35 @@ The token vocabulary is documented in [THEME.md](THEME.md).
 ## Data Sources
 
 The app reads **static files served from [public/](public/)** — there is no
-database in the frontend. Collection data is **namespaced per entity** under
-`public/<entityId>/` (e.g. `public/rs/`, `public/sc/`); list/text pages build
-their path with `entityPath(entity.id, file)`. Site-wide assets stay at the
-`public/` root. Most files are fetched with a `?v=<build-id>` cache-buster
-(see `versioned()` / `__BUILD_ID__`):
+database in the frontend. Collection data is **namespaced per entity**:
+`entityPath(entity.id, file)` resolves a file to `/<id>/<id>-<file>` (every file in
+`public/<id>/` carries the `<id>-` prefix, so names are globally unique). Shared
+files stay at the `public/` root. The data files are fetched with a `?v=<build-id>`
+cache-buster (`versioned()` / `__BUILD_ID__`); the PDFs and `.zip` packages are
+plain links:
 
 | File | Used by | Format |
 | --- | --- | --- |
-| `<entity>/servicos-index.json` | Serviços (audience tabs manifest) | JSON `{tipo,filename}[]` |
-| `<entity>/servicos-*.json` | Serviços | JSON per audience |
-| `<entity>/faqs.json` | FAQs | JSON tree |
-| `<entity>/conteudo_site_tree.json` | Conteúdos | JSON categories |
-| `<entity>/portal-pareceres.txt` | Pareceres | plain text |
-| `<entity>/portal-notas.txt` | Notas | plain text |
-| `about.md` (root) | Sobre | markdown |
-| `favicon.ico`, `robots.txt`, `sitemap.xml` (root) | site metadata | — |
+| `<id>/<id>-servicos-index.json` | Serviços (audience tabs manifest) | JSON `{tipo,filename}[]` |
+| `<id>/<id>-servicos-*.json` | Serviços | JSON per audience |
+| `<id>/<id>-faqs-tree.json` | FAQs | JSON tree |
+| `<id>/<id>-pareceres-index.json` | Pareceres | JSON list |
+| `<id>/<id>-tarf-index.json` | Acórdãos TARF | JSON list |
+| `<id>/<id>-legislacao-index.json` | Legislação | JSON list |
+| `<id>/<id>-portal-notas.txt` | Notas | plain text |
+| `<id>/<id>-conteudo_site_tree.json` | Conteúdos | JSON categories |
+| `tributum.json`, `tributum-criterios.md`, `tributum/*.pdf` | Tributum (all states) | catalog / markdown / hosted PDFs |
+| `manuais/*.md` | Conectar sua IA | markdown |
+| `downloads/downloads.json` | Downloads (all states) | JSON manifest |
+| `about.md` | Sobre | markdown |
+| `favicon.ico`, `robots.txt`, `sitemap.xml` | site metadata | — |
 
-An entity only ships the files for the collections it has — e.g. `public/sc/` has
-the Serviços files but no `faqs.json` (the FAQs tab shows the empty state).
+An entity only ships the files for the collections it has: one that declares
+only `servicos` has the Serviços files and nothing else.
 
-The only **dynamic** call is the chat question endpoint at
-`https://api.auli.com.br/v1/question` (POST `{ question, entity? }`; override with
-`VITE_API_URL`).
+The only **dynamic** calls are the chat's, in [src/api/chat.ts](src/api/chat.ts):
+the question (`POST /v1/question`, 70-second timeout) and an answer's audit log
+(`GET /v1/log/{log_id}`). Override the base URL with `VITE_API_URL`.
 
 ---
 
@@ -459,8 +551,9 @@ The only **dynamic** call is the chat question endpoint at
   - `vendor-utils` — axios, framer-motion, react-markdown, remark-gfm, swr
 - **`test`** block configures Vitest (see Testing below).
 
-A representative production build emits separate hashed chunks per group
-(react ≈ 56 kB gzip, chakra ≈ 95 kB gzip, utils ≈ 77 kB gzip, app ≈ 16 kB gzip).
+A production build emits separate hashed chunks per group (measured at v0.1.87:
+react ≈ 65 kB gzip, chakra ≈ 104 kB gzip, utils ≈ 103 kB gzip, icons ≈ 5 kB
+gzip, app ≈ 48 kB gzip).
 
 ---
 
