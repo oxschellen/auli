@@ -649,7 +649,7 @@ A regra desta etapa é que o diff só tenha renomeações e linhas de `import`. 
 - [x] Commit 2b: `shared/` se reparte em `app/`, `ui/`, `lib/`, `api/` e `contexto/`. O caminho de `entities.ts` muda no mesmo commit em `gen-frontend-entities.mjs` e em `check-registry-sync.sh`.
 - [x] Commit 2c: `pages/*` e `tributum/` vão para `secoes/*`, com os nomes novos; `types/chat.ts` vira `secoes/chat/tipos.ts`; `chat/utils/` se reparte em `hooks/` e `lib/`.
 - [x] Commit 2d: entra o `test/camadas.test.ts`, e o layout de diretórios do `DESCRIPTION.md` é reescrito.
-- [ ] Commit 2e, à parte: os quatro `.jsx` de `ui/` viram `.tsx` com tipos, sem o `'use client'`. O `allowJs` só pode sair do `tsconfig.json` se `theme/system.js` também virar `.ts`.
+- [x] Commit 2e, à parte: os quatro `.jsx` de `ui/` viram `.tsx` com tipos, sem o `'use client'`. O `allowJs` só pode sair do `tsconfig.json` se `theme/system.js` também virar `.ts`.
 
 Dois testes dependem de caminho e precisam de ajuste no commit 2c:
 

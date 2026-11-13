@@ -1,6 +1,18 @@
 import { Tooltip as ChakraTooltip, Portal } from "@chakra-ui/react";
+import type { ReactNode, Ref, RefObject } from "react";
 
-export function Tooltip(props) {
+export interface TooltipProps extends ChakraTooltip.RootProps {
+  /** React 19: `ref` é prop comum, e vai para o conteúdo da dica. */
+  ref?: Ref<HTMLDivElement>;
+  showArrow?: boolean;
+  portalled?: boolean;
+  portalRef?: RefObject<HTMLElement | null>;
+  content: ReactNode;
+  contentProps?: ChakraTooltip.ContentProps;
+  disabled?: boolean;
+}
+
+export function Tooltip(props: TooltipProps) {
   const {
     ref,
     showArrow,

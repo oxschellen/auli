@@ -206,7 +206,7 @@ export const SystemMessage = ({
           {/* Só existe quando o backend devolveu `log_id` — sem registro gravado não há o que
               abrir, e o botão some em vez de levar a um 404. */}
           {logId && (
-            <Tooltip content="Ver o log desta resposta" bg="bg.inverted">
+            <Tooltip content="Ver o log desta resposta">
               <Button
                 borderRadius="8px"
                 aria-label="Ver o log de auditoria desta resposta"
@@ -226,7 +226,7 @@ export const SystemMessage = ({
               </Button>
             </Tooltip>
           )}
-          <Tooltip content="Copiar resposta" bg="bg.inverted">
+          <Tooltip content="Copiar resposta">
             <Button
               borderRadius="8px"
               aria-label="Copiar resposta para a área de transferência"

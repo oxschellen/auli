@@ -1,7 +1,7 @@
 import { Box, Flex, Text, chakra } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import { LuPanelLeft } from "react-icons/lu";
-import { ColorModeButton } from "../ui/color-mode.jsx";
+import { ColorModeButton } from "../ui/color-mode";
 import { Tooltip } from "../ui/tooltip";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../ui/layout";
 

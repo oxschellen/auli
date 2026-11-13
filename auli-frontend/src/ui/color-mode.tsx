@@ -1,10 +1,10 @@
-"use client";
-
-import { ThemeProvider, useTheme } from "next-themes";
-import { Box } from "@chakra-ui/react";
+import { ThemeProvider, useTheme, type ThemeProviderProps } from "next-themes";
+import { chakra, type HTMLChakraProps } from "@chakra-ui/react";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 
-export function ColorModeProvider(props) {
+export type ColorModeProviderProps = ThemeProviderProps;
+
+export function ColorModeProvider(props: ColorModeProviderProps) {
   return (
     <ThemeProvider
       attribute="class"
@@ -23,14 +23,13 @@ function useColorMode() {
   return { colorMode: resolvedTheme, setColorMode: setTheme, toggleColorMode };
 }
 
-export function ColorModeButton(props) {
+export function ColorModeButton(props: HTMLChakraProps<"button">) {
   const { colorMode, toggleColorMode } = useColorMode();
   // CSR-only app, so no SSR hydration to guard against. `colorMode` is
   // undefined until next-themes resolves on the client; default the icon to
   // the "switch to dark" affordance until then.
   return (
-    <Box
-      as="button"
+    <chakra.button
       type="button"
       aria-label={colorMode === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
       onClick={toggleColorMode}
@@ -46,6 +45,6 @@ export function ColorModeButton(props) {
       {...props}
     >
       {colorMode === "dark" ? <MdLightMode size={18} /> : <MdDarkMode size={18} />}
-    </Box>
+    </chakra.button>
   );
 }
