@@ -8,6 +8,7 @@ import { getEffectiveUrl, type FaqNode, type FaqSearchHit } from "./faqs";
 import { compactMarkdownComponents, markdownPlugins } from "../../lib/markdown";
 import { Highlight } from "../../lib/highlight";
 import { parseQuery } from "../../lib/textSearch";
+import { SemResultados } from "../../ui/busca";
 import { utilsCopyTextToClipboard } from "../../ui/copiar";
 
 interface TreeNodeProps {
@@ -254,13 +255,7 @@ export function FaqsAccordion({
 
   if (searchQuery.trim()) {
     if (results.length === 0) {
-      return (
-        <Box py={10} textAlign="center">
-          <Text color="fg.muted" fontSize="0.95rem">
-            Nenhum resultado encontrado para &ldquo;{searchQuery}&rdquo;
-          </Text>
-        </Box>
-      );
+      return <SemResultados consulta={searchQuery} />;
     }
     return (
       <Box>

@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState, useDeferredValue } from "react";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import useSWR from "swr";
 import { AccordionItem } from "./ServicosAccordion";
 import {
@@ -12,12 +12,11 @@ import {
   type ServicoGroup,
 } from "./servicos";
 import { jsonFetcher, SWR_OPTS, entityPath } from "../../api/estaticos";
-import { SearchInput } from "../../ui/SearchInput";
+import { BarraDeBusca, SemResultados, useBusca } from "../../ui/busca";
 import { AsyncContent } from "../../ui/AsyncContent";
 import { useSelectedEntity } from "../../contexto/EntityContext";
 import { hasCollection } from "../../contexto/entities";
 import { CollectionEmpty } from "../../ui/CollectionEmpty";
-import { parseQuery } from "../../lib/textSearch";
 
 export function ServicosList() {
   const entity = useSelectedEntity();
@@ -38,10 +37,7 @@ export function ServicosList() {
 
   const [active, setActive] = useState("");
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
-  const [searchQuery, setSearchQuery] = useState("");
-  // Input stays instant; grouping/filtering derive from the deferred value.
-  const deferredQuery = useDeferredValue(searchQuery);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const busca = useBusca();
 
   // Default to the first tab once the manifest (or fallback) is known.
   const activeIndex = Math.max(
@@ -75,12 +71,7 @@ export function ServicosList() {
     if (tipo === active) return;
     setActive(tipo);
     setOpenGroups(new Set());
-    setSearchQuery("");
-  }
-
-  function clearSearch() {
-    setSearchQuery("");
-    inputRef.current?.focus();
+    busca.setTexto("");
   }
 
   function toggleGroup(classe: string) {
@@ -102,14 +93,11 @@ export function ServicosList() {
   }, [activeServicos]);
 
   const filteredGroups = useMemo<ServicoGroup[]>(
-    () => filterServicoGroups(grouped, deferredQuery),
-    [grouped, deferredQuery],
+    () => filterServicoGroups(grouped, busca.adiado),
+    [grouped, busca.adiado],
   );
 
-  // Uma vez por query, não por grupo: `parseQuery` devolve array novo a cada chamada.
-  const terms = useMemo(() => parseQuery(deferredQuery), [deferredQuery]);
-
-  const isSearching = deferredQuery.trim().length > 0;
+  const isSearching = busca.buscando;
   const totalResults = isSearching
     ? filteredGroups.reduce((sum, [, items]) => sum + items.length, 0)
     : 0;
@@ -118,59 +106,41 @@ export function ServicosList() {
 
   return (
     <Flex direction="column" flex={1} w="100%" bg="bg.app">
-      {/* Sticky controls: tabs + search + result count */}
-      <Box
-        position="sticky"
-        top={0}
-        zIndex={10}
-        bg="bg.app"
-        px={4}
-        pt={3}
-        pb={2}
-        borderBottom="1px solid var(--chakra-colors-border)"
+      {/* Barra fixa: abas de público + busca + contador */}
+      <BarraDeBusca
+        busca={busca}
+        placeholder="Pesquisar serviços..."
+        antes={
+          <Flex mb={3} gap={2} flexWrap="wrap">
+            {tipoServicos.map((ts) => (
+              <Button
+                key={ts.filename}
+                size="sm"
+                h="30px"
+                px={2}
+                onClick={() => selectTipo(ts.tipo)}
+                bg={activeName === ts.tipo ? "accent" : "transparent"}
+                color={activeName === ts.tipo ? "accent.fg" : "fg"}
+                border="1px solid"
+                borderColor={activeName === ts.tipo ? "accent" : "border"}
+                borderRadius="md"
+                _hover={{ bg: activeName === ts.tipo ? "brand.600" : "bg.subtle" }}
+              >
+                {ts.tipo}
+              </Button>
+            ))}
+          </Flex>
+        }
       >
-        <Flex mb={3} gap={2} flexWrap="wrap">
-          {tipoServicos.map((ts) => (
-            <Button
-              key={ts.filename}
-              size="sm"
-              h="30px"
-              px={2}
-              onClick={() => selectTipo(ts.tipo)}
-              bg={activeName === ts.tipo ? "accent" : "transparent"}
-              color={activeName === ts.tipo ? "accent.fg" : "fg"}
-              border="1px solid"
-              borderColor={activeName === ts.tipo ? "accent" : "border"}
-              borderRadius="md"
-              _hover={{ bg: activeName === ts.tipo ? "brand.600" : "bg.subtle" }}
-            >
-              {ts.tipo}
-            </Button>
-          ))}
-        </Flex>
-
-        <SearchInput
-          ref={inputRef}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onClear={clearSearch}
-          placeholder="Pesquisar serviços..."
-        />
-
-        {totalDistintos > 0 && (
-          <Box pt={2}>
-            <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
-              {isSearching
-                ? // O denominador é a ABA, não a coleção: a busca só varre a aba aberta, e dizer
-                  // "de 518" no SP contaria 145 serviços que ninguém pesquisou. O nome da aba
-                  // explica por que o número encolheu em relação ao de repouso — e some quando a
-                  // entidade tem público único, porque aí não há nada a explicar.
-                  `${totalResults} de ${activeServicos.length}${tipoServicos.length > 1 ? ` em ${activeName}` : ""}`
-                : `${totalDistintos} ${totalDistintos !== 1 ? "serviços" : "serviço"}`}
-            </Text>
-          </Box>
-        )}
-      </Box>
+        {totalDistintos > 0 &&
+          (isSearching
+            ? // O denominador é a ABA, não a coleção: a busca só varre a aba aberta, e dizer
+              // "de 518" no SP contaria 145 serviços que ninguém pesquisou. O nome da aba
+              // explica por que o número encolheu em relação ao de repouso — e some quando a
+              // entidade tem público único, porque aí não há nada a explicar.
+              `${totalResults} de ${activeServicos.length}${tipoServicos.length > 1 ? ` em ${activeName}` : ""}`
+            : `${totalDistintos} ${totalDistintos !== 1 ? "serviços" : "serviço"}`)}
+      </BarraDeBusca>
 
       {/* Scrollable content */}
       <Box px={4} pt={3} pb={6}>
@@ -183,11 +153,7 @@ export function ServicosList() {
         >
           <Box>
             {isSearching && filteredGroups.length === 0 ? (
-              <Box py={10} textAlign="center">
-                <Text color="fg.muted" fontSize="0.95rem">
-                  Nenhum resultado encontrado para &ldquo;{deferredQuery}&rdquo;
-                </Text>
-              </Box>
+              <SemResultados consulta={busca.adiado} />
             ) : (
               <Box border="1px solid var(--chakra-colors-border)" borderRadius="6px">
                 {filteredGroups.map(([classe, items], idx) => (
@@ -199,7 +165,7 @@ export function ServicosList() {
                     onToggle={() => !isSearching && toggleGroup(classe)}
                     isFirst={idx === 0}
                     isLast={idx === filteredGroups.length - 1}
-                    terms={terms}
+                    terms={busca.termos}
                   />
                 ))}
               </Box>

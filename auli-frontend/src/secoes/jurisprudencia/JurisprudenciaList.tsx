@@ -1,10 +1,10 @@
-import { useMemo, useRef, useState, useDeferredValue } from "react";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { useMemo } from "react";
+import { Box, Flex } from "@chakra-ui/react";
 import useSWR from "swr";
 import { PareceresAccordion } from "./PareceresAccordion";
 import { buildPareceresIndex, searchPareceres, type Parecer } from "./pareceres";
 import { jsonFetcher, SWR_OPTS, entityPath } from "../../api/estaticos";
-import { SearchInput } from "../../ui/SearchInput";
+import { BarraDeBusca, SemResultados, useBusca } from "../../ui/busca";
 import { AsyncContent } from "../../ui/AsyncContent";
 import { useSelectedEntity } from "../../contexto/EntityContext";
 import { hasCollection, type Collection } from "../../contexto/entities";
@@ -47,63 +47,34 @@ export const JurisprudenciaList = ({ colecao, titulo, singular, plural }: Jurisp
     SWR_OPTS,
   );
 
-  const [searchQuery, setSearchQuery] = useState("");
-  // Input stays instant; parsing/filtering derive from the deferred value.
-  const deferredQuery = useDeferredValue(searchQuery);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const isSearching = deferredQuery.trim().length > 0;
+  const busca = useBusca();
 
   // Índice de busca pré-normalizado, construído na PRIMEIRA busca e reusado nas teclas seguintes.
   // Preguiçoso de propósito: quem só folheia a lista nunca paga os ~400 ms do acervo do SP, e quem
   // busca paga uma vez em vez de a cada letra. Vale ainda mais no TARF, que é o maior acervo
   // (22,5 mil acórdãos) e cujo `resumo` é a fundamentação inteira, não uma sinopse curta.
   const searchIndex = useMemo(
-    () => (isSearching ? buildPareceresIndex(documentos) : undefined),
-    [documentos, isSearching],
+    () => (busca.buscando ? buildPareceresIndex(documentos) : undefined),
+    [documentos, busca.buscando],
   );
 
   const filtered = useMemo(
-    () => searchPareceres(documentos, deferredQuery, searchIndex),
-    [documentos, deferredQuery, searchIndex],
+    () => searchPareceres(documentos, busca.adiado, searchIndex),
+    [documentos, busca.adiado, searchIndex],
   );
-
-  function clearSearch() {
-    setSearchQuery("");
-    inputRef.current?.focus();
-  }
 
   if (!available) return <CollectionEmpty entity={entity} label={titulo} />;
 
   return (
     <Flex direction="column" flex={1} w="100%" bg="bg.app">
-      {/* Sticky search + count */}
-      <Box
-        position="sticky"
-        top={0}
-        zIndex={10}
-        bg="bg.app"
-        px={4}
-        pt={3}
-        pb={2}
-        borderBottom="1px solid var(--chakra-colors-border)"
-      >
-        <SearchInput
-          ref={inputRef}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onClear={clearSearch}
-          placeholder={`Pesquisar ${plural}...`}
-        />
+      <BarraDeBusca busca={busca} placeholder={`Pesquisar ${plural}...`}>
         {documentos.length > 0 && (
-          <Box pt={2}>
-            <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
-              {filtered.length} {filtered.length !== 1 ? plural : singular}
-              {isSearching ? ` de ${documentos.length}` : ""}
-            </Text>
-          </Box>
+          <>
+            {filtered.length} {filtered.length !== 1 ? plural : singular}
+            {busca.buscando ? ` de ${documentos.length}` : ""}
+          </>
         )}
-      </Box>
+      </BarraDeBusca>
 
       {/* Scrollable content */}
       <Box px={4} pt={3} pb={6}>
@@ -114,14 +85,10 @@ export const JurisprudenciaList = ({ colecao, titulo, singular, plural }: Jurisp
           errorTitle={`Erro ao carregar ${plural}`}
           errorDescription={error instanceof Error ? error.message : undefined}
         >
-          {isSearching && filtered.length === 0 ? (
-            <Box py={10} textAlign="center">
-              <Text color="fg.muted" fontSize="0.95rem">
-                Nenhum resultado encontrado para &ldquo;{deferredQuery}&rdquo;
-              </Text>
-            </Box>
+          {busca.buscando && filtered.length === 0 ? (
+            <SemResultados consulta={busca.adiado} />
           ) : (
-            <PareceresAccordion pareceres={filtered} searchQuery={deferredQuery} />
+            <PareceresAccordion pareceres={filtered} searchQuery={busca.adiado} />
           )}
         </AsyncContent>
       </Box>

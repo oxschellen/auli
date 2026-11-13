@@ -3,6 +3,7 @@ import { Box, Flex, Text, Badge } from "@chakra-ui/react";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Highlight } from "../../lib/highlight";
 import { parseQuery } from "../../lib/textSearch";
+import { SemResultados } from "../../ui/busca";
 import {
   MdExpandMore,
   MdExpandLess,
@@ -178,13 +179,7 @@ export function ConteudosAccordion({
   const terms = useMemo(() => parseQuery(searchQuery), [searchQuery]);
 
   if (searchQuery.trim() && filtered.length === 0) {
-    return (
-      <Box py={10} textAlign="center">
-        <Text color="fg.muted" fontSize="0.95rem">
-          Nenhum resultado encontrado para &ldquo;{searchQuery}&rdquo;
-        </Text>
-      </Box>
-    );
+    return <SemResultados consulta={searchQuery} />;
   }
 
   return (

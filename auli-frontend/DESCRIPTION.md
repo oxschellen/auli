@@ -295,9 +295,13 @@ and fails when a rule breaks.
   this state" placeholder shown by a section the selected entity has no data for.
 - [AsyncContent.tsx](src/ui/AsyncContent.tsx) — three-state gate
   (loading spinner / error alert / children) shared by every SWR-backed page.
-- [SearchInput.tsx](src/ui/SearchInput.tsx) — the sticky-bar search field
-  shared by Serviços, FAQs, and Conteúdos (icon + input + accessible clear
-  button).
+- [busca.tsx](src/ui/busca.tsx) — the pieces every searchable list uses:
+  `useBusca` (the text, its deferred value, the normalized terms, and whether a
+  search is active), `BarraDeBusca` (the sticky bar with the field and the
+  counter line; it owns the input, so clearing refocuses it) and
+  `SemResultados`. Each list keeps its own filter and body.
+- [SearchInput.tsx](src/ui/SearchInput.tsx) — the search field inside
+  `BarraDeBusca` (icon + input + accessible clear button).
 - [LinkExterno.tsx](src/ui/LinkExterno.tsx) — the "open in a new tab" link.
 - [copiar.ts](src/ui/copiar.ts) — `utilsCopyTextToClipboard`, copies text and
   shows a Chakra toast (with an insecure-origin guard).

@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { m, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -13,13 +13,12 @@ import {
   type Dispositivo,
 } from "./legislacao";
 import { jsonFetcher, SWR_OPTS, entityPath } from "../../api/estaticos";
-import { SearchInput } from "../../ui/SearchInput";
+import { BarraDeBusca, SemResultados, useBusca } from "../../ui/busca";
 import { AsyncContent } from "../../ui/AsyncContent";
 import { useSelectedEntity } from "../../contexto/EntityContext";
 import { hasCollection } from "../../contexto/entities";
 import { CollectionEmpty } from "../../ui/CollectionEmpty";
 import { Highlight } from "../../lib/highlight";
-import { parseQuery } from "../../lib/textSearch";
 import { compactMarkdownComponents, markdownPlugins } from "../../lib/markdown";
 import { rehypeHighlight } from "../../lib/rehypeHighlight";
 
@@ -239,58 +238,31 @@ export const LegislacaoList = () => {
     SWR_OPTS,
   );
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const deferredQuery = useDeferredValue(searchQuery);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const isSearching = deferredQuery.trim().length > 0;
+  const busca = useBusca();
 
   // Índice preguiçoso, como nas irmãs: quem só folheia não paga a normalização.
   const searchIndex = useMemo(
-    () => (isSearching ? buildLegislacaoIndex(itens) : undefined),
-    [itens, isSearching],
+    () => (busca.buscando ? buildLegislacaoIndex(itens) : undefined),
+    [itens, busca.buscando],
   );
   const filtered = useMemo(
-    () => searchLegislacao(itens, deferredQuery, searchIndex),
-    [itens, deferredQuery, searchIndex],
+    () => searchLegislacao(itens, busca.adiado, searchIndex),
+    [itens, busca.adiado, searchIndex],
   );
   const grupos = useMemo(() => agruparPorLei(filtered), [filtered]);
-  const terms = useMemo(() => parseQuery(deferredQuery), [deferredQuery]);
-
-  function clearSearch() {
-    setSearchQuery("");
-    inputRef.current?.focus();
-  }
 
   if (!available) return <CollectionEmpty entity={entity} label={TITULO} />;
 
   return (
     <Flex direction="column" flex={1} w="100%" bg="bg.app">
-      <Box
-        position="sticky"
-        top={0}
-        zIndex={10}
-        bg="bg.app"
-        px={4}
-        pt={3}
-        pb={2}
-        borderBottom="1px solid var(--chakra-colors-border)"
-      >
-        <SearchInput
-          ref={inputRef}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onClear={clearSearch}
-          placeholder="Pesquisar na legislação..."
-        />
+      <BarraDeBusca busca={busca} placeholder="Pesquisar na legislação...">
         {itens.length > 0 && (
-          <Box pt={2}>
-            <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
-              {filtered.length} {filtered.length !== 1 ? "dispositivos" : "dispositivo"}
-              {isSearching ? ` de ${itens.length}` : ""}
-            </Text>
-          </Box>
+          <>
+            {filtered.length} {filtered.length !== 1 ? "dispositivos" : "dispositivo"}
+            {busca.buscando ? ` de ${itens.length}` : ""}
+          </>
         )}
-      </Box>
+      </BarraDeBusca>
 
       <Box px={4} pt={3} pb={6}>
         <AsyncContent
@@ -300,15 +272,17 @@ export const LegislacaoList = () => {
           errorTitle="Erro ao carregar a legislação"
           errorDescription={error instanceof Error ? error.message : undefined}
         >
-          {isSearching && filtered.length === 0 ? (
-            <Box py={10} textAlign="center">
-              <Text color="fg.muted" fontSize="0.95rem">
-                Nenhum resultado encontrado para &ldquo;{deferredQuery}&rdquo;
-              </Text>
-            </Box>
+          {busca.buscando && filtered.length === 0 ? (
+            <SemResultados consulta={busca.adiado} />
           ) : (
             grupos.map(([lei, doLei]) => (
-              <GrupoLei key={lei} lei={lei} itens={doLei} terms={terms} isSearching={isSearching} />
+              <GrupoLei
+                key={lei}
+                lei={lei}
+                itens={doLei}
+                terms={busca.termos}
+                isSearching={busca.buscando}
+              />
             ))
           )}
         </AsyncContent>
