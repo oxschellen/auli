@@ -1,6 +1,6 @@
-import axios from "axios";
 import type { Dispatch, SetStateAction } from "react";
-import type { Fonte, Message } from "../tipos";
+import { perguntar } from "../../../api/chat";
+import type { Message } from "../tipos";
 import type { QuestionType } from "./useQuestionType";
 
 interface CallServerAPIArgs {
@@ -9,27 +9,12 @@ interface CallServerAPIArgs {
   setMessages: Dispatch<SetStateAction<Message[]>>;
   setPrompt: Dispatch<SetStateAction<string>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  API_URL: string;
   /** Active entity id (state), so the backend queries the right tenant's collections. */
   entityId?: string;
   /** Tipo de consulta selecionado ("1" = Serviços+FAQs, "2" = Pareceres, "3" = Acórdãos TARF);
    *  enviado como o campo numérico `type`. */
   questionType: QuestionType;
 }
-
-interface QuestionResponse {
-  answer?: string;
-  /** UUID do registro de auditoria (D-LOG-2). **Ausente quando a gravação falhou** — o chat não
-   *  falha por causa do log, só deixa de oferecer o ícone. */
-  log_id?: string;
-  /** Fontes recuperadas (D-SF-10). Só vem em Serviços + FAQs; ausente nos demais tipos. */
-  fontes?: Fonte[];
-}
-
-/** Abort the request if the server hasn't responded within this window.
- *  70 s (era 35 s) desde a triagem de serviços+FAQs (D-SF-9): a resposta pode levar DUAS chamadas
- *  ao LLM — até 20 s na triagem e 30 s na redação —, mais embed e busca. */
-const REQUEST_TIMEOUT_MS = 70_000;
 
 /** User-facing copy (pt-BR). Kept here so the wording lives in one place. */
 const MESSAGES = {
@@ -46,7 +31,6 @@ export const callServerAPI = async ({
   setMessages,
   setPrompt,
   setLoading,
-  API_URL,
   entityId,
   questionType,
 }: CallServerAPIArgs): Promise<void> => {
@@ -76,58 +60,30 @@ export const callServerAPI = async ({
   setPrompt("");
   const inicio = Date.now();
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const r = await perguntar(prompt, entityId, Number(questionType));
 
-  try {
-    const res = await axios.post<QuestionResponse>(
-      API_URL,
-      {
-        question: prompt,
-        ...(entityId ? { entity: entityId } : {}),
-        type: Number(questionType),
-      },
-      { signal: controller.signal },
-    );
-
-    const serverMessage = res.data?.answer || MESSAGES.emptyAnswer;
-
-    messagesArray.pop();
+  messagesArray.pop();
+  if (r.ok) {
     messagesArray.push({
       id: crypto.randomUUID(),
       from: "server",
-      text: serverMessage,
+      text: r.texto || MESSAGES.emptyAnswer,
       showButton: true,
-      logId: res.data?.log_id,
-      fontes: res.data?.fontes,
+      logId: r.logId,
+      fontes: r.fontes,
       tipo: questionType,
       duracaoMs: Date.now() - inicio,
     });
-  } catch (e) {
-    // Distinguish: timeout (aborted) → rate limited (HTTP 429, server sends a friendly pt-BR
-    // `{ error }` body) → anything else (server down / network). Without this, a throttled user is
-    // wrongly told the server is unavailable.
-    let serverMessage: string;
-    if (axios.isCancel(e)) {
-      serverMessage = MESSAGES.timeout;
-    } else {
-      const err = e as { response?: { status?: number; data?: { error?: string } } };
-      serverMessage =
-        err.response?.status === 429
-          ? err.response.data?.error || MESSAGES.rateLimited
+  } else {
+    // O 429 traz a mensagem amigável do próprio servidor; sem ela, a nossa.
+    const texto =
+      r.falha === "tempo"
+        ? MESSAGES.timeout
+        : r.falha === "limite"
+          ? r.mensagem || MESSAGES.rateLimited
           : MESSAGES.unavailable;
-    }
-
-    messagesArray.pop();
-    messagesArray.push({
-      id: crypto.randomUUID(),
-      from: "server",
-      text: serverMessage,
-      showButton: true,
-    });
-  } finally {
-    clearTimeout(timeoutId);
-    setMessages([...messagesArray]);
-    setLoading(false);
+    messagesArray.push({ id: crypto.randomUUID(), from: "server", text: texto, showButton: true });
   }
+  setMessages([...messagesArray]);
+  setLoading(false);
 };

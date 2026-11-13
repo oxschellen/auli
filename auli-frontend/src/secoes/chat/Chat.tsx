@@ -20,9 +20,6 @@ import { TIPOS } from "./lib/textoDosTipos";
 import { useSelectedEntity } from "../../contexto/EntityContext";
 import { useAvisarResposta } from "../../contexto/RespostaDaAba";
 import { HEADER_HEIGHT, HISTORICO_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH } from "../../ui/layout";
-// O `API_URL` saiu daqui para `utils/api.ts` quando o modal do log passou a precisar da MESMA
-// base — ver `logUrl`, que é derivada dele justamente para não divergir.
-import { API_URL } from "../../api/chat";
 
 /** O botão de "Minhas perguntas", na linha acima da caixa de mensagem. São dois no DOM — um por
  *  modo, escolhidos por CSS (`hideBelow`/`hideFrom`), como os dois botões da barra lateral
@@ -158,7 +155,6 @@ export const Chat = () => {
         setMessages,
         setPrompt,
         setLoading,
-        API_URL,
         entityId: entity.id,
         questionType,
       });

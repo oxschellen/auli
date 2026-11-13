@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { MdClose, MdCopyAll } from "react-icons/md";
-import { logUrl } from "../../api/chat";
+import { buscarLog } from "../../api/chat";
 import { utilsCopyTextToClipboard } from "../../ui/copiar";
 
 interface LogModalProps {
@@ -33,14 +33,9 @@ export const LogModal = ({ logId, onClose }: LogModalProps) => {
     // `ignorar` evita escrever estado depois que o modal fechou — trocar de resposta rápido dispara
     // duas buscas, e a que chegar por último venceria sem isto.
     let ignorar = false;
-    fetch(logUrl(logId))
-      .then(async (r) => {
-        const texto = await r.text();
-        // O backend manda a mensagem amigável no corpo do 404/400 — usá-la é melhor que inventar
-        // uma nossa, e é a mesma para "nunca existiu" e "podado", de propósito.
-        if (!r.ok) throw new Error(texto || MESSAGES.indisponivel);
-        return texto;
-      })
+    // Quando não há registro, `buscarLog` lança com a mensagem amigável do backend — usá-la é
+    // melhor que inventar uma nossa; só sem ela (corpo vazio, rede fora) entra a de cá.
+    buscarLog(logId)
       .then((t) => !ignorar && setConteudo(t))
       .catch((e: Error) => !ignorar && setErro(e.message || MESSAGES.indisponivel));
     return () => {

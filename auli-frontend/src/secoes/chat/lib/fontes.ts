@@ -1,4 +1,4 @@
-import type { Fonte } from "../tipos";
+import type { Fonte } from "../../../api/chat";
 
 /**
  * A lista de fontes em três grupos (D-UI-8), na ordem do contexto dentro de cada um:

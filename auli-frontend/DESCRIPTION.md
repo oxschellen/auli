@@ -185,12 +185,12 @@ The conversational core.
 
 **Chat hooks and logic (`hooks/` and `lib/` under `src/secoes/chat/`):**
 
-- [callServerAPI.ts](src/secoes/chat/hooks/callServerAPI.ts) — posts the question
-  (plus the selected `entityId`, when present, as `entity` in the body) to the API
-  with a **25-second timeout** (`AbortController`). Optimistically appends the user
-  message and an "Aguarde! Pensando..." placeholder, then replaces the placeholder
-  with the answer or a friendly error (distinguishing timeout/cancel from
-  server-unavailable). `Chat` reads the active entity via `useSelectedEntity()`.
+- [callServerAPI.ts](src/secoes/chat/hooks/callServerAPI.ts) — optimistically
+  appends the user message and an "Aguarde! Pensando..." placeholder, asks the
+  API through `perguntar` ([api/chat.ts](src/api/chat.ts)), then replaces the
+  placeholder with the answer or a friendly error (timeout, rate limit — with the
+  server's own message —, or server unavailable). `Chat` reads the active entity
+  via `useSelectedEntity()`.
 - [prompt.ts](src/secoes/chat/lib/prompt.ts) — the single source of truth for
   the prompt-length rule: `MIN_PROMPT_LENGTH` (10), `isPromptValid`, and
   `charsRemaining`, used by the send guard, the button's disabled state, and the
@@ -328,8 +328,12 @@ and fails when a rule breaks.
   focus/reconnect (the endpoints serve static files), `versioned()` for the
   per-build `?v=` cache-buster, and **`entityPath(entityId, file)`** which
   resolves an entity-scoped data file to its versioned `/<entityId>/<file>` path.
-- [chat.ts](src/api/chat.ts) — the question endpoint (`VITE_API_URL`, falling
-  back to production) and the audit-log URL derived from it.
+- [chat.ts](src/api/chat.ts) — the chat's way out: `perguntar` posts the
+  question (`question`, `entity`, `type`) with a **70-second timeout** and returns
+  a `Resultado` (the answer, or which failure: `tempo`, `limite`, `indisponivel`)
+  instead of touching state; `buscarLog` fetches a response's audit log. The
+  endpoint is `VITE_API_URL` (falling back to production), and the log URL is
+  derived from it. `Fonte`, the server's source contract, lives here too.
 
 ### `src/contexto/`
 

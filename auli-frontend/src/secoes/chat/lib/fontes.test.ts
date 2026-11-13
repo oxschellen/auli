@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { agruparFontes } from "./fontes";
-import type { Fonte } from "../tipos";
+import type { Fonte } from "../../../api/chat";
 
 const f = (rotulo: string, triagem?: Fonte["triagem"]): Fonte => ({
   rotulo,
