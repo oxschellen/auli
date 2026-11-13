@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getEntity } from "../contexto/entities";
+import { CHAVES, gravarTexto, lerTexto } from "../lib/storage";
 
 /**
  * Abas de estado (D-ABAS-5..7, docs/ESTUDO-abas-por-estado.md): vários estados abertos ao mesmo
@@ -22,10 +23,6 @@ export interface Abas {
   lista: Aba[];
   ativa: string;
 }
-
-const STORAGE_KEY = "auli.abas";
-/** A chave de antes das abas, quando só havia um estado. Lida uma vez, para quem já escolhera. */
-const LEGADO_KEY = "auli.entity";
 
 const novaAba = (entityId: string | null = null): Aba => ({ chave: crypto.randomUUID(), entityId });
 
@@ -74,17 +71,17 @@ export function fechar(s: Abas, chave: string): Abas {
 export function lerAbas(): Abas {
   let ids: unknown[] = [];
   let ativaId: unknown = null;
-  try {
-    const bruto = localStorage.getItem(STORAGE_KEY);
-    if (bruto === null) {
-      ids = [localStorage.getItem(LEGADO_KEY)];
-    } else {
+  const bruto = lerTexto(CHAVES.abas);
+  if (bruto === null) {
+    ids = [lerTexto(CHAVES.entidadeLegada)];
+  } else {
+    try {
       const salvo = JSON.parse(bruto);
       ids = Array.isArray(salvo?.abas) ? salvo.abas : [];
       ativaId = salvo?.ativa;
+    } catch {
+      // JSON quebrado: começa do mapa.
     }
-  } catch {
-    // Sem localStorage ou JSON quebrado: começa do mapa.
   }
   const validos = [...new Set(ids)].filter(
     (id): id is string => typeof id === "string" && getEntity(id) !== undefined,
@@ -97,11 +94,7 @@ export function lerAbas(): Abas {
 function salvarAbas(s: Abas) {
   const ativa = s.lista.find((a) => a.chave === s.ativa)?.entityId ?? null;
   const abas = s.lista.flatMap((a) => (a.entityId ? [a.entityId] : []));
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ abas, ativa }));
-  } catch {
-    // Sem persistência, as abas seguem valendo nesta sessão.
-  }
+  gravarTexto(CHAVES.abas, JSON.stringify({ abas, ativa }));
 }
 
 /** As abas de estado do app, persistidas em `auli.abas`. */

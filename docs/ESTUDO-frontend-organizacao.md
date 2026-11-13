@@ -46,6 +46,7 @@ O relatório foi conferido contra a `main` em `a57bb86` antes da etapa 1. Os ach
 - O `config/registry.toml` citava o gerador no caminho antigo, `scripts/gen-frontend-entities.mjs` (linhas 12 e 22), o mesmo defeito do E1. Corrigido na etapa 1.
 - A suíte tem 342 testes, todos passando e nenhum pulado, em cerca de 5 s.
 - O `DESCRIPTION.md` tem 75 referências a caminhos de `src/`, não 67; o `docs/auli_code.md` tem 41.
+- A I1 diz que o painel "Minhas perguntas" já sincroniza entre abas do navegador. Não sincronizava: o `usePainelHistorico` não ouvia o evento `storage`, só o `useHistorico` ouvia. Com o `lib/storage.ts`, a barra lateral e o painel passam a acompanhar as outras janelas.
 - E6: o `.cursor/` e o `.agents/` saíram (decisão do mantenedor em 13/11/2026). A skill do react-doctor segue na cópia local de `.claude/skills/`, que é a que o Claude Code lê.
 
 **A etapa 1 fez também, além do checklist:** `remark-gfm` e `swr` entraram no `vendor-utils` do `chunkMap` (E4), o que leva o pacote do app de 204 kB para 153 kB, sem mudar o total; a linha comentada do `vite.svg` saiu do `index.html`; as menções a `@emotion/styled`, ao `jsconfig.json` e ao alias saíram do `README.md`, do `DESCRIPTION.md` e do `docs/auli_code.md`. A `meta description` com o texto "Auli" ficou: trocá-la é decisão de produto, não de organização.
@@ -660,7 +661,7 @@ Dois testes dependem de caminho e precisam de ajuste no commit 2c:
 
 A ordem põe primeiro o que encosta em login e permissão, e depois o que só reduz repetição.
 
-- [ ] I1, armazenamento único. Conferir à mão: recolher a sidebar, o painel de perguntas e trocar o tipo de consulta sobrevivem ao recarregar.
+- [x] I1, armazenamento único. Conferir à mão: recolher a sidebar, o painel de perguntas e trocar o tipo de consulta sobrevivem ao recarregar.
 - [ ] I2, saída única para a rede. Conferir à mão: uma pergunta, o log dela e uma pergunta com o servidor desligado.
 - [ ] I3, busca compartilhada. Conferir à mão: buscar com acento e com duas palavras em cada lista.
 - [ ] I4, acordeão compartilhado. Conferir à mão: abrir e fechar por clique, Enter e Espaço.
