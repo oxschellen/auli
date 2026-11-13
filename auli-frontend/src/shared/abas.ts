@@ -12,7 +12,7 @@ import { getEntity } from "./entities";
 
 /** Uma aba. `entityId: null` = aba nova, ainda no mapa. A `chave` vale só nesta sessão: o que
  *  persiste são os ids das entidades. */
-export interface Aba {
+interface Aba {
   chave: string;
   entityId: string | null;
 }

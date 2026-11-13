@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import type { QuestionType } from "../pages/chat/utils/useQuestionType";
 
 /** Who authored a chat message. */
-export type MessageSender = "user" | "server";
+type MessageSender = "user" | "server";
 
 /** Um documento recuperado para a resposta, como a lista de fontes o mostra (D-SF-10). O `rotulo`
  *  é o mesmo da citação no texto (`"Serviço 2"`, `"FAQ 4"`), para o analista bater um com o outro. */

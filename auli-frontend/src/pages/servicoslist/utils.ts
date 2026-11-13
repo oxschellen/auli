@@ -97,7 +97,7 @@ export function empresaPrimeiro(tipos: TipoServico[]): TipoServico[] {
 /**
  * Fallback audience tabs, used when `servicos-index.json` is absent (older deploys / RS-only data).
  * The scraper now emits `servicos-index.json` (`{ tipo, filename }[]`) so the tabs match whichever
- * entity's data was built — see `getTipoServicos`.
+ * entity's data was built — see the `useSWR` of `servicos-index.json` in `ServicosList`.
  */
 export function getDefaultTipoServicos(): TipoServico[] {
   // Order mirrors the RS scraper / `servicos-index.json` (Cidadãos first) so the fallback tabs match

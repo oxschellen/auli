@@ -9,7 +9,7 @@
 #   1. um bloco `[[entities]]` aqui;
 #   2. `config/prompts/<id>.txt` com as instruções do LLM para ela;
 #   3. `data/<id>/` com o conteúdo (o scraper produz; ver crates/scrapers/SCRAPERS.md).
-#   Depois: `node scripts/gen-frontend-entities.mjs` (o frontend lê um espelho gerado daqui).
+#   Depois: `node scripts/tools/gen-frontend-entities.mjs` (o frontend lê um espelho gerado daqui).
 #
 # COLEÇÃO NOVA (outro tipo de documento, além de serviços/faqs/pareceres/tarf) ainda EXIGE código —
 # uma variante no enum `Kind` do auli-contract e uma projeção. É pequeno desde a TAREFA-DOCUMENTO
@@ -19,7 +19,7 @@
 # FONTE DA VERDADE compartilhada. É lida por:
 #   - auli-cli  (server): entidades carregadas + prompt por entidade
 #   - auli-collections (scraper): entidades válidas + diretório de saída
-#   - auli-frontend: gerado por scripts/gen-frontend-entities.mjs -> src/shared/entities.ts
+#   - auli-frontend: gerado por scripts/tools/gen-frontend-entities.mjs -> src/shared/entities.ts
 # Editar AQUI; nunca duplicar a lista de entidades em código.
 #
 # Campos por entidade:

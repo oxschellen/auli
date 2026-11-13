@@ -23,13 +23,7 @@
     /* Gradual migration: existing .js/.jsx files can be imported by .ts/.tsx
        without being type-checked. Set "allowJs": false once everything is .ts. */
     "allowJs": true,
-    "checkJs": false,
-
-    /* Path alias kept in sync with jsconfig.json and the resolve.alias in
-       vite.config.js, so "@/..." resolves in the editor, type-check, and build. */
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "checkJs": false
   },
   "include": ["src"]
 }

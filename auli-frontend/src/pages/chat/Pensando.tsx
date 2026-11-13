@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
  * Só `transform` e `opacity` animam (regra `no-layout-property-animation` do react-doctor), e
  * com `prefers-reduced-motion` tudo fica parado — o texto e o contador seguem informando.
  */
-export const ETAPAS: { aPartirDe: number; texto: string }[] = [
+const ETAPAS: { aPartirDe: number; texto: string }[] = [
   { aPartirDe: 0, texto: "Buscando nos documentos" },
   { aPartirDe: 3, texto: "Separando o que se aplica à sua pergunta" },
   { aPartirDe: 8, texto: "Redigindo a resposta" },

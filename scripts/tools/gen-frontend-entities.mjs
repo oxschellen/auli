@@ -47,7 +47,6 @@ if (entities.length === 0) {
 // Union de coleções = conjunto distinto presente no registry (ordenado).
 const allCollections = [...new Set(entities.flatMap((e) => e.collections ?? []))].sort();
 const collType = allCollections.map((c) => JSON.stringify(c)).join(" | ");
-const defaultId = entities[0].id;
 
 const body = entities
   .map(
@@ -66,9 +65,9 @@ const out = `/**
  * GERADO de config/registry.toml por scripts/tools/gen-frontend-entities.mjs — NÃO EDITE À MÃO.
  * Rode \`node scripts/tools/gen-frontend-entities.mjs\` após mudar o registry.
  *
- * Cada entidade é uma secretaria estadual da fazenda. O app é escopo de uma entidade por vez,
- * escolhida na landing de seleção de estado e persistida no localStorage. Os dados são servidos
- * por entidade de \`public/<id>/…\` (ver \`entityPath\` em fetchers).
+ * Cada entidade é uma secretaria estadual da fazenda. Cada aba de estado do app é escopo de uma
+ * entidade, escolhida no mapa de seleção; as abas abertas são persistidas por \`abas.ts\`. Os dados
+ * são servidos por entidade de \`public/<id>/…\` (ver \`entityPath\` em fetchers).
  */
 
 /** As abas de coleção que uma entidade pode ter. \`chat\` está sempre disponível. */
@@ -90,8 +89,6 @@ export interface Entity {
 export const ENTITIES: Entity[] = [
 ${body}
 ];
-
-export const DEFAULT_ENTITY_ID = ${JSON.stringify(defaultId)};
 
 export function getEntity(id: string | null | undefined): Entity | undefined {
   return ENTITIES.find((e) => e.id === id);
