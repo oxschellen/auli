@@ -1,3 +1,5 @@
+import { DIACRITICOS } from "../../../shared/textSearch";
+
 /**
  * Citações por afirmação (`[Serviço 2]`, `[FAQ 4]` — D-SF-7) viram selos clicáveis (D-UI-7).
  *
@@ -20,7 +22,7 @@ export function ancora(rotulo: string): string {
     "fonte-" +
     rotulo
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replace(DIACRITICOS, "")
       .toLowerCase()
       .replace(/\s+/g, "-")
   );

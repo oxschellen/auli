@@ -626,7 +626,7 @@ versão 0.1.43). Confirmado:
 
 - **React 19** + **Vite 8** (com Rolldown — `rolldownOptions` em
   [vite.config.js](auli-frontend/vite.config.js)).
-- **Chakra UI v3** (`@chakra-ui/react`, `@emotion/react`, `@emotion/styled`).
+- **Chakra UI v3** (`@chakra-ui/react`, `@emotion/react`).
 - **SWR** + **Axios** (busca de dados), **Framer Motion** (animações), **react-markdown**,
   **react-icons**, **next-themes** (modo claro/escuro).
 - **TypeScript** em modo `strict` ([tsconfig.json](auli-frontend/tsconfig.json), `allowJs:true`).

@@ -8,15 +8,6 @@ interface BrazilMapProps {
   onSelect: (entityId: string) => void;
 }
 
-/**
- * Outlined map of Brazil's 27 states. States backed by an available entity (RS, SC) are filled with
- * the accent color and are clickable; all other states are greyed out and inert. Geometry lives in
- * the generated `brazilPaths.ts` (keyed by UF code).
- *
- * Native SVG elements are used instead of Chakra's `Box as="path"` because the style factory drops
- * the `d`/`viewBox` attributes. Colors are resolved from the theme via `useToken` (concrete values),
- * so the map still follows light/dark mode without relying on Chakra emitting each CSS var.
- */
 type Point = { x: number; y: number };
 
 /** Parse a path into its rings (sub-polygons). Paths are absolute-coordinate
@@ -75,6 +66,16 @@ function centerOf(d: string, nudge?: Point): Point & { size: number } {
 const LABEL_NUDGE: Record<string, Point> = {
   SC: { x: 0, y: 10 },
 };
+
+/**
+ * Outlined map of Brazil's 27 states. States backed by an entity of the registry (`getEntityByUf`)
+ * are filled with the accent color and are clickable; any other state is greyed out and inert.
+ * Geometry lives in the generated `brazilPaths.ts` (keyed by UF code).
+ *
+ * Native SVG elements are used instead of Chakra's `Box as="path"` because the style factory drops
+ * the `d`/`viewBox` attributes. Colors are resolved from the theme via `useToken` (concrete values),
+ * so the map still follows light/dark mode without relying on Chakra emitting each CSS var.
+ */
 export function BrazilMap({ onSelect }: BrazilMapProps) {
   const [hoveredUf, setHoveredUf] = useState<string | null>(null);
   // Todas as cores do mapa vêm do tema por `useToken` (valores concretos): os elementos SVG são

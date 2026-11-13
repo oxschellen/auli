@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { fileURLToPath, URL } from 'node:url'
+import { URL } from 'node:url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -10,9 +10,9 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
 
 const chunkMap = {
   'vendor-react': ['react', 'react-dom'],
-  'vendor-chakra': ['@chakra-ui/react', '@emotion/react', '@emotion/styled'],
+  'vendor-chakra': ['@chakra-ui/react', '@emotion/react'],
   'vendor-icons': ['react-icons'],
-  'vendor-utils': ['axios', 'framer-motion', 'react-markdown'],
+  'vendor-utils': ['axios', 'framer-motion', 'react-markdown', 'remark-gfm', 'swr'],
 }
 
 function manualChunks(id) {
@@ -33,13 +33,6 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(`v.${pkg.version}`),
   },
   plugins: [react()],
-  resolve: {
-    // Matches the "@/*" path alias in tsconfig.json / jsconfig.json so imports
-    // like "@/shared/fetchers" resolve at build time, not just in the editor.
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
   build: {
     rolldownOptions: {
       output: {

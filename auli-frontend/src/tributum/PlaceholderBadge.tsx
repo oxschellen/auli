@@ -5,10 +5,9 @@ import { ehPlaceholder, type ItemBase } from "./types";
  * O selo "exemplo" da D-TRIB-7. Renderiza para todo item que **não** se declarou publicado — o
  * default é o selo, não a ausência dele (ver `ehPlaceholder`).
  *
- * **Não é o `Badge` do Chakra**, e a divergência é deliberada: o componente não é usado em lugar
- * nenhum deste frontend, e o `colorPalette` dele puxa a paleta do Chakra em vez dos tokens
- * semânticos do `theme/system.js` — o que daria um selo que ignora o modo escuro do app. A casa
- * monta tudo com `Box`/`Flex`/`Text` sobre tokens, e é o que se faz aqui.
+ * **Não é o `Badge` do Chakra**, e a divergência é deliberada: o `colorPalette` dele puxa a paleta
+ * do Chakra em vez dos tokens semânticos do `theme/system.js` — o que daria um selo que ignora o
+ * modo escuro do app. Aqui o selo é montado com `Box` sobre tokens.
  *
  * O par `bg.highlight`/`fg.highlight` é o âmbar translúcido que o tema reserva para chamar atenção
  * sem sugerir clique — `accent` é a cor de link neste app, e um selo em accent leria como botão.

@@ -2,33 +2,34 @@
 
 **Auli** é um projeto piloto, aberto e cooperativo, de um assistente virtual inteligente projetado para **auxiliar o servidor público no atendimento ao cidadão** sobre impostos estaduais no Brasil (com foco no Rio Grande do Sul).
 
-O frontend permite que o usuário faça perguntas em **linguagem natural** e receba respostas geradas por IA, além de navegar por seções de referência: Serviços, FAQs, Pareceres Jurídicos, Notas Tributárias e Conteúdos.
+O frontend permite que o usuário faça perguntas em **linguagem natural** e receba respostas geradas por IA, além de navegar pelo acervo de cada estado (Serviços, FAQs, Pareceres, Acórdãos TARF, Legislação, Notas e Conteúdos), pela curadoria do **Tributum** e pelas integrações (Conectar sua IA e Downloads).
 
-O aplicativo é **multi-tenant por estado**: ao abrir, o usuário escolhe a Secretaria da Fazenda estadual (*entidade*) numa tela inicial, e toda a sessão — os dados de cada seção e o chat — passa a ser daquele estado. Hoje há **RS** (SEFAZ-RS, dados completos) e **SC** (SEF-SC, apenas Serviços por enquanto).
+O aplicativo é **multi-tenant por estado**: o usuário escolhe a Secretaria da Fazenda estadual (*entidade*) num mapa do Brasil, e cada estado aberto vira uma **aba de estado**, com a sua conversa, a sua seção e a sua rolagem. Hoje são **27 entidades**, uma por unidade da federação, geradas de `config/registry.toml`.
 
 ## Funcionalidades
 
-- **Seleção de estado** numa tela inicial com um **mapa do Brasil interativo** (estados disponíveis em destaque, demais em cinza) ao lado dos cards RS/SC; a escolha é persistida (`localStorage`) e pode ser trocada pelo cabeçalho
+- **Seleção de estado** num **mapa do Brasil interativo**; vários estados ficam abertos ao mesmo tempo, em **abas de estado** no cabeçalho, e as abas abertas são persistidas (`localStorage`)
 - Chat conversacional com balões diferenciados para usuário e assistente
-- Navegação por **abas** (`Home`): Chat, Serviços, FAQs, Pareceres, Notas, Conteúdos e Sobre — todas mantidas montadas para preservar estado (rolagem, busca, histórico) ao trocar de aba
-- Páginas de referência com conteúdo estático, servidas por estado de [public/](public/)`<estado>/` (JSON e texto), com busca no cliente; seções sem dados para o estado mostram um aviso amigável de "em breve"
+- Navegação por uma **barra lateral** (`Home`) com 17 seções em 4 grupos (Chat, Acervo, Tributum e Integrações), recolhível numa faixa de ícones (Ctrl+B) e num drawer no celular; cada seção, depois de aberta, fica montada para preservar estado (rolagem, busca, histórico)
+- **Minhas perguntas**: as perguntas enviadas ficam no navegador, com favoritas, num painel à direita do chat
+- Páginas de referência com conteúdo estático, servidas por estado de [public/](public/)`<estado>/` (JSON e texto), com busca no cliente; seções sem dados para o estado aparecem desativadas na barra lateral
 - Botão de copiar mensagens com um clique
 - **Modo claro/escuro** que respeita a preferência do sistema e persiste a escolha do usuário (alternador no cabeçalho)
 - Layout **mobile-first** com ajuste inteligente ao teclado virtual (iOS/Android)
-- Timeout de 25 segundos com mensagem amigável em caso de lentidão da API
+- Timeout de 70 segundos com mensagem amigável em caso de lentidão da API
 
 ## Tecnologias Utilizadas
 
 - **TypeScript** (modo `strict`) — todo o código da aplicação é `.ts`/`.tsx`; apenas os 4 *snippets* utilitários do Chakra em `ui/` seguem como `.jsx`
 - **React 19** + **Vite 8** (Rolldown)
-- **Chakra UI v3** (`@chakra-ui/react`, `@emotion/react`, `@emotion/styled`)
+- **Chakra UI v3** (`@chakra-ui/react`, `@emotion/react`)
 - **SWR** + **Axios** (busca de dados)
 - **Framer Motion** (animações)
 - **react-markdown** (respostas do assistente e página Sobre)
 - **react-icons**, **next-themes** (modo de cor)
 - **Vitest** + **Testing Library** (testes)
 
-> A navegação é por **abas** dentro de `Home` (single-page, sem roteador): toda a navegação é em memória e a URL permanece em `/`.
+> A navegação é pela barra lateral dentro de `Home` (single-page, sem roteador): toda a navegação é em memória e a URL permanece em `/`.
 
 ## Tema e cores
 
@@ -48,7 +49,7 @@ npm run test:watch # Vitest em modo watch
 ```
 
 O aplicativo consome a API backend da Auli em `https://api.auli.com.br/v1/question`
-(POST `{ question, entity? }`, onde `entity` é o estado selecionado; pode ser
+(POST `{ question, entity?, type }`, onde `entity` é o estado da aba e `type` o tipo de consulta; pode ser
 sobrescrita com a variável de ambiente `VITE_API_URL`).
 
 ## Testes

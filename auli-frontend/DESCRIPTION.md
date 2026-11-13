@@ -35,7 +35,7 @@ today, each with the collections scraped for it so far. See
 | Language | **TypeScript (strict)** — all app code is `.ts`/`.tsx`; only the 4 vendored Chakra `ui/` snippets remain `.jsx` |
 | UI library | **React 19** |
 | Build tool / dev server | **Vite 8** (Rolldown-based) with `@vitejs/plugin-react` |
-| Component library | **Chakra UI v3** (+ `@emotion/react`, `@emotion/styled`) |
+| Component library | **Chakra UI v3** (+ `@emotion/react`) |
 | Navigation | **None** — single-page **tabbed** shell (no router) |
 | Data fetching | **SWR** + **Axios** |
 | Animation | **Framer Motion** (`LazyMotion` / `domAnimation`) |
@@ -354,13 +354,11 @@ The only **dynamic** call is the chat question endpoint at
 
 - **`define`** injects `__BUILD_ID__` (a per-build timestamp for cache-busting)
   and `__APP_VERSION__` (read from `package.json` at config load).
-- **`resolve.alias`** wires the `@/*` path alias to `./src` so it resolves in
-  the editor, type-check, and build alike.
 - **Manual vendor chunking** via Rolldown to keep the main bundle small:
   - `vendor-react` — react, react-dom
-  - `vendor-chakra` — @chakra-ui/react, @emotion/react, @emotion/styled
+  - `vendor-chakra` — @chakra-ui/react, @emotion/react
   - `vendor-icons` — react-icons
-  - `vendor-utils` — axios, framer-motion, react-markdown
+  - `vendor-utils` — axios, framer-motion, react-markdown, remark-gfm, swr
 - **`test`** block configures Vitest (see Testing below).
 
 A representative production build emits separate hashed chunks per group
@@ -376,13 +374,12 @@ typed `.ts`/`.tsx`; the only remaining `.jsx` files are the four vendored Chakra
 
 - [tsconfig.json](tsconfig.json) — `strict: true`, `moduleResolution: "Bundler"`,
   `jsx: "react-jsx"`, `noEmit: true`. `allowJs: true` + `checkJs: false` lets the
-  Chakra `ui/*.jsx` snippets be imported without being type-checked. The `@/*`
-  path alias is declared here and mirrored in `jsconfig.json` and the Vite
-  `resolve.alias`.
+  Chakra `ui/*.jsx` snippets be imported without being type-checked. There is no
+  path alias: imports are relative.
 - [src/vite-env.d.ts](src/vite-env.d.ts) — Vite client types plus the
   `__BUILD_ID__` / `__APP_VERSION__` / `VITE_API_URL` declarations.
-- [src/types/chat.ts](src/types/chat.ts) — shared `Message`, `MessageSender`,
-  `SetPrompt` types.
+- [src/types/chat.ts](src/types/chat.ts) — shared `Message` and `SetPrompt`
+  types.
 - Data shapes are typed at their source: `RawFaqNode`/`FaqNode` in `parseFaqs`,
   `ConteudoCategory`/`ConteudoTree` in `parseConteudos`, `Servico`/`TipoServico`
   in the servicos `utils`; the list pages pass these as the `jsonFetcher<T>`
@@ -423,7 +420,6 @@ auli-frontend/
 ├─ vite.config.js
 ├─ eslint.config.js
 ├─ tsconfig.json
-├─ jsconfig.json
 ├─ package.json
 ├─ public/                     # static assets
 │  ├─ rs/                      # SEFAZ-RS collection data (faqs, servicos-*, portal-*…)

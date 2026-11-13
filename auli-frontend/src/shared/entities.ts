@@ -2,9 +2,9 @@
  * GERADO de config/registry.toml por scripts/tools/gen-frontend-entities.mjs — NÃO EDITE À MÃO.
  * Rode `node scripts/tools/gen-frontend-entities.mjs` após mudar o registry.
  *
- * Cada entidade é uma secretaria estadual da fazenda. O app é escopo de uma entidade por vez,
- * escolhida na landing de seleção de estado e persistida no localStorage. Os dados são servidos
- * por entidade de `public/<id>/…` (ver `entityPath` em fetchers).
+ * Cada entidade é uma secretaria estadual da fazenda. Cada aba de estado do app é escopo de uma
+ * entidade, escolhida no mapa de seleção; as abas abertas são persistidas por `abas.ts`. Os dados
+ * são servidos por entidade de `public/<id>/…` (ver `entityPath` em fetchers).
  */
 
 /** As abas de coleção que uma entidade pode ter. `chat` está sempre disponível. */
@@ -214,8 +214,6 @@ export const ENTITIES: Entity[] = [
     collections: ["servicos"],
   },
 ];
-
-export const DEFAULT_ENTITY_ID = "rs";
 
 export function getEntity(id: string | null | undefined): Entity | undefined {
   return ENTITIES.find((e) => e.id === id);
