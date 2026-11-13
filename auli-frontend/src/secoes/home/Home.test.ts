@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { proximaHabilitada } from "./Home";
+import { proximaHabilitada } from "./Navegacao";
 
 /** Barra de abas em miniatura: `-` habilitada, `x` inativa. */
 const barra = (spec: string) =>
