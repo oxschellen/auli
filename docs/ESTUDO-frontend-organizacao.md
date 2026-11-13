@@ -45,7 +45,7 @@ O relatório foi conferido contra a `main` em `a57bb86` antes da etapa 1. Os ach
 - O `config/registry.toml` citava o gerador no caminho antigo, `scripts/gen-frontend-entities.mjs` (linhas 12 e 22), o mesmo defeito do E1. Corrigido na etapa 1.
 - A suíte tem 342 testes, todos passando e nenhum pulado, em cerca de 5 s.
 - O `DESCRIPTION.md` tem 75 referências a caminhos de `src/`, não 67; o `docs/auli_code.md` tem 41.
-- O E6 (`.cursor/` e `.agents/`) fica em aberto até o mantenedor decidir.
+- E6: o `.cursor/` saiu (decisão do mantenedor em 13/11/2026); o `.agents/` fica.
 
 **A etapa 1 fez também, além do checklist:** `remark-gfm` e `swr` entraram no `vendor-utils` do `chunkMap` (E4), o que leva o pacote do app de 204 kB para 153 kB, sem mudar o total; a linha comentada do `vite.svg` saiu do `index.html`; as menções a `@emotion/styled`, ao `jsconfig.json` e ao alias saíram do `README.md`, do `DESCRIPTION.md` e do `docs/auli_code.md`. A `meta description` com o texto "Auli" ficou: trocá-la é decisão de produto, não de organização.
 
