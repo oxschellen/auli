@@ -21,7 +21,8 @@ interface SystemMessageProps {
    *  alvo da rolagem do `Chat` quando a resposta chega. */
   id?: string;
   messageText: string;
-  showButton: boolean;
+  /** A resposta é o cartão com as ações; o erro, um balão simples (ver `Natureza`). */
+  natureza?: "resposta" | "erro";
   /** Quando presente, oferece o ícone que abre o registro de auditoria desta resposta. */
   logId?: string;
   /** Lista de fontes recuperadas (D-SF-10); ausente ou vazia = nada é desenhado. */
@@ -54,7 +55,7 @@ const Secao = ({ rotulo, children }: { rotulo: string; children: ReactNode }) =>
 export const SystemMessage = ({
   id,
   messageText,
-  showButton,
+  natureza = "resposta",
   logId,
   fontes,
   tipo,
@@ -63,7 +64,7 @@ export const SystemMessage = ({
   const [logAberto, setLogAberto] = useState(false);
   const [destaque, setDestaque] = useState<string | null>(null);
   const idBase = `msg-${id ?? "saudacao"}`;
-  const comFontes = showButton && !!fontes && fontes.length > 0;
+  const comFontes = natureza === "resposta" && !!fontes && fontes.length > 0;
 
   // Citações só viram selos quando há lista de fontes para onde levar (D-UI-7).
   const texto = useMemo(
@@ -112,9 +113,9 @@ export const SystemMessage = ({
     [comFontes, titulos, citar],
   );
 
-  // Sem ações (`showButton` falso), a mensagem segue como balão simples. A resposta ocupa a
-  // coluna — e as mensagens de erro também, porque o `useConversa` as cria com `showButton`.
-  if (!showButton) {
+  // O erro (tempo esgotado, servidor fora, limite) é um balão simples: não há o que copiar nem
+  // registro para abrir. A resposta ocupa a coluna, com as ações.
+  if (natureza === "erro") {
     return (
       <Flex px={3} py={2} w="100%">
         <Box

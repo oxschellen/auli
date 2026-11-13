@@ -58,12 +58,12 @@ export const Chat = () => {
 
   // Resposta que chega rola até o COMEÇO dela, não até o fim (D-UI-2): a resposta longa terminava
   // com a tabela e as fontes na tela, e o Resumo — a parte mais lida — ficava acima, fora da vista
-  // (no celular, sempre). A pergunta e a espera seguem rolando até o fim, como antes.
+  // (no celular, sempre). A pergunta, a espera e o erro rolam até o fim.
   const { mensagens } = conversa;
   useEffect(() => {
     const ultima = mensagens[mensagens.length - 1];
     requestAnimationFrame(() => {
-      if (ultima?.from === "server" && ultima.showButton && !ultima.pendente) {
+      if (ultima?.natureza === "resposta") {
         document
           .getElementById(`msg-${ultima.id}`)
           ?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -74,7 +74,7 @@ export const Chat = () => {
   }, [mensagens]);
 
   // Antes da primeira pergunta, a apresentação do tipo selecionado no lugar da saudação (D-UI-10).
-  const vazio = !mensagens.some((m) => m.from === "user");
+  const vazio = !mensagens.some((m) => m.natureza === "pergunta");
   const usarExemplo = (pergunta: string) => {
     setPrompt(pergunta);
     requestAnimationFrame(() => textareaRef.current?.focus());

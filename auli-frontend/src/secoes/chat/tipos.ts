@@ -2,24 +2,30 @@ import type { Dispatch, SetStateAction } from "react";
 import type { Fonte } from "../../api/chat";
 import type { QuestionType } from "./lib/tipoDeConsulta";
 
-/** Who authored a chat message. */
-type MessageSender = "user" | "server";
+/**
+ * O que uma mensagem da conversa É — e daí quem a desenha e como (C4 do
+ * docs/ESTUDO-frontend-organizacao.md, que tirou o `showButton`, o `from` e o `pendente`):
+ *
+ * - `pergunta`: o balão do usuário.
+ * - `espera`: o lugar da resposta enquanto a consulta roda, desenhado como a animação `Pensando`.
+ * - `resposta`: o cartão largo, com o tipo, as fontes, o log e o copiar; a rolagem vai ao COMEÇO
+ *   dela (D-UI-2).
+ * - `erro`: tempo esgotado, servidor fora ou limite de requisições — um balão simples, sem ações.
+ */
+export type Natureza = "pergunta" | "espera" | "resposta" | "erro";
 
 /** A single message rendered in the chat transcript. */
 export interface Message {
   id: string;
-  from: MessageSender;
+  natureza: Natureza;
+  /** O texto. Na `espera`, segue preenchido para quem não desenha a animação (e para os testes). */
   text: string;
-  showButton: boolean;
   /** UUID do registro de auditoria desta resposta (`log_id` do backend), quando houve gravação.
-   *  Ausente na saudação, nas mensagens do usuário e quando o log falhou — e é essa ausência que
+   *  Ausente fora das respostas e quando o log falhou — e é essa ausência que
    *  esconde o ícone: não existe registro para abrir. */
   logId?: string;
   /** Lista de fontes recuperadas (D-SF-10) — só em respostas de Serviços + FAQs. */
   fontes?: Fonte[];
-  /** O lugar da resposta enquanto a consulta roda: desenhado como a animação `Pensando`, não
-   *  como texto. O `text` segue preenchido para quem não desenha (e para os testes). */
-  pendente?: boolean;
   /** Tipo de consulta que produziu esta resposta (D-UI-9) — a linha de contexto no topo dela. */
   tipo?: QuestionType;
   /** Quanto a resposta levou, medido no navegador do envio à chegada (D-UI-9). */

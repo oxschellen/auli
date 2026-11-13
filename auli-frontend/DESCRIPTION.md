@@ -192,8 +192,12 @@ The conversational core.
   delegating to `UserMessage` / `SystemMessage`.
 - [UserMessage.tsx](src/secoes/chat/UserMessage.tsx) — user's bubble (right
   aligned, blue) with a copy-to-input button.
-- [SystemMessage.tsx](src/secoes/chat/SystemMessage.tsx) — assistant's bubble,
-  rendered via `react-markdown` (shared renderers), with a copy button.
+- [SystemMessage.tsx](src/secoes/chat/SystemMessage.tsx) — the answer card,
+  rendered via `react-markdown` (shared renderers), with the type line, sources,
+  log and copy buttons; an error is a plain bubble with no actions. What a
+  message is lives in one field, `natureza` (`pergunta`, `espera`, `resposta`,
+  `erro`), in [tipos.ts](src/secoes/chat/tipos.ts): it picks who draws it and
+  where the scroll goes.
 - [Historico.tsx](src/secoes/chat/Historico.tsx) — the "Minhas perguntas" panel:
   the questions sent in this state, starred ones on top, kept only in this
   browser (`lib/historico.ts`, `hooks/useHistorico.ts`; whether it is open,

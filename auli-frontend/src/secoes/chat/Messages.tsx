@@ -25,9 +25,9 @@ export const Messages = ({ messages, setPrompt }: MessagesProps) => {
         const messageText = item.text;
         const key = item.id ?? index;
 
-        if (item.from === "user") {
+        if (item.natureza === "pergunta") {
           return <UserMessage key={key} messageText={messageText} setPrompt={setPrompt} />;
-        } else if (item.pendente) {
+        } else if (item.natureza === "espera") {
           return <Pensando key={key} />;
         } else {
           return (
@@ -35,7 +35,7 @@ export const Messages = ({ messages, setPrompt }: MessagesProps) => {
               key={key}
               id={item.id}
               messageText={messageText}
-              showButton={item.showButton}
+              natureza={item.natureza}
               logId={item.logId}
               fontes={item.fontes}
               tipo={item.tipo}

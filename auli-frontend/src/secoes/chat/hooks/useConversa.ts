@@ -33,9 +33,8 @@ export function useConversa(entityId: string) {
     const resposta: Message = r.ok
       ? {
           id: crypto.randomUUID(),
-          from: "server",
+          natureza: "resposta",
           text: r.texto || TEXTOS.semResposta,
-          showButton: true,
           logId: r.logId,
           fontes: r.fontes,
           tipo,
@@ -43,10 +42,9 @@ export function useConversa(entityId: string) {
         }
       : {
           id: crypto.randomUUID(),
-          from: "server",
+          natureza: "erro",
           // O 429 traz a mensagem amigável do próprio servidor; sem ela, a nossa.
           text: r.falha === "limite" ? r.mensagem || TEXTOS.limite : TEXTOS[r.falha],
-          showButton: true,
         };
     setMensagens((atual) => atual.map((m) => (m.id === idDaEspera ? resposta : m)));
     setEsperando(false);
@@ -60,9 +58,8 @@ export function useConversa(entityId: string) {
     const idDaEspera = crypto.randomUUID();
     setMensagens((atual) => [
       ...atual,
-      { id: crypto.randomUUID(), from: "user", text: pergunta, showButton: true },
-      // Desenhada como a animação `Pensando`; o `text` fica para quem não desenha (e os testes).
-      { id: idDaEspera, from: "server", text: TEXTOS.pensando, showButton: false, pendente: true },
+      { id: crypto.randomUUID(), natureza: "pergunta", text: pergunta },
+      { id: idDaEspera, natureza: "espera", text: TEXTOS.pensando },
     ]);
     void responder(pergunta, tipo, idDaEspera);
     return true;

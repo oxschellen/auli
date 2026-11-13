@@ -59,19 +59,14 @@ describe("Fontes", () => {
 describe("SystemMessage + Fontes", () => {
   it("desenha a lista só quando há fontes, e a citação vira selo", () => {
     const { rerender } = renderWithProvider(
-      <SystemMessage
-        id="m1"
-        messageText="**Resumo**\nUse a guia [Serviço 1]."
-        showButton
-        fontes={fontes}
-      />,
+      <SystemMessage id="m1" messageText="**Resumo**\nUse a guia [Serviço 1]." fontes={fontes} />,
     );
     expect(screen.getByRole("heading", { name: "Fontes" })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Serviço 1: Emitir guia. Ver nas fontes" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Resumo" })).toHaveTextContent("Use a guia");
-    rerender(<SystemMessage id="m1" messageText="Use a guia [Serviço 1]." showButton />);
+    rerender(<SystemMessage id="m1" messageText="Use a guia [Serviço 1]." />);
     expect(screen.queryByRole("heading", { name: "Fontes" })).toBeNull();
     // Sem fontes, a citação fica como texto: não há para onde o selo levar.
     expect(screen.queryByRole("button", { name: /Ver nas fontes/ })).toBeNull();
