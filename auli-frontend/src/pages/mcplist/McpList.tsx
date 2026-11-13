@@ -100,7 +100,9 @@ const FERRAMENTAS: Ferramenta[] = [
     ),
     exemplo: (
       <>
-        {frase("Em Santa Catarina, o que já foi respondido sobre crédito de ICMS na energia elétrica?")}{" "}
+        {frase(
+          "Em Santa Catarina, o que já foi respondido sobre crédito de ICMS na energia elétrica?",
+        )}{" "}
         — ou, para os acórdãos: {frase("O que o TARF do RS já decidiu sobre…")}. Quer mais
         resultados? {frase("Traga os 15 mais próximos.")}
       </>
@@ -137,8 +139,8 @@ const FERRAMENTAS: Ferramenta[] = [
     nome: "buscar_legislacao",
     oQueFaz: (
       <>
-        Para o que a <Text as="strong">lei</Text> diz: pares pergunta/resposta sobre a norma, cada um
-        com o dispositivo citado ({`"Art. 18-A, § 2º"`}) e o link oficial. Disponível só onde{" "}
+        Para o que a <Text as="strong">lei</Text> diz: pares pergunta/resposta sobre a norma, cada
+        um com o dispositivo citado ({`"Art. 18-A, § 2º"`}) e o link oficial. Disponível só onde{" "}
         <Text as="code">listar_entidades</Text> o reporta.
       </>
     ),

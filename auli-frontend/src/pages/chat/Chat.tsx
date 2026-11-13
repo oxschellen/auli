@@ -107,7 +107,9 @@ export const Chat = () => {
     const ultima = messages[messages.length - 1];
     requestAnimationFrame(() => {
       if (ultima?.from === "server" && ultima.showButton && !ultima.pendente) {
-        document.getElementById(`msg-${ultima.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document
+          .getElementById(`msg-${ultima.id}`)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       }
@@ -206,7 +208,12 @@ export const Chat = () => {
           acima do AppHeader, pelos motivos do drawer de seções no `Home`. */}
       {drawerAberto && (
         <Box hideFrom="xl" position="fixed" inset={0} zIndex={110}>
-          <Box position="absolute" inset={0} bg="blackAlpha.500" onClick={() => setDrawerAberto(false)} />
+          <Box
+            position="absolute"
+            inset={0}
+            bg="blackAlpha.500"
+            onClick={() => setDrawerAberto(false)}
+          />
           <Box
             as="aside"
             aria-label="Minhas perguntas"

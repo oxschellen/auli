@@ -17,9 +17,7 @@ function makeArgs() {
   const setMessages = vi.fn();
   const setPrompt = vi.fn();
   const setLoading = vi.fn();
-  const messages: Message[] = [
-    { id: "greeting", from: "server", text: "Olá!", showButton: false },
-  ];
+  const messages: Message[] = [{ id: "greeting", from: "server", text: "Olá!", showButton: false }];
   return {
     setMessages,
     setPrompt,

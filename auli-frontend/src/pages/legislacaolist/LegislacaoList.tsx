@@ -308,13 +308,7 @@ export const LegislacaoList = () => {
             </Box>
           ) : (
             grupos.map(([lei, doLei]) => (
-              <GrupoLei
-                key={lei}
-                lei={lei}
-                itens={doLei}
-                terms={terms}
-                isSearching={isSearching}
-              />
+              <GrupoLei key={lei} lei={lei} itens={doLei} terms={terms} isSearching={isSearching} />
             ))
           )}
         </AsyncContent>

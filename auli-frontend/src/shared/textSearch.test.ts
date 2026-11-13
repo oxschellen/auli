@@ -83,9 +83,7 @@ describe("matchesQuery", () => {
   });
 
   it("ordem dos termos é irrelevante", () => {
-    expect(matchesQuery(item, "presumido credito")).toBe(
-      matchesQuery(item, "credito presumido"),
-    );
+    expect(matchesQuery(item, "presumido credito")).toBe(matchesQuery(item, "credito presumido"));
     expect(matchesQuery(item, "presumido credito")).toBe(true);
   });
 

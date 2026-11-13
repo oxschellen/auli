@@ -14,7 +14,16 @@ import { BrazilMap } from "./BrazilMap";
 export function StateSelection({ onSelect }: { onSelect: (entityId: string) => void }) {
   return (
     <Flex direction="column" h="100%" w="100%" bg="bg.canvas" overflowY="auto">
-      <Flex direction="column" align="center" maxW="720px" mx="auto" w="100%" px={5} py={10} flex={1}>
+      <Flex
+        direction="column"
+        align="center"
+        maxW="720px"
+        mx="auto"
+        w="100%"
+        px={5}
+        py={10}
+        flex={1}
+      >
         <Stack gap={2} align="center" textAlign="center" mb={10}>
           <Text fontSize="1.6rem" fontWeight="700" color="fg" letterSpacing="-0.01em">
             Escolha o estado

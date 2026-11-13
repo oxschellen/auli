@@ -42,18 +42,20 @@ function centerOf(d: string, nudge?: Point): Point & { size: number } {
   let best = 0;
   for (const r of rings) {
     const area = Math.abs(ringArea2(r));
-    if (area > best) { best = area; ring = r; }
+    if (area > best) {
+      best = area;
+      ring = r;
+    }
   }
   const a2 = ringArea2(ring);
-  let cx = 0, cy = 0;
+  let cx = 0,
+    cy = 0;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
     const f = ring[j].x * ring[i].y - ring[i].x * ring[j].y;
     cx += (ring[j].x + ring[i].x) * f;
     cy += (ring[j].y + ring[i].y) * f;
   }
-  const c = a2 !== 0
-    ? { x: cx / (3 * a2), y: cy / (3 * a2) }
-    : ring[0] ?? { x: 0, y: 0 };
+  const c = a2 !== 0 ? { x: cx / (3 * a2), y: cy / (3 * a2) } : (ring[0] ?? { x: 0, y: 0 });
   // best = 2×area of the largest ring; shrink the label for small states so it fits.
   const area = best / 2;
   const size = area < 3000 ? 18 : area < 6000 ? 25 : 31;
@@ -108,49 +110,49 @@ export function BrazilMap({ onSelect }: BrazilMapProps) {
 
           return (
             <g key={uf}>
-            <path
-              d={d}
-              fill={fill}
-              stroke={stroke}
-              strokeWidth={1.2}
-              style={{ cursor: available ? "pointer" : "default", transition: "fill 0.15s ease" }}
-              role={available ? "button" : undefined}
-              tabIndex={available ? 0 : undefined}
-              aria-label={available ? `Selecionar ${entity?.name} (${entity?.state})` : undefined}
-              aria-disabled={available ? undefined : true}
-              onClick={available ? () => entity && onSelect(entity.id) : undefined}
-              onMouseEnter={available ? () => setHoveredUf(uf) : undefined}
-              onMouseLeave={available ? () => setHoveredUf(null) : undefined}
-              onFocus={available ? () => setHoveredUf(uf) : undefined}
-              onBlur={available ? () => setHoveredUf(null) : undefined}
-              onKeyDown={
-                available
-                  ? (e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        if (entity) onSelect(entity.id);
+              <path
+                d={d}
+                fill={fill}
+                stroke={stroke}
+                strokeWidth={1.2}
+                style={{ cursor: available ? "pointer" : "default", transition: "fill 0.15s ease" }}
+                role={available ? "button" : undefined}
+                tabIndex={available ? 0 : undefined}
+                aria-label={available ? `Selecionar ${entity?.name} (${entity?.state})` : undefined}
+                aria-disabled={available ? undefined : true}
+                onClick={available ? () => entity && onSelect(entity.id) : undefined}
+                onMouseEnter={available ? () => setHoveredUf(uf) : undefined}
+                onMouseLeave={available ? () => setHoveredUf(null) : undefined}
+                onFocus={available ? () => setHoveredUf(uf) : undefined}
+                onBlur={available ? () => setHoveredUf(null) : undefined}
+                onKeyDown={
+                  available
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          if (entity) onSelect(entity.id);
+                        }
                       }
-                    }
-                  : undefined
-              }
-            >
-              <title>{available ? entity?.name : uf}</title>
-            </path>
-            {hovered && center && (
-              <text
-                x={center.x}
-                y={center.y}
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontSize={center.size}
-                fontWeight={900}
-                // Dark ink for contrast against the teal highlight fill.
-                fill={labelInk}
-                style={{ pointerEvents: "none", userSelect: "none" }}
+                    : undefined
+                }
               >
-                {uf}
-              </text>
-            )}
+                <title>{available ? entity?.name : uf}</title>
+              </path>
+              {hovered && center && (
+                <text
+                  x={center.x}
+                  y={center.y}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={center.size}
+                  fontWeight={900}
+                  // Dark ink for contrast against the teal highlight fill.
+                  fill={labelInk}
+                  style={{ pointerEvents: "none", userSelect: "none" }}
+                >
+                  {uf}
+                </text>
+              )}
             </g>
           );
         })}

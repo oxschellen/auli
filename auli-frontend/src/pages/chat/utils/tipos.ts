@@ -31,7 +31,8 @@ export const TIPOS: Record<QuestionType, TextoDoTipo> = {
   "2": {
     rotulo: "Pareceres",
     descricao: "Respostas oficiais a consultas tributárias",
-    apresentacao: "procura nos pareceres — as respostas oficiais a consultas sobre a legislação tributária.",
+    apresentacao:
+      "procura nos pareceres — as respostas oficiais a consultas sobre a legislação tributária.",
     placeholder: "Pergunte sobre o entendimento dos pareceres…",
     exemplos: [
       "Incide ICMS na transferência de mercadoria entre estabelecimentos do mesmo titular?",

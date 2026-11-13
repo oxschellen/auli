@@ -66,15 +66,23 @@ export const SystemMessage = ({
   const comFontes = showButton && !!fontes && fontes.length > 0;
 
   // Citações só viram selos quando há lista de fontes para onde levar (D-UI-7).
-  const texto = useMemo(() => (comFontes ? marcarCitacoes(messageText) : messageText), [comFontes, messageText]);
-  const citados = useMemo(() => (comFontes ? rotulosCitados(messageText) : new Set<string>()), [comFontes, messageText]);
+  const texto = useMemo(
+    () => (comFontes ? marcarCitacoes(messageText) : messageText),
+    [comFontes, messageText],
+  );
+  const citados = useMemo(
+    () => (comFontes ? rotulosCitados(messageText) : new Set<string>()),
+    [comFontes, messageText],
+  );
   const secoes = useMemo(() => dividirSecoes(texto), [texto]);
   const titulos = useMemo(() => new Map((fontes ?? []).map((f) => [f.rotulo, f.titulo])), [fontes]);
 
   const citar = useCallback(
     (rotulo: string) => {
       setDestaque(rotulo);
-      document.getElementById(`${idBase}-${ancora(rotulo)}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document
+        .getElementById(`${idBase}-${ancora(rotulo)}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
     },
     [idBase],
   );
@@ -90,7 +98,13 @@ export const SystemMessage = ({
       a: ({ href, children }) => {
         const rotulo = rotuloDoHref(href);
         if (rotulo && comFontes) {
-          return <CitacaoSelo rotulo={rotulo} titulo={titulos.get(rotulo)} onClick={() => citar(rotulo)} />;
+          return (
+            <CitacaoSelo
+              rotulo={rotulo}
+              titulo={titulos.get(rotulo)}
+              onClick={() => citar(rotulo)}
+            />
+          );
         }
         return <MarkdownLink href={href}>{children}</MarkdownLink>;
       },
@@ -103,7 +117,15 @@ export const SystemMessage = ({
   if (!showButton) {
     return (
       <Flex px={3} py={2} w="100%">
-        <Box bg="bg.canvas" border="1px solid" borderColor="border" borderRadius="16px" px={4} py={3} maxW="85%">
+        <Box
+          bg="bg.canvas"
+          border="1px solid"
+          borderColor="border"
+          borderRadius="16px"
+          px={4}
+          py={3}
+          maxW="85%"
+        >
           <Markdown components={compactMarkdownComponents}>{messageText}</Markdown>
         </Box>
       </Flex>
@@ -128,18 +150,42 @@ export const SystemMessage = ({
       >
         {tipo && (
           <Flex align="center" gap={2} fontSize="13px" color="fg.muted">
-            <Text as="span" px={2} lineHeight="22px" borderRadius="6px" bg="bg.subtle" color="fg" fontWeight="600">
+            <Text
+              as="span"
+              px={2}
+              lineHeight="22px"
+              borderRadius="6px"
+              bg="bg.subtle"
+              color="fg"
+              fontWeight="600"
+            >
               {TIPOS[tipo].rotulo}
             </Text>
-            {duracaoMs !== undefined && <Text as="span">respondida em {Math.max(1, Math.round(duracaoMs / 1000))} s</Text>}
+            {duracaoMs !== undefined && (
+              <Text as="span">respondida em {Math.max(1, Math.round(duracaoMs / 1000))} s</Text>
+            )}
           </Flex>
         )}
 
         {secoes.antes && <Markdown components={components}>{secoes.antes}</Markdown>}
 
         {secoes.resumo !== null && (
-          <Box as="section" aria-label="Resumo" bg="bg.resumo" borderRadius="12px" px={{ base: 3.5, md: 4.5 }} pt={3} pb={1.5}>
-            <Text fontSize="12px" fontWeight="700" letterSpacing="0.08em" color="accent.strong" mb={1}>
+          <Box
+            as="section"
+            aria-label="Resumo"
+            bg="bg.resumo"
+            borderRadius="12px"
+            px={{ base: 3.5, md: 4.5 }}
+            pt={3}
+            pb={1.5}
+          >
+            <Text
+              fontSize="12px"
+              fontWeight="700"
+              letterSpacing="0.08em"
+              color="accent.strong"
+              mb={1}
+            >
               RESUMO
             </Text>
             <Markdown components={components}>{secoes.resumo}</Markdown>
@@ -152,7 +198,9 @@ export const SystemMessage = ({
           </Secao>
         )}
 
-        {comFontes && <Fontes fontes={fontes!} citados={citados} idBase={idBase} destaque={destaque} />}
+        {comFontes && (
+          <Fontes fontes={fontes!} citados={citados} idBase={idBase} destaque={destaque} />
+        )}
 
         <Flex justify="flex-end" gap={1} pt={2} borderTop="1px solid" borderColor="border">
           {/* Só existe quando o backend devolveu `log_id` — sem registro gravado não há o que
@@ -192,7 +240,10 @@ export const SystemMessage = ({
               bg="transparent"
               _hover={{ bg: "bg.overlay" }}
               onClick={() => {
-                utilsCopyTextToClipboard(messageText, "A resposta foi copiada para a área de transferência");
+                utilsCopyTextToClipboard(
+                  messageText,
+                  "A resposta foi copiada para a área de transferência",
+                );
               }}
             >
               <MdCopyAll size={16} color="var(--chakra-colors-fg-muted)" />

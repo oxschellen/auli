@@ -68,8 +68,7 @@ const montar = () =>
   );
 
 /** Espera o catálogo resolver: até lá o `AsyncContent` mostra o spinner. */
-const aguardarCarga = () =>
-  waitFor(() => screen.getByText("Gasto tributário no ICMS"));
+const aguardarCarga = () => waitFor(() => screen.getByText("Gasto tributário no ICMS"));
 
 /**
  * Catálogo do teste da D-TRIB-8/10: os quatro estados que decidem o botão "Ler PDF". Só o
@@ -143,9 +142,7 @@ describe("TributumShell", () => {
       target: { value: "renuncia federada" },
     });
 
-    await waitFor(() =>
-      expect(screen.getByText("1 artigo de 2")).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.getByText("1 artigo de 2")).toBeInTheDocument());
     expect(screen.queryByText("Reforma e atendimento")).not.toBeInTheDocument();
   });
 
@@ -158,9 +155,7 @@ describe("TributumShell", () => {
     montar();
 
     await waitFor(() =>
-      expect(
-        screen.getByText(/Nada em artigos e estudos por enquanto/i),
-      ).toBeInTheDocument(),
+      expect(screen.getByText(/Nada em artigos e estudos por enquanto/i)).toBeInTheDocument(),
     );
   });
 
@@ -173,9 +168,7 @@ describe("TributumShell", () => {
     montar();
 
     await waitFor(() =>
-      expect(
-        screen.getByText(/Erro ao carregar o Tributum/i),
-      ).toBeInTheDocument(),
+      expect(screen.getByText(/Erro ao carregar o Tributum/i)).toBeInTheDocument(),
     );
   });
 });
@@ -240,22 +233,12 @@ describe("D-TRIB-8 na UI: o botão 'Ler PDF'", () => {
     montar();
     await waitFor(() => screen.getByText("Nosso estudo"));
 
-    expect(
-      screen.getByLabelText('Ler o PDF de "Nosso estudo"'),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByLabelText('Ler o PDF de "Estudo de terceiro"'),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByLabelText('Ler o PDF de "Sem arquivo"'),
-    ).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Ler o PDF de "Nosso estudo"')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Ler o PDF de "Estudo de terceiro"')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Ler o PDF de "Sem arquivo"')).not.toBeInTheDocument();
     // D-TRIB-10: hospedado e com arquivo, mas sem a procedência registrada — degrada para link.
-    expect(
-      screen.queryByLabelText('Ler o PDF de "Sem procedência"'),
-    ).not.toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: /Ler o PDF/ })).toHaveLength(
-      1,
-    );
+    expect(screen.queryByLabelText('Ler o PDF de "Sem procedência"')).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Ler o PDF/ })).toHaveLength(1);
   });
 
   /**

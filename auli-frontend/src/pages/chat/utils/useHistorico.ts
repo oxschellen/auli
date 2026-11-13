@@ -65,7 +65,10 @@ export function useHistorico(entityId: string) {
   return {
     itens,
     registrar: (pergunta: string, tipo: QuestionType) =>
-      gravar(chave, historico.registrar(ler(chave), pergunta, tipo, Date.now(), crypto.randomUUID())),
+      gravar(
+        chave,
+        historico.registrar(ler(chave), pergunta, tipo, Date.now(), crypto.randomUUID()),
+      ),
     alternarFavorita: (id: string) => gravar(chave, historico.alternarFavorita(ler(chave), id)),
     remover: (id: string) => gravar(chave, historico.remover(ler(chave), id)),
     limparRecentes: () => gravar(chave, historico.limparRecentes(ler(chave))),

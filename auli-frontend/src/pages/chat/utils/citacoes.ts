@@ -19,12 +19,7 @@ function canonico(tipo: string, n: string): string {
 /** "Serviço 2" → "fonte-servico-2" (sem acento nem espaço: vale como id de elemento e como URL). */
 export function ancora(rotulo: string): string {
   return (
-    "fonte-" +
-    rotulo
-      .normalize("NFD")
-      .replace(DIACRITICOS, "")
-      .toLowerCase()
-      .replace(/\s+/g, "-")
+    "fonte-" + rotulo.normalize("NFD").replace(DIACRITICOS, "").toLowerCase().replace(/\s+/g, "-")
   );
 }
 

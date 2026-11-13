@@ -25,10 +25,7 @@ function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
   const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   // Sem termos o plugin é um no-op, mas evitamos até instanciá-lo no caso comum (sem busca).
-  const rehypePlugins = useMemo(
-    () => (terms.length ? [rehypeHighlight(terms)] : []),
-    [terms],
-  );
+  const rehypePlugins = useMemo(() => (terms.length ? [rehypeHighlight(terms)] : []), [terms]);
 
   return (
     <Box borderBottom="1px solid var(--chakra-colors-border)">

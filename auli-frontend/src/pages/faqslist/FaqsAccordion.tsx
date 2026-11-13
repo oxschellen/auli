@@ -1,76 +1,75 @@
-import { useState, useMemo } from 'react'
-import type { KeyboardEvent, MouseEvent } from 'react'
-import { Box, Flex, Text, chakra } from '@chakra-ui/react'
-import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { MdExpandMore, MdExpandLess, MdOpenInNew, MdContentCopy } from 'react-icons/md'
-import ReactMarkdown from 'react-markdown'
-import { getEffectiveUrl, type FaqNode, type FaqSearchHit } from './parseFaqs'
-import { compactMarkdownComponents, markdownPlugins } from '../../shared/markdown'
-import { Highlight } from '../../shared/highlight'
-import { parseQuery } from '../../shared/textSearch'
-import { utilsCopyTextToClipboard } from '../chat/utils/utils'
-
+import { useState, useMemo } from "react";
+import type { KeyboardEvent, MouseEvent } from "react";
+import { Box, Flex, Text, chakra } from "@chakra-ui/react";
+import { m, AnimatePresence, useReducedMotion } from "framer-motion";
+import { MdExpandMore, MdExpandLess, MdOpenInNew, MdContentCopy } from "react-icons/md";
+import ReactMarkdown from "react-markdown";
+import { getEffectiveUrl, type FaqNode, type FaqSearchHit } from "./parseFaqs";
+import { compactMarkdownComponents, markdownPlugins } from "../../shared/markdown";
+import { Highlight } from "../../shared/highlight";
+import { parseQuery } from "../../shared/textSearch";
+import { utilsCopyTextToClipboard } from "../chat/utils/utils";
 
 interface TreeNodeProps {
-  node: FaqNode
-  ancestors: FaqNode[]
-  depth: number
-  perguntaMap: Map<string, string>
-  pageTypeMap: Map<string, string>
+  node: FaqNode;
+  ancestors: FaqNode[];
+  depth: number;
+  perguntaMap: Map<string, string>;
+  pageTypeMap: Map<string, string>;
 }
 
 interface SearchResultProps {
-  node: FaqNode
-  ancestors: FaqNode[]
+  node: FaqNode;
+  ancestors: FaqNode[];
   /** Termos já normalizados (`parseQuery`) — os MESMOS que filtraram, para marcar o que casou. */
-  terms: string[]
+  terms: string[];
 }
 
 interface FaqsAccordionProps {
-  nodes: FaqNode[]
-  searchQuery: string
+  nodes: FaqNode[];
+  searchQuery: string;
   /** Acertos da busca, calculados pelo `FaqsList` — que também os conta na barra fixa. */
-  results: FaqSearchHit[]
-  answerMap: Map<string, string>
-  pageTypeMap: Map<string, string>
+  results: FaqSearchHit[];
+  answerMap: Map<string, string>;
+  pageTypeMap: Map<string, string>;
 }
 
-const MENU_TYPES = new Set(['Menu', 'Geral'])
+const MENU_TYPES = new Set(["Menu", "Geral"]);
 
 function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNodeProps) {
-  const reduceMotion = useReducedMotion()
-  const [isOpen, setIsOpen] = useState(false)
-  const hasChildren = node.children.length > 0
-  const effectiveUrl = getEffectiveUrl(node, ancestors)
-  const answer = perguntaMap.get(node.text.trim().toLowerCase())
-  const isFaqLeaf = !hasChildren && !!answer
-  const nodePageType = node.url ? pageTypeMap.get(node.url.replace(/\/$/, '')) : undefined
-  const isMenuOrGeral = hasChildren && !!node.url && !!nodePageType && MENU_TYPES.has(nodePageType)
+  const reduceMotion = useReducedMotion();
+  const [isOpen, setIsOpen] = useState(false);
+  const hasChildren = node.children.length > 0;
+  const effectiveUrl = getEffectiveUrl(node, ancestors);
+  const answer = perguntaMap.get(node.text.trim().toLowerCase());
+  const isFaqLeaf = !hasChildren && !!answer;
+  const nodePageType = node.url ? pageTypeMap.get(node.url.replace(/\/$/, "")) : undefined;
+  const isMenuOrGeral = hasChildren && !!node.url && !!nodePageType && MENU_TYPES.has(nodePageType);
 
-  const indentPx = 16 + depth * 20
+  const indentPx = 16 + depth * 20;
 
   function toggleOrOpenNode() {
     if (hasChildren || isFaqLeaf) {
-      setIsOpen(o => !o)
+      setIsOpen((o) => !o);
     } else if (effectiveUrl) {
-      window.open(effectiveUrl, '_blank', 'noopener,noreferrer')
+      window.open(effectiveUrl, "_blank", "noopener,noreferrer");
     }
   }
 
   function handleLinkClick(e: MouseEvent<HTMLButtonElement>) {
-    e.stopPropagation()
-    if (effectiveUrl) window.open(effectiveUrl, '_blank', 'noopener,noreferrer')
+    e.stopPropagation();
+    if (effectiveUrl) window.open(effectiveUrl, "_blank", "noopener,noreferrer");
   }
 
-  const nextAncestors = useMemo(() => [...ancestors, node], [ancestors, node])
+  const nextAncestors = useMemo(() => [...ancestors, node], [ancestors, node]);
 
-  const expandable = hasChildren || isFaqLeaf
-  const interactive = expandable || !!effectiveUrl
+  const expandable = hasChildren || isFaqLeaf;
+  const interactive = expandable || !!effectiveUrl;
 
   function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    if (interactive && (e.key === 'Enter' || e.key === ' ')) {
-      e.preventDefault()
-      toggleOrOpenNode()
+    if (interactive && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      toggleOrOpenNode();
     }
   }
 
@@ -81,11 +80,11 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
         justify="space-between"
         py={2}
         pr={4}
-        bg={isOpen ? 'bg.app' : 'bg.canvas'}
+        bg={isOpen ? "bg.app" : "bg.canvas"}
         borderBottom="1px solid var(--chakra-colors-border)"
-        cursor={interactive ? 'pointer' : 'default'}
-        _hover={{ bg: isOpen ? 'bg.app' : 'bg.subtle' }}
-        style={{ transition: 'background 0.15s ease', paddingLeft: `${indentPx}px` }}
+        cursor={interactive ? "pointer" : "default"}
+        _hover={{ bg: isOpen ? "bg.app" : "bg.subtle" }}
+        style={{ transition: "background 0.15s ease", paddingLeft: `${indentPx}px` }}
         onClick={toggleOrOpenNode}
         onKeyDown={handleKeyDown}
         role="button"
@@ -93,12 +92,7 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
         aria-expanded={expandable ? isOpen : undefined}
       >
         <Flex align="center" gap={2} flex={1} mr={2}>
-          <Text
-            fontSize="1rem"
-            fontWeight={hasChildren ? '600' : '400'}
-            color="fg"
-            lineHeight="1"
-          >
+          <Text fontSize="1rem" fontWeight={hasChildren ? "600" : "400"} color="fg" lineHeight="1">
             {node.text}
           </Text>
         </Flex>
@@ -110,7 +104,13 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
               opacity={0.7}
               display="flex"
               cursor="pointer"
-              onClick={e => { e.stopPropagation(); utilsCopyTextToClipboard(`${node.text}\n\n${answer}`, 'A resposta foi copiada para a área de transferência') }}
+              onClick={(e) => {
+                e.stopPropagation();
+                utilsCopyTextToClipboard(
+                  `${node.text}\n\n${answer}`,
+                  "A resposta foi copiada para a área de transferência",
+                );
+              }}
               aria-label="Copiar resposta"
               title="Copiar resposta"
             >
@@ -148,25 +148,26 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
         {isOpen && (
           <m.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
+            animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.25, ease: 'easeInOut' }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.25, ease: "easeInOut" }}
             // Mesma contenção do painel de Serviços, e pelo mesmo motivo: animar `height` até
             // `auto` refaz layout a cada quadro, e `contain` prende esse custo na fronteira do
             // painel. A animação fica — é revelação intrínseca, o caso que a regra
             // `no-layout-property-animation` (dispensada em `doctor.config.json`) manda conter.
-            style={{ overflow: 'hidden', contain: 'layout paint' }}
+            style={{ overflow: "hidden", contain: "layout paint" }}
           >
-            {hasChildren && node.children.map(child => (
-              <TreeNode
-                key={child.id}
-                node={child}
-                ancestors={nextAncestors}
-                depth={depth + 1}
-                perguntaMap={perguntaMap}
-                pageTypeMap={pageTypeMap}
-              />
-            ))}
+            {hasChildren &&
+              node.children.map((child) => (
+                <TreeNode
+                  key={child.id}
+                  node={child}
+                  ancestors={nextAncestors}
+                  depth={depth + 1}
+                  perguntaMap={perguntaMap}
+                  pageTypeMap={pageTypeMap}
+                />
+              ))}
             {isFaqLeaf && (
               <Box
                 style={{ paddingLeft: `${indentPx}px` }}
@@ -179,8 +180,11 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
                 lineHeight="1.7"
                 className="faq-answer"
               >
-                <ReactMarkdown remarkPlugins={markdownPlugins} components={compactMarkdownComponents}>
-                  {answer ?? ''}
+                <ReactMarkdown
+                  remarkPlugins={markdownPlugins}
+                  components={compactMarkdownComponents}
+                >
+                  {answer ?? ""}
                 </ReactMarkdown>
               </Box>
             )}
@@ -188,16 +192,16 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
         )}
       </AnimatePresence>
     </Box>
-  )
+  );
 }
 
 function SearchResult({ node, ancestors, terms }: SearchResultProps) {
-  const effectiveUrl = getEffectiveUrl(node, ancestors)
-  const breadcrumb = ancestors.flatMap(a => (a.text ? [a.text] : [])).join(' › ')
+  const effectiveUrl = getEffectiveUrl(node, ancestors);
+  const breadcrumb = ancestors.flatMap((a) => (a.text ? [a.text] : [])).join(" › ");
 
   function openNodeUrl() {
     if (effectiveUrl) {
-      window.open(effectiveUrl, '_blank', 'noopener,noreferrer')
+      window.open(effectiveUrl, "_blank", "noopener,noreferrer");
     }
   }
 
@@ -206,17 +210,17 @@ function SearchResult({ node, ancestors, terms }: SearchResultProps) {
       py={3}
       px={4}
       borderBottom="1px solid var(--chakra-colors-border)"
-      cursor={effectiveUrl ? 'pointer' : 'default'}
-      _hover={{ bg: effectiveUrl ? 'bg.subtle' : undefined }}
-      style={{ transition: 'background 0.15s ease' }}
+      cursor={effectiveUrl ? "pointer" : "default"}
+      _hover={{ bg: effectiveUrl ? "bg.subtle" : undefined }}
+      style={{ transition: "background 0.15s ease" }}
       onClick={openNodeUrl}
       onKeyDown={(e) => {
-        if (effectiveUrl && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault()
-          openNodeUrl()
+        if (effectiveUrl && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          openNodeUrl();
         }
       }}
-      role={effectiveUrl ? 'button' : undefined}
+      role={effectiveUrl ? "button" : undefined}
       tabIndex={effectiveUrl ? 0 : undefined}
     >
       {breadcrumb && (
@@ -235,12 +239,18 @@ function SearchResult({ node, ancestors, terms }: SearchResultProps) {
         </Text>
       </Flex>
     </Box>
-  )
+  );
 }
 
-export function FaqsAccordion({ nodes, searchQuery, results, answerMap, pageTypeMap }: FaqsAccordionProps) {
+export function FaqsAccordion({
+  nodes,
+  searchQuery,
+  results,
+  answerMap,
+  pageTypeMap,
+}: FaqsAccordionProps) {
   // Uma vez por query, não por resultado: `parseQuery` devolve array novo a cada chamada.
-  const terms = useMemo(() => parseQuery(searchQuery), [searchQuery])
+  const terms = useMemo(() => parseQuery(searchQuery), [searchQuery]);
 
   if (searchQuery.trim()) {
     if (results.length === 0) {
@@ -250,7 +260,7 @@ export function FaqsAccordion({ nodes, searchQuery, results, answerMap, pageType
             Nenhum resultado encontrado para &ldquo;{searchQuery}&rdquo;
           </Text>
         </Box>
-      )
+      );
     }
     return (
       <Box>
@@ -258,19 +268,19 @@ export function FaqsAccordion({ nodes, searchQuery, results, answerMap, pageType
             da coleção — os dois números pertencem à mesma linha. */}
         {results.map(({ node, ancestors }) => (
           <SearchResult
-            key={`${ancestors.map(a => a.id).join('/')}/${node.id}`}
+            key={`${ancestors.map((a) => a.id).join("/")}/${node.id}`}
             node={node}
             ancestors={ancestors}
             terms={terms}
           />
         ))}
       </Box>
-    )
+    );
   }
 
   return (
     <Box>
-      {nodes.map(node => (
+      {nodes.map((node) => (
         <TreeNode
           key={node.id}
           node={node}
@@ -281,5 +291,5 @@ export function FaqsAccordion({ nodes, searchQuery, results, answerMap, pageType
         />
       ))}
     </Box>
-  )
+  );
 }

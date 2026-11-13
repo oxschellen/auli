@@ -10,11 +10,11 @@ import { CollectionEmpty } from "../../shared/CollectionEmpty";
 export const NotasList = () => {
   const entity = useSelectedEntity();
   const available = hasCollection(entity, "notas");
-  const { data: content = "", error, isLoading } = useSWR(
-    available ? entityPath(entity.id, "portal-notas.txt") : null,
-    textFetcher,
-    SWR_OPTS,
-  );
+  const {
+    data: content = "",
+    error,
+    isLoading,
+  } = useSWR(available ? entityPath(entity.id, "portal-notas.txt") : null, textFetcher, SWR_OPTS);
 
   if (!available) return <CollectionEmpty entity={entity} label="Notas" />;
 
@@ -34,4 +34,3 @@ export const NotasList = () => {
     </Flex>
   );
 };
-

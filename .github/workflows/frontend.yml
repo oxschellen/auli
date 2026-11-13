@@ -41,6 +41,10 @@ jobs:
       # de quem for buildar depois.
       - name: npm ci
         run: npm ci
+      # Prettier: um estilo só (aspas duplas, ponto e vírgula, 100 colunas). `npm run format`
+      # conserta na máquina; aqui só confere.
+      - name: format
+        run: npm run format:check
       - name: lint
         run: npm run lint
       - name: testes

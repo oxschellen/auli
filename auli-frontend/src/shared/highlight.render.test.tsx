@@ -18,7 +18,9 @@ describe("<Highlight>", () => {
   });
 
   it("marca o texto acentuado a partir de query sem acento", () => {
-    renderWithProvider(<Highlight text="Substituição tributária" terms={parseQuery("substituicao")} />);
+    renderWithProvider(
+      <Highlight text="Substituição tributária" terms={parseQuery("substituicao")} />,
+    );
     expect(marcados()).toEqual(["Substituição"]);
   });
 

@@ -16,7 +16,10 @@ vi.mock("axios", () => ({
 }));
 
 const faixa = () => within(screen.getByRole("tablist", { name: "Estados abertos" }));
-const nomes = () => faixa().getAllByRole("tab").map((t) => t.getAttribute("aria-label"));
+const nomes = () =>
+  faixa()
+    .getAllByRole("tab")
+    .map((t) => t.getAttribute("aria-label"));
 const aba = (nome: string) => faixa().getByRole("tab", { name: nome });
 const ativa = () => faixa().getByRole("tab", { selected: true }).getAttribute("aria-label");
 /** O painel VISÍVEL da aba (os escondidos não entram no `getByRole`). */
@@ -160,11 +163,15 @@ describe("abas de estado", () => {
       within(painel(nome)).queryByRole("complementary", { name: "Minhas perguntas" });
     expect(doPainel("SEFAZ-RS")).not.toBeNull();
 
-    fireEvent.click(within(painel("SEFAZ-RS")).getByRole("button", { name: "Fechar minhas perguntas" }));
+    fireEvent.click(
+      within(painel("SEFAZ-RS")).getByRole("button", { name: "Fechar minhas perguntas" }),
+    );
     fireEvent.click(aba("SEFAZ-SP"));
     expect(doPainel("SEFAZ-SP")).toBeNull();
 
-    fireEvent.click(within(painel("SEFAZ-SP")).getByRole("button", { name: "Mostrar minhas perguntas" }));
+    fireEvent.click(
+      within(painel("SEFAZ-SP")).getByRole("button", { name: "Mostrar minhas perguntas" }),
+    );
     fireEvent.click(aba("SEFAZ-RS"));
     expect(doPainel("SEFAZ-RS")).not.toBeNull();
   });

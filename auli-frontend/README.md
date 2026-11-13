@@ -43,6 +43,7 @@ npm run dev      # servidor de desenvolvimento (Vite)
 npm run build    # checagem de tipos (tsc --noEmit) + build de produção
 npm run preview  # visualizar o build de produção
 npm run lint     # ESLint sobre js/jsx/ts/tsx
+npm run format   # Prettier sobre src/ e os *.js da raiz (o CI roda format:check)
 npm run typecheck# apenas checagem de tipos
 npm test         # executa a suíte de testes (Vitest)
 npm run test:watch # Vitest em modo watch

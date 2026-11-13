@@ -47,10 +47,7 @@ describe("buildNodesFromJson", () => {
     const nodes = buildNodesFromJson(sampleJson);
     const icms = nodes[0].children[0];
     expect(icms.text).toBe("ICMS");
-    expect(icms.children.map((c) => c.text)).toEqual([
-      "O que é ICMS?",
-      "Como pagar ICMS?",
-    ]);
+    expect(icms.children.map((c) => c.text)).toEqual(["O que é ICMS?", "Como pagar ICMS?"]);
     expect(icms.children[0].url).toBe("https://portal/icms");
   });
 
@@ -80,7 +77,7 @@ describe("buildNodesFromJson", () => {
     expect(first[0].id).toBe(second[0].id);
 
     const ids = new Set<string>();
-    const collect = (n: { id: string; children: typeof n[] }) => {
+    const collect = (n: { id: string; children: (typeof n)[] }) => {
       ids.add(n.id);
       n.children.forEach(collect);
     };
@@ -99,11 +96,7 @@ describe("searchNodes", () => {
   it("finds nodes whose text matches, case-insensitively", () => {
     const nodes = buildNodesFromJson(sampleJson);
     const hits = searchNodes(nodes, "icms");
-    expect(hits.map((h) => h.node.text)).toEqual([
-      "ICMS",
-      "O que é ICMS?",
-      "Como pagar ICMS?",
-    ]);
+    expect(hits.map((h) => h.node.text)).toEqual(["ICMS", "O que é ICMS?", "Como pagar ICMS?"]);
   });
 
   it("records the ancestor chain for each hit", () => {

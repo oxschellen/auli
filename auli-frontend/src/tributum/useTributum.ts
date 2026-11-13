@@ -34,7 +34,7 @@ const VAZIO: TributumCatalogo = {
  */
 function normalizar(bruto: unknown): TributumCatalogo {
   const j = (bruto ?? {}) as Partial<Record<keyof TributumCatalogo, unknown>>;
-  const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
+  const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
   const curadores = j.curadores;
   return {
     artigos: arr(j.artigos),

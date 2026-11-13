@@ -21,7 +21,11 @@ interface SelectQuestionTypeProps {
  * painel que abre para CIMA (a caixa fica no pé da tela). Fecha ao escolher, com Esc ou com clique
  * fora.
  */
-export const SelectQuestionType = ({ questionType, updateQuestionType, disponiveis }: SelectQuestionTypeProps) => {
+export const SelectQuestionType = ({
+  questionType,
+  updateQuestionType,
+  disponiveis,
+}: SelectQuestionTypeProps) => {
   const [aberto, setAberto] = useState(false);
   const raiz = useRef<HTMLDivElement>(null);
 
@@ -39,7 +43,12 @@ export const SelectQuestionType = ({ questionType, updateQuestionType, disponive
   const atual = TIPOS[questionType];
 
   return (
-    <Box ref={raiz} position="relative" flex="none" onKeyDown={(e) => e.key === "Escape" && setAberto(false)}>
+    <Box
+      ref={raiz}
+      position="relative"
+      flex="none"
+      onKeyDown={(e) => e.key === "Escape" && setAberto(false)}
+    >
       <chakra.button
         type="button"
         aria-expanded={aberto}
@@ -105,7 +114,11 @@ export const SelectQuestionType = ({ questionType, updateQuestionType, disponive
                       bg={selected ? "bg.resumo" : "transparent"}
                       _hover={{ bg: selected ? "bg.resumo" : "bg.overlay" }}
                     >
-                      <RadioGroup.ItemText fontSize="14.5px" fontWeight="600" color={selected ? "accent.strong" : "fg"}>
+                      <RadioGroup.ItemText
+                        fontSize="14.5px"
+                        fontWeight="600"
+                        color={selected ? "accent.strong" : "fg"}
+                      >
                         {TIPOS[tipo].rotulo}
                       </RadioGroup.ItemText>
                       <Text fontSize="13px" color="fg.muted">

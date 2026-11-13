@@ -45,9 +45,7 @@ describe("editLinks", () => {
 
   it("links multiple URLs in the same text", () => {
     const parts = editLinks("a http://x.com b https://y.com") as ReactNode[];
-    const links = parts.filter(
-      (p): p is ReactElement<{ href: string }> => isValidElement(p),
-    );
+    const links = parts.filter((p): p is ReactElement<{ href: string }> => isValidElement(p));
     expect(links.map((l) => l.props.href)).toEqual(["http://x.com", "https://y.com"]);
   });
 

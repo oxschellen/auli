@@ -20,7 +20,10 @@ const declaracao = (el: Element, prop: string) => {
 
 const sidebar = () => document.getElementById("rs-sidebar-secoes")!;
 /** Largura da sidebar e a que a barra fixa do chat lê (definida na raiz do Home). */
-const larguras = () => [declaracao(sidebar(), "width"), declaracao(sidebar().parentElement!, SIDEBAR_VAR)];
+const larguras = () => [
+  declaracao(sidebar(), "width"),
+  declaracao(sidebar().parentElement!, SIDEBAR_VAR),
+];
 const botao = () => screen.getByRole("button", { name: /barra lateral/ });
 const ctrlB = (extra: Partial<KeyboardEventInit> = {}) =>
   fireEvent.keyDown(document, { key: "b", ctrlKey: true, ...extra });
