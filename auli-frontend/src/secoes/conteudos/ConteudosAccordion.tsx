@@ -4,6 +4,7 @@ import { comoBotao, PainelRevelado } from "../../ui/Acordeao";
 import { Highlight } from "../../lib/highlight";
 import { parseQuery } from "../../lib/textSearch";
 import { SemResultados } from "../../ui/busca";
+import { abrirEmNovaAba } from "../../ui/LinkExterno";
 import {
   MdExpandMore,
   MdExpandLess,
@@ -19,10 +20,6 @@ import {
   MdArchive,
 } from "react-icons/md";
 import { searchCategories, type ConteudoCategory, type ConteudoItem } from "./conteudos";
-
-function openUrl(url?: string) {
-  window.open(url, "_blank", "noopener,noreferrer");
-}
 
 function typeIcon(type?: string) {
   const t = (type || "").toLowerCase();
@@ -54,7 +51,7 @@ function ItemRow({ item, terms }: { item: ConteudoItem; terms: string[] }) {
         cursor={hasUrl ? "pointer" : "default"}
         _hover={{ bg: hasUrl ? "bg.subtle" : undefined }}
         style={{ transition: "background 0.12s ease" }}
-        {...comoBotao(() => openUrl(item.url), hasUrl)}
+        {...comoBotao(() => item.url && abrirEmNovaAba(item.url), hasUrl)}
       >
         <Flex align="center" gap={2} flex={1}>
           {icon && (

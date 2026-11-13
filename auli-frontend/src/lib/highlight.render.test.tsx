@@ -2,7 +2,10 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProvider } from "../test/render";
+import ReactMarkdown from "react-markdown";
 import { Highlight } from "./highlight";
+import { compactMarkdownComRealce, markdownPlugins } from "./markdown";
+import { rehypeHighlight } from "./rehypeHighlight";
 import { parseQuery } from "./textSearch";
 
 /** Todos os `<mark>` do documento, na ordem, pelo texto. */
@@ -49,5 +52,24 @@ describe("<Highlight>", () => {
     const mark = document.querySelector("mark");
     expect(mark).not.toBeNull();
     expect(mark?.className).toBeTruthy(); // Chakra emitiu classe própria (não é o <mark> cru)
+  });
+
+  it("no markdown, o <mark> do rehypeHighlight sai igual ao do texto simples (a mesma Marca)", () => {
+    const termos = parseQuery("icms");
+    renderWithProvider(
+      <>
+        <Highlight text="Crédito de ICMS" terms={termos} />
+        <ReactMarkdown
+          remarkPlugins={markdownPlugins}
+          rehypePlugins={[rehypeHighlight(termos)]}
+          components={compactMarkdownComRealce}
+        >
+          {"Alíquota do **ICMS**"}
+        </ReactMarkdown>
+      </>,
+    );
+    const [doTexto, doMarkdown] = Array.from(document.querySelectorAll("mark"));
+    expect(doMarkdown?.textContent).toBe("ICMS");
+    expect(doMarkdown?.className).toBe(doTexto?.className);
   });
 });

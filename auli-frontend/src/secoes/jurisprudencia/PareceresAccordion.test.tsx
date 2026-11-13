@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach } from "vitest";
-import { renderWithProvider } from "../../test/render";
+import { fireEvent, renderWithProvider, screen } from "../../test/render";
 import { PareceresAccordion } from "./PareceresAccordion";
 import type { Parecer } from "./pareceres";
 
@@ -57,5 +57,13 @@ describe("PareceresAccordion — render progressivo", () => {
     expect(document.body.textContent).toContain("PARECER Nº 1000");
     expect(document.body.textContent).toContain("PARECER Nº 1099");
     expect(document.body.textContent).not.toContain("PARECER Nº 1100");
+  });
+
+  it("aberto, o parecer leva ao portal por um link com nome próprio", () => {
+    renderWithProvider(<PareceresAccordion pareceres={gerar(1)} searchQuery="" />);
+    fireEvent.click(screen.getByRole("button", { expanded: false }));
+    const link = screen.getByRole("link", { name: "Abrir PARECER Nº 1000 no portal oficial" });
+    expect(link).toHaveAttribute("href", "http://legislacao/0");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 });

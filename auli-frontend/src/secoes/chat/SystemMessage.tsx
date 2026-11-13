@@ -35,7 +35,7 @@ interface SystemMessageProps {
 const REALCE_MS = 2500;
 
 const Markdown = ({ children, components }: { children: string; components: Components }) => (
-  <Box fontSize="16px" lineHeight="1.6" color="fg" fontFamily="body" className="markdown-body">
+  <Box fontSize="16px" lineHeight="1.6" color="fg" fontFamily="body">
     <ReactMarkdown remarkPlugins={markdownPlugins} components={components}>
       {children}
     </ReactMarkdown>

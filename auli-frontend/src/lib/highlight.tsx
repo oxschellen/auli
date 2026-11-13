@@ -94,6 +94,14 @@ export function findHighlightRanges(text: string, terms: readonly string[]): Ran
  * O texto com os termos casados envoltos em `<mark>`. Sem casamento (ou sem termos), devolve a
  * string crua — nenhum elemento a mais no DOM no caso comum, que é a lista inteira sem busca.
  */
+/** O `<mark>` do realce de busca: o mesmo visual no texto simples (`Highlight`) e no markdown
+ *  (`compactMarkdownComRealce`, onde o `rehypeHighlight` o injeta). */
+export const Marca = ({ children }: { children?: ReactNode }) => (
+  <Box as="mark" bg="bg.highlight" color="fg.highlight" px="0.1em" borderRadius="2px">
+    {children}
+  </Box>
+);
+
 export function Highlight({ text, terms }: { text: string; terms: readonly string[] }): ReactNode {
   const ranges = findHighlightRanges(text, terms);
   if (ranges.length === 0) return text;
@@ -102,18 +110,7 @@ export function Highlight({ text, terms }: { text: string; terms: readonly strin
   let cursor = 0;
   for (const [start, end] of ranges) {
     if (start > cursor) out.push(text.slice(cursor, start));
-    out.push(
-      <Box
-        as="mark"
-        key={start}
-        bg="bg.highlight"
-        color="fg.highlight"
-        px="0.1em"
-        borderRadius="2px"
-      >
-        {text.slice(start, end)}
-      </Box>,
-    );
+    out.push(<Marca key={start}>{text.slice(start, end)}</Marca>);
     cursor = end;
   }
   if (cursor < text.length) out.push(text.slice(cursor));
