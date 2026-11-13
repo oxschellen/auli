@@ -18,9 +18,24 @@ interface EstadoInicialProps {
 export const EstadoInicial = ({ tipo, onExemplo }: EstadoInicialProps) => {
   const t = TIPOS[tipo];
   return (
-    <Flex w="100%" maxW="760px" mx="auto" direction="column" gap={6} px={3} pt={{ base: 6, md: 14 }} pb={6}>
+    <Flex
+      w="100%"
+      maxW="760px"
+      mx="auto"
+      direction="column"
+      gap={6}
+      px={3}
+      pt={{ base: 6, md: 14 }}
+      pb={6}
+    >
       <Flex direction="column" gap={2.5}>
-        <Heading as="h1" fontSize={{ base: "24px", md: "30px" }} lineHeight="1.2" fontWeight="700" letterSpacing="-0.02em">
+        <Heading
+          as="h1"
+          fontSize={{ base: "24px", md: "30px" }}
+          lineHeight="1.2"
+          fontWeight="700"
+          letterSpacing="-0.02em"
+        >
           Como posso ajudar?
         </Heading>
         <Text fontSize="16.5px" lineHeight="1.6" color="fg.muted" maxW="640px">
@@ -62,13 +77,23 @@ export const EstadoInicial = ({ tipo, onExemplo }: EstadoInicialProps) => {
         </Flex>
       </Flex>
 
-      <Flex gap={2.5} align="flex-start" px={3.5} py={3} borderRadius="12px" bg="bg.subtle" fontSize="14px" lineHeight="1.5" color="fg.muted">
+      <Flex
+        gap={2.5}
+        align="flex-start"
+        px={3.5}
+        py={3}
+        borderRadius="12px"
+        bg="bg.subtle"
+        fontSize="14px"
+        lineHeight="1.5"
+        color="fg.muted"
+      >
         <Box flex="none" mt="2px">
           <MdInfoOutline size={16} />
         </Box>
         <Text>
-          A Auli consulta só o acervo público. Situação de um contribuinte específico e erros de processamento dos
-          sistemas exigem acesso aos dados — ela não responde.
+          A Auli consulta só o acervo público. Situação de um contribuinte específico e erros de
+          processamento dos sistemas exigem acesso aos dados — ela não responde.
         </Text>
       </Flex>
     </Flex>

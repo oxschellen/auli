@@ -34,12 +34,7 @@ export interface Jurisprudencia {
  * shape. Duplicar a componente significaria manter duas cópias da lógica de busca e da renderização
  * progressiva, que é onde moram os cuidados de desempenho.
  */
-export const JurisprudenciaList = ({
-  colecao,
-  titulo,
-  singular,
-  plural,
-}: Jurisprudencia) => {
+export const JurisprudenciaList = ({ colecao, titulo, singular, plural }: Jurisprudencia) => {
   const entity = useSelectedEntity();
   const available = hasCollection(entity, colecao);
   const {

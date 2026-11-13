@@ -21,8 +21,8 @@ export function CollectionEmpty({ entity, label }: CollectionEmptyProps) {
           {label} ainda não disponível para {entity.uf}
         </Text>
         <Text fontSize="0.9rem" color="fg.muted" lineHeight="1.6">
-          Os dados de {label} para {entity.name} ({entity.state}) ainda não foram coletados. Em breve
-          esta seção estará disponível.
+          Os dados de {label} para {entity.name} ({entity.state}) ainda não foram coletados. Em
+          breve esta seção estará disponível.
         </Text>
       </Stack>
     </Flex>

@@ -21,13 +21,28 @@ const item = (id: string, pergunta: string, extra: Partial<ItemHistorico> = {}):
 
 describe("registrar", () => {
   it("põe a pergunta nova no topo", () => {
-    const lista = registrar([item("a", "Como emitir a certidão?")], "Como pagar o IPVA?", "1", 5, "b");
+    const lista = registrar(
+      [item("a", "Como emitir a certidão?")],
+      "Como pagar o IPVA?",
+      "1",
+      5,
+      "b",
+    );
     expect(lista.map((i) => i.id)).toEqual(["b", "a"]);
-    expect(lista[0]).toEqual({ id: "b", pergunta: "Como pagar o IPVA?", tipo: "1", em: 5, favorita: false });
+    expect(lista[0]).toEqual({
+      id: "b",
+      pergunta: "Como pagar o IPVA?",
+      tipo: "1",
+      em: 5,
+      favorita: false,
+    });
   });
 
   it("pergunta repetida sobe ao topo sem duplicar, mantendo o id e a estrela", () => {
-    const antes = [item("a", "Outra pergunta qualquer"), item("b", "Como pagar o IPVA?", { favorita: true })];
+    const antes = [
+      item("a", "Outra pergunta qualquer"),
+      item("b", "Como pagar o IPVA?", { favorita: true }),
+    ];
     // Caixa e espaços não fazem dela outra pergunta.
     const lista = registrar(antes, "  como pagar   o IPVA? ", "1", 9, "novo");
     expect(lista.map((i) => i.id)).toEqual(["b", "a"]);
@@ -43,7 +58,9 @@ describe("registrar", () => {
   });
 
   it("descarta a recente mais antiga ao passar do teto, e nunca uma favorita", () => {
-    const cheias = Array.from({ length: MAX_RECENTES }, (_, n) => item(`r${n}`, `Pergunta número ${n}`));
+    const cheias = Array.from({ length: MAX_RECENTES }, (_, n) =>
+      item(`r${n}`, `Pergunta número ${n}`),
+    );
     const antes = [...cheias, item("fav", "Favorita antiga", { favorita: true })];
     const lista = registrar(antes, "Pergunta nova", "1", 9, "nova");
     expect(lista.filter((i) => !i.favorita)).toHaveLength(MAX_RECENTES);
@@ -88,7 +105,12 @@ describe("o que está gravado", () => {
   it("item fora da forma é descartado, os bons ficam", () => {
     const bruto = JSON.stringify({
       v: 1,
-      itens: [item("a", "Boa"), { id: "b", pergunta: "Tipo inválido", tipo: "9", em: 1, favorita: false }, null, { id: "c" }],
+      itens: [
+        item("a", "Boa"),
+        { id: "b", pergunta: "Tipo inválido", tipo: "9", em: 1, favorita: false },
+        null,
+        { id: "c" },
+      ],
     });
     expect(desserializar(bruto).map((i) => i.id)).toEqual(["a"]);
   });

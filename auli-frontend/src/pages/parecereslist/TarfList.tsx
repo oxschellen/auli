@@ -8,10 +8,5 @@ import { JurisprudenciaList } from "./JurisprudenciaList";
  * o `resumo` é a fundamentação que o próprio acórdão traz no cabeçalho — não uma sinopse gerada.
  */
 export const TarfList = () => (
-  <JurisprudenciaList
-    colecao="tarf"
-    titulo="Acórdãos TARF"
-    singular="acórdão"
-    plural="acórdãos"
-  />
+  <JurisprudenciaList colecao="tarf" titulo="Acórdãos TARF" singular="acórdão" plural="acórdãos" />
 );

@@ -25,7 +25,10 @@ const com = (s: ReadonlySet<string>, chave: string, sim: boolean): ReadonlySet<s
 /** As abas esperando resposta e as com resposta nova, pela chave. Mora no `App`, que tem a faixa e
  *  os painéis; `ativa` é a chave da aba à vista. */
 export function useAbasRespondendo(ativa: string) {
-  const [avisos, setAvisos] = useState<Avisos>(() => ({ respondendo: new Set(), novas: new Set() }));
+  const [avisos, setAvisos] = useState<Avisos>(() => ({
+    respondendo: new Set(),
+    novas: new Set(),
+  }));
 
   // Abrir a aba é ver a resposta nova dela: o ponto sai quando ela vira a ativa. Ajustado no
   // render, comparando com a última ativa vista, e não num efeito, que pintaria o ponto uma vez.

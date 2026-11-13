@@ -23,7 +23,9 @@ const accent = "var(--chakra-colors-accent)";
 const tableComponents: Components = {
   table: ({ children }) => (
     <div style={{ overflowX: "auto", marginBottom: "0.5em" }}>
-      <table style={{ borderCollapse: "collapse", width: "100%", fontSize: "0.9em" }}>{children}</table>
+      <table style={{ borderCollapse: "collapse", width: "100%", fontSize: "0.9em" }}>
+        {children}
+      </table>
     </div>
   ),
   th: ({ children }) => (
@@ -75,7 +77,9 @@ export const MarkdownLink = ({ href, children }: { href?: string; children?: Rea
   // No autolink o texto É o endereço, aspas incluídas: elas saem do link e voltam logo depois dele.
   const unico = Array.isArray(children) && children.length === 1 ? children[0] : children;
   const texto =
-    aspas && typeof unico === "string" && unico.endsWith(aspas) ? unico.slice(0, -aspas.length) : null;
+    aspas && typeof unico === "string" && unico.endsWith(aspas)
+      ? unico.slice(0, -aspas.length)
+      : null;
   return (
     <>
       <a
@@ -97,32 +101,79 @@ export const compactMarkdownComponents: Components = {
   p: ({ children }) => <p style={{ marginBottom: "0.5em" }}>{children}</p>,
   // `listStyleType` explícito: o reset do Chakra zera o `list-style`, e sem ele os itens viravam
   // parágrafos recuados soltos (D-UI-1).
-  ul: ({ children }) => <ul style={{ paddingLeft: "1.3em", marginBottom: "0.5em", listStyleType: "disc" }}>{children}</ul>,
-  ol: ({ children }) => <ol style={{ paddingLeft: "1.3em", marginBottom: "0.5em", listStyleType: "decimal" }}>{children}</ol>,
+  ul: ({ children }) => (
+    <ul style={{ paddingLeft: "1.3em", marginBottom: "0.5em", listStyleType: "disc" }}>
+      {children}
+    </ul>
+  ),
+  ol: ({ children }) => (
+    <ol style={{ paddingLeft: "1.3em", marginBottom: "0.5em", listStyleType: "decimal" }}>
+      {children}
+    </ol>
+  ),
   li: ({ children }) => <li style={{ marginBottom: "0.25em" }}>{children}</li>,
 };
 
 export const proseMarkdownComponents: Components = {
   ...tableComponents,
   h1: ({ children }) => (
-    <h1 style={{ fontSize: "1.8rem", fontWeight: 700, marginBottom: "0.75em", color: "var(--chakra-colors-fg)" }}>
+    <h1
+      style={{
+        fontSize: "1.8rem",
+        fontWeight: 700,
+        marginBottom: "0.75em",
+        color: "var(--chakra-colors-fg)",
+      }}
+    >
       {children}
     </h1>
   ),
   h2: ({ children }) => (
-    <h2 style={{ fontSize: "1.3rem", fontWeight: 600, marginTop: "1.5em", marginBottom: "0.5em", color: "var(--chakra-colors-fg)" }}>
+    <h2
+      style={{
+        fontSize: "1.3rem",
+        fontWeight: 600,
+        marginTop: "1.5em",
+        marginBottom: "0.5em",
+        color: "var(--chakra-colors-fg)",
+      }}
+    >
       {children}
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 style={{ fontSize: "1.1rem", fontWeight: 600, marginTop: "1.25em", marginBottom: "0.4em", color: "var(--chakra-colors-fg)" }}>
+    <h3
+      style={{
+        fontSize: "1.1rem",
+        fontWeight: 600,
+        marginTop: "1.25em",
+        marginBottom: "0.4em",
+        color: "var(--chakra-colors-fg)",
+      }}
+    >
       {children}
     </h3>
   ),
   p: ({ children }) => <p style={{ marginBottom: "0.85em" }}>{children}</p>,
-  ul: ({ children }) => <ul style={{ paddingLeft: "1.4em", marginBottom: "0.75em", listStyleType: "disc" }}>{children}</ul>,
-  ol: ({ children }) => <ol style={{ paddingLeft: "1.4em", marginBottom: "0.75em", listStyleType: "decimal" }}>{children}</ol>,
+  ul: ({ children }) => (
+    <ul style={{ paddingLeft: "1.4em", marginBottom: "0.75em", listStyleType: "disc" }}>
+      {children}
+    </ul>
+  ),
+  ol: ({ children }) => (
+    <ol style={{ paddingLeft: "1.4em", marginBottom: "0.75em", listStyleType: "decimal" }}>
+      {children}
+    </ol>
+  ),
   li: ({ children }) => <li style={{ marginBottom: "0.3em" }}>{children}</li>,
   a: MarkdownLink,
-  hr: () => <hr style={{ border: "none", borderTop: `1px solid var(--chakra-colors-border)`, margin: "1.5em 0" }} />,
+  hr: () => (
+    <hr
+      style={{
+        border: "none",
+        borderTop: `1px solid var(--chakra-colors-border)`,
+        margin: "1.5em 0",
+      }}
+    />
+  ),
 };

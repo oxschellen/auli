@@ -16,11 +16,17 @@ function svc(id: number, classe: string, titulo: string): Servico {
 const grouped: ServicoGroup[] = [
   [
     "Crédito Fiscal",
-    [svc(1, "Crédito Fiscal", "Apropriação de crédito"), svc(2, "Crédito Fiscal", "Estorno de crédito")],
+    [
+      svc(1, "Crédito Fiscal", "Apropriação de crédito"),
+      svc(2, "Crédito Fiscal", "Estorno de crédito"),
+    ],
   ],
   [
     "Substituição Tributária",
-    [svc(3, "Substituição Tributária", "ST de autopeças"), svc(4, "Substituição Tributária", "ST de bebidas")],
+    [
+      svc(3, "Substituição Tributária", "ST de autopeças"),
+      svc(4, "Substituição Tributária", "ST de bebidas"),
+    ],
   ],
 ];
 
@@ -77,7 +83,15 @@ describe("empresaPrimeiro", () => {
 
   it("preserva a cauda longa intacta — o caso do `pr`, com 7 abas", () => {
     const r = empresaPrimeiro(
-      abas("Cidadão", "Empresa", "Município", "Produtor rural", "Receita/PR", "Programas", "Legislação"),
+      abas(
+        "Cidadão",
+        "Empresa",
+        "Município",
+        "Produtor rural",
+        "Receita/PR",
+        "Programas",
+        "Legislação",
+      ),
     );
     expect(rotulos(r)).toEqual([
       "Empresa",
@@ -91,7 +105,9 @@ describe("empresaPrimeiro", () => {
   });
 
   it("reconhece o plural `Empresas` — mg / pe / rs", () => {
-    const r = empresaPrimeiro(abas("Cidadãos", "Empresas", "Fornecedores", "Agentes", "Servidores"));
+    const r = empresaPrimeiro(
+      abas("Cidadãos", "Empresas", "Fornecedores", "Agentes", "Servidores"),
+    );
     expect(rotulos(r)).toEqual(["Empresas", "Cidadãos", "Fornecedores", "Agentes", "Servidores"]);
   });
 
@@ -144,8 +160,14 @@ describe("contarServicosDistintos", () => {
   }
 
   it("não conta duas vezes o serviço que atende mais de um público", () => {
-    const cidadao = [s("Consulta de débitos", "http://x/deb"), s("Emissão de guia", "http://x/guia")];
-    const empresa = [s("Consulta de débitos", "http://x/deb"), s("Credenciamento", "http://x/cred")];
+    const cidadao = [
+      s("Consulta de débitos", "http://x/deb"),
+      s("Emissão de guia", "http://x/guia"),
+    ];
+    const empresa = [
+      s("Consulta de débitos", "http://x/deb"),
+      s("Credenciamento", "http://x/cred"),
+    ];
     expect(contarServicosDistintos([cidadao, empresa])).toBe(3);
   });
 

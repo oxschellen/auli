@@ -48,8 +48,7 @@ export function DadosLista() {
                   download
                   aria-label={`Baixar ${d.titulo} em ${d.formato.toUpperCase()}`}
                 >
-                  <MdFileDownload size={14} /> Baixar ({d.formato.toUpperCase()}
-                  )
+                  <MdFileDownload size={14} /> Baixar ({d.formato.toUpperCase()})
                 </a>
               </Button>
             ) : (

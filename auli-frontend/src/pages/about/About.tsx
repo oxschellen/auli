@@ -15,7 +15,9 @@ export const About = () => {
         <Flex justify="center" align="center" minH="200px" w="full">
           <Stack gap={4} align="center">
             <Spinner size="lg" color="accent" />
-            <Text color="fg" fontSize="md">Carregando…</Text>
+            <Text color="fg" fontSize="md">
+              Carregando…
+            </Text>
           </Stack>
         </Flex>
       )}
@@ -28,23 +30,25 @@ export const About = () => {
           </Alert.Content>
         </Alert.Root>
       )}
-      {!isLoading && !error && <Box
-        w="100%"
-        maxW="720px"
-        mx="auto"
-        px={5}
-        pt={5}
-        pb={10}
-        fontSize="1rem"
-        lineHeight="1.7"
-        color="fg"
-        fontFamily="body"
-        className="markdown-body"
-      >
-        <ReactMarkdown remarkPlugins={markdownPlugins} components={proseMarkdownComponents}>
-          {manifesto ?? ""}
-        </ReactMarkdown>
-      </Box>}
+      {!isLoading && !error && (
+        <Box
+          w="100%"
+          maxW="720px"
+          mx="auto"
+          px={5}
+          pt={5}
+          pb={10}
+          fontSize="1rem"
+          lineHeight="1.7"
+          color="fg"
+          fontFamily="body"
+          className="markdown-body"
+        >
+          <ReactMarkdown remarkPlugins={markdownPlugins} components={proseMarkdownComponents}>
+            {manifesto ?? ""}
+          </ReactMarkdown>
+        </Box>
+      )}
     </Flex>
   );
 };

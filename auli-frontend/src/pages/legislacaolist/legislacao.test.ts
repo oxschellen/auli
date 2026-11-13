@@ -64,9 +64,21 @@ describe("agruparPorLei", () => {
 
 describe("searchLegislacao", () => {
   const itens = [
-    d("Art. 28", "Qual o prazo e a forma da impugnação ao Auto de Lançamento?", `${LEI} | Título II — Do Procedimento Tributário Administrativo | Capítulo II — Do Processo Contencioso`),
-    d("Art. 11, § 3º", "Existe teto para as multas por infração formal?", `${LEI} | Título I — Das Infrações à Legislação Tributária | Capítulo III — Das Infrações Formais`),
-    d("Art. 96", "Como é composto o TARF?", `${LEI} | Título III — Do Tribunal Administrativo de Recursos Fiscais`),
+    d(
+      "Art. 28",
+      "Qual o prazo e a forma da impugnação ao Auto de Lançamento?",
+      `${LEI} | Título II — Do Procedimento Tributário Administrativo | Capítulo II — Do Processo Contencioso`,
+    ),
+    d(
+      "Art. 11, § 3º",
+      "Existe teto para as multas por infração formal?",
+      `${LEI} | Título I — Das Infrações à Legislação Tributária | Capítulo III — Das Infrações Formais`,
+    ),
+    d(
+      "Art. 96",
+      "Como é composto o TARF?",
+      `${LEI} | Título III — Do Tribunal Administrativo de Recursos Fiscais`,
+    ),
   ];
 
   it("acha pela pergunta, ignorando acento e caixa", () => {
@@ -83,10 +95,18 @@ describe("searchLegislacao", () => {
     // O `corpo` é exibido no painel que a linha abre (D-LEG-11a). Deixá-lo fora do haystack criaria
     // a armadilha de o termo estar marcado em amarelo dentro de uma linha que o filtro não devolve.
     const comCorpo = [
-      d("Art. 28", "Qual o prazo da impugnação?", `${LEI} | Título II`,
-        "O prazo é de **30 dias** contados da intimação do Auto de Lançamento."),
-      d("Art. 96", "Como é composto o TARF?", `${LEI} | Título III`,
-        "Por representantes do Estado e dos contribuintes, em composição paritária."),
+      d(
+        "Art. 28",
+        "Qual o prazo da impugnação?",
+        `${LEI} | Título II`,
+        "O prazo é de **30 dias** contados da intimação do Auto de Lançamento.",
+      ),
+      d(
+        "Art. 96",
+        "Como é composto o TARF?",
+        `${LEI} | Título III`,
+        "Por representantes do Estado e dos contribuintes, em composição paritária.",
+      ),
     ];
     // "paritária" não está na pergunta, na trilha nem na ementa — só na resposta.
     expect(searchLegislacao(comCorpo, "paritária").map((x) => x.ementa)).toEqual(["Art. 96"]);

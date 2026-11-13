@@ -42,7 +42,14 @@ const Item = ({ f, idBase, ativo }: { f: Fonte; idBase: string; ativo: boolean }
       transition="background-color 0.3s ease"
       color={descartada ? "fg.muted" : "fg"}
     >
-      <Text as="span" flex="none" minW="64px" fontSize="12px" fontWeight="700" color={ativo ? "accent.strong" : "inherit"}>
+      <Text
+        as="span"
+        flex="none"
+        minW="64px"
+        fontSize="12px"
+        fontWeight="700"
+        color={ativo ? "accent.strong" : "inherit"}
+      >
         {f.rotulo}
       </Text>
       {f.link ? (
@@ -50,7 +57,11 @@ const Item = ({ f, idBase, ativo }: { f: Fonte; idBase: string; ativo: boolean }
           href={toAbsoluteHref(f.link)}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: descartada ? "inherit" : "var(--chakra-colors-accent)", textDecoration: "underline", textUnderlineOffset: "3px" }}
+          style={{
+            color: descartada ? "inherit" : "var(--chakra-colors-accent)",
+            textDecoration: "underline",
+            textUnderlineOffset: "3px",
+          }}
         >
           {f.titulo}
         </a>
@@ -58,7 +69,16 @@ const Item = ({ f, idBase, ativo }: { f: Fonte; idBase: string; ativo: boolean }
         <span>{f.titulo}</span>
       )}
       {f.triagem === "condicional" && (
-        <Text as="span" fontSize="12px" fontWeight="600" px={1.5} lineHeight="20px" borderRadius="6px" bg="condicional.bg" color="condicional.fg">
+        <Text
+          as="span"
+          fontSize="12px"
+          fontWeight="600"
+          px={1.5}
+          lineHeight="20px"
+          borderRadius="6px"
+          bg="condicional.bg"
+          color="condicional.fg"
+        >
           depende de condição
         </Text>
       )}
@@ -68,14 +88,28 @@ const Item = ({ f, idBase, ativo }: { f: Fonte; idBase: string; ativo: boolean }
 
 const Grupo = ({ titulo, children }: { titulo: string; children: ReactNode }) => (
   <Flex direction="column" gap={1}>
-    <Text fontSize="11px" fontWeight="700" letterSpacing="0.06em" color="fg.muted" textTransform="uppercase">
+    <Text
+      fontSize="11px"
+      fontWeight="700"
+      letterSpacing="0.06em"
+      color="fg.muted"
+      textTransform="uppercase"
+    >
       {titulo}
     </Text>
     {children}
   </Flex>
 );
 
-const Alternar = ({ aberto, onClick, children }: { aberto: boolean; onClick: () => void; children: ReactNode }) => (
+const Alternar = ({
+  aberto,
+  onClick,
+  children,
+}: {
+  aberto: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) => (
   <chakra.button
     type="button"
     aria-expanded={aberto}
@@ -112,7 +146,18 @@ export const Fontes = ({ fontes, citados, idBase, destaque = null }: FontesProps
   const [descartadasAbertas, setDescartadasAbertas] = useState(false);
 
   return (
-    <Flex as="section" aria-label="Fontes consultadas" direction="column" gap={3} mt={1} pt={3} borderTop="1px solid" borderColor="border" fontSize="14.5px" lineHeight="1.45">
+    <Flex
+      as="section"
+      aria-label="Fontes consultadas"
+      direction="column"
+      gap={3}
+      mt={1}
+      pt={3}
+      borderTop="1px solid"
+      borderColor="border"
+      fontSize="14.5px"
+      lineHeight="1.45"
+    >
       <Flex align="baseline" justify="space-between" gap={3} wrap="wrap">
         <Heading as="h3" fontSize="15px" fontWeight="700" m={0}>
           Fontes
@@ -139,14 +184,16 @@ export const Fontes = ({ fontes, citados, idBase, destaque = null }: FontesProps
           </Grupo>
         ) : (
           <Alternar aberto={false} onClick={() => setConsideradasAbertas(true)}>
-            {g.consideradas.length} também {g.consideradas.length === 1 ? "considerada" : "consideradas"}
+            {g.consideradas.length} também{" "}
+            {g.consideradas.length === 1 ? "considerada" : "consideradas"}
           </Alternar>
         ))}
 
       {g.descartadas.length > 0 && (
         <Box>
           <Alternar aberto={descartadasAbertas} onClick={() => setDescartadasAbertas((v) => !v)}>
-            {g.descartadas.length} {g.descartadas.length === 1 ? "descartada" : "descartadas"} na triagem
+            {g.descartadas.length} {g.descartadas.length === 1 ? "descartada" : "descartadas"} na
+            triagem
           </Alternar>
           {descartadasAbertas && (
             <Flex direction="column" gap={1} mt={1}>

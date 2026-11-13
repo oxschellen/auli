@@ -50,14 +50,12 @@ export default tseslint.config(
       "no-restricted-syntax": [
         "error",
         {
-          selector:
-            "Literal[value=/#[0-9a-fA-F]{3,8}\\b|\\b(?:rgba?|hsla?)\\(/]",
+          selector: "Literal[value=/#[0-9a-fA-F]{3,8}\\b|\\b(?:rgba?|hsla?)\\(/]",
           message:
             "No raw color literals in components. Use a semantic token (e.g. bg.app, fg.muted, accent, border) from src/theme/system.js.",
         },
         {
-          selector:
-            "TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}\\b|\\b(?:rgba?|hsla?)\\(/]",
+          selector: "TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}\\b|\\b(?:rgba?|hsla?)\\(/]",
           message:
             "No raw color literals in components. Use a semantic token or var(--chakra-colors-*) from src/theme/system.js.",
         },

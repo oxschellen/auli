@@ -105,10 +105,10 @@ export function getDefaultTipoServicos(): TipoServico[] {
   // o resultado por `empresaPrimeiro`, então "Empresas" aparece na frente — aqui fica a ordem do
   // dado, para o fallback continuar espelhando o índice real.
   return [
-    { tipo: "Cidadãos",     filename: "servicos-ao-cidadao" },
-    { tipo: "Empresas",     filename: "servicos-a-empresas" },
+    { tipo: "Cidadãos", filename: "servicos-ao-cidadao" },
+    { tipo: "Empresas", filename: "servicos-a-empresas" },
     { tipo: "Fornecedores", filename: "servicos-a-fornecedores" },
-    { tipo: "Agentes",      filename: "servicos-a-agentes-publicos" },
-    { tipo: "Servidores",   filename: "servicos-a-servidores-publicos" },
+    { tipo: "Agentes", filename: "servicos-a-agentes-publicos" },
+    { tipo: "Servidores", filename: "servicos-a-servidores-publicos" },
   ];
 }

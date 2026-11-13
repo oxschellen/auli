@@ -32,7 +32,10 @@ export function RodapeCurador({ curador }: { curador?: Curador }) {
       color="fg.muted"
     >
       <Text>
-        Curadoria desta estante: <Text as="span" color="fg">{curador.nome}</Text>
+        Curadoria desta estante:{" "}
+        <Text as="span" color="fg">
+          {curador.nome}
+        </Text>
         {curador.contato && (
           <>
             {" · "}

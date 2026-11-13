@@ -1,4 +1,4 @@
-import { Tooltip as ChakraTooltip, Portal } from '@chakra-ui/react'
+import { Tooltip as ChakraTooltip, Portal } from "@chakra-ui/react";
 
 export function Tooltip(props) {
   const {
@@ -11,9 +11,9 @@ export function Tooltip(props) {
     contentProps,
     portalRef,
     ...rest
-  } = props
+  } = props;
 
-  if (disabled) return children
+  if (disabled) return children;
 
   return (
     <ChakraTooltip.Root {...rest}>
@@ -31,5 +31,5 @@ export function Tooltip(props) {
         </ChakraTooltip.Positioner>
       </Portal>
     </ChakraTooltip.Root>
-  )
+  );
 }

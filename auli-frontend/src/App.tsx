@@ -59,7 +59,8 @@ const AppShell = () => {
   useEffect(() => {
     if (!temSidebar) return;
     const aoTeclar = (e: KeyboardEvent) => {
-      if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== "b") return;
+      if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== "b")
+        return;
       e.preventDefault();
       setSidebarAberta((v) => !v);
     };

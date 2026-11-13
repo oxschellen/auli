@@ -63,25 +63,144 @@ const TABS: {
   grupo: Grupo;
   Icone: IconType;
 }[] = [
-  { id: "chat", label: "Chat", Component: Chat, collection: null, grupo: null, Icone: MdOutlineChat },
-  { id: "servicos", label: "Serviços", Component: ServicosList, collection: "servicos", grupo: "acervo", Icone: MdOutlineWorkOutline },
-  { id: "faqs", label: "FAQs", Component: FaqsList, collection: "faqs", grupo: "acervo", Icone: MdHelpOutline },
-  { id: "pareceres", label: "Pareceres", Component: PareceresList, collection: "pareceres", grupo: "acervo", Icone: MdOutlineGavel },
-  { id: "tarf", label: "Acórdãos TARF", Component: TarfList, collection: "tarf", grupo: "acervo", Icone: MdOutlineBalance },
-  { id: "legislacao", label: "Legislação", Component: LegislacaoList, collection: "legislacao", grupo: "acervo", Icone: MdOutlineMenuBook },
-  { id: "notas", label: "Notas", Component: NotasList, collection: "notas", grupo: "acervo", Icone: MdOutlineStickyNote2 },
-  { id: "conteudos", label: "Conteúdos", Component: ConteudosList, collection: "conteudos", grupo: "acervo", Icone: MdOutlineLibraryBooks },
+  {
+    id: "chat",
+    label: "Chat",
+    Component: Chat,
+    collection: null,
+    grupo: null,
+    Icone: MdOutlineChat,
+  },
+  {
+    id: "servicos",
+    label: "Serviços",
+    Component: ServicosList,
+    collection: "servicos",
+    grupo: "acervo",
+    Icone: MdOutlineWorkOutline,
+  },
+  {
+    id: "faqs",
+    label: "FAQs",
+    Component: FaqsList,
+    collection: "faqs",
+    grupo: "acervo",
+    Icone: MdHelpOutline,
+  },
+  {
+    id: "pareceres",
+    label: "Pareceres",
+    Component: PareceresList,
+    collection: "pareceres",
+    grupo: "acervo",
+    Icone: MdOutlineGavel,
+  },
+  {
+    id: "tarf",
+    label: "Acórdãos TARF",
+    Component: TarfList,
+    collection: "tarf",
+    grupo: "acervo",
+    Icone: MdOutlineBalance,
+  },
+  {
+    id: "legislacao",
+    label: "Legislação",
+    Component: LegislacaoList,
+    collection: "legislacao",
+    grupo: "acervo",
+    Icone: MdOutlineMenuBook,
+  },
+  {
+    id: "notas",
+    label: "Notas",
+    Component: NotasList,
+    collection: "notas",
+    grupo: "acervo",
+    Icone: MdOutlineStickyNote2,
+  },
+  {
+    id: "conteudos",
+    label: "Conteúdos",
+    Component: ConteudosList,
+    collection: "conteudos",
+    grupo: "acervo",
+    Icone: MdOutlineLibraryBooks,
+  },
   // O Sobre fechava a sidebar, colado no pé; com o grupo Tributum ela passou da altura de tela de
   // notebook (768 px) e ele ficava abaixo da dobra, sem pista de que a lista rolava.
-  { id: "about", label: "Sobre", Component: About, collection: null, grupo: "acervo", Icone: MdInfoOutline },
-  { id: "tributum-criterios", label: "Critérios", Component: CriteriosTributum, collection: null, grupo: "tributum", Icone: MdOutlineRule },
-  { id: "tributum-artigos", label: "Artigos e estudos", Component: ArtigosLista, collection: null, grupo: "tributum", Icone: MdOutlineArticle },
-  { id: "tributum-instituicoes", label: "Instituições", Component: InstituicoesLista, collection: null, grupo: "tributum", Icone: MdOutlineAccountBalance },
-  { id: "tributum-dados", label: "Dados", Component: DadosLista, collection: null, grupo: "tributum", Icone: MdOutlineDataset },
-  { id: "tributum-analises", label: "Análises", Component: AnalisesLista, collection: null, grupo: "tributum", Icone: MdOutlineInsights },
-  { id: "tributum-livros", label: "Livros", Component: LivrosLista, collection: null, grupo: "tributum", Icone: MdOutlineAutoStories },
-  { id: "mcp", label: "Conectar sua IA", Component: McpList, collection: null, grupo: "integracoes", Icone: MdOutlinePower },
-  { id: "downloads", label: "Downloads", Component: DownloadsList, collection: null, grupo: "integracoes", Icone: MdOutlineFileDownload },
+  {
+    id: "about",
+    label: "Sobre",
+    Component: About,
+    collection: null,
+    grupo: "acervo",
+    Icone: MdInfoOutline,
+  },
+  {
+    id: "tributum-criterios",
+    label: "Critérios",
+    Component: CriteriosTributum,
+    collection: null,
+    grupo: "tributum",
+    Icone: MdOutlineRule,
+  },
+  {
+    id: "tributum-artigos",
+    label: "Artigos e estudos",
+    Component: ArtigosLista,
+    collection: null,
+    grupo: "tributum",
+    Icone: MdOutlineArticle,
+  },
+  {
+    id: "tributum-instituicoes",
+    label: "Instituições",
+    Component: InstituicoesLista,
+    collection: null,
+    grupo: "tributum",
+    Icone: MdOutlineAccountBalance,
+  },
+  {
+    id: "tributum-dados",
+    label: "Dados",
+    Component: DadosLista,
+    collection: null,
+    grupo: "tributum",
+    Icone: MdOutlineDataset,
+  },
+  {
+    id: "tributum-analises",
+    label: "Análises",
+    Component: AnalisesLista,
+    collection: null,
+    grupo: "tributum",
+    Icone: MdOutlineInsights,
+  },
+  {
+    id: "tributum-livros",
+    label: "Livros",
+    Component: LivrosLista,
+    collection: null,
+    grupo: "tributum",
+    Icone: MdOutlineAutoStories,
+  },
+  {
+    id: "mcp",
+    label: "Conectar sua IA",
+    Component: McpList,
+    collection: null,
+    grupo: "integracoes",
+    Icone: MdOutlinePower,
+  },
+  {
+    id: "downloads",
+    label: "Downloads",
+    Component: DownloadsList,
+    collection: null,
+    grupo: "integracoes",
+    Icone: MdOutlineFileDownload,
+  },
 ];
 
 /**
@@ -382,12 +501,7 @@ export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
   const ativa = menuItems.find((t) => t.id === selectedId);
 
   return (
-    <Flex
-      h="100%"
-      minH={0}
-      bg="bg.canvas"
-      css={{ [SIDEBAR_VAR]: largura }}
-    >
+    <Flex h="100%" minH={0} bg="bg.canvas" css={{ [SIDEBAR_VAR]: largura }}>
       {/* Sidebar (>= md). Scroll próprio se a janela for baixa; o conteúdo mantém o seu — ela não
           é ancestral do chat, então o "único container de scroll" do App.tsx segue valendo. */}
       <Box

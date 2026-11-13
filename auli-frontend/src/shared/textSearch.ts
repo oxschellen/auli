@@ -94,10 +94,7 @@ export function parseQuery(query: string): string[] {
  * `terms` vazio → `true` (lista inteira). Pré-condição: haystack e termos já normalizados
  * (saídas de `buildHaystack`/`parseQuery`).
  */
-export function haystackMatches(
-  haystack: readonly string[],
-  terms: readonly string[],
-): boolean {
+export function haystackMatches(haystack: readonly string[], terms: readonly string[]): boolean {
   return terms.every((t) => haystack.some((h) => h.includes(t)));
 }
 

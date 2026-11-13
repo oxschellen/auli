@@ -24,12 +24,7 @@
 import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 
-import {
-  buildHaystack,
-  haystackMatches,
-  normalizeText,
-  parseQuery,
-} from "./textSearch";
+import { buildHaystack, haystackMatches, normalizeText, parseQuery } from "./textSearch";
 
 /** O `parseQuery` de antes do conserto: sem descarte nenhum. */
 function parseQuerySemDescarte(query: string): string[] {
@@ -42,12 +37,9 @@ function itensDe(valor: unknown, saida: string[][] = []): string[][] {
   if (Array.isArray(valor)) {
     for (const v of valor) itensDe(v, saida);
   } else if (valor && typeof valor === "object") {
-    const campos = Object.values(valor).filter(
-      (v): v is string => typeof v === "string",
-    );
+    const campos = Object.values(valor).filter((v): v is string => typeof v === "string");
     if (campos.length) saida.push(campos);
-    for (const v of Object.values(valor))
-      if (typeof v === "object") itensDe(v, saida);
+    for (const v of Object.values(valor)) if (typeof v === "object") itensDe(v, saida);
   }
   return saida;
 }
@@ -73,30 +65,21 @@ const QUERIES = [
 ];
 
 /** Sem `data/` montado (CI, clone novo) não há o que medir. */
-const TEM_ACERVO = ABAS.every(([, arquivo]) =>
-  existsSync(`public/rs/${arquivo}`),
-);
+const TEM_ACERVO = ABAS.every(([, arquivo]) => existsSync(`public/rs/${arquivo}`));
 
 describe.skipIf(!TEM_ACERVO)(
   "descartar letra isolada não muda o conjunto filtrado (pendência 37)",
   () => {
     for (const [aba, arquivo] of ABAS) {
       it(aba, () => {
-        const itens = itensDe(
-          JSON.parse(readFileSync(`public/rs/${arquivo}`, "utf8")),
-        ).map((campos) => buildHaystack(campos));
+        const itens = itensDe(JSON.parse(readFileSync(`public/rs/${arquivo}`, "utf8"))).map(
+          (campos) => buildHaystack(campos),
+        );
         expect(itens.length, `${aba}: artefato vazio`).toBeGreaterThan(0);
         for (const q of QUERIES) {
-          const antes = itens.filter((h) =>
-            haystackMatches(h, parseQuerySemDescarte(q)),
-          ).length;
-          const depois = itens.filter((h) =>
-            haystackMatches(h, parseQuery(q)),
-          ).length;
-          expect(
-            depois,
-            `${aba} / ${JSON.stringify(q)} / ${itens.length} itens`,
-          ).toBe(antes);
+          const antes = itens.filter((h) => haystackMatches(h, parseQuerySemDescarte(q))).length;
+          const depois = itens.filter((h) => haystackMatches(h, parseQuery(q))).length;
+          expect(depois, `${aba} / ${JSON.stringify(q)} / ${itens.length} itens`).toBe(antes);
         }
       });
     }

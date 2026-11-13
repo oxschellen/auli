@@ -89,7 +89,12 @@ export const Input = ({
           color="fg"
           // Placeholder numa linha só: com `autoresize`, o texto de exemplo que quebrava no celular
           // fazia a caixa VAZIA crescer para 5 linhas.
-          _placeholder={{ color: "fg.muted", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+          _placeholder={{
+            color: "fg.muted",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
           _focus={{ outline: "none", boxShadow: "none" }}
           value={prompt}
           onChange={updatePrompt}

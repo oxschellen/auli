@@ -1,7 +1,6 @@
 /** Endpoint do chat. Override por ambiente com VITE_API_URL (ex.: um endpoint de staging);
  *  cai na produção para o app funcionar sem `.env` nenhum. */
-export const API_URL =
-  import.meta.env.VITE_API_URL ?? "https://api.auli.com.br/v1/question";
+export const API_URL = import.meta.env.VITE_API_URL ?? "https://api.auli.com.br/v1/question";
 
 /** URL do registro de auditoria de UMA resposta — `GET /v1/log/{uuid}` (D-LOG-3).
  *

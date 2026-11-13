@@ -23,13 +23,7 @@ export const UserMessage = ({ messageText, setPrompt }: UserMessageProps) => {
         my={0}
         border="1px solid var(--chakra-colors-border)"
       >
-        <Text
-          fontSize="16px"
-          lineHeight="1.4"
-          whiteSpace="pre-wrap"
-          color="fg"
-          fontFamily="body"
-        >
+        <Text fontSize="16px" lineHeight="1.4" whiteSpace="pre-wrap" color="fg" fontFamily="body">
           {messageText}
         </Text>
 

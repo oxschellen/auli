@@ -30,22 +30,40 @@ const entrada = (
 
 describe("colunasDeTipos", () => {
   it("usa a ordem preferida, não a ordem do dado", () => {
-    const entries = [entrada("rs", [["pareceres", 372], ["faqs", 1945], ["servicos", 586]])];
+    const entries = [
+      entrada("rs", [
+        ["pareceres", 372],
+        ["faqs", 1945],
+        ["servicos", 586],
+      ]),
+    ];
     expect(colunasDeTipos(entries)).toEqual(["servicos", "faqs", "pareceres"]);
   });
 
   it("une os tipos de todos os estados", () => {
     const entries = [
       entrada("ac", [["servicos", 17]]),
-      entrada("rs", [["servicos", 586], ["faqs", 1945]]),
-      entrada("sp", [["servicos", 518], ["pareceres", 15605]]),
+      entrada("rs", [
+        ["servicos", 586],
+        ["faqs", 1945],
+      ]),
+      entrada("sp", [
+        ["servicos", 518],
+        ["pareceres", 15605],
+      ]),
     ];
     expect(colunasDeTipos(entries)).toEqual(["servicos", "faqs", "pareceres"]);
   });
 
   it("põe tipo desconhecido depois dos conhecidos, em ordem alfabética", () => {
     // O bundle é genérico: uma coleção nova no data/ vira coluna sem tocar neste arquivo.
-    const entries = [entrada("rs", [["zetas", 1], ["servicos", 2], ["alfas", 3]])];
+    const entries = [
+      entrada("rs", [
+        ["zetas", 1],
+        ["servicos", 2],
+        ["alfas", 3],
+      ]),
+    ];
     expect(colunasDeTipos(entries)).toEqual(["servicos", "alfas", "zetas"]);
   });
 
@@ -55,7 +73,10 @@ describe("colunasDeTipos", () => {
 });
 
 describe("contagem", () => {
-  const rs = entrada("rs", [["servicos", 586], ["faqs", 1945]]);
+  const rs = entrada("rs", [
+    ["servicos", 586],
+    ["faqs", 1945],
+  ]);
 
   it("devolve o número do tipo presente", () => {
     expect(contagem(rs, "servicos")).toBe(586);
@@ -68,7 +89,11 @@ describe("contagem", () => {
 
 describe("totalDocumentos", () => {
   it("soma todos os tipos", () => {
-    const rs = entrada("rs", [["servicos", 586], ["faqs", 1945], ["pareceres", 372]]);
+    const rs = entrada("rs", [
+      ["servicos", 586],
+      ["faqs", 1945],
+      ["pareceres", 372],
+    ]);
     expect(totalDocumentos(rs)).toBe(2903);
   });
 
@@ -79,7 +104,11 @@ describe("totalDocumentos", () => {
 
 describe("resumoTipos", () => {
   it("formata em pt-BR e na ordem das colunas", () => {
-    const rs = entrada("rs", [["pareceres", 372], ["servicos", 586], ["faqs", 1945]]);
+    const rs = entrada("rs", [
+      ["pareceres", 372],
+      ["servicos", 586],
+      ["faqs", 1945],
+    ]);
     expect(resumoTipos(rs)).toBe("586 serviços · 1.945 faqs · 372 pareceres");
   });
 });

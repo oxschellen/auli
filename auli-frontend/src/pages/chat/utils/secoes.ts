@@ -37,7 +37,11 @@ export function dividirSecoes(texto: string): Secoes {
       const marcado = Boolean(titulo) || negrito || Boolean(doisPontosA || doisPontosB);
       const nome = palavra.toLowerCase() as Nome;
       // Negrito só abre de um lado ("**Resumo texto") não é rótulo; e a seção não se repete.
-      if ((marcado || resto.trim() === "") && Boolean(negritoA) === Boolean(negritoB) && !vistas.has(nome)) {
+      if (
+        (marcado || resto.trim() === "") &&
+        Boolean(negritoA) === Boolean(negritoB) &&
+        !vistas.has(nome)
+      ) {
         atual = nome;
         vistas.add(nome);
         if (resto.trim() !== "") partes[atual].push(resto);

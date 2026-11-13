@@ -62,8 +62,12 @@ describe("Chat", () => {
     localStorage.setItem("auli.questionType", "1");
     montar();
     expect(screen.getByRole("heading", { name: "Como posso ajudar?" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Empresa nova: como apurar e recolher o ICMS?" }));
-    expect(screen.getByLabelText("Sua pergunta")).toHaveValue("Empresa nova: como apurar e recolher o ICMS?");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Empresa nova: como apurar e recolher o ICMS?" }),
+    );
+    expect(screen.getByLabelText("Sua pergunta")).toHaveValue(
+      "Empresa nova: como apurar e recolher o ICMS?",
+    );
   });
 });
 
@@ -130,9 +134,7 @@ describe("recolher a caixa de mensagem (celular)", () => {
     fireEvent.click(screen.getByRole("button", { name: "Recolher a caixa de mensagem" }));
     fireEvent.click(screen.getByRole("button", { name: "Mostrar a caixa de mensagem" }));
     expect(regrasDe(caixa())).not.toMatch(/display:\s*none/);
-    await waitFor(() =>
-      expect(document.activeElement).toBe(screen.getByLabelText("Sua pergunta")),
-    );
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText("Sua pergunta")));
   });
 });
 
@@ -199,9 +201,13 @@ describe("minhas perguntas", () => {
       JSON.stringify({ v: 1, itens: [{ id: "a", pergunta, tipo: "2", em: 1, favorita: false }] }),
     );
     montar();
-    expect(screen.getByRole("button", { name: /^Tipo de consulta: Serviços \+ FAQs/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^Tipo de consulta: Serviços \+ FAQs/ }),
+    ).toBeInTheDocument();
     fireEvent.click(painel().getByText(pergunta));
-    expect(screen.getByRole("button", { name: /^Tipo de consulta: Pareceres/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^Tipo de consulta: Pareceres/ }),
+    ).toBeInTheDocument();
   });
 
   it("a estrela move a pergunta para Favoritas e a marca fica gravada", () => {
@@ -223,7 +229,13 @@ describe("minhas perguntas", () => {
         v: 1,
         itens: [
           { id: "a", pergunta, tipo: "1", em: 2, favorita: false },
-          { id: "b", pergunta: "Como emitir a certidão de situação fiscal?", tipo: "1", em: 1, favorita: true },
+          {
+            id: "b",
+            pergunta: "Como emitir a certidão de situação fiscal?",
+            tipo: "1",
+            em: 1,
+            favorita: true,
+          },
         ],
       }),
     );

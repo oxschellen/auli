@@ -11,7 +11,9 @@ describe("useHistorico", () => {
     const rs = renderHook(() => useHistorico("rs"));
     const sp = renderHook(() => useHistorico("sp"));
     act(() => rs.result.current.registrar("Como pagar o IPVA no estado?", "1"));
-    expect(rs.result.current.itens.map((i) => i.pergunta)).toEqual(["Como pagar o IPVA no estado?"]);
+    expect(rs.result.current.itens.map((i) => i.pergunta)).toEqual([
+      "Como pagar o IPVA no estado?",
+    ]);
     expect(sp.result.current.itens).toEqual([]);
     expect(localStorage.getItem("auli.historico.rs")).toContain("Como pagar o IPVA no estado?");
     expect(localStorage.getItem("auli.historico.sp")).toBeNull();
@@ -30,7 +32,13 @@ describe("useHistorico", () => {
     act(() => result.current.registrar("Pergunta feita nesta aba", "1"));
     // A outra aba releu, acrescentou a dela e gravou; o navegador avisa esta com `storage`.
     const daOutra = JSON.parse(localStorage.getItem("auli.historico.rs")!);
-    daOutra.itens.unshift({ id: "x", pergunta: "Pergunta feita na outra aba", tipo: "2", em: 9, favorita: false });
+    daOutra.itens.unshift({
+      id: "x",
+      pergunta: "Pergunta feita na outra aba",
+      tipo: "2",
+      em: 9,
+      favorita: false,
+    });
     act(() => {
       localStorage.setItem("auli.historico.rs", JSON.stringify(daOutra));
       window.dispatchEvent(new StorageEvent("storage", { key: "auli.historico.rs" }));
@@ -48,7 +56,13 @@ describe("useHistorico", () => {
     act(() => result.current.registrar("Pergunta feita nesta aba", "1"));
     // A outra aba gravou, e o `storage` ainda não chegou: a tela não a mostra.
     const daOutra = JSON.parse(localStorage.getItem("auli.historico.rs")!);
-    daOutra.itens.unshift({ id: "x", pergunta: "Pergunta feita na outra aba", tipo: "2", em: 9, favorita: false });
+    daOutra.itens.unshift({
+      id: "x",
+      pergunta: "Pergunta feita na outra aba",
+      tipo: "2",
+      em: 9,
+      favorita: false,
+    });
     localStorage.setItem("auli.historico.rs", JSON.stringify(daOutra));
     const daqui = result.current.itens[0].id;
     act(() => result.current.alternarFavorita(daqui));

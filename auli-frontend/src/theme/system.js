@@ -84,7 +84,9 @@ const config = defineConfig({
           // DEFAULT, which left the header subtitle with no resolved color — it
           // fell back to `fg`, invisible on the black header in light mode.
           inverted: { value: { base: "#ffffff", _dark: "#ffffff" } },
-          invertedMuted: { value: { base: "rgba(255,255,255,0.6)", _dark: "rgba(255,255,255,0.6)" } },
+          invertedMuted: {
+            value: { base: "rgba(255,255,255,0.6)", _dark: "rgba(255,255,255,0.6)" },
+          },
           // text inside a <mark>: the browser default forces near-black, unreadable over a dark
           // surface. Flat 2-level leaf for the same reason as `inverted` above.
           highlight: { value: { base: "{colors.ink}", _dark: "#ffffff" } },

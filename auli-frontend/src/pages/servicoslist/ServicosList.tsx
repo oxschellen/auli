@@ -28,7 +28,7 @@ export function ServicosList() {
   const { data: tipoIndex } = useSWR<TipoServico[]>(
     available ? entityPath(entity.id, "servicos-index.json") : null,
     jsonFetcher<TipoServico[]>,
-    SWR_OPTS
+    SWR_OPTS,
   );
   // `empresaPrimeiro` reordena SÓ para exibição: a aba de empresa vai para a frente (e, por
   // consequência do `[0]` abaixo, vira a aba inicial). O JSON em disco e a ordem do dado não mudam.
@@ -55,22 +55,21 @@ export function ServicosList() {
   // inteira, e sem as outras abas não há como saber quem se repete entre públicos. O custo é
   // pequeno — 413 KB no SP, 580 KB no RS, contra os 33 MB do índice de pareceres da aba vizinha —,
   // e trocar de aba passa a ser instantâneo, porque o dado já está aqui.
-  const { data: abas, error, isLoading: loading } = useSWR(
+  const {
+    data: abas,
+    error,
+    isLoading: loading,
+  } = useSWR(
     available && tipoServicos.length > 0
       ? ["servicos", entity.id, ...tipoServicos.map((ts) => ts.filename)]
       : null,
     ([, id, ...filenames]: string[]) =>
-      Promise.all(
-        filenames.map((f) => jsonFetcher<Servico[]>(entityPath(id, `${f}.json`))),
-      ),
+      Promise.all(filenames.map((f) => jsonFetcher<Servico[]>(entityPath(id, `${f}.json`)))),
     SWR_OPTS,
   );
   // Memoizado porque o `?? []` devolveria um array novo a cada render, e ele alimenta o `grouped`.
   const activeServicos = useMemo(() => abas?.[activeIndex] ?? [], [abas, activeIndex]);
-  const totalDistintos = useMemo(
-    () => (abas ? contarServicosDistintos(abas) : 0),
-    [abas],
-  );
+  const totalDistintos = useMemo(() => (abas ? contarServicosDistintos(abas) : 0), [abas]);
 
   function selectTipo(tipo: string) {
     if (tipo === active) return;
@@ -104,14 +103,16 @@ export function ServicosList() {
 
   const filteredGroups = useMemo<ServicoGroup[]>(
     () => filterServicoGroups(grouped, deferredQuery),
-    [grouped, deferredQuery]
+    [grouped, deferredQuery],
   );
 
   // Uma vez por query, não por grupo: `parseQuery` devolve array novo a cada chamada.
   const terms = useMemo(() => parseQuery(deferredQuery), [deferredQuery]);
 
   const isSearching = deferredQuery.trim().length > 0;
-  const totalResults = isSearching ? filteredGroups.reduce((sum, [, items]) => sum + items.length, 0) : 0;
+  const totalResults = isSearching
+    ? filteredGroups.reduce((sum, [, items]) => sum + items.length, 0)
+    : 0;
 
   if (!available) return <CollectionEmpty entity={entity} label="Serviços" />;
 

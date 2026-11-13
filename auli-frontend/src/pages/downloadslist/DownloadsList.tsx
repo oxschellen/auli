@@ -84,7 +84,13 @@ export function DownloadsList() {
                       {atual.tamanho}
                     </Text>
                     {/* asChild → âncora real, para o atributo `download` funcionar. */}
-                    <Button asChild size="md" bg="accent" color="accent.fg" _hover={{ bg: "brand.600" }}>
+                    <Button
+                      asChild
+                      size="md"
+                      bg="accent"
+                      color="accent.fg"
+                      _hover={{ bg: "brand.600" }}
+                    >
                       <a href={zipHref(atual)} download>
                         <MdFileDownload />
                         Baixar {atual.arquivo}
@@ -118,7 +124,11 @@ export function DownloadsList() {
               <Text as="h2" fontSize="0.95rem" fontWeight="700" color="fg">
                 Todos os estados
               </Text>
-              <Box border="1px solid var(--chakra-colors-border)" borderRadius="8px" overflowX="auto">
+              <Box
+                border="1px solid var(--chakra-colors-border)"
+                borderRadius="8px"
+                overflowX="auto"
+              >
                 <Table.Root size="sm">
                   <Table.Header>
                     <Table.Row bg="bg.subtle">

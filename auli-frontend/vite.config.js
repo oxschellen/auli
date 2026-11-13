@@ -1,30 +1,30 @@
-import { readFileSync } from 'node:fs'
-import { URL } from 'node:url'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { readFileSync } from "node:fs";
+import { URL } from "node:url";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 // Single source of truth for the displayed app version: package.json. Read at
 // config load and injected via `define`, so the version can't drift from a
 // hardcoded constant and package.json isn't bundled into the client.
-const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
+const pkg = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8"));
 
 const chunkMap = {
-  'vendor-react': ['react', 'react-dom'],
-  'vendor-chakra': ['@chakra-ui/react', '@emotion/react'],
-  'vendor-icons': ['react-icons'],
-  'vendor-utils': ['axios', 'framer-motion', 'react-markdown', 'remark-gfm', 'swr'],
-}
+  "vendor-react": ["react", "react-dom"],
+  "vendor-chakra": ["@chakra-ui/react", "@emotion/react"],
+  "vendor-icons": ["react-icons"],
+  "vendor-utils": ["axios", "framer-motion", "react-markdown", "remark-gfm", "swr"],
+};
 
 function manualChunks(id) {
   for (const [chunk, pkgs] of Object.entries(chunkMap)) {
-    if (pkgs.some(pkg => id.includes(`/node_modules/${pkg}/`))) return chunk
+    if (pkgs.some((pkg) => id.includes(`/node_modules/${pkg}/`))) return chunk;
   }
 }
 
 // Stable per-build identifier, evaluated once when the config loads (build
 // start / dev server start). Used to cache-bust static assets only when a new
 // build is deployed, so reloads of the same build hit the browser cache.
-const buildId = String(Date.now())
+const buildId = String(Date.now());
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -43,8 +43,8 @@ export default defineConfig({
   test: {
     // Pure-logic tests run in Node; component tests opt into jsdom per-file
     // with a `// @vitest-environment jsdom` docblock.
-    environment: 'node',
-    include: ['src/**/*.test.{ts,tsx}'],
-    setupFiles: ['./src/test/setup.ts'],
+    environment: "node",
+    include: ["src/**/*.test.{ts,tsx}"],
+    setupFiles: ["./src/test/setup.ts"],
   },
-})
+});

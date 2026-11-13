@@ -39,9 +39,7 @@ describe("ícone do log", () => {
 
   /** A saudação chega com `showButton=false` e sem `logId`: nenhum dos dois botões. */
   it("não aparece na saudação", () => {
-    renderWithProvider(
-      <SystemMessage messageText="Olá! Como posso ajudar?" showButton={false} />,
-    );
+    renderWithProvider(<SystemMessage messageText="Olá! Como posso ajudar?" showButton={false} />);
     expect(screen.queryByLabelText(ROTULO_LOG)).toBeNull();
     expect(screen.queryByLabelText(ROTULO_COPIA)).toBeNull();
   });
