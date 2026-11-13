@@ -42,6 +42,7 @@ O relatório foi conferido contra a `main` em `a57bb86` antes da etapa 1. Os ach
 **Correções ao relatório:**
 
 - O `deploy-frontend.sh` cita `src/shared/entities.ts` (linhas 224 e 247: um comentário e a mensagem de erro do gate de deploy), e o `config/registry.toml` também (linha 22). Os três mudam no commit 2b, junto com o gerador e o `check-registry-sync.sh`.
+- O próprio gerador monta o destino com `join(ROOT, "auli-frontend", "src", "shared", "entities.ts")` (linha 17), forma que uma busca por `shared/entities` não encontra. Mudou no commit da movimentação, junto com os outros quatro.
 - O `config/registry.toml` citava o gerador no caminho antigo, `scripts/gen-frontend-entities.mjs` (linhas 12 e 22), o mesmo defeito do E1. Corrigido na etapa 1.
 - A suíte tem 342 testes, todos passando e nenhum pulado, em cerca de 5 s.
 - O `DESCRIPTION.md` tem 75 referências a caminhos de `src/`, não 67; o `docs/auli_code.md` tem 41.
@@ -644,10 +645,10 @@ São quatro etapas, da mais segura à mais invasiva, e cada pull request tem um 
 
 A regra desta etapa é que o diff só tenha renomeações e linhas de `import`. Com `git mv`, o histórico de cada arquivo é preservado. A tabela arquivo a arquivo está no apêndice.
 
-- [ ] Commit 2a: `pages/chat/ui/` vai para `ui/`, e `pages/chat/utils/utils.ts` vira `ui/copiar.ts`.
-- [ ] Commit 2b: `shared/` se reparte em `app/`, `ui/`, `lib/`, `api/` e `contexto/`. O caminho de `entities.ts` muda no mesmo commit em `gen-frontend-entities.mjs` e em `check-registry-sync.sh`.
-- [ ] Commit 2c: `pages/*` e `tributum/` vão para `secoes/*`, com os nomes novos; `types/chat.ts` vira `secoes/chat/tipos.ts`; `chat/utils/` se reparte em `hooks/` e `lib/`.
-- [ ] Commit 2d: entra o `test/camadas.test.ts`, e o layout de diretórios do `DESCRIPTION.md` é reescrito.
+- [x] Commit 2a: `pages/chat/ui/` vai para `ui/`, e `pages/chat/utils/utils.ts` vira `ui/copiar.ts`.
+- [x] Commit 2b: `shared/` se reparte em `app/`, `ui/`, `lib/`, `api/` e `contexto/`. O caminho de `entities.ts` muda no mesmo commit em `gen-frontend-entities.mjs` e em `check-registry-sync.sh`.
+- [x] Commit 2c: `pages/*` e `tributum/` vão para `secoes/*`, com os nomes novos; `types/chat.ts` vira `secoes/chat/tipos.ts`; `chat/utils/` se reparte em `hooks/` e `lib/`.
+- [x] Commit 2d: entra o `test/camadas.test.ts`, e o layout de diretórios do `DESCRIPTION.md` é reescrito.
 - [ ] Commit 2e, à parte: os quatro `.jsx` de `ui/` viram `.tsx` com tipos, sem o `'use client'`. O `allowJs` só pode sair do `tsconfig.json` se `theme/system.js` também virar `.ts`.
 
 Dois testes dependem de caminho e precisam de ajuste no commit 2c:

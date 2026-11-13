@@ -75,17 +75,17 @@ npm run test:watch# Vitest in watch mode
 
 - [index.html](index.html) loads [src/main.tsx](src/main.tsx), which mounts
   `<App />` inside `React.StrictMode`.
-- [src/App.tsx](src/App.tsx) wraps everything in (outermost first):
-  - `Provider` (Chakra UI + color mode, from [src/pages/chat/ui/provider.jsx](src/pages/chat/ui/provider.jsx)),
+- [src/app/App.tsx](src/app/App.tsx) wraps everything in (outermost first):
+  - `Provider` (Chakra UI + color mode, from [src/ui/provider.jsx](src/ui/provider.jsx)),
   - a single global `Toaster`,
-  - [`ErrorBoundary`](src/shared/ErrorBoundary.tsx),
+  - [`ErrorBoundary`](src/app/ErrorBoundary.tsx),
   - `LazyMotion` (Framer Motion),
   - then `AppShell`: a full-height `Flex` column with the shared
-    [`AppHeader`](src/shared/AppHeader.tsx), which carries the state tabs, pinned
+    [`AppHeader`](src/app/AppHeader.tsx), which carries the state tabs, pinned
     above one panel per tab. A tab shows the
-    [`StateSelection`](src/pages/stateselection/StateSelection.tsx) map until it
-    has a state, then that state's [`Home`](src/pages/home/Home.tsx) inside its
-    own [`EntityProvider`](src/shared/EntityContext.tsx). Inactive tabs stay
+    [`StateSelection`](src/secoes/mapa/StateSelection.tsx) map until it
+    has a state, then that state's [`Home`](src/secoes/home/Home.tsx) inside its
+    own [`EntityProvider`](src/contexto/EntityContext.tsx). Inactive tabs stay
     mounted and hidden, so each keeps its conversation, section and scroll.
 
 There is **no router** — the app is a single page. Sections are tabs inside
@@ -101,43 +101,43 @@ Each state tab is scoped to one **entity** (state tax authority), chosen once on
 its map, so chat history, search and scroll never need re-scoping. To look at
 another state, the user opens another tab; a state opens in one tab only.
 
-- [src/shared/entities.ts](src/shared/entities.ts) — the entity registry (a
+- [src/contexto/entities.ts](src/contexto/entities.ts) — the entity registry (a
   frontend mirror of the scraper's `domain::entities`). Each `Entity` has `id`
   (also the `public/<id>/` data folder and the backend tenant key), `name`
   (`SEFAZ-RS`), `uf` (`RS`), `state` (`Rio Grande do Sul`), and **`collections`**
   — the list of sections it actually has data for. `hasCollection(entity, kind)`
   drives the per-section empty state. Generated from `config/registry.toml` by
   `scripts/tools/gen-frontend-entities.mjs` — do not hand-edit.
-- [src/shared/abas.ts](src/shared/abas.ts) — the state tabs: open, close, pick a
+- [src/app/abas.ts](src/app/abas.ts) — the state tabs: open, close, pick a
   state, persisted to `localStorage` under `auli.abas` (the open states in order,
   and the active one). The pre-tabs `auli.entity` key is migrated into the first
   tab once. Ids the registry no longer knows, and repeats, are dropped.
-- [src/shared/AbasDeEstado.tsx](src/shared/AbasDeEstado.tsx) — the tab strip next
+- [src/app/AbasDeEstado.tsx](src/app/AbasDeEstado.tsx) — the tab strip next
   to the logo, `[RS SEFAZ-RS ×] [SP SEFAZ-SP ×] [+]`: WAI-ARIA tabs (arrow keys,
   Delete closes), "+" opens a tab on the map. A tab whose chat is waiting for an
   answer shows a spinner, and one whose answer arrived while it was hidden shows a
   dot until it is opened — both in the ×'s spot, so the tab keeps its width; with
   a mouse, hovering brings the × back. Reported through
-  [RespostaDaAba.tsx](src/shared/RespostaDaAba.tsx).
-- [src/shared/EntityContext.tsx](src/shared/EntityContext.tsx) — `EntityProvider`,
+  [RespostaDaAba.tsx](src/contexto/RespostaDaAba.tsx).
+- [src/contexto/EntityContext.tsx](src/contexto/EntityContext.tsx) — `EntityProvider`,
   one per tab, with that tab's entity; `useSelectedEntity()` reads it.
-- [src/pages/stateselection/StateSelection.tsx](src/pages/stateselection/StateSelection.tsx)
+- [src/secoes/mapa/StateSelection.tsx](src/secoes/mapa/StateSelection.tsx)
   — the map page ("Escolha o estado") of a tab with no state yet: an interactive
   **Brazil map**; picking a state calls the tab's `onSelect`.
-- [src/pages/stateselection/BrazilMap.tsx](src/pages/stateselection/BrazilMap.tsx) —
+- [src/secoes/mapa/BrazilMap.tsx](src/secoes/mapa/BrazilMap.tsx) —
   an outlined SVG map of all 27 states. States backed by an available entity (all
   27 today) are filled with the accent color and are clickable/keyboard-operable (`role=button`,
   `<title>` tooltip); every other state is greyed (`bg.mapInactive`) and inert.
   Colors resolve via `useToken` and native `<svg>`/`<path>` elements are used (Chakra's
   `Box as="path"` drops the `d`/`viewBox` attributes). Geometry comes from
-  [brazilPaths.ts](src/pages/stateselection/brazilPaths.ts) — auto-generated compact
+  [brazilPaths.ts](src/secoes/mapa/brazilPaths.ts) — auto-generated compact
   per-UF path strings (GeoJSON simplified via Douglas-Peucker, projected to a
   1000×1000 viewBox; ~33 kB, do not hand-edit). The map lights up any UF that has an
   entity in the registry.
 
 ### Home tab shell
 
-[src/pages/home/Home.tsx](src/pages/home/Home.tsx) renders a top tab bar
+[src/secoes/home/Home.tsx](src/secoes/home/Home.tsx) renders a top tab bar
 (Chat, Serviços, FAQs, Pareceres, Notas, Conteúdos, Sobre) implementing the
 WAI-ARIA tabs pattern (roving `tabIndex`, arrow-key navigation). A tab panel is
 **mounted on first activation and then kept mounted** (toggled with
@@ -157,148 +157,185 @@ anchor.
 
 ## Feature Sections
 
-### 1. Chat (`src/pages/chat/`)
+### 1. Chat (`src/secoes/chat/`)
 
 The conversational core.
 
-- [Chat.tsx](src/pages/chat/Chat.tsx) — orchestrates state and layout. Holds
+- [Chat.tsx](src/secoes/chat/Chat.tsx) — orchestrates state and layout. Holds
   message list, prompt, and loading state; auto-scrolls to the latest message;
   uses an `isSubmittingRef` guard to prevent double submits; pins the input bar
   to the bottom and lifts it above the virtual keyboard (measured via
   `visualViewport`, no device sniffing).
-- [Input.tsx](src/pages/chat/Input.tsx) — multiline `Textarea` + send button.
+- [Input.tsx](src/secoes/chat/Input.tsx) — multiline `Textarea` + send button.
   **Enter** submits (Shift+Enter = newline). A live character hint shows how
   many characters remain.
-- [Messages.tsx](src/pages/chat/Messages.tsx) — renders the transcript,
+- [Messages.tsx](src/secoes/chat/Messages.tsx) — renders the transcript,
   delegating to `UserMessage` / `SystemMessage`.
-- [UserMessage.tsx](src/pages/chat/UserMessage.tsx) — user's bubble (right
+- [UserMessage.tsx](src/secoes/chat/UserMessage.tsx) — user's bubble (right
   aligned, blue) with a copy-to-input button.
-- [SystemMessage.tsx](src/pages/chat/SystemMessage.tsx) — assistant's bubble,
+- [SystemMessage.tsx](src/secoes/chat/SystemMessage.tsx) — assistant's bubble,
   rendered via `react-markdown` (shared renderers), with a copy button.
-- [Historico.tsx](src/pages/chat/Historico.tsx) — the "Minhas perguntas" panel:
+- [Historico.tsx](src/secoes/chat/Historico.tsx) — the "Minhas perguntas" panel:
   the questions sent in this state, starred ones on top, kept only in this
-  browser (`utils/historico.ts`, `utils/useHistorico.ts`; whether it is open,
-  shared by all tabs, in `utils/usePainelHistorico.ts`). A column from `xl`, a
+  browser (`lib/historico.ts`, `hooks/useHistorico.ts`; whether it is open,
+  shared by all tabs, in `hooks/usePainelHistorico.ts`). A column from `xl`, a
   drawer below.
 
-**Chat utilities (`src/pages/chat/utils/`):**
+**Chat hooks and logic (`hooks/` and `lib/` under `src/secoes/chat/`):**
 
-- [callServerAPI.ts](src/pages/chat/utils/callServerAPI.ts) — posts the question
+- [callServerAPI.ts](src/secoes/chat/hooks/callServerAPI.ts) — posts the question
   (plus the selected `entityId`, when present, as `entity` in the body) to the API
   with a **25-second timeout** (`AbortController`). Optimistically appends the user
   message and an "Aguarde! Pensando..." placeholder, then replaces the placeholder
   with the answer or a friendly error (distinguishing timeout/cancel from
   server-unavailable). `Chat` reads the active entity via `useSelectedEntity()`.
-- [prompt.ts](src/pages/chat/utils/prompt.ts) — the single source of truth for
+- [prompt.ts](src/secoes/chat/lib/prompt.ts) — the single source of truth for
   the prompt-length rule: `MIN_PROMPT_LENGTH` (10), `isPromptValid`, and
   `charsRemaining`, used by the send guard, the button's disabled state, and the
   character hint.
-- [useMessages.ts](src/pages/chat/utils/useMessages.ts) — seeds the transcript
+- [useMessages.ts](src/secoes/chat/hooks/useMessages.ts) — seeds the transcript
   with a greeting message and exposes `{ messages, setMessages }`.
-- [usePrompt.ts](src/pages/chat/utils/usePrompt.ts) — prompt input state.
-- [useIsKeyboardVisible.ts](src/pages/chat/utils/useIsKeyboardVisible.ts) —
+- [usePrompt.ts](src/secoes/chat/hooks/usePrompt.ts) — prompt input state.
+- [useIsKeyboardVisible.ts](src/secoes/chat/hooks/useIsKeyboardVisible.ts) —
   detects the on-screen keyboard and its height (via `visualViewport`) so the
   input bar can float above it.
-- [utils.ts](src/pages/chat/utils/utils.ts) — `utilsCopyTextToClipboard`,
-  copies text and shows a Chakra toast (with an insecure-origin guard).
 
-**Chat UI wrappers (`src/pages/chat/ui/`):** vendored Chakra v3 snippet
-components, kept as `.jsx` — [provider.jsx](src/pages/chat/ui/provider.jsx),
-[color-mode.jsx](src/pages/chat/ui/color-mode.jsx),
-[toaster.jsx](src/pages/chat/ui/toaster.jsx),
-[tooltip.jsx](src/pages/chat/ui/tooltip.jsx).
-
-### 2. Serviços (`src/pages/servicoslist/`)
+### 2. Serviços (`src/secoes/servicos/`)
 
 Browsable catalog of tax services, grouped by audience. The audience sub-tabs are
 **manifest-driven**: `ServicosList` loads `<entity>/servicos-index.json`
 (`{ tipo, filename }[]`, emitted by the scraper per entity) via SWR, falling back
 to `getDefaultTipoServicos()` (the legacy RS list) in
-[utils.ts](src/pages/servicoslist/utils.ts) when the manifest is absent. The
+[servicos.ts](src/secoes/servicos/servicos.ts) when the manifest is absent. The
 selected sub-tab loads its `<entity>/<filename>.json`, groups by `classe`, and
 renders through
-[ServicosAccordion.tsx](src/pages/servicoslist/ServicosAccordion.tsx). Includes
+[ServicosAccordion.tsx](src/secoes/servicos/ServicosAccordion.tsx). Includes
 client-side search (deferred via `useDeferredValue`).
 
 Because the manifest comes from the entity's own data, each state shows its own
 audiences — RS's `Cidadãos / Empresas / Fornecedores / Agentes / Servidores`, or
 SC's `Cidadão / Empresa / Servidor Público / Estudante / Prefeitura`.
 
-### 3. FAQs (`src/pages/faqslist/`)
+### 3. FAQs (`src/secoes/faqs/`)
 
-[FaqsList.tsx](src/pages/faqslist/FaqsList.tsx) loads `public/<entity>/faqs.json`
+[FaqsList.tsx](src/secoes/faqs/FaqsList.tsx) loads `public/<entity>/faqs.json`
 and builds an in-memory tree with the parsers in
-[parseFaqs.ts](src/pages/faqslist/parseFaqs.ts) (`buildNodesFromJson`,
+[faqs.ts](src/secoes/faqs/faqs.ts) (`buildNodesFromJson`,
 `buildAnswerMap`, `buildPageTypeMap`, `searchNodes`, `getEffectiveUrl`),
 rendered as a searchable, keyboard-operable accordion
-([FaqsAccordion.tsx](src/pages/faqslist/FaqsAccordion.tsx)). Search is deferred
+([FaqsAccordion.tsx](src/secoes/faqs/FaqsAccordion.tsx)). Search is deferred
 with `useDeferredValue` since the dataset is large.
 
-### 4. Pareceres (`src/pages/parecereslist/`)
+### 4. Pareceres (`src/secoes/jurisprudencia/`)
 
-[PareceresList.tsx](src/pages/parecereslist/PareceresList.tsx) loads the plain
+[PareceresList.tsx](src/secoes/jurisprudencia/PareceresList.tsx) loads the plain
 text `public/<entity>/portal-pareceres.txt` and renders it with URLs turned into
-links via [linkify.tsx](src/shared/linkify.tsx).
+links via [linkify.tsx](src/lib/linkify.tsx).
 
-### 5. Notas (`src/pages/notaslist/`)
+### 5. Notas (`src/secoes/notas/`)
 
-[NotasList.tsx](src/pages/notaslist/NotasList.tsx) — same pattern as Pareceres,
+[NotasList.tsx](src/secoes/notas/NotasList.tsx) — same pattern as Pareceres,
 loading `public/<entity>/portal-notas.txt`.
 
-### 6. Conteúdos (`src/pages/conteudoslist/`)
+### 6. Conteúdos (`src/secoes/conteudos/`)
 
-[ConteudosList.tsx](src/pages/conteudoslist/ConteudosList.tsx) — "Central de
+[ConteudosList.tsx](src/secoes/conteudos/ConteudosList.tsx) — "Central de
 Conteúdo", loads `public/<entity>/conteudo_site_tree.json` (a `categories` tree),
-rendered with [ConteudosAccordion.tsx](src/pages/conteudoslist/ConteudosAccordion.tsx)
-and filtered by [parseConteudos.ts](src/pages/conteudoslist/parseConteudos.ts).
+rendered with [ConteudosAccordion.tsx](src/secoes/conteudos/ConteudosAccordion.tsx)
+and filtered by [conteudos.ts](src/secoes/conteudos/conteudos.ts).
 
 > **Empty state:** every section gates on `hasCollection(entity, kind)`. When the
 > selected state has no data for a section (e.g. SC has only Serviços), the tab
-> renders [`CollectionEmpty`](src/shared/CollectionEmpty.tsx) — a friendly
+> renders [`CollectionEmpty`](src/ui/CollectionEmpty.tsx) — a friendly
 > "*&lt;Section&gt; ainda não disponível para &lt;UF&gt;*" placeholder — and never
 > fires the fetch, so there is no 404. Tabs reappear as that state's data is scraped.
 
-### 7. Sobre (`src/pages/about/About.tsx`)
+### 7. Sobre (`src/secoes/sobre/About.tsx`)
 
 Loads `public/about.md` and renders it as markdown.
 
 ---
 
-## Shared Modules (`src/shared/`)
+## App Shell and Base Modules
 
-- [AppHeader.tsx](src/shared/AppHeader.tsx) — sticky 52px header: the sidebar
+`src/` has three layers, and dependencies go one way only:
+
+- **`app/`** is the composition root: it mounts the app and may import from
+  anywhere.
+- **`secoes/`** holds the sections. A section never imports from another one;
+  `home/`, which exists to compose them, is the exception.
+- **The base** (`ui/`, `lib/`, `api/`, `contexto/`, `theme/`) never imports
+  from `secoes/` or `app/`. What two sections need moves down here.
+
+[src/test/camadas.test.ts](src/test/camadas.test.ts) reads every relative import
+and fails when a rule breaks.
+
+### `src/app/`
+
+- [App.tsx](src/app/App.tsx) — providers and the single-page shell; see
+  [Entry & shell](#entry--shell).
+- [AppHeader.tsx](src/app/AppHeader.tsx) — sticky 52px header: the sidebar
   toggle (from `md`, also Ctrl+B), the "Auli" wordmark (the app version is its
   tooltip), the state tabs, and the light/dark **color-mode toggle**
-  ([`ColorModeButton`](src/pages/chat/ui/color-mode.jsx)) on the right. With the
+  ([`ColorModeButton`](src/ui/color-mode.jsx)) on the right. With the
   sidebar open, the tabs start on the sidebar's edge.
-- [entities.ts](src/shared/entities.ts) — the entity registry (`Entity`,
-  `ENTITIES`, `getEntity`, `hasCollection`); see
-  [Multi-tenant state selection](#multi-tenant-state-selection).
-- [abas.ts](src/shared/abas.ts), [AbasDeEstado.tsx](src/shared/AbasDeEstado.tsx),
-  [RespostaDaAba.tsx](src/shared/RespostaDaAba.tsx) — the state tabs; see
-  [Multi-tenant state selection](#multi-tenant-state-selection).
-- [EntityContext.tsx](src/shared/EntityContext.tsx) — `EntityProvider` +
-  `useSelectedEntity`; one provider per state tab.
-- [CollectionEmpty.tsx](src/shared/CollectionEmpty.tsx) — the "coming soon for
+- [abas.ts](src/app/abas.ts), [AbasDeEstado.tsx](src/app/AbasDeEstado.tsx) — the
+  state tabs; see [Multi-tenant state selection](#multi-tenant-state-selection).
+- [ErrorBoundary.tsx](src/app/ErrorBoundary.tsx) — app-level React error
+  boundary wrapping the whole tree.
+
+### `src/ui/`
+
+- Vendored Chakra v3 snippet components, kept as `.jsx` —
+  [provider.jsx](src/ui/provider.jsx), [color-mode.jsx](src/ui/color-mode.jsx),
+  [toaster.jsx](src/ui/toaster.jsx), [tooltip.jsx](src/ui/tooltip.jsx).
+- [CollectionEmpty.tsx](src/ui/CollectionEmpty.tsx) — the "coming soon for
   this state" placeholder shown by a section the selected entity has no data for.
-- [AsyncContent.tsx](src/shared/AsyncContent.tsx) — three-state gate
+- [AsyncContent.tsx](src/ui/AsyncContent.tsx) — three-state gate
   (loading spinner / error alert / children) shared by every SWR-backed page.
-- [SearchInput.tsx](src/shared/SearchInput.tsx) — the sticky-bar search field
+- [SearchInput.tsx](src/ui/SearchInput.tsx) — the sticky-bar search field
   shared by Serviços, FAQs, and Conteúdos (icon + input + accessible clear
   button).
-- [markdown.tsx](src/shared/markdown.tsx) — shared `react-markdown` component
+- [LinkExterno.tsx](src/ui/LinkExterno.tsx) — the "open in a new tab" link.
+- [copiar.ts](src/ui/copiar.ts) — `utilsCopyTextToClipboard`, copies text and
+  shows a Chakra toast (with an insecure-origin guard).
+- [layout.ts](src/ui/layout.ts) — the sidebar widths (open, and collapsed into
+  an icon rail), which the chat's `position: fixed` composer must also know.
+
+### `src/lib/`
+
+- [markdown.tsx](src/lib/markdown.tsx) — shared `react-markdown` component
   maps (`compactMarkdownComponents` for chat/FAQ, `proseMarkdownComponents` for
   About), centralizing the link renderer's `target`/`rel`.
-- [ErrorBoundary.tsx](src/shared/ErrorBoundary.tsx) — app-level React error
-  boundary wrapping the whole tree.
-- [fetchers.ts](src/shared/fetchers.ts) — Axios-based `textFetcher` and
+- [linkify.tsx](src/lib/linkify.tsx) — turns bare URLs in plain text into
+  Chakra `Link`s, trimming trailing sentence punctuation (and preserving
+  balanced-paren URLs).
+- [textSearch.ts](src/lib/textSearch.ts), [highlight.tsx](src/lib/highlight.tsx),
+  [rehypeHighlight.ts](src/lib/rehypeHighlight.ts) — the client-side search
+  (accent- and case-insensitive) and the highlight of what it matched, in plain
+  text and in markdown.
+
+### `src/api/`
+
+- [estaticos.ts](src/api/estaticos.ts) — Axios-based `textFetcher` and
   generic `jsonFetcher<T>` for SWR, `SWR_OPTS` that disable revalidation on
   focus/reconnect (the endpoints serve static files), `versioned()` for the
   per-build `?v=` cache-buster, and **`entityPath(entityId, file)`** which
   resolves an entity-scoped data file to its versioned `/<entityId>/<file>` path.
-- [linkify.tsx](src/shared/linkify.tsx) — turns bare URLs in plain text into
-  Chakra `Link`s, trimming trailing sentence punctuation (and preserving
-  balanced-paren URLs).
+- [chat.ts](src/api/chat.ts) — the question endpoint (`VITE_API_URL`, falling
+  back to production) and the audit-log URL derived from it.
+
+### `src/contexto/`
+
+What a state tab hands to the sections inside it.
+
+- [entities.ts](src/contexto/entities.ts) — the entity registry (`Entity`,
+  `ENTITIES`, `getEntity`, `hasCollection`); see
+  [Multi-tenant state selection](#multi-tenant-state-selection).
+- [EntityContext.tsx](src/contexto/EntityContext.tsx) — `EntityProvider` +
+  `useSelectedEntity`; one provider per state tab.
+- [RespostaDaAba.tsx](src/contexto/RespostaDaAba.tsx) — how a tab's chat reports
+  that it is waiting for an answer, or that one arrived while hidden.
 
 ---
 
@@ -382,11 +419,11 @@ typed `.ts`/`.tsx`; the only remaining `.jsx` files are the four vendored Chakra
   path alias: imports are relative.
 - [src/vite-env.d.ts](src/vite-env.d.ts) — Vite client types plus the
   `__BUILD_ID__` / `__APP_VERSION__` / `VITE_API_URL` declarations.
-- [src/types/chat.ts](src/types/chat.ts) — shared `Message` and `SetPrompt`
+- [src/secoes/chat/tipos.ts](src/secoes/chat/tipos.ts) — shared `Message` and `SetPrompt`
   types.
-- Data shapes are typed at their source: `RawFaqNode`/`FaqNode` in `parseFaqs`,
-  `ConteudoCategory`/`ConteudoTree` in `parseConteudos`, `Servico`/`TipoServico`
-  in the servicos `utils`; the list pages pass these as the `jsonFetcher<T>`
+- Data shapes are typed at their source: `RawFaqNode`/`FaqNode` in `faqs.ts`,
+  `ConteudoCategory`/`ConteudoTree` in `conteudos.ts`, `Servico`/`TipoServico`
+  in `servicos.ts`; the list pages pass these as the `jsonFetcher<T>`
   generic so SWR data is typed end-to-end.
 
 > Note: Vite resolves a `.jsx`/`.js` import specifier to a `.tsx`/`.ts` file, so
@@ -410,8 +447,10 @@ typed `.ts`/`.tsx`; the only remaining `.jsx` files are the four vendored Chakra
 
 Coverage:
 
-- **Logic:** `prompt`, `parseFaqs`, `parseConteudos`, `editLinks`, and the
+- **Logic:** `prompt`, `faqs`, `conteudos`, `editLinks`, and the
   `callServerAPI` branches (mocked Axios).
+- **Structure:** [camadas.test.ts](src/test/camadas.test.ts) — the layer rules of
+  [App Shell and Base Modules](#app-shell-and-base-modules).
 - **Render:** `SearchInput`, `AsyncContent`, `Input`, `Messages`.
 
 ---
@@ -427,43 +466,41 @@ auli-frontend/
 ├─ tsconfig.json
 ├─ package.json
 ├─ public/                     # static assets
-│  ├─ rs/                      # SEFAZ-RS collection data (faqs, servicos-*, portal-*…)
-│  ├─ sc/                      # SEF-SC collection data (servicos only, so far)
+│  ├─ rs/, sc/, … (27)         # per-entity collection data (faqs, servicos-*, portal-*…)
+│  ├─ tributum/, tributum.json # the Tributum catalog (shared by every entity)
 │  └─ about.md, favicon.ico…   # site-wide assets (not entity-scoped)
 └─ src/
    ├─ main.tsx                 # entry
-   ├─ App.tsx                  # providers + single-page shell (no router)
    ├─ index.css                # global styles (consume Chakra color vars)
    ├─ vite-env.d.ts
-   ├─ types/
-   │  └─ chat.ts
+   │
+   ├─ app/                     # COMPOSITION ROOT: mounts the app, imports from anywhere
+   │  ├─ App.tsx               # providers + single-page shell (no router)
+   │  ├─ AppHeader.tsx
+   │  ├─ AbasDeEstado.tsx      # the state-tab strip in the header
+   │  ├─ abas.ts               # state tabs: open/close/pick, persisted (auli.abas)
+   │  └─ ErrorBoundary.tsx
+   │
+   ├─ secoes/                  # SECTIONS: import from the base, never from each other
+   │  ├─ home/                 # sidebar shell that composes the sections
+   │  ├─ mapa/                 # "Escolha o estado" map of a new tab (+ BrazilMap, brazilPaths)
+   │  ├─ chat/                 # components · hooks/ · lib/ · tipos.ts
+   │  ├─ servicos/  faqs/  jurisprudencia/  legislacao/  notas/  conteudos/
+   │  ├─ tributum/             # the six Tributum sections
+   │  ├─ downloads/  mcp/
+   │  └─ sobre/
+   │
+   ├─ ui/                      # BASE: generic components (+ the Chakra .jsx snippets)
+   ├─ lib/                     # BASE: search, highlight, markdown, linkify
+   ├─ api/                     # BASE: every network exit (static files, chat endpoint)
+   ├─ contexto/                # BASE: what a state tab hands to its sections
+   │  ├─ entities.ts           # entity registry (generated from config/registry.toml)
+   │  ├─ EntityContext.tsx     # per-tab state context
+   │  └─ RespostaDaAba.tsx     # a tab's chat reports when it waits (spinner, then dot)
    ├─ theme/
    │  └─ system.js             # color token system (single source of truth)
-   ├─ test/
-   │  ├─ setup.ts              # Vitest setup (matchers, polyfills, cleanup)
-   │  └─ render.tsx            # renderWithProvider helper
-   ├─ shared/
-   │  ├─ AppHeader.tsx
-   │  ├─ entities.ts           # entity registry (states + their collections)
-   │  ├─ abas.ts               # state tabs: open/close/pick, persisted (auli.abas)
-   │  ├─ AbasDeEstado.tsx      # the state-tab strip in the header
-   │  ├─ RespostaDaAba.tsx     # a tab's chat reports when it waits (spinner, then dot)
-   │  ├─ EntityContext.tsx     # per-tab state context
-   │  ├─ CollectionEmpty.tsx   # "coming soon for this state" placeholder
-   │  ├─ AsyncContent.tsx
-   │  ├─ SearchInput.tsx
-   │  ├─ markdown.tsx
-   │  ├─ ErrorBoundary.tsx
-   │  ├─ fetchers.ts
-   │  └─ linkify.tsx
-   └─ pages/
-      ├─ stateselection/       # "Escolha o estado" map of a new tab (+ BrazilMap, brazilPaths)
-      ├─ home/                 # tabbed shell
-      ├─ chat/                 # chat + ui/ + utils/
-      ├─ servicoslist/
-      ├─ faqslist/
-      ├─ parecereslist/
-      ├─ notaslist/
-      ├─ conteudoslist/
-      └─ about/
+   └─ test/
+      ├─ setup.ts              # Vitest setup (matchers, polyfills, cleanup)
+      ├─ render.tsx            # renderWithProvider helper
+      └─ camadas.test.ts       # the layer rules above, as a test
 ```

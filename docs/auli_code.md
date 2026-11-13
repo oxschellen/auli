@@ -640,53 +640,53 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
 
 ### 4.2 Estrutura da aplicação
 
-- **Single-page sem roteador.** [App.tsx](auli-frontend/src/App.tsx) mostra uma **aba de
+- **Single-page sem roteador.** [App.tsx](auli-frontend/src/app/App.tsx) mostra uma **aba de
   estado** por estado aberto (faixa no cabeçalho, `[RS SEFAZ-RS ×] [+]`): a aba mostra
   `StateSelection` até ter um estado e depois o `Home` dele. As abas inativas ficam montadas e
   escondidas, cada uma com a sua conversa, seção e rolagem. Não há React Router; a navegação
   interna é por **abas** (as de estado e, dentro do `Home`, as de seção).
-- **Abas de estado.** [shared/abas.ts](auli-frontend/src/shared/abas.ts) abre, fecha e persiste as
+- **Abas de estado.** [app/abas.ts](auli-frontend/src/app/abas.ts) abre, fecha e persiste as
   abas em `localStorage` (chave `auli.abas`; migra o `auli.entity` de antes delas); um estado abre
-  numa aba só. [shared/EntityContext.tsx](auli-frontend/src/shared/EntityContext.tsx) dá a cada aba
-  a sua entidade (`useSelectedEntity`). [shared/RespostaDaAba.tsx](auli-frontend/src/shared/RespostaDaAba.tsx)
+  numa aba só. [contexto/EntityContext.tsx](auli-frontend/src/contexto/EntityContext.tsx) dá a cada aba
+  a sua entidade (`useSelectedEntity`). [contexto/RespostaDaAba.tsx](auli-frontend/src/contexto/RespostaDaAba.tsx)
   põe um spinner na aba enquanto a conversa dela espera resposta e, se a resposta chega com a aba
   escondida, um ponto até ela ser aberta — os dois no lugar do ×, que volta com o mouse sobre a
   aba. Desenho e decisões em [ESTUDO-abas-por-estado.md](ESTUDO-abas-por-estado.md).
-- **Registro de entidades (frontend).** [shared/entities.ts](auli-frontend/src/shared/entities.ts) é
+- **Registro de entidades (frontend).** [contexto/entities.ts](auli-frontend/src/contexto/entities.ts) é
   **gerado** de `config/registry.toml` por [scripts/tools/gen-frontend-entities.mjs](scripts/tools/gen-frontend-entities.mjs)
   (guardado por `scripts/tools/check-registry-sync.sh`), com **nove** entidades:
   - `rs` = SEFAZ-RS, coleções `["servicos","faqs","pareceres","notas","conteudos"]`.
   - `sc`/`sp`/`pr`/`mg`/`pe`/`ba`/`rj`/`ce` — coleções `["servicos"]`.
     `hasCollection(entity, collection)` dirige os estados "em breve".
-- **Abas** ([pages/home/Home.tsx](auli-frontend/src/pages/home/Home.tsx)): Chat, Serviços,
+- **Abas** ([secoes/home/Home.tsx](auli-frontend/src/secoes/home/Home.tsx)): Chat, Serviços,
   FAQs, Pareceres, Notas, Conteúdos, Sobre. Implementam o padrão WAI-ARIA de tabs (roving
   tabindex, navegação por setas). Cada aba é montada na primeira ativação e mantida montada
   (preserva rolagem/busca/histórico).
 
 ### 4.3 Chat (caminho ativo)
 
-- [pages/chat/Chat.tsx](auli-frontend/src/pages/chat/Chat.tsx): a URL da API é
+- [secoes/chat/Chat.tsx](auli-frontend/src/secoes/chat/Chat.tsx): a URL da API é
   `import.meta.env.VITE_API_URL ?? "https://api.auli.com.br/v1/question"`. Passa
   `entityId: entity.id` ao backend.
-- [pages/chat/utils/callServerAPI.ts](auli-frontend/src/pages/chat/utils/callServerAPI.ts):
+- [secoes/chat/hooks/callServerAPI.ts](auli-frontend/src/secoes/chat/hooks/callServerAPI.ts):
   `POST` via axios do corpo `{ question, entity? }`, com **timeout de 70 s** via
   `AbortController`; mensagens de erro/timeout em pt-BR. Lê `res.data.answer`, `log_id` e
   `fontes` (D-SF-10).
-- [pages/chat/Fontes.tsx](auli-frontend/src/pages/chat/Fontes.tsx): a lista fixa de fontes de
+- [secoes/chat/Fontes.tsx](auli-frontend/src/secoes/chat/Fontes.tsx): a lista fixa de fontes de
   Serviços + FAQs (§3.4.1, D-SF-10), abaixo da resposta, em três grupos — citadas à vista,
   também consideradas e descartadas recolhidas (§4.3.1, D-UI-8).
-- [pages/chat/utils/prompt.ts](auli-frontend/src/pages/chat/utils/prompt.ts): validação do
+- [secoes/chat/lib/prompt.ts](auli-frontend/src/secoes/chat/lib/prompt.ts): validação do
   prompt (mínimo de 10 caracteres) — fonte única usada pelo guard de envio, botão e contador.
-- [pages/chat/utils/useMessages.ts](auli-frontend/src/pages/chat/utils/useMessages.ts):
+- [secoes/chat/hooks/useMessages.ts](auli-frontend/src/secoes/chat/hooks/useMessages.ts):
   estado das mensagens, que começa **vazio** — antes da primeira pergunta o chat mostra o
-  [EstadoInicial](auli-frontend/src/pages/chat/EstadoInicial.tsx) (D-UI-10), não uma saudação.
-- **Minhas perguntas** (§4.3.2): [pages/chat/Historico.tsx](auli-frontend/src/pages/chat/Historico.tsx)
-  desenha o painel; [utils/historico.ts](auli-frontend/src/pages/chat/utils/historico.ts) tem as
-  operações puras sobre a lista; [utils/useHistorico.ts](auli-frontend/src/pages/chat/utils/useHistorico.ts)
-  é a única porta para o armazenamento; [utils/usePainelHistorico.ts](auli-frontend/src/pages/chat/utils/usePainelHistorico.ts)
+  [EstadoInicial](auli-frontend/src/secoes/chat/EstadoInicial.tsx) (D-UI-10), não uma saudação.
+- **Minhas perguntas** (§4.3.2): [secoes/chat/Historico.tsx](auli-frontend/src/secoes/chat/Historico.tsx)
+  desenha o painel; [lib/historico.ts](auli-frontend/src/secoes/chat/lib/historico.ts) tem as
+  operações puras sobre a lista; [hooks/useHistorico.ts](auli-frontend/src/secoes/chat/hooks/useHistorico.ts)
+  é a única porta para o armazenamento; [hooks/usePainelHistorico.ts](auli-frontend/src/secoes/chat/hooks/usePainelHistorico.ts)
   guarda se o painel está aberto, uma escolha só para todas as abas de estado.
 
-Há subpasta [pages/chat/ui/](auli-frontend/src/pages/chat/ui/) com 4 snippets utilitários do
+Há a pasta [ui/](auli-frontend/src/ui/) com 4 snippets utilitários do
 Chakra em `.jsx` (color-mode, provider, toaster, tooltip) — confirmando a observação do
 README de que apenas esses arquivos permanecem em JSX.
 
@@ -707,11 +707,11 @@ contrato da API, nos prompts ou nos packs.
 | **D-UI-2** | A caixa esvazia no **envio** (não na chegada); a resposta que chega rola até o **começo** dela; o botão do balão do usuário vira "Reutilizar a pergunta" (ícone de lápis) | A pergunta ficava no campo com "Pronto para enviar" durante a espera, convidando a reenviar; a resposta longa abria na tabela e nas fontes, com o Resumo fora da vista; o ícone de cópia não dizia que a pergunta volta para a caixa |
 | **D-UI-3** | Item ativo da barra lateral em peso 600 (era 700); `SIDEBAR_WIDTH` 210 → 224px | O negrito alargava o texto e cortava "Artigos e estu…" |
 | **D-UI-4** | Cabeçalho de 52px na cor de superfície, com o estado à esquerda ("SEFAZ-RS ▾") e a versão como dica do logo; coluna de leitura de 760px; caixa numa linha só (seletor compacto + campo que cresce a partir de 1 linha + enviar), dica de mínimo só com texto curto; aviso de protótipo uma vez, sob a caixa; faixa da caixa na cor do fundo; fundo escuro `#111113` (era `#000`) | Devolve área de leitura e legibilidade (70–80 caracteres por linha). O aviso de 3 linhas repetido em toda resposta vira uma linha fixa |
-| **D-UI-5** | `utils/secoes.ts` separa "Resumo" e "Detalhes" do texto — rótulo em negrito sozinho, com dois-pontos, ou como título | O modelo escreve `**Resumo**` colado ao parágrafo, e a estrutura que o prompt pede sumia no render |
+| **D-UI-5** | `lib/secoes.ts` separa "Resumo" e "Detalhes" do texto — rótulo em negrito sozinho, com dois-pontos, ou como título | O modelo escreve `**Resumo**` colado ao parágrafo, e a estrutura que o prompt pede sumia no render |
 | **D-UI-6** | O Resumo vira bloco de destaque (token `bg.resumo`, rótulo em `accent.strong`) | É a parte mais lida; tem de ser a primeira coisa que o olho encontra. Fundo, não borda lateral colorida (clichê que envelhece mal) |
-| **D-UI-7** | `utils/citacoes.ts` + `CitacaoSelo`: `[Serviço 2]` vira selo clicável que leva à fonte e a realça (2,5 s); a dica mostra o título | Fecha visualmente a promessa da D-SF-7 e da D-SF-10: cada afirmação aponta para a origem. Só vira selo quando há lista de fontes para onde levar |
-| **D-UI-8** | `utils/fontes.ts` + `Fontes.tsx`: três grupos — **citadas** (sempre à vista), **também consideradas** (com selo "depende de condição"; abrem sozinhas se o texto não cita nada) e **descartadas** (recolhidas, mas presentes) | O que sustenta o texto fica à vista; a alternativa `condicional` que o texto às vezes omite (REGISTRO-triagem §7) fica a um clique; o descarte errado continua visível |
-| **D-UI-9** | Linha de contexto no topo da resposta ("Serviços + FAQs · respondida em 8 s"); `Message` ganha `tipo` e `duracaoMs`; `utils/tipos.ts` concentra rótulo, descrição, apresentação, placeholder e exemplos de cada tipo | Numa conversa que mistura tipos, não se sabia de que gaveta veio cada resposta. O texto de cada tipo, que estava espalhado, fica num lugar só |
+| **D-UI-7** | `lib/citacoes.ts` + `CitacaoSelo`: `[Serviço 2]` vira selo clicável que leva à fonte e a realça (2,5 s); a dica mostra o título | Fecha visualmente a promessa da D-SF-7 e da D-SF-10: cada afirmação aponta para a origem. Só vira selo quando há lista de fontes para onde levar |
+| **D-UI-8** | `lib/fontes.ts` + `Fontes.tsx`: três grupos — **citadas** (sempre à vista), **também consideradas** (com selo "depende de condição"; abrem sozinhas se o texto não cita nada) e **descartadas** (recolhidas, mas presentes) | O que sustenta o texto fica à vista; a alternativa `condicional` que o texto às vezes omite (REGISTRO-triagem §7) fica a um clique; o descarte errado continua visível |
+| **D-UI-9** | Linha de contexto no topo da resposta ("Serviços + FAQs · respondida em 8 s"); `Message` ganha `tipo` e `duracaoMs`; `lib/textoDosTipos.ts` concentra rótulo, descrição, apresentação, placeholder e exemplos de cada tipo | Numa conversa que mistura tipos, não se sabia de que gaveta veio cada resposta. O texto de cada tipo, que estava espalhado, fica num lugar só |
 | **D-UI-10** | `EstadoInicial.tsx` no lugar do "Olá! Como posso ajudar?": o que o tipo faz, três exemplos (vão para a caixa, não são enviados) e o que a Auli não responde | Reduz pergunta feita no tipo errado e deixa explícito que situação de contribuinte e erro de sistema estão fora do acervo público |
 
 **Correção posterior (mesma entrega):** a saudação "Olá! Como posso ajudar?" seguia como primeira
@@ -751,26 +751,26 @@ no `App` nem no `Home`.
 ### 4.4 Páginas de referência (conteúdo estático por entidade)
 
 Todas usam SWR + `entityPath(entityId, file)` →
-`/<entityId>/<entityId>-<file>?v=<buildId>` ([shared/fetchers.ts](auli-frontend/src/shared/fetchers.ts)):
+`/<entityId>/<entityId>-<file>?v=<buildId>` ([api/estaticos.ts](auli-frontend/src/api/estaticos.ts)):
 os arquivos em `public/<id>/` são **prefixados com `<id>-`** (globalmente únicos), e o `entityPath`
 adiciona esse prefixo ao buscar (o consumidor passa o nome "cru"). Nomes crus por aba:
 
 | Aba       | Arquivo lido (cru; servido como `<id>-…`)                                 | Fonte                                                                                                                                       |
 | --------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Serviços  | `servicos-index.json` (manifesto de abas) + `<filename>.json` por público | [pages/servicoslist/ServicosList.tsx](auli-frontend/src/pages/servicoslist/ServicosList.tsx)                                                |
-| FAQs      | `faqs-tree.json` (árvore recursiva)                                       | [pages/faqslist/FaqsList.tsx](auli-frontend/src/pages/faqslist/FaqsList.tsx), [parseFaqs.ts](auli-frontend/src/pages/faqslist/parseFaqs.ts) |
-| Pareceres | `portal-pareceres.txt` (texto)                                            | [pages/parecereslist/PareceresList.tsx](auli-frontend/src/pages/parecereslist/PareceresList.tsx)                                            |
-| Notas     | `portal-notas.txt` (texto)                                                | [pages/notaslist/NotasList.tsx](auli-frontend/src/pages/notaslist/NotasList.tsx)                                                            |
-| Conteúdos | `conteudo_site_tree.json`                                                 | [pages/conteudoslist/ConteudosList.tsx](auli-frontend/src/pages/conteudoslist/ConteudosList.tsx)                                            |
+| Serviços  | `servicos-index.json` (manifesto de abas) + `<filename>.json` por público | [secoes/servicos/ServicosList.tsx](auli-frontend/src/secoes/servicos/ServicosList.tsx)                                                |
+| FAQs      | `faqs-tree.json` (árvore recursiva)                                       | [secoes/faqs/FaqsList.tsx](auli-frontend/src/secoes/faqs/FaqsList.tsx), [faqs.ts](auli-frontend/src/secoes/faqs/faqs.ts) |
+| Pareceres | `portal-pareceres.txt` (texto)                                            | [secoes/jurisprudencia/PareceresList.tsx](auli-frontend/src/secoes/jurisprudencia/PareceresList.tsx)                                            |
+| Notas     | `portal-notas.txt` (texto)                                                | [secoes/notas/NotasList.tsx](auli-frontend/src/secoes/notas/NotasList.tsx)                                                            |
+| Conteúdos | `conteudo_site_tree.json`                                                 | [secoes/conteudos/ConteudosList.tsx](auli-frontend/src/secoes/conteudos/ConteudosList.tsx)                                            |
 
 - A aba **Serviços** lê `servicos-index.json` para montar as abas de público; se ausente,
   usa o fallback hardcoded `getDefaultTipoServicos()` (5 tipos RS) em
-  [pages/servicoslist/utils.ts](auli-frontend/src/pages/servicoslist/utils.ts). Agrupa por
+  [secoes/servicos/servicos.ts](auli-frontend/src/secoes/servicos/servicos.ts). Agrupa por
   `classe` em acordeões e busca por `titulo`.
-- Pareceres/Notas usam `editLinks` ([shared/linkify.tsx](auli-frontend/src/shared/linkify.tsx))
+- Pareceres/Notas usam `editLinks` ([lib/linkify.tsx](auli-frontend/src/lib/linkify.tsx))
   para transformar links no texto.
 - Quando a entidade não tem a coleção (`hasCollection` falso), renderiza
-  [shared/CollectionEmpty.tsx](auli-frontend/src/shared/CollectionEmpty.tsx) ("em breve").
+  [ui/CollectionEmpty.tsx](auli-frontend/src/ui/CollectionEmpty.tsx) ("em breve").
 
 **Dados estáticos presentes** (confirmado na árvore de `public/`, gerada por
 [scripts/build-frontend-public.sh](scripts/build-frontend-public.sh) — que aceita um `<id>` opcional
@@ -784,25 +784,25 @@ alimentam os packs, lidos de `data/<id>/raw/`).
 
 ### 4.5 Seleção de estado e mapa
 
-[pages/stateselection/StateSelection.tsx](auli-frontend/src/pages/stateselection/StateSelection.tsx)
-apresenta um mapa interativo do Brasil ([BrazilMap.tsx](auli-frontend/src/pages/stateselection/BrazilMap.tsx),
-[brazilPaths.ts](auli-frontend/src/pages/stateselection/brazilPaths.ts)) dentro de uma aba de
+[secoes/mapa/StateSelection.tsx](auli-frontend/src/secoes/mapa/StateSelection.tsx)
+apresenta um mapa interativo do Brasil ([BrazilMap.tsx](auli-frontend/src/secoes/mapa/BrazilMap.tsx),
+[brazilPaths.ts](auli-frontend/src/secoes/mapa/brazilPaths.ts)) dentro de uma aba de
 estado ainda sem estado; escolher chama o `onSelect` da aba.
 
 ### 4.6 Tema, erros e testes
 
 - Tokens semânticos de cor centralizados em [src/theme/system.js](auli-frontend/src/theme/system.js)
   (claro/escuro); modo de cor via `next-themes`.
-- `ErrorBoundary` ([shared/ErrorBoundary.tsx](auli-frontend/src/shared/ErrorBoundary.tsx)).
+- `ErrorBoundary` ([app/ErrorBoundary.tsx](auli-frontend/src/app/ErrorBoundary.tsx)).
 - Testes presentes: `SearchInput`, `AsyncContent`, `linkify`, `Input`, `Messages`,
-  `callServerAPI`, `prompt`, `parseFaqs`, `parseConteudos` (arquivos `*.test.ts(x)`).
+  `callServerAPI`, `prompt`, `faqs`, `conteudos`, `camadas` (arquivos `*.test.ts(x)`).
 
 ### 4.7 Distinção ativo vs modelado (frontend)
 
 - O frontend é **single-tenant em tempo de execução por deploy**: serve os arquivos de uma
   pasta `public/` específica; a seleção de entidade (as 12) muda apenas qual `public/<id>/` é
   consultado. Não há, no código, busca de uma lista de entidades vinda do backend — a lista vem de
-  [shared/entities.ts](auli-frontend/src/shared/entities.ts), **gerado** de `config/registry.toml`
+  [contexto/entities.ts](auli-frontend/src/contexto/entities.ts), **gerado** de `config/registry.toml`
   (não editado à mão).
 - O frontend **não** consome rotas de gestão de dados do servidor; o único endpoint de backend
   efetivamente chamado é `POST /v1/question` (via `VITE_API_URL`). Não há, no código do
