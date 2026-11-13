@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Box, Flex, Text, Badge } from "@chakra-ui/react";
-import { m, AnimatePresence, useReducedMotion } from "framer-motion";
+import { comoBotao, PainelRevelado } from "../../ui/Acordeao";
 import { Highlight } from "../../lib/highlight";
 import { parseQuery } from "../../lib/textSearch";
 import { SemResultados } from "../../ui/busca";
@@ -54,15 +54,7 @@ function ItemRow({ item, terms }: { item: ConteudoItem; terms: string[] }) {
         cursor={hasUrl ? "pointer" : "default"}
         _hover={{ bg: hasUrl ? "bg.subtle" : undefined }}
         style={{ transition: "background 0.12s ease" }}
-        onClick={() => hasUrl && openUrl(item.url)}
-        onKeyDown={(e) => {
-          if (hasUrl && (e.key === "Enter" || e.key === " ")) {
-            e.preventDefault();
-            openUrl(item.url);
-          }
-        }}
-        role={hasUrl ? "button" : undefined}
-        tabIndex={hasUrl ? 0 : undefined}
+        {...comoBotao(() => openUrl(item.url), hasUrl)}
       >
         <Flex align="center" gap={2} flex={1}>
           {icon && (
@@ -89,7 +81,6 @@ function ItemRow({ item, terms }: { item: ConteudoItem; terms: string[] }) {
 }
 
 function CategoryPanel({ category, terms }: { category: ConteudoCategory; terms: string[] }) {
-  const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -103,15 +94,7 @@ function CategoryPanel({ category, terms }: { category: ConteudoCategory; terms:
         cursor="pointer"
         _hover={{ bg: isOpen ? "bg.app" : "bg.subtle" }}
         style={{ transition: "background 0.15s ease" }}
-        onClick={() => setIsOpen((o) => !o)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setIsOpen((o) => !o);
-          }
-        }}
-        role="button"
-        tabIndex={0}
+        {...comoBotao(() => setIsOpen((o) => !o))}
         aria-expanded={isOpen}
       >
         <Flex align="center" gap={2}>
@@ -135,28 +118,14 @@ function CategoryPanel({ category, terms }: { category: ConteudoCategory; terms:
         </Box>
       </Flex>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <m.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.22, ease: "easeInOut" }}
-            // Mesma contenção do painel de Serviços, e pelo mesmo motivo: animar `height` até
-            // `auto` refaz layout a cada quadro, e `contain` prende esse custo na fronteira do
-            // painel. A animação fica — é revelação intrínseca, o caso que a regra
-            // `no-layout-property-animation` (dispensada em `doctor.config.json`) manda conter.
-            style={{ overflow: "hidden", contain: "layout paint" }}
-          >
-            {/* O separador da key é um NUL escapado: é o único caractere que não pode
+      <PainelRevelado aberto={isOpen}>
+        {/* O separador da key é um NUL escapado: é o único caractere que não pode
                 aparecer no título nem na URL. Escapado, e não literal — o byte cru fazia
                 `grep` e `git diff` tratarem este arquivo como binário. */}
-            {category.items.map((item) => (
-              <ItemRow key={`${item.title}\u0000${item.url}`} item={item} terms={terms} />
-            ))}
-          </m.div>
-        )}
-      </AnimatePresence>
+        {category.items.map((item) => (
+          <ItemRow key={`${item.title}\u0000${item.url}`} item={item} terms={terms} />
+        ))}
+      </PainelRevelado>
     </Box>
   );
 }

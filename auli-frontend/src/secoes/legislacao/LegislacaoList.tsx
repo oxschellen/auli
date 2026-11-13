@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
-import { m, AnimatePresence, useReducedMotion } from "framer-motion";
+import { comoBotao, PainelRevelado } from "../../ui/Acordeao";
 import { MdExpandLess, MdExpandMore, MdOpenInNew } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import useSWR from "swr";
@@ -45,7 +45,6 @@ const markdownComponents = {
  */
 function ItemDispositivo({ d, terms }: { d: Dispositivo; terms: string[] }) {
   const caminho = caminhoNaLei(d.trilha);
-  const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   // Sem termos o plugin é um no-op, mas evitamos até instanciá-lo no caso comum (sem busca).
   const rehypePlugins = useMemo(() => (terms.length ? [rehypeHighlight(terms)] : []), [terms]);
@@ -61,15 +60,7 @@ function ItemDispositivo({ d, terms }: { d: Dispositivo; terms: string[] }) {
         cursor="pointer"
         _hover={{ bg: isOpen ? "bg.app" : "bg.subtle" }}
         style={{ transition: "background 0.15s ease" }}
-        onClick={() => setIsOpen((o) => !o)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setIsOpen((o) => !o);
-          }
-        }}
-        role="button"
-        tabIndex={0}
+        {...comoBotao(() => setIsOpen((o) => !o))}
         aria-expanded={isOpen}
       >
         {/* O dispositivo é a identidade da linha e é por ele que o analista procura — daí vir
@@ -101,49 +92,35 @@ function ItemDispositivo({ d, terms }: { d: Dispositivo; terms: string[] }) {
         </Box>
       </Flex>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <m.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.22, ease: "easeInOut" }}
-            // Mesma contenção do painel de Serviços, e pelo mesmo motivo: animar `height` até
-            // `auto` refaz layout a cada quadro, e `contain` prende esse custo na fronteira do
-            // painel. A animação fica — é revelação intrínseca, o caso que a regra
-            // `no-layout-property-animation` (dispensada em `doctor.config.json`) manda conter.
-            style={{ overflow: "hidden", contain: "layout paint" }}
-          >
-            <Box bg="bg.app" px={4} py={3} pl="calc(1rem + 7.5rem + 0.75rem)">
-              {d.link && (
-                <Link
-                  href={d.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  color="accent"
-                  fontSize="0.85rem"
-                  display="inline-flex"
-                  alignItems="center"
-                  gap={1}
-                  mb={2}
-                  aria-label={`Abrir ${d.ementa} no portal oficial`}
-                >
-                  <MdOpenInNew size={14} /> Abrir no portal
-                </Link>
-              )}
-              <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
-                <ReactMarkdown
-                  remarkPlugins={markdownPlugins}
-                  rehypePlugins={rehypePlugins}
-                  components={markdownComponents}
-                >
-                  {d.corpo}
-                </ReactMarkdown>
-              </Box>
-            </Box>
-          </m.div>
-        )}
-      </AnimatePresence>
+      <PainelRevelado aberto={isOpen}>
+        <Box bg="bg.app" px={4} py={3} pl="calc(1rem + 7.5rem + 0.75rem)">
+          {d.link && (
+            <Link
+              href={d.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="accent"
+              fontSize="0.85rem"
+              display="inline-flex"
+              alignItems="center"
+              gap={1}
+              mb={2}
+              aria-label={`Abrir ${d.ementa} no portal oficial`}
+            >
+              <MdOpenInNew size={14} /> Abrir no portal
+            </Link>
+          )}
+          <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
+            <ReactMarkdown
+              remarkPlugins={markdownPlugins}
+              rehypePlugins={rehypePlugins}
+              components={markdownComponents}
+            >
+              {d.corpo}
+            </ReactMarkdown>
+          </Box>
+        </Box>
+      </PainelRevelado>
     </Box>
   );
 }
@@ -183,15 +160,7 @@ function GrupoLei({
         borderRadius="8px"
         cursor="pointer"
         _hover={{ bg: "bg.subtle" }}
-        onClick={alternar}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            alternar();
-          }
-        }}
-        role="button"
-        tabIndex={0}
+        {...comoBotao(alternar)}
         aria-expanded={aberto}
       >
         <Text fontSize="0.95rem" fontWeight="700" color="fg" lineHeight="1.25">

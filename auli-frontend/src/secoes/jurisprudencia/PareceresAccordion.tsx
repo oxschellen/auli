@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
-import { m, AnimatePresence, useReducedMotion } from "framer-motion";
+import { comoBotao, PainelRevelado } from "../../ui/Acordeao";
 import { MdExpandMore, MdExpandLess, MdOpenInNew } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import type { Parecer } from "./pareceres";
@@ -22,7 +22,6 @@ const markdownComponents = {
 
 /** Uma linha de parecer: cabeçalho (número + assunto) que abre para a sinopse + link do portal. */
 function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
-  const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   // Sem termos o plugin é um no-op, mas evitamos até instanciá-lo no caso comum (sem busca).
   const rehypePlugins = useMemo(() => (terms.length ? [rehypeHighlight(terms)] : []), [terms]);
@@ -39,15 +38,7 @@ function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
         cursor="pointer"
         _hover={{ bg: isOpen ? "bg.app" : "bg.subtle" }}
         style={{ transition: "background 0.15s ease" }}
-        onClick={() => setIsOpen((o) => !o)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setIsOpen((o) => !o);
-          }
-        }}
-        role="button"
-        tabIndex={0}
+        {...comoBotao(() => setIsOpen((o) => !o))}
         aria-expanded={isOpen}
       >
         <Box flex={1} minW={0}>
@@ -65,56 +56,42 @@ function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
         </Box>
       </Flex>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <m.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.22, ease: "easeInOut" }}
-            // Mesma contenção do painel de Serviços, e pelo mesmo motivo: animar `height` até
-            // `auto` refaz layout a cada quadro, e `contain` prende esse custo na fronteira do
-            // painel. A animação fica — é revelação intrínseca, o caso que a regra
-            // `no-layout-property-animation` (dispensada em `doctor.config.json`) manda conter.
-            style={{ overflow: "hidden", contain: "layout paint" }}
-          >
-            <Box bg="bg.app" px={4} py={3}>
-              {p.link && (
-                <Link
-                  href={p.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  color="accent"
-                  fontSize="0.85rem"
-                  display="inline-flex"
-                  alignItems="center"
-                  gap={1}
-                  mb={2}
-                >
-                  <MdOpenInNew size={14} /> Abrir no portal
-                </Link>
-              )}
-              {p.resumo ? (
-                <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
-                  <ReactMarkdown
-                    remarkPlugins={markdownPlugins}
-                    rehypePlugins={rehypePlugins}
-                    components={markdownComponents}
-                  >
-                    {p.resumo}
-                  </ReactMarkdown>
-                </Box>
-              ) : (
-                // A árvore permite documento sem sinopse (pendente); o índice o traz assim mesmo,
-                // para não sumir da listagem. O link acima continua sendo o caminho da íntegra.
-                <Text color="fg.muted" fontSize="0.85rem" fontStyle="italic">
-                  Sinopse ainda não disponível — abra no portal para o texto integral.
-                </Text>
-              )}
+      <PainelRevelado aberto={isOpen}>
+        <Box bg="bg.app" px={4} py={3}>
+          {p.link && (
+            <Link
+              href={p.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="accent"
+              fontSize="0.85rem"
+              display="inline-flex"
+              alignItems="center"
+              gap={1}
+              mb={2}
+            >
+              <MdOpenInNew size={14} /> Abrir no portal
+            </Link>
+          )}
+          {p.resumo ? (
+            <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
+              <ReactMarkdown
+                remarkPlugins={markdownPlugins}
+                rehypePlugins={rehypePlugins}
+                components={markdownComponents}
+              >
+                {p.resumo}
+              </ReactMarkdown>
             </Box>
-          </m.div>
-        )}
-      </AnimatePresence>
+          ) : (
+            // A árvore permite documento sem sinopse (pendente); o índice o traz assim mesmo,
+            // para não sumir da listagem. O link acima continua sendo o caminho da íntegra.
+            <Text color="fg.muted" fontSize="0.85rem" fontStyle="italic">
+              Sinopse ainda não disponível — abra no portal para o texto integral.
+            </Text>
+          )}
+        </Box>
+      </PainelRevelado>
     </Box>
   );
 }

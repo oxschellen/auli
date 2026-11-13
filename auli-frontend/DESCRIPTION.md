@@ -295,6 +295,11 @@ and fails when a rule breaks.
   this state" placeholder shown by a section the selected entity has no data for.
 - [AsyncContent.tsx](src/ui/AsyncContent.tsx) — three-state gate
   (loading spinner / error alert / children) shared by every SWR-backed page.
+- [Acordeao.tsx](src/ui/Acordeao.tsx) — `PainelRevelado` (the accordion panel:
+  height 0 → `auto` once, 0.22 s, still under `prefers-reduced-motion`, with
+  `contain: layout paint` — the only height animation in the app) and
+  `comoBotao(acao, ativo)` (role, Tab focus, click, Enter and Space for an element
+  that is not a `<button>`; inactive, it is plain text).
 - [busca.tsx](src/ui/busca.tsx) — the pieces every searchable list uses:
   `useBusca` (the text, its deferred value, the normalized terms, and whether a
   search is active), `BarraDeBusca` (the sticky bar with the field and the

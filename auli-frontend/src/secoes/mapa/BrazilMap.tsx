@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Box, useToken } from "@chakra-ui/react";
 import { getEntityByUf } from "../../contexto/entities";
 import { BRAZIL_UF_PATHS, BRAZIL_VIEWBOX } from "./brazilPaths";
+import { comoBotao } from "../../ui/Acordeao";
 
 interface BrazilMapProps {
   /** Called with the entity id when an available (selectable) state is clicked. */
@@ -116,25 +117,13 @@ export function BrazilMap({ onSelect }: BrazilMapProps) {
                 stroke={stroke}
                 strokeWidth={1.2}
                 style={{ cursor: available ? "pointer" : "default", transition: "fill 0.15s ease" }}
-                role={available ? "button" : undefined}
-                tabIndex={available ? 0 : undefined}
+                {...comoBotao(() => entity && onSelect(entity.id), available)}
                 aria-label={available ? `Selecionar ${entity?.name} (${entity?.state})` : undefined}
                 aria-disabled={available ? undefined : true}
-                onClick={available ? () => entity && onSelect(entity.id) : undefined}
                 onMouseEnter={available ? () => setHoveredUf(uf) : undefined}
                 onMouseLeave={available ? () => setHoveredUf(null) : undefined}
                 onFocus={available ? () => setHoveredUf(uf) : undefined}
                 onBlur={available ? () => setHoveredUf(null) : undefined}
-                onKeyDown={
-                  available
-                    ? (e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          if (entity) onSelect(entity.id);
-                        }
-                      }
-                    : undefined
-                }
               >
                 <title>{available ? entity?.name : uf}</title>
               </path>

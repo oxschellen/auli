@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
-import type { KeyboardEvent, MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import { Box, Flex, Text, chakra } from "@chakra-ui/react";
-import { m, AnimatePresence, useReducedMotion } from "framer-motion";
+import { comoBotao, PainelRevelado } from "../../ui/Acordeao";
 import { MdExpandMore, MdExpandLess, MdOpenInNew, MdContentCopy } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { getEffectiveUrl, type FaqNode, type FaqSearchHit } from "./faqs";
@@ -38,7 +38,6 @@ interface FaqsAccordionProps {
 const MENU_TYPES = new Set(["Menu", "Geral"]);
 
 function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNodeProps) {
-  const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = node.children.length > 0;
   const effectiveUrl = getEffectiveUrl(node, ancestors);
@@ -67,13 +66,6 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
   const expandable = hasChildren || isFaqLeaf;
   const interactive = expandable || !!effectiveUrl;
 
-  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    if (interactive && (e.key === "Enter" || e.key === " ")) {
-      e.preventDefault();
-      toggleOrOpenNode();
-    }
-  }
-
   return (
     <Box>
       <Flex
@@ -86,10 +78,7 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
         cursor={interactive ? "pointer" : "default"}
         _hover={{ bg: isOpen ? "bg.app" : "bg.subtle" }}
         style={{ transition: "background 0.15s ease", paddingLeft: `${indentPx}px` }}
-        onClick={toggleOrOpenNode}
-        onKeyDown={handleKeyDown}
-        role="button"
-        tabIndex={interactive ? 0 : undefined}
+        {...comoBotao(toggleOrOpenNode, interactive)}
         aria-expanded={expandable ? isOpen : undefined}
       >
         <Flex align="center" gap={2} flex={1} mr={2}>
@@ -145,53 +134,36 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
         </Flex>
       </Flex>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <m.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { duration: 0.25, ease: "easeInOut" }}
-            // Mesma contenção do painel de Serviços, e pelo mesmo motivo: animar `height` até
-            // `auto` refaz layout a cada quadro, e `contain` prende esse custo na fronteira do
-            // painel. A animação fica — é revelação intrínseca, o caso que a regra
-            // `no-layout-property-animation` (dispensada em `doctor.config.json`) manda conter.
-            style={{ overflow: "hidden", contain: "layout paint" }}
+      <PainelRevelado aberto={isOpen}>
+        {hasChildren &&
+          node.children.map((child) => (
+            <TreeNode
+              key={child.id}
+              node={child}
+              ancestors={nextAncestors}
+              depth={depth + 1}
+              perguntaMap={perguntaMap}
+              pageTypeMap={pageTypeMap}
+            />
+          ))}
+        {isFaqLeaf && (
+          <Box
+            style={{ paddingLeft: `${indentPx}px` }}
+            pr={4}
+            py={3}
+            bg="bg.app"
+            borderBottom="1px solid var(--chakra-colors-border)"
+            fontSize="0.95rem"
+            color="fg"
+            lineHeight="1.7"
+            className="faq-answer"
           >
-            {hasChildren &&
-              node.children.map((child) => (
-                <TreeNode
-                  key={child.id}
-                  node={child}
-                  ancestors={nextAncestors}
-                  depth={depth + 1}
-                  perguntaMap={perguntaMap}
-                  pageTypeMap={pageTypeMap}
-                />
-              ))}
-            {isFaqLeaf && (
-              <Box
-                style={{ paddingLeft: `${indentPx}px` }}
-                pr={4}
-                py={3}
-                bg="bg.app"
-                borderBottom="1px solid var(--chakra-colors-border)"
-                fontSize="0.95rem"
-                color="fg"
-                lineHeight="1.7"
-                className="faq-answer"
-              >
-                <ReactMarkdown
-                  remarkPlugins={markdownPlugins}
-                  components={compactMarkdownComponents}
-                >
-                  {answer ?? ""}
-                </ReactMarkdown>
-              </Box>
-            )}
-          </m.div>
+            <ReactMarkdown remarkPlugins={markdownPlugins} components={compactMarkdownComponents}>
+              {answer ?? ""}
+            </ReactMarkdown>
+          </Box>
         )}
-      </AnimatePresence>
+      </PainelRevelado>
     </Box>
   );
 }
@@ -214,15 +186,7 @@ function SearchResult({ node, ancestors, terms }: SearchResultProps) {
       cursor={effectiveUrl ? "pointer" : "default"}
       _hover={{ bg: effectiveUrl ? "bg.subtle" : undefined }}
       style={{ transition: "background 0.15s ease" }}
-      onClick={openNodeUrl}
-      onKeyDown={(e) => {
-        if (effectiveUrl && (e.key === "Enter" || e.key === " ")) {
-          e.preventDefault();
-          openNodeUrl();
-        }
-      }}
-      role={effectiveUrl ? "button" : undefined}
-      tabIndex={effectiveUrl ? 0 : undefined}
+      {...comoBotao(openNodeUrl, !!effectiveUrl)}
     >
       {breadcrumb && (
         <Text fontSize="0.75rem" color="fg.muted" mb={1} lineHeight="1.4">
