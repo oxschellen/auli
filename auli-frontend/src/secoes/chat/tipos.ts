@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { Fonte } from "../../api/chat";
-import type { QuestionType } from "./hooks/useQuestionType";
+import type { QuestionType } from "./lib/tipoDeConsulta";
 
 /** Who authored a chat message. */
 type MessageSender = "user" | "server";
@@ -26,5 +26,5 @@ export interface Message {
   duracaoMs?: number;
 }
 
-/** Setter returned by `usePrompt`, matching React's `useState<string>` setter. */
+/** O setter da caixa de mensagem (o `useState<string>` do `Chat`). */
 export type SetPrompt = Dispatch<SetStateAction<string>>;

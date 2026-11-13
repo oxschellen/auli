@@ -13,7 +13,7 @@ import { CitacaoSelo } from "./CitacaoSelo";
 import { dividirSecoes } from "./lib/secoes";
 import { ancora, marcarCitacoes, rotuloDoHref, rotulosCitados } from "./lib/citacoes";
 import { TIPOS } from "./lib/textoDosTipos";
-import type { QuestionType } from "./hooks/useQuestionType";
+import type { QuestionType } from "./lib/tipoDeConsulta";
 import type { Fonte } from "../../api/chat";
 
 interface SystemMessageProps {
@@ -113,7 +113,7 @@ export const SystemMessage = ({
   );
 
   // Sem ações (`showButton` falso), a mensagem segue como balão simples. A resposta ocupa a
-  // coluna — e as mensagens de erro também, porque o `callServerAPI` as cria com `showButton`.
+  // coluna — e as mensagens de erro também, porque o `useConversa` as cria com `showButton`.
   if (!showButton) {
     return (
       <Flex px={3} py={2} w="100%">

@@ -174,11 +174,17 @@ anchor.
 
 The conversational core.
 
-- [Chat.tsx](src/secoes/chat/Chat.tsx) — orchestrates state and layout. Holds
-  message list, prompt, and loading state; auto-scrolls to the latest message;
-  uses an `isSubmittingRef` guard to prevent double submits; pins the input bar
-  to the bottom and lifts it above the virtual keyboard (measured via
-  `visualViewport`, no device sniffing).
+- [Chat.tsx](src/secoes/chat/Chat.tsx) — composes the parts below and keeps
+  what is the chat's own: sending (valid prompt, history entry and an empty box
+  at send time, D-HIST-3/D-UI-2), scrolling to the answer that arrives (to its
+  start, D-UI-2), and a history question going back to the box with its type.
+- [Compositor.tsx](src/secoes/chat/Compositor.tsx) — the fixed composer bar:
+  the "Minhas perguntas" buttons, the mobile collapse bar, the message box with
+  the type selector inside, and the prototype notice. It lifts itself above the
+  virtual keyboard (measured via `visualViewport`, no device sniffing), clears
+  the sidebar, and measures its own height so the transcript is not hidden.
+- [PainelHistorico.tsx](src/secoes/chat/PainelHistorico.tsx) — "Minhas
+  perguntas" in its two forms: a column from `xl` and a drawer below.
 - [Input.tsx](src/secoes/chat/Input.tsx) — multiline `Textarea` + send button.
   **Enter** submits (Shift+Enter = newline). A live character hint shows how
   many characters remain.
@@ -196,19 +202,20 @@ The conversational core.
 
 **Chat hooks and logic (`hooks/` and `lib/` under `src/secoes/chat/`):**
 
-- [callServerAPI.ts](src/secoes/chat/hooks/callServerAPI.ts) — optimistically
-  appends the user message and an "Aguarde! Pensando..." placeholder, asks the
-  API through `perguntar` ([api/chat.ts](src/api/chat.ts)), then replaces the
-  placeholder with the answer or a friendly error (timeout, rate limit — with the
-  server's own message —, or server unavailable). `Chat` reads the active entity
-  via `useSelectedEntity()`.
+- [useConversa.ts](src/secoes/chat/hooks/useConversa.ts) — the conversation:
+  messages (empty at first, D-UI-10), whether it is waiting, and `enviar`, which
+  appends the question and an "Aguarde! Pensando..." placeholder, asks the API
+  through `perguntar` ([api/chat.ts](src/api/chat.ts)) and swaps the placeholder
+  for the answer or a friendly error (timeout, rate limit — with the server's own
+  message —, or server unavailable). It answers at once whether it took the
+  question (`false` while another is on its way: no double submit).
+- [tipoDeConsulta.ts](src/secoes/chat/lib/tipoDeConsulta.ts) — the question
+  type (`QuestionType`, a backend contract), the collection each one needs, and
+  `tiposDisponiveis(entity)`; `hooks/useQuestionType.ts` persists the choice.
 - [prompt.ts](src/secoes/chat/lib/prompt.ts) — the single source of truth for
   the prompt-length rule: `MIN_PROMPT_LENGTH` (10), `isPromptValid`, and
   `charsRemaining`, used by the send guard, the button's disabled state, and the
   character hint.
-- [useMessages.ts](src/secoes/chat/hooks/useMessages.ts) — seeds the transcript
-  with a greeting message and exposes `{ messages, setMessages }`.
-- [usePrompt.ts](src/secoes/chat/hooks/usePrompt.ts) — prompt input state.
 - [useIsKeyboardVisible.ts](src/secoes/chat/hooks/useIsKeyboardVisible.ts) —
   detects the on-screen keyboard and its height (via `visualViewport`) so the
   input bar can float above it.
@@ -489,8 +496,8 @@ typed `.ts`/`.tsx`; the only JavaScript file left is
 
 Coverage:
 
-- **Logic:** `prompt`, `faqs`, `conteudos`, `editLinks`, and the
-  `callServerAPI` branches (mocked Axios).
+- **Logic:** `prompt`, `faqs`, `conteudos`, `editLinks`, the `api/chat`
+  contract and the `useConversa` flow (mocked Axios).
 - **Structure:** [camadas.test.ts](src/test/camadas.test.ts) — the layer rules of
   [App Shell and Base Modules](#app-shell-and-base-modules).
 - **Render:** `SearchInput`, `AsyncContent`, `Input`, `Messages`.

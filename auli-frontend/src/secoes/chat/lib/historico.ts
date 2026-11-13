@@ -1,4 +1,4 @@
-import { isQuestionType, type QuestionType } from "../hooks/useQuestionType";
+import { isQuestionType, type QuestionType } from "./tipoDeConsulta";
 
 /**
  * Uma pergunta enviada, como o painel "Minhas perguntas" a guarda (D-HIST-2).
