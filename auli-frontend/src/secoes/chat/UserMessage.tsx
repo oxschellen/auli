@@ -28,7 +28,7 @@ export const UserMessage = ({ messageText, setPrompt }: UserMessageProps) => {
         </Text>
 
         <Flex justify="flex-end" mt={0}>
-          <Tooltip content="Reutilizar a pergunta" bg="bg.inverted">
+          <Tooltip content="Reutilizar a pergunta">
             <Button
               borderRadius="full"
               aria-label="Reutilizar a pergunta na caixa de mensagem"

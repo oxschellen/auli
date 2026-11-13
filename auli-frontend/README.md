@@ -20,7 +20,7 @@ O aplicativo é **multi-tenant por estado**: o usuário escolhe a Secretaria da 
 
 ## Tecnologias Utilizadas
 
-- **TypeScript** (modo `strict`) — todo o código da aplicação é `.ts`/`.tsx`; apenas os 4 *snippets* utilitários do Chakra em `ui/` seguem como `.jsx`
+- **TypeScript** (modo `strict`) — todo o código da aplicação é `.ts`/`.tsx`; o único JavaScript que resta é o sistema de cores, `src/theme/system.js`
 - **React 19** + **Vite 8** (Rolldown)
 - **Chakra UI v3** (`@chakra-ui/react`, `@emotion/react`)
 - **SWR** + **Axios** (busca de dados)

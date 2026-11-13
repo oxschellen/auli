@@ -32,7 +32,7 @@ today, each with the collections scraped for it so far. See
 
 | Concern | Choice |
 | --- | --- |
-| Language | **TypeScript (strict)** — all app code is `.ts`/`.tsx`; only the 4 vendored Chakra `ui/` snippets remain `.jsx` |
+| Language | **TypeScript (strict)** — all app code is `.ts`/`.tsx`; the only JavaScript left is the color token system, `theme/system.js` |
 | UI library | **React 19** |
 | Build tool / dev server | **Vite 8** (Rolldown-based) with `@vitejs/plugin-react` |
 | Component library | **Chakra UI v3** (+ `@emotion/react`) |
@@ -76,7 +76,7 @@ npm run test:watch# Vitest in watch mode
 - [index.html](index.html) loads [src/main.tsx](src/main.tsx), which mounts
   `<App />` inside `React.StrictMode`.
 - [src/app/App.tsx](src/app/App.tsx) wraps everything in (outermost first):
-  - `Provider` (Chakra UI + color mode, from [src/ui/provider.jsx](src/ui/provider.jsx)),
+  - `Provider` (Chakra UI + color mode, from [src/ui/provider.tsx](src/ui/provider.tsx)),
   - a single global `Toaster`,
   - [`ErrorBoundary`](src/app/ErrorBoundary.tsx),
   - `LazyMotion` (Framer Motion),
@@ -277,7 +277,7 @@ and fails when a rule breaks.
 - [AppHeader.tsx](src/app/AppHeader.tsx) — sticky 52px header: the sidebar
   toggle (from `md`, also Ctrl+B), the "Auli" wordmark (the app version is its
   tooltip), the state tabs, and the light/dark **color-mode toggle**
-  ([`ColorModeButton`](src/ui/color-mode.jsx)) on the right. With the
+  ([`ColorModeButton`](src/ui/color-mode.tsx)) on the right. With the
   sidebar open, the tabs start on the sidebar's edge.
 - [abas.ts](src/app/abas.ts), [AbasDeEstado.tsx](src/app/AbasDeEstado.tsx) — the
   state tabs; see [Multi-tenant state selection](#multi-tenant-state-selection).
@@ -286,9 +286,9 @@ and fails when a rule breaks.
 
 ### `src/ui/`
 
-- Vendored Chakra v3 snippet components, kept as `.jsx` —
-  [provider.jsx](src/ui/provider.jsx), [color-mode.jsx](src/ui/color-mode.jsx),
-  [toaster.jsx](src/ui/toaster.jsx), [tooltip.jsx](src/ui/tooltip.jsx).
+- Chakra v3 snippet components, typed like Chakra's TypeScript snippets —
+  [provider.tsx](src/ui/provider.tsx), [color-mode.tsx](src/ui/color-mode.tsx),
+  [toaster.tsx](src/ui/toaster.tsx), [tooltip.tsx](src/ui/tooltip.tsx).
 - [CollectionEmpty.tsx](src/ui/CollectionEmpty.tsx) — the "coming soon for
   this state" placeholder shown by a section the selected entity has no data for.
 - [AsyncContent.tsx](src/ui/AsyncContent.tsx) — three-state gate
@@ -410,12 +410,12 @@ A representative production build emits separate hashed chunks per group
 ## TypeScript
 
 The project is on **TypeScript with `strict: true`**. All application code is
-typed `.ts`/`.tsx`; the only remaining `.jsx` files are the four vendored Chakra
-`ui/` snippets, kept as-is on purpose.
+typed `.ts`/`.tsx`; the only JavaScript file left is
+[src/theme/system.js](src/theme/system.js).
 
 - [tsconfig.json](tsconfig.json) — `strict: true`, `moduleResolution: "Bundler"`,
-  `jsx: "react-jsx"`, `noEmit: true`. `allowJs: true` + `checkJs: false` lets the
-  Chakra `ui/*.jsx` snippets be imported without being type-checked. There is no
+  `jsx: "react-jsx"`, `noEmit: true`. `allowJs: true` + `checkJs: false` lets
+  `theme/system.js` be imported without being type-checked. There is no
   path alias: imports are relative.
 - [src/vite-env.d.ts](src/vite-env.d.ts) — Vite client types plus the
   `__BUILD_ID__` / `__APP_VERSION__` / `VITE_API_URL` declarations.
@@ -425,9 +425,6 @@ typed `.ts`/`.tsx`; the only remaining `.jsx` files are the four vendored Chakra
   `ConteudoCategory`/`ConteudoTree` in `conteudos.ts`, `Servico`/`TipoServico`
   in `servicos.ts`; the list pages pass these as the `jsonFetcher<T>`
   generic so SWR data is typed end-to-end.
-
-> Note: Vite resolves a `.jsx`/`.js` import specifier to a `.tsx`/`.ts` file, so
-> drop the extension (or keep it consistent) when renaming.
 
 ---
 
@@ -490,7 +487,7 @@ auli-frontend/
    │  ├─ downloads/  mcp/
    │  └─ sobre/
    │
-   ├─ ui/                      # BASE: generic components (+ the Chakra .jsx snippets)
+   ├─ ui/                      # BASE: generic components (+ the Chakra snippets)
    ├─ lib/                     # BASE: search, highlight, markdown, linkify
    ├─ api/                     # BASE: every network exit (static files, chat endpoint)
    ├─ contexto/                # BASE: what a state tab hands to its sections

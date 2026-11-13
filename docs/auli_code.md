@@ -686,9 +686,9 @@ A versão exibida e um `__BUILD_ID__` para cache-busting são injetados em build
   é a única porta para o armazenamento; [hooks/usePainelHistorico.ts](auli-frontend/src/secoes/chat/hooks/usePainelHistorico.ts)
   guarda se o painel está aberto, uma escolha só para todas as abas de estado.
 
-Há a pasta [ui/](auli-frontend/src/ui/) com 4 snippets utilitários do
-Chakra em `.jsx` (color-mode, provider, toaster, tooltip) — confirmando a observação do
-README de que apenas esses arquivos permanecem em JSX.
+Há a pasta [ui/](auli-frontend/src/ui/) com os 4 snippets utilitários do
+Chakra (color-mode, provider, toaster, tooltip), tipados em `.tsx`; o único JavaScript que
+resta no frontend é o `src/theme/system.js`.
 
 ### 4.3.1 Chat redesenhado — as decisões (D-UI-\*)
 
