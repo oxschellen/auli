@@ -1,5 +1,5 @@
-import { useState, useMemo, useRef, useDeferredValue } from "react";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { useMemo } from "react";
+import { Box, Flex } from "@chakra-ui/react";
 import useSWR from "swr";
 import { FaqsAccordion } from "./FaqsAccordion";
 import {
@@ -11,7 +11,7 @@ import {
   type RawFaqNode,
 } from "./faqs";
 import { jsonFetcher, SWR_OPTS, entityPath } from "../../api/estaticos";
-import { SearchInput } from "../../ui/SearchInput";
+import { BarraDeBusca, useBusca } from "../../ui/busca";
 import { AsyncContent } from "../../ui/AsyncContent";
 import { useSelectedEntity } from "../../contexto/EntityContext";
 import { hasCollection } from "../../contexto/entities";
@@ -35,59 +35,27 @@ export function FaqsList() {
     [data],
   );
   const totalPerguntas = useMemo(() => (data ? contarPerguntas(data) : 0), [data]);
-  const [searchQuery, setSearchQuery] = useState("");
-  // Keep the input instant, but let React run the full-tree search (over the
-  // large FAQ dataset) against a deferred value so typing doesn't jank.
-  const deferredQuery = useDeferredValue(searchQuery);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const busca = useBusca();
 
   // A busca roda AQUI, e não no acordeão, porque o contador da barra fixa e a lista de resultados
   // precisam do mesmo número — computar nos dois lugares varreria a árvore duas vezes por tecla.
   const results = useMemo(
-    () => (deferredQuery.trim() ? searchNodes(nodes, deferredQuery.trim()) : []),
-    [nodes, deferredQuery],
+    () => (busca.buscando ? searchNodes(nodes, busca.adiado.trim()) : []),
+    [nodes, busca.buscando, busca.adiado],
   );
-  const isSearching = deferredQuery.trim().length > 0;
-
-  function clearSearch() {
-    setSearchQuery("");
-    inputRef.current?.focus();
-  }
 
   if (!available) return <CollectionEmpty entity={entity} label="FAQs" />;
 
   return (
     <Flex direction="column" flex={1} w="100%" bg="bg.app">
-      {/* Sticky search bar */}
-      <Box
-        position="sticky"
-        top={0}
-        zIndex={10}
-        bg="bg.app"
-        px={4}
-        pt={3}
-        pb={2}
-        borderBottom="1px solid var(--chakra-colors-border)"
-      >
-        <SearchInput
-          ref={inputRef}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onClear={clearSearch}
-          placeholder="Pesquisar FAQs..."
-        />
-        {totalPerguntas > 0 && (
-          <Box pt={2}>
-            <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
-              {isSearching
-                ? // Sem "de N": um acerto pode ser uma pergunta OU o título de uma página/menu,
-                  // então não há denominador honesto — as duas unidades não são a mesma coisa.
-                  `${results.length} resultado${results.length !== 1 ? "s" : ""}`
-                : `${totalPerguntas} pergunta${totalPerguntas !== 1 ? "s" : ""}`}
-            </Text>
-          </Box>
-        )}
-      </Box>
+      <BarraDeBusca busca={busca} placeholder="Pesquisar FAQs...">
+        {totalPerguntas > 0 &&
+          (busca.buscando
+            ? // Sem "de N": um acerto pode ser uma pergunta OU o título de uma página/menu,
+              // então não há denominador honesto — as duas unidades não são a mesma coisa.
+              `${results.length} resultado${results.length !== 1 ? "s" : ""}`
+            : `${totalPerguntas} pergunta${totalPerguntas !== 1 ? "s" : ""}`)}
+      </BarraDeBusca>
 
       {/* Scrollable content */}
       <Box w="100%" px={4} pt={3} pb={6}>
@@ -99,7 +67,7 @@ export function FaqsList() {
         >
           <FaqsAccordion
             nodes={nodes}
-            searchQuery={deferredQuery}
+            searchQuery={busca.adiado}
             results={results}
             answerMap={answerMap}
             pageTypeMap={pageTypeMap}

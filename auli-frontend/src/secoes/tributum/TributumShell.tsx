@@ -1,9 +1,9 @@
-import { useDeferredValue, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
-import { SearchInput } from "../../ui/SearchInput";
+import { BarraDeBusca, SemResultados, useBusca } from "../../ui/busca";
 import { AsyncContent } from "../../ui/AsyncContent";
-import { buildHaystack, haystackMatches, parseQuery } from "../../lib/textSearch";
+import { buildHaystack, haystackMatches } from "../../lib/textSearch";
 import { useTributum } from "./useTributum";
 import { RodapeCurador } from "./RodapeCurador";
 import type { Estante, ItemBase } from "./types";
@@ -46,62 +46,34 @@ export function TributumShell<T extends ItemBase>({
   const itens = catalogo[secao] as unknown as T[];
   const curador = catalogo.curadores?.[secao];
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const deferredQuery = useDeferredValue(searchQuery);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const isSearching = deferredQuery.trim().length > 0;
-
-  const terms = useMemo(() => parseQuery(deferredQuery), [deferredQuery]);
+  const busca = useBusca();
   const haystacks = useMemo(
     () =>
-      isSearching
+      busca.buscando
         ? itens.map((i) => buildHaystack(campos(i).map((c) => (c == null ? "" : String(c)))))
         : undefined,
     // `campos` é uma closure recriada a cada render pelo chamador; incluí-la faria o índice
     // refazer por tecla. O que ela lê é `itens`, que já está nas dependências.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [itens, isSearching],
+    [itens, busca.buscando],
   );
   const filtrados = useMemo(
-    () => (haystacks ? itens.filter((_, n) => haystackMatches(haystacks[n], terms)) : itens),
-    [itens, haystacks, terms],
+    () => (haystacks ? itens.filter((_, n) => haystackMatches(haystacks[n], busca.termos)) : itens),
+    [itens, haystacks, busca.termos],
   );
-
-  function clearSearch() {
-    setSearchQuery("");
-    inputRef.current?.focus();
-  }
 
   const [singular, plural] = substantivo;
 
   return (
     <Flex direction="column" flex={1} w="100%" bg="bg.app">
-      <Box
-        position="sticky"
-        top={0}
-        zIndex={10}
-        bg="bg.app"
-        px={4}
-        pt={3}
-        pb={2}
-        borderBottom="1px solid var(--chakra-colors-border)"
-      >
-        <SearchInput
-          ref={inputRef}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onClear={clearSearch}
-          placeholder={`Pesquisar em ${titulo.toLowerCase()}...`}
-        />
+      <BarraDeBusca busca={busca} placeholder={`Pesquisar em ${titulo.toLowerCase()}...`}>
         {itens.length > 0 && (
-          <Box pt={2}>
-            <Text fontSize="0.8rem" color="fg.muted" fontWeight="500">
-              {filtrados.length} {filtrados.length !== 1 ? plural : singular}
-              {isSearching ? ` de ${itens.length}` : ""}
-            </Text>
-          </Box>
+          <>
+            {filtrados.length} {filtrados.length !== 1 ? plural : singular}
+            {busca.buscando ? ` de ${itens.length}` : ""}
+          </>
         )}
-      </Box>
+      </BarraDeBusca>
 
       <Box px={4} pt={3} pb={6}>
         <AsyncContent
@@ -115,12 +87,12 @@ export function TributumShell<T extends ItemBase>({
               : "O catálogo não pôde ser carregado. Tente novamente mais tarde."
           }
         >
-          {filtrados.length === 0 ? (
+          {filtrados.length === 0 && busca.buscando ? (
+            <SemResultados consulta={busca.adiado} />
+          ) : filtrados.length === 0 ? (
             <Box py={10} textAlign="center">
               <Text color="fg.muted" fontSize="0.95rem">
-                {isSearching
-                  ? `Nenhum resultado encontrado para “${deferredQuery}”`
-                  : `Nada em ${titulo.toLowerCase()} por enquanto.`}
+                Nada em {titulo.toLowerCase()} por enquanto.
               </Text>
             </Box>
           ) : (
@@ -135,7 +107,7 @@ export function TributumShell<T extends ItemBase>({
                   px={4}
                   py={3}
                 >
-                  {children(item, terms)}
+                  {children(item, busca.termos)}
                 </Box>
               ))}
             </Flex>
