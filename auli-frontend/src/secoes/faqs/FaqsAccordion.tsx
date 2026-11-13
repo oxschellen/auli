@@ -9,6 +9,7 @@ import { compactMarkdownComponents, markdownPlugins } from "../../lib/markdown";
 import { Highlight } from "../../lib/highlight";
 import { parseQuery } from "../../lib/textSearch";
 import { SemResultados } from "../../ui/busca";
+import { abrirEmNovaAba } from "../../ui/LinkExterno";
 import { utilsCopyTextToClipboard } from "../../ui/copiar";
 
 interface TreeNodeProps {
@@ -52,13 +53,13 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
     if (hasChildren || isFaqLeaf) {
       setIsOpen((o) => !o);
     } else if (effectiveUrl) {
-      window.open(effectiveUrl, "_blank", "noopener,noreferrer");
+      abrirEmNovaAba(effectiveUrl);
     }
   }
 
   function handleLinkClick(e: MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
-    if (effectiveUrl) window.open(effectiveUrl, "_blank", "noopener,noreferrer");
+    if (effectiveUrl) abrirEmNovaAba(effectiveUrl);
   }
 
   const nextAncestors = useMemo(() => [...ancestors, node], [ancestors, node]);
@@ -156,7 +157,6 @@ function TreeNode({ node, ancestors, depth, perguntaMap, pageTypeMap }: TreeNode
             fontSize="0.95rem"
             color="fg"
             lineHeight="1.7"
-            className="faq-answer"
           >
             <ReactMarkdown remarkPlugins={markdownPlugins} components={compactMarkdownComponents}>
               {answer ?? ""}
@@ -174,7 +174,7 @@ function SearchResult({ node, ancestors, terms }: SearchResultProps) {
 
   function openNodeUrl() {
     if (effectiveUrl) {
-      window.open(effectiveUrl, "_blank", "noopener,noreferrer");
+      abrirEmNovaAba(effectiveUrl);
     }
   }
 

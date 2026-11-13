@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
-import type { ReactNode } from "react";
-import { Box, Flex, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { comoBotao, PainelRevelado } from "../../ui/Acordeao";
-import { MdExpandLess, MdExpandMore, MdOpenInNew } from "react-icons/md";
+import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import useSWR from "swr";
 import {
@@ -19,20 +18,11 @@ import { useSelectedEntity } from "../../contexto/EntityContext";
 import { hasCollection } from "../../contexto/entities";
 import { CollectionEmpty } from "../../ui/CollectionEmpty";
 import { Highlight } from "../../lib/highlight";
-import { compactMarkdownComponents, markdownPlugins } from "../../lib/markdown";
+import { compactMarkdownComRealce, markdownPlugins } from "../../lib/markdown";
+import { LinkExterno } from "../../ui/LinkExterno";
 import { rehypeHighlight } from "../../lib/rehypeHighlight";
 
 const TITULO = "Legislação";
-
-/** Renderiza o `<mark>` que o `rehypeHighlight` injeta, com o mesmo visual do `Highlight`. */
-const markdownComponents = {
-  ...compactMarkdownComponents,
-  mark: ({ children }: { children?: ReactNode }) => (
-    <Box as="mark" bg="bg.highlight" color="fg.highlight" px="0.1em" borderRadius="2px">
-      {children}
-    </Box>
-  ),
-};
 
 /**
  * Uma linha: o dispositivo à esquerda, a pergunta e o caminho na lei à direita — e que **abre para
@@ -95,26 +85,19 @@ function ItemDispositivo({ d, terms }: { d: Dispositivo; terms: string[] }) {
       <PainelRevelado aberto={isOpen}>
         <Box bg="bg.app" px={4} py={3} pl="calc(1rem + 7.5rem + 0.75rem)">
           {d.link && (
-            <Link
-              href={d.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              color="accent"
-              fontSize="0.85rem"
-              display="inline-flex"
-              alignItems="center"
-              gap={1}
-              mb={2}
-              aria-label={`Abrir ${d.ementa} no portal oficial`}
-            >
-              <MdOpenInNew size={14} /> Abrir no portal
-            </Link>
+            <Box mb={2}>
+              <LinkExterno
+                href={d.link}
+                rotulo="Abrir no portal"
+                ariaLabel={`Abrir ${d.ementa} no portal oficial`}
+              />
+            </Box>
           )}
           <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
             <ReactMarkdown
               remarkPlugins={markdownPlugins}
               rehypePlugins={rehypePlugins}
-              components={markdownComponents}
+              components={compactMarkdownComRealce}
             >
               {d.corpo}
             </ReactMarkdown>

@@ -307,7 +307,13 @@ and fails when a rule breaks.
   `SemResultados`. Each list keeps its own filter and body.
 - [SearchInput.tsx](src/ui/SearchInput.tsx) — the search field inside
   `BarraDeBusca` (icon + input + accessible clear button).
-- [LinkExterno.tsx](src/ui/LinkExterno.tsx) — the "open in a new tab" link.
+- [LinkExterno.tsx](src/ui/LinkExterno.tsx) — the "open in a new tab" link
+  (`target="_blank"` + `rel="noopener noreferrer"`, mandatory `aria-label`), used by
+  the Tributum lists and the "Abrir no portal" of Pareceres and Legislação; and
+  `abrirEmNovaAba(url)`, the same guarantee for rows that act as a link.
+- [DocumentoMarkdown.tsx](src/ui/DocumentoMarkdown.tsx) — fetches a `.md` from
+  `public/` and shows it as prose, through `AsyncContent`: the Sobre page, the
+  Tributum Critérios and the "Conectar sua IA" manuals.
 - [copiar.ts](src/ui/copiar.ts) — `utilsCopyTextToClipboard`, copies text and
   shows a Chakra toast (with an insecure-origin guard).
 - [layout.ts](src/ui/layout.ts) — the sidebar widths (open, and collapsed into
@@ -316,8 +322,10 @@ and fails when a rule breaks.
 ### `src/lib/`
 
 - [markdown.tsx](src/lib/markdown.tsx) — shared `react-markdown` component
-  maps (`compactMarkdownComponents` for chat/FAQ, `proseMarkdownComponents` for
-  About), centralizing the link renderer's `target`/`rel`.
+  maps (`compactMarkdownComponents` for chat/FAQ, `compactMarkdownComRealce` —
+  the same plus the search highlight's `<mark>` — for Pareceres and Legislação,
+  `proseMarkdownComponents` for authored documents), centralizing the link
+  renderer's `target`/`rel`. The `<mark>` itself is `Marca`, in `highlight.tsx`.
 - [linkify.tsx](src/lib/linkify.tsx) — turns bare URLs in plain text into
   Chakra `Link`s, trimming trailing sentence punctuation (and preserving
   balanced-paren URLs).

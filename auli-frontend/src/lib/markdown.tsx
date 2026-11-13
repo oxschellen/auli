@@ -11,6 +11,7 @@ import type { ReactNode } from "react";
 
 import type { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Marca } from "./highlight";
 
 /** Shared remark plugins for every ReactMarkdown instance — GFM adds tables, strikethrough, and
  *  autolinks (without it, an LLM table renders as one flowing line of pipes). */
@@ -113,6 +114,9 @@ export const compactMarkdownComponents: Components = {
   ),
   li: ({ children }) => <li style={{ marginBottom: "0.25em" }}>{children}</li>,
 };
+
+/** O mapa compacto, mais o `<mark>` que o `rehypeHighlight` injeta no texto que casou com a busca. */
+export const compactMarkdownComRealce: Components = { ...compactMarkdownComponents, mark: Marca };
 
 export const proseMarkdownComponents: Components = {
   ...tableComponents,

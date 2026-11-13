@@ -1,24 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ReactNode } from "react";
-import { Box, Flex, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { comoBotao, PainelRevelado } from "../../ui/Acordeao";
-import { MdExpandMore, MdExpandLess, MdOpenInNew } from "react-icons/md";
+import { MdExpandMore, MdExpandLess } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import type { Parecer } from "./pareceres";
-import { compactMarkdownComponents, markdownPlugins } from "../../lib/markdown";
+import { compactMarkdownComRealce, markdownPlugins } from "../../lib/markdown";
+import { LinkExterno } from "../../ui/LinkExterno";
 import { Highlight } from "../../lib/highlight";
 import { parseQuery } from "../../lib/textSearch";
 import { rehypeHighlight } from "../../lib/rehypeHighlight";
-
-/** Renderiza o `<mark>` que o `rehypeHighlight` injeta, com o mesmo visual do `Highlight`. */
-const markdownComponents = {
-  ...compactMarkdownComponents,
-  mark: ({ children }: { children?: ReactNode }) => (
-    <Box as="mark" bg="bg.highlight" color="fg.highlight" px="0.1em" borderRadius="2px">
-      {children}
-    </Box>
-  ),
-};
 
 /** Uma linha de parecer: cabeçalho (número + assunto) que abre para a sinopse + link do portal. */
 function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
@@ -59,26 +49,20 @@ function ParecerItem({ p, terms }: { p: Parecer; terms: string[] }) {
       <PainelRevelado aberto={isOpen}>
         <Box bg="bg.app" px={4} py={3}>
           {p.link && (
-            <Link
-              href={p.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              color="accent"
-              fontSize="0.85rem"
-              display="inline-flex"
-              alignItems="center"
-              gap={1}
-              mb={2}
-            >
-              <MdOpenInNew size={14} /> Abrir no portal
-            </Link>
+            <Box mb={2}>
+              <LinkExterno
+                href={p.link}
+                rotulo="Abrir no portal"
+                ariaLabel={`Abrir ${p.numero} no portal oficial`}
+              />
+            </Box>
           )}
           {p.resumo ? (
             <Box color="fg" fontSize="0.9rem" lineHeight="1.7">
               <ReactMarkdown
                 remarkPlugins={markdownPlugins}
                 rehypePlugins={rehypePlugins}
-                components={markdownComponents}
+                components={compactMarkdownComRealce}
               >
                 {p.resumo}
               </ReactMarkdown>

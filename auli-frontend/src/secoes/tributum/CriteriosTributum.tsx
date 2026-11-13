@@ -1,12 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import ReactMarkdown from "react-markdown";
-import useSWR from "swr";
-import { textFetcher, SWR_OPTS, versioned } from "../../api/estaticos";
-import { AsyncContent } from "../../ui/AsyncContent";
-import { proseMarkdownComponents, markdownPlugins } from "../../lib/markdown";
-
-/** Mesmo lugar e mesma disciplina do `about.md`: prosa autorada, versionada, na raiz de `public/`. */
-const ARQUIVO = versioned("/tributum-criterios.md");
+import { DocumentoMarkdown } from "../../ui/DocumentoMarkdown";
 
 /**
  * A aba **Critérios**: o que entra no Tributum, o que não entra e quem seleciona.
@@ -16,34 +9,19 @@ const ARQUIVO = versioned("/tributum-criterios.md");
  * Uma declaração de conflito de interesse guardada onde só o mantenedor lê não cumpre a função que
  * ela mesma se atribui.
  *
- * Renderiza como a aba Sobre — `textFetcher` + `proseMarkdownComponents` —, mas pelo `AsyncContent`
- * em vez do trio de estados à mão que o `About.tsx` ainda carrega de antes de ele existir.
+ * O texto mora no mesmo lugar e segue a mesma disciplina do `about.md` (prosa autorada,
+ * versionada, na raiz de `public/`), e se mostra pelo mesmo `DocumentoMarkdown`.
  */
 export function CriteriosTributum() {
-  const { data, error, isLoading } = useSWR(ARQUIVO, textFetcher, SWR_OPTS);
-
   return (
     <Flex direction="column" flex={1} w="100%" bg="bg.app">
       <Box w="100%" maxW="720px" mx="auto" px={5} pt={5} pb={10}>
-        <AsyncContent
-          loading={isLoading}
-          error={error}
-          loadingText="Carregando os critérios…"
-          errorTitle="Erro ao carregar os critérios"
-          errorDescription="Não foi possível carregar o texto agora."
-        >
-          <Box
-            fontSize="1rem"
-            lineHeight="1.7"
-            color="fg"
-            fontFamily="body"
-            className="markdown-body"
-          >
-            <ReactMarkdown remarkPlugins={markdownPlugins} components={proseMarkdownComponents}>
-              {data ?? ""}
-            </ReactMarkdown>
-          </Box>
-        </AsyncContent>
+        <DocumentoMarkdown
+          arquivo="/tributum-criterios.md"
+          carregando="Carregando os critérios…"
+          tituloDoErro="Erro ao carregar os critérios"
+          erro="Não foi possível carregar o texto agora."
+        />
       </Box>
     </Flex>
   );

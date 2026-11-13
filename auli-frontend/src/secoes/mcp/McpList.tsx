@@ -1,11 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Box, Button, Flex, Stack, Table, Text } from "@chakra-ui/react";
 import { MdArrowBack, MdMenuBook } from "react-icons/md";
-import ReactMarkdown from "react-markdown";
-import useSWR from "swr";
-import { textFetcher, SWR_OPTS, versioned } from "../../api/estaticos";
-import { AsyncContent } from "../../ui/AsyncContent";
-import { proseMarkdownComponents, markdownPlugins } from "../../lib/markdown";
+import { DocumentoMarkdown } from "../../ui/DocumentoMarkdown";
 
 /**
  * Um manual de instalação do conector MCP. A lista é hardcoded de propósito: espelha
@@ -150,37 +146,17 @@ const FERRAMENTAS: Ferramenta[] = [
 
 /** Leitor de um manual: botão de voltar + o .md renderizado (mesmo padrão da aba Sobre). */
 function LeitorManual({ manual, onVoltar }: { manual: Manual; onVoltar: () => void }) {
-  const { data, error, isLoading } = useSWR(
-    versioned(`/manuais/${manual.arquivo}`),
-    textFetcher,
-    SWR_OPTS,
-  );
-
   return (
     <Box px={4} pt={4} pb={10} w="100%" maxW="720px" mx="auto">
       <Button size="xs" variant="outline" onClick={onVoltar} mb={4}>
         <MdArrowBack />
         Voltar aos manuais
       </Button>
-      <AsyncContent
-        loading={isLoading}
-        error={error}
-        loadingText="Carregando manual…"
-        errorTitle="Erro ao carregar o manual"
-        errorDescription={(error as Error)?.message}
-      >
-        <Box
-          fontSize="1rem"
-          lineHeight="1.7"
-          color="fg"
-          fontFamily="body"
-          className="markdown-body"
-        >
-          <ReactMarkdown remarkPlugins={markdownPlugins} components={proseMarkdownComponents}>
-            {data ?? ""}
-          </ReactMarkdown>
-        </Box>
-      </AsyncContent>
+      <DocumentoMarkdown
+        arquivo={`/manuais/${manual.arquivo}`}
+        carregando="Carregando manual…"
+        tituloDoErro="Erro ao carregar o manual"
+      />
     </Box>
   );
 }

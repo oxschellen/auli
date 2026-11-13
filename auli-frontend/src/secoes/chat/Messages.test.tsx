@@ -22,6 +22,6 @@ describe("Messages", () => {
   it("renders nothing for an empty transcript", () => {
     const { container } = renderWithProvider(<Messages messages={[]} setPrompt={vi.fn()} />);
     // The Flex wrapper renders but has no message children.
-    expect(container.querySelector("p, .markdown-body")).toBeNull();
+    expect(container.querySelector("p")).toBeNull();
   });
 });
