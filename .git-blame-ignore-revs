@@ -4,3 +4,6 @@
 
 # style: formata o workspace inteiro com os defaults do rustfmt (114 arquivos)
 95938f5545eec423998828f12699093b77fc18d8
+
+# style(frontend): Prettier sobre src/ e os *.js da raiz (66 arquivos; PR #227, squash — inclui a config)
+d232539910406874cad45d4b934a54a4650b60db
