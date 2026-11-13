@@ -264,7 +264,9 @@ describe("D-TRIB-8 na UI: o botão 'Ler PDF'", () => {
       "/tributum/a.pdf",
     );
 
-    fireEvent.keyDown(window, { key: "Escape" });
+    // No `document`, onde a `Sobreposicao` ouve: uma tecla de verdade nasce no elemento com foco e
+    // sobe por ele; disparada direto no `window`, nunca passa pelo `document`.
+    fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });

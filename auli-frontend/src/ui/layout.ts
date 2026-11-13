@@ -32,3 +32,21 @@ export const HEADER_HEIGHT = "52px";
 /** Largura do painel "Minhas perguntas", à direita do chat (a partir do breakpoint `xl`; abaixo
  *  dele vira drawer). A barra de composição, que é `fixed`, recua esta largura à direita. */
 export const HISTORICO_WIDTH = "288px";
+
+/** As camadas do app, da mais baixa à mais alta. Quem precisa de `zIndex` lê daqui: a relação entre
+ *  elas morava em comentários espalhados por doze arquivos. */
+export const Z = {
+  /** Barra de busca das listas (`sticky`). */
+  barraFixa: 10,
+  /** Caixa de mensagem do chat (`fixed`). */
+  compositor: 20,
+  /** Coluna "Minhas perguntas": a barra de composição é `fixed`, não desconta a barra de rolagem
+   *  e avança alguns pixels sobre a borda dela. */
+  painelHistorico: 21,
+  /** Seletor do tipo de consulta, que abre para cima, sobre a conversa. */
+  menuSuspenso: 30,
+  /** `AppHeader` (`sticky`). */
+  cabecalho: 100,
+  /** Drawers e modais: acima do cabeçalho, senão ele cobre o topo do painel. */
+  sobreposicao: 110,
+} as const;

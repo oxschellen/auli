@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { ComponentType, KeyboardEvent, RefObject } from "react";
 import { Flex, Box, Text, chakra } from "@chakra-ui/react";
 import {
@@ -44,6 +44,7 @@ import { useSelectedEntity } from "../../contexto/EntityContext";
 import { hasCollection } from "../../contexto/entities";
 import type { Collection } from "../../contexto/entities";
 import { SIDEBAR_RAIL_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH, idDaSidebar } from "../../ui/layout";
+import { Sobreposicao } from "../../ui/Sobreposicao";
 import { Tooltip } from "../../ui/tooltip";
 
 /** Grupo de navegação. `null` = topo (sem título). */
@@ -451,24 +452,6 @@ export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
   const drawerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  // Esc fecha o drawer e devolve o foco ao botão que o abriu — o par mínimo que um overlay
-  // modal deve ao teclado.
-  //
-  // O ouvinte é do DOCUMENTO, não do painel: ao abrir, o foco continua no botão de menu, que
-  // fica FORA do drawer, então um `onKeyDown` no container não veria a tecla no caso mais comum.
-  // `globalThis.KeyboardEvent` porque `KeyboardEvent` aqui é o tipo sintético do React, importado
-  // no topo — o `addEventListener` quer o do DOM.
-  useEffect(() => {
-    if (!drawerOpen) return;
-    const aoTeclar = (e: globalThis.KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      setDrawerOpen(false);
-      menuBtnRef.current?.focus();
-    };
-    document.addEventListener("keydown", aoTeclar);
-    return () => document.removeEventListener("keydown", aoTeclar);
-  }, [drawerOpen]);
-
   const selectTab = (id: string) => {
     setSelectedId(id);
     setMountedIds((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
@@ -559,18 +542,15 @@ export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
           </Text>
         </Flex>
 
-        {/* Drawer mobile: overlay + painel com a MESMA NavList. Feito à mão (Box fixed) para
-            não depender da API de Drawer da versão instalada do Chakra. O zIndex fica ACIMA do
-            AppHeader (sticky, 100): abaixo dele, o cabeçalho cobria o topo do painel e o "Chat",
-            primeiro item, sumia atrás dele. */}
+        {/* Drawer mobile: o véu + painel com a MESMA NavList. Esc fecha e devolve o foco ao
+            botão de menu. Acima do AppHeader (`Z`): abaixo dele, o cabeçalho cobria o topo do
+            painel e o "Chat", primeiro item, sumia atrás dele. */}
         {drawerOpen && (
-          <Box hideFrom="md" position="fixed" inset={0} zIndex={110}>
-            <Box
-              position="absolute"
-              inset={0}
-              bg="blackAlpha.500"
-              onClick={() => setDrawerOpen(false)}
-            />
+          <Sobreposicao
+            hideFrom="md"
+            onFechar={() => setDrawerOpen(false)}
+            devolverFocoA={menuBtnRef}
+          >
             <Box
               position="absolute"
               top={0}
@@ -592,7 +572,7 @@ export const Home = ({ sidebarAberta = true }: { sidebarAberta?: boolean }) => {
                 tabRefs={drawerRefs}
               />
             </Box>
-          </Box>
+          </Sobreposicao>
         )}
 
         {/* Conteúdo — único container de scroll (ver comentário no App.tsx). */}

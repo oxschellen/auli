@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { parseQuery } from "../lib/textSearch";
 import { SearchInput } from "./SearchInput";
+import { Z } from "./layout";
 
 /**
  * As peças da busca das listas (I3 do docs/ESTUDO-frontend-organizacao.md): o estado, a barra fixa
@@ -49,7 +50,7 @@ export function BarraDeBusca({
     <Box
       position="sticky"
       top={0}
-      zIndex={10}
+      zIndex={Z.barraFixa}
       bg="bg.app"
       px={4}
       pt={3}

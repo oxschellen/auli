@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { LuPanelLeft } from "react-icons/lu";
 import { ColorModeButton } from "../ui/color-mode";
 import { Tooltip } from "../ui/tooltip";
-import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../ui/layout";
+import { HEADER_HEIGHT, SIDEBAR_WIDTH, Z } from "../ui/layout";
 
 interface AppHeaderProps {
   /** A versão do app. Saiu da vista (D-UI-4): vira a dica do logo — era informação de quem
@@ -53,7 +53,7 @@ export const AppHeader = ({
       borderColor="border"
       position="sticky"
       top={0}
-      zIndex={100}
+      zIndex={Z.cabecalho}
     >
       <Flex h="100%" alignItems="center" justifyContent="space-between" gap={3}>
         <Flex alignItems="center" gap={3} flex="1" minW={0}>

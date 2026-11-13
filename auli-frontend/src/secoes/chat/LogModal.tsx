@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { MdClose, MdCopyAll } from "react-icons/md";
 import { buscarLog } from "../../api/chat";
 import { utilsCopyTextToClipboard } from "../../ui/copiar";
+import { Sobreposicao } from "../../ui/Sobreposicao";
 
 interface LogModalProps {
   /** UUID da consulta — a *capability* que abre o registro. */
@@ -22,8 +23,7 @@ const MESSAGES = {
  * reformatar. Isso inclui o par pergunta original / pergunta anonimizada — ver o mascaramento
  * funcionando é a prova de privacidade, não vazamento dela: quem lê é o autor da pergunta.
  *
- * Feito à mão (Box `fixed` + overlay) como o drawer do `Home.tsx`, para não depender da API de
- * Dialog da versão instalada do Chakra.
+ * Sobre o app pela `Sobreposicao`, como os drawers e o leitor de PDF.
  */
 export const LogModal = ({ logId, onClose }: LogModalProps) => {
   const [conteudo, setConteudo] = useState<string | null>(null);
@@ -43,16 +43,8 @@ export const LogModal = ({ logId, onClose }: LogModalProps) => {
     };
   }, [logId]);
 
-  // Esc fecha, como em qualquer diálogo.
-  useEffect(() => {
-    const aoTeclar = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", aoTeclar);
-    return () => window.removeEventListener("keydown", aoTeclar);
-  }, [onClose]);
-
   return (
-    <Box position="fixed" inset={0} zIndex={100}>
-      <Box position="absolute" inset={0} bg="blackAlpha.600" onClick={onClose} />
+    <Sobreposicao onFechar={onClose} fundo="blackAlpha.600">
       <Flex
         position="absolute"
         top="50%"
@@ -122,6 +114,6 @@ export const LogModal = ({ logId, onClose }: LogModalProps) => {
           )}
         </Box>
       </Flex>
-    </Box>
+    </Sobreposicao>
   );
 };

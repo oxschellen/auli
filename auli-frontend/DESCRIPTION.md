@@ -317,7 +317,14 @@ and fails when a rule breaks.
 - [copiar.ts](src/ui/copiar.ts) — `utilsCopyTextToClipboard`, copies text and
   shows a Chakra toast (with an insecure-origin guard).
 - [layout.ts](src/ui/layout.ts) — the sidebar widths (open, and collapsed into
-  an icon rail), which the chat's `position: fixed` composer must also know.
+  an icon rail), which the chat's `position: fixed` composer must also know, and
+  **`Z`**, the app's layers in one place: sticky search bar 10, chat composer 20,
+  "Minhas perguntas" column 21, question-type menu 30, header 100, overlays 110.
+- [Sobreposicao.tsx](src/ui/Sobreposicao.tsx) — the skeleton of the two drawers
+  (sections, "Minhas perguntas") and the two modals (question log, PDF reader):
+  a veil that closes on click, Esc that closes (listened on the `document`) and,
+  for the drawers, focus back to the button that opened them. It does not trap
+  focus yet.
 
 ### `src/lib/`
 

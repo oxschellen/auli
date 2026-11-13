@@ -1,6 +1,6 @@
-import { useEffect } from "react";
 import { Box, Button, Flex, Link, Text } from "@chakra-ui/react";
 import { MdClose, MdOpenInNew } from "react-icons/md";
+import { Sobreposicao } from "../../ui/Sobreposicao";
 
 interface PdfModalProps {
   titulo: string;
@@ -14,11 +14,8 @@ const ABRIR_NOVA_ABA = "Abrir em nova aba";
 /**
  * Visualizador de PDF em modal, por `<iframe>` nativo (D-TRIB-6) — sem pdf.js nem react-pdf.
  *
- * **Feito à mão (Box `fixed` + overlay), não com o `Dialog` do Chakra**, e a divergência é do
- * repositório e não do gosto: o `LogModal.tsx` do chat já é assim, e o doc dele diz por quê — "para
- * não depender da API de Dialog da versão instalada do Chakra". Duas mecânicas de modal no mesmo
- * app seriam duas superfícies para acertar Esc, foco e overlay. Este é o mesmo esqueleto com outro
- * corpo.
+ * **Sobre a `Sobreposicao` da casa, não o `Dialog` do Chakra**, como o `LogModal` e os drawers:
+ * duas mecânicas de modal no mesmo app seriam duas superfícies para acertar Esc, foco e véu.
  *
  * **O "Abrir em nova aba" fica SEMPRE visível**, e não é um fallback de erro: é o caminho normal no
  * Android, onde o Chrome recusa renderizar PDF em iframe e mostra um quadro em branco — sem jeito
@@ -27,16 +24,8 @@ const ABRIR_NOVA_ABA = "Abrir em nova aba";
  * quadro diz o que fazer se nada aparecer.
  */
 export function PdfModal({ titulo, pdfUrl, onFechar }: PdfModalProps) {
-  // Esc fecha, como em qualquer diálogo — e como no LogModal.
-  useEffect(() => {
-    const aoTeclar = (e: KeyboardEvent) => e.key === "Escape" && onFechar();
-    window.addEventListener("keydown", aoTeclar);
-    return () => window.removeEventListener("keydown", aoTeclar);
-  }, [onFechar]);
-
   return (
-    <Box position="fixed" inset={0} zIndex={100}>
-      <Box position="absolute" inset={0} bg="blackAlpha.600" onClick={onFechar} />
+    <Sobreposicao onFechar={onFechar} fundo="blackAlpha.600">
       <Flex
         position="absolute"
         top="50%"
@@ -105,6 +94,6 @@ export function PdfModal({ titulo, pdfUrl, onFechar }: PdfModalProps) {
           </Text>
         </Box>
       </Flex>
-    </Box>
+    </Sobreposicao>
   );
 }

@@ -19,7 +19,8 @@ import type { ItemHistorico } from "./lib/historico";
 import { TIPOS } from "./lib/textoDosTipos";
 import { useSelectedEntity } from "../../contexto/EntityContext";
 import { useAvisarResposta } from "../../contexto/RespostaDaAba";
-import { HEADER_HEIGHT, HISTORICO_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH } from "../../ui/layout";
+import { HEADER_HEIGHT, HISTORICO_WIDTH, SIDEBAR_VAR, SIDEBAR_WIDTH, Z } from "../../ui/layout";
+import { Sobreposicao } from "../../ui/Sobreposicao";
 
 /** O botão de "Minhas perguntas", na linha acima da caixa de mensagem. São dois no DOM — um por
  *  modo, escolhidos por CSS (`hideBelow`/`hideFrom`), como os dois botões da barra lateral
@@ -55,18 +56,6 @@ export const Chat = () => {
   const [painelAberto, setPainelAberto] = usePainelHistorico();
   const [drawerAberto, setDrawerAberto] = useState(false);
   const botaoDrawerRef = useRef<HTMLButtonElement>(null);
-
-  // Esc fecha o drawer e devolve o foco ao botão que o abriu — o mesmo par do drawer de seções.
-  useEffect(() => {
-    if (!drawerAberto) return;
-    const aoTeclar = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      setDrawerAberto(false);
-      botaoDrawerRef.current?.focus();
-    };
-    document.addEventListener("keydown", aoTeclar);
-    return () => document.removeEventListener("keydown", aoTeclar);
-  }, [drawerAberto]);
 
   const { isKeyboardVisible: isKeyboardOpen, keyboardHeight } = useIsKeyboardVisible();
   const [loading, setLoading] = useState(false);
@@ -178,8 +167,7 @@ export const Chat = () => {
           e a barra de rolagem da área de conteúdo segue à vista, à direita dele. `sticky` porque o
           Chat mora dentro do único container de scroll (ver `Home`): sem isso o painel subiria
           junto com as mensagens. A altura é a da área que rola, que nesta largura é a tela menos
-          o cabeçalho. O zIndex fica ACIMA da barra de composição (20): ela é `fixed` e não desconta
-          a barra de rolagem, então avança alguns pixels sobre a borda do painel. */}
+          o cabeçalho. O zIndex fica ACIMA da barra de composição (ver `Z`). */}
       {painelAberto && (
         <Box
           as="aside"
@@ -194,22 +182,20 @@ export const Chat = () => {
           overflowY="auto"
           bg="bg.app"
           borderLeft="1px solid var(--chakra-colors-border)"
-          zIndex={21}
+          zIndex={Z.painelHistorico}
         >
           {painel(() => setPainelAberto(false))}
         </Box>
       )}
 
-      {/* Drawer (< xl): overlay + o MESMO painel, vindo da direita. Feito à mão e com o zIndex
-          acima do AppHeader, pelos motivos do drawer de seções no `Home`. */}
+      {/* Drawer (< xl): o véu + o MESMO painel, vindo da direita. Esc fecha e devolve o foco ao
+          botão que o abriu, como no drawer de seções do `Home`. */}
       {drawerAberto && (
-        <Box hideFrom="xl" position="fixed" inset={0} zIndex={110}>
-          <Box
-            position="absolute"
-            inset={0}
-            bg="blackAlpha.500"
-            onClick={() => setDrawerAberto(false)}
-          />
+        <Sobreposicao
+          hideFrom="xl"
+          onFechar={() => setDrawerAberto(false)}
+          devolverFocoA={botaoDrawerRef}
+        >
           <Box
             as="aside"
             aria-label="Minhas perguntas"
@@ -224,7 +210,7 @@ export const Chat = () => {
           >
             {painel(() => setDrawerAberto(false))}
           </Box>
-        </Box>
+        </Sobreposicao>
       )}
 
       {/* Barra de composição. `fixed` é o que permite subi-la acima do teclado virtual — mas
@@ -247,7 +233,7 @@ export const Chat = () => {
         left={{ base: 0, md: `var(${SIDEBAR_VAR}, ${SIDEBAR_WIDTH})` }}
         // Com o painel "Minhas perguntas" aberto (>= xl), recua também à direita.
         right={painelAberto ? { base: 0, xl: HISTORICO_WIDTH } : 0}
-        zIndex={20}
+        zIndex={Z.compositor}
         // Mesma cor do fundo: a caixa é que se destaca (borda e sombra), não uma faixa branca de
         // ponta a ponta (D-UI-4).
         bg="bg.app"
