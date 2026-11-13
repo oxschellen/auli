@@ -344,9 +344,10 @@ and fails when a rule breaks.
   "Minhas perguntas" column 21, question-type menu 30, header 100, overlays 110.
 - [Sobreposicao.tsx](src/ui/Sobreposicao.tsx) — the skeleton of the two drawers
   (sections, "Minhas perguntas") and the two modals (question log, PDF reader):
-  a veil that closes on click, Esc that closes (listened on the `document`) and,
-  for the drawers, focus back to the button that opened them. It does not trap
-  focus yet.
+  a veil that closes on click, Esc that closes (listened on the `document`), and
+  a focus trap: on open, focus moves to the panel's first focusable; Tab and
+  Shift+Tab wrap around; focus that escapes (the Tab out of the PDF iframe)
+  comes back; on close, by any path, focus returns to whoever opened it.
 
 ### `src/lib/`
 
