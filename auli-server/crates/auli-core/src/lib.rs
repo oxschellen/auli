@@ -14,5 +14,6 @@ pub mod corpus;
 pub mod embed;
 pub mod error;
 pub mod manifest;
+pub mod sparse;
 
 pub use error::{Error, Result};

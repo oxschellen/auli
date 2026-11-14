@@ -16,6 +16,8 @@ pub mod bundle;
 pub mod config;
 pub mod entities;
 pub mod error;
+#[cfg(test)]
+mod fase0_hibrida;
 pub mod llm;
 pub mod mcp;
 pub mod packs;

@@ -196,3 +196,12 @@ a primeira ocorrência tem mediana no caractere 492, porque o termo vive no come
 > `text_to_embed` a partir da árvore deu 40 também. Dois métodos independentes concordam; o 69 fica
 > registrado como número sem procedência conhecida, e não foi substituído por uma explicação
 > inventada.
+
+## 11. A §5 e o passo 1 da §8 foram superados pela troca para o FP32 (14/11/2026)
+
+Desde 07/11/2026 o encoder é o BGE-M3 FP32 (`EMBED_MODEL_ID = "bge-m3-fp32"`), e no `fastembed 7.6.1` o
+`SparseModel::BGEM3` aponta para os mesmos arquivos do denso. O obstáculo da §5 (o esparso exigia o FP32
+completo, um segundo modelo) e o "teste de meia hora" do passo 1 da §8 deixaram de existir. A pergunta foi
+reaberta no [Estudo-rag-dense.md](Estudo-rag-dense.md), e a medição está no
+[RELATORIO-rag-dense-fase0.md](RELATORIO-rag-dense-fase0.md). As §§2, 3, 4, 9 e 10 continuam valendo; as
+medições deste estudo (feitas com 3.800 acórdãos e o INT8) ficam como registro da época.

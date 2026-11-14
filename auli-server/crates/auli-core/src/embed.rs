@@ -49,7 +49,7 @@ pub const EMBED_MAX_TOKENS: usize = 8192;
 /// O valor não é crítico: qualquer coisa entre dezenas e alguns milhares troca memória por um número
 /// irrelevante de chamadas a mais. 256 dá folga confortável mesmo se um lote inteiro bater no teto de
 /// 8.192 tokens (256 × 8.192 × 1024 × 4 B ≈ 8,6 GB no pior caso teórico, que o corpus real não tem).
-const FATIA: usize = 256;
+pub(crate) const FATIA: usize = 256;
 
 pub struct Embedder {
     inner: Mutex<TextEmbedding>,
