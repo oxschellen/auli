@@ -49,7 +49,11 @@ pub(crate) const LEG_BAND: f32 = f32::INFINITY;
 // dispositivos anexar ao contexto, e o mínimo de dispositivos em comum para um parecer contar como
 // relacionado. Opt-in por entidade — sem `dispositivos-index.json` (do `canonizar`), nada é
 // anexado e o contexto fica idêntico ao de hoje.
-const MAX_RELACIONADOS: usize = 3;
+//
+// 5 (era 3) desde 13/11/2026, a pedido do mantenedor. Cada relacionado entra com o corpo inteiro
+// (no RS, ~5,6 mil caracteres na mediana e 31 mil no maior): os 2 a mais somam ~3 mil tokens à
+// pergunta típica — cabe com folga na janela do modelo.
+const MAX_RELACIONADOS: usize = 5;
 const MIN_DISPOSITIVOS_COMUNS: usize = 2;
 
 /// Tempos por fase de uma consulta RAG, em milissegundos de relógio de parede — precisão
