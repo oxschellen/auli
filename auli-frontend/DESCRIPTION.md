@@ -241,6 +241,20 @@ renders through
 [ServicosAccordion.tsx](src/secoes/servicos/ServicosAccordion.tsx). Includes
 client-side search (deferred via `useDeferredValue`).
 
+Each service opens its **description** in place, as a second accordion level
+(class → service → description). The text is the `descricao` field the
+per-audience JSON already carries (the clean snapshot body, D-S5), so nothing
+extra is fetched. It is rendered as plain text (`white-space: pre-wrap` +
+`editLinks`), not markdown: the collection has no markdown, and markdown would
+merge single-newline paragraphs and swallow text like `<Manual de Orientação>`.
+The portal stays one click away through an "open in portal" icon that is a real
+`<a>`, placed as a **sibling** of the toggle (not inside it), so Enter on the
+icon follows the link and the icon's label stays out of the button's name. A
+service whose description is empty or only repeats the title (`temDescricao`)
+keeps being a plain link — all of MS, RJ and PE. Row `key`s are `titulo + NUL +
+link`, because the `id` restarts in every audience file. See
+[Estudo-servicos-descricao.md](../docs/Estudo-servicos-descricao.md).
+
 Because the manifest comes from the entity's own data, each state shows its own
 audiences — RS's `Cidadãos / Empresas / Fornecedores / Agentes / Servidores`, or
 SC's `Cidadão / Empresa / Servidor Público / Estudante / Prefeitura`.
@@ -444,7 +458,9 @@ and fails when a rule breaks.
   renderer's `target`/`rel`. The `<mark>` itself is `Marca`, in `highlight.tsx`.
 - [linkify.tsx](src/lib/linkify.tsx) — turns bare URLs in plain text into
   Chakra `Link`s, trimming trailing sentence punctuation (and preserving
-  balanced-paren URLs).
+  balanced-paren URLs). A URL ends at a straight or curly quote, and the
+  trailing cleanup repeats until stable (`…gov.br);`), for the
+  `clique aqui "https://…").` style of the Serviços descriptions.
 - [storage.ts](src/lib/storage.ts) — the only door to `localStorage`: every key
   (`CHAVES`), `lerTexto`/`gravarTexto` with one `try/catch` (blocked storage
   keeps the value in memory for the session), and `useTextoGravado`, which

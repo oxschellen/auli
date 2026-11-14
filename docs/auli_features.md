@@ -90,7 +90,8 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
   o Chat — com o estado de cada aba preservado ao alternar. Aba de coleção que
   a entidade não tem some.
 - **Páginas de referência** por estado, com **busca no cliente**:
-  - **Serviços** — agrupados por classe, em acordeões, com abas por público.
+  - **Serviços** — agrupados por classe, em acordeões, com abas por público; cada serviço abre a
+    descrição ali mesmo, com o portal a um clique no ícone ao lado.
   - **FAQs** — árvore navegável de perguntas e respostas.
   - **Pareceres** e **Acórdãos TARF** — lista pesquisável por número, ementa e resumo, do mais
     recente ao mais antigo, com link para a fonte oficial.
