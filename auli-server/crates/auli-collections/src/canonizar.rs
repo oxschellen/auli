@@ -107,8 +107,10 @@ static SECAO: LazyLock<Regex> =
 
 /// Normas com identificador `número/ano` — cada uma captura (número, ano). Ordem de tentativa em
 /// `detectar_norma` (LC antes de Lei; EC antes de tudo com "constitucional").
+/// Emenda Constitucional: `nº 87/15` OU `n.º 87, de 16 de abril de 2015` (a data por extenso; o
+/// ano de quatro dígitos vira os dois do outro formato, para as duas caírem na MESMA chave).
 static EC: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)emenda constitucional\s+n?[º.°]*\s*(\d+)\s*/\s*(\d+)").unwrap()
+    Regex::new(r"(?i)emenda constitucional\s+n?[º.°]*\s*(\d+)(?:\s*/\s*(\d+)|,?\s*de\s+\d{1,2}[º°]?\s+de\s+[a-zà-ú]+\s+de\s+\d{2}(\d{2})\b)").unwrap()
 });
 static LC: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"(?i)lei complementar\s+n?[º.°]*\s*(\d+)\s*/\s*(\d+)").unwrap());
@@ -161,7 +163,8 @@ fn detectar_norma(t: &str) -> Option<(String, String)> {
         return Some(("ctn".into(), "CTN".into()));
     }
     if let Some(c) = EC.captures(t) {
-        let (n, a) = (&c[1], &c[2]);
+        let n = &c[1];
+        let a = c.get(2).or_else(|| c.get(3)).map_or("", |m| m.as_str());
         return Some((format!("ec:{n}/{a}"), format!("EC nº {n}/{a}")));
     }
     if let Some(c) = LC.captures(t) {
@@ -501,6 +504,22 @@ mod tests {
         assert!(key("Art. 32 - Assegura-se direito a crédito fiscal presumido:").is_none());
         // Sem norma identificável.
         assert!(key("inciso II do artigo 25-B").is_none());
+    }
+
+    #[test]
+    fn ec_com_a_data_por_extenso_cai_na_mesma_chave() {
+        // O formato da data (`de 16 de abril de 2015`) é o do texto da própria EC; o ano de quatro
+        // dígitos vira os dois do `87/15`, senão a mesma emenda viraria dois nós.
+        assert_eq!(
+            key("artigo 3.º da Emenda Constitucional n.º 87, de 16 de abril de 2015").as_deref(),
+            Some("ec:87/15:art3")
+        );
+        assert_eq!(
+            key("Emenda Constitucional nº 87/15").as_deref(),
+            key("Emenda Constitucional n.º 87, de 16 de abril de 2015").as_deref()
+        );
+        // Sem ano nenhum, não há como montar a chave: segue na cauda.
+        assert!(key("artigo 2.º da Emenda Constitucional n.º 87").is_none());
     }
 
     #[test]

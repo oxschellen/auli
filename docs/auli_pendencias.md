@@ -1675,6 +1675,34 @@ registrado no estudo de cada fonte, como fato, mas não barra a coleta.
 
 ---
 
+## 45. Grafo de pareceres: citações compostas viram chaves misturadas no canonizador (aberta — 2026-11-13)
+
+Achado ao atualizar o grafo do RS (13/11). O `canonizar` (`auli-collections/src/canonizar.rs`)
+trata cada citação literal como UM dispositivo e extrai os componentes por regex sobre o texto todo.
+Numa citação composta, os componentes das duas partes se juntam numa chave que não existe:
+
+- `artigo 23, II, do Livro I, combinado com item II do Apêndice IV do Regulamento do ICMS` →
+  `ricms-rs:lI:apIV:art23` (artigo do Livro I + Apêndice IV);
+- `inciso IX do artigo 4.º, combinado com a alínea "f" do inciso I do artigo 16, ambos do Livro I
+  do RICMS` → `ricms-rs:lI:art4:incIX:alf` (a alínea do art. 16 atribuída ao art. 4).
+
+No RS: **31 ocorrências** já no índice com "combinado com / conjugado com / c/c", **17 chaves**
+com Livro e Apêndice juntos. E **32** outras caem na cauda porque a regra de anáfora descarta
+"seu/desse/mesmo" mesmo quando a norma está nomeada na própria citação ("…do Regulamento do ICMS,
+combinado com o seu Apêndice IV"). Para os "pareceres relacionados" (co-citação por chave
+EXATA) o efeito é recall menor: a chave misturada só casa com quem cita o mesmo par.
+
+Correlatos: o inciso no formato `artigo 23, II` (sem a palavra "inciso") é perdido em 36
+ocorrências, e o `item` dos Apêndices em romano (`item IX`) não é capturado.
+
+**Proposta (não decidida):** separar a citação composta em uma ocorrência por parte, herdando a
+norma de `ambos/todos do …` e de `seu/desse/mesmo Regulamento`; aceitar `artigo N, <romano>` como
+inciso e `item <romano>`. Muda chaves do grafo (corrige as 17), por isso pede decisão e uma rodada
+de `canonizar` + `grafo` com a comparação antes/depois. **Decisão do mantenedor em 13/11:** por ora,
+só a EC com data por extenso entrou (`ec:87/15`); o resto fica aqui.
+
+---
+
 ## D-NAMING (pendência separada — MG, NÃO é do GO) — ✅ resolvida em 01/11/2026
 
 Política da frota: separador sigla–UF sempre `-`. O `orgao` do **MG** passou de `"SEF/MG"` para
