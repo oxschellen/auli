@@ -53,8 +53,11 @@ pub(crate) const LEG_BAND: f32 = f32::INFINITY;
 // 5 (era 3) desde 13/11/2026, a pedido do mantenedor. Cada relacionado entra com o corpo inteiro
 // (no RS, ~5,6 mil caracteres na mediana e 31 mil no maior): os 2 a mais somam ~3 mil tokens à
 // pergunta típica — cabe com folga na janela do modelo.
-const MAX_RELACIONADOS: usize = 5;
-const MIN_DISPOSITIVOS_COMUNS: usize = 2;
+//
+// O `buscar_pareceres` do MCP usa os mesmos dois limites (só com os metadados, sem o corpo), e a
+// descrição da ferramenta cita os dois números: mudar um aqui é mudar o texto de lá.
+pub(crate) const MAX_RELACIONADOS: usize = 5;
+pub(crate) const MIN_DISPOSITIVOS_COMUNS: usize = 2;
 
 /// Tempos por fase de uma consulta RAG, em milissegundos de relógio de parede — precisão
 /// suficiente para a pergunta que este medidor responde ("onde foi o tempo?").

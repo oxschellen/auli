@@ -33,7 +33,7 @@ use rmcp::{
 use auli_anon::{Anonimizador, TEXTO_FALLBACK_ERRO};
 use auli_contract::Kind;
 use auli_core::corpus::{FAQS, LEGISLACAO, SERVICES};
-use auli_retrieval::Engine;
+use auli_retrieval::{Engine, ParecerHit};
 
 use crate::rag::TemposConsulta;
 use crate::{entities, rag};
@@ -77,6 +77,34 @@ fn resolver_colecao(colecao: Option<&str>) -> Result<Kind, McpError> {
         .ok_or_else(|| McpError::invalid_params(erro_colecao_invalida(nome), None))
 }
 
+/// Um item da lista que o `buscar_pareceres` devolve: o parecer e, só nos que vieram do grafo, a
+/// marca `relacionado_por_grafo: true`. Nos da busca o campo não aparece — a saída das UFs sem
+/// grafo, e a do TARF, fica byte a byte a de antes.
+#[derive(serde::Serialize)]
+struct ItemBusca<'a> {
+    #[serde(flatten)]
+    parecer: &'a ParecerHit,
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    relacionado_por_grafo: bool,
+}
+
+/// A saída do `buscar_pareceres`: os resultados da busca, na ordem do score, e depois deles os
+/// relacionados por grafo, na ordem do grafo.
+fn saida_da_busca(hits: &[ParecerHit], relacionados: &[ParecerHit]) -> serde_json::Result<String> {
+    let itens: Vec<ItemBusca> = hits
+        .iter()
+        .map(|parecer| ItemBusca {
+            parecer,
+            relacionado_por_grafo: false,
+        })
+        .chain(relacionados.iter().map(|parecer| ItemBusca {
+            parecer,
+            relacionado_por_grafo: true,
+        }))
+        .collect();
+    serde_json::to_string_pretty(&itens)
+}
+
 #[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
 pub struct BuscarPareceresArgs {
     /// Sigla da UF em minúsculas (ex.: "rs", "sc", "sp", "pr"). Use `listar_entidades` para ver
@@ -85,7 +113,8 @@ pub struct BuscarPareceresArgs {
     /// Pergunta ou tema em linguagem natural (ex.: "crédito de ICMS na aquisição de energia
     /// elétrica pela indústria").
     pub pergunta: String,
-    /// Quantos resultados devolver (1 a 20; padrão 5).
+    /// Quantos resultados da busca devolver (1 a 20; padrão 5). Os relacionados por grafo, onde
+    /// houver, vêm além deles.
     #[serde(default)]
     pub top_k: Option<usize>,
     /// Acervo a consultar: "pareceres" (padrão) ou "tarf" (acórdãos do Tribunal Administrativo de
@@ -218,7 +247,11 @@ impl AuliMcp {
         consulta os ACÓRDÃOS do Tribunal Administrativo de Recursos Fiscais (decisões em recursos \
         de contribuintes, caso a caso — não valem como norma geral). Devolve para cada resultado: \
         número, assunto (ementa), sinopse, link oficial e score de proximidade (menor = mais \
-        próximo). NÃO devolve o corpo integral — use `obter_parecer` com o número para lê-lo."
+        próximo). Nos PARECERES de UF com grafo de citações (hoje, o RS), depois dos resultados \
+        vêm até 5 pareceres RELACIONADOS, marcados com `relacionado_por_grafo: true` e sem score: \
+        os que citam ao menos 2 dos mesmos dispositivos legais (artigo, parágrafo, inciso) dos \
+        resultados — conexão jurídica que a busca por sentido pode não ver. NÃO devolve o corpo \
+        integral — use `obter_parecer` com o número para lê-lo."
     )]
     async fn buscar_pareceres(
         &self,
@@ -245,8 +278,27 @@ impl AuliMcp {
 
         // Embed + scan são CPU-bound: fora do runtime async (mesma disciplina das outras faces).
         let t = Instant::now();
-        let hits = tokio::task::spawn_blocking(move || {
-            engine.search_jurisprudencia(&uf2, colecao, &pergunta, top_k, 0, f32::INFINITY)
+        let (hits, relacionados) = tokio::task::spawn_blocking(move || {
+            engine
+                .search_jurisprudencia(&uf2, colecao, &pergunta, top_k, 0, f32::INFINITY)
+                .map(|hits| {
+                    // A expansão por grafo do chat, com os mesmos limites — e, como lá, só nos
+                    // pareceres (D-A4: o índice de dispositivos é derivado da árvore de pareceres).
+                    // Aqui em metadados: o corpo, quem quiser, pede ao `obter_parecer`. UF sem
+                    // `dispositivos-index.json` devolve vazio, e a saída fica a de antes.
+                    let relacionados = if colecao == Kind::Pareceres {
+                        let seeds: Vec<String> = hits.iter().map(|h| h.numero.clone()).collect();
+                        engine.relacionados_por_grafo(
+                            &uf2,
+                            &seeds,
+                            rag::MAX_RELACIONADOS,
+                            rag::MIN_DISPOSITIVOS_COMUNS,
+                        )
+                    } else {
+                        Vec::new()
+                    };
+                    (hits, relacionados)
+                })
         })
         .await
         .map_err(|e| McpError::internal_error(e.to_string(), None))?
@@ -255,19 +307,26 @@ impl AuliMcp {
 
         // D-MCP-5: só metadados no log — nunca o texto da pergunta.
         let ms = t.elapsed().as_millis() as u64;
-        tracing::info!(uf = %uf, colecao = %colecao, top_k, hits = hits.len(), ms, "mcp buscar_pareceres");
+        tracing::info!(uf = %uf, colecao = %colecao, top_k, hits = hits.len(),
+            relacionados = relacionados.len(), ms, "mcp buscar_pareceres");
 
         // JSON estruturado no content de texto: é o formato que assistentes consomem melhor.
-        let json = serde_json::to_string_pretty(&hits)
+        let json = saida_da_busca(&hits, &relacionados)
             .map_err(|e| McpError::internal_error(e.to_string(), None))?;
         // `search_pareceres` funde embed + varredura, então o split não existe aqui: o tempo vai
         // inteiro em `retrieve_ms` (rotulado "retrieve+montagem" na linha TEMPOS).
         // O JSON devolvido já carrega o score de cada parecer; a seção é montada assim mesmo para
-        // que o registro tenha o MESMO formato nas quatro ferramentas e no chat.
-        let aderencia = rag::montar_aderencia(&rag::aderencia(
+        // que o registro tenha o MESMO formato nas quatro ferramentas e no chat — inclusive a
+        // linha "parecer relacionado" dos que vieram do grafo.
+        let mut itens = rag::aderencia(
             &colecao.rotulo().to_lowercase(),
             hits.iter().map(|h| h.score),
+        );
+        itens.extend(rag::aderencia(
+            "parecer relacionado",
+            relacionados.iter().map(|_| None),
         ));
+        let aderencia = rag::montar_aderencia(&itens);
         self.registrar(
             &uf,
             "buscar_pareceres",
@@ -768,6 +827,59 @@ mod tests {
         assert_eq!(efetivo(None), 5);
         assert_eq!(efetivo(Some(9999)), MAX_TOP_K);
         assert_eq!(efetivo(Some(0)), 1);
+    }
+
+    fn parecer(numero: &str, score: Option<f32>) -> ParecerHit {
+        ParecerHit {
+            numero: numero.into(),
+            assunto: format!("Assunto do {numero}"),
+            resumo: "Sinopse.".into(),
+            link: format!("http://x/{numero}"),
+            score,
+            corpo: None,
+        }
+    }
+
+    #[test]
+    fn sem_relacionados_a_saida_da_busca_e_a_de_antes() {
+        // UF sem grafo e TARF: o cliente que lia a lista de `ParecerHit` lê a mesma coisa, byte a
+        // byte — nenhum campo novo nos resultados da busca.
+        let hits = vec![parecer("P1", Some(0.25)), parecer("P2", Some(0.5))];
+        assert_eq!(
+            saida_da_busca(&hits, &[]).unwrap(),
+            serde_json::to_string_pretty(&hits).unwrap()
+        );
+    }
+
+    #[test]
+    fn os_relacionados_vem_depois_da_busca_marcados_e_sem_score() {
+        let hits = vec![parecer("P1", Some(0.25)), parecer("P2", Some(0.5))];
+        let relacionados = vec![parecer("P7", None), parecer("P3", None)];
+        let v: serde_json::Value =
+            serde_json::from_str(&saida_da_busca(&hits, &relacionados).unwrap()).unwrap();
+        let itens = v.as_array().unwrap();
+
+        let numeros: Vec<&str> = itens
+            .iter()
+            .map(|i| i["numero"].as_str().unwrap())
+            .collect();
+        assert_eq!(numeros, ["P1", "P2", "P7", "P3"], "a busca, depois o grafo");
+        for i in &itens[..2] {
+            assert!(i.get("relacionado_por_grafo").is_none(), "{i}");
+            assert!(i["score"].is_number(), "{i}");
+        }
+        for i in &itens[2..] {
+            assert_eq!(i["relacionado_por_grafo"], true, "{i}");
+            assert!(i.get("score").is_none(), "sem distância inventada: {i}");
+            assert!(
+                i.get("corpo").is_none(),
+                "o corpo é do `obter_parecer`: {i}"
+            );
+            assert_eq!(
+                i["link"],
+                format!("http://x/{}", i["numero"].as_str().unwrap())
+            );
+        }
     }
 
     // ---- `consultar_servicos_faqs` ----

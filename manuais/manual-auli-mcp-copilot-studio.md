@@ -29,7 +29,7 @@ Cinco ferramentas são expostas:
 | Ferramenta | O que faz |
 |---|---|
 | `listar_entidades` | Lista as UFs com acervo e, para cada uma, o que tem indexado (pareceres, TARF, legislação, serviços, FAQs) e os totais |
-| `buscar_pareceres` | Busca semântica numa UF. Devolve número, ementa, sinopse, link oficial e score — **não** devolve o corpo. Parâmetro `colecao`: `pareceres` (padrão) ou `tarf` |
+| `buscar_pareceres` | Busca semântica numa UF. Devolve número, ementa, sinopse, link oficial e score — **não** devolve o corpo. Nos pareceres do RS, traz também até 5 relacionados por grafo (marcados com `relacionado_por_grafo`, sem score): os que citam os mesmos dispositivos legais. Parâmetro `colecao`: `pareceres` (padrão) ou `tarf` |
 | `obter_parecer` | Devolve o corpo integral de um documento, dado a UF e o número exato. Passe o mesmo `colecao` da busca |
 | `consultar_servicos_faqs` | Serviços de atendimento e perguntas frequentes de uma UF, num único bloco de texto. Para dúvidas de "como fazer" (guias, cadastros, certidões, parcelamentos) |
 | `buscar_legislacao` | O texto da LEI de uma UF em pares pergunta/resposta, com o dispositivo citado (ex.: "Art. 18-A, § 2º") e o link oficial. Para o que a norma DETERMINA — alíquota, prazo, isenção, obrigação, definição legal |
