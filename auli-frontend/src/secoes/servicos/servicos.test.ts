@@ -4,6 +4,7 @@ import {
   empresaPrimeiro,
   filterServicoGroups,
   getDefaultTipoServicos,
+  temDescricao,
   type Servico,
   type ServicoGroup,
   type TipoServico,
@@ -190,5 +191,36 @@ describe("contarServicosDistintos", () => {
   it("devolve 0 sem abas e ignora aba vazia", () => {
     expect(contarServicosDistintos([])).toBe(0);
     expect(contarServicosDistintos([[], [s("Único", "http://x/1")]])).toBe(1);
+  });
+});
+
+describe("temDescricao", () => {
+  const com = (descricao: string | undefined): Servico => ({
+    id: 1,
+    classe: "Geral",
+    titulo: "Emissão de Guia",
+    link: "http://x/guia",
+    descricao,
+  });
+
+  it("descrição vazia, só espaços ou ausente (JSON antigo) não conta", () => {
+    expect(temDescricao(com(""))).toBe(false);
+    expect(temDescricao(com(" \n\t "))).toBe(false);
+    expect(temDescricao(com(undefined))).toBe(false);
+  });
+
+  it("descrição que só repete o título não conta, mesmo com caixa, acento e espaço diferentes", () => {
+    // Os 35 casos do AM, CE, RO, PI e RS: o portal pôs o título no lugar do corpo.
+    expect(temDescricao(com("Emissão de Guia"))).toBe(false);
+    expect(temDescricao(com("  EMISSAO   de guia\n"))).toBe(false);
+  });
+
+  it("descrição curta e legítima conta", () => {
+    // As curtas do SP dizem algo, e entram como estão.
+    expect(temDescricao(com("Formas de acesso: Certificado Digital"))).toBe(true);
+  });
+
+  it("descrição que começa pelo título e segue conta", () => {
+    expect(temDescricao(com("Emissão de Guia pelo portal, com certificado."))).toBe(true);
   });
 });

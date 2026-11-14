@@ -73,4 +73,35 @@ describe("editLinks", () => {
       firstLink(editLinks("ref https://w.org/wiki/Foo_(bar)") as ReactNode[])?.props.href,
     ).toBe("https://w.org/wiki/Foo_(bar)");
   });
+
+  // Os três casos reais das descrições de Serviços (docs/Estudo-servicos-descricao.md, §5.3).
+  it('para a URL na aspa reta — o `clique aqui "…")` do RS', () => {
+    const parts = editLinks(
+      '(clique aqui "https://atendimento.receita.rs.gov.br/pessoa-juridica/servicos?servico=1666").',
+    ) as ReactNode[];
+    expect(firstLink(parts)?.props.href).toBe(
+      "https://atendimento.receita.rs.gov.br/pessoa-juridica/servicos?servico=1666",
+    );
+  });
+
+  it('para a URL na aspa mesmo sem espaço depois — o `".O contribuinte` da BA', () => {
+    const parts = editLinks('acesse "https://www.ba.gov.br/".O contribuinte') as ReactNode[];
+    expect(firstLink(parts)?.props.href).toBe("https://www.ba.gov.br/");
+    expect(parts[parts.length - 1]).toBe('".O contribuinte');
+  });
+
+  it("tira `);` inteiro do fim, alternando as duas regras — o caso do ES", () => {
+    const parts = editLinks("(http://www.simplifica.es.gov.br);") as ReactNode[];
+    expect(firstLink(parts)?.props.href).toBe("http://www.simplifica.es.gov.br");
+    // O que sai do link continua na tela, como texto, depois dele.
+    const fragmento = parts.find((p) => isValidElement(p) && p.type === Fragment) as ReactElement<{
+      children: ReactNode[];
+    }>;
+    expect(fragmento.props.children[1]).toBe(");");
+  });
+
+  it("para a URL na aspa curva", () => {
+    const parts = editLinks("(veja “http://www.simplifica.es.gov.br)”") as ReactNode[];
+    expect(firstLink(parts)?.props.href).toBe("http://www.simplifica.es.gov.br");
+  });
 });

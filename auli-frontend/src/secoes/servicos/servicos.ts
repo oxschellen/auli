@@ -1,4 +1,4 @@
-import { parseQuery, buildHaystack, haystackMatches } from "../../lib/textSearch";
+import { parseQuery, buildHaystack, haystackMatches, normalizeText } from "../../lib/textSearch";
 
 /** A Serviços tab: the label shown on the button and the JSON file it loads. */
 export interface TipoServico {
@@ -12,6 +12,19 @@ export interface Servico {
   classe: string;
   titulo: string;
   link: string;
+  /** O corpo limpo do snapshot (D-S5), em texto puro. Opcional: JSON de deploy antigo não o traz. */
+  descricao?: string;
+}
+
+/**
+ * Há o que mostrar no acordeão do serviço? Descrição vazia, ou que só repete o título, não conta, e
+ * o serviço fica sendo o link de antes (D-SVC-4 do docs/Estudo-servicos-descricao.md). Em 14/11
+ * eram 834 das 6.203 entradas: MS, RJ e PE inteiros, e as que repetem o título no AM, CE e RO.
+ * "Repete" usa a régua da busca (`normalizeText`: caixa, acentos e espaços).
+ */
+export function temDescricao(s: Servico): boolean {
+  const d = normalizeText(s.descricao ?? "");
+  return d.length > 0 && d !== normalizeText(s.titulo);
 }
 
 /** A class heading paired with its (possibly filtered) services. */
