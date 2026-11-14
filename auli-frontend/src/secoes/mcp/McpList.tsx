@@ -91,7 +91,8 @@ const FERRAMENTAS: Ferramenta[] = [
         <Text as="strong">sem o corpo</Text>. Parâmetros: <Text as="code">uf</Text>,{" "}
         <Text as="code">pergunta</Text>, <Text as="code">top_k</Text> (1 a 20, padrão 5) e{" "}
         <Text as="code">colecao</Text>: <Text as="code">pareceres</Text> (padrão) ou{" "}
-        <Text as="code">tarf</Text>.
+        <Text as="code">tarf</Text>. Nos pareceres do RS, traz também até 5 relacionados: os que
+        citam os mesmos dispositivos legais.
       </>
     ),
     exemplo: (
