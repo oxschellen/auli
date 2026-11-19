@@ -239,7 +239,10 @@ to `getDefaultTipoServicos()` (the legacy RS list) in
 selected sub-tab loads its `<entity>/<filename>.json`, groups by `classe`, and
 renders through
 [ServicosAccordion.tsx](src/secoes/servicos/ServicosAccordion.tsx). Includes
-client-side search (deferred via `useDeferredValue`).
+client-side search (deferred via `useDeferredValue`) over class, title and
+description; the normalized title + description are built once per tab while
+searching (`buildServicosIndex`), as in Legislação and Pareceres, because the
+largest tab (MG › Empresas) carries 628k characters of descriptions.
 
 Each service opens its **description** in place, as a second accordion level
 (class → service → description). The text is the `descricao` field the
@@ -249,7 +252,15 @@ extra is fetched. It is rendered as plain text (`white-space: pre-wrap` +
 merge single-newline paragraphs and swallow text like `<Manual de Orientação>`.
 The portal stays one click away through an "open in portal" icon that is a real
 `<a>`, placed as a **sibling** of the toggle (not inside it), so Enter on the
-icon follows the link and the icon's label stays out of the button's name. A
+icon follows the link and the icon's label stays out of the button's name.
+When a service enters a search only through its description, the row shows the
+matching excerpt under the title (`trechoDaDescricao`: starts at the first term
+the title lacks, cut on word boundaries, "…" at the cuts) and the panel stays
+closed — auto-opening would be a wall of text (RS › Empresas, "icms": 58 panels).
+Groups that matched by class show no excerpt. The open description highlights
+the terms too: `editLinks` takes the search terms and marks text and URLs.
+Beside it, a "copy" icon (also a sibling) copies the service name on the first
+line, the link on the second and, after a blank line, the description. A
 service whose description is empty or only repeats the title (`temDescricao`)
 keeps being a plain link — all of MS, RJ and PE. Row `key`s are `titulo + NUL +
 link`, because the `id` restarts in every audience file. See

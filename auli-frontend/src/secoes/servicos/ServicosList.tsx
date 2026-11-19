@@ -6,6 +6,7 @@ import {
   getDefaultTipoServicos,
   empresaPrimeiro,
   filterServicoGroups,
+  buildServicosIndex,
   contarServicosDistintos,
   type Servico,
   type TipoServico,
@@ -92,9 +93,15 @@ export function ServicosList() {
     return Array.from(map.entries());
   }, [activeServicos]);
 
+  // Índice preguiçoso, como na Legislação e nos Pareceres: quem só folheia não paga a normalização
+  // das descrições.
+  const searchIndex = useMemo(
+    () => (busca.buscando ? buildServicosIndex(activeServicos) : undefined),
+    [activeServicos, busca.buscando],
+  );
   const filteredGroups = useMemo<ServicoGroup[]>(
-    () => filterServicoGroups(grouped, busca.adiado),
-    [grouped, busca.adiado],
+    () => filterServicoGroups(grouped, busca.adiado, searchIndex),
+    [grouped, busca.adiado, searchIndex],
   );
 
   const isSearching = busca.buscando;

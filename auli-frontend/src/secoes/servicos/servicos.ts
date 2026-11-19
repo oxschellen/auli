@@ -1,4 +1,5 @@
 import { parseQuery, buildHaystack, haystackMatches, normalizeText } from "../../lib/textSearch";
+import { findHighlightRanges } from "../../lib/highlight";
 
 /** A Serviços tab: the label shown on the button and the JSON file it loads. */
 export interface TipoServico {
@@ -52,28 +53,93 @@ export function contarServicosDistintos(abas: Servico[][]): number {
   return vistos.size;
 }
 
+/** Os campos de busca do serviço, já normalizados: o título e a descrição. */
+function camposDeBusca(s: Servico): string[] {
+  return buildHaystack([s.titulo, s.descricao]);
+}
+
+/**
+ * Pré-normaliza os campos de busca de cada serviço da aba, **uma vez por aba, não por tecla**, como o
+ * `buildPareceresIndex`. Com só o título era irrelevante; com a descrição, a maior aba (MG ›
+ * Empresas, 161 serviços) são 628 mil caracteres. Chave pelo próprio objeto: o `id` recomeça em
+ * cada arquivo de público.
+ */
+export function buildServicosIndex(servicos: Servico[]): Map<Servico, string[]> {
+  return new Map(servicos.map((s) => [s, camposDeBusca(s)]));
+}
+
+/** A classe casa a busca? Então o grupo inteiro entra, e nenhum serviço dele precisa de trecho. */
+export function classeCasa(classe: string, terms: readonly string[]): boolean {
+  return terms.length > 0 && haystackMatches(buildHaystack([classe]), terms);
+}
+
 /**
  * Filtra os grupos pela query, preservando a regra da lista: se a **classe** casa, o grupo inteiro
- * entra (sem filtrar itens); senão, entram só os itens cujo **título** casa. Busca via `textSearch`
- * (acentos + multi-termo, E entre termos). Query vazia devolve `grouped` intacto (mesma referência).
+ * entra (sem filtrar itens); senão, entram só os itens cujo **título ou descrição** casa. Busca via
+ * `textSearch` (acentos + multi-termo, E entre termos, OU entre campos: um termo no título e outro
+ * na descrição bastam). Query vazia devolve `grouped` intacto (mesma referência).
  *
- * Servicos é pequeno por aba (SP tem 537), então normalizar por tecla é irrelevante — o corpus
- * grande é Pareceres, tratado à parte. Helper puro (mesmo idioma de `searchNodes`/`searchCategories`)
- * para ser testável sem montar o componente.
+ * `index` é a saída de `buildServicosIndex` para a aba. Omitido, o haystack é construído na hora —
+ * cômodo para testes, caro nas abas de descrição longa. Helper puro (mesmo idioma de
+ * `searchNodes`/`searchCategories`) para ser testável sem montar o componente.
  */
-export function filterServicoGroups(grouped: ServicoGroup[], query: string): ServicoGroup[] {
+export function filterServicoGroups(
+  grouped: ServicoGroup[],
+  query: string,
+  index?: Map<Servico, string[]>,
+): ServicoGroup[] {
   const terms = parseQuery(query);
   if (terms.length === 0) return grouped;
   const result: ServicoGroup[] = [];
   for (const [classe, items] of grouped) {
-    if (haystackMatches(buildHaystack([classe]), terms)) {
+    if (classeCasa(classe, terms)) {
       result.push([classe, items]);
     } else {
-      const matching = items.filter((s) => haystackMatches(buildHaystack([s.titulo]), terms));
+      const matching = items.filter((s) =>
+        haystackMatches(index?.get(s) ?? camposDeBusca(s), terms),
+      );
       if (matching.length > 0) result.push([classe, matching]);
     }
   }
   return result;
+}
+
+/** Quanto do texto o trecho mostra antes e depois do termo, em caracteres. */
+const TRECHO_ANTES = 40;
+const TRECHO_DEPOIS = 80;
+
+/**
+ * O pedaço da descrição que explica por que o serviço entrou na busca, para a linha mostrar sob o
+ * título. `null` quando não há busca, quando não há descrição ou quando o título já tem todos os
+ * termos — aí o realce do título basta. A classe é regra do chamador (`classeCasa`): no grupo que
+ * entrou pela classe, ninguém precisa de trecho.
+ *
+ * O trecho começa no primeiro termo que **falta** no título, porque é ele que a descrição explica.
+ * Corta em fronteira de palavra, junta as quebras de linha num espaço e marca os cortes com "…".
+ */
+export function trechoDaDescricao(s: Servico, terms: readonly string[]): string | null {
+  if (terms.length === 0 || !temDescricao(s)) return null;
+  const titulo = normalizeText(s.titulo);
+  const faltam = terms.filter((t) => !titulo.includes(t));
+  if (faltam.length === 0) return null;
+
+  const texto = s.descricao ?? "";
+  const primeiro = findHighlightRanges(texto, faltam)[0];
+  if (!primeiro) return null;
+  const [inicioTermo, fimTermo] = primeiro;
+
+  let ini = Math.max(0, inicioTermo - TRECHO_ANTES);
+  if (ini > 0) {
+    const espaco = texto.slice(ini, inicioTermo).search(/\s/);
+    ini = espaco === -1 ? inicioTermo : ini + espaco + 1;
+  }
+  let fim = Math.min(texto.length, fimTermo + TRECHO_DEPOIS);
+  if (fim < texto.length) {
+    const espaco = texto.slice(fimTermo, fim).search(/\s\S*$/);
+    if (espaco !== -1) fim = fimTermo + espaco;
+  }
+  const meio = texto.slice(ini, fim).replace(/\s+/g, " ").trim();
+  return `${ini > 0 ? "…" : ""}${meio}${fim < texto.length ? "…" : ""}`;
 }
 
 /**

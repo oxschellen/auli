@@ -313,7 +313,9 @@ Depois do Passo 3, no navegador:
 ## 9. Escolhas baratas de trocar
 
 - **Copiar.** A folha das FAQs tem "Copiar resposta". Aqui caberia o mesmo ícone, copiando título,
-  descrição e link. Deixei fora por não ter sido pedido; são poucas linhas.
+  descrição e link. Deixei fora por não ter sido pedido; são poucas linhas. **Feito em
+  18/11/2026** (branch `feat/servicos-copiar-descricao`): o ícone copia o nome do serviço na 1ª linha, o
+  link na 2ª e, depois de uma linha em branco, a descrição; é irmão do botão, como o do portal.
 - **"Abrir no portal" também dentro do painel** (`LinkExterno`, como nos Pareceres), além do ícone
   da linha. O ícone de 14 px é alvo pequeno no celular.
 - **Cor do título expansível:** `fg` (proposto) ou manter `accent`.
@@ -325,7 +327,15 @@ Depois do Passo 3, no navegador:
   entrar na lista sem que o título mostre o porquê; pediria abrir o painel sozinho ou exibir o
   trecho que casou, e o `Highlight` teria de conviver com o `editLinks`. O custo de normalizar não
   é o obstáculo (o texto do RS é ~40 vezes menor que o das sinopses do SP, que precisaram de índice
-  pré-computado). É uma entrega própria, depois desta.
+  pré-computado). É uma entrega própria, depois desta. **Feito em 19/11/2026** (branch
+  `feat/servicos-copiar-descricao`), com o trecho sob o título, escolha do Carlos: quando só a
+  descrição casa, a linha mostra o trecho que casou, marcado, e o painel continua fechado (abrir
+  sozinho daria 58 painéis no RS › Empresas com "icms"). O grupo que entrou pela classe não mostra
+  trecho; o painel aberto marca os termos (o `editLinks` recebe os termos); o haystack é
+  pré-computado por aba durante a busca (MG › Empresas tem 628 mil caracteres de descrição).
+  Medido nas abas: SP › Empresa, "certificado digital", de 0 para 238 resultados; RS › Empresas,
+  "icms", de 88 para 146. Limite conhecido: com vários termos, o trecho começa no primeiro termo
+  que falta no título e pode não mostrar os outros.
 - **A qualidade do texto extraído** ("clique aqui" sem endereço, frases coladas). É da extração de
   cada scraper de serviços, não do frontend; o conversor único que já existe
   (`docs/ESTUDO-kit-html-para-texto.md`) cobre só as FAQs. Vale olhar o DF e a PB antes de divulgar

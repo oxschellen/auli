@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Box, Flex, Link, Stack, Text } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
+import { Box, Flex, Link, Stack, Text, chakra } from "@chakra-ui/react";
 import { comoBotao, PainelRevelado } from "../../ui/Acordeao";
-import { MdExpandLess, MdExpandMore, MdOpenInNew } from "react-icons/md";
-import { temDescricao, type Servico } from "./servicos";
+import { MdContentCopy, MdExpandLess, MdExpandMore, MdOpenInNew } from "react-icons/md";
+import { classeCasa, temDescricao, trechoDaDescricao, type Servico } from "./servicos";
 import { Highlight } from "../../lib/highlight";
 import { editLinks } from "../../lib/linkify";
+import { utilsCopyTextToClipboard } from "../../ui/copiar";
 
 interface AccordionItemProps {
   classe: string;
@@ -22,17 +23,36 @@ interface AccordionItemProps {
  * no ícone ao lado; sem descrição, a linha continua sendo o link para o portal, como sempre foi
  * (docs/Estudo-servicos-descricao.md, D-SVC-2 a D-SVC-5).
  *
- * O ícone é IRMÃO do botão, não filho: um `<a>` dentro de `role="button"` teria o Enter capturado
- * pelo `onKeyDown` do `comoBotao` (o acordeão abriria em vez de o link seguir), e os filhos de um
- * botão são apresentacionais para o leitor de tela. Lado a lado, nenhum `stopPropagation` é
- * preciso. E é `<a>` de verdade, não `window.open`, para Ctrl+clique e "copiar endereço" valerem.
+ * Os ícones são IRMÃOS do botão, não filhos: um `<a>` dentro de `role="button"` teria o Enter
+ * capturado pelo `onKeyDown` do `comoBotao` (o acordeão abriria em vez de o link seguir), e os
+ * filhos de um botão são apresentacionais para o leitor de tela. Lado a lado, nenhum
+ * `stopPropagation` é preciso. O do portal é `<a>` de verdade, não `window.open`, para Ctrl+clique
+ * e "copiar endereço" valerem. O de copiar leva o nome do serviço na 1ª linha, o link na 2ª e,
+ * depois de uma linha em branco, a descrição.
  *
  * A descrição é texto puro (`pre-wrap` + `editLinks`), não markdown: o acervo não tem markdown, e
  * o `ReactMarkdown` juntaria os parágrafos separados por quebra simples, viraria lista as linhas
  * começadas por `* ` ou `1. ` e apagaria trechos como `<Manual de Orientação>`.
+ *
+ * Na busca, a descrição também conta. Quando é ela que explica o resultado, a linha mostra sob o
+ * título o trecho que casou (`trechoDaDescricao`), com o painel fechado: abrir sozinho daria
+ * paredes de texto (RS › Empresas, "icms": 58 painéis, 58 mil caracteres).
  */
-function ServicoItem({ s, terms }: { s: Servico; terms: string[] }) {
+function ServicoItem({
+  s,
+  terms,
+  mostrarTrecho,
+}: {
+  s: Servico;
+  terms: string[];
+  /** `false` no grupo que entrou pela classe: lá o realce da classe já explica o resultado. */
+  mostrarTrecho: boolean;
+}) {
   const [aberto, setAberto] = useState(false);
+  const trecho = useMemo(
+    () => (mostrarTrecho ? trechoDaDescricao(s, terms) : null),
+    [mostrarTrecho, s, terms],
+  );
 
   if (!temDescricao(s)) {
     return (
@@ -63,13 +83,38 @@ function ServicoItem({ s, terms }: { s: Servico; terms: string[] }) {
           gap={2}
           cursor="pointer"
         >
-          <Text fontSize="1rem" fontWeight="500" lineHeight="1.75" color="fg" flex={1}>
-            <Highlight text={s.titulo} terms={terms} />
-          </Text>
+          <Box flex={1} minW={0}>
+            <Text fontSize="1rem" fontWeight="500" lineHeight="1.75" color="fg">
+              <Highlight text={s.titulo} terms={terms} />
+            </Text>
+            {trecho && (
+              <Text fontSize="0.85rem" lineHeight="1.5" color="fg.muted" overflowWrap="anywhere">
+                <Highlight text={trecho} terms={terms} />
+              </Text>
+            )}
+          </Box>
           <Box color="fg.muted" display="flex" aria-hidden>
             {aberto ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
           </Box>
         </Flex>
+        <chakra.button
+          type="button"
+          onClick={() =>
+            utilsCopyTextToClipboard(
+              `${s.titulo}\n${s.link}\n\n${s.descricao ?? ""}`,
+              "A descrição foi copiada para a área de transferência",
+            )
+          }
+          aria-label={`Copiar a descrição de ${s.titulo}`}
+          title="Copiar descrição"
+          color="fg.muted"
+          display="flex"
+          flexShrink={0}
+          cursor="pointer"
+          p={2}
+        >
+          <MdContentCopy size={14} />
+        </chakra.button>
         <Link
           href={s.link}
           target="_blank"
@@ -96,7 +141,7 @@ function ServicoItem({ s, terms }: { s: Servico; terms: string[] }) {
           whiteSpace="pre-wrap"
           overflowWrap="anywhere"
         >
-          {editLinks(s.descricao ?? "")}
+          {editLinks(s.descricao ?? "", terms)}
         </Box>
       </PainelRevelado>
     </Box>
@@ -112,6 +157,7 @@ export function AccordionItem({
   isLast,
   terms,
 }: AccordionItemProps) {
+  const casouPelaClasse = classeCasa(classe, terms);
   return (
     <Box>
       <Flex
@@ -153,7 +199,12 @@ export function AccordionItem({
                 arquivo de público, e com o "aberto" guardado na linha a mesma `key` numa classe
                 de mesmo nome em outra aba passaria o estado de um serviço a outro (§5.4). */}
             {items.map((s) => (
-              <ServicoItem key={`${s.titulo}\u0000${s.link}`} s={s} terms={terms} />
+              <ServicoItem
+                key={`${s.titulo}\u0000${s.link}`}
+                s={s}
+                terms={terms}
+                mostrarTrecho={!casouPelaClasse}
+              />
             ))}
           </Stack>
         </Box>

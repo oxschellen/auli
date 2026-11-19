@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { Link } from "@chakra-ui/react";
+import { Highlight } from "./highlight";
 
 // Capturing group so String.prototype.split keeps the URLs as separate parts. A URL também para
 // na aspa (reta ou curva): aspa não codificada não pertence a URL, e as descrições de Serviços
@@ -30,9 +31,17 @@ function splitTrailing(part: string): { url: string; trailing: string } {
   return { url, trailing: part.slice(url.length) };
 }
 
-export function editLinks(text: string) {
+/** O texto com as URLs viradas em link. Com `terms` (os da busca, já normalizados), marca também o
+ *  que casou, no texto e no endereço — a busca dos Serviços olha os dois. Sem termos, a saída é a de
+ *  sempre: as partes de texto saem como strings cruas. */
+export function editLinks(text: string, terms: readonly string[] = []) {
+  const marcar = terms.length > 0;
+  // A posição da parte no texto é a chave do realce: única e estável, o idioma do `Highlight`.
+  let inicio = 0;
   return text.split(urlSplitRegex).map((part: string, index: number) => {
-    if (!isUrl(part)) return part;
+    const posicao = inicio;
+    inicio += part.length;
+    if (!isUrl(part)) return marcar ? <Highlight key={posicao} text={part} terms={terms} /> : part;
 
     const { url, trailing } = splitTrailing(part);
     const link = (
@@ -43,7 +52,7 @@ export function editLinks(text: string) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {url}
+        {marcar ? <Highlight text={url} terms={terms} /> : url}
       </Link>
     );
 
