@@ -1,10 +1,13 @@
 import { describe, it, expect } from "vitest";
+import { parseQuery } from "../../lib/textSearch";
 import {
+  buildServicosIndex,
   contarServicosDistintos,
   empresaPrimeiro,
   filterServicoGroups,
   getDefaultTipoServicos,
   temDescricao,
+  trechoDaDescricao,
   type Servico,
   type ServicoGroup,
   type TipoServico,
@@ -65,6 +68,68 @@ describe("filterServicoGroups", () => {
 
   it("termo ausente derruba tudo", () => {
     expect(filterServicoGroups(grouped, "credito inexistente")).toEqual([]);
+  });
+});
+
+describe("filterServicoGroups — a descrição na busca", () => {
+  const gnre = {
+    ...svc(5, "Arrecadação", "Emissão de GNRE"),
+    descricao: "Recolhimento do ICMS devido a outra UF.",
+  };
+  const parcelamento = {
+    ...svc(6, "Arrecadação", "Parcelamento de débitos"),
+    descricao: "Débitos declarados em GIA podem ser parcelados.",
+  };
+  const comDescricao: ServicoGroup[] = [["Arrecadação", [gnre, parcelamento]]];
+
+  it("o serviço entra quando só a descrição casa", () => {
+    const r = filterServicoGroups(comDescricao, "icms");
+    expect(r[0][1].map((s) => s.titulo)).toEqual(["Emissão de GNRE"]);
+  });
+
+  it("um termo no título e outro na descrição bastam (E entre termos, OU entre campos)", () => {
+    const r = filterServicoGroups(comDescricao, "gnre icms");
+    expect(r[0][1].map((s) => s.titulo)).toEqual(["Emissão de GNRE"]);
+  });
+
+  it("o índice pré-computado devolve o mesmo que o haystack na hora", () => {
+    const index = buildServicosIndex([gnre, parcelamento]);
+    for (const q of ["icms", "gia parcelados", "gnre icms", "inexistente"]) {
+      expect(filterServicoGroups(comDescricao, q, index)).toEqual(
+        filterServicoGroups(comDescricao, q),
+      );
+    }
+  });
+});
+
+describe("trechoDaDescricao", () => {
+  const restituicao = {
+    ...svc(7, "Restituição", "Restituição de tributos"),
+    descricao:
+      "O pedido pode ser feito pelo portal da Receita Estadual, na área do contribuinte.\n" +
+      "Após o protocolo, a restituição do ICMS pago indevidamente é analisada pela equipe " +
+      "responsável em até noventa dias úteis, contados da data do pedido.",
+  };
+
+  it("sem busca, sem descrição ou com o título já casando tudo: nada a mostrar", () => {
+    expect(trechoDaDescricao(restituicao, [])).toBeNull();
+    expect(trechoDaDescricao({ ...restituicao, descricao: "" }, parseQuery("icms"))).toBeNull();
+    expect(trechoDaDescricao(restituicao, parseQuery("restituicao tributos"))).toBeNull();
+  });
+
+  it("começa no termo que falta no título e corta em palavra inteira, com reticências", () => {
+    // "restituição" está no título e também no começo da descrição: o trecho pula para o ICMS.
+    expect(trechoDaDescricao(restituicao, parseQuery("restituicao icms"))).toBe(
+      "…Após o protocolo, a restituição do ICMS pago indevidamente é analisada pela equipe " +
+        "responsável em até noventa dias…",
+    );
+  });
+
+  it("descrição curta sai inteira, sem reticências e com as quebras de linha num espaço", () => {
+    const curta = { ...restituicao, descricao: "Pedido pelo portal.\nVale para ICMS e IPVA." };
+    expect(trechoDaDescricao(curta, parseQuery("ipva"))).toBe(
+      "Pedido pelo portal. Vale para ICMS e IPVA.",
+    );
   });
 });
 

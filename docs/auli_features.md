@@ -91,7 +91,9 @@ Os conteúdos oficiais são previamente **coletados do portal** da secretaria (s
   a entidade não tem some.
 - **Páginas de referência** por estado, com **busca no cliente**:
   - **Serviços** — agrupados por classe, em acordeões, com abas por público; cada serviço abre a
-    descrição ali mesmo, com o portal a um clique no ícone ao lado.
+    descrição ali mesmo, com o portal a um clique no ícone ao lado e um ícone para copiar nome,
+    link e descrição, como nas FAQs. A busca olha classe, título e descrição; quando só a
+    descrição casa, a linha mostra o trecho que casou, marcado.
   - **FAQs** — árvore navegável de perguntas e respostas.
   - **Pareceres** e **Acórdãos TARF** — lista pesquisável por número, ementa e resumo, do mais
     recente ao mais antigo, com link para a fonte oficial.
