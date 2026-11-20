@@ -141,6 +141,18 @@ function ServicoItem({
           whiteSpace="pre-wrap"
           overflowWrap="anywhere"
         >
+          {/* O endereço do serviço abre o painel, na ordem do texto copiado: link, depois a
+              descrição. Sem realce: a busca não olha o link. */}
+          <Link
+            href={s.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="accent"
+            display="block"
+            mb={2}
+          >
+            {s.link}
+          </Link>
           {editLinks(s.descricao ?? "", terms)}
         </Box>
       </PainelRevelado>

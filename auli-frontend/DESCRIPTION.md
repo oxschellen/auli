@@ -247,8 +247,9 @@ largest tab (MG › Empresas) carries 628k characters of descriptions.
 Each service opens its **description** in place, as a second accordion level
 (class → service → description). The text is the `descricao` field the
 per-audience JSON already carries (the clean snapshot body, D-S5), so nothing
-extra is fetched. It is rendered as plain text (`white-space: pre-wrap` +
-`editLinks`), not markdown: the collection has no markdown, and markdown would
+extra is fetched. The panel starts with the service's own link (the URL itself, clickable, not
+highlighted — search doesn't look at it), then the description. The description is
+rendered as plain text (`white-space: pre-wrap` + `editLinks`), not markdown: the collection has no markdown, and markdown would
 merge single-newline paragraphs and swallow text like `<Manual de Orientação>`.
 The portal stays one click away through an "open in portal" icon that is a real
 `<a>`, placed as a **sibling** of the toggle (not inside it), so Enter on the
