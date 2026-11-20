@@ -97,6 +97,16 @@ describe("ServicosAccordion — a descrição do serviço", () => {
     expect(linha).toHaveAttribute("aria-expanded", "false");
   });
 
+  it("o painel começa pelo endereço do serviço, clicável, e depois vem a descrição", () => {
+    renderClasse([comDescricao]);
+    fireEvent.click(screen.getByRole("button", { name: "Comunicação por WhatsApp" }));
+    const link = screen.getByRole("link", { name: "http://portal/whatsapp" });
+    expect(link).toHaveAttribute("href", "http://portal/whatsapp");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(link.parentElement).toHaveTextContent(/^http:\/\/portal\/whatsapp\s*O WhatsApp/);
+  });
+
   it("a descrição sai como texto puro: nada some, e o endereço entre aspas vira link", () => {
     // O caso do SC: `<Manual de Orientação>` e a URL entre aspas. Em markdown o `<…>` sumiria
     // como HTML, e as linhas com `* ` e `1. ` virariam listas.
