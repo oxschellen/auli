@@ -908,7 +908,8 @@ Duas ressalvas de leitura:
   se destacando é o sinal típico de "não há documento sobre isso" — e é exatamente esse caso que a
   seção torna visível no log.
 
-Pareceres trazidos pela **expansão por grafo** (co-citação de dispositivos) aparecem como
+Pareceres trazidos pela **expansão por grafo** (co-citação de dispositivos — no chat e, desde
+13/11/2026, no `buscar_pareceres` do MCP) aparecem como
 `parecer relacionado N · por co-citação de dispositivos (sem busca vetorial)`: não vieram do vetor
 e não têm distância — inventar um número ali seria mentir no registro.
 

@@ -481,6 +481,12 @@ brasileiro:
 | `consultar_servicos_faqs` | `uf`, `pergunta`                      | o bloco de contexto RAG serviços+FAQs, byte a byte o do chat   |
 | `buscar_legislacao`       | `uf`, `pergunta`                      | o bloco de contexto RAG da legislação, com a trilha da norma   |
 
+Nos **pareceres** de UF com grafo (hoje, o RS), o `buscar_pareceres` acrescenta, depois dos
+resultados da busca, até 5 pareceres relacionados por grafo — a expansão do chat, com os mesmos
+limites (`MAX_RELACIONADOS`, `MIN_DISPOSITIVOS_COMUNS`), mas só os metadados: cada um marcado com
+`relacionado_por_grafo: true` e sem `score`, que é distância ao vetor da pergunta e estes não
+vieram do vetor. Sem grafo, e no TARF, a saída é byte a byte a de antes (13/11/2026).
+
 O `colecao` das duas de jurisprudência é `pareceres` (padrão) ou `tarf` (D-A6), e o
 `resolver_colecao` recusa qualquer outro nome — inclusive `servicos` e `legislacao`, que são
 coleções legítimas de outra natureza. As duas últimas **não** têm `top_k`: são o caminho do bloco

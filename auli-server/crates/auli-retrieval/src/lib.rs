@@ -194,6 +194,24 @@ impl Engine {
         pareceres_relacionados(&self.docs_root, entity_id, seeds, max, min_shared)
     }
 
+    /// Delegação: os mesmos relacionados, no formato da busca e sem corpo (a face MCP).
+    pub fn relacionados_por_grafo(
+        &self,
+        entity_id: &str,
+        seeds: &[String],
+        max: usize,
+        min_shared: usize,
+    ) -> Vec<ParecerHit> {
+        relacionados_por_grafo(
+            &self.collections,
+            &self.docs_root,
+            entity_id,
+            seeds,
+            max,
+            min_shared,
+        )
+    }
+
     /// Delegação: bloco de contexto RAG de um parecer pelo número (mesma renderização do chat).
     pub fn bloco_por_numero(&self, entity_id: &str, numero: &str) -> Result<Option<String>> {
         bloco_por_numero(&self.collections, &self.docs_root, entity_id, numero)
@@ -379,6 +397,47 @@ pub fn pareceres_relacionados(
         .into_iter()
         .take(max)
         .map(|(p, _)| p.to_string())
+        .collect()
+}
+
+/// Os [`pareceres_relacionados`] no formato da busca — número, assunto, sinopse e link —, para a
+/// face que devolve metadados (o MCP); o chat usa o [`bloco_por_numero`], que traz o corpo. Sem
+/// corpo e sem score: o score é a distância ao vetor da pergunta, e estes não vieram do vetor.
+///
+/// Número do índice que o pack não tem é pulado: índice e pack são gerados em momentos diferentes,
+/// e um parecer que saiu do acervo depois da extração não pode virar um item vazio.
+pub fn relacionados_por_grafo(
+    collections: &Collections,
+    docs_root: &Path,
+    entity_id: &str,
+    seeds: &[String],
+    max: usize,
+    min_shared: usize,
+) -> Vec<ParecerHit> {
+    let numeros = pareceres_relacionados(docs_root, entity_id, seeds, max, min_shared);
+    let Some(store) = collections.get(&format!("{entity_id}-pareceres")) else {
+        return Vec::new();
+    };
+    if numeros.is_empty() {
+        return Vec::new();
+    }
+    let mut por_numero: HashMap<String, DocumentoPack> = store
+        .list()
+        .iter()
+        .filter_map(|j| serde_json::from_str::<DocumentoPack>(j).ok())
+        .map(|p| (p.titulo.trim().to_lowercase(), p))
+        .collect();
+    numeros
+        .iter()
+        .filter_map(|n| por_numero.remove(&n.trim().to_lowercase()))
+        .map(|p| ParecerHit {
+            numero: p.titulo,
+            assunto: p.ementa,
+            resumo: p.resumo,
+            link: p.link,
+            score: None,
+            corpo: None,
+        })
         .collect()
 }
 
@@ -836,6 +895,56 @@ mod tests {
         )
         .unwrap();
         assert!(pareceres_relacionados(&root, "rs", &[], 5, 1).is_empty());
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn relacionados_por_grafo_seguem_a_ordem_do_grafo_sem_corpo_e_sem_o_que_o_pack_nao_tem() {
+        let root = temp_dir("relac-leve");
+        let exdir = root.join("rs").join("extracao");
+        std::fs::create_dir_all(&exdir).unwrap();
+        // Seed P1: P2 compartilha 2 dispositivos (d1, d2); P3 e P4, 1 cada.
+        let idx = r#"{
+          "d1": {"display":"art. 1","ocorrencias":3,"variantes":[],"pareceres":["P1","P2","P3"]},
+          "d2": {"display":"art. 2","ocorrencias":3,"variantes":[],"pareceres":["P1","P2","P4"]}
+        }"#;
+        std::fs::write(exdir.join("dispositivos-index.json"), idx).unwrap();
+        // O pack em outra ordem, P2 grafado em minúsculas, e sem o P4 (saiu do acervo depois da
+        // extração). Nenhum `.md` existe: o corpo não é lido.
+        let (p3, p2, p1) = (
+            payload_json("P3", "docs/pareceres/p3.md"),
+            payload_json("p2", "docs/pareceres/p2.md"),
+            payload_json("P1", "docs/pareceres/p1.md"),
+        );
+        let mut cols = Collections::new();
+        cols.insert(
+            "rs-pareceres".into(),
+            store_de(vec![
+                (p3.as_str(), vec![1.0]),
+                (p2.as_str(), vec![1.0]),
+                (p1.as_str(), vec![1.0]),
+            ]),
+        );
+
+        let r = relacionados_por_grafo(&cols, &root, "rs", &["P1".into()], 5, 1);
+        // A grafia que vale é a do pack, como no `documento_por_numero`.
+        let numeros: Vec<&str> = r.iter().map(|h| h.numero.as_str()).collect();
+        assert_eq!(numeros, ["p2", "P3"], "ordem do grafo; o P4 é pulado");
+        assert_eq!(r[0].assunto, "ICMS – crédito");
+        assert_eq!(r[0].resumo, "Resumo do parecer.");
+        assert_eq!(r[0].link, "http://x/1");
+        assert!(r.iter().all(|h| h.corpo.is_none() && h.score.is_none()));
+
+        // Os limites são os do grafo.
+        assert_eq!(
+            relacionados_por_grafo(&cols, &root, "rs", &["P1".into()], 5, 2).len(),
+            1
+        );
+        // Entidade sem pack de pareceres: nada.
+        assert!(
+            relacionados_por_grafo(&Collections::new(), &root, "rs", &["P1".into()], 5, 1)
+                .is_empty()
+        );
         let _ = std::fs::remove_dir_all(&root);
     }
 
